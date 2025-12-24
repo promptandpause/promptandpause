@@ -5,7 +5,7 @@
 
 **Transform Your Mental Wellness Journey with Daily Reflection**
 
-[Visit Our Website](https://www.promptandpause.com) | [Start Your Free Trial](https://www.promptandpause.com/auth/signup) | [Contact Us](mailto:support@promptandpause.com)
+<a href="https://www.promptandpause.com" target="_blank">Visit Our Website</a> | <a href="https://www.promptandpause.com/auth/signup" target="_blank">Start Your Free Trial</a> | <a href="mailto:support@promptandpause.com" target="_blank">Contact Us</a>
 
 ---
 
@@ -71,9 +71,9 @@ Unlike generic journaling apps, Prompt & Pause delivers **deeply personalized pr
 
 **Ready to transform your mental wellness journey?**
 
-👉 [Start Your Free Trial](https://www.promptandpause.com/auth/signup)  
-👉 [View Pricing](https://www.promptandpause.com/pricing)  
-👉 [Learn More](https://www.promptandpause.com)
+👉 <a href="https://www.promptandpause.com/auth/signup" target="_blank">Start Your Free Trial</a>  
+👉 <a href="https://www.promptandpause.com/pricing" target="_blank">View Pricing</a>  
+👉 <a href="https://www.promptandpause.com" target="_blank">Learn More</a>
 
 ---
 
@@ -81,11 +81,11 @@ Unlike generic journaling apps, Prompt & Pause delivers **deeply personalized pr
 
 **Need help or have questions?**
 
-- 📧 **Email**: [support@promptandpause.com](mailto:support@promptandpause.com)
-- 🌐 **Website**: [www.promptandpause.com](https://www.promptandpause.com)
-- 💬 **Support Portal**: [Contact Form](https://www.promptandpause.com/support)
+- 📧 **Email**: <a href="mailto:support@promptandpause.com" target="_blank">support@promptandpause.com</a>
+- 🌐 **Website**: <a href="https://www.promptandpause.com" target="_blank">www.promptandpause.com</a>
+- 💬 **Support Portal**: <a href="https://www.promptandpause.com/support" target="_blank">Contact Form</a>
 
-**Business Inquiries**: [hello@promptandpause.com](mailto:hello@promptandpause.com)
+**Business Inquiries**: <a href="mailto:hello@promptandpause.com" target="_blank">hello@promptandpause.com</a>
 
 ---
 
@@ -117,17 +117,17 @@ Prompt & Pause is built with modern, reliable technology:
 
 Follow our journey and get mental wellness tips:
 
-- <img width="16" height="16" alt="Twitter" src="https://github.com/user-attachments/assets/6522f7e1-f5da-4587-ae99-6f10cdba2297" /> Twitter: [@promptandpause](https://twitter.com/promptandpause)
-- <img width="16" height="16" alt="LinkedIn" src="https://github.com/user-attachments/assets/84c6b1d3-7ea0-4c46-abf4-18274f7394be" /> LinkedIn: [Prompt & Pause](https://linkedin.com/company/promptandpause)
-- <img width="16" height="16" alt="Instagram" src="https://github.com/user-attachments/assets/1c2d24f2-a4b9-44a0-92eb-ca51174af3f3" /> Instagram: [@promptandpause](https://instagram.com/promptandpause)
+- <img width="16" height="16" alt="Twitter" src="https://github.com/user-attachments/assets/6522f7e1-f5da-4587-ae99-6f10cdba2297" /> Twitter: <a href="https://twitter.com/promptandpause" target="_blank">@promptandpause</a>
+- <img width="16" height="16" alt="LinkedIn" src="https://github.com/user-attachments/assets/84c6b1d3-7ea0-4c46-abf4-18274f7394be" /> LinkedIn: <a href="https://linkedin.com/company/promptandpause" target="_blank">Prompt & Pause</a>
+- <img width="16" height="16" alt="Instagram" src="https://github.com/user-attachments/assets/1c2d24f2-a4b9-44a0-92eb-ca51174af3f3" /> Instagram: <a href="https://instagram.com/promptandpause" target="_blank">@promptandpause</a>
 
 ---
 
 ## Legal
 
-- [Privacy Policy](https://www.promptandpause.com/privacy)
-- [Terms of Service](https://www.promptandpause.com/terms)
-- [Cookie Policy](https://www.promptandpause.com/cookie-policy)
+- <a href="https://www.promptandpause.com/privacy" target="_blank">Privacy Policy</a>
+- <a href="https://www.promptandpause.com/terms" target="_blank">Terms of Service</a>
+- <a href="https://www.promptandpause.com/cookie-policy" target="_blank">Cookie Policy</a>
 
 ---
 
@@ -137,6 +137,6 @@ Follow our journey and get mental wellness tips:
 
 *Building a world where daily reflection is accessible to everyone.*
 
-[Get Started](https://www.promptandpause.com/auth/signup) | [Learn More](https://www.promptandpause.com) | [Contact Us](mailto:support@promptandpause.com)
+<a href="https://www.promptandpause.com/auth/signup" target="_blank">Get Started</a> | <a href="https://www.promptandpause.com" target="_blank">Learn More</a> | <a href="mailto:support@promptandpause.com" target="_blank">Contact Us</a>
 
 </div>
