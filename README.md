@@ -2,7 +2,6 @@
 
 ![Prompt & Pause Logo](https://res.cloudinary.com/dh1rrfpmq/image/upload/v1766460430/prompt_pause-png-xr9SralsTsOhMfuwfo1LJKxqmeaJA5_ibt3kc.png)
 
-# Prompt & Pause
 
 **Transform Your Mental Wellness Journey with Daily Reflection**
 
@@ -12,15 +11,15 @@
 
 </div>
 
-## 🌟 About Prompt & Pause
+## About Prompt & Pause
 
-**Prompt & Pause** is a UK-based mental wellness platform that helps you build a sustainable reflection practice through personalized daily prompts. We combine AI-powered personalization with evidence-based reflection techniques to support your journey toward better mental health, self-awareness, and personal growth.
+**Prompt & Pause** is a UK/US-based mental wellness platform that helps you build a sustainable reflection practice through personalized daily prompts. We combine AI-powered personalization with evidence-based reflection techniques to support your journey toward better mental health, self-awareness, and personal growth.
 
 Unlike generic journaling apps, Prompt & Pause delivers **deeply personalized prompts** tailored to your unique goals, emotional state, and life circumstances—helping you explore what truly matters to you.
 
 ### Why Choose Prompt & Pause?
 
-✨ **AI-Powered Personalization** - Receive prompts that adapt to your focus areas, recent moods, and personal journey  
+**AI-Powered Personalization** - Receive prompts that adapt to your focus areas, recent moods, and personal journey  
 📧 **Flexible Delivery** - Get prompts via email, Slack, or directly in your dashboard  
 📊 **Insightful Analytics** - Track your progress with mood trends, streak tracking, and reflection patterns  
 🎯 **Custom Focus Areas** - Premium users can create unlimited custom focus areas for targeted growth  
@@ -29,7 +28,7 @@ Unlike generic journaling apps, Prompt & Pause delivers **deeply personalized pr
 
 ---
 
-## 🚀 Features
+## Features
 
 ### For Everyone (Free)
 - Daily personalized reflection prompts
@@ -48,7 +47,7 @@ Unlike generic journaling apps, Prompt & Pause delivers **deeply personalized pr
 
 ---
 
-## 💼 Perfect For
+## Perfect For
 
 - **Professionals** managing work-life balance and stress
 - **Students** developing self-awareness and emotional intelligence
@@ -58,7 +57,7 @@ Unlike generic journaling apps, Prompt & Pause delivers **deeply personalized pr
 
 ---
 
-## 🎯 How It Works
+## How It Works
 
 1. **Sign Up** - Create your free account in under 2 minutes
 2. **Set Your Preferences** - Choose your focus areas, delivery time, and frequency
@@ -68,7 +67,7 @@ Unlike generic journaling apps, Prompt & Pause delivers **deeply personalized pr
 
 ---
 
-## 🌐 Get Started Today
+## Get Started Today
 
 **Ready to transform your mental wellness journey?**
 
@@ -78,7 +77,7 @@ Unlike generic journaling apps, Prompt & Pause delivers **deeply personalized pr
 
 ---
 
-## 📞 Contact & Support
+## Contact & Support
 
 **Need help or have questions?**
 
@@ -90,7 +89,7 @@ Unlike generic journaling apps, Prompt & Pause delivers **deeply personalized pr
 
 ---
 
-## 🔐 Security & Privacy
+## Security & Privacy
 
 Your privacy is our priority. We use industry-standard encryption and security practices:
 
@@ -102,29 +101,41 @@ Your privacy is our priority. We use industry-standard encryption and security p
 
 ---
 
-## 🏆 Built With Care
+## Built With Care
 
 Prompt & Pause is built with modern, reliable technology:
 
-- **Next.js 14** - Fast, scalable React framework
+- **Next.js 16** - Fast, scalable React framework
 - **Supabase** - Secure, real-time database
-- **OpenAI & Gemini** - Advanced AI for personalization
+- **OpenAI & Gemini, Varies Fallbacks** - Advanced AI for personalization
 - **Stripe** - Secure payment processing
 - **Vercel** - Global edge deployment
 
 ---
 
-## 📱 Stay Connected
+## Stay Connected
 
 Follow our journey and get mental wellness tips:
 
-- 🐦 Twitter: [@promptandpause](https://twitter.com/promptandpause)
-- 💼 LinkedIn: [Prompt & Pause](https://linkedin.com/company/promptandpause)
-- 📸 Instagram: [@promptandpause](https://instagram.com/promptandpause)
+<div align="center">
+
+<a href="https://twitter.com/promptandpause" target="_blank">
+  <img width="48" height="48" alt="Twitter" src="https://github.com/user-attachments/assets/6522f7e1-f5da-4587-ae99-6f10cdba2297" />
+</a>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="https://linkedin.com/company/promptandpause" target="_blank">
+  <img width="48" height="48" alt="LinkedIn" src="https://github.com/user-attachments/assets/84c6b1d3-7ea0-4c46-abf4-18274f7394be" />
+</a>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="https://instagram.com/promptandpause" target="_blank">
+  <img width="48" height="48" alt="Instagram" src="https://github.com/user-attachments/assets/1c2d24f2-a4b9-44a0-92eb-ca51174af3f3" />
+</a>
+
+</div>
 
 ---
 
-## 📄 Legal
+## Legal
 
 - [Privacy Policy](https://www.promptandpause.com/privacy)
 - [Terms of Service](https://www.promptandpause.com/terms)
@@ -134,7 +145,7 @@ Follow our journey and get mental wellness tips:
 
 <div align="center">
 
-**© 2024 Prompt & Pause. All rights reserved.**
+**© 2026 Prompt & Pause. All rights reserved.**
 
 *Building a world where daily reflection is accessible to everyone.*
 
