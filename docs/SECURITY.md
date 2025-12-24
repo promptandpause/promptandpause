@@ -161,7 +161,7 @@ In case of a security incident:
 **Security Issues**: security@promptandpause.com  
 **General Inquiries**: hello@promptandpause.com
 
-**Emergency Contact**: [Your emergency contact method]
+**Emergency Contact**: infrastructure@promptandpause.com
 
 ---
 
