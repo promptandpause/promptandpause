@@ -132,6 +132,9 @@ export default function SubscriptionDetailPage() {
       alert('No changes to update')
       return
     }
+
+    try {
+      setUpdating(true)
       const response = await fetch(`/api/admin/subscriptions/${userId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },

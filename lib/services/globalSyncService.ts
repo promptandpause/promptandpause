@@ -85,7 +85,6 @@ async function syncUserProfile() {
       
       return
     }
-    })
 
   } catch (error) {
   }
