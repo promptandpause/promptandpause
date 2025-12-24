@@ -2,7 +2,6 @@
 
 ![Prompt & Pause Logo](https://res.cloudinary.com/dh1rrfpmq/image/upload/v1766460430/prompt_pause-png-xr9SralsTsOhMfuwfo1LJKxqmeaJA5_ibt3kc.png)
 
-# Prompt & Pause
 
 **Transform Your Mental Wellness Journey with Daily Reflection**
 
