@@ -34,7 +34,6 @@ export async function POST(request: NextRequest) {
     // Check if request is from Vercel Cron (with secret)
     if (cronSecret && authHeader === `Bearer ${cronSecret}`) {
       isAuthorized = true
-      console.log('✅ Authorized via cron secret')
     } else {
       // Check if request is from authenticated admin user
       const { createClient } = require('@/lib/supabase/server')
@@ -47,21 +46,16 @@ export async function POST(request: NextRequest) {
         const adminAuth = await checkAdminAuth(user.email || '')
         if (adminAuth.isAdmin) {
           isAuthorized = true
-          console.log('✅ Authorized via admin user:', user.email)
         }
       }
     }
 
     if (!isAuthorized) {
-      console.error('❌ Unauthorized cron job attempt')
       return NextResponse.json(
         { error: 'Unauthorized - Admin access or cron secret required' },
         { status: 401 }
       )
     }
-
-    console.log('⏰ Starting daily prompt cron job...')
-
     const supabase = createServiceRoleClient()
     const startTime = Date.now()
     const now = new Date()
@@ -102,7 +96,6 @@ export async function POST(request: NextRequest) {
       .not('email', 'is', null)
 
     if (profilesError) {
-      console.error('Error fetching profiles:', profilesError)
       return NextResponse.json(
         { error: 'Failed to fetch users' },
         { status: 500 }
@@ -110,16 +103,12 @@ export async function POST(request: NextRequest) {
     }
 
     if (!profiles || profiles.length === 0) {
-      console.log('📭 No active users found')
       return NextResponse.json({
         success: true,
         message: 'No active users to send prompts to',
         sent: 0,
       })
     }
-
-    console.log(`👥 Found ${profiles.length} active users`)
-
     // Get user preferences for all users
     const { data: preferences, error: prefsError } = await supabase
       .from('user_preferences')
@@ -127,7 +116,6 @@ export async function POST(request: NextRequest) {
       .in('user_id', profiles.map(p => p.id))
 
     if (prefsError) {
-      console.error('Error fetching preferences:', prefsError)
     }
 
     const prefsMap = new Map(
@@ -145,13 +133,11 @@ export async function POST(request: NextRequest) {
 
         // Skip if no preferences or daily reminders disabled
         if (!userPrefs) {
-          console.log(`⏭️ Skipping user ${profile.email} - no preferences found`)
           skippedCount++
           continue
         }
 
         if (!userPrefs.daily_reminders) {
-          console.log(`⏭️ Skipping user ${profile.email} - daily reminders disabled (${userPrefs.daily_reminders})`)
           skippedCount++
           continue
         }
@@ -177,18 +163,11 @@ export async function POST(request: NextRequest) {
           const [hourStr, minuteStr] = nowInUserTZ.split(':')
           const currentHourInUserTimezone = parseInt(hourStr, 10)
           const currentMinuteInUserTimezone = parseInt(minuteStr, 10)
-          
-          console.log(`⏰ User ${profile.email}: reminder=${reminderTime} local, timezone=${userTimezone}, current UTC=${currentHour}:${currentMinute.toString().padStart(2, '0')}, current local=${currentHourInUserTimezone}:${currentMinuteInUserTimezone.toString().padStart(2, '0')}`)
-          
           // Check if current hour in user's timezone matches their reminder hour
           if (currentHourInUserTimezone !== reminderHourLocal) {
-            console.log(`⏭️ Skipping user ${profile.email} - wrong time (wants ${reminderHourLocal}:00 local, now is ${currentHourInUserTimezone}:00 local)`)
             continue
           }
-
-          console.log(`✅ User ${profile.email} matches time criteria! Sending prompt...`)
         } catch (tzError) {
-          console.error(`❌ Error parsing timezone for ${profile.email} (${userTimezone}):`, tzError)
           // Fall back to skipping this user
           continue
         }
@@ -204,12 +183,10 @@ export async function POST(request: NextRequest) {
         if (existingPrompt) {
           // Check if they've used (completed) the prompt
           if (existingPrompt.used) {
-            console.log(`✅ User ${profile.id} already completed today's prompt`)
             skippedCount++
             continue
           } else {
             // They have a prompt but haven't completed it - still send reminder
-            console.log(`📧 User ${profile.id} has prompt but hasn't completed it - sending reminder`)
           }
         }
 
@@ -226,14 +203,12 @@ export async function POST(request: NextRequest) {
             .gte('date_generated', monthStart)
 
           if (countError) {
-            console.error(`Error counting prompts for user ${profile.id}:`, countError)
             continue
           }
 
           const promptsThisMonth = monthPrompts?.length || 0
           
           if (promptsThisMonth >= 7) {
-            console.log(`🚫 User ${profile.id} reached free tier limit (7/month)`)
             skippedCount++
             continue
           }
@@ -289,10 +264,7 @@ export async function POST(request: NextRequest) {
                 date_generated: today,
                 used: false,
               })
-
-            console.log(`✨ Generated new prompt for user ${profile.id}`)
           } catch (genError) {
-            console.error(`Error generating prompt for user ${profile.id}:`, genError)
             // Use fallback prompt
             promptText = 'What emotion am I feeling right now, and what might be causing it?'
           }
@@ -314,10 +286,8 @@ export async function POST(request: NextRequest) {
           )
 
           if (emailResult.success) {
-            console.log(`✉️ Sent prompt email to ${profile.email}`)
             emailSent = true
           } else {
-            console.error(`Failed to send email to ${profile.email}:`, emailResult.error)
             errors.push(`Email: ${emailResult.error}`)
           }
         }
@@ -331,10 +301,8 @@ export async function POST(request: NextRequest) {
           )
 
           if (slackResult.success) {
-            console.log(`💬 Sent prompt to Slack for user ${profile.id}`)
             slackSent = true
           } else {
-            console.error(`Failed to send Slack message for user ${profile.id}:`, slackResult.error)
             errors.push(`Slack: ${slackResult.error}`)
           }
         }
@@ -361,7 +329,6 @@ export async function POST(request: NextRequest) {
         }
 
       } catch (userError) {
-        console.error(`Error processing user ${profile.id}:`, userError)
         results.push({
           user_id: profile.id,
           status: 'error',
@@ -369,9 +336,6 @@ export async function POST(request: NextRequest) {
         })
       }
     }
-
-    console.log(`✅ Cron job complete: Sent ${sentCount}, Skipped ${skippedCount}`)
-
     const executionTime = Date.now() - startTime
     const failedCount = results.filter(r => r.status === 'failed' || r.status === 'error').length
 
@@ -409,8 +373,6 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('❌ Fatal error in send-daily-prompts cron:', error)
-
     // Try to log the failure
     try {
       const supabase = createServiceRoleClient()
@@ -428,7 +390,6 @@ export async function POST(request: NextRequest) {
         execution_time_ms: 0,
       })
     } catch (logError) {
-      console.error('Failed to log cron job failure:', logError)
     }
 
     return NextResponse.json(

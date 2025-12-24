@@ -40,7 +40,6 @@ export default function MaintenanceStatus({ onStatusChange }: MaintenanceStatusP
         setStatus(data.maintenance_mode)
       }
     } catch (error) {
-      console.error('Error loading maintenance status:', error)
     } finally {
       setLoading(false)
     }

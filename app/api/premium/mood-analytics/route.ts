@@ -77,9 +77,6 @@ export async function GET(request: NextRequest) {
         { status: 400 }
       )
     }
-
-    console.log(`Fetching mood analytics for ${user.id}: ${days} days`)
-
     // Calculate mood trends
     const moodTrends = await calculateMoodTrendsServer(user.id, days)
 
@@ -109,7 +106,6 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Error fetching mood analytics:', error)
     return NextResponse.json(
       { 
         success: false, 

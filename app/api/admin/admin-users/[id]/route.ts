@@ -51,7 +51,6 @@ export async function PATCH(
       message: 'Admin user updated successfully'
     })
   } catch (error: any) {
-    console.error('Error updating admin user:', error)
     return NextResponse.json(
       { error: error.message || 'Failed to update admin user' },
       { status: 500 }
@@ -92,7 +91,6 @@ export async function DELETE(
       message: 'Admin user deactivated successfully'
     })
   } catch (error: any) {
-    console.error('Error deactivating admin user:', error)
     return NextResponse.json(
       { error: error.message || 'Failed to deactivate admin user' },
       { status: 500 }

@@ -131,7 +131,6 @@ export default function Onboarding() {
         setPreviewPrompt("What's on your mind today? Take a moment to reflect on how you're feeling.")
       }
     } catch (error) {
-      console.error('Error generating preview prompt:', error)
       // Fallback prompt
       setPreviewPrompt("What's on your mind today? Take a moment to reflect on how you're feeling.")
     }
@@ -178,7 +177,6 @@ export default function Onboarding() {
       }, 2000)
       
     } catch (error: any) {
-      console.error('Onboarding error:', error)
       toast({
         title: "Error",
         description: error.message || "Failed to save preferences. Please try again.",

@@ -47,7 +47,6 @@ export default function ActivityCalendar() {
           setLoading(false)
         }
       } catch (error) {
-        console.error('Error loading activity data:', error)
         if (isMounted) {
           setLoading(false)
         }

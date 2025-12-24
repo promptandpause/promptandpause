@@ -42,11 +42,6 @@ export async function POST(request: NextRequest) {
       .select('stripe_customer_id, stripe_subscription_id, subscription_status, subscription_end_date')
       .eq('id', user.id)
       .single()
-
-    console.log('Cancel API - User ID:', user.id)
-    console.log('Cancel API - Profile:', profile)
-    console.log('Cancel API - Profile Error:', profileError)
-
     if (profileError || !profile) {
       return NextResponse.json(
         { error: 'User profile not found. Please contact support.' },
@@ -109,7 +104,6 @@ export async function POST(request: NextRequest) {
       })
     }
   } catch (error: any) {
-    console.error('Error cancelling subscription:', error)
     return NextResponse.json(
       { error: error.message || 'Failed to cancel subscription' },
       { status: 500 }

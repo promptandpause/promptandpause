@@ -92,7 +92,6 @@ function ArchivePageContent() {
         setMostUsedTag(mostUsed[0])
       }
     } catch (error) {
-      console.error('Error loading reflections:', error)
       toast({
         title: "Error",
         description: "Failed to load reflections. Please refresh the page.",

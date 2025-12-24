@@ -20,14 +20,10 @@ export function detectUserTimezone(): string {
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
     
     if (!timezone) {
-      console.warn('Could not detect timezone, defaulting to Europe/London')
       return 'Europe/London'
     }
-    
-    console.log('✅ Detected timezone:', timezone)
     return timezone
   } catch (error) {
-    console.error('Error detecting timezone:', error)
     return 'Europe/London' // Fallback
   }
 }

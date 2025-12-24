@@ -34,7 +34,6 @@ export async function POST(request: NextRequest) {
     const rawBody = await request.text() // must read raw body for signature verification
 
     if (!signingSecret) {
-      console.error('SLACK_SIGNING_SECRET not configured')
       return NextResponse.json({ error: 'Slack not configured' }, { status: 500 })
     }
 
@@ -62,7 +61,6 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ success: true })
     }
   } catch (error) {
-    console.error('Error handling Slack interaction:', error)
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Internal server error' },
       { status: 500 }
@@ -179,7 +177,6 @@ async function handleViewSubmission(payload: any) {
       },
     })
   } catch (error) {
-    console.error('Error saving reflection from Slack:', error)
     return NextResponse.json({
       response_action: 'errors',
       errors: { reflection_block: 'Failed to save reflection. Please try again.' },

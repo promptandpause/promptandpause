@@ -95,7 +95,6 @@ export async function GET(request: NextRequest) {
       },
     })
   } catch (error) {
-    console.error('Error exporting activity logs:', error)
     return NextResponse.json(
       { error: 'Failed to export activity logs' },
       { status: 500 }

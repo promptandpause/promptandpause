@@ -113,9 +113,6 @@ export async function createCheckoutSession(
         },
       },
     })
-
-    console.log('Created checkout session:', session.id)
-
     return {
       sessionId: session.id,
       url: session.url || undefined,
@@ -153,9 +150,6 @@ export async function createCustomerPortalSession(
       customer: customerId,
       return_url: returnUrl || `${APP_URL}/dashboard/settings`,
     })
-
-    console.log('Created customer portal session for customer:', customerId)
-
     return { url: session.url }
   } catch (error) {
     logger.error('stripe_create_portal_error', { error })
@@ -268,13 +262,11 @@ export async function cancelSubscription(
     if (immediately) {
       // Cancel immediately
       subscription = await stripe.subscriptions.cancel(subscriptionId)
-      console.log('Subscription cancelled immediately:', subscriptionId)
     } else {
       // Cancel at period end
       subscription = await stripe.subscriptions.update(subscriptionId, {
         cancel_at_period_end: true,
       })
-      console.log('Subscription set to cancel at period end:', subscriptionId)
     }
 
     return { subscription }
@@ -327,9 +319,6 @@ export async function updateSubscription(
       ],
       proration_behavior: 'create_prorations', // Charge/credit prorated amount
     })
-
-    console.log('Subscription updated to new price:', subscriptionId, newPriceId)
-
     return { subscription }
   } catch (error) {
     logger.error('stripe_update_subscription_error', { error, subscriptionId, newPriceId })
@@ -365,9 +354,6 @@ export async function reactivateSubscription(
     const subscription = await stripe.subscriptions.update(subscriptionId, {
       cancel_at_period_end: false,
     })
-
-    console.log('Subscription reactivated:', subscriptionId)
-
     return { subscription }
   } catch (error) {
     logger.error('stripe_reactivate_subscription_error', { error, subscriptionId })
@@ -422,7 +408,6 @@ export async function syncSubscriptionToDatabase(
       .eq('id', userId)
 
     if (userError) {
-      console.error('Error updating user subscription info:', userError)
       return { success: false, error: userError.message }
     }
 
@@ -447,11 +432,8 @@ export async function syncSubscriptionToDatabase(
       )
 
     if (subError) {
-      console.error('Error upserting subscription:', subError)
       return { success: false, error: subError.message }
     }
-
-    console.log('Subscription synced to database for user:', userId)
     return { success: true }
   } catch (error) {
     logger.error('stripe_sync_subscription_db_error', { error, userId })
@@ -486,7 +468,6 @@ export async function handleSubscriptionCancellation(
       .eq('id', userId)
 
     if (userError) {
-      console.error('Error updating user after cancellation:', userError)
       return { success: false, error: userError.message }
     }
 
@@ -501,11 +482,8 @@ export async function handleSubscriptionCancellation(
       .eq('stripe_subscription_id', subscriptionId)
 
     if (subError) {
-      console.error('Error updating subscription after cancellation:', subError)
       return { success: false, error: subError.message }
     }
-
-    console.log('Subscription cancellation handled in database for user:', userId)
     return { success: true }
   } catch (error) {
     logger.error('stripe_handle_cancellation_db_error', { error, userId, subscriptionId })

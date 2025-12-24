@@ -87,13 +87,6 @@ export async function POST(request: NextRequest) {
     const weekEnd = new Date(weekStart)
     weekEnd.setDate(weekStart.getDate() + 6)
     weekEnd.setHours(23, 59, 59, 999)
-
-    console.log(`Generating weekly digest for ${user.id}:`, {
-      weekStart: weekStart.toISOString(),
-      weekEnd: weekEnd.toISOString(),
-      weekOffset
-    })
-
     // Generate digest data using server-side service for fresh data
     const digest = await generateWeeklyDigestServer(user.id, weekStart, weekEnd)
 
@@ -102,7 +95,6 @@ export async function POST(request: NextRequest) {
     try {
       insights = await generateWeeklyInsights(digest, profile.full_name)
     } catch (error) {
-      console.error('Error generating AI insights:', error)
       // Continue without AI insights if generation fails
       insights = {
         summary: 'Unable to generate AI insights at this time.',
@@ -136,7 +128,6 @@ export async function POST(request: NextRequest) {
         deliveryResults.emailSent = emailResult.success
         deliveryResults.emailId = emailResult.emailId
       } catch (error) {
-        console.error('Error sending weekly digest email:', error)
         deliveryResults.emailSent = false
         deliveryResults.emailError = error instanceof Error ? error.message : 'Unknown error'
       }
@@ -154,7 +145,6 @@ export async function POST(request: NextRequest) {
           deliveryResults.slackError = slackResult.error
         }
       } catch (error) {
-        console.error('Error sending weekly digest to Slack:', error)
         deliveryResults.slackSent = false
         deliveryResults.slackError = error instanceof Error ? error.message : 'Unknown error'
       }
@@ -176,7 +166,6 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Error generating weekly digest:', error)
     return NextResponse.json(
       { 
         success: false, 
@@ -257,7 +246,6 @@ export async function GET(request: NextRequest) {
       .single()
 
     if (cachedInsights) {
-      console.log('✅ Using cached weekly insights (no API call)')
       return NextResponse.json({
         success: true,
         data: {
@@ -273,9 +261,6 @@ export async function GET(request: NextRequest) {
         },
       })
     }
-
-    console.log('⚡ Generating NEW weekly insights (API call) for', user.id)
-
     // Generate digest using server-side service for fresh data
     const digest = await generateWeeklyDigestServer(user.id, weekStart, weekEnd)
 
@@ -284,7 +269,6 @@ export async function GET(request: NextRequest) {
     try {
       insights = await generateWeeklyInsights(digest, profile.full_name)
     } catch (error) {
-      console.error('Error generating AI insights:', error)
       insights = {
         summary: 'Unable to generate AI insights at this time.',
         keyInsights: [],
@@ -319,16 +303,12 @@ export async function GET(request: NextRequest) {
       }, {
         onConflict: 'user_id,week_start,week_end'
       })
-
-    console.log('✅ Cached weekly insights for future page loads')
-
     return NextResponse.json({
       success: true,
       data: fullDigest,
     })
 
   } catch (error) {
-    console.error('Error fetching weekly digest:', error)
     return NextResponse.json(
       { 
         success: false, 

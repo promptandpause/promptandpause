@@ -26,7 +26,6 @@ export async function GET(request: NextRequest) {
       email: user.email 
     })
   } catch (error: any) {
-    console.error('Error verifying admin access:', error)
     return NextResponse.json(
       { hasAccess: false, error: error.message },
       { status: 500 }

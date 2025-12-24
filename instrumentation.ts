@@ -39,6 +39,5 @@ export async function onRequestError(
     // Example: Send to error tracking service
     // await errorTracker.captureException(err, { request });
   } else {
-    console.error('Server error:', err);
   }
 }

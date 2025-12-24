@@ -33,7 +33,6 @@ export async function GET() {
       stats: result.stats,
     })
   } catch (error) {
-    console.error('Error fetching cron job stats:', error)
     return NextResponse.json(
       { error: 'Failed to fetch cron job stats' },
       { status: 500 }

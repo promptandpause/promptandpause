@@ -10,7 +10,6 @@ import { createServiceRoleClient } from '@/lib/supabase/server'
 function verifySignature(req: NextRequest, rawBody: string): boolean {
   const secret = process.env.HUBSPOT_SIGNING_SECRET
   if (!secret) {
-    console.error('⚠️ HUBSPOT_SIGNING_SECRET not configured')
     return false
   }
 
@@ -18,7 +17,6 @@ function verifySignature(req: NextRequest, rawBody: string): boolean {
   const timestamp = req.headers.get('x-hubspot-request-timestamp')
   
   if (!signature || !timestamp) {
-    console.error('⚠️ Missing signature headers')
     return false
   }
 
@@ -39,7 +37,6 @@ function verifySignature(req: NextRequest, rawBody: string): boolean {
       Buffer.from(hash)
     )
   } catch (error) {
-    console.error('⚠️ Signature verification error:', error)
     return false
   }
 }
@@ -80,7 +77,6 @@ async function logWebhookEvent(
       created_at: new Date().toISOString()
     })
   } catch (e) {
-    console.error('Failed to log webhook event:', e)
   }
 }
 
@@ -88,14 +84,11 @@ async function logWebhookEvent(
  * Handle ticket.creation events
  */
 async function handleTicketCreation(objectId: string, payload: any) {
-  console.log('📩 HubSpot ticket.creation:', objectId)
-  
   try {
     const result = await syncTicketFromHubSpot(objectId)
     await logWebhookEvent('ticket.creation', objectId, 'success', payload)
     return result
   } catch (error: any) {
-    console.error('❌ Failed to sync new ticket from HubSpot:', error)
     await logWebhookEvent('ticket.creation', objectId, 'failed', payload, error.message)
     throw error
   }
@@ -105,8 +98,6 @@ async function handleTicketCreation(objectId: string, payload: any) {
  * Handle ticket.propertyChange events
  */
 async function handleTicketPropertyChange(objectId: string, propertyName: string, payload: any) {
-  console.log(`📝 HubSpot ticket.propertyChange: ${objectId} (${propertyName})`)
-  
   // Only sync for properties we care about
   const relevantProperties = [
     'hs_ticket_subject',
@@ -118,7 +109,6 @@ async function handleTicketPropertyChange(objectId: string, propertyName: string
   ]
 
   if (!relevantProperties.includes(propertyName)) {
-    console.log(`⏭️  Skipping non-relevant property: ${propertyName}`)
     return { skipped: true }
   }
 
@@ -127,7 +117,6 @@ async function handleTicketPropertyChange(objectId: string, propertyName: string
     await logWebhookEvent('ticket.propertyChange', objectId, 'success', payload)
     return result
   } catch (error: any) {
-    console.error('❌ Failed to sync ticket property change:', error)
     await logWebhookEvent('ticket.propertyChange', objectId, 'failed', payload, error.message)
     throw error
   }
@@ -137,8 +126,6 @@ async function handleTicketPropertyChange(objectId: string, propertyName: string
  * Handle ticket.deletion events
  */
 async function handleTicketDeletion(objectId: string, payload: any) {
-  console.log('🗑️  HubSpot ticket.deletion:', objectId)
-  
   try {
     const supabase = await createServiceRoleClient()
     
@@ -159,7 +146,6 @@ async function handleTicketDeletion(objectId: string, payload: any) {
     
     return { closed: data?.length || 0 }
   } catch (error: any) {
-    console.error('❌ Failed to handle ticket deletion:', error)
     await logWebhookEvent('ticket.deletion', objectId, 'failed', payload, error.message)
     throw error
   }
@@ -169,15 +155,12 @@ async function handleTicketDeletion(objectId: string, payload: any) {
  * Main webhook handler
  */
 export async function POST(req: NextRequest) {
-  console.log('🔔 Incoming HubSpot webhook')
-
   // Read raw body for signature verification
   const rawBody = await req.text()
   
   // 1. Verify timestamp
   const timestamp = req.headers.get('x-hubspot-request-timestamp') || ''
   if (!isTimestampValid(timestamp)) {
-    console.error('❌ Webhook timestamp invalid or too old')
     return NextResponse.json(
       { error: 'Invalid timestamp' },
       { status: 401 }
@@ -186,37 +169,26 @@ export async function POST(req: NextRequest) {
 
   // 2. Verify signature
   if (!verifySignature(req, rawBody)) {
-    console.error('❌ Webhook signature verification failed')
     return NextResponse.json(
       { error: 'Invalid signature' },
       { status: 401 }
     )
   }
-
-  console.log('✅ Webhook signature verified')
-
   // 3. Parse and process events
   try {
     const events = JSON.parse(rawBody)
     
     if (!Array.isArray(events)) {
-      console.error('❌ Invalid webhook payload format')
       return NextResponse.json(
         { error: 'Invalid payload' },
         { status: 400 }
       )
     }
-
-    console.log(`📦 Processing ${events.length} event(s)`)
-
     // Process events asynchronously (don't block webhook response)
     const results = []
     
     for (const event of events) {
       const { objectId, subscriptionType, propertyName } = event
-
-      console.log(`Event: ${subscriptionType} for ${objectId}`)
-
       try {
         let result
 
@@ -234,13 +206,11 @@ export async function POST(req: NextRequest) {
             break
 
           default:
-            console.log(`⏭️  Unhandled event type: ${subscriptionType}`)
             result = { skipped: true }
         }
 
         results.push({ objectId, subscriptionType, success: true, result })
       } catch (error: any) {
-        console.error(`❌ Error processing event ${subscriptionType} for ${objectId}:`, error)
         results.push({ 
           objectId, 
           subscriptionType, 
@@ -250,9 +220,6 @@ export async function POST(req: NextRequest) {
         // Continue processing other events even if one fails
       }
     }
-
-    console.log('✅ Webhook processing complete')
-
     // Return success quickly to HubSpot (within their timeout)
     return NextResponse.json({
       success: true,
@@ -261,7 +228,6 @@ export async function POST(req: NextRequest) {
     })
 
   } catch (error: any) {
-    console.error('❌ Webhook processing error:', error)
     return NextResponse.json(
       { error: 'Processing failed', message: error.message },
       { status: 500 }
@@ -277,7 +243,6 @@ export async function GET(req: NextRequest) {
   const challenge = req.nextUrl.searchParams.get('challenge')
   
   if (challenge) {
-    console.log('✅ Webhook verification challenge received')
     return new NextResponse(challenge, { status: 200 })
   }
 

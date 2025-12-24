@@ -48,7 +48,6 @@ export async function calculateReflectionStreak(userId: string): Promise<number>
 
     return streak
   } catch (error) {
-    console.error('Error calculating reflection streak:', error)
     return 0
   }
 }
@@ -95,7 +94,6 @@ export async function calculateLongestStreak(userId: string): Promise<number> {
     longestStreak = Math.max(longestStreak, currentStreak)
     return longestStreak
   } catch (error) {
-    console.error('Error calculating longest streak:', error)
     return 0
   }
 }
@@ -179,7 +177,6 @@ export async function generateWeeklyDigest(
       reflectionSummaries,
     }
   } catch (error) {
-    console.error('Error generating weekly digest:', error)
     // Return empty digest on error
     const end = endDate || new Date()
     const start = startDate || new Date(end.getTime() - 6 * 24 * 60 * 60 * 1000)
@@ -256,7 +253,6 @@ export async function getDailyActivity(
 
     return activities
   } catch (error) {
-    console.error('Error getting daily activity:', error)
     return []
   }
 }
@@ -291,7 +287,6 @@ export async function getMostUsedTags(
       .sort((a, b) => b.count - a.count)
       .slice(0, limit)
   } catch (error) {
-    console.error('Error getting most used tags:', error)
     return []
   }
 }
@@ -369,7 +364,6 @@ export async function getTagTrends(
 
     return trends.sort((a, b) => b.currentCount - a.currentCount)
   } catch (error) {
-    console.error('Error calculating tag trends:', error)
     return []
   }
 }
@@ -448,17 +442,6 @@ function calculateMoodTrendClient(
 
   // Calculate difference and trend
   const diff = lastAvg - firstAvg
-  
-  console.log('Mood Trend Calculation (Client):', {
-    totalReflections: reflections.length,
-    firstThirdCount: firstThird.length,
-    lastThirdCount: lastThird.length,
-    firstAvg: firstAvg.toFixed(2),
-    lastAvg: lastAvg.toFixed(2),
-    difference: diff.toFixed(2),
-    trend: diff > 0.2 ? 'improving' : diff < -0.2 ? 'declining' : 'stable'
-  })
-  
   // Use a smaller threshold for more sensitive trend detection
   // 0.2 = about 1/5 of a mood level difference
   if (diff > 0.2) return 'improving'
@@ -537,7 +520,6 @@ export async function calculateMoodTrends(
       trend,
     }
   } catch (error) {
-    console.error('Error calculating mood trends:', error)
     return {
       overall: [],
       daily: [],
@@ -648,7 +630,6 @@ export async function getReflectionInsights(
       },
     }
   } catch (error) {
-    console.error('Error generating reflection insights:', error)
     return {
       insights: ['Unable to generate insights at this time. Keep reflecting to build your data!'],
       highlights: {
@@ -714,7 +695,6 @@ export async function calculateWritingMetrics(
       trend,
     }
   } catch (error) {
-    console.error('Error calculating writing metrics:', error)
     return {
       averageWordCount: 0,
       totalWords: 0,

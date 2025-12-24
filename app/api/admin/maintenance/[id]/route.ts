@@ -38,7 +38,6 @@ export async function GET(
 
     return NextResponse.json({ maintenance_window: result.data })
   } catch (error: any) {
-    console.error(`Error in GET /api/admin/maintenance/${params.id}:`, error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
@@ -114,7 +113,6 @@ export async function PUT(
 
     return NextResponse.json({ maintenance_window: result.data })
   } catch (error: any) {
-    console.error(`Error in PUT /api/admin/maintenance/${params.id}:`, error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
@@ -153,7 +151,6 @@ export async function DELETE(
       maintenance_window: result.data 
     })
   } catch (error: any) {
-    console.error(`Error in DELETE /api/admin/maintenance/${params.id}:`, error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

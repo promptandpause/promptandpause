@@ -55,7 +55,6 @@ export default function ScheduledMaintenance({ onScheduleChange }: ScheduledMain
         setWindows(data.maintenance_windows || [])
       }
     } catch (error) {
-      console.error('Error loading scheduled windows:', error)
     } finally {
       setLoading(false)
     }

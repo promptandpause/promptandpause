@@ -38,7 +38,6 @@ export default function QuickStats() {
           setLoading(false)
         }
       } catch (error) {
-        console.error('Error loading stats:', error)
         if (isMounted) {
           setLoading(false)
         }

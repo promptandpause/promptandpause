@@ -49,7 +49,6 @@ export async function GET(
       events: result.events,
     })
   } catch (error) {
-    console.error('Error fetching subscription:', error)
     return NextResponse.json(
       { error: 'Failed to fetch subscription' },
       { status: 500 }
@@ -117,7 +116,6 @@ export async function PATCH(
       message: 'Subscription updated successfully',
     })
   } catch (error) {
-    console.error('Error updating subscription:', error)
     return NextResponse.json(
       { error: 'Failed to update subscription' },
       { status: 500 }

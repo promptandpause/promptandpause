@@ -39,7 +39,6 @@ export async function GET(request: NextRequest) {
       }
     })
   } catch (error: any) {
-    console.error('Error fetching stats:', error)
     return NextResponse.json(
       { error: error.message || 'Failed to fetch statistics' },
       { status: 500 }

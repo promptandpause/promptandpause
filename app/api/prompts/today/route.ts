@@ -47,8 +47,6 @@ export async function GET(request: NextRequest) {
           { status: 404 }
         )
       }
-
-      console.error('Error fetching today\'s prompt:', promptError)
       return NextResponse.json(
         { success: false, error: 'Failed to fetch prompt' },
         { status: 500 }
@@ -68,7 +66,6 @@ export async function GET(request: NextRequest) {
       },
     })
   } catch (error) {
-    console.error('Unexpected error in /api/prompts/today:', error)
     return NextResponse.json(
       {
         success: false,

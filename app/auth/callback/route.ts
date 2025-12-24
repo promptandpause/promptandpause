@@ -30,7 +30,6 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     
     if (error) {
-      console.error('Auth callback error:', error)
       // Redirect to signin with error
       return NextResponse.redirect(`${origin}/auth/signin?error=auth_callback_error`)
     }
@@ -57,7 +56,6 @@ export async function GET(request: Request) {
         if (profile?.email) {
           // Send welcome email asynchronously (don't wait for it)
           sendWelcomeEmail(profile.email, profile.full_name).catch(error => {
-            console.error('Failed to send welcome email:', error)
             // Don't block user flow if email fails
           })
         }

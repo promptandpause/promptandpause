@@ -48,7 +48,6 @@ export async function GET(request: NextRequest) {
       totalPages: Math.ceil(result.total / limit),
     })
   } catch (error: any) {
-    console.error('Error in GET /api/admin/emails:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

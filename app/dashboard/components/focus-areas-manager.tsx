@@ -133,7 +133,6 @@ export default function FocusAreasManager() {
         return // User not premium
       }
     } catch (error) {
-      console.error('Error fetching focus areas:', error)
       toast.error('Failed to load focus areas')
     } finally {
       setLoading(false)
@@ -169,7 +168,6 @@ export default function FocusAreasManager() {
         toast.error(result.error || 'Failed to create focus area')
       }
     } catch (error) {
-      console.error('Error creating focus area:', error)
       toast.error('Failed to create focus area')
     }
   }
@@ -203,7 +201,6 @@ export default function FocusAreasManager() {
         toast.error(result.error || 'Failed to update focus area')
       }
     } catch (error) {
-      console.error('Error updating focus area:', error)
       toast.error('Failed to update focus area')
     }
   }
@@ -227,7 +224,6 @@ export default function FocusAreasManager() {
         toast.error(result.error || 'Failed to delete focus area')
       }
     } catch (error) {
-      console.error('Error deleting focus area:', error)
       toast.error('Failed to delete focus area')
     }
   }

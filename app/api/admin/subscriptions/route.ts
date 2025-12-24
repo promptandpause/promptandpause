@@ -51,7 +51,6 @@ export async function GET(request: NextRequest) {
       total: result.total,
     })
   } catch (error) {
-    console.error('Error fetching subscriptions:', error)
     return NextResponse.json(
       { error: 'Failed to fetch subscriptions' },
       { status: 500 }

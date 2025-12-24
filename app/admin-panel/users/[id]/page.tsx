@@ -76,7 +76,6 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
         language: data.data.language || ''
       })
     } catch (error) {
-      console.error('Error loading user:', error)
       toast.error('Failed to load user')
     } finally {
       setLoading(false)
@@ -99,7 +98,6 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
       setEditing(false)
       toast.success('User updated successfully')
     } catch (error) {
-      console.error('Error updating user:', error)
       toast.error('Failed to update user')
     } finally {
       setSaving(false)
@@ -117,7 +115,6 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
       toast.success('User deleted successfully')
       router.push('/admin-panel/users')
     } catch (error) {
-      console.error('Error deleting user:', error)
       toast.error('Failed to delete user')
     }
   }

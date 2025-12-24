@@ -46,7 +46,6 @@ export async function GET(request: NextRequest) {
     }
 
   } catch (error) {
-    console.error('❌ Admin Freshdesk test error:', error)
     return NextResponse.json(
       { 
         ok: false, 

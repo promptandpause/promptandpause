@@ -29,7 +29,6 @@ export async function POST(request: NextRequest) {
     ])
 
     if (profileRes.error) {
-      console.error('Error fetching profile:', profileRes.error)
       return NextResponse.json(
         { success: false, error: 'Failed to fetch profile data' },
         { status: 500 }
@@ -70,7 +69,6 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Error in export-data route:', error)
     return NextResponse.json(
       { 
         success: false, 

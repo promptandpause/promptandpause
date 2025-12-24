@@ -43,7 +43,7 @@ export default function Home() {
 
       animationFrameId = requestAnimationFrame(raf)
     } catch (error) {
-      console.error('Error initializing smooth scroll:', error)
+
     }
 
     return () => {

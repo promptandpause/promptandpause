@@ -28,7 +28,6 @@ export async function POST(request: Request) {
       prompt
     })
   } catch (error) {
-    console.error('Error generating preview prompt:', error)
     return NextResponse.json(
       { error: 'Failed to generate preview prompt' },
       { status: 500 }

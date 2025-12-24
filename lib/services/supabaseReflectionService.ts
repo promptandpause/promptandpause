@@ -30,7 +30,6 @@ export const supabaseReflectionService = {
         headers: { 'Content-Type': 'application/json' },
       })
       if (!res.ok) {
-        console.error('Error fetching reflections via API:', await res.text())
         return []
       }
       const text = await res.text()
@@ -38,7 +37,6 @@ export const supabaseReflectionService = {
       const json = JSON.parse(text)
       return json.data || []
     } catch (e) {
-      console.error('Error fetching reflections via API:', e)
       return []
     }
   },
@@ -54,7 +52,6 @@ export const supabaseReflectionService = {
       })
       if (!res.ok) {
         if (res.status === 404) return null
-        console.error('Error fetching reflection via API:', await res.text())
         return null
       }
       const text = await res.text()
@@ -62,7 +59,6 @@ export const supabaseReflectionService = {
       const json = JSON.parse(text)
       return json.data || null
     } catch (e) {
-      console.error('Error fetching reflection via API:', e)
       return null
     }
   },
@@ -79,7 +75,6 @@ export const supabaseReflectionService = {
       })
       if (!res.ok) {
         const txt = await res.text()
-        console.error('Error saving reflection via API:', txt)
         throw new Error(txt || 'Failed to save reflection')
       }
       const text = await res.text()
@@ -87,7 +82,6 @@ export const supabaseReflectionService = {
       const json = JSON.parse(text)
       return json.data || null
     } catch (e) {
-      console.error('Error saving reflection via API:', e)
       throw e
     }
   },
@@ -107,11 +101,9 @@ export const supabaseReflectionService = {
       })
       if (!res.ok) {
         const txt = await res.text()
-        console.error('Error updating feedback via API:', txt)
         throw new Error(txt || 'Failed to update feedback')
       }
     } catch (e) {
-      console.error('Error updating feedback via API:', e)
       throw e
     }
   },
@@ -127,7 +119,6 @@ export const supabaseReflectionService = {
       const url = `/api/reflections?startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`
       const res = await fetch(url, { method: 'GET', headers: { 'Content-Type': 'application/json' } })
       if (!res.ok) {
-        console.error('Error fetching reflections (range) via API:', await res.text())
         return []
       }
       const text = await res.text()
@@ -135,7 +126,6 @@ export const supabaseReflectionService = {
       const json = JSON.parse(text)
       return json.data || []
     } catch (e) {
-      console.error('Error fetching reflections (range) via API:', e)
       return []
     }
   },
@@ -150,7 +140,6 @@ export const supabaseReflectionService = {
       const res = await fetch(url, { method: 'GET', headers: { 'Content-Type': 'application/json' } })
       if (!res.ok) {
         if (res.status === 404) return null
-        console.error('Error fetching today\'s reflection via API:', await res.text())
         return null
       }
       const text = await res.text()
@@ -159,7 +148,6 @@ export const supabaseReflectionService = {
       const items: Reflection[] = json.data || []
       return items[0] || null
     } catch (e) {
-      console.error('Error fetching today\'s reflection via API:', e)
       return null
     }
   },
@@ -172,11 +160,9 @@ export const supabaseReflectionService = {
       const res = await fetch(`/api/reflections/${id}`, { method: 'DELETE' })
       if (!res.ok) {
         const txt = await res.text()
-        console.error('Error deleting reflection via API:', txt)
         throw new Error(txt || 'Failed to delete reflection')
       }
     } catch (e) {
-      console.error('Error deleting reflection via API:', e)
       throw e
     }
   },
@@ -203,7 +189,6 @@ export const supabaseMoodService = {
       .order('date', { ascending: false })
 
     if (error) {
-      console.error('Error fetching moods:', error)
       return []
     }
 
@@ -239,7 +224,6 @@ export const supabaseMoodService = {
       })
 
     if (error) {
-      console.error('Error saving mood:', error)
       throw error
     }
   },
@@ -261,7 +245,6 @@ export const supabaseMoodService = {
       .single()
 
     if (error && error.code !== 'PGRST116') {
-      console.error('Error fetching mood:', error)
     }
 
     return data || null
@@ -288,7 +271,6 @@ export const supabaseMoodService = {
       .order('date', { ascending: false })
 
     if (error) {
-      console.error('Error fetching moods by date range:', error)
       return []
     }
 

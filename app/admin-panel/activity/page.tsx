@@ -73,7 +73,6 @@ export default function ActivityLogsPage() {
       setLogs(data.logs)
       setTotalPages(Math.ceil(data.total / limit))
     } catch (error) {
-      console.error('Error loading logs:', error)
     } finally {
       setLoading(false)
     }
@@ -105,7 +104,6 @@ export default function ActivityLogsPage() {
       setTotalPages(Math.ceil(data.total / limit))
       setCurrentPage(1)
     } catch (error) {
-      console.error('Error searching logs:', error)
     } finally {
       setLoading(false)
     }
@@ -134,7 +132,6 @@ export default function ActivityLogsPage() {
       window.URL.revokeObjectURL(url)
       document.body.removeChild(a)
     } catch (error) {
-      console.error('Error exporting logs:', error)
       alert('Failed to export logs')
     }
   }

@@ -24,7 +24,6 @@ export const reflectionService = {
    */
   getAllReflections(): Reflection[] {
     if (process.env.NODE_ENV === 'development') {
-      console.warn('[DEPRECATED] reflectionService.getAllReflections() - Use supabaseReflectionService instead')
     }
     if (!isClient) return []
     const data = localStorage.getItem(REFLECTIONS_KEY)
@@ -37,7 +36,6 @@ export const reflectionService = {
    */
   getReflectionById(id: string): Reflection | null {
     if (process.env.NODE_ENV === 'development') {
-      console.warn('[DEPRECATED] reflectionService.getReflectionById() - Use supabaseReflectionService instead')
     }
     const reflections = this.getAllReflections()
     return reflections.find(r => r.id === id) || null
@@ -49,7 +47,6 @@ export const reflectionService = {
    */
   saveReflection(reflection: Omit<Reflection, "id" | "createdAt" | "wordCount">): Reflection {
     if (process.env.NODE_ENV === 'development') {
-      console.warn('[DEPRECATED] reflectionService.saveReflection() - Use supabaseReflectionService instead')
     }
     if (!isClient) throw new Error("Cannot save in non-client environment")
     
@@ -73,7 +70,6 @@ export const reflectionService = {
    */
   updateReflectionFeedback(id: string, feedback: "helped" | "irrelevant"): void {
     if (process.env.NODE_ENV === 'development') {
-      console.warn('[DEPRECATED] reflectionService.updateReflectionFeedback() - Use supabaseReflectionService instead')
     }
     if (!isClient) return
     
@@ -91,7 +87,6 @@ export const reflectionService = {
    */
   getReflectionsByDateRange(startDate: string, endDate: string): Reflection[] {
     if (process.env.NODE_ENV === 'development') {
-      console.warn('[DEPRECATED] reflectionService.getReflectionsByDateRange() - Use supabaseReflectionService instead')
     }
     const reflections = this.getAllReflections()
     return reflections.filter(r => r.date >= startDate && r.date <= endDate)
@@ -103,7 +98,6 @@ export const reflectionService = {
    */
   getTodaysReflection(): Reflection | null {
     if (process.env.NODE_ENV === 'development') {
-      console.warn('[DEPRECATED] reflectionService.getTodaysReflection() - Use supabaseReflectionService instead')
     }
     const today = new Date().toISOString().split("T")[0]
     const reflections = this.getAllReflections()
@@ -116,7 +110,6 @@ export const reflectionService = {
    */
   deleteReflection(id: string): void {
     if (process.env.NODE_ENV === 'development') {
-      console.warn('[DEPRECATED] reflectionService.deleteReflection() - Use supabaseReflectionService instead')
     }
     if (!isClient) return
     
@@ -141,7 +134,6 @@ export const moodService = {
    */
   getAllMoods(): MoodEntry[] {
     if (process.env.NODE_ENV === 'development') {
-      console.warn('[DEPRECATED] moodService.getAllMoods() - Use supabaseMoodService instead')
     }
     if (!isClient) return []
     const data = localStorage.getItem(MOODS_KEY)
@@ -154,7 +146,6 @@ export const moodService = {
    */
   saveMood(date: string, mood: MoodType, reflectionId?: string): void {
     if (process.env.NODE_ENV === 'development') {
-      console.warn('[DEPRECATED] moodService.saveMood() - Use supabaseMoodService instead')
     }
     if (!isClient) return
     
@@ -178,7 +169,6 @@ export const moodService = {
    */
   getMoodForDate(date: string): MoodEntry | null {
     if (process.env.NODE_ENV === 'development') {
-      console.warn('[DEPRECATED] moodService.getMoodForDate() - Use supabaseMoodService instead')
     }
     const moods = this.getAllMoods()
     return moods.find(m => m.date === date) || null
@@ -190,7 +180,6 @@ export const moodService = {
    */
   getMoodsByDateRange(startDate: string, endDate: string): MoodEntry[] {
     if (process.env.NODE_ENV === 'development') {
-      console.warn('[DEPRECATED] moodService.getMoodsByDateRange() - Use supabaseMoodService instead')
     }
     const moods = this.getAllMoods()
     return moods.filter(m => m.date >= startDate && m.date <= endDate)
@@ -212,7 +201,6 @@ export const analyticsService = {
    */
   getCurrentStreak(): number {
     if (process.env.NODE_ENV === 'development') {
-      console.warn('[DEPRECATED] analyticsService.getCurrentStreak() - Use analyticsService.calculateReflectionStreak() instead')
     }
     const reflections = reflectionService.getAllReflections()
     if (reflections.length === 0) return 0
@@ -243,7 +231,6 @@ export const analyticsService = {
    */
   getWeeklyDigest(): WeeklyDigest {
     if (process.env.NODE_ENV === 'development') {
-      console.warn('[DEPRECATED] analyticsService.getWeeklyDigest() - Use analyticsService.generateWeeklyDigest() instead')
     }
     const today = new Date()
     const weekStart = new Date(today)
@@ -305,7 +292,6 @@ export const analyticsService = {
    */
   getDailyActivity(days: number = 90): DailyActivity[] {
     if (process.env.NODE_ENV === 'development') {
-      console.warn('[DEPRECATED] analyticsService.getDailyActivity() - Use analyticsService.getDailyActivity() instead')
     }
     const today = new Date()
     const activities: DailyActivity[] = []
@@ -334,7 +320,6 @@ export const analyticsService = {
    */
   getMostUsedTags(limit: number = 10): { tag: string; count: number }[] {
     if (process.env.NODE_ENV === 'development') {
-      console.warn('[DEPRECATED] analyticsService.getMostUsedTags() - Use analyticsService.getMostUsedTags() instead')
     }
     const reflections = reflectionService.getAllReflections()
     const tagCounts: Record<string, number> = {}

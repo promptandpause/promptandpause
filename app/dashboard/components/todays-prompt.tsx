@@ -118,7 +118,6 @@ export default function TodaysPrompt() {
           setTodaysPrompt("")
         }
       } catch (error) {
-        console.error('TodaysPrompt: Error initializing:', error)
         setTodaysPrompt("")
       }
     }
@@ -196,7 +195,6 @@ export default function TodaysPrompt() {
         description: `Your reflection has been saved to the archive. Word count: ${saved.word_count}`,
       })
     } catch (error) {
-      console.error("Error saving reflection:", error)
       toast({
         title: "Error",
         description: "Failed to save reflection. Please try again.",
@@ -216,7 +214,6 @@ export default function TodaysPrompt() {
           description: "Thank you for your feedback!",
         })
       } catch (e) {
-        console.error(e)
       }
     }
   }
@@ -587,7 +584,6 @@ export default function TodaysPrompt() {
           }}
           onShare={() => {
             // TODO: Implement share functionality
-            console.log('Share badge:', newBadges[currentBadgeIndex])
           }}
         />
       )}

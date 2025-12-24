@@ -26,9 +26,6 @@ export async function GET(request: NextRequest) {
     }
 
     const supabase = createServiceRoleClient()
-    
-    console.log('[CRON] Starting trial expiration check...')
-
     // Find all users with expired trials
     const { data: expiredTrials, error: fetchError } = await supabase
       .from('profiles')
@@ -38,7 +35,6 @@ export async function GET(request: NextRequest) {
       .lt('trial_end_date', new Date().toISOString())
 
     if (fetchError) {
-      console.error('[CRON] Error fetching expired trials:', fetchError)
       return NextResponse.json(
         { error: 'Failed to fetch expired trials', details: fetchError.message },
         { status: 500 }
@@ -46,16 +42,12 @@ export async function GET(request: NextRequest) {
     }
 
     if (!expiredTrials || expiredTrials.length === 0) {
-      console.log('[CRON] No expired trials found')
       return NextResponse.json({
         success: true,
         message: 'No expired trials to process',
         expired: 0
       })
     }
-
-    console.log(`[CRON] Found ${expiredTrials.length} expired trials`)
-
     // Expire trials and send emails
     const results = {
       expired: 0,
@@ -77,14 +69,11 @@ export async function GET(request: NextRequest) {
           .eq('id', trial.id)
 
         if (updateError) {
-          console.error(`[CRON] Error expiring trial for ${trial.email}:`, updateError)
           results.errors.push(`${trial.email}: ${updateError.message}`)
           continue
         }
 
         results.expired++
-        console.log(`✅ Expired trial for ${trial.email}`)
-
         // Send trial expiration email
         try {
           await sendTrialExpirationEmail(
@@ -92,20 +81,14 @@ export async function GET(request: NextRequest) {
             trial.full_name || 'User'
           )
           results.emailsSent++
-          console.log(`📧 Sent trial expiration email to ${trial.email}`)
         } catch (emailError) {
-          console.error(`[CRON] Error sending email to ${trial.email}:`, emailError)
           results.errors.push(`Email to ${trial.email}: ${emailError instanceof Error ? emailError.message : 'Unknown error'}`)
           // Don't fail the whole process if email fails
         }
       } catch (error) {
-        console.error(`[CRON] Unexpected error processing ${trial.email}:`, error)
         results.errors.push(`${trial.email}: ${error instanceof Error ? error.message : 'Unknown error'}`)
       }
     }
-
-    console.log('[CRON] Trial expiration complete:', results)
-
     return NextResponse.json({
       success: true,
       message: `Expired ${results.expired} trials, sent ${results.emailsSent} emails`,
@@ -113,7 +96,6 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('[CRON] Unexpected error in trial expiration:', error)
     return NextResponse.json(
       {
         error: 'Internal server error',

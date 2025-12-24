@@ -70,7 +70,6 @@ export async function GET(request: NextRequest) {
       offset
     })
   } catch (error: any) {
-    console.error('Error fetching users:', error)
     return NextResponse.json(
       { error: error.message || 'Failed to fetch users' },
       { status: 500 }

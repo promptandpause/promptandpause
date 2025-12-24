@@ -132,7 +132,6 @@ export default function VoicePromptPlayer({ promptText, userName }: VoicePromptP
     }
 
     utterance.onerror = (event) => {
-      console.error('Speech error:', event)
       toast.error('Failed to play audio')
       setIsPlaying(false)
       setIsPaused(false)

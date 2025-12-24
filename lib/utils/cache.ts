@@ -26,7 +26,6 @@ export class CacheManager {
       const cached = localStorage.getItem(fullKey)
       
       if (!cached || cached.trim() === '') {
-        console.log(`📦 [Cache] Miss: ${key}`)
         return null
       }
 
@@ -35,22 +34,17 @@ export class CacheManager {
       
       // Check if cache is expired
       if (now - entry.timestamp >= this.DEFAULT_TTL) {
-        console.log(`⏰ [Cache] Expired: ${key}`)
         this.remove(key)
         return null
       }
       
       // If userId is provided, verify it matches
       if (userId && entry.userId && entry.userId !== userId) {
-        console.log(`👤 [Cache] User mismatch: ${key}`)
         this.remove(key)
         return null
       }
-
-      console.log(`✅ [Cache] Hit: ${key}`, entry.data)
       return entry.data
     } catch (err) {
-      console.error(`❌ [Cache] Error reading ${key}:`, err)
       this.remove(key)
       return null
     }
@@ -71,9 +65,7 @@ export class CacheManager {
       }
       
       localStorage.setItem(fullKey, JSON.stringify(entry))
-      console.log(`💾 [Cache] Set: ${key}`, data)
     } catch (err) {
-      console.error(`❌ [Cache] Error writing ${key}:`, err)
     }
   }
 
@@ -86,9 +78,7 @@ export class CacheManager {
     try {
       const fullKey = this.PREFIX + key
       localStorage.removeItem(fullKey)
-      console.log(`🗑️ [Cache] Removed: ${key}`)
     } catch (err) {
-      console.error(`❌ [Cache] Error removing ${key}:`, err)
     }
   }
 
@@ -116,10 +106,7 @@ export class CacheManager {
           }
         } catch {}
       })
-      
-      console.log(`🧹 [Cache] Cleared ${removed} entries for user ${userId}`)
     } catch (err) {
-      console.error('❌ [Cache] Error clearing user cache:', err)
     }
   }
 
@@ -139,10 +126,7 @@ export class CacheManager {
           removed++
         }
       })
-      
-      console.log(`🧹 [Cache] Cleared ${removed} cache entries`)
     } catch (err) {
-      console.error('❌ [Cache] Error clearing all cache:', err)
     }
   }
 
@@ -181,7 +165,6 @@ export class CacheManager {
         ttl: this.DEFAULT_TTL / 1000 + 's'
       }
     } catch (err) {
-      console.error('❌ [Cache] Error getting stats:', err)
       return null
     }
   }

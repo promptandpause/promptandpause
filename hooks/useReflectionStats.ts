@@ -60,7 +60,6 @@ export function useReflectionStats() {
       
       // Check if cache is still valid
       if (now - data.timestamp < STATS_CACHE_DURATION) {
-        console.log('📊 [useReflectionStats] Using cached stats', data.stats)
         return data
       }
       
@@ -68,7 +67,6 @@ export function useReflectionStats() {
       localStorage.removeItem(STATS_CACHE_KEY)
       return null
     } catch (err) {
-      console.error('Error reading stats cache:', err)
       localStorage.removeItem(STATS_CACHE_KEY)
       return null
     }
@@ -122,12 +120,9 @@ export function useReflectionStats() {
           timestamp: Date.now(),
         }
         localStorage.setItem(STATS_CACHE_KEY, JSON.stringify(cacheData))
-        console.log('💾 [useReflectionStats] Cached stats', newStats)
       } catch (err) {
-        console.error('Error caching stats:', err)
       }
     } catch (err) {
-      console.error('Error fetching reflection stats:', err)
       setError(err instanceof Error ? err.message : 'Unknown error')
       setStats(null)
     } finally {
@@ -148,9 +143,6 @@ export function useReflectionStats() {
         const supabase = getSupabaseClient()
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) return
-
-        console.log('🔌 [useReflectionStats] Setting up Realtime subscription for user:', user.id)
-
         // Subscribe to changes in the reflections table for this user
         const channel = supabase
           .channel(`reflections-changes-${user.id}`)
@@ -163,21 +155,17 @@ export function useReflectionStats() {
               filter: `user_id=eq.${user.id}`,
             },
             (payload) => {
-              console.log('⚡ [useReflectionStats] Real-time reflection change detected!', payload.eventType)
               // Re-fetch stats when reflections change
               fetchStats(true) // Force fresh data, bypass cache
             }
           )
           .subscribe((status) => {
-            console.log('📡 [useReflectionStats] Realtime channel status:', status)
           })
 
         return () => {
-          console.log('🧹 [useReflectionStats] Cleaning up Realtime subscription')
           channel.unsubscribe()
         }
       } catch (err) {
-        console.error('Error setting up Realtime subscription:', err)
       }
     }
 
@@ -207,9 +195,7 @@ export function useInvalidateReflectionStats() {
     
     try {
       localStorage.removeItem(STATS_CACHE_KEY)
-      console.log('🧹 [useInvalidateReflectionStats] Cache invalidated')
     } catch (err) {
-      console.error('Error invalidating stats cache:', err)
     }
   }, [])
 }

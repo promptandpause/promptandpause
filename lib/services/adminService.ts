@@ -25,7 +25,6 @@ import { logger } from '@/lib/utils/logger'
 export function isAdminEmail(email: string): boolean {
   const adminEmail = process.env.ADMIN_EMAIL
   if (!adminEmail) {
-    console.error('ADMIN_EMAIL environment variable is not set')
     return false
   }
   return email.toLowerCase() === adminEmail.toLowerCase()
@@ -58,7 +57,6 @@ export async function checkAdminAuth(userEmail?: string): Promise<{
       error: 'Unauthorized: No user email provided'
     }
   } catch (error) {
-    console.error('Error checking admin auth:', error)
     return {
       isAdmin: false,
       email: null,
@@ -308,7 +306,6 @@ export async function getUserById(userId: string) {
       success: true,
     }
   } catch (error: any) {
-    console.error('Error fetching user:', error)
     return {
       user: null,
       success: false,
@@ -548,7 +545,6 @@ export async function getEngagementTrends(days: number = 30) {
       success: true
     }
   } catch (error: any) {
-    console.error('Error fetching engagement trends:', error)
     return {
       trends: [],
       success: false,
@@ -585,7 +581,6 @@ export async function getRevenueBreakdown() {
       success: true
     }
   } catch (error: any) {
-    console.error('Error fetching revenue breakdown:', error)
     return {
       mrr: null,
       growth: [],
@@ -669,7 +664,6 @@ export async function getAllSubscriptions(params: {
       success: true,
     }
   } catch (error: any) {
-    console.error('Error fetching subscriptions:', error)
     return {
       subscriptions: [],
       total: 0,
@@ -721,7 +715,6 @@ export async function getSubscriptionById(userId: string) {
       success: true,
     }
   } catch (error: any) {
-    console.error('Error fetching subscription:', error)
     return {
       subscription: null,
       events: [],
@@ -745,9 +738,6 @@ export async function updateSubscription(
 ) {
   try {
     const supabase = createServiceRoleClient()
-
-    console.log(`🔍 [Admin] Updating subscription for user ${userId}:`, updates)
-
     // Get current subscription
     const { data: currentSub, error: fetchError } = await supabase
       .from('profiles')
@@ -756,12 +746,8 @@ export async function updateSubscription(
       .single()
 
     if (fetchError) {
-      console.error(`❌ [Admin] Failed to fetch current subscription:`, fetchError)
       throw fetchError
     }
-
-    console.log(`📋 [Admin] Current subscription:`, currentSub)
-
     // Update subscription
     const { data: updatedData, error: updateError } = await supabase
       .from('profiles')
@@ -773,12 +759,8 @@ export async function updateSubscription(
       .select()
 
     if (updateError) {
-      console.error(`❌ [Admin] Failed to update subscription:`, updateError)
       throw updateError
     }
-
-    console.log(`✅ [Admin] Subscription updated successfully:`, updatedData)
-
     // Log subscription event if status changed
     if (updates.subscription_status && currentSub?.subscription_status !== updates.subscription_status) {
       await supabase
@@ -1220,7 +1202,6 @@ export async function getEmailTemplates() {
       success: true,
     }
   } catch (error: any) {
-    console.error('Error fetching email templates:', error)
     return {
       templates: [],
       success: false,
@@ -1439,7 +1420,6 @@ export async function getSupportStats() {
       success: true,
     }
   } catch (error: any) {
-    console.error('Error fetching support stats:', error)
     return {
       stats: null,
       success: false,
@@ -1602,7 +1582,6 @@ export async function getPromptLibrary(params: {
       success: true,
     }
   } catch (error: any) {
-    console.error('Error fetching prompt library:', error)
     return {
       prompts: [],
       total: 0,
@@ -1632,7 +1611,6 @@ export async function getPromptById(promptId: string) {
       success: true,
     }
   } catch (error: any) {
-    console.error('Error fetching prompt:', error)
     return {
       prompt: null,
       success: false,
@@ -1679,7 +1657,6 @@ export async function createPrompt(
       success: true,
     }
   } catch (error: any) {
-    console.error('Error creating prompt:', error)
     return {
       prompt: null,
       success: false,
@@ -1725,7 +1702,6 @@ export async function updatePrompt(
       success: true,
     }
   } catch (error: any) {
-    console.error('Error updating prompt:', error)
     return {
       prompt: null,
       success: false,
@@ -1758,7 +1734,6 @@ export async function deletePrompt(promptId: string, adminEmail: string) {
       success: true,
     }
   } catch (error: any) {
-    console.error('Error deleting prompt:', error)
     return {
       success: false,
       error: error.message,
@@ -1789,7 +1764,6 @@ export async function getSystemSettings() {
       success: true,
     }
   } catch (error: any) {
-    console.error('Error fetching system settings:', error)
     return {
       settings: [],
       success: false,
@@ -1832,7 +1806,6 @@ export async function updateSystemSetting(
       success: true,
     }
   } catch (error: any) {
-    console.error('Error updating system setting:', error)
     return {
       setting: null,
       success: false,
@@ -1860,7 +1833,6 @@ export async function getFeatureFlags() {
       success: true,
     }
   } catch (error: any) {
-    console.error('Error fetching feature flags:', error)
     return {
       flags: [],
       success: false,
@@ -1903,7 +1875,6 @@ export async function updateFeatureFlag(
       success: true,
     }
   } catch (error: any) {
-    console.error('Error updating feature flag:', error)
     return {
       flag: null,
       success: false,

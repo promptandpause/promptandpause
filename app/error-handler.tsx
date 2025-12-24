@@ -8,13 +8,9 @@ export default function ErrorHandler() {
     const originalParse = JSON.parse
     JSON.parse = function(text: string, reviver?: any) {
       if (text === '' || text === null || text === undefined) {
-        console.error('🚨 JSON.parse called with empty/null value!')
-        console.error('Stack trace:', new Error().stack)
         throw new SyntaxError('Unexpected token \'\', "" is not valid JSON')
       }
       if (typeof text === 'string' && text.trim() === '') {
-        console.error('🚨 JSON.parse called with whitespace-only string!')
-        console.error('Stack trace:', new Error().stack)
         throw new SyntaxError('Unexpected token \'\', "" is not valid JSON')
       }
       return originalParse.call(this, text, reviver)
@@ -22,17 +18,12 @@ export default function ErrorHandler() {
 
     // Catch unhandled promise rejections
     const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
-      console.error('🔴 Unhandled Promise Rejection:', event.reason)
-      console.error('Stack trace:', event.reason?.stack)
       // Prevent the default browser behavior
       event.preventDefault()
     }
 
     // Catch global errors
     const handleError = (event: ErrorEvent) => {
-      console.error('🔴 Global Error:', event.error)
-      console.error('Message:', event.message)
-      console.error('Stack:', event.error?.stack)
     }
 
     window.addEventListener('unhandledrejection', handleUnhandledRejection)

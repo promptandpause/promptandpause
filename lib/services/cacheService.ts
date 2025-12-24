@@ -48,15 +48,12 @@ export function getFromCache<T>(key: string, userId: string): T | null {
     const parsedCache: CachedData<T> = JSON.parse(cached)
     
     if (isCacheValid(parsedCache, userId)) {
-      console.log(`✅ Cache hit: ${key}`)
       return parsedCache.data
     } else {
-      console.log(`⏰ Cache expired: ${key}`)
       localStorage.removeItem(key)
       return null
     }
   } catch (error) {
-    console.error('Cache read error:', error)
     return null
   }
 }
@@ -72,9 +69,7 @@ export function saveToCache<T>(key: string, data: T, userId: string): void {
       userId,
     }
     localStorage.setItem(key, JSON.stringify(cacheItem))
-    console.log(`💾 Cached: ${key}`)
   } catch (error) {
-    console.error('Cache write error:', error)
   }
 }
 
@@ -84,9 +79,7 @@ export function saveToCache<T>(key: string, data: T, userId: string): void {
 export function clearCache(key: string): void {
   try {
     localStorage.removeItem(key)
-    console.log(`🗑️ Cleared cache: ${key}`)
   } catch (error) {
-    console.error('Cache clear error:', error)
   }
 }
 
@@ -98,9 +91,7 @@ export function clearAllCache(): void {
     Object.values(CACHE_KEYS).forEach(key => {
       localStorage.removeItem(key)
     })
-    console.log('🗑️ Cleared all caches')
   } catch (error) {
-    console.error('Cache clear all error:', error)
   }
 }
 
@@ -179,7 +170,6 @@ export function getLastSyncTime(userId: string): number | null {
  */
 export function invalidateCacheOnLogout(): void {
   clearAllCache()
-  console.log('🔄 Cache invalidated (logout)')
 }
 
 /**
@@ -187,8 +177,6 @@ export function invalidateCacheOnLogout(): void {
  */
 export async function prefetchUserData(userId: string): Promise<void> {
   try {
-    console.log('🚀 Prefetching user data...')
-    
     // Fetch in parallel
     const [profileRes, preferencesRes] = await Promise.all([
       fetch('/api/user/profile'),
@@ -212,8 +200,6 @@ export async function prefetchUserData(userId: string): Promise<void> {
     }
 
     updateLastSyncTime(userId)
-    console.log('✅ Prefetch complete')
   } catch (error) {
-    console.error('Prefetch error:', error)
   }
 }

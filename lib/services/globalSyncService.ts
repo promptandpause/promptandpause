@@ -43,7 +43,6 @@ function notifyCallbacks() {
     try {
       callback()
     } catch (error) {
-      console.error('Sync callback error:', error)
     }
   })
 }
@@ -66,11 +65,8 @@ async function syncUserProfile() {
       .single()
 
     if (error) {
-      console.error('Error syncing profile:', error)
-      
       // If profile doesn't exist (PGRST116 = no rows), create it
       if (error.code === 'PGRST116') {
-        console.log('[syncUserProfile] Profile not found, creating default profile')
         const { error: createError } = await supabase
           .from('profiles')
           .insert({
@@ -83,22 +79,15 @@ async function syncUserProfile() {
           })
         
         if (!createError) {
-          console.log('✅ Profile created successfully')
           return
         }
       }
       
       return
     }
-
-    console.log('✅ Profile synced:', {
-      tier: profile?.subscription_tier,
-      status: profile?.subscription_status,
-      updatedAt: new Date().toLocaleTimeString()
     })
 
   } catch (error) {
-    console.error('Error in syncUserProfile:', error)
   }
 }
 
@@ -120,14 +109,9 @@ async function syncUserPreferences() {
       .single()
 
     if (error && error.code !== 'PGRST116') {
-      console.error('Error syncing preferences:', error)
       return
     }
-
-    console.log('✅ Preferences synced')
-
   } catch (error) {
-    console.error('Error in syncUserPreferences:', error)
   }
 }
 
@@ -148,14 +132,9 @@ async function syncReflectionsMetadata() {
       .eq('user_id', user.id)
 
     if (error) {
-      console.error('Error syncing reflections metadata:', error)
       return
     }
-
-    console.log('✅ Reflections metadata synced:', { count })
-
   } catch (error) {
-    console.error('Error in syncReflectionsMetadata:', error)
   }
 }
 
@@ -164,13 +143,10 @@ async function syncReflectionsMetadata() {
  */
 export async function syncAllData() {
   if (isSyncing) {
-    console.log('⏭️ Sync already in progress, skipping...')
     return
   }
 
   isSyncing = true
-  console.log('🔄 Starting global Supabase sync...')
-
   try {
     // Run all syncs in parallel for speed
     await Promise.allSettled([
@@ -180,13 +156,10 @@ export async function syncAllData() {
     ])
 
     lastSyncTime = new Date()
-    console.log(`✅ Global sync completed at ${lastSyncTime.toLocaleTimeString()}`)
-
     // Notify all registered callbacks
     notifyCallbacks()
 
   } catch (error) {
-    console.error('❌ Error during global sync:', error)
   } finally {
     isSyncing = false
   }
@@ -198,12 +171,8 @@ export async function syncAllData() {
 export function startGlobalSync() {
   // Don't start if already running
   if (syncIntervalId) {
-    console.log('Global sync already running')
     return
   }
-
-  console.log('🚀 Starting global Supabase sync service (every 5 minutes)')
-
   // Initial sync after 10 seconds
   setTimeout(() => {
     syncAllData()
@@ -220,7 +189,6 @@ export function startGlobalSync() {
       if (document.visibilityState === 'visible') {
         // Only sync if last sync was more than 1 minute ago
         if (!lastSyncTime || Date.now() - lastSyncTime.getTime() > 60000) {
-          console.log('🔄 Tab focused - syncing data...')
           syncAllData()
         }
       }
@@ -235,7 +203,6 @@ export function stopGlobalSync() {
   if (syncIntervalId) {
     clearInterval(syncIntervalId)
     syncIntervalId = null
-    console.log('🛑 Global sync stopped')
   }
 }
 
@@ -257,6 +224,5 @@ export function isCurrentlySyncing(): boolean {
  * Force an immediate sync
  */
 export function forceSyncNow() {
-  console.log('🔄 Force sync requested')
   syncAllData()
 }

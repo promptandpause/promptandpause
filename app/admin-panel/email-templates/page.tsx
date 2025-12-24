@@ -36,7 +36,6 @@ export default function EmailTemplatesPage() {
         setSelectedTemplate(data.templates[0])
       }
     } catch (error) {
-      console.error('Error loading templates:', error)
     } finally {
       setLoading(false)
     }
@@ -73,7 +72,6 @@ export default function EmailTemplatesPage() {
         setPreviewSubject(data.subject)
       }
     } catch (error) {
-      console.error('Error generating preview:', error)
     }
   }
 

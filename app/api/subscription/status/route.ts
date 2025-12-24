@@ -25,7 +25,6 @@ export async function GET(request: NextRequest) {
       .single()
 
     if (profileError) {
-      console.error('Error fetching profile:', profileError)
       return NextResponse.json(
         { error: 'Failed to fetch subscription status' },
         { status: 500 }
@@ -47,7 +46,6 @@ export async function GET(request: NextRequest) {
       }
     })
   } catch (error: any) {
-    console.error('Error fetching subscription status:', error)
     return NextResponse.json(
       { error: error.message || 'Failed to fetch subscription status' },
       { status: 500 }

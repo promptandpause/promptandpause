@@ -25,7 +25,6 @@ export async function POST(request: NextRequest) {
 
     const { error: deleteError } = await admin.auth.admin.deleteUser(user.id)
     if (deleteError) {
-      console.error('Failed to delete user:', deleteError)
       return NextResponse.json(
         { success: false, error: 'Failed to delete account' },
         { status: 500 }
@@ -34,7 +33,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, message: 'Account deleted' })
   } catch (error) {
-    console.error('Error in account deletion:', error)
     return NextResponse.json(
       { success: false, error: 'Internal server error' },
       { status: 500 }

@@ -92,7 +92,6 @@ export async function GET(request: NextRequest) {
       }
     })
   } catch (error: any) {
-    console.error('Error fetching engagement analytics:', error)
     return NextResponse.json(
       { error: error.message || 'Failed to fetch engagement analytics' },
       { status: 500 }

@@ -38,7 +38,6 @@ export function BadgeIcon({ badge, isUnlocked, size = "md", className = "" }: Ba
         setLottieError(true)
       }
     } catch (error) {
-      console.error("Failed to load Lottie animation:", error)
       setLottieError(true)
     }
   }

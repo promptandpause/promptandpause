@@ -36,7 +36,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ maintenance_windows: result.data })
   } catch (error: any) {
-    console.error('Error in GET /api/admin/maintenance:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
@@ -113,7 +112,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ maintenance_window: result.data }, { status: 201 })
   } catch (error: any) {
-    console.error('Error in POST /api/admin/maintenance:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

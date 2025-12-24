@@ -89,9 +89,7 @@ export async function POST(request: NextRequest) {
 
       if (dbError) throw dbError
       localTicketId = ticket.id
-      console.log('✅ Created local support ticket:', localTicketId)
     } catch (dbError) {
-      console.error('❌ Local ticket creation failed:', dbError)
       return NextResponse.json(
         { 
           success: false, 
@@ -105,8 +103,6 @@ export async function POST(request: NextRequest) {
     let freshdeskTicketId: number
     try {
       freshdeskTicketId = await createFreshdeskTicket(ticketPayload)
-      console.log('✅ Created Freshdesk ticket:', freshdeskTicketId)
-      
       // Update local ticket with Freshdesk ID
       await supabase
         .from('support_tickets')
@@ -119,7 +115,6 @@ export async function POST(request: NextRequest) {
         })
         .eq('id', localTicketId)
     } catch (freshdeskError) {
-      console.error('❌ Freshdesk ticket creation failed:', freshdeskError)
       // Continue anyway - we have the local ticket
       freshdeskTicketId = 0
     }
@@ -136,9 +131,7 @@ export async function POST(request: NextRequest) {
         subject,
         freshdeskTicketId.toString()
       )
-      console.log('✅ Sent confirmation email to user')
     } catch (emailError) {
-      console.error('⚠️ Failed to send user confirmation email (non-critical):', emailError)
       // Don't fail the request if email notification fails
     }
 
@@ -154,9 +147,7 @@ export async function POST(request: NextRequest) {
         tier: tier || 'freemium',
         requestId: freshdeskTicketId.toString()
       })
-      console.log('✅ Sent notification to support team')
     } catch (emailError) {
-      console.error('⚠️ Failed to send support team notification (non-critical):', emailError)
       // Don't fail the request if email notification fails
     }
 
@@ -169,7 +160,6 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('❌ Error processing support request:', error)
     return NextResponse.json(
       { 
         success: false, 

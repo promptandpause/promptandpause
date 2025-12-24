@@ -51,7 +51,6 @@ export async function POST(request: NextRequest) {
       // Check if it's a portal configuration error
       if (stripeError.message?.includes('No configuration provided') || 
           stripeError.message?.includes('default configuration has not been created')) {
-        console.error('Stripe Customer Portal not configured. Please configure it at: https://dashboard.stripe.com/settings/billing/portal')
         return NextResponse.json(
           { 
             error: 'Customer portal not yet configured. Please contact support to manage your subscription.',
@@ -64,7 +63,6 @@ export async function POST(request: NextRequest) {
       throw stripeError // Re-throw other Stripe errors
     }
   } catch (error: any) {
-    console.error('Error creating portal session:', error)
     return NextResponse.json(
       { error: error.message || 'Failed to create portal session' },
       { status: 500 }

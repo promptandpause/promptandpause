@@ -20,7 +20,6 @@ export async function GET(request: NextRequest) {
 
     // Check for OAuth errors
     if (oauthError) {
-      console.error('Slack OAuth error:', oauthError)
       return NextResponse.redirect(
         new URL(`/dashboard/settings?slack_error=${encodeURIComponent(oauthError)}`, request.url)
       )
@@ -57,7 +56,6 @@ export async function GET(request: NextRequest) {
     const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/integrations/slack/oauth/callback`
 
     if (!clientId || !clientSecret) {
-      console.error('Slack OAuth credentials not configured')
       return NextResponse.redirect(
         new URL('/dashboard/settings?slack_error=not_configured', request.url)
       )
@@ -80,7 +78,6 @@ export async function GET(request: NextRequest) {
     const tokenData = await tokenResponse.json()
 
     if (!tokenData.ok) {
-      console.error('Slack token exchange failed:', tokenData)
       return NextResponse.redirect(
         new URL(`/dashboard/settings?slack_error=${encodeURIComponent(tokenData.error)}`, request.url)
       )
@@ -92,7 +89,6 @@ export async function GET(request: NextRequest) {
     const channelName = tokenData.incoming_webhook?.channel
 
     if (!webhookUrl) {
-      console.error('No webhook URL received from Slack')
       return NextResponse.redirect(
         new URL('/dashboard/settings?slack_error=no_webhook', request.url)
       )
@@ -109,14 +105,10 @@ export async function GET(request: NextRequest) {
       .eq('user_id', user.id)
 
     if (updateError) {
-      console.error('Error saving Slack webhook:', updateError)
       return NextResponse.redirect(
         new URL('/dashboard/settings?slack_error=save_failed', request.url)
       )
     }
-
-    console.log(`✅ Slack connected for user ${user.id} - Team: ${teamName}, Channel: ${channelName}`)
-
     // Clear state cookie
     const res = NextResponse.redirect(
       new URL(
@@ -134,7 +126,6 @@ export async function GET(request: NextRequest) {
     return res
 
   } catch (error) {
-    console.error('Error in Slack OAuth callback:', error)
     return NextResponse.redirect(
       new URL('/dashboard/settings?slack_error=internal_error', request.url)
     )

@@ -36,7 +36,6 @@ export async function GET() {
       stats: result.stats,
     })
   } catch (error) {
-    console.error('Error fetching subscription stats:', error)
     return NextResponse.json(
       { error: 'Failed to fetch subscription stats' },
       { status: 500 }

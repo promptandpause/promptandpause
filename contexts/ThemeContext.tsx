@@ -52,7 +52,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         applyTheme(dbTheme)
       }
     } catch (error) {
-      console.error('Error loading theme from database:', error)
     }
   }
 
@@ -80,10 +79,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         .from('profiles')
         .update({ dark_mode: newTheme === 'dark' })
         .eq('id', user.id)
-
-      console.log(`Theme changed to: ${newTheme} and saved to database`)
     } catch (error) {
-      console.error('Error saving theme to database:', error)
     }
   }
 

@@ -98,7 +98,6 @@ export async function POST(request: Request) {
     }
     
     if (result.error) {
-      console.error('Database error:', result.error)
       return NextResponse.json(
         { error: 'Failed to save preferences: ' + result.error.message },
         { status: 500 }
@@ -121,11 +120,9 @@ export async function POST(request: Request) {
       }, { onConflict: 'id' })
     
     if (profileError) {
-      console.error('Profile creation error:', profileError)
       // Don't fail the request, but log the error
       // User preferences are saved, profile can be created later
     } else {
-      console.log('✅ Profile created with 7-day premium trial')
     }
     
     // Send welcome email after successful onboarding
@@ -134,12 +131,8 @@ export async function POST(request: Request) {
                          user.user_metadata?.name || 
                          user.email?.split('@')[0] || 
                          'there'
-      
-      console.log('📧 Sending welcome email to:', user.email, 'Display name:', displayName)
       await sendWelcomeEmail(user.email!, displayName)
-      console.log('✅ Welcome email sent successfully')
     } catch (emailError) {
-      console.error('❌ Failed to send welcome email:', emailError)
       // Don't fail the onboarding if email fails
     }
     
@@ -151,7 +144,6 @@ export async function POST(request: Request) {
     }, { status: 200 })
     
   } catch (error: any) {
-    console.error('Onboarding API error:', error)
     return NextResponse.json(
       { error: error.message || 'Internal server error' },
       { status: 500 }
@@ -186,7 +178,6 @@ export async function GET(request: Request) {
     
     if (error && error.code !== 'PGRST116') {
       // PGRST116 = no rows returned (user hasn't completed onboarding)
-      console.error('Database error:', error)
       return NextResponse.json(
         { error: 'Failed to check onboarding status' },
         { status: 500 }
@@ -199,7 +190,6 @@ export async function GET(request: Request) {
     }, { status: 200 })
     
   } catch (error: any) {
-    console.error('Onboarding check error:', error)
     return NextResponse.json(
       { error: error.message || 'Internal server error' },
       { status: 500 }

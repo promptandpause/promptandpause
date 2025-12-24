@@ -98,7 +98,6 @@ export async function generateWeeklyInsights(
       const result = await generateInsightsWithOpenRouter(systemPrompt, userContext)
       
       if (result) {
-        console.log(`[INSIGHTS_GEN] Generated with OpenRouter: ${result.model}`)
         return {
           ...result.insights,
           provider: 'openrouter',
@@ -106,18 +105,15 @@ export async function generateWeeklyInsights(
         }
       }
     } catch (error) {
-      console.error('OpenRouter insight generation failed:', error)
     }
   }
 
   // Try Hugging Face as fallback (100% FREE, no credit card)
   if (huggingface) {
     try {
-      console.log('Falling back to Hugging Face for insights...')
       const insights = await generateInsightsWithHuggingFace(systemPrompt, userContext)
       
       if (insights) {
-        console.log('Successfully generated insights with Hugging Face')
         return {
           ...insights,
           provider: 'huggingface',
@@ -125,18 +121,15 @@ export async function generateWeeklyInsights(
         }
       }
     } catch (error) {
-      console.error('Hugging Face insight generation failed:', error)
     }
   }
 
   // Try Gemini as fallback (free tier with generous limits)
   if (gemini) {
     try {
-      console.log('Falling back to Google Gemini for insights...')
       const insights = await generateInsightsWithGemini(systemPrompt, userContext)
       
       if (insights) {
-        console.log('Successfully generated insights with Gemini')
         return {
           ...insights,
           provider: 'gemini',
@@ -144,18 +137,15 @@ export async function generateWeeklyInsights(
         }
       }
     } catch (error) {
-      console.error('Gemini insight generation failed:', error)
     }
   }
 
   // Final fallback to OpenAI if configured
   if (process.env.OPENAI_API_KEY) {
     try {
-      console.log('Falling back to OpenAI for insights...')
       const insights = await generateInsightsWithOpenAI(systemPrompt, userContext)
       
       if (insights) {
-        console.log('Successfully generated insights with OpenAI')
         return {
           ...insights,
           provider: 'openai',
@@ -163,7 +153,6 @@ export async function generateWeeklyInsights(
         }
       }
     } catch (error) {
-      console.error('OpenAI insight generation failed:', error)
     }
   }
 
@@ -193,7 +182,6 @@ async function generateInsightsWithOpenRouter(
   growthAreas: string[]
 }; model: string } | null> {
   if (!openrouter) {
-    console.warn('OPENROUTER_API_KEY not configured - skipping OpenRouter')
     return null
   }
 
@@ -206,8 +194,6 @@ async function generateInsightsWithOpenRouter(
 
   for (const model of modelPrefs) {
     try {
-      console.log(`🔄 Trying OpenRouter model: ${model}`)
-      
       const completion = await openrouter.chat.completions.create({
         model,
         messages: [
@@ -220,7 +206,6 @@ async function generateInsightsWithOpenRouter(
 
       const text = completion.choices[0]?.message?.content?.trim()
       if (text) {
-        console.log(`✅ Successfully generated insights with ${model}`)
         const insights = parseAIResponse(text)
         return { insights, model }
       }
@@ -230,33 +215,26 @@ async function generateInsightsWithOpenRouter(
       
       // 404 = Model not available, skip to next
       if (status === 404) {
-        console.warn(`⏭️  Model not available: ${model} (404 - No endpoints found)`)
         continue
       }
       
       // 5xx = Server error, skip to next  
       if (status && status >= 500) {
-        console.warn(`⏭️  OpenRouter server error: ${model} (${status})`)
         continue
       }
       
       // 4xx but not 404 = Auth, rate limit, etc - may want to stop
       if (status && status >= 400 && status < 500) {
-        console.error(`❌ OpenRouter client error: ${model} (${status}) - ${message}`)
         // Continue trying other models unless it's auth
         if (status === 401 || status === 403) {
-          console.error('Authentication issue detected - check OPENROUTER_API_KEY')
           return null
         }
         continue
       }
       
       // Generic error, log and continue
-      console.warn(`⚠️  OpenRouter error with ${model}: ${message}`)
     }
   }
-
-  console.error('❌ All OpenRouter models exhausted - falling back to Hugging Face/Gemini/OpenAI')
   return null
 }
 
@@ -274,14 +252,11 @@ async function generateInsightsWithHuggingFace(
   growthAreas: string[]
 } | null> {
   if (!huggingface) {
-    console.warn('HUGGINGFACE_API_KEY not configured - skipping Hugging Face')
     return null
   }
 
   for (const model of HUGGINGFACE_MODELS) {
     try {
-      console.log(`🔄 Trying Hugging Face model: ${model}`)
-      
       const completion = await huggingface.chat.completions.create({
         model,
         messages: [
@@ -294,7 +269,6 @@ async function generateInsightsWithHuggingFace(
 
       const text = completion.choices[0]?.message?.content?.trim()
       if (text) {
-        console.log(`✅ Successfully generated insights with Hugging Face: ${model}`)
         return parseAIResponse(text)
       }
     } catch (error: any) {
@@ -303,34 +277,27 @@ async function generateInsightsWithHuggingFace(
       
       // 404 = Model not available, skip to next
       if (status === 404) {
-        console.warn(`⏭️  Hugging Face model not available: ${model} (404)`)
         continue
       }
       
       // 503 = Model loading, skip to next
       if (status === 503) {
-        console.warn(`⏭️  Hugging Face model loading: ${model} (503)`)
         continue
       }
       
       // Other server errors
       if (status && status >= 500) {
-        console.warn(`⏭️  Hugging Face server error: ${model} (${status})`)
         continue
       }
       
       // Auth or rate limit issues
       if (status === 401 || status === 403) {
-        console.error(`❌ Hugging Face auth error: ${model} (${status})`)
         return null
       }
       
       // Generic error, log and continue
-      console.warn(`⚠️  Hugging Face error with ${model}: ${message}`)
     }
   }
-
-  console.error('❌ All Hugging Face models exhausted')
   return null
 }
 
@@ -348,7 +315,6 @@ async function generateInsightsWithGemini(
   growthAreas: string[]
 } | null> {
   if (!gemini) {
-    console.warn('GEMINI_API_KEY not configured - skipping Gemini')
     return null
   }
 
@@ -374,12 +340,7 @@ async function generateInsightsWithGemini(
   } catch (error: any) {
     // Log detailed error for debugging
     if (error?.status === 403 || error?.status === 401) {
-      console.error('Gemini API Auth Error: Access denied. This usually means:')
-      console.error('  1. Invalid or expired API key')
-      console.error('  2. Need to set GEMINI_API_KEY in .env.local')
-      console.error('  3. Get key from: https://aistudio.google.com/app/apikey')
     }
-    console.error('Gemini API error:', error?.message || error)
     return null
   }
 }
@@ -418,7 +379,6 @@ async function generateInsightsWithOpenAI(
 
     return parseAIResponse(response)
   } catch (error) {
-    console.error('OpenAI API error:', error)
     return null
   }
 }

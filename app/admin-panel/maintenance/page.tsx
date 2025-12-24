@@ -25,7 +25,6 @@ export default function MaintenancePage() {
         setActiveMaintenanceId(data.maintenance_window_id || null)
       }
     } catch (error) {
-      console.error('Error checking maintenance status:', error)
     }
   }
 

@@ -184,8 +184,6 @@ function SettingsPageContent() {
     // Detect user's timezone from browser
     const detectedTimezone = detectUserTimezone()
     const tzInfo = getTimezoneInfo(detectedTimezone)
-    
-    console.log('🌍 Auto-detected timezone:', tzInfo)
     setTimezoneInfo(tzInfo)
     
     // Set as default if no timezone loaded yet
@@ -219,7 +217,6 @@ function SettingsPageContent() {
       const cachedPreferences = getCachedUserPreferences(user.id)
 
       if (cachedProfile) {
-        console.log('📦 Loading from cache (instant!)')
         setFullName(cachedProfile.full_name || '')
         // Prefer timezone_iana over old timezone field
         const savedTimezone = cachedProfile.timezone_iana || cachedProfile.timezone
@@ -293,7 +290,6 @@ function SettingsPageContent() {
         }
       }
     } catch (error) {
-      console.error('Error loading user data:', error)
       toast({
         title: "Error",
         description: "Failed to load user data.",
@@ -350,7 +346,6 @@ function SettingsPageContent() {
         description: t('toast.profileUpdatedDesc'),
       })
     } catch (error: any) {
-      console.error('Error saving profile:', error)
       toast({
         title: t('toast.error'),
         description: error.message || t('toast.errorGeneric') || "Failed to save profile. Please try again.",
@@ -384,7 +379,6 @@ function SettingsPageContent() {
         description: t('toast.notificationsUpdatedDesc'),
       })
     } catch (error: any) {
-      console.error('Error saving notifications:', error)
       toast({
         title: t('toast.error'),
         description: error.message || t('toast.errorGeneric') || "Failed to save notification settings. Please try again.",
@@ -438,7 +432,6 @@ function SettingsPageContent() {
           .eq('id', user.id)
 
         if (updateError) {
-          console.error('Error updating password_set flag:', updateError)
         }
 
         setHasPassword(true) // User now has a password
@@ -450,7 +443,6 @@ function SettingsPageContent() {
         setNewPassword("")
         setConfirmPassword("")
       } catch (error: any) {
-        console.error('Error setting password:', error)
         toast({
           title: t('toast.error'),
         description: error.message || t('toast.errorGeneric') || "Failed to set password. Please try again.",
@@ -503,7 +495,6 @@ function SettingsPageContent() {
         setNewPassword("")
         setConfirmPassword("")
       } catch (error: any) {
-        console.error('Error updating password:', error)
         toast({
           title: t('toast.error'),
         description: error.message || t('toast.errorGeneric') || "Failed to update password. Please try again.",
@@ -560,7 +551,6 @@ function SettingsPageContent() {
         description: `${t('toast.preferencesUpdatedDesc')} ${scheduleInfo}`,
       })
     } catch (error: any) {
-      console.error('Error saving preferences:', error)
       toast({
         title: t('toast.error'),
         description: error.message || t('toast.errorGeneric') || "Failed to save preferences. Please try again.",
@@ -604,7 +594,6 @@ function SettingsPageContent() {
         description: "Your data is being exported as a PDF. You'll receive an email shortly with your complete data package.",
       })
     } catch (error: any) {
-      console.error('Error exporting data:', error)
       toast({
         title: "Export Failed",
         description: error.message || "Failed to export data. Please try again or contact support.",
@@ -647,7 +636,6 @@ function SettingsPageContent() {
         throw new Error('No checkout URL returned')
       }
     } catch (error: any) {
-      console.error('Error creating checkout session:', error)
       toast({
         title: t('toast.error'),
         description: error.message || t('toast.errorGeneric') || "Failed to start checkout. Please try again.",
@@ -691,7 +679,6 @@ function SettingsPageContent() {
       // Refresh tier to update UI
       await refreshTier()
     } catch (error: any) {
-      console.error('Error cancelling subscription:', error)
       toast({
         title: t('toast.error'),
         description: error.message || t('toast.errorGeneric') || 'Failed to cancel subscription. Please try again.',
@@ -737,7 +724,6 @@ function SettingsPageContent() {
       await refreshTier()
       setShowDowngradeDialog(false)
     } catch (error: any) {
-      console.error('Error cancelling subscription:', error)
       toast({
         title: t('toast.error'),
         description: error.message || 'Failed to cancel subscription. Please try again.',
@@ -767,7 +753,6 @@ function SettingsPageContent() {
         window.location.href = url
       }
     } catch (error: any) {
-      console.error('Error connecting Slack:', error)
       toast({
         title: "Connection Failed",
         description: error.message || "Failed to connect to Slack. Please try again.",
@@ -797,7 +782,6 @@ function SettingsPageContent() {
         description: "You'll no longer receive prompts in Slack.",
       })
     } catch (error: any) {
-      console.error('Error disconnecting Slack:', error)
       toast({
         title: "Error",
         description: error.message || "Failed to disconnect Slack. Please try again.",

@@ -53,7 +53,6 @@ export default function WeeklyInsights() {
         toast.error('Failed to load weekly insights')
       }
     } catch (error) {
-      console.error('Error fetching weekly digest:', error)
       toast.error('Failed to load weekly insights')
     } finally {
       setLoading(false)
@@ -77,7 +76,6 @@ export default function WeeklyInsights() {
         toast.error('Failed to send email')
       }
     } catch (error) {
-      console.error('Error sending digest email:', error)
       toast.error('Failed to send email')
     } finally {
       setSending(false)

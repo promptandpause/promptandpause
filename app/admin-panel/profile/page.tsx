@@ -70,7 +70,6 @@ export default function AdminProfilePage() {
         setProfile(myProfile)
       }
     } catch (error) {
-      console.error('Error loading profile:', error)
       toast({
         title: 'Error',
         description: 'Failed to load profile',

@@ -16,7 +16,6 @@ export async function GET(request: NextRequest) {
       data: pricing,
     })
   } catch (error: any) {
-    console.error('Error fetching Stripe pricing:', error)
     return NextResponse.json(
       {
         success: false,

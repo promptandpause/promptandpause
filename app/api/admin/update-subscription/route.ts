@@ -62,7 +62,6 @@ export async function POST(req: NextRequest) {
       data: data[0],
     })
   } catch (error: any) {
-    console.error('Error updating subscription:', error)
     return NextResponse.json(
       { error: error.message || 'Failed to update subscription' },
       { status: 500 }

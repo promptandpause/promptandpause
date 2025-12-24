@@ -45,7 +45,6 @@ export async function GET(request: NextRequest) {
       total: result.total,
     })
   } catch (error) {
-    console.error('Error fetching cron jobs:', error)
     return NextResponse.json(
       { error: 'Failed to fetch cron jobs' },
       { status: 500 }

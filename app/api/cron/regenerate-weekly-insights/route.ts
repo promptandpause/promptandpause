@@ -25,9 +25,6 @@ export async function GET(request: NextRequest) {
         { status: 401 }
       )
     }
-
-    console.log('[CRON] Starting weekly insights regeneration...')
-
     const supabase = createServiceRoleClient()
 
     // Debug: Get all users to see their subscription data
@@ -35,9 +32,6 @@ export async function GET(request: NextRequest) {
       .from('profiles')
       .select('id, full_name, subscription_tier, subscription_status')
       .limit(10)
-    
-    console.log('[CRON] Debug - Sample users:', JSON.stringify(allUsers, null, 2))
-
     // Get all premium users with active subscriptions
     const { data: premiumUsers, error: usersError } = await supabase
       .from('profiles')
@@ -46,7 +40,6 @@ export async function GET(request: NextRequest) {
       .eq('subscription_status', 'active')
 
     if (usersError) {
-      console.error('[CRON] Error fetching premium users:', usersError)
       return NextResponse.json(
         { success: false, error: usersError.message },
         { status: 500 }
@@ -54,16 +47,12 @@ export async function GET(request: NextRequest) {
     }
 
     if (!premiumUsers || premiumUsers.length === 0) {
-      console.log('[CRON] No premium users found')
       return NextResponse.json({
         success: true,
         message: 'No premium users to process',
         processed: 0,
       })
     }
-
-    console.log(`[CRON] Found ${premiumUsers.length} premium users`)
-
     // Calculate current week (Monday - Sunday)
     const today = new Date()
     const dayOfWeek = today.getDay()
@@ -76,17 +65,12 @@ export async function GET(request: NextRequest) {
     const weekEnd = new Date(weekStart)
     weekEnd.setDate(weekStart.getDate() + 6)
     weekEnd.setHours(23, 59, 59, 999)
-
-    console.log(`[CRON] Week range: ${weekStart.toISOString()} to ${weekEnd.toISOString()}`)
-
     // Process each premium user
     let successCount = 0
     let errorCount = 0
 
     for (const user of premiumUsers) {
       try {
-        console.log(`[CRON] Processing user ${user.id}...`)
-
         // Generate digest data
         const digest = await generateWeeklyDigestServer(user.id, weekStart, weekEnd)
 
@@ -95,7 +79,6 @@ export async function GET(request: NextRequest) {
         try {
           insights = await generateWeeklyInsights(digest, user.full_name)
         } catch (error) {
-          console.error(`[CRON] Error generating AI insights for user ${user.id}:`, error)
           insights = {
             summary: 'Unable to generate AI insights at this time.',
             keyInsights: [],
@@ -129,15 +112,11 @@ export async function GET(request: NextRequest) {
           )
 
         if (cacheError) {
-          console.error(`[CRON] Error caching insights for user ${user.id}:`, cacheError)
           errorCount++
         } else {
-          console.log(`[CRON] ✅ Successfully regenerated insights for user ${user.id}`)
-          
           // Send weekly digest email
           if (user.email) {
             try {
-              console.log(`[CRON] Sending weekly digest email to ${user.email}`)
               await sendWeeklyDigestEmail(
                 user.email,
                 user.id,
@@ -153,9 +132,7 @@ export async function GET(request: NextRequest) {
                   reflectionSummaries: digest.reflectionSummaries || [],
                 }
               )
-              console.log(`[CRON] ✅ Weekly digest email sent to ${user.email}`)
             } catch (emailError) {
-              console.error(`[CRON] ❌ Failed to send weekly digest email to ${user.email}:`, emailError)
               // Don't fail the job if email fails
             }
           }
@@ -163,13 +140,9 @@ export async function GET(request: NextRequest) {
           successCount++
         }
       } catch (error) {
-        console.error(`[CRON] Error processing user ${user.id}:`, error)
         errorCount++
       }
     }
-
-    console.log(`[CRON] Finished processing. Success: ${successCount}, Errors: ${errorCount}`)
-
     return NextResponse.json({
       success: true,
       message: 'Weekly insights regeneration completed',
@@ -178,7 +151,6 @@ export async function GET(request: NextRequest) {
       total: premiumUsers.length,
     })
   } catch (error) {
-    console.error('[CRON] Unexpected error in weekly insights regeneration:', error)
     return NextResponse.json(
       {
         success: false,

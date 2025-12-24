@@ -27,7 +27,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ stats: result.stats })
   } catch (error: any) {
-    console.error('Error in GET /api/admin/emails/stats:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

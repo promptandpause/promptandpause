@@ -38,7 +38,6 @@ export async function POST(
       batch_result: result.data,
     })
   } catch (error: any) {
-    console.error(`Error in POST /api/admin/maintenance/${params.id}/notify-start:`, error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

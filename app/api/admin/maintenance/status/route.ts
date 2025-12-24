@@ -31,7 +31,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ maintenance_mode: result.data })
   } catch (error: any) {
-    console.error('Error in GET /api/admin/maintenance/status:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
@@ -84,7 +83,6 @@ export async function PUT(request: NextRequest) {
       maintenance_mode: result.data,
     })
   } catch (error: any) {
-    console.error('Error in PUT /api/admin/maintenance/status:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

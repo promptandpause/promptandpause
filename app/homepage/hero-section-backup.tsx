@@ -9,7 +9,6 @@ export default function HeroSection() {
   const [videoError, setVideoError] = useState(false)
 
   const handleVideoError = (e: React.SyntheticEvent<HTMLVideoElement, Event>) => {
-    console.error('Video failed to load, falling back to image:', e)
     setVideoError(true)
   }
 

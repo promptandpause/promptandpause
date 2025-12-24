@@ -40,18 +40,13 @@ export async function POST(request: NextRequest) {
       })
 
       if (error) {
-        console.error('❌ Failed to send homepage contact email:', error)
         return NextResponse.json({ success: false, error: 'Failed to send email' }, { status: 500 })
       }
-
-      console.log('✅ Homepage contact email sent to', contactEmail)
       return NextResponse.json({ success: true, message: 'Email sent successfully' })
     } catch (emailError) {
-      console.error('❌ Resend API error:', emailError)
       return NextResponse.json({ success: false, error: 'Failed to send email' }, { status: 500 })
     }
   } catch (error: any) {
-    console.error('❌ Homepage contact error:', error)
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 })
   }
 }

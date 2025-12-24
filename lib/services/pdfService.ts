@@ -33,7 +33,6 @@ export async function generateUserDataPDF(userData: UserDataExport): Promise<Buf
       const logoBytes = fs.readFileSync(logoPath)
       logoImage = await pdfDoc.embedPng(logoBytes)
     } catch (error) {
-      console.warn('Could not embed logo:', error)
       // Continue without logo if file not found
     }
     
@@ -45,7 +44,6 @@ export async function generateUserDataPDF(userData: UserDataExport): Promise<Buf
     
     return Buffer.from(pdfBytes)
   } catch (error) {
-    console.error('Error generating PDF:', error)
     throw error
   }
 }

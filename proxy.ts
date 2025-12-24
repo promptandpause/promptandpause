@@ -7,12 +7,8 @@ export default async function middleware(request: NextRequest) {
 
   // ABSOLUTE FIRST PRIORITY - BYPASS EVERYTHING FOR ADMIN LOGIN
   if (pathname === '/admin-panel/login') {
-    console.log('[MIDDLEWARE] ✅ BYPASSING ALL CHECKS FOR ADMIN LOGIN')
     return NextResponse.next()
   }
-
-  console.log('[MIDDLEWARE] Processing request:', pathname)
-
   // Skip proxy for static files and public assets
   if (
     pathname.startsWith('/_next') ||
@@ -22,13 +18,11 @@ export default async function middleware(request: NextRequest) {
     pathname.startsWith('/api/admin/verify-access') ||
     pathname.match(/\.(jpg|jpeg|png|gif|svg|ico|css|js|woff|woff2|ttf|eot)$/)
   ) {
-    console.log('[MIDDLEWARE] Bypassing static asset:', pathname)
     return NextResponse.next()
   }
 
   // Always allow access to maintenance page
   if (pathname.startsWith('/maintenance')) {
-    console.log('[MIDDLEWARE] Allowing access to maintenance page')
     return NextResponse.next()
   }
 
@@ -91,26 +85,12 @@ export default async function middleware(request: NextRequest) {
       .select('is_enabled')
       .limit(1)
       .single()
-
-    console.log('[PROXY] Maintenance mode check:', { 
-      isEnabled: maintenanceMode?.is_enabled, 
-      error: maintenanceError,
-      pathname 
-    })
-
     if (maintenanceMode?.is_enabled) {
       // Get user to check if admin
       const { data: { user } } = await supabase.auth.getUser()
 
       // Allow admin users to bypass maintenance mode
       const isAdmin = user?.email ? await isAdminUser(user.email) : false
-
-      console.log('[PROXY] Maintenance mode active:', { 
-        userEmail: user?.email, 
-        isAdmin,
-        pathname 
-      })
-
       // Allow access to admin login page during maintenance
       if (pathname === '/admin-panel/login') {
         return response
@@ -118,22 +98,18 @@ export default async function middleware(request: NextRequest) {
 
       // Allow authenticated admins to access admin panel during maintenance
       if (isAdmin && pathname.startsWith('/admin-panel')) {
-        console.log('[PROXY] Admin accessing admin panel during maintenance')
         // Continue to normal admin panel auth checks below
       } else if (!isAdmin && !pathname.startsWith('/admin-panel')) {
         // Redirect non-admins to maintenance page
-        console.log('[PROXY] Redirecting to maintenance page')
         const maintenanceUrl = new URL('/maintenance', request.url)
         return NextResponse.redirect(maintenanceUrl)
       } else if (!isAdmin && pathname.startsWith('/admin-panel') && pathname !== '/admin-panel/login') {
         // Non-admin trying to access admin panel - redirect to maintenance
-        console.log('[PROXY] Non-admin trying to access admin panel during maintenance')
         const maintenanceUrl = new URL('/maintenance', request.url)
         return NextResponse.redirect(maintenanceUrl)
       }
     }
   } catch (error) {
-    console.error('[PROXY] Maintenance mode check error:', error)
     // Continue on error to prevent site lockout
   }
 
@@ -177,7 +153,6 @@ export default async function middleware(request: NextRequest) {
     const isEmailVerified = user.email_confirmed_at !== null
     
     if (!isOAuthUser && !isEmailVerified) {
-      console.log('[PROXY] Email not verified - redirecting to verify page')
       return NextResponse.redirect(new URL('/auth/verify', request.url))
     }
     
@@ -189,7 +164,6 @@ export default async function middleware(request: NextRequest) {
       .single()
 
     if (!preferences || prefsError) {
-      console.log('[PROXY] Global onboarding check - redirecting to onboarding')
       return NextResponse.redirect(new URL('/onboarding', request.url))
     }
   }
@@ -248,16 +222,8 @@ export default async function middleware(request: NextRequest) {
       .select('id')
       .eq('user_id', user.id)
       .single()
-
-    console.log('[PROXY] Dashboard access check:', {
-      userId: user.id,
-      hasPreferences: !!preferences,
-      error: prefsError?.code
-    })
-
     if (!preferences || prefsError) {
       // Redirect to onboarding if not completed
-      console.log('[PROXY] Redirecting to onboarding - no preferences found')
       return NextResponse.redirect(new URL('/onboarding', request.url))
     }
 
@@ -275,7 +241,6 @@ export default async function middleware(request: NextRequest) {
     const isEmailVerified = user.email_confirmed_at !== null
     
     if (!isOAuthUser && !isEmailVerified) {
-      console.log('[PROXY] Onboarding access denied - email not verified')
       return NextResponse.redirect(new URL('/auth/verify', request.url))
     }
 

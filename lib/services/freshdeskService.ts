@@ -14,12 +14,10 @@ function initFreshdeskClient(): AxiosInstance | null {
   const enabled = process.env.NEXT_PUBLIC_FRESHDESK_ENABLED === 'true'
 
   if (!enabled) {
-    console.log('ℹ️ Freshdesk integration disabled')
     return null
   }
 
   if (!domain || !apiKey) {
-    console.error('⚠️ Freshdesk credentials not configured')
     return null
   }
 
@@ -111,8 +109,6 @@ export async function createOrUpdateContact(
 
     if (searchResponse.data && searchResponse.data.length > 0) {
       const contactId = searchResponse.data[0].id
-      console.log('✅ Found existing Freshdesk contact:', contactId)
-      
       // Update if name or phone changed
       if (name || phone) {
         await client.put(`/contacts/${contactId}`, {
@@ -130,13 +126,10 @@ export async function createOrUpdateContact(
       email,
       phone: phone || null
     })
-
-    console.log('✅ Created Freshdesk contact:', createResponse.data.id)
     return createResponse.data.id
   } catch (error: any) {
     // Handle duplicate email error gracefully
     if (error.response?.data?.errors?.[0]?.code === 'duplicate_value') {
-      console.log('✅ Contact already exists with this email')
       // Try to find the existing contact by email
       try {
         const retryResponse = await client.get('/contacts', {
@@ -146,11 +139,9 @@ export async function createOrUpdateContact(
           return retryResponse.data[0].id
         }
       } catch (retryError) {
-        console.error('❌ Failed to retrieve existing contact:', retryError)
       }
       return null
     }
-    console.error('❌ Freshdesk contact error:', error.response?.data || error.message)
     return null
   }
 }
@@ -193,19 +184,10 @@ export async function createFreshdeskTicket(local: any): Promise<number> {
     // Always include email and name - Freshdesk uses these to find/create contact
     ticketData.email = local.user_email
     ticketData.name = local.user_name || local.user_email.split('@')[0]
-    
-    console.log('📤 Sending ticket payload:', JSON.stringify(ticketData, null, 2))
     const response = await client.post('/tickets', ticketData)
-    
-    console.log('✅ Created Freshdesk ticket:', response.data.id)
     return response.data.id
   } catch (error: any) {
-    console.error('❌ Failed to create Freshdesk ticket')
-    console.error('   Status:', error.response?.status)
-    console.error('   Error Data:', JSON.stringify(error.response?.data, null, 2))
-    console.error('   Message:', error.message)
     if (ticketData) {
-      console.error('   Payload:', JSON.stringify(ticketData, null, 2))
     }
     throw error
   }
@@ -234,9 +216,7 @@ export async function updateFreshdeskTicket(
     }
 
     await client.put(`/tickets/${ticketId}`, updates)
-    console.log('✅ Updated Freshdesk ticket:', ticketId)
   } catch (error: any) {
-    console.error('❌ Failed to update Freshdesk ticket:', error.response?.data || error.message)
     throw error
   }
 }
@@ -254,7 +234,6 @@ export async function getFreshdeskTicket(ticketId: number): Promise<any> {
     })
     return response.data
   } catch (error: any) {
-    console.error('❌ Failed to fetch Freshdesk ticket:', error.response?.data || error.message)
     throw error
   }
 }
@@ -275,9 +254,7 @@ export async function addNoteToTicket(
       body,
       private: isPrivate
     })
-    console.log('✅ Added note to Freshdesk ticket:', ticketId)
   } catch (error: any) {
-    console.error('❌ Failed to add note:', error.response?.data || error.message)
     throw error
   }
 }
@@ -301,7 +278,6 @@ async function logSync(payload: {
       created_at: new Date().toISOString()
     })
   } catch (error) {
-    console.error('Failed to log sync:', error)
   }
 }
 
@@ -311,7 +287,6 @@ async function logSync(payload: {
 export async function syncTicketToFreshdesk(localId: string): Promise<{ ticketId?: number }> {
   const enabled = process.env.NEXT_PUBLIC_FRESHDESK_ENABLED === 'true'
   if (!enabled) {
-    console.log('⏭️ Freshdesk sync skipped (disabled)')
     return {}
   }
 
@@ -360,13 +335,9 @@ export async function syncTicketToFreshdesk(localId: string): Promise<{ ticketId
       sync_status: 'synced',
       sync_data: { local, freshdeskTicketId }
     })
-
-    console.log('✅ Synced to Freshdesk:', { localId, freshdeskTicketId })
     return { ticketId: freshdeskTicketId }
 
   } catch (error: any) {
-    console.error('❌ Sync to Freshdesk failed:', error.message)
-
     // Update local record with error
     await supabase
       .from('support_requests')
@@ -460,8 +431,6 @@ export async function syncTicketFromFreshdesk(ticketId: number): Promise<{ id: s
       return { id: created.id }
     }
   } catch (error: any) {
-    console.error('❌ Sync from Freshdesk failed:', error.message)
-
     await logSync({
       freshdesk_ticket_id: ticketId.toString(),
       sync_direction: 'from_freshdesk',

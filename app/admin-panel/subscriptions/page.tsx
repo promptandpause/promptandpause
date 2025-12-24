@@ -70,7 +70,6 @@ export default function SubscriptionsPage() {
       const data = await response.json()
       setStats(data.stats)
     } catch (error) {
-      console.error('Error loading stats:', error)
     }
   }
 
@@ -97,7 +96,6 @@ export default function SubscriptionsPage() {
       setSubscriptions(data.subscriptions)
       setTotalPages(Math.ceil(data.total / limit))
     } catch (error) {
-      console.error('Error loading subscriptions:', error)
     } finally {
       setLoading(false)
     }
@@ -133,7 +131,6 @@ export default function SubscriptionsPage() {
       setTotalPages(Math.ceil(data.total / limit))
       setCurrentPage(1)
     } catch (error) {
-      console.error('Error searching subscriptions:', error)
     } finally {
       setLoading(false)
     }
@@ -193,7 +190,6 @@ export default function SubscriptionsPage() {
       link.click()
       document.body.removeChild(link)
     } catch (error) {
-      console.error('Error exporting subscriptions:', error)
     }
   }
 

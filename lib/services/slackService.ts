@@ -117,8 +117,6 @@ export async function sendDailyPromptToSlack(
       logger.error('slack_api_error', { status: response.status, errorText })
       return { success: false, error: `Slack API error: ${response.status}` }
     }
-
-    console.log('Daily prompt sent to Slack successfully')
     return { success: true }
 
   } catch (error) {
@@ -272,8 +270,6 @@ export async function sendWeeklyDigestToSlack(
       logger.error('slack_api_error', { status: response.status, errorText })
       return { success: false, error: `Slack API error: ${response.status}` }
     }
-
-    console.log('Weekly digest sent to Slack successfully')
     return { success: true }
 
   } catch (error) {

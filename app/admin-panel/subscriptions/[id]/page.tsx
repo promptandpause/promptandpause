@@ -90,7 +90,6 @@ export default function SubscriptionDetailPage() {
       // ✅ FIX: Default to 'monthly' if billing_cycle is null
       setNewCycle(data.subscription.billing_cycle || 'monthly')
     } catch (error) {
-      console.error('Error loading subscription:', error)
     } finally {
       setLoading(false)
     }
@@ -133,11 +132,6 @@ export default function SubscriptionDetailPage() {
       alert('No changes to update')
       return
     }
-
-    console.log('Sending updates to server:', updates) // Debug log
-
-    try {
-      setUpdating(true)
       const response = await fetch(`/api/admin/subscriptions/${userId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -150,11 +144,8 @@ export default function SubscriptionDetailPage() {
       }
 
       const result = await response.json()
-      console.log('Update successful:', result) // Debug log
-      alert('Subscription updated successfully')
       loadSubscription()
     } catch (error) {
-      console.error('Error updating subscription:', error)
       alert(`Failed to update subscription: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setUpdating(false)
@@ -193,7 +184,6 @@ export default function SubscriptionDetailPage() {
       alert(`Successfully gifted ${giftTrialMonths} month${giftTrialMonths > 1 ? 's' : ''} Premium trial!`)
       loadSubscription()
     } catch (error) {
-      console.error('Error gifting trial:', error)
       alert(`Failed to gift trial: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setUpdating(false)
@@ -223,7 +213,6 @@ export default function SubscriptionDetailPage() {
       alert('Subscription cancelled successfully')
       loadSubscription()
     } catch (error) {
-      console.error('Error cancelling subscription:', error)
       alert('Failed to cancel subscription')
     } finally {
       setUpdating(false)

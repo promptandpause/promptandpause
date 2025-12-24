@@ -84,7 +84,6 @@ export default function CronJobsPage() {
       const data = await response.json()
       setStats(data.stats)
     } catch (error) {
-      console.error('Error loading stats:', error)
     }
   }
 
@@ -111,7 +110,6 @@ export default function CronJobsPage() {
       setRuns(data.runs)
       setTotalPages(Math.ceil(data.total / limit))
     } catch (error) {
-      console.error('Error loading runs:', error)
     } finally {
       setLoading(false)
     }
@@ -152,7 +150,6 @@ export default function CronJobsPage() {
         toast.error(data.error || 'Failed to trigger cron job')
       }
     } catch (error) {
-      console.error('Error triggering cron job:', error)
       toast.error('Failed to trigger cron job')
     } finally {
       setTriggering(null)

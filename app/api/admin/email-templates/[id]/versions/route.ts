@@ -37,7 +37,6 @@ export async function GET(
 
     return NextResponse.json({ versions: result.data })
   } catch (error: any) {
-    console.error(`Error in GET /api/admin/email-templates/${params.id}/versions:`, error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
@@ -96,7 +95,6 @@ export async function POST(
       customization: result.data,
     })
   } catch (error: any) {
-    console.error(`Error in POST /api/admin/email-templates/${params.id}/versions:`, error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

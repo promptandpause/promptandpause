@@ -40,7 +40,6 @@ export default function TemplateVersionHistory({ templateId }: TemplateVersionHi
         setVersions(data.versions || [])
       }
     } catch (error) {
-      console.error('Error loading version history:', error)
     } finally {
       setLoading(false)
     }

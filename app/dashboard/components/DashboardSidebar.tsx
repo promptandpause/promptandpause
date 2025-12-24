@@ -50,7 +50,6 @@ export function DashboardSidebar() {
       // 1. LOAD FROM CACHE FIRST (instant UI)
       const cachedProfile = getCachedUserProfile(user.id)
       if (cachedProfile && isMounted) {
-        console.log('📦 Sidebar: Loading from cache (instant!)')
         setUserProfile({
           full_name: cachedProfile.full_name || user.email?.split('@')[0] || 'User',
           subscription_tier: tier
@@ -85,7 +84,6 @@ export function DashboardSidebar() {
         })
       }
     } catch (error) {
-      console.error('Error loading user profile:', error)
       const { data: { user } } = await supabase.auth.getUser()
       if (user && isMounted) {
         setUserProfile({

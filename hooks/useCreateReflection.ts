@@ -115,12 +115,10 @@ export function useCreateReflection() {
         setError(null)
 
         // Invalidate stats cache to trigger refresh
-        console.log('📍 [useCreateReflection] Invalidating stats cache after reflection creation')
         invalidateStats()
 
         return createdReflection
       } catch (err) {
-        console.error('Error creating reflection:', err)
         const errorMessage = err instanceof Error ? err.message : 'Unknown error'
         setError(errorMessage)
         setReflection(null)

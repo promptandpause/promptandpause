@@ -51,7 +51,6 @@ export async function GET(request: NextRequest) {
       count: decrypted.length
     })
   } catch (error: any) {
-    console.error('Error fetching reflections:', error)
     return NextResponse.json(
       { error: error.message || 'Failed to fetch reflections' },
       { status: 500 }
@@ -174,7 +173,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     )
   } catch (error: any) {
-    console.error('Error creating reflection:', error)
     return NextResponse.json(
       { error: error.message || 'Failed to create reflection' },
       { status: 500 }

@@ -36,7 +36,6 @@ export async function GET(
       responses: result.responses,
     })
   } catch (error: any) {
-    console.error('Error in GET /api/admin/support/[id]:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
@@ -68,7 +67,6 @@ export async function PATCH(
 
     return NextResponse.json({ ticket: result.ticket })
   } catch (error: any) {
-    console.error('Error in PATCH /api/admin/support/[id]:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
@@ -100,7 +98,6 @@ export async function POST(
 
     return NextResponse.json({ response: result.response })
   } catch (error: any) {
-    console.error('Error in POST /api/admin/support/[id]:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

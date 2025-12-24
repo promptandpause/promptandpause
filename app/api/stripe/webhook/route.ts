@@ -20,7 +20,6 @@ export async function POST(request: NextRequest) {
   try {
     event = stripe.webhooks.constructEvent(body, signature, webhookSecret)
   } catch (err: any) {
-    console.error(`⚠️  Webhook signature verification failed:`, err.message)
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
   }
 
@@ -33,7 +32,6 @@ export async function POST(request: NextRequest) {
         const userId = session.metadata?.supabase_user_id
 
         if (!userId) {
-          console.error('No user ID in session metadata')
           break
         }
 
@@ -57,9 +55,6 @@ export async function POST(request: NextRequest) {
           stripe_event_id: event.id,
           metadata: { session_id: session.id },
         })
-
-        console.log(`✅ Subscription created for user ${userId}`)
-        
         // Send subscription confirmation email
         const { data: userProfile } = await supabase
           .from('profiles')
@@ -81,7 +76,6 @@ export async function POST(request: NextRequest) {
             planName,
             userProfile.full_name
           ).catch(error => {
-            console.error('Failed to send subscription confirmation email:', error)
           })
         }
         break
@@ -99,7 +93,6 @@ export async function POST(request: NextRequest) {
           .single()
 
         if (!profile) {
-          console.error(`No profile found for customer ${customerId}`)
           break
         }
 
@@ -124,8 +117,6 @@ export async function POST(request: NextRequest) {
           stripe_event_id: event.id,
           metadata: { subscription_id: subscription.id },
         })
-
-        console.log(`✅ Subscription updated for user ${profile.id}`)
         break
       }
 
@@ -141,7 +132,6 @@ export async function POST(request: NextRequest) {
           .single()
 
         if (!profile) {
-          console.error(`No profile found for customer ${customerId}`)
           break
         }
 
@@ -163,9 +153,6 @@ export async function POST(request: NextRequest) {
           stripe_event_id: event.id,
           metadata: { subscription_id: subscription.id },
         })
-
-        console.log(`✅ Subscription cancelled for user ${profile.id}`)
-        
         // Send cancellation email
         const { data: cancelProfile } = await supabase
           .from('profiles')
@@ -185,7 +172,6 @@ export async function POST(request: NextRequest) {
             planName,
             cancelProfile.full_name
           ).catch(error => {
-            console.error('Failed to send cancellation email:', error)
           })
         }
         break
@@ -203,7 +189,6 @@ export async function POST(request: NextRequest) {
           .single()
 
         if (!profile) {
-          console.error(`No profile found for customer ${customerId}`)
           break
         }
 
@@ -216,9 +201,6 @@ export async function POST(request: NextRequest) {
           stripe_event_id: event.id,
           metadata: { invoice_id: invoice.id, amount: invoice.amount_due },
         })
-
-        console.log(`⚠️  Payment failed for user ${profile.id}`)
-        
         // Send payment failure notification
         const { data: failProfile } = await supabase
           .from('profiles')
@@ -229,19 +211,16 @@ export async function POST(request: NextRequest) {
         if (failProfile?.email) {
           // TODO: Create a dedicated payment failure email template in emailService
           // For now, we'll log it and handle via Stripe's built-in failed payment emails
-          console.log(`Payment failed for ${failProfile.email}, amount: £${(invoice.amount_due / 100).toFixed(2)}`)
           // Note: Stripe automatically sends payment failure emails if configured in dashboard
         }
         break
       }
 
       default:
-        console.log(`Unhandled event type: ${event.type}`)
     }
 
     return NextResponse.json({ received: true })
   } catch (error: any) {
-    console.error('Error processing webhook:', error)
     return NextResponse.json(
       { error: 'Webhook handler failed' },
       { status: 500 }

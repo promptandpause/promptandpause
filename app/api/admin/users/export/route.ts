@@ -49,7 +49,6 @@ export async function GET(request: NextRequest) {
       },
     })
   } catch (error: any) {
-    console.error('Error exporting users:', error)
     return NextResponse.json(
       { error: error.message || 'Failed to export users' },
       { status: 500 }

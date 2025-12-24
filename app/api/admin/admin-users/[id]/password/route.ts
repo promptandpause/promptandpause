@@ -54,7 +54,6 @@ export async function PATCH(
       message: 'Password updated successfully'
     })
   } catch (error: any) {
-    console.error('Error updating password:', error)
     return NextResponse.json(
       { error: error.message || 'Failed to update password' },
       { status: 500 }

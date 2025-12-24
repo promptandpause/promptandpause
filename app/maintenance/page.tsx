@@ -38,7 +38,6 @@ export default function MaintenancePage() {
           router.push('/dashboard')
         }
       } catch (error) {
-        console.error('Error checking maintenance mode:', error)
       }
     }
 

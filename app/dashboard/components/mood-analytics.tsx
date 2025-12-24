@@ -105,7 +105,6 @@ export default function MoodAnalytics() {
         toast.error('Failed to load mood analytics')
       }
     } catch (error) {
-      console.error('Error fetching mood analytics:', error)
       toast.error('Failed to load mood analytics')
     } finally {
       setLoading(false)

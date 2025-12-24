@@ -92,7 +92,6 @@ function AdminPanelContent() {
         setSystemHealth(healthData)
       }
     } catch (err: any) {
-      console.error('Error loading dashboard:', err)
       setError(err.message)
     } finally {
       setLoading(false)

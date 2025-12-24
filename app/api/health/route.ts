@@ -642,7 +642,6 @@ async function sendInfrastructureAlert(failedSystems: SystemStatus[]): Promise<b
   try {
     const resendKey = process.env.RESEND_API_KEY
     if (!resendKey) {
-      console.error('Cannot send alert: Resend key not configured')
       return false
     }
 
@@ -687,14 +686,10 @@ async function sendInfrastructureAlert(failedSystems: SystemStatus[]): Promise<b
     })
 
     if (error) {
-      console.error('Failed to send infrastructure alert:', error)
       return false
     }
-
-    console.log('Infrastructure alert sent successfully')
     return true
   } catch (error) {
-    console.error('Error sending infrastructure alert:', error)
     return false
   }
 }
@@ -832,7 +827,6 @@ export async function GET() {
       },
     })
   } catch (error) {
-    console.error('Health check error:', error)
     return NextResponse.json(
       {
         overall: 'down',

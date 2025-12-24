@@ -108,7 +108,6 @@ export async function POST(
     })
   } catch (error: any) {
     const params = await context.params
-    console.error(`Error in POST /api/admin/email-templates/${params.id}/preview:`, error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

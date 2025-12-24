@@ -82,7 +82,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       document.documentElement.lang = languageCode
       
       // TODO: When backend is connected, also save to user profile
-      console.log(`Language changed to: ${lang.name} (${lang.nativeName})`)
     }
   }
 

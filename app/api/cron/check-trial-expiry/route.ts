@@ -34,9 +34,6 @@ export async function GET(request: NextRequest) {
         { status: 401 }
       )
     }
-
-    console.log('[CRON] Starting trial expiry check...')
-
     const supabase = createServiceRoleClient()
 
     // Find all users with expired trials (premium status but subscription_end_date in the past)
@@ -56,16 +53,12 @@ export async function GET(request: NextRequest) {
     }
 
     if (!expiredUsers || expiredUsers.length === 0) {
-      console.log('[CRON] No expired trials found')
       return NextResponse.json({
         success: true,
         message: 'No expired trials found',
         processed: 0,
       })
     }
-
-    console.log(`[CRON] Found ${expiredUsers.length} expired trials to process`)
-
     const results = {
       total: expiredUsers.length,
       downgraded: 0,
@@ -76,8 +69,6 @@ export async function GET(request: NextRequest) {
     // Process each expired trial user
     for (const user of expiredUsers) {
       try {
-        console.log(`[CRON] Processing user ${user.id} (${user.email})`)
-
         // 1. Downgrade user to freemium
         const { error: updateError } = await supabase
           .from('profiles')
@@ -94,8 +85,6 @@ export async function GET(request: NextRequest) {
         }
 
         results.downgraded++
-        console.log(`[CRON] ✓ Downgraded user ${user.email} to freemium`)
-
         // 2. Send trial expiration email
         const emailResult = await sendTrialExpiredEmail(
           user.email,
@@ -105,7 +94,6 @@ export async function GET(request: NextRequest) {
 
         if (emailResult.success) {
           results.emailsSent++
-          console.log(`[CRON] ✓ Sent trial expiry email to ${user.email}`)
         } else {
           logger.warn('trial_expiry_email_error', { 
             error: emailResult.error, 
@@ -136,9 +124,6 @@ export async function GET(request: NextRequest) {
         results.errors.push(`Processing error for ${user.email}: ${errorMessage}`)
       }
     }
-
-    console.log('[CRON] Trial expiry check completed', results)
-
     return NextResponse.json({
       success: true,
       message: 'Trial expiry check completed',

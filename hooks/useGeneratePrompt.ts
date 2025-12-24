@@ -30,7 +30,7 @@ export interface GeneratedPrompt {
  * const handleGenerateClick = async () => {
  *   const result = await generatePrompt()
  *   if (result) {
- *     console.log('Generated:', result)
+ *
  *   }
  * }
  * ```
@@ -92,12 +92,10 @@ export function useGeneratePrompt() {
       setError(null)
 
       // Invalidate stats cache to trigger refresh
-      console.log('📍 [useGeneratePrompt] Invalidating stats cache after prompt generation')
       invalidateStats()
 
       return generatedPrompt
     } catch (err) {
-      console.error('Error generating prompt:', err)
       const errorMessage = err instanceof Error ? err.message : 'Unknown error'
       setError(errorMessage)
       setPrompt(null)

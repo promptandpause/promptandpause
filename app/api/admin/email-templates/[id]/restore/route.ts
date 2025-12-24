@@ -45,7 +45,6 @@ export async function POST(
       customization: result.data,
     })
   } catch (error: any) {
-    console.error(`Error in POST /api/admin/email-templates/${params.id}/restore:`, error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

@@ -49,9 +49,9 @@ function log(level: 'info'|'warn'|'error', event: string, meta?: any) {
     meta: redact(meta),
   }
   const line = JSON.stringify(entry)
-  if (level === 'error') console.error(line)
-  else if (level === 'warn') console.warn(line)
-  else console.log(line)
+  if (level === 'error')
+  else if (level === 'warn')
+  else
 }
 
 export const logger = {

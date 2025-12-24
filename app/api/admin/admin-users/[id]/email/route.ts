@@ -54,7 +54,6 @@ export async function PATCH(
       message: 'Email updated successfully'
     })
   } catch (error: any) {
-    console.error('Error updating email:', error)
     return NextResponse.json(
       { error: error.message || 'Failed to update email' },
       { status: 500 }

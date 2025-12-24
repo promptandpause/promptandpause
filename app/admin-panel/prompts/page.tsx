@@ -60,7 +60,6 @@ export default function PromptLibraryPage() {
         setTotalPages(data.totalPages)
       }
     } catch (error) {
-      console.error('Error fetching prompts:', error)
     } finally {
       setLoading(false)
     }
@@ -116,7 +115,6 @@ export default function PromptLibraryPage() {
         fetchPrompts()
       }
     } catch (error) {
-      console.error('Error saving prompt:', error)
     }
   }
 
@@ -129,7 +127,6 @@ export default function PromptLibraryPage() {
         fetchPrompts()
       }
     } catch (error) {
-      console.error('Error deleting prompt:', error)
     }
   }
 

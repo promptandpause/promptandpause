@@ -36,7 +36,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ templates: result.data })
   } catch (error: any) {
-    console.error('Error in GET /api/admin/email-templates:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
@@ -103,7 +102,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ template: result.data }, { status: 201 })
   } catch (error: any) {
-    console.error('Error in POST /api/admin/email-templates:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

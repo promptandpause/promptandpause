@@ -33,7 +33,6 @@ export async function POST(request: NextRequest) {
       .eq('user_id', user.id)
 
     if (updateError) {
-      console.error('Error disconnecting Slack:', updateError)
       return NextResponse.json(
         { error: 'Failed to disconnect Slack' },
         { status: 500 }
@@ -45,7 +44,6 @@ export async function POST(request: NextRequest) {
       message: 'Slack disconnected successfully' 
     })
   } catch (error) {
-    console.error('Error disconnecting Slack:', error)
     return NextResponse.json(
       { error: 'Failed to disconnect Slack' },
       { status: 500 }

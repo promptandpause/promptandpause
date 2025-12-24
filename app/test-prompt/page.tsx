@@ -43,7 +43,6 @@ export default function TestPromptPage() {
                 type="button"
                 onClick={(e) => {
                   e.preventDefault()
-                  console.log('Mood clicked:', mood)
                   setSelectedMood(mood)
                 }}
                 className={`text-2xl p-2 rounded-lg transition-all ${
@@ -68,7 +67,6 @@ export default function TestPromptPage() {
                 type="button"
                 onClick={(e) => {
                   e.preventDefault()
-                  console.log('Tag clicked:', tag)
                   toggleTag(tag)
                 }}
                 className={`px-3 py-1 rounded-full text-xs font-medium border cursor-pointer transition-all ${

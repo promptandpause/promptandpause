@@ -70,7 +70,6 @@ export default function UsersPage() {
       setUsers(data.data)
       setTotal(data.total)
     } catch (error) {
-      console.error('Error loading users:', error)
     } finally {
       setLoading(false)
     }
@@ -86,7 +85,6 @@ export default function UsersPage() {
       a.download = `users-export-${new Date().toISOString().split('T')[0]}.csv`
       a.click()
     } catch (error) {
-      console.error('Error exporting users:', error)
     }
   }
 

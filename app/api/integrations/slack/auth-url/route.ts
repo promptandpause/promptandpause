@@ -26,7 +26,6 @@ export async function GET(request: NextRequest) {
     const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/integrations/slack/oauth/callback`
 
     if (!clientId) {
-      console.error('SLACK_CLIENT_ID not configured')
       return NextResponse.json(
         { error: 'Slack integration not configured' },
         { status: 500 }
@@ -59,7 +58,6 @@ export async function GET(request: NextRequest) {
 
     return res
   } catch (error) {
-    console.error('Error generating Slack auth URL:', error)
     return NextResponse.json(
       { error: 'Failed to generate authorization URL' },
       { status: 500 }

@@ -239,8 +239,6 @@ export const ServerCache = {
  */
 export async function warmServerCache() {
   try {
-    console.log('[ServerCache] Cache warming initiated')
-    
     // This would be called from a separate initialization script
     // Example: Pre-load active email templates
     // const { getAllEmailTemplates } = await import('@/lib/services/emailTemplateService')
@@ -248,10 +246,7 @@ export async function warmServerCache() {
     // if (result.success && result.data) {
     //   EmailTemplateCache.setAll(result.data)
     // }
-    
-    console.log('[ServerCache] Cache warming completed')
   } catch (error) {
-    console.error('[ServerCache] Failed to warm cache:', error)
   }
 }
 

@@ -70,7 +70,6 @@ export async function POST(request: NextRequest) {
       endDateISO: endDate.toISOString(),
     })
   } catch (error: any) {
-    console.error('Error granting gifted subscription:', error)
     return NextResponse.json(
       { error: error.message || 'Failed to grant subscription' },
       { status: 500 }

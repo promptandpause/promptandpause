@@ -67,7 +67,6 @@ export async function getStripePricing(): Promise<PricingData> {
       },
     }
   } catch (error) {
-    console.error('Error fetching Stripe prices:', error)
     throw new Error('Failed to fetch pricing from Stripe')
   }
 }
@@ -99,12 +98,10 @@ export async function getCachedStripePricing(): Promise<PricingData> {
 
   // Return cached data if still valid
   if (cachedPricing && (now - cacheTimestamp) < CACHE_DURATION) {
-    console.log('📦 Using cached Stripe pricing')
     return cachedPricing
   }
 
   // Fetch fresh data
-  console.log('🔄 Fetching fresh Stripe pricing')
   cachedPricing = await getStripePricing()
   cacheTimestamp = now
 

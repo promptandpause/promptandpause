@@ -27,7 +27,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ templates: result.templates })
   } catch (error: any) {
-    console.error('Error in GET /api/admin/emails/templates:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

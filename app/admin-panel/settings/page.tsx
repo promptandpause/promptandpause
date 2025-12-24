@@ -56,7 +56,6 @@ export default function SettingsPage() {
         setFlags(data.flags)
       }
     } catch (error) {
-      console.error('Error fetching settings:', error)
     } finally {
       setLoading(false)
     }
@@ -81,7 +80,6 @@ export default function SettingsPage() {
         fetchData()
       }
     } catch (error) {
-      console.error('Error saving setting:', error)
     }
   }
 
@@ -97,7 +95,6 @@ export default function SettingsPage() {
         fetchData()
       }
     } catch (error) {
-      console.error('Error toggling flag:', error)
     }
   }
 

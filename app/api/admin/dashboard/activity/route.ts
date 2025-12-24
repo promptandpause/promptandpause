@@ -47,7 +47,6 @@ export async function GET(request: NextRequest) {
       data: result.activities
     })
   } catch (error: any) {
-    console.error('Error fetching recent activity:', error)
     return NextResponse.json(
       { error: error.message || 'Failed to fetch recent activity' },
       { status: 500 }

@@ -26,7 +26,6 @@ export default function CookieConsent() {
         return () => clearTimeout(timer)
       }
     } catch (error) {
-      console.error('Error accessing localStorage:', error)
     }
   }, [])
 
@@ -36,7 +35,6 @@ export default function CookieConsent() {
       localStorage.setItem("cookieConsent", "accepted")
       closePopup()
     } catch (error) {
-      console.error('Error saving cookie consent:', error)
       closePopup()
     }
   }
@@ -47,7 +45,6 @@ export default function CookieConsent() {
       localStorage.setItem("cookieConsent", "never_show")
       closePopup()
     } catch (error) {
-      console.error('Error saving cookie preference:', error)
       closePopup()
     }
   }

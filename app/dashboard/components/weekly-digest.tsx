@@ -26,7 +26,6 @@ export default function WeeklyDigest() {
           setDigest(weeklyData)
         }
       } catch (error) {
-        console.error('Error loading weekly digest:', error)
       }
     }
 

@@ -77,7 +77,6 @@ export default function SupportTicketsPage() {
         setTotalPages(ticketsData.totalPages)
       }
     } catch (error) {
-      console.error('Error fetching support data:', error)
     } finally {
       setLoading(false)
     }

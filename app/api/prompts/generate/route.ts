@@ -90,7 +90,6 @@ export async function POST(request: NextRequest) {
     // Select a focus area for this session (random or weighted)
     const selectedFocusArea = selectFocusArea(allFocusAreas, tier === 'premium')
     if (selectedFocusArea) {
-      console.log(`📍 Focus area selected for this session: ${selectedFocusArea}`)
     }
 
     // Build context for AI generation
@@ -105,18 +104,6 @@ export async function POST(request: NextRequest) {
         .slice(0, 5),
       user_reason: preferencesResult.preferences?.reason || undefined,
     }
-
-    console.log('[PROMPT_GEN] Context built:', {
-      userId: user.id,
-      tier,
-      hasPreferences: !!preferencesResult.preferences,
-      userReason: context.user_reason,
-      focusAreasCount: context.focus_areas.length,
-      focusAreas: context.focus_areas,
-      selectedFocusArea,
-      recentReflectionsCount: recentReflections.length
-    })
-
     // Generate prompt using AI service
     const { prompt, provider, model } = await generatePrompt(context)
 
@@ -137,7 +124,6 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (saveError) {
-      console.error('Error saving generated prompt:', saveError)
       // Return the prompt anyway, even if saving fails
       return NextResponse.json({
         success: true,
@@ -166,7 +152,6 @@ export async function POST(request: NextRequest) {
         })
       
       if (usageError) {
-        console.warn('Error tracking focus area usage:', usageError)
         // Non-critical error, don't fail the response
       }
     }
@@ -190,8 +175,6 @@ export async function POST(request: NextRequest) {
       }, { headers })
     }
   } catch (error) {
-    console.error('Unexpected error in /api/prompts/generate:', error)
-    
     // Check if it's an AI generation error
     if (error instanceof Error && error.message.includes('Failed to generate prompt')) {
       return NextResponse.json(

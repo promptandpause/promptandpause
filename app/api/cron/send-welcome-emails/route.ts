@@ -25,9 +25,6 @@ export async function GET(request: NextRequest) {
     }
 
     const supabase = createServiceRoleClient()
-    
-    console.log('[CRON] Processing welcome email queue...')
-
     // Get pending welcome emails
     const { data: pendingEmails, error: fetchError } = await supabase
       .from('email_queue')
@@ -40,7 +37,6 @@ export async function GET(request: NextRequest) {
       .limit(50) // Process max 50 per run
 
     if (fetchError) {
-      console.error('[CRON] Error fetching email queue:', fetchError)
       return NextResponse.json(
         { error: 'Failed to fetch email queue', details: fetchError.message },
         { status: 500 }
@@ -48,16 +44,12 @@ export async function GET(request: NextRequest) {
     }
 
     if (!pendingEmails || pendingEmails.length === 0) {
-      console.log('[CRON] No pending welcome emails')
       return NextResponse.json({
         success: true,
         message: 'No pending emails to process',
         processed: 0
       })
     }
-
-    console.log(`[CRON] Found ${pendingEmails.length} pending welcome emails`)
-
     const results = {
       processed: 0,
       sent: 0,
@@ -87,7 +79,6 @@ export async function GET(request: NextRequest) {
             .eq('id', emailJob.id)
 
           results.sent++
-          console.log(`✅ Sent welcome email to ${emailJob.recipient_email}`)
         } else {
           // Mark as failed, increment retry count
           await supabase
@@ -102,10 +93,8 @@ export async function GET(request: NextRequest) {
 
           results.failed++
           results.errors.push(`${emailJob.recipient_email}: ${emailResult.error}`)
-          console.error(`❌ Failed to send welcome email to ${emailJob.recipient_email}:`, emailResult.error)
         }
       } catch (error) {
-        console.error(`[CRON] Unexpected error processing ${emailJob.recipient_email}:`, error)
         results.errors.push(`${emailJob.recipient_email}: ${error instanceof Error ? error.message : 'Unknown error'}`)
         
         // Increment retry count
@@ -119,9 +108,6 @@ export async function GET(request: NextRequest) {
           .eq('id', emailJob.id)
       }
     }
-
-    console.log('[CRON] Welcome email processing complete:', results)
-
     return NextResponse.json({
       success: true,
       message: `Processed ${results.processed} emails, sent ${results.sent}, failed ${results.failed}`,
@@ -129,7 +115,6 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('[CRON] Unexpected error in welcome email processing:', error)
     return NextResponse.json(
       {
         error: 'Internal server error',

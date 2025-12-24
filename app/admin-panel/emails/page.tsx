@@ -90,7 +90,6 @@ export default function EmailTrackingPage() {
         setTotalPages(logsData.totalPages)
       }
     } catch (error) {
-      console.error('Error fetching email data:', error)
     } finally {
       setLoading(false)
     }

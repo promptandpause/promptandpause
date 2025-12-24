@@ -24,7 +24,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ flags: result.flags })
   } catch (error: any) {
-    console.error('Error in GET /api/admin/settings/feature-flags:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
@@ -52,7 +51,6 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({ flag: result.flag })
   } catch (error: any) {
-    console.error('Error in PATCH /api/admin/settings/feature-flags:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

@@ -145,7 +145,6 @@ function ContactSupportPageContent() {
         })
       }
     } catch (error) {
-      console.error('Error loading user profile:', error)
     } finally {
       setLoading(false)
     }
@@ -203,7 +202,6 @@ function ContactSupportPageContent() {
         throw new Error(result.error || 'Failed to send message')
       }
     } catch (error) {
-      console.error('Error submitting support request:', error)
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to send message. Please try again.",

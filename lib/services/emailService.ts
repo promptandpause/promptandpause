@@ -296,7 +296,6 @@ export async function sendWelcomeEmail(
 ): Promise<{ success: boolean; emailId?: string; error?: string }> {
   try {
     if (!process.env.RESEND_API_KEY) {
-      console.error('RESEND_API_KEY not configured')
       return { success: false, error: 'Email service not configured' }
     }
 
@@ -316,8 +315,6 @@ export async function sendWelcomeEmail(
       logger.error('email_welcome_send_error', { error, email })
       return { success: false, error: error.message }
     }
-
-    console.log('Welcome email sent successfully:', data?.id)
     return { success: true, emailId: data?.id }
   } catch (error) {
     logger.error('email_welcome_unexpected_error', { error, email })
@@ -345,7 +342,6 @@ export async function sendDailyPromptEmail(
 ): Promise<{ success: boolean; emailId?: string; error?: string }> {
   try {
     if (!process.env.RESEND_API_KEY) {
-      console.error('RESEND_API_KEY not configured')
       await logEmailDelivery(userId, 'daily_prompt', email, 'failed', null, 'API key not configured')
       return { success: false, error: 'Email service not configured' }
     }
@@ -367,8 +363,6 @@ export async function sendDailyPromptEmail(
       await logEmailDelivery(userId, 'daily_prompt', email, 'failed', null, error.message)
       return { success: false, error: error.message }
     }
-
-    console.log('Daily prompt email sent successfully:', data?.id)
     await logEmailDelivery(userId, 'daily_prompt', email, 'sent', data?.id || null)
     
     return { success: true, emailId: data?.id }
@@ -397,7 +391,6 @@ export async function sendWeeklyDigestEmail(
 ): Promise<{ success: boolean; emailId?: string; error?: string }> {
   try {
     if (!process.env.RESEND_API_KEY) {
-      console.error('RESEND_API_KEY not configured')
       await logEmailDelivery(userId, 'weekly_digest', email, 'failed', null, 'API key not configured')
       return { success: false, error: 'Email service not configured' }
     }
@@ -419,8 +412,6 @@ export async function sendWeeklyDigestEmail(
       await logEmailDelivery(userId, 'weekly_digest', email, 'failed', null, error.message)
       return { success: false, error: error.message }
     }
-
-    console.log('Weekly digest email sent successfully:', data?.id)
     await logEmailDelivery(userId, 'weekly_digest', email, 'sent', data?.id || null)
     
     return { success: true, emailId: data?.id }
@@ -457,7 +448,6 @@ export async function sendTrialExpiredEmail(
 ): Promise<{ success: boolean; emailId?: string; error?: string }> {
   try {
     if (!process.env.RESEND_API_KEY) {
-      console.error('RESEND_API_KEY not configured')
       await logEmailDelivery(userId, 'trial_expired', email, 'failed', null, 'API key not configured')
       return { success: false, error: 'Email service not configured' }
     }
@@ -480,8 +470,6 @@ export async function sendTrialExpiredEmail(
       await logEmailDelivery(userId, 'trial_expired', email, 'failed', null, error.message)
       return { success: false, error: error.message }
     }
-
-    console.log('Trial expired email sent successfully:', data?.id)
     await logEmailDelivery(userId, 'trial_expired', email, 'sent', data?.id || null)
     
     return { success: true, emailId: data?.id }
@@ -502,7 +490,6 @@ export async function sendSubscriptionEmail(
 ): Promise<{ success: boolean; emailId?: string; error?: string }> {
   try {
     if (!process.env.RESEND_API_KEY) {
-      console.error('RESEND_API_KEY not configured')
       const emailType = type === 'confirmation' ? 'subscription_confirm' : 'subscription_cancelled'
       await logEmailDelivery(userId, emailType, email, 'failed', null, 'API key not configured')
       return { success: false, error: 'Email service not configured' }
@@ -534,8 +521,6 @@ export async function sendSubscriptionEmail(
       await logEmailDelivery(userId, emailType, email, 'failed', null, error.message)
       return { success: false, error: error.message }
     }
-
-    console.log(`${type} email sent successfully:`, data?.id)
     await logEmailDelivery(userId, emailType, email, 'sent', data?.id || null)
     
     return { success: true, emailId: data?.id }
@@ -569,7 +554,6 @@ export async function sendDataExportEmail(
 ): Promise<{ success: boolean; emailId?: string; error?: string }> {
   try {
     if (!process.env.RESEND_API_KEY) {
-      console.error('RESEND_API_KEY not configured')
       await logEmailDelivery(userId, 'data_export', email, 'failed', null, 'API key not configured')
       return { success: false, error: 'Email service not configured' }
     }
@@ -597,8 +581,6 @@ export async function sendDataExportEmail(
       await logEmailDelivery(userId, 'data_export', email, 'failed', null, error.message)
       return { success: false, error: error.message }
     }
-
-    console.log('Data export email sent successfully:', data?.id)
     await logEmailDelivery(userId, 'data_export', email, 'sent', data?.id || null)
     
     return { success: true, emailId: data?.id }
@@ -1072,7 +1054,6 @@ export async function sendSupportConfirmationEmail(
 ): Promise<{ success: boolean; emailId?: string; error?: string }> {
   try {
     if (!process.env.RESEND_API_KEY) {
-      console.error('RESEND_API_KEY not configured')
       return { success: false, error: 'Email service not configured' }
     }
 
@@ -1091,8 +1072,6 @@ export async function sendSupportConfirmationEmail(
       logger.error('email_support_confirmation_send_error', { error, email })
       return { success: false, error: error.message }
     }
-
-    console.log('Support confirmation email sent successfully:', data?.id)
     return { success: true, emailId: data?.id }
   } catch (error) {
     logger.error('email_support_confirmation_unexpected_error', { error, email })
@@ -1121,7 +1100,6 @@ export async function sendSupportEmail(params: {
 }): Promise<{ success: boolean; emailId?: string; error?: string }> {
   try {
     if (!process.env.RESEND_API_KEY) {
-      console.error('RESEND_API_KEY not configured')
       return { success: false, error: 'Email service not configured' }
     }
 
@@ -1140,8 +1118,6 @@ export async function sendSupportEmail(params: {
       logger.error('email_support_send_error', { error, userEmail })
       return { success: false, error: error.message }
     }
-
-    console.log('Support email sent successfully:', data?.id)
     return { success: true, emailId: data?.id }
   } catch (error) {
     logger.error('email_support_unexpected_error', { error })
@@ -1376,7 +1352,6 @@ export async function sendMaintenanceStartEmail(
 ): Promise<{ success: boolean; emailId?: string; error?: string }> {
   try {
     if (!process.env.RESEND_API_KEY) {
-      console.error('RESEND_API_KEY not configured')
       return { success: false, error: 'Email service not configured' }
     }
 
@@ -1396,8 +1371,6 @@ export async function sendMaintenanceStartEmail(
       logger.error('email_maintenance_start_send_error', { error, email })
       return { success: false, error: error.message }
     }
-
-    console.log('Maintenance start email sent successfully:', data?.id)
     return { success: true, emailId: data?.id }
   } catch (error) {
     logger.error('email_maintenance_start_unexpected_error', { error, email })
@@ -1427,7 +1400,6 @@ export async function sendMaintenanceCompleteEmail(
 ): Promise<{ success: boolean; emailId?: string; error?: string }> {
   try {
     if (!process.env.RESEND_API_KEY) {
-      console.error('RESEND_API_KEY not configured')
       return { success: false, error: 'Email service not configured' }
     }
 
@@ -1447,8 +1419,6 @@ export async function sendMaintenanceCompleteEmail(
       logger.error('email_maintenance_complete_send_error', { error, email })
       return { success: false, error: error.message }
     }
-
-    console.log('Maintenance complete email sent successfully:', data?.id)
     return { success: true, emailId: data?.id }
   } catch (error) {
     logger.error('email_maintenance_complete_unexpected_error', { error, email })
@@ -1642,7 +1612,6 @@ export async function sendAdminCredentialsEmail(
 ): Promise<{ success: boolean; emailId?: string; error?: string }> {
   try {
     if (!process.env.RESEND_API_KEY) {
-      console.error('RESEND_API_KEY not configured')
       return { success: false, error: 'Email service not configured' }
     }
 
@@ -1717,8 +1686,6 @@ export async function sendAdminCredentialsEmail(
       logger.error('email_admin_credentials_send_error', { error, email })
       return { success: false, error: error.message }
     }
-
-    console.log('Admin credentials email sent successfully:', data?.id)
     return { success: true, emailId: data?.id }
   } catch (error) {
     logger.error('email_admin_credentials_unexpected_error', { error, email })
@@ -1742,7 +1709,6 @@ export async function sendTrialExpirationEmail(
 ): Promise<{ success: boolean; emailId?: string; error?: string }> {
   try {
     if (!process.env.RESEND_API_KEY) {
-      console.error('RESEND_API_KEY not configured')
       return { success: false, error: 'Email service not configured' }
     }
 
@@ -1780,8 +1746,6 @@ export async function sendTrialExpirationEmail(
       logger.error('email_trial_expiration_send_error', { error, email })
       return { success: false, error: error.message }
     }
-
-    console.log('Trial expiration email sent successfully:', data?.id)
     return { success: true, emailId: data?.id }
   } catch (error) {
     logger.error('email_trial_expiration_unexpected_error', { error, email })

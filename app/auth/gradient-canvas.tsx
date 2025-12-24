@@ -11,7 +11,6 @@ export function GradientCanvas() {
 
     const gl = canvas.getContext("webgl")
     if (!gl) {
-      console.error("WebGL not supported")
       return
     }
 

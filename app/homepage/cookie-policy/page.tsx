@@ -58,13 +58,13 @@ export default function CookiePolicyPage() {
             marketing: parsed.marketing ?? false,
           }))
         } catch (error) {
-          console.error("Failed to parse cookie preferences:", error)
+
           // Clear the corrupted cookie
           document.cookie = "cookie_preferences=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;"
         }
       }
     } catch (error) {
-      console.error("Error in cookie preferences useEffect:", error)
+
     }
   }, [])
 
@@ -82,7 +82,6 @@ export default function CookiePolicyPage() {
     setSaveSuccess(true)
     setTimeout(() => setSaveSuccess(false), 3000)
 
-    console.log("[v0] Cookie preferences saved:", preferences)
   }
 
   const sections = [

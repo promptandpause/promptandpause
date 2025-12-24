@@ -58,18 +58,14 @@ export function GlobalSyncProvider({ children }: { children: React.ReactNode }) 
    */
   const syncNow = useCallback(async () => {
     if (isSyncing) {
-      console.log('Sync already in progress, skipping...')
       return
     }
-
-    console.log('🔄 Starting global sync with Supabase...')
     setIsSyncing(true)
 
     try {
       // Execute all registered callbacks in parallel for faster sync
       const syncPromises = Array.from(syncCallbacks.values()).map(callback => 
         callback().catch(error => {
-          console.error('Sync callback error:', error)
           // Don't throw - allow other callbacks to continue
         })
       )
@@ -77,10 +73,7 @@ export function GlobalSyncProvider({ children }: { children: React.ReactNode }) 
       await Promise.allSettled(syncPromises)
       
       setLastSyncTime(new Date())
-      console.log(`✅ Global sync completed at ${new Date().toLocaleTimeString()}`)
-      
     } catch (error) {
-      console.error('Global sync error:', error)
       toast.error('Failed to sync data')
     } finally {
       setIsSyncing(false)
@@ -117,7 +110,6 @@ export function GlobalSyncProvider({ children }: { children: React.ReactNode }) 
       if (document.visibilityState === 'visible') {
         // Only sync if last sync was more than 1 minute ago
         if (!lastSyncTime || Date.now() - lastSyncTime.getTime() > 60000) {
-          console.log('🔄 Window focused - syncing data...')
           syncNow()
         }
       }

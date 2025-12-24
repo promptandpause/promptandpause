@@ -57,7 +57,6 @@ export async function GET(request: NextRequest) {
       .order('created_at', { ascending: false })
 
     if (error) {
-      console.error('Error fetching focus areas:', error)
       return NextResponse.json(
         { success: false, error: 'Failed to fetch focus areas' },
         { status: 500 }
@@ -94,7 +93,6 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Error in focus areas GET:', error)
     return NextResponse.json(
       { 
         success: false, 
@@ -198,7 +196,6 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (error) {
-      console.error('Error creating focus area:', error)
       return NextResponse.json(
         { success: false, error: 'Failed to create focus area' },
         { status: 500 }
@@ -219,7 +216,6 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Error in focus areas POST:', error)
     return NextResponse.json(
       { 
         success: false, 
@@ -311,7 +307,6 @@ export async function PATCH(request: NextRequest) {
       .single()
 
     if (error) {
-      console.error('Error updating focus area:', error)
       return NextResponse.json(
         { success: false, error: 'Failed to update focus area' },
         { status: 500 }
@@ -339,7 +334,6 @@ export async function PATCH(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Error in focus areas PATCH:', error)
     return NextResponse.json(
       { 
         success: false, 
@@ -419,7 +413,6 @@ export async function DELETE(request: NextRequest) {
       .eq('user_id', user.id) // Ensure user owns this focus area
 
     if (error) {
-      console.error('Error deleting focus area:', error)
       return NextResponse.json(
         { success: false, error: 'Failed to delete focus area' },
         { status: 500 }
@@ -432,7 +425,6 @@ export async function DELETE(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Error in focus areas DELETE:', error)
     return NextResponse.json(
       { 
         success: false, 

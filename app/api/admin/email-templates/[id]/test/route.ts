@@ -156,7 +156,6 @@ export async function POST(
     })
 
     if (error) {
-      console.error('Test email send error:', error)
       return NextResponse.json(
         { error: 'Failed to send test email', details: error.message },
         { status: 500 }
@@ -171,7 +170,6 @@ export async function POST(
     })
   } catch (error: any) {
     const params = await context.params
-    console.error(`Error in POST /api/admin/email-templates/${params.id}/test:`, error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

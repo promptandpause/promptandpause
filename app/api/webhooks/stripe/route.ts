@@ -38,15 +38,11 @@ export async function POST(req: NextRequest) {
   try {
     event = stripe.webhooks.constructEvent(body, signature, webhookSecret)
   } catch (err: any) {
-    console.error(`Webhook signature verification failed: ${err.message}`)
     return NextResponse.json(
       { error: `Webhook Error: ${err.message}` },
       { status: 400 }
     )
   }
-
-  console.log(`Received event: ${event.type}`)
-
   try {
     switch (event.type) {
       case 'checkout.session.completed': {
@@ -81,12 +77,10 @@ export async function POST(req: NextRequest) {
       }
 
       default:
-        console.log(`Unhandled event type: ${event.type}`)
     }
 
     return NextResponse.json({ received: true })
   } catch (error: any) {
-    console.error('Error processing webhook:', error)
     return NextResponse.json(
       { error: error.message || 'Webhook processing failed' },
       { status: 500 }
@@ -97,12 +91,8 @@ export async function POST(req: NextRequest) {
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const userId = session.metadata?.supabase_user_id
   if (!userId) {
-    console.error('No supabase_user_id in session metadata')
     return
   }
-
-  console.log(`Checkout completed for user: ${userId}`)
-
   // Get subscription details
   if (session.subscription) {
     const subscription = await stripe.subscriptions.retrieve(
@@ -123,7 +113,6 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
     .single()
 
   if (profileError || !profile) {
-    console.error('Could not find user for customer:', customerId, profileError)
     return
   }
 
@@ -144,9 +133,6 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
     : 'freemium'
 
   const billingCycle = isYearly ? 'yearly' : 'monthly'
-
-  console.log(`Updating subscription for user ${userId}: status=${subscriptionStatus}, stripe_status=${stripeStatus}, cycle=${billingCycle}`)
-
   // Update profile with CORRECT field names from your schema
   const { error: updateError } = await supabaseAdmin
     .from('profiles')
@@ -160,7 +146,6 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
     .eq('id', userId)
 
   if (updateError) {
-    console.error('Error updating profile:', updateError)
     throw updateError
   }
 
@@ -179,8 +164,6 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
         stripe_status: stripeStatus
       }
     })
-
-  console.log(`Successfully updated user ${userId} to ${subscriptionStatus}`)
 }
 
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
@@ -194,14 +177,10 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
     .single()
 
   if (profileError || !profile) {
-    console.error('Could not find user for customer:', customerId)
     return
   }
 
   const userId = profile.id
-
-  console.log(`Subscription deleted for user ${userId}, downgrading to freemium`)
-
   // Downgrade to cancelled - using correct schema field names
   const { error: updateError } = await supabaseAdmin
     .from('profiles')
@@ -213,7 +192,6 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
     .eq('id', userId)
 
   if (updateError) {
-    console.error('Error downgrading user:', updateError)
     throw updateError
   }
 
@@ -227,13 +205,9 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
       new_status: 'cancelled',
       stripe_event_id: subscription.id
     })
-
-  console.log(`Successfully downgraded user ${userId} to cancelled`)
 }
 
 async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
-  console.log(`Payment succeeded for invoice: ${invoice.id}`)
-  
   if (invoice.subscription) {
     const subscription = await stripe.subscriptions.retrieve(
       invoice.subscription as string
@@ -244,9 +218,6 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
 
 async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
   const customerId = invoice.customer as string
-  
-  console.error(`Payment failed for invoice: ${invoice.id}, customer: ${customerId}`)
-  
   // Optionally notify the user about payment failure
   // You could send an email or in-app notification here
 }

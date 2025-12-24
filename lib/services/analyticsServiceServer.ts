@@ -54,7 +54,6 @@ export async function calculateReflectionStreakServer(userId: string): Promise<n
 
     return streak
   } catch (error) {
-    console.error('Error calculating reflection streak (server):', error)
     return 0
   }
 }
@@ -149,16 +148,6 @@ function calculateMoodTrend(
   const diff = lastAvg - firstAvg
   
   // Log trend calculation for debugging
-  console.log('Mood Trend Calculation:', {
-    totalReflections: reflections.length,
-    firstThirdCount: firstThird.length,
-    lastThirdCount: lastThird.length,
-    firstAvg: firstAvg.toFixed(2),
-    lastAvg: lastAvg.toFixed(2),
-    difference: diff.toFixed(2),
-    trend: diff > 0.2 ? 'improving' : diff < -0.2 ? 'declining' : 'stable'
-  })
-  
   // Use a smaller threshold for more sensitive trend detection
   // 0.2 = about 1/5 of a mood level difference
   if (diff > 0.2) return 'improving'
@@ -232,7 +221,6 @@ export async function calculateMoodTrendsServer(
 
     return { overall, daily, mostCommon, trend }
   } catch (error) {
-    console.error('Error calculating mood trends (server):', error)
     return { overall: [], daily: [], mostCommon: null, trend: 'stable' }
   }
 }
@@ -274,7 +262,6 @@ export async function generateWeeklyDigestServer(
       .order('date', { ascending: false })
     
     if (error) {
-      console.error('Error fetching weekly reflections (server):', error)
       throw error
     }
     
@@ -339,7 +326,6 @@ export async function generateWeeklyDigestServer(
       reflectionSummaries,
     }
   } catch (error) {
-    console.error('Error generating weekly digest (server):', error)
     // Return empty digest on error
     const end = endDate || new Date()
     const start = startDate || new Date(end.getTime() - 6 * 24 * 60 * 60 * 1000)

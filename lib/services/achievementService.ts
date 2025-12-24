@@ -28,7 +28,6 @@ export class AchievementService {
       .order('earned_at', { ascending: false })
 
     if (error) {
-      console.error('Error fetching user achievements:', error)
       return []
     }
 
@@ -69,7 +68,6 @@ export class AchievementService {
       .single()
 
     if (error) {
-      console.error('Error awarding badge:', error)
       return null
     }
 
@@ -253,7 +251,6 @@ export class AchievementService {
       .eq('user_id', userId)
 
     if (error) {
-      console.error('Error getting reflection count:', error)
       return 0
     }
 

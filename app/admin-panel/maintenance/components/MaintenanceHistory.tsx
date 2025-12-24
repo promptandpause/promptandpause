@@ -47,7 +47,6 @@ export default function MaintenanceHistory() {
 
       setWindows(allWindows)
     } catch (error) {
-      console.error('Error loading maintenance history:', error)
     } finally {
       setLoading(false)
     }

@@ -87,7 +87,6 @@ export default function AdminUsersPage() {
       const data = await response.json()
       setUsers(data.users || [])
     } catch (error) {
-      console.error('Error loading admin users:', error)
       toast({
         title: 'Error',
         description: 'Failed to load admin users',

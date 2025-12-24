@@ -92,7 +92,6 @@ export async function generatePrompt(context: GeneratePromptContext): Promise<{
       const result = await generateWithOpenRouter(systemPrompt, userContext)
       
       if (result) {
-        console.log(`[PROMPT_GEN] Generated with OpenRouter: ${result.model}`)
         return {
           prompt: result.text,
           provider: 'openai', // OpenRouter uses OpenAI-compatible API
@@ -100,18 +99,15 @@ export async function generatePrompt(context: GeneratePromptContext): Promise<{
         }
       }
     } catch (error) {
-      console.error('OpenRouter generation failed:', error)
     }
   }
 
   // Try Hugging Face as fallback (100% FREE, no credit card)
   if (huggingface) {
     try {
-      console.log('Falling back to Hugging Face...')
       const prompt = await generateWithHuggingFace(systemPrompt, userContext)
       
       if (prompt) {
-        console.log('Successfully generated prompt with Hugging Face')
         return {
           prompt,
           provider: 'openai',
@@ -119,18 +115,15 @@ export async function generatePrompt(context: GeneratePromptContext): Promise<{
         }
       }
     } catch (error) {
-      console.error('Hugging Face generation failed:', error)
     }
   }
 
   // Try Gemini as fallback
   if (gemini) {
     try {
-      console.log('Falling back to Google Gemini...')
       const prompt = await generateWithGemini(systemPrompt, userContext)
       
       if (prompt) {
-        console.log('Successfully generated prompt with Gemini')
         return {
           prompt,
           provider: 'gemini',
@@ -138,18 +131,15 @@ export async function generatePrompt(context: GeneratePromptContext): Promise<{
         }
       }
     } catch (error) {
-      console.error('Gemini generation failed:', error)
     }
   }
 
   // Final fallback to OpenAI if configured
   if (process.env.OPENAI_API_KEY) {
     try {
-      console.log('Falling back to OpenAI...')
       const prompt = await generateWithOpenAI(systemPrompt, userContext)
       
       if (prompt) {
-        console.log('Successfully generated prompt with OpenAI')
         return {
           prompt,
           provider: 'openai',
@@ -157,7 +147,6 @@ export async function generatePrompt(context: GeneratePromptContext): Promise<{
         }
       }
     } catch (error) {
-      console.error('OpenAI generation failed:', error)
     }
   }
 
@@ -181,7 +170,6 @@ async function generateWithOpenRouter(
   userContext: string
 ): Promise<{ text: string; model: string } | null> {
   if (!openrouter) {
-    console.warn('OPENROUTER_API_KEY not configured - skipping OpenRouter')
     return null
   }
 
@@ -194,8 +182,6 @@ async function generateWithOpenRouter(
 
   for (const model of modelPrefs) {
     try {
-      console.log(`🔄 Trying OpenRouter model: ${model}`)
-      
       const completion = await openrouter.chat.completions.create({
         model,
         messages: [
@@ -209,7 +195,6 @@ async function generateWithOpenRouter(
 
       const text = completion.choices[0]?.message?.content?.trim()
       if (text) {
-        console.log(`✅ Successfully generated with ${model}`)
         return { text, model }
       }
     } catch (error: any) {
@@ -218,33 +203,26 @@ async function generateWithOpenRouter(
       
       // 404 = Model not available, skip to next
       if (status === 404) {
-        console.warn(`⏭️  Model not available: ${model} (404 - No endpoints found)`)
         continue
       }
       
       // 5xx = Server error, skip to next  
       if (status && status >= 500) {
-        console.warn(`⏭️  OpenRouter server error: ${model} (${status})`)
         continue
       }
       
       // 4xx but not 404 = Auth, rate limit, etc - may want to stop
       if (status && status >= 400 && status < 500) {
-        console.error(`❌ OpenRouter client error: ${model} (${status}) - ${message}`)
         // Continue trying other models unless it's auth
         if (status === 401 || status === 403) {
-          console.error('Authentication issue detected - check OPENROUTER_API_KEY')
           return null
         }
         continue
       }
       
       // Generic error, log and continue
-      console.warn(`⚠️  OpenRouter error with ${model}: ${message}`)
     }
   }
-
-  console.error('❌ All OpenRouter models exhausted - falling back to Gemini/OpenAI')
   return null
 }
 
@@ -256,14 +234,11 @@ async function generateWithHuggingFace(
   userContext: string
 ): Promise<string | null> {
   if (!huggingface) {
-    console.warn('HUGGINGFACE_API_KEY not configured - skipping Hugging Face')
     return null
   }
 
   for (const model of HUGGINGFACE_MODELS) {
     try {
-      console.log(`🔄 Trying Hugging Face model: ${model}`)
-      
       const completion = await huggingface.chat.completions.create({
         model,
         messages: [
@@ -277,7 +252,6 @@ async function generateWithHuggingFace(
 
       const prompt = completion.choices[0]?.message?.content?.trim()
       if (prompt) {
-        console.log(`✅ Successfully generated with Hugging Face: ${model}`)
         return prompt
       }
     } catch (error: any) {
@@ -286,34 +260,27 @@ async function generateWithHuggingFace(
       
       // 404 = Model not available, skip to next
       if (status === 404) {
-        console.warn(`⏭️  Hugging Face model not available: ${model} (404)`)
         continue
       }
       
       // 503 = Model loading, skip to next
       if (status === 503) {
-        console.warn(`⏭️  Hugging Face model loading: ${model} (503)`)
         continue
       }
       
       // Other server errors
       if (status && status >= 500) {
-        console.warn(`⏭️  Hugging Face server error: ${model} (${status})`)
         continue
       }
       
       // Auth or rate limit issues
       if (status === 401 || status === 403) {
-        console.error(`❌ Hugging Face auth error: ${model} (${status}) - check HUGGINGFACE_API_KEY`)
         return null
       }
       
       // Generic error, log and continue
-      console.warn(`⚠️  Hugging Face error with ${model}: ${message}`)
     }
   }
-
-  console.error('❌ All Hugging Face models exhausted')
   return null
 }
 
@@ -326,7 +293,6 @@ async function generateWithGemini(
   userContext: string
 ): Promise<string | null> {
   if (!gemini) {
-    console.warn('GEMINI_API_KEY not configured - skipping Gemini')
     return null
   }
 
@@ -351,12 +317,7 @@ async function generateWithGemini(
   } catch (error: any) {
     // Log detailed error for debugging
     if (error?.status === 403 || error?.status === 401) {
-      console.error('Gemini API Auth Error: Access denied. This usually means:')
-      console.error('  1. Invalid or expired API key')
-      console.error('  2. Need to set GEMINI_API_KEY in .env.local')
-      console.error('  3. Get key from: https://aistudio.google.com/app/apikey')
     }
-    console.error('Gemini API error:', error?.message || error)
     return null
   }
 }
@@ -388,7 +349,6 @@ async function generateWithOpenAI(
     const prompt = completion.choices[0]?.message?.content?.trim()
     return prompt || null
   } catch (error) {
-    console.error('OpenAI API error:', error)
     return null
   }
 }
@@ -499,21 +459,11 @@ export function selectFocusArea(
  */
 
 function buildUserContext(context: GeneratePromptContext): string {
-  console.log('[buildUserContext] Context received:', {
-    hasReason: !!context.user_reason,
-    reason: context.user_reason,
-    focusAreasCount: context.focus_areas?.length || 0,
-    focusAreas: context.focus_areas,
-    recentMoodsCount: context.recent_moods?.length || 0,
-    recentTopicsCount: context.recent_topics?.length || 0
-  })
-
   // If we have no context, provide a general but still personal prompt
   if (!context.user_reason && 
       (!context.focus_areas || context.focus_areas.length === 0) &&
       (!context.recent_moods || context.recent_moods.length === 0) &&
       (!context.recent_topics || context.recent_topics.length === 0)) {
-    console.warn('[buildUserContext] No context available - using generic prompt')
     return `This person is just starting their reflection journey. Generate a warm, welcoming prompt that helps them explore their current emotional state and what brought them here today. Make it feel safe and non-intimidating.`
   }
 
@@ -522,7 +472,6 @@ function buildUserContext(context: GeneratePromptContext): string {
   // Build a narrative profile, not just bullet points
   if (context.user_reason) {
     profile.push(`**Their Journey:**\nThey came to Prompt & Pause because: "${context.user_reason}"\nThis is what matters to them right now. Honor this in your prompt.`)
-    console.log('[buildUserContext] Added user reason to context')
   }
 
   if (context.focus_areas && context.focus_areas.length > 0) {

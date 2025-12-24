@@ -50,7 +50,6 @@ export default function AnalyticsPage() {
       const data = await response.json()
       setEngagement(data.data)
     } catch (error) {
-      console.error('Error loading analytics:', error)
     } finally {
       setLoading(false)
     }

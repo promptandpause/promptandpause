@@ -88,7 +88,6 @@ export async function POST(request: NextRequest) {
     }
 
   } catch (error) {
-    console.error('Error testing Slack webhook:', error)
     return NextResponse.json(
       { 
         success: false, 

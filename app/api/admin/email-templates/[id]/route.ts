@@ -42,7 +42,6 @@ export async function GET(
 
     return NextResponse.json({ template: result.data })
   } catch (error: any) {
-    console.error(`Error in GET /api/admin/email-templates/${params.id}:`, error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
@@ -101,12 +100,8 @@ export async function PUT(
       }
 
       // Update customization (automatically creates version snapshot)
-      console.log('Updating customization:', { templateId: params.id, data, userId: user.id })
       const result = await updateCustomization(params.id, data, user.id)
-      console.log('Customization update result:', result)
-
       if (!result.success) {
-        console.error('Customization update failed:', result.error)
         return NextResponse.json({ error: result.error }, { status: 500 })
       }
 
@@ -133,8 +128,6 @@ export async function PUT(
       return NextResponse.json({ template: result.data })
     }
   } catch (error: any) {
-    console.error(`Error in PUT /api/admin/email-templates/:`, error)
-    console.error('Full error:', error.stack || error)
     return NextResponse.json({ error: error.message || 'Unknown error' }, { status: 500 })
   }
 }
@@ -178,7 +171,6 @@ export async function DELETE(
 
     return NextResponse.json({ message: 'Template deactivated successfully' })
   } catch (error: any) {
-    console.error(`Error in DELETE /api/admin/email-templates/${params.id}:`, error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

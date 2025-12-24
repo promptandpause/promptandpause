@@ -13,7 +13,6 @@ export function safeJsonParse<T = any>(jsonString: string | null | undefined): T
   try {
     return JSON.parse(jsonString) as T
   } catch (error) {
-    console.error('JSON parse error:', error)
     return null
   }
 }
@@ -27,13 +26,11 @@ export async function safeResponseJson<T = any>(response: Response): Promise<T |
     const text = await response.text()
     
     if (!text || text.trim() === '') {
-      console.warn('Response body is empty')
       return null
     }
 
     return JSON.parse(text) as T
   } catch (error) {
-    console.error('Response JSON parse error:', error)
     return null
   }
 }
@@ -48,7 +45,6 @@ export function safeLocalStorageGet<T = any>(key: string): T | null {
     const item = localStorage.getItem(key)
     return safeJsonParse<T>(item)
   } catch (error) {
-    console.error(`Error reading from localStorage (${key}):`, error)
     return null
   }
 }
@@ -63,7 +59,6 @@ export function safeLocalStorageSet(key: string, value: any): boolean {
     localStorage.setItem(key, JSON.stringify(value))
     return true
   } catch (error) {
-    console.error(`Error writing to localStorage (${key}):`, error)
     return false
   }
 }

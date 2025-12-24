@@ -52,7 +52,6 @@ export async function GET(
       data: reflection
     })
   } catch (error: any) {
-    console.error('Error fetching reflection:', error)
     return NextResponse.json(
       { error: error.message || 'Failed to fetch reflection' },
       { status: 500 }
@@ -144,7 +143,6 @@ export async function PATCH(
       data: returned,
     })
   } catch (error: any) {
-    console.error('Error updating reflection:', error)
     return NextResponse.json(
       { error: error.message || 'Failed to update reflection' },
       { status: 500 }
@@ -202,7 +200,6 @@ export async function DELETE(
       message: 'Reflection deleted successfully'
     })
   } catch (error: any) {
-    console.error('Error deleting reflection:', error)
     return NextResponse.json(
       { error: error.message || 'Failed to delete reflection' },
       { status: 500 }

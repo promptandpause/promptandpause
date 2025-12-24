@@ -32,12 +32,8 @@ export async function getUserProfile(
       .single()
 
     if (error) {
-      console.error('Error fetching user profile:', error)
-      
       // If profile doesn't exist (PGRST116 = no rows), create it
       if (error.code === 'PGRST116') {
-        console.log('[getUserProfile] Profile not found, creating default profile')
-        
         // Get user email from auth
         const { data: authUser } = await supabase.auth.admin.getUserById(userId)
         
@@ -55,11 +51,8 @@ export async function getUserProfile(
           .single()
         
         if (createError) {
-          console.error('Error creating profile:', createError)
           return { error: createError.message }
         }
-        
-        console.log('✅ Profile created successfully')
         return { user: newProfile as User }
       }
       
@@ -72,7 +65,6 @@ export async function getUserProfile(
 
     return { user: data as User }
   } catch (error) {
-    console.error('Unexpected error fetching user profile:', error)
     return {
       error: error instanceof Error ? error.message : 'Unknown error',
     }
@@ -119,8 +111,6 @@ export async function updateUserProfile(
 
     // If no rows were affected (profile doesn't exist), fetch user email and create profile
     if (!data && !error) {
-      console.log('Profile does not exist for user', userId, '- fetching email from auth.users')
-      
       // Get email from auth.users
       const { data: { user: authUser }, error: authError } = await supabase.auth.admin.getUserById(userId)
       
@@ -147,14 +137,10 @@ export async function updateUserProfile(
     }
 
     if (error) {
-      console.error('Error updating user profile:', error)
       return { error: error.message }
     }
-
-    console.log('User profile updated:', userId)
     return { user: data as User }
   } catch (error) {
-    console.error('Unexpected error updating user profile:', error)
     return {
       error: error instanceof Error ? error.message : 'Unknown error',
     }
@@ -183,13 +169,11 @@ export async function getUserBasicInfo(
       .single()
 
     if (error) {
-      console.error('Error fetching user basic info:', error)
       return { error: error.message }
     }
 
     return { info: data }
   } catch (error) {
-    console.error('Unexpected error fetching user basic info:', error)
     return {
       error: error instanceof Error ? error.message : 'Unknown error',
     }
@@ -223,13 +207,11 @@ export async function getUserPreferences(
       if (error.code === 'PGRST116') {
         return { preferences: undefined, error: 'No preferences found' }
       }
-      console.error('Error fetching user preferences:', error)
       return { error: error.message }
     }
 
     return { preferences: data as UserPreferences }
   } catch (error) {
-    console.error('Unexpected error fetching user preferences:', error)
     return {
       error: error instanceof Error ? error.message : 'Unknown error',
     }
@@ -278,14 +260,10 @@ export async function upsertUserPreferences(
       .single()
 
     if (error) {
-      console.error('Error upserting user preferences:', error)
       return { error: error.message }
     }
-
-    console.log('User preferences upserted:', userId)
     return { preferences: data as UserPreferences }
   } catch (error) {
-    console.error('Unexpected error upserting user preferences:', error)
     return {
       error: error instanceof Error ? error.message : 'Unknown error',
     }
@@ -317,14 +295,10 @@ export async function updateUserPreferences(
       .single()
 
     if (error) {
-      console.error('Error updating user preferences:', error)
       return { error: error.message }
     }
-
-    console.log('User preferences updated:', userId)
     return { preferences: data as UserPreferences }
   } catch (error) {
-    console.error('Unexpected error updating user preferences:', error)
     return {
       error: error instanceof Error ? error.message : 'Unknown error',
     }
@@ -354,7 +328,6 @@ export async function checkSubscriptionTier(
       .single()
 
     if (error) {
-      console.error('Error checking subscription tier:', error)
       return { error: error.message }
     }
 
@@ -363,7 +336,6 @@ export async function checkSubscriptionTier(
       status: data.subscription_status as SubscriptionStatus,
     }
   } catch (error) {
-    console.error('Unexpected error checking subscription tier:', error)
     return {
       error: error instanceof Error ? error.message : 'Unknown error',
     }
@@ -402,14 +374,10 @@ export async function updateSubscriptionInfo(
       .eq('id', userId)
 
     if (error) {
-      console.error('Error updating subscription info:', error)
       return { success: false, error: error.message }
     }
-
-    console.log('Subscription info updated for user:', userId)
     return { success: true }
   } catch (error) {
-    console.error('Unexpected error updating subscription info:', error)
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',
@@ -437,7 +405,6 @@ export async function hasPremiumAccess(
 
     return { hasPremium }
   } catch (error) {
-    console.error('Unexpected error checking premium access:', error)
     return {
       hasPremium: false,
       error: error instanceof Error ? error.message : 'Unknown error',
@@ -478,7 +445,6 @@ export async function getUserStatistics(
       .single()
 
     if (userError) {
-      console.error('Error fetching user data:', userError)
       return { error: userError.message }
     }
 
@@ -529,7 +495,6 @@ export async function getUserStatistics(
       },
     }
   } catch (error) {
-    console.error('Unexpected error calculating user statistics:', error)
     return {
       error: error instanceof Error ? error.message : 'Unknown error',
     }
@@ -604,7 +569,6 @@ export async function getUserActivitySummary(
       },
     }
   } catch (error) {
-    console.error('Unexpected error getting user activity summary:', error)
     return {
       error: error instanceof Error ? error.message : 'Unknown error',
     }
@@ -635,14 +599,10 @@ export async function deleteUserAccount(
       .eq('id', userId)
 
     if (error) {
-      console.error('Error deleting user account:', error)
       return { success: false, error: error.message }
     }
-
-    console.log('User account deleted:', userId)
     return { success: true }
   } catch (error) {
-    console.error('Unexpected error deleting user account:', error)
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',
@@ -676,7 +636,6 @@ export async function hasCompletedOnboarding(
 
     return { completed: !!preferences }
   } catch (error) {
-    console.error('Unexpected error checking onboarding status:', error)
     return {
       completed: false,
       error: error instanceof Error ? error.message : 'Unknown error',
@@ -730,7 +689,6 @@ export async function getUserContext(
       },
     }
   } catch (error) {
-    console.error('Unexpected error getting user context:', error)
     return {
       error: error instanceof Error ? error.message : 'Unknown error',
     }
@@ -759,7 +717,6 @@ export async function getUserTier(
       .single()
 
     if (error || !data) {
-      console.warn('Error getting user tier, defaulting to freemium:', error?.message)
       return { tier: 'freemium' }
     }
 
@@ -767,7 +724,6 @@ export async function getUserTier(
       data.subscription_status === 'active' ? data.subscription_tier : 'freemium'
     return { tier }
   } catch (error) {
-    console.error('Unexpected error getting user tier:', error)
     return { tier: 'freemium' }
   }
 }
@@ -808,7 +764,6 @@ export async function listFocusAreas(
         .order('priority', { ascending: false })
 
       if (error) {
-        console.error('Error fetching premium focus areas:', error)
       } else if (data && data.length > 0) {
         // User has custom areas - use them exclusively
         areas.push(
@@ -819,7 +774,6 @@ export async function listFocusAreas(
             isPremium: true,
           }))
         )
-        console.log(`Using ${data.length} custom focus areas for user ${userId}`)
         return { areas }
       }
     }
@@ -838,14 +792,11 @@ export async function listFocusAreas(
           isPremium: false,
         }))
       )
-      console.log(`Using ${prefs.focus_areas.length} onboarding focus areas for user ${userId}`)
     } else {
-      console.warn(`No focus areas found for user ${userId}`)
     }
 
     return { areas }
   } catch (error) {
-    console.error('Unexpected error listing focus areas:', error)
     return { areas: [], error: String(error) }
   }
 }
@@ -880,14 +831,10 @@ export async function createFocusArea(
       .single()
 
     if (error) {
-      console.error('Error creating focus area:', error)
       return { error: error.message }
     }
-
-    console.log('Focus area created:', area?.id)
     return { area }
   } catch (error) {
-    console.error('Unexpected error creating focus area:', error)
     return { error: String(error) }
   }
 }
@@ -921,14 +868,10 @@ export async function updateFocusArea(
       .single()
 
     if (error) {
-      console.error('Error updating focus area:', error)
       return { error: error.message }
     }
-
-    console.log('Focus area updated:', areaId)
     return { area }
   } catch (error) {
-    console.error('Unexpected error updating focus area:', error)
     return { error: String(error) }
   }
 }
@@ -958,14 +901,10 @@ export async function deleteFocusArea(
       .eq('user_id', userId)
 
     if (error) {
-      console.error('Error deleting focus area:', error)
       return { success: false, error: error.message }
     }
-
-    console.log('Focus area deleted:', areaId)
     return { success: true }
   } catch (error) {
-    console.error('Unexpected error deleting focus area:', error)
     return { success: false, error: String(error) }
   }
 }

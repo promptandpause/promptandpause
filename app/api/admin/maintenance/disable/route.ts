@@ -42,7 +42,6 @@ export async function POST(request: NextRequest) {
       maintenance_mode: result.data 
     })
   } catch (error: any) {
-    console.error('Error in POST /api/admin/maintenance/disable:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

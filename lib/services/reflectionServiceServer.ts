@@ -42,13 +42,11 @@ export const reflectionServiceServer = {
         .order('created_at', { ascending: false })
 
       if (error) {
-        console.error('Error fetching reflections by date range:', error)
         throw error
       }
 
       return data || []
     } catch (error) {
-      console.error('Error in getReflectionsByDateRange:', error)
       return []
     }
   },
@@ -76,13 +74,11 @@ export const reflectionServiceServer = {
         .order('created_at', { ascending: false })
 
       if (error) {
-        console.error('Error fetching all reflections:', error)
         throw error
       }
 
       return data || []
     } catch (error) {
-      console.error('Error in getAllReflections:', error)
       return []
     }
   },
@@ -117,13 +113,11 @@ export const reflectionServiceServer = {
           // No rows returned
           return null
         }
-        console.error('Error fetching reflection by ID:', error)
         throw error
       }
 
       return data
     } catch (error) {
-      console.error('Error in getReflectionById:', error)
       return null
     }
   },

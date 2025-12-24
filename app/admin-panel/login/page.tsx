@@ -41,7 +41,6 @@ export default function AdminLoginPage() {
         }
       }
     } catch (error) {
-      console.error('Error checking auth:', error)
     } finally {
       setCheckingAuth(false)
     }
@@ -96,7 +95,6 @@ export default function AdminLoginPage() {
       router.push(redirectPath)
       router.refresh()
     } catch (error: any) {
-      console.error('Login error:', error)
       setError(error.message || 'An unexpected error occurred')
       setLoading(false)
     }

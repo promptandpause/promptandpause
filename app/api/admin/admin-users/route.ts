@@ -37,7 +37,6 @@ export async function GET(request: NextRequest) {
       users: result.users
     })
   } catch (error: any) {
-    console.error('Error fetching admin users:', error)
     return NextResponse.json(
       { error: error.message || 'Failed to fetch admin users' },
       { status: 500 }
@@ -113,7 +112,6 @@ export async function POST(request: NextRequest) {
       message: 'Admin user created successfully. Credentials sent via email.'
     })
   } catch (error: any) {
-    console.error('Error creating admin user:', error)
     return NextResponse.json(
       { error: error.message || 'Failed to create admin user' },
       { status: 500 }

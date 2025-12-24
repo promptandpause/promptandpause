@@ -67,7 +67,6 @@ export function useTier(): UseTierResult {
       
       // Check if cache is still valid (within 5 minutes)
       if (now - data.timestamp < CACHE_DURATION) {
-        console.log('📦 [useTier] Using cached tier data', data)
         return data
       }
       
@@ -75,7 +74,6 @@ export function useTier(): UseTierResult {
       localStorage.removeItem(TIER_CACHE_KEY)
       return null
     } catch (err) {
-      console.error('Error reading tier cache:', err)
       localStorage.removeItem(TIER_CACHE_KEY)
       return null
     }
@@ -118,11 +116,8 @@ export function useTier(): UseTierResult {
         .single()
 
       if (profileError) {
-        console.error('[useTier] Error fetching profile:', profileError)
-        
         // If profile doesn't exist (PGRST116 = no rows), create it
         if (profileError.code === 'PGRST116') {
-          console.log('[useTier] Profile not found, creating default profile')
           const { error: createError } = await supabase
             .from('profiles')
             .insert({
@@ -147,12 +142,8 @@ export function useTier(): UseTierResult {
         setTier('free')
         setSubscriptionStatus(null)
       } else if (profile) {
-        console.log('[useTier] Profile data:', profile)
-        
         // Determine tier based on subscription_status
         const userTier = profile.subscription_status === 'premium' ? 'premium' : 'free'
-        
-        console.log('[useTier] Calculated tier:', userTier)
         setTier(userTier)
         setSubscriptionStatus(profile.subscription_status || null)
         setSubscriptionEndDate(
@@ -179,13 +170,10 @@ export function useTier(): UseTierResult {
             userId: user.id
           }
           localStorage.setItem(TIER_CACHE_KEY, JSON.stringify(cacheData))
-          console.log('💾 [useTier] Cached tier data', cacheData)
         } catch (err) {
-          console.error('Error caching tier data:', err)
         }
       }
     } catch (err) {
-      console.error('Error in useTier:', err)
       setError(err instanceof Error ? err.message : 'Unknown error')
       setTier('free')
     } finally {
@@ -204,9 +192,6 @@ export function useTier(): UseTierResult {
     const setupRealtimeSync = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
-      
-      console.log('🔌 [useTier] Setting up Realtime subscription for user:', user.id)
-      
       // Subscribe to changes in the profiles table for this user
       realtimeChannel = supabase
         .channel(`profile-changes-${user.id}`)
@@ -219,20 +204,16 @@ export function useTier(): UseTierResult {
             filter: `id=eq.${user.id}`,
           },
           (payload) => {
-            console.log('⚡ [useTier] Real-time subscription update detected!', payload)
             // Re-fetch tier data when profile updates
             fetchTierData()
           }
         )
         .subscribe((status) => {
-          console.log('📡 [useTier] Realtime channel status:', status)
         })
       
       // FALLBACK: Poll every 30 seconds to check for changes (reduced from 10s)
       // This ensures updates work even if Realtime isn't properly configured
-      console.log('🔄 [useTier] Starting polling fallback (every 30s)')
       pollingInterval = setInterval(() => {
-        console.log('🔍 [useTier] Polling for subscription changes...')
         fetchTierData()
       }, 30000) // Poll every 30 seconds (less aggressive)
     }
@@ -241,7 +222,6 @@ export function useTier(): UseTierResult {
     
     // Cleanup subscription and polling on unmount
     return () => {
-      console.log('🧹 [useTier] Cleaning up subscriptions')
       if (realtimeChannel) {
         realtimeChannel.unsubscribe()
       }
@@ -349,7 +329,6 @@ export function usePromptAllowance() {
           setUsed(count)
         }
       } catch (err) {
-        console.error('Error fetching weekly usage:', err)
       } finally {
         setIsLoadingUsage(false)
       }
