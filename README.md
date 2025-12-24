@@ -11,7 +11,7 @@
 
 </div>
 
-## 🌟 About Prompt & Pause
+## About Prompt & Pause
 
 **Prompt & Pause** is a UK-based mental wellness platform that helps you build a sustainable reflection practice through personalized daily prompts. We combine AI-powered personalization with evidence-based reflection techniques to support your journey toward better mental health, self-awareness, and personal growth.
 
@@ -19,7 +19,7 @@ Unlike generic journaling apps, Prompt & Pause delivers **deeply personalized pr
 
 ### Why Choose Prompt & Pause?
 
-✨ **AI-Powered Personalization** - Receive prompts that adapt to your focus areas, recent moods, and personal journey  
+**AI-Powered Personalization** - Receive prompts that adapt to your focus areas, recent moods, and personal journey  
 📧 **Flexible Delivery** - Get prompts via email, Slack, or directly in your dashboard  
 📊 **Insightful Analytics** - Track your progress with mood trends, streak tracking, and reflection patterns  
 🎯 **Custom Focus Areas** - Premium users can create unlimited custom focus areas for targeted growth  
@@ -28,7 +28,7 @@ Unlike generic journaling apps, Prompt & Pause delivers **deeply personalized pr
 
 ---
 
-## 🚀 Features
+## Features
 
 ### For Everyone (Free)
 - Daily personalized reflection prompts
@@ -47,7 +47,7 @@ Unlike generic journaling apps, Prompt & Pause delivers **deeply personalized pr
 
 ---
 
-## 💼 Perfect For
+## Perfect For
 
 - **Professionals** managing work-life balance and stress
 - **Students** developing self-awareness and emotional intelligence
@@ -57,7 +57,7 @@ Unlike generic journaling apps, Prompt & Pause delivers **deeply personalized pr
 
 ---
 
-## 🎯 How It Works
+## How It Works
 
 1. **Sign Up** - Create your free account in under 2 minutes
 2. **Set Your Preferences** - Choose your focus areas, delivery time, and frequency
@@ -67,7 +67,7 @@ Unlike generic journaling apps, Prompt & Pause delivers **deeply personalized pr
 
 ---
 
-## 🌐 Get Started Today
+## Get Started Today
 
 **Ready to transform your mental wellness journey?**
 
@@ -77,7 +77,7 @@ Unlike generic journaling apps, Prompt & Pause delivers **deeply personalized pr
 
 ---
 
-## 📞 Contact & Support
+## Contact & Support
 
 **Need help or have questions?**
 
@@ -89,7 +89,7 @@ Unlike generic journaling apps, Prompt & Pause delivers **deeply personalized pr
 
 ---
 
-## 🔐 Security & Privacy
+## Security & Privacy
 
 Your privacy is our priority. We use industry-standard encryption and security practices:
 
@@ -101,7 +101,7 @@ Your privacy is our priority. We use industry-standard encryption and security p
 
 ---
 
-## 🏆 Built With Care
+## Built With Care
 
 Prompt & Pause is built with modern, reliable technology:
 
@@ -113,17 +113,17 @@ Prompt & Pause is built with modern, reliable technology:
 
 ---
 
-## 📱 Stay Connected
+## Stay Connected
 
 Follow our journey and get mental wellness tips:
 
-- 🐦 Twitter: [@promptandpause](https://twitter.com/promptandpause)
-- 💼 LinkedIn: [Prompt & Pause](https://linkedin.com/company/promptandpause)
-- 📸 Instagram: [@promptandpause](https://instagram.com/promptandpause)
+-  Twitter: [@promptandpause](https://twitter.com/promptandpause)
+-  LinkedIn: [Prompt & Pause](https://linkedin.com/company/promptandpause)
+-  Instagram: [@promptandpause](https://instagram.com/promptandpause)
 
 ---
 
-## 📄 Legal
+## Legal
 
 - [Privacy Policy](https://www.promptandpause.com/privacy)
 - [Terms of Service](https://www.promptandpause.com/terms)
@@ -133,7 +133,7 @@ Follow our journey and get mental wellness tips:
 
 <div align="center">
 
-**© 2024 Prompt & Pause. All rights reserved.**
+**© 2026 Prompt & Pause. All rights reserved.**
 
 *Building a world where daily reflection is accessible to everyone.*
 
