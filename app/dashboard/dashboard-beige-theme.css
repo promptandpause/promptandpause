@@ -1,0 +1,66 @@
+/* Beige Theme Dashboard Overrides */
+
+/* Glass cards on beige background - make them more visible */
+.dashboard-card {
+  @apply backdrop-blur-xl bg-white/80 border border-gray-300 rounded-2xl md:rounded-3xl shadow-lg;
+}
+
+/* Text colors for beige background */
+.dashboard-text-primary {
+  @apply text-gray-900;
+}
+
+.dashboard-text-secondary {
+  @apply text-gray-600;
+}
+
+.dashboard-text-muted {
+  @apply text-gray-500;
+}
+
+/* Headings */
+.dashboard-heading {
+  @apply text-gray-900 font-semibold;
+}
+
+/* Buttons on beige */
+.dashboard-button-primary {
+  @apply bg-purple-600 hover:bg-purple-700 text-white;
+}
+
+.dashboard-button-secondary {
+  @apply bg-gray-100 hover:bg-gray-200 text-gray-900 border border-gray-300;
+}
+
+/* Premium badge colors */
+.dashboard-premium-badge {
+  @apply bg-yellow-100 text-yellow-700 border-yellow-300;
+}
+
+/* Dividers */
+.dashboard-divider {
+  @apply border-gray-300;
+}
+
+/* Skeletons */
+.dashboard-skeleton {
+  @apply bg-gray-200;
+}
+
+/* Icons */
+.dashboard-icon-primary {
+  @apply text-gray-700;
+}
+
+.dashboard-icon-secondary {
+  @apply text-gray-500;
+}
+
+/* Stats and metrics */
+.dashboard-stat-value {
+  @apply text-gray-900 font-bold;
+}
+
+.dashboard-stat-label {
+  @apply text-gray-600;
+}

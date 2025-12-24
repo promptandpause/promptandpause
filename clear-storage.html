@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clear Storage - Prompt & Pause</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #000;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #333;
+        }
+        .success {
+            color: green;
+            margin-top: 20px;
+        }
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Clear Browser Storage</h1>
+        <p>This will help fix the JSON.parse error by clearing any corrupted localStorage values.</p>
+        
+        <div class="info">
+            <strong>What this does:</strong>
+            <ul>
+                <li>Finds and removes empty localStorage values</li>
+                <li>Clears all cookies</li>
+                <li>Shows you what was found</li>
+            </ul>
+        </div>
+
+        <button onclick="inspectStorage()">1. Inspect Storage</button>
+        <button onclick="clearEmptyValues()">2. Clear Empty Values</button>
+        <button onclick="clearAll()">3. Clear Everything</button>
+
+        <div id="output"></div>
+    </div>
+
+    <script>
+        function inspectStorage() {
+            const output = document.getElementById('output');
+            let html = '<h3>Current localStorage:</h3><pre>';
+            
+            const emptyKeys = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                
+                if (value === '' || value === null || value.trim() === '') {
+                    emptyKeys.push(key);
+                    html += `❌ ${key}: "${value}" (EMPTY)\n`;
+                } else {
+                    html += `✅ ${key}: ${value.substring(0, 50)}${value.length > 50 ? '...' : ''}\n`;
+                }
+            }
+            
+            html += '</pre>';
+            
+            if (emptyKeys.length > 0) {
+                html += `<div class="info"><strong>Found ${emptyKeys.length} empty value(s):</strong><br>${emptyKeys.join(', ')}</div>`;
+            } else {
+                html += '<div class="success">No empty values found!</div>';
+            }
+            
+            output.innerHTML = html;
+        }
+
+        function clearEmptyValues() {
+            const emptyKeys = [];
+            
+            for (let i = localStorage.length - 1; i >= 0; i--) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                
+                if (value === '' || value === null || value.trim() === '') {
+                    emptyKeys.push(key);
+                    localStorage.removeItem(key);
+                }
+            }
+            
+            const output = document.getElementById('output');
+            if (emptyKeys.length > 0) {
+                output.innerHTML = `<div class="success">✅ Cleared ${emptyKeys.length} empty value(s):<br>${emptyKeys.join(', ')}</div>`;
+            } else {
+                output.innerHTML = '<div class="success">No empty values to clear!</div>';
+            }
+        }
+
+        function clearAll() {
+            const count = localStorage.length;
+            localStorage.clear();
+            
+            // Clear cookies
+            document.cookie.split(";").forEach(function(c) { 
+                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+            });
+            
+            const output = document.getElementById('output');
+            output.innerHTML = `<div class="success">✅ Cleared all storage (${count} items) and cookies!<br><br>Reload the homepage now.</div>`;
+        }
+    </script>
+</body>
+</html>

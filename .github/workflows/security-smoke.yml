@@ -1,0 +1,25 @@
+name: security-smoke
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Install dependencies
+        run: npm ci
+      - name: Headers check (CSP/HSTS/etc.)
+        run: npm run security:headers || true
+      - name: Rate limit & Slack signature smoke (optional)
+        env:
+          BASE_URL: ${{ secrets.STAGING_BASE_URL }}
+        run: npm run security:rl-smoke || true

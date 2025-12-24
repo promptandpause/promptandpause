@@ -1,0 +1,101 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
+import { checkAdminAuth } from '@/lib/services/adminService'
+
+// Force dynamic rendering for this API route
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
+/**
+ * GET /api/admin/analytics/engagement
+ * Get engagement analytics data
+ * 
+ * Query params:
+ * - days: number of days to analyze (default: 30)
+ */
+export async function GET(request: NextRequest) {
+  try {
+    const supabase = await createClient()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const adminAuth = await checkAdminAuth(user.email || '')
+    if (!adminAuth.isAdmin) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+
+    const { searchParams } = new URL(request.url)
+    const days = parseInt(searchParams.get('days') || '30')
+
+    const serviceSupabase = createServiceRoleClient()
+
+    // Get overall engagement stats
+    const { data: engagementData } = await serviceSupabase.rpc('get_engagement_stats', { days_back: days })
+    const engagement = engagementData?.[0] || {
+      total_prompts_sent: 0,
+      total_reflections: 0,
+      overall_engagement_rate: 0,
+      avg_reflection_length: 0
+    }
+
+    // Get engagement by activity status
+    const { data: userStats } = await serviceSupabase
+      .from('admin_user_stats')
+      .select('activity_status, engagement_rate_percent')
+
+    const engagementByActivity = userStats?.reduce((acc: any, user: any) => {
+      const status = user.activity_status || 'unknown'
+      if (!acc[status]) {
+        acc[status] = { total: 0, sum: 0 }
+      }
+      acc[status].total++
+      acc[status].sum += user.engagement_rate_percent || 0
+      return acc
+    }, {})
+
+    const engagementBreakdown = Object.entries(engagementByActivity || {}).map(([status, data]: [string, any]) => ({
+      status,
+      count: data.total,
+      avgEngagement: data.sum / data.total
+    }))
+
+    // Get daily trend for the period
+    const daysAgo = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString()
+    
+    const { data: reflectionTrend } = await serviceSupabase
+      .from('reflections')
+      .select('created_at')
+      .gte('created_at', daysAgo)
+      .order('created_at', { ascending: true })
+
+    // Group by day
+    const dailyReflections = reflectionTrend?.reduce((acc: any, ref: any) => {
+      const date = ref.created_at.split('T')[0]
+      acc[date] = (acc[date] || 0) + 1
+      return acc
+    }, {}) || {}
+
+    const trend = Object.entries(dailyReflections).map(([date, count]) => ({
+      date,
+      reflections: count
+    }))
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        overall: engagement,
+        byActivity: engagementBreakdown,
+        trend
+      }
+    })
+  } catch (error: any) {
+    console.error('Error fetching engagement analytics:', error)
+    return NextResponse.json(
+      { error: error.message || 'Failed to fetch engagement analytics' },
+      { status: 500 }
+    )
+  }
+}
