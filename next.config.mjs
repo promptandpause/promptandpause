@@ -6,8 +6,7 @@ const __dirname = path.dirname(__filename)
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Set the correct workspace root to silence warning about multiple lockfiles
-  outputFileTracingRoot: path.join(__dirname, '../'),
+  output: 'standalone',
   
   typescript: {
     ignoreBuildErrors: true,
