@@ -117,21 +117,9 @@ Prompt & Pause is built with modern, reliable technology:
 
 Follow our journey and get mental wellness tips:
 
-<div align="center">
-
-<a href="https://twitter.com/promptandpause" target="_blank">
-  <img width="48" height="48" alt="Twitter" src="https://github.com/user-attachments/assets/6522f7e1-f5da-4587-ae99-6f10cdba2297" />
-</a>
-&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="https://linkedin.com/company/promptandpause" target="_blank">
-  <img width="48" height="48" alt="LinkedIn" src="https://github.com/user-attachments/assets/84c6b1d3-7ea0-4c46-abf4-18274f7394be" />
-</a>
-&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="https://instagram.com/promptandpause" target="_blank">
-  <img width="48" height="48" alt="Instagram" src="https://github.com/user-attachments/assets/1c2d24f2-a4b9-44a0-92eb-ca51174af3f3" />
-</a>
-
-</div>
+- 🐦 Twitter: [@promptandpause](https://twitter.com/promptandpause)
+- 💼 LinkedIn: [Prompt & Pause](https://linkedin.com/company/promptandpause)
+- 📸 Instagram: [@promptandpause](https://instagram.com/promptandpause)
 
 ---
 
