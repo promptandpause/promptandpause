@@ -150,8 +150,18 @@
   * {
     @apply border-border outline-ring/50;
   }
+  
+  html {
+    overscroll-behavior: none;
+    overflow-x: hidden;
+  }
+  
   body {
     @apply bg-background text-foreground;
+    overscroll-behavior-y: none;
+    overflow-x: hidden;
+    position: relative;
+    min-height: 100vh;
   }
 }
 

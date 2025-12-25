@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import Homepage from './homepage/page';
+import Homepage from './(homepage)/page';
 import { organizationJsonLd, websiteJsonLd, premiumProductJsonLd } from '@/lib/structured-data'
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://promptandpause.com'
