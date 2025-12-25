@@ -6,7 +6,7 @@
 
 ### Copyright Notice
 
-© 2025 Prompt & Pause. All Rights Reserved.
+© 2026 Prompt & Pause. All Rights Reserved.
 
 ### No Permission Granted
 

@@ -7,15 +7,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const urls: MetadataRoute.Sitemap = [
     { url: `${siteUrl}/`, lastModified: now, changeFrequency: 'weekly', priority: 1.0 },
-    { url: `${siteUrl}/homepage/features`, changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${siteUrl}/homepage/pricing`, changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${siteUrl}/homepage/research`, changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${siteUrl}/homepage/our-mission`, changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${siteUrl}/homepage/contact`, changeFrequency: 'monthly', priority: 0.6 },
-    { url: `${siteUrl}/homepage/support-us`, changeFrequency: 'monthly', priority: 0.6 },
-    { url: `${siteUrl}/homepage/privacy-policy`, changeFrequency: 'yearly', priority: 0.5 },
-    { url: `${siteUrl}/homepage/terms-of-service`, changeFrequency: 'yearly', priority: 0.5 },
-    { url: `${siteUrl}/homepage/cookie-policy`, changeFrequency: 'yearly', priority: 0.5 },
+    { url: `${siteUrl}/features`, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${siteUrl}/pricing`, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${siteUrl}/research`, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${siteUrl}/our-mission`, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${siteUrl}/contact`, changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${siteUrl}/support-us`, changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${siteUrl}/privacy-policy`, changeFrequency: 'yearly', priority: 0.5 },
+    { url: `${siteUrl}/terms-of-service`, changeFrequency: 'yearly', priority: 0.5 },
+    { url: `${siteUrl}/cookie-policy`, changeFrequency: 'yearly', priority: 0.5 },
     { url: `${siteUrl}/crisis-resources`, changeFrequency: 'monthly', priority: 0.6 },
   ]
 

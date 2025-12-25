@@ -84,7 +84,7 @@ All emails should follow this structure:
           <tr>
             <td style="background: #0a0a0a; padding: 30px 20px; border-top: 1px solid #262626;">
               <p style="color: rgba(255, 255, 255, 0.7);">Prompt & Pause • Pause. Reflect. Grow.</p>
-              <p style="color: rgba(255, 255, 255, 0.5);">© 2025 Prompt & Pause</p>
+              <p style="color: rgba(255, 255, 255, 0.5);">© 2026 Prompt & Pause</p>
             </td>
           </tr>
         </table>

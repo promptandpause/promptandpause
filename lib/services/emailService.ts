@@ -1022,7 +1022,7 @@ function generateDataExportEmailHTML(name: string): string {
       ${APP_NAME} • Your data, your privacy
     </p>
     <p style="color: ${TEXT_MUTED}; font-size: 12px; margin: 0;">
-      © 2025 ${APP_NAME}. All rights reserved.
+      © 2026 ${APP_NAME}. All rights reserved.
     </p>
     <p style="color: ${TEXT_MUTED}; font-size: 12px; margin: 8px 0 0 0;">
       Questions? Contact us at <a href="mailto:support@promptandpause.com" style="color: ${PRIMARY_ACCENT}; text-decoration: none;">support@promptandpause.com</a>

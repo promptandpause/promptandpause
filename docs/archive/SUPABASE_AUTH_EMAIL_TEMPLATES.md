@@ -73,7 +73,7 @@ Supabase allows custom HTML templates for authentication emails. These templates
                 Prompt & Pause • Pause. Reflect. Grow.
               </p>
               <p style="color: rgba(255, 255, 255, 0.5); font-size: 12px; margin: 0;">
-                © 2025 Prompt & Pause. All rights reserved.
+                © 2026 Prompt & Pause. All rights reserved.
               </p>
             </td>
           </tr>
@@ -142,7 +142,7 @@ Supabase allows custom HTML templates for authentication emails. These templates
                 Prompt & Pause • Pause. Reflect. Grow.
               </p>
               <p style="color: rgba(255, 255, 255, 0.5); font-size: 12px; margin: 0;">
-                © 2025 Prompt & Pause. All rights reserved.
+                © 2026 Prompt & Pause. All rights reserved.
               </p>
             </td>
           </tr>
@@ -217,7 +217,7 @@ Supabase allows custom HTML templates for authentication emails. These templates
                 Prompt & Pause • Pause. Reflect. Grow.
               </p>
               <p style="color: rgba(255, 255, 255, 0.5); font-size: 12px; margin: 0;">
-                © 2025 Prompt & Pause. All rights reserved.
+                © 2026 Prompt & Pause. All rights reserved.
               </p>
             </td>
           </tr>
@@ -292,7 +292,7 @@ Supabase allows custom HTML templates for authentication emails. These templates
                 Prompt & Pause • Pause. Reflect. Grow.
               </p>
               <p style="color: rgba(255, 255, 255, 0.5); font-size: 12px; margin: 0;">
-                © 2025 Prompt & Pause. All rights reserved.
+                © 2026 Prompt & Pause. All rights reserved.
               </p>
             </td>
           </tr>
@@ -371,7 +371,7 @@ Supabase allows custom HTML templates for authentication emails. These templates
                 Prompt & Pause • Pause. Reflect. Grow.
               </p>
               <p style="color: rgba(255, 255, 255, 0.5); font-size: 12px; margin: 0;">
-                © 2025 Prompt & Pause. All rights reserved.
+                © 2026 Prompt & Pause. All rights reserved.
               </p>
             </td>
           </tr>
@@ -454,7 +454,7 @@ Supabase allows custom HTML templates for authentication emails. These templates
                 Prompt & Pause • Pause. Reflect. Grow.
               </p>
               <p style="color: rgba(255, 255, 255, 0.5); font-size: 12px; margin: 0;">
-                © 2025 Prompt & Pause. All rights reserved.
+                © 2026 Prompt & Pause. All rights reserved.
               </p>
             </td>
           </tr>

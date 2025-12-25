@@ -42,7 +42,7 @@ export default function Navigation() {
       >
         <div className="flex justify-between items-center">
           {/* Logo - Vertically centered */}
-          <Link href="/homepage" className="relative flex items-center">
+          <Link href="/" className="relative flex items-center">
             <img
               src="https://res.cloudinary.com/dh1rrfpmq/image/upload/v1766460430/prompt_pause-JRsbZR3dxCXndC8YMcyX6XU3XeT2Vw_vdvqfj.svg"
               alt="Prompt & Pause"
@@ -53,31 +53,31 @@ export default function Navigation() {
           {/* Desktop Navigation Links */}
           <div className="hidden lg:flex items-center gap-6 xl:gap-8 text-white/90 font-sans text-sm font-light">
             <Link
-              href="/homepage/our-mission"
+              href="/our-mission"
               className="hover:text-white hover:scale-105 transition-all duration-300"
             >
               Our Mission
             </Link>
             <Link
-              href="/homepage/features"
+              href="/features"
               className="hover:text-white hover:scale-105 transition-all duration-300"
             >
               Features
             </Link>
             <Link
-              href="/homepage/pricing"
+              href="/pricing"
               className="hover:text-white hover:scale-105 transition-all duration-300"
             >
               Pricing
             </Link>
             <Link
-              href="/homepage/research"
+              href="/research"
               className="hover:text-white hover:scale-105 transition-all duration-300 text-red-400 border border-red-400/30 px-3 py-1.5 rounded-lg hover:bg-red-500/10"
             >
               Resources
             </Link>
             <Link
-              href="/homepage/contact"
+              href="/contact"
               className="hover:text-white hover:scale-105 transition-all duration-300"
             >
               Contact
@@ -111,7 +111,7 @@ export default function Navigation() {
       >
         <div className="flex flex-col items-center justify-center min-h-screen gap-8 px-6 pt-20">
           <Link
-            href="/homepage/our-mission"
+            href="/our-mission"
             onClick={closeMenu}
             className="text-white text-2xl font-light hover:text-white/70 transition-colors duration-300 animate-fade-in"
             style={{ animationDelay: "0.1s" }}
@@ -119,7 +119,7 @@ export default function Navigation() {
             Our Mission
           </Link>
           <Link
-            href="/homepage/features"
+            href="/features"
             onClick={closeMenu}
             className="text-white text-2xl font-light hover:text-white/70 transition-colors duration-300 animate-fade-in"
             style={{ animationDelay: "0.2s" }}
@@ -127,7 +127,7 @@ export default function Navigation() {
             Features
           </Link>
           <Link
-            href="/homepage/pricing"
+            href="/pricing"
             onClick={closeMenu}
             className="text-white text-2xl font-light hover:text-white/70 transition-colors duration-300 animate-fade-in"
             style={{ animationDelay: "0.3s" }}
@@ -143,7 +143,7 @@ export default function Navigation() {
             Crisis Resources
           </Link>
           <Link
-            href="/homepage/contact"
+            href="/contact"
             onClick={closeMenu}
             className="text-white text-2xl font-light hover:text-white/70 transition-colors duration-300 animate-fade-in"
             style={{ animationDelay: "0.4s" }}

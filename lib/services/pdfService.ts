@@ -469,7 +469,7 @@ async function generateContent(
     color: lightGray,
   })
   
-  lastPage.drawText('© 2025 Prompt & Pause. All rights reserved.', {
+  lastPage.drawText('© 2026 Prompt & Pause. All rights reserved.', {
     x: pageWidth - 220,
     y: footerY - 35,
     size: 8,

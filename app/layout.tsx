@@ -73,10 +73,11 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
       { url: '/icon.png', type: 'image/png', sizes: '32x32' },
       { url: '/icon.png', type: 'image/png', sizes: '64x64' },
     ],
-    apple: [{ url: '/apple-icon.png', type: 'image/png', sizes: '180x180' }],
+    apple: [{ url: '/PandP_APPiconApple.svg', type: 'image/svg+xml', sizes: '1024x1024' }],
   },
   manifest: '/manifest.json',
   robots: { index: true, follow: true },
@@ -86,7 +87,10 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
   themeColor: '#0f172a',
+  viewportFit: 'cover',
 }
 
 export default function RootLayout({

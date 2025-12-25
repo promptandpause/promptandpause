@@ -82,7 +82,7 @@ export default function HeroSection() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex justify-center sm:justify-start items-center">
             <p className="font-sans text-white/70 text-xs sm:text-sm font-light text-center sm:text-left">
-              © 2025 Prompt & Pause. All rights reserved.
+              © 2026 Prompt & Pause. All rights reserved.
             </p>
           </div>
         </div>

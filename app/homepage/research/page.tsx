@@ -78,10 +78,10 @@ function TabNavigation({
   setActiveTab: (tab: "getting-started" | "account" | "research") => void
 }) {
   return (
-    <div className="flex gap-4 border-b-2 border-neutral-200 mb-12 overflow-x-auto">
+    <div className="flex gap-2 sm:gap-4 border-b-2 border-neutral-200 mb-12 overflow-x-auto scrollbar-hide">
       <button
         onClick={() => setActiveTab("getting-started")}
-        className={`pb-4 px-2 text-lg font-bold whitespace-nowrap transition-colors ${
+        className={`pb-4 px-2 sm:px-4 text-sm sm:text-lg font-bold whitespace-nowrap transition-colors ${
           activeTab === "getting-started"
             ? "border-b-4 border-black -mb-[2px] text-black"
             : "text-neutral-400 hover:text-neutral-600"
@@ -91,7 +91,7 @@ function TabNavigation({
       </button>
       <button
         onClick={() => setActiveTab("account")}
-        className={`pb-4 px-2 text-lg font-bold whitespace-nowrap transition-colors ${
+        className={`pb-4 px-2 sm:px-4 text-sm sm:text-lg font-bold whitespace-nowrap transition-colors ${
           activeTab === "account"
             ? "border-b-4 border-black -mb-[2px] text-black"
             : "text-neutral-400 hover:text-neutral-600"
@@ -101,7 +101,7 @@ function TabNavigation({
       </button>
       <button
         onClick={() => setActiveTab("research")}
-        className={`pb-4 px-2 text-lg font-bold whitespace-nowrap transition-colors ${
+        className={`pb-4 px-2 sm:px-4 text-sm sm:text-lg font-bold whitespace-nowrap transition-colors ${
           activeTab === "research"
             ? "border-b-4 border-black -mb-[2px] text-black"
             : "text-neutral-400 hover:text-neutral-600"

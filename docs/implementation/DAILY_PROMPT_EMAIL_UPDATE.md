@@ -163,7 +163,7 @@ Instead of pure black (#000000), the email now uses:
 │                                             │
 ├─────────────────────────────────────────────┤
 │   Prompt & Pause • Pause. Reflect. Grow.   │
-│         © 2025 Prompt & Pause               │
+│         © 2026 Prompt & Pause               │
 └─────────────────────────────────────────────┘
 ```
 
