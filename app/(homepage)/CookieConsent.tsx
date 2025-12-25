@@ -17,10 +17,10 @@ export default function CookieConsent() {
       
       // If no consent status exists, show the popup
       if (!consentStatus) {
-        // Small delay for better UX
+        // 3-second delay for better UX
         const timer = setTimeout(() => {
           setShowConsent(true)
-        }, 1000)
+        }, 3000)
 
         // Cleanup timeout on unmount
         return () => clearTimeout(timer)
@@ -33,6 +33,8 @@ export default function CookieConsent() {
     try {
       // Save acceptance to localStorage (persists forever)
       localStorage.setItem("cookieConsent", "accepted")
+      // Set cookie with 1 year expiration
+      document.cookie = "cookieConsent=accepted; max-age=31536000; path=/; SameSite=Lax"
       closePopup()
     } catch (error) {
       closePopup()

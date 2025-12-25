@@ -547,7 +547,7 @@ function FAQSection({
 
 function CrisisResourcesSidebar() {
   return (
-    <div className="bg-orange-50 border-2 border-orange-200 rounded-2xl p-8">
+    <div id="need-urgent-help" className="bg-orange-50 border-2 border-orange-200 rounded-2xl p-8">
       <h3 className="text-2xl font-bold mb-6 text-orange-900">Need Urgent Help?</h3>
 
       <div className="space-y-8">

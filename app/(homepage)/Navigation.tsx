@@ -135,7 +135,7 @@ export default function Navigation() {
             Pricing
           </Link>
           <Link
-            href="/crisis-resources"
+            href="/research#need-urgent-help"
             onClick={closeMenu}
             className="text-red-400 text-2xl font-light hover:text-red-300 transition-colors duration-300 animate-fade-in border border-red-400/30 px-6 py-2 rounded-lg"
             style={{ animationDelay: "0.35s" }}
