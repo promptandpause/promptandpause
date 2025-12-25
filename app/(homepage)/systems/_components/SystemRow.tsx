@@ -42,3 +42,4 @@ export function SystemRow({ name, status, optional }: SystemRowProps) {
     </li>
   )
 }
+

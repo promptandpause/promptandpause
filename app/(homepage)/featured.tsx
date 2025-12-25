@@ -20,10 +20,11 @@ export default function Featured() {
           it's job hunt anxiety or creative burnout. UK and US-focused support integrated with NHS and local mental health resources,
           designed for the unique stressors of modern life.
         </p>
-        <Link href="/homepage/our-mission" className="bg-black text-white border border-black px-4 py-2 text-sm transition-all duration-300 hover:bg-white hover:text-black cursor-pointer w-fit inline-block text-center">
+        <Link href="/our-mission" className="bg-black text-white border border-black px-4 py-2 text-sm transition-all duration-300 hover:bg-white hover:text-black cursor-pointer w-fit inline-block text-center">
           LEARN MORE
         </Link>
       </div>
     </div>
   )
 }
+

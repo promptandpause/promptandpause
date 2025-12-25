@@ -452,7 +452,7 @@ function CTASection() {
             START FREE
           </a>
           <a
-            href="/homepage/pricing"
+            href="/pricing"
             className="px-10 py-5 border-2 border-white bg-transparent text-white text-base font-medium tracking-wide transition-all duration-300 hover:bg-white hover:text-black cursor-pointer text-center"
           >
             VIEW PRICING
@@ -462,5 +462,6 @@ function CTASection() {
     </div>
   )
 }
+
 
 

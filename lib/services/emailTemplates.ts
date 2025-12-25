@@ -67,11 +67,11 @@ export function emailFooter(): string {
                 </td>
                 <td style="padding: 0 8px; color: ${BRAND_COLORS.textMuted};">|</td>
                 <td style="padding: 0 8px;">
-                  <a href="https://promptandpause.com/homepage/privacy" target="_blank" rel="noopener noreferrer" style="color: ${BRAND_COLORS.textMuted}; text-decoration: none; font-size: 14px;">Privacy</a>
+                  <a href="https://promptandpause.com/privacy" target="_blank" rel="noopener noreferrer" style="color: ${BRAND_COLORS.textMuted}; text-decoration: none; font-size: 14px;">Privacy</a>
                 </td>
                 <td style="padding: 0 8px; color: ${BRAND_COLORS.textMuted};">|</td>
                 <td style="padding: 0 8px;">
-                  <a href="https://promptandpause.com/homepage/contact" target="_blank" rel="noopener noreferrer" style="color: ${BRAND_COLORS.textMuted}; text-decoration: none; font-size: 14px;">Contact</a>
+                  <a href="https://promptandpause.com/contact" target="_blank" rel="noopener noreferrer" style="color: ${BRAND_COLORS.textMuted}; text-decoration: none; font-size: 14px;">Contact</a>
                 </td>
               </tr>
             </table>
@@ -339,3 +339,4 @@ export function alertBox(content: string, type: 'info' | 'warning' | 'success' =
     </div>
   `
 }
+

@@ -73,7 +73,7 @@ export function premiumProductJsonLd() {
         price: "12",
         priceValidUntil: "2026-12-31",
         availability: "https://schema.org/InStock",
-        url: "https://promptandpause.com/homepage/pricing"
+        url: "https://promptandpause.com/pricing"
       },
       {
         "@type": "Offer",
@@ -82,8 +82,9 @@ export function premiumProductJsonLd() {
         price: "120",
         priceValidUntil: "2026-12-31",
         availability: "https://schema.org/InStock",
-        url: "https://promptandpause.com/homepage/pricing"
+        url: "https://promptandpause.com/pricing"
       }
     ]
   }
 }
+

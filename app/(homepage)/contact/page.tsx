@@ -350,7 +350,7 @@ function FAQSection() {
         </div>
         <div className="mt-12 text-center">
           <a
-            href="/homepage/research"
+            href="/research"
             className="inline-block px-10 py-5 border-2 border-black text-black text-base font-medium tracking-wide transition-all duration-300 hover:bg-black hover:text-white"
           >
             VIEW ALL FAQS
@@ -445,5 +445,6 @@ function ResponseTimeSection() {
     </div>
   )
 }
+
 
 

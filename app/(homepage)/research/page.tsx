@@ -622,7 +622,7 @@ function SupportCTASection() {
           Can't find what you're looking for? Our support team is here to help.
         </p>
         <a
-          href="/homepage/contact"
+          href="/contact"
           className="inline-flex items-center gap-3 px-10 py-5 bg-white text-black border-2 border-white text-base font-medium tracking-wide transition-all duration-300 hover:bg-transparent hover:text-white cursor-pointer"
         >
           <Mail className="w-5 h-5" />
@@ -633,4 +633,5 @@ function SupportCTASection() {
     </div>
   )
 }
+
 

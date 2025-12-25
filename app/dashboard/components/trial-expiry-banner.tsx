@@ -20,7 +20,7 @@ export function TrialExpiryBanner({ daysRemaining, isExpired, userName }: TrialE
   if (daysRemaining > 7) return null
 
   const handleUpgrade = () => {
-    router.push('/homepage/pricing')
+    router.push('/pricing')
   }
 
   // Trial expired banner (red/urgent)

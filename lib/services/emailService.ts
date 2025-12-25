@@ -889,7 +889,7 @@ function generateTrialExpiredEmailHTML(name: string): string {
     )}
     
     <div style="text-align: center; margin: 40px 0;">
-      ${ctaButton('Upgrade to Premium', `${APP_URL}/homepage/pricing`)}
+      ${ctaButton('Upgrade to Premium', `${APP_URL}/pricing`)}
     </div>
     
     <!-- Premium Features Reminder -->
@@ -1772,3 +1772,4 @@ export function validateEmailConfig(): {
     hasFromEmail: !!process.env.RESEND_FROM_EMAIL,
   }
 }
+

@@ -120,7 +120,7 @@ export default function TermsOfServicePage() {
               <p className="p-4 bg-neutral-800 rounded-lg">
                 <strong>Important:</strong> By creating an account or using our Service, you acknowledge that you have
                 read, understood, and agree to be bound by these Terms and our{" "}
-                <Link href="/homepage/privacy-policy" className="text-white underline">
+                <Link href="/privacy-policy" className="text-white underline">
                   Privacy Policy
                 </Link>
                 .
@@ -368,7 +368,7 @@ export default function TermsOfServicePage() {
                 <li>Your access to the Service will cease immediately</li>
                 <li>
                   Your data will be deleted according to our{" "}
-                  <Link href="/homepage/privacy-policy" className="text-white underline">
+                  <Link href="/privacy-policy" className="text-white underline">
                     Privacy Policy
                   </Link>
                 </li>
@@ -458,7 +458,7 @@ export default function TermsOfServicePage() {
           <h2 className="text-4xl md:text-5xl font-bold mb-6 uppercase">Ready to Start Your Reflection Journey?</h2>
           <p className="text-xl text-neutral-400 mb-8">Join thousands finding clarity through daily prompts.</p>
           <Link
-            href="/homepage/pricing"
+            href="/pricing"
             className="inline-block px-8 py-4 bg-white text-black font-bold uppercase hover:bg-neutral-200 transition-colors duration-300"
           >
             View Pricing
@@ -470,5 +470,6 @@ export default function TermsOfServicePage() {
     </>
   )
 }
+
 
 

@@ -310,7 +310,7 @@ function PricingCardsSection() {
             </div>
 
             <a
-              href="/homepage/pricing"
+              href="/pricing"
               className="block w-full px-10 py-5 bg-black text-white border-2 border-black text-base font-medium tracking-wide transition-all duration-300 hover:bg-neutral-800 cursor-pointer text-center"
             >
               START 7-DAY FREE TRIAL
@@ -697,7 +697,7 @@ function EnterpriseSection() {
           </div>
 
           <a
-            href="/homepage/contact"
+            href="/contact"
             className="inline-block px-10 py-5 bg-white text-black border-2 border-white text-base font-medium tracking-wide transition-all duration-300 hover:bg-transparent hover:text-white cursor-pointer"
           >
             CONTACT SALES
@@ -728,7 +728,7 @@ function FinalCTASection() {
             START FREE
           </a>
           <a
-            href="/homepage/pricing"
+            href="/pricing"
             className="px-10 py-5 border-2 border-black bg-transparent text-black text-base font-medium tracking-wide transition-all duration-300 hover:bg-black hover:text-white cursor-pointer text-center"
           >
             TRY PREMIUM FREE FOR 7 DAYS
@@ -739,5 +739,6 @@ function FinalCTASection() {
     </div>
   )
 }
+
 
 

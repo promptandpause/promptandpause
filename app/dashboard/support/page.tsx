@@ -522,7 +522,7 @@ function ContactSupportPageContent() {
               Before you reach out...
             </h3>
             <div className="space-y-2">
-              <Link href="/homepage/research" target="_blank" rel="noopener noreferrer" className={`block transition-colors text-sm hover:underline ${
+              <Link href="/research" target="_blank" rel="noopener noreferrer" className={`block transition-colors text-sm hover:underline ${
                 theme === 'dark' ? 'text-white/70 hover:text-white' : 'text-gray-600 hover:text-gray-900'
               }`}>
                 • Check our Help Center for common questions

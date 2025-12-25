@@ -160,7 +160,7 @@ function WaysToSupportSection() {
               others.
             </p>
             <a
-              href="/homepage/pricing"
+              href="/pricing"
               className="block px-8 py-4 bg-black text-white text-sm font-medium tracking-wide transition-all duration-300 hover:bg-neutral-800 cursor-pointer w-full text-center"
             >
               VIEW PREMIUM FEATURES
@@ -177,7 +177,7 @@ function WaysToSupportSection() {
               Know someone navigating a tough time? Gift them 1, 3, or 6 months of Premium.
             </p>
             <a
-              href="/homepage/pricing"
+              href="/pricing"
               className="block px-8 py-4 bg-black text-white text-sm font-medium tracking-wide transition-all duration-300 hover:bg-neutral-800 cursor-pointer w-full text-center"
             >
               GIFT PREMIUM
@@ -223,7 +223,7 @@ function WaysToSupportSection() {
               Are you a therapist, HR leader, or wellness advocate? Let's collaborate to reach more people.
             </p>
             <a
-              href="/homepage/contact"
+              href="/contact"
               className="block px-8 py-4 bg-black text-white text-sm font-medium tracking-wide transition-all duration-300 hover:bg-neutral-800 cursor-pointer w-full text-center"
             >
               CONTACT US
@@ -371,19 +371,19 @@ function CTASection() {
         </h2>
         <div className="flex flex-col sm:flex-row gap-6 justify-center">
           <a
-            href="/homepage/pricing"
+            href="/pricing"
             className="px-10 py-5 bg-white text-black border-2 border-white text-base font-medium tracking-wide transition-all duration-300 hover:bg-transparent hover:text-white cursor-pointer text-center"
           >
             UPGRADE TO PREMIUM
           </a>
           <a
-            href="/homepage/pricing"
+            href="/pricing"
             className="px-10 py-5 border-2 border-white bg-transparent text-white text-base font-medium tracking-wide transition-all duration-300 hover:bg-white hover:text-black cursor-pointer text-center"
           >
             GIFT PREMIUM
           </a>
           <a
-            href="/homepage/contact"
+            href="/contact"
             className="px-10 py-5 border-2 border-white bg-transparent text-white text-base font-medium tracking-wide transition-all duration-300 hover:bg-white hover:text-black cursor-pointer text-center"
           >
             JUST SAY HI
@@ -393,5 +393,6 @@ function CTASection() {
     </div>
   )
 }
+
 
 

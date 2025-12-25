@@ -372,7 +372,7 @@ export default function PrivacyPolicyPage() {
             <div className="space-y-4 text-neutral-300 leading-relaxed">
               <p>
                 We use cookies and similar tracking technologies to improve your experience. See our{" "}
-                <Link href="/homepage/cookie-policy" className="text-white underline hover:text-neutral-300">
+                <Link href="/cookie-policy" className="text-white underline hover:text-neutral-300">
                   Cookie Policy
                 </Link>{" "}
                 for detailed information.
@@ -488,7 +488,7 @@ export default function PrivacyPolicyPage() {
           <h2 className="text-4xl md:text-5xl font-bold mb-6 uppercase">Questions About Your Privacy?</h2>
           <p className="text-xl text-neutral-400 mb-8">We're here to help. Reach out anytime.</p>
           <Link
-            href="/homepage/contact"
+            href="/contact"
             className="inline-block px-8 py-4 bg-white text-black font-bold uppercase hover:bg-neutral-200 transition-colors duration-300"
           >
             Contact Us
@@ -500,5 +500,6 @@ export default function PrivacyPolicyPage() {
     </>
   )
 }
+
 
 

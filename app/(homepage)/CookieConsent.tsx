@@ -134,7 +134,7 @@ export default function CookieConsent() {
           {/* Learn more link */}
           <div className="mt-5 pt-5 border-t border-white/10">
             <a
-              href="/homepage/cookie-policy"
+              href="/cookie-policy"
               className="text-xs text-white/60 hover:text-white font-medium hover:underline transition-colors"
             >
               Learn more about our Cookie Policy →
@@ -145,3 +145,4 @@ export default function CookieConsent() {
     </>
   )
 }
+

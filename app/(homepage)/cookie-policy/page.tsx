@@ -512,7 +512,7 @@ export default function CookiePolicyPage() {
                 </p>
                 <p className="mt-2">
                   <strong>Privacy Policy:</strong>{" "}
-                  <Link href="/homepage/privacy-policy" className="text-white underline hover:text-neutral-300">
+                  <Link href="/privacy-policy" className="text-white underline hover:text-neutral-300">
                     View Full Policy
                   </Link>
                 </p>
@@ -528,7 +528,7 @@ export default function CookiePolicyPage() {
           <h2 className="text-4xl md:text-5xl font-bold mb-6 uppercase">Questions About Cookies?</h2>
           <p className="text-xl text-neutral-400 mb-8">We're transparent about how we use your data.</p>
           <Link
-            href="/homepage/contact"
+            href="/contact"
             className="inline-block px-8 py-4 bg-white text-black font-bold uppercase hover:bg-neutral-200 transition-colors duration-300"
           >
             Contact Us
@@ -540,5 +540,6 @@ export default function CookiePolicyPage() {
     </>
   )
 }
+
 
 
