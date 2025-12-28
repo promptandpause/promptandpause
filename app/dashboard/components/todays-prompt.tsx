@@ -31,6 +31,7 @@ export default function TodaysPrompt() {
   const { stats: reflectionStats } = useReflectionStats()
   const [reflection, setReflection] = useState("");
   const [timer, setTimer] = useState(300); // 5 min in seconds
+  const [timerStarted, setTimerStarted] = useState(false); // Track if timer has started
   const [submitted, setSubmitted] = useState(false);
   const [feedback, setFeedback] = useState<"helped" | "irrelevant" | null>(null);
   const [selectedMood, setSelectedMood] = useState<MoodType>("😊")
@@ -127,13 +128,13 @@ export default function TodaysPrompt() {
   }, [])
   
   // Timer logic
-  // Decrement every second if timer > 0 and prompt not submitted
+  // Decrement every second if timer > 0, timer has started, and prompt not submitted
   useEffect(() => {
-    if (timer > 0 && !submitted) {
+    if (timer > 0 && timerStarted && !submitted) {
       const interval = setInterval(() => setTimer(t => t - 1), 1000);
       return () => clearInterval(interval);
     }
-  }, [timer, submitted]);
+  }, [timer, timerStarted, submitted]);
   const min = Math.floor(timer / 60);
   const sec = String(timer % 60).padStart(2, '0');
 
@@ -300,6 +301,11 @@ export default function TodaysPrompt() {
               onChange={(e) => {
                 const newText = e.target.value
                 const newWordCount = newText.trim().split(/\s+/).filter(Boolean).length
+                
+                // Start timer on first keystroke
+                if (!timerStarted && newText.length > 0) {
+                  setTimerStarted(true)
+                }
                 
                 // Only allow update if under word limit
                 if (newWordCount <= MAX_WORDS) {

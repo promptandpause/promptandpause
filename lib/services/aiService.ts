@@ -189,7 +189,7 @@ async function generateWithOpenRouter(
           { role: 'user', content: userContext },
         ],
         temperature: 0.9,
-        max_tokens: 500,  // Increased for full prompt generation
+        max_tokens: 800,  // Increased to handle longer multi-paragraph prompts
         top_p: 0.95,
       })
 
@@ -246,7 +246,7 @@ async function generateWithHuggingFace(
           { role: 'user', content: userContext },
         ],
         temperature: 0.9,
-        max_tokens: 500,  // Increased for full prompt generation
+        max_tokens: 800,  // Increased to handle longer multi-paragraph prompts
         top_p: 0.95,
       })
 
@@ -306,7 +306,7 @@ async function generateWithGemini(
       contents: [{ role: 'user', parts: [{ text: fullPrompt }] }],
       generationConfig: {
         temperature: 0.9, // Higher for more natural, human-like variation
-        maxOutputTokens: 500, // Increased for full prompt generation
+        maxOutputTokens: 800, // Increased to handle longer multi-paragraph prompts
         topP: 0.95,
       },
     })
@@ -342,7 +342,7 @@ async function generateWithOpenAI(
         { role: 'user', content: userContext },
       ],
       temperature: 0.9, // Higher for more natural, human-like variation
-      max_tokens: 500,   // Increased for full prompt generation
+      max_tokens: 800,   // Increased to handle longer multi-paragraph prompts
       top_p: 0.95,       // Add nucleus sampling for better quality
     })
 
