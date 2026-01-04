@@ -236,7 +236,7 @@ export function useTier(): UseTierResult {
   }, [])
 
   // Generate status message
-  const statusMessage = getSubscriptionStatusMessage(tier, subscriptionStatus, subscriptionEndDate)
+  const statusMessage = getSubscriptionStatusMessage(subscriptionStatus, subscriptionEndDate)
   
   // Calculate trial days remaining
   const trialDaysRemaining = trialEndDate && isTrial

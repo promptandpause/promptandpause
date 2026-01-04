@@ -49,11 +49,12 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Fetch user's focus areas
+    // Fetch user's focus areas (only active ones)
     const { data: focusAreas, error } = await supabase
       .from('focus_areas')
       .select('id, name, description, icon, color, created_at')
       .eq('user_id', user.id)
+      .eq('is_active', true)
       .order('created_at', { ascending: false })
 
     if (error) {

@@ -25,6 +25,7 @@ export const en = {
   'nav.dashboard': 'Dashboard',
   'nav.achievements': 'Achievements',
   'nav.archive': 'Archive',
+  'nav.my_journals': 'My Journals',
   'nav.settings': 'Settings',
   'nav.crisis_resources': 'Crisis Resources',
   'nav.logout': 'Logout',
@@ -146,6 +147,7 @@ export const es: Record<TranslationKey, string> = {
   'nav.dashboard': 'Panel',
   'nav.achievements': 'Logros',
   'nav.archive': 'Archivo',
+  'nav.my_journals': 'Mis Diarios',
   'nav.settings': 'Configuración',
   'nav.crisis_resources': 'Recursos de Crisis',
   'nav.logout': 'Cerrar sesión',
@@ -265,8 +267,11 @@ export const fr: Record<TranslationKey, string> = {
   
   // Navigation
   'nav.dashboard': 'Tableau de Bord',
+  'nav.achievements': 'Réalisations',
   'nav.archive': 'Archives',
+  'nav.my_journals': 'Mes Journaux',
   'nav.settings': 'Paramètres',
+  'nav.crisis_resources': 'Ressources de Crise',
   'nav.logout': 'Déconnexion',
   'nav.help': 'Contacter le Support',
   
@@ -384,8 +389,11 @@ export const nl: Record<TranslationKey, string> = {
   
   // Navigation
   'nav.dashboard': 'Dashboard',
+  'nav.achievements': 'Prestaties',
   'nav.archive': 'Archief',
+  'nav.my_journals': 'Mijn Dagboeken',
   'nav.settings': 'Instellingen',
+  'nav.crisis_resources': 'Crisisbronnen',
   'nav.logout': 'Uitloggen',
   'nav.help': 'Contact Ondersteuning',
   
