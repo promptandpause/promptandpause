@@ -230,60 +230,67 @@ export default function JournalsPage() {
         <div className="col-span-1 md:col-span-10 space-y-4 md:space-y-6">
           {/* Header Card */}
           <Card className={`backdrop-blur-xl border-2 rounded-3xl p-3 md:p-6 ${theme === 'dark' ? 'bg-white/5 border-white/10 shadow-2xl shadow-black/50' : 'bg-white/90 border-gray-400 shadow-xl'}`}>
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-4">
-              <div>
-                <h1 className={`text-2xl md:text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>My Journals</h1>
-                <p className={`text-sm ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>Private self-journals (no AI, no streaks). Edit or add freely.</p>
+            <div className="space-y-4">
+              {/* Title Row */}
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div>
+                  <h1 className={`text-2xl md:text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>My Journals</h1>
+                  <p className={`text-sm ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>Private self-journals (no AI, no streaks). Edit or add freely.</p>
+                </div>
               </div>
-              <div className="flex gap-2 flex-wrap">
-                <div className="relative">
-                  <Search className="h-4 w-4 absolute left-2.5 top-2.5 text-gray-400" />
+              
+              {/* Search and Filter Row */}
+              <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-end">
+                <div className="relative flex-1 sm:max-w-[200px]">
+                  <Search className="h-4 w-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
                   <Input
-                    className="pl-9"
+                    className={`pl-9 h-10 ${theme === 'dark' ? 'bg-white/10 border-white/20 text-white placeholder:text-white/50' : 'bg-white border-gray-300 text-gray-900'}`}
                     placeholder="Search text..."
                     value={searchText}
                     onChange={(e) => setSearchText(e.target.value)}
                   />
                 </div>
-                <div className="flex flex-col">
-                  <label className={`text-[11px] font-semibold mb-2 ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>Filter by date</label>
+                <div className="flex-1 sm:max-w-[180px]">
+                  <label className={`text-[11px] font-semibold mb-1 block ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>Filter by date</label>
                   <Input
                     type="date"
                     value={filterDate}
                     onChange={(e) => setFilterDate(e.target.value)}
-                    className="w-[160px]"
+                    className={`h-10 ${theme === 'dark' ? 'bg-white/10 border-white/20 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
                   />
                 </div>
-                <div className="flex items-center gap-2">
-                  <Filter className="h-4 w-4 text-gray-400" />
+                <div className="flex items-center gap-2 h-10">
+                  <Filter className="h-4 w-4 text-gray-400 flex-shrink-0" />
                   <div className="flex gap-1 flex-wrap">
                     {moods.map(m => (
                       <button
                         key={m}
                         onClick={() => setFilterMood(filterMood === m ? null : m)}
-                        className={`px-2 py-1 rounded-lg text-sm border ${filterMood === m ? 'bg-green-500/20 border-green-400' : theme === 'dark' ? 'border-white/20 bg-white/10 text-white/80' : 'border-gray-200 bg-white/60 text-gray-800'}`}
+                        className={`px-2 py-1.5 rounded-lg text-sm border transition-colors ${filterMood === m ? 'bg-green-500/20 border-green-400' : theme === 'dark' ? 'border-white/20 bg-white/10 text-white/80 hover:bg-white/15' : 'border-gray-200 bg-white/60 text-gray-800 hover:bg-gray-100'}`}
                       >
                         {m}
                       </button>
                     ))}
                   </div>
                 </div>
-                <div className="flex gap-1 flex-wrap">
-                  {availableTags.map(tag => (
-                    <Badge
-                      key={tag}
-                      onClick={() => setFilterTag(filterTag === tag ? null : tag)}
-                      className={`cursor-pointer ${filterTag === tag ? 'bg-green-600 text-white' : theme === 'dark' ? 'bg-white/10 text-white/80 border-white/20' : 'bg-gray-100 text-gray-800 border-gray-200'}`}
-                    >
-                      {tag}
-                    </Badge>
-                  ))}
-                  {filterTag || filterMood || filterDate || searchText ? (
-                    <Button variant="ghost" size="sm" onClick={() => { setFilterTag(null); setFilterMood(null); setFilterDate(""); setSearchText(""); }}>
-                      Clear filters
-                    </Button>
-                  ) : null}
-                </div>
+              </div>
+              
+              {/* Tags Row */}
+              <div className="flex gap-1.5 flex-wrap items-center">
+                {availableTags.map(tag => (
+                  <Badge
+                    key={tag}
+                    onClick={() => setFilterTag(filterTag === tag ? null : tag)}
+                    className={`cursor-pointer transition-colors ${filterTag === tag ? 'bg-green-600 text-white' : theme === 'dark' ? 'bg-white/10 text-white/80 border-white/20 hover:bg-white/15' : 'bg-gray-100 text-gray-800 border-gray-200 hover:bg-gray-200'}`}
+                  >
+                    {tag}
+                  </Badge>
+                ))}
+                {(filterTag || filterMood || filterDate || searchText) && (
+                  <Button variant="ghost" size="sm" onClick={() => { setFilterTag(null); setFilterMood(null); setFilterDate(""); setSearchText(""); }} className={theme === 'dark' ? 'text-white/70 hover:text-white' : 'text-gray-600 hover:text-gray-900'}>
+                    Clear filters
+                  </Button>
+                )}
               </div>
             </div>
           </Card>

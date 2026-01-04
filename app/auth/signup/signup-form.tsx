@@ -2,6 +2,8 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { getSupabaseClient } from "@/lib/supabase/client"
@@ -116,8 +118,20 @@ export function SignupForm() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center w-full max-w-sm space-y-6 px-4 py-10">
-      <div className="text-center">
+    <div className="flex flex-col items-center justify-center w-full max-w-sm space-y-6 px-4 py-10 relative">
+      {/* Mobile-only logo */}
+      <Link href="/" className="absolute top-6 left-1/2 -translate-x-1/2 lg:hidden">
+        <Image
+          src="https://res.cloudinary.com/dh1rrfpmq/image/upload/v1735646356/prompt_pause-JRsbZR3dxCXndC8YMcyX6XU3XeT2Vw_vdvqfj.svg"
+          alt="Prompt & Pause"
+          width={140}
+          height={36}
+          className="h-9 w-auto"
+          priority
+        />
+      </Link>
+      
+      <div className="text-center pt-8 lg:pt-0">
         <h1 className="text-lg font-medium tracking-tight">Create your account</h1>
         <p className="text-xs text-muted-foreground">Sign up to access Prompt & Pause features</p>
       </div>

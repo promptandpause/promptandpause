@@ -1,9 +1,16 @@
 "use client"
 import { useState } from "react";
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import dynamic from 'next/dynamic';
+import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { getSupabaseClient } from "@/lib/supabase/client";
+
+const DotLottieReact = dynamic(
+  () => import('@lottiefiles/dotlottie-react').then((mod) => mod.DotLottieReact),
+  { ssr: false }
+);
 
 export default function ForgotPasswordPage() {
   const supabase = getSupabaseClient()
@@ -14,7 +21,19 @@ export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   return (
     <main className="w-screen h-screen flex">
-      <div className="w-full lg:w-1/2 h-full flex items-center justify-center" style={{backgroundColor: '#F2F0EF'}}>
+      <div className="w-full lg:w-1/2 h-full flex items-center justify-center relative" style={{backgroundColor: '#F2F0EF'}}>
+        {/* Mobile-only logo */}
+        <Link href="/" className="absolute top-6 left-1/2 -translate-x-1/2 lg:hidden">
+          <Image
+            src="https://res.cloudinary.com/dh1rrfpmq/image/upload/v1735646356/prompt_pause-JRsbZR3dxCXndC8YMcyX6XU3XeT2Vw_vdvqfj.svg"
+            alt="Prompt & Pause"
+            width={140}
+            height={36}
+            className="h-9 w-auto"
+            priority
+          />
+        </Link>
+        
         <div className="w-full max-w-sm space-y-6 px-4">
           <div className="text-center">
             <h1 className="text-lg font-medium tracking-tight">Reset Your Password</h1>

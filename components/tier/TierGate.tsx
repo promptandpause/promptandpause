@@ -2,6 +2,7 @@
 
 import { ReactNode } from 'react'
 import { useTier } from '@/hooks/useTier'
+import { useTheme } from '@/contexts/ThemeContext'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -237,6 +238,7 @@ export function LockedFeatureOverlay({
 
 export function PromptLimitBanner() {
   const { features } = useTier()
+  const { theme } = useTheme()
   const [used, setUsed] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -290,10 +292,10 @@ export function PromptLimitBanner() {
             <Sparkles className="h-5 w-5 text-orange-400" />
           </div>
           <div>
-            <h4 className="font-semibold text-white">
+            <h4 className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               {remaining === 0 ? 'Weekly Limit Reached' : `${remaining} Prompt${remaining === 1 ? '' : 's'} Remaining`}
             </h4>
-            <p className="text-white/70 text-sm">
+            <p className={`text-sm ${theme === 'dark' ? 'text-white/70' : 'text-gray-600'}`}>
               {remaining === 0 
                 ? 'Upgrade to Premium for daily prompts (7 days/week)'
                 : 'Get unlimited prompts with Premium'

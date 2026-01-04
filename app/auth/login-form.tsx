@@ -2,6 +2,8 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { getSupabaseClient } from "@/lib/supabase/client"
@@ -83,7 +85,19 @@ export function LoginForm() {
   }
 
   return (
-    <div className="flex h-screen w-full items-center justify-center">
+    <div className="flex h-screen w-full items-center justify-center relative">
+      {/* Mobile-only logo */}
+      <Link href="/" className="absolute top-6 left-1/2 -translate-x-1/2 lg:hidden">
+        <Image
+          src="https://res.cloudinary.com/dh1rrfpmq/image/upload/v1735646356/prompt_pause-JRsbZR3dxCXndC8YMcyX6XU3XeT2Vw_vdvqfj.svg"
+          alt="Prompt & Pause"
+          width={140}
+          height={36}
+          className="h-9 w-auto"
+          priority
+        />
+      </Link>
+      
       <div className="w-full max-w-sm space-y-6 px-4">
         <div className="text-center">
           <h1 className="text-lg font-medium tracking-tight">Welcome Back!</h1>

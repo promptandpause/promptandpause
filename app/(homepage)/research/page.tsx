@@ -478,7 +478,7 @@ function FAQSection({
     {
       question: "Is there a mobile app?",
       answer:
-        "Not yet, and that's intentional. We deliver prompts where you already are—your email inbox or Slack workspace. This removes the friction of downloading another app and reduces screen time. However, our web platform is fully mobile-responsive, so you can reflect on any device. A native app is on our roadmap for 2026 based on user feedback.",
+        "Yes! While we considered building a native app, we decided to use a Progressive Web App (PWA) instead. You can install Prompt & Pause directly to your home screen from Safari (tap Share → Add to Home Screen) or Chrome (tap the install prompt). The PWA works just like a native app—with push notifications, offline access, and a full-screen experience. We may develop a native app in the future based on user feedback, but the PWA delivers the same great experience without the app store download.",
     },
   ]
 

@@ -1,10 +1,14 @@
 "use client"
 
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import dynamic from 'next/dynamic';
 import { SignupForm } from "./signup-form";
 
-export default function SignUpPage() {
+const DotLottieReact = dynamic(
+  () => import('@lottiefiles/dotlottie-react').then((mod) => mod.DotLottieReact),
+  { ssr: false }
+);
 
+export default function SignUpPage() {
   return (
     <main className="w-screen h-screen flex">
       <div className="w-full lg:w-1/2 h-full flex items-center justify-center" style={{backgroundColor: '#F2F0EF'}}>
