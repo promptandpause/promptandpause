@@ -71,7 +71,9 @@ function AchievementsPageContent() {
   return (
     <div 
       className="min-h-screen relative" 
-      style={theme === 'light' ? { backgroundColor: '#F5F5DC' } : { background: 'linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a)' }}
+      style={theme === 'light' 
+        ? { background: 'linear-gradient(135deg, #f4f0eb 0%, #a1a79e 45%, #384c37 100%)' } 
+        : { background: 'linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a)' }}
     >
       {/* Animated Bubble Background */}
       <BubbleBackground 
@@ -79,7 +81,7 @@ function AchievementsPageContent() {
         className="fixed inset-0 -z-10"
       />
       {/* Theme overlay for cohesive background */}
-      <div className={`fixed inset-0 -z-10 ${theme === 'light' ? 'bg-[#F5F5DC]/60' : 'bg-black/20'}`} />
+      <div className={`fixed inset-0 -z-10 ${theme === 'light' ? 'bg-white/35' : 'bg-black/25'}`} />
       
       <div className="relative z-10 px-3 md:px-6 py-4 md:py-8 pb-24 md:pb-8">
       {/* Header */}

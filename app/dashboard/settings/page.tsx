@@ -8,7 +8,13 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
-import { ChevronRight, HelpCircle, LogOut, Crown, Archive, Settings, LayoutDashboard, Bell, Lock, User, Palette, Shield, Calendar, CreditCard, Check, Zap, LifeBuoy } from "lucide-react"
+import { 
+  Bell, ChevronLeft, ChevronRight, HelpCircle, Lock, Palette, 
+  Shield, Trash2, Upload, User, Zap, CreditCard, Smartphone, 
+  Globe2, Loader2, CheckCircle2, XCircle, Settings2, SmartphoneCharging, 
+  ArrowRight, Mail, KeyRound, Eye, EyeOff, Copy, Check, ExternalLink, NotebookPen, Clock, 
+  LayoutDashboard, Archive, Settings, Crown, Calendar 
+} from "lucide-react"
 import { SlackIcon } from "@/components/icons/SlackIcon"
 import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon"
 import { TeamsIcon } from "@/components/icons/TeamsIcon"
@@ -814,18 +820,16 @@ function SettingsPageContent() {
     return (
       <div 
         className="min-h-screen relative" 
-        style={theme === 'light' ? { backgroundColor: '#F5F5DC' } : { background: 'linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a)' }}
+        style={theme === 'light' ? { background: 'linear-gradient(135deg, #f4f0eb 0%, #a1a79e 45%, #384c37 100%)' } : { background: 'linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a)' }}
       >
         {/* Animated Bubble Background - Shows immediately */}
         <BubbleBackground 
           interactive
           className="fixed inset-0 -z-10"
         />
-        <div className={`fixed inset-0 -z-10 ${
-          theme === 'light' ? 'bg-[#F5F5DC]/60' : 'bg-black/20'
-        }`} />
-        
-        <div className="relative z-10 p-3 md:p-6">
+        <div className={`fixed inset-0 -z-10 ${theme === 'light' ? 'bg-white/35' : 'bg-black/25'}`} />
+
+        <div className="relative z-10 p-4 sm:p-6 md:p-8">
           <PageSkeleton />
         </div>
       </div>
@@ -835,17 +839,14 @@ function SettingsPageContent() {
   return (
     <div 
       className="min-h-screen relative" 
-      style={theme === 'light' ? { backgroundColor: '#F5F5DC' } : { background: 'linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a)' }}
+      style={theme === 'light' ? { background: 'linear-gradient(135deg, #f4f0eb 0%, #a1a79e 45%, #384c37 100%)' } : { background: 'linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a)' }}
     >
       {/* Animated Bubble Background */}
       <BubbleBackground 
         interactive
         className="fixed inset-0 -z-10"
       />
-      {/* Theme overlay */}
-      <div className={`fixed inset-0 -z-10 ${
-        theme === 'light' ? 'bg-[#F5F5DC]/60' : 'bg-black/20'
-      }`} />
+      <div className={`fixed inset-0 -z-10 ${theme === 'light' ? 'bg-white/35' : 'bg-black/25'}`} />
 
       <div className="relative z-10 p-3 md:p-6 grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 pb-24 md:pb-6">
         {/* Universal Sidebar - Desktop & Mobile */}
@@ -2191,17 +2192,26 @@ function SettingsPageContent() {
                   <Label className={`text-sm ${
                     theme === 'dark' ? 'text-white' : 'text-gray-900'
                   }`}>Reminder Time</Label>
-                  <input
-                    id="reminder-time"
-                    type="time"
-                    value={reminderTime}
-                    onChange={(e) => setReminderTime(e.target.value)}
-                    className={`text-sm h-9 md:h-10 ${
-                      theme === 'dark'
-                        ? 'bg-white/10 border border-white/20 text-white'
-                        : 'bg-white border-2 border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200'
-                    }`}
-                  />
+                  <div className={`flex items-center gap-2 rounded-xl px-3 h-11 border ${
+                    theme === 'dark'
+                      ? 'bg-white/5 border-white/15'
+                      : 'bg-white border-gray-300'
+                  }`}>
+                    <Clock className={`h-4 w-4 ${
+                      theme === 'dark' ? 'text-white' : 'text-gray-700'
+                    }`} />
+                    <input
+                      id="reminder-time"
+                      type="time"
+                      value={reminderTime}
+                      onChange={(e) => setReminderTime(e.target.value)}
+                      className={`flex-1 bg-transparent outline-none text-sm ${
+                        theme === 'dark'
+                          ? 'text-white placeholder:text-white/50'
+                          : 'text-gray-900 placeholder:text-gray-500'
+                      }`}
+                    />
+                  </div>
                 </div>
                 <Button 
                   onClick={handleSaveNotifications}

@@ -32,7 +32,7 @@ export function DashboardSidebar() {
     { icon: LayoutDashboard, label: "dashboard", href: "/dashboard", active: pathname === "/dashboard" },
     { icon: Trophy, label: "achievements", href: "/dashboard/achievements", active: pathname === "/dashboard/achievements" },
     { icon: Archive, label: "archive", href: "/dashboard/archive", active: pathname === "/dashboard/archive" },
-    { icon: NotebookPen, label: "journals", href: "/dashboard/journals", active: pathname === "/dashboard/journals" },
+    { icon: NotebookPen, label: "my_journals", href: "/dashboard/journals", active: pathname === "/dashboard/journals" },
     { icon: Settings, label: "settings", href: "/dashboard/settings", active: pathname?.startsWith("/dashboard/settings") || false },
   ]
 

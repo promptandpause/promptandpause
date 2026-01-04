@@ -213,7 +213,12 @@ function ContactSupportPageContent() {
   }
 
   return (
-    <div className="min-h-screen relative" style={theme === 'light' ? { backgroundColor: '#F5F5DC' } : { background: 'linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a)' }}>
+    <div 
+      className="min-h-screen relative" 
+      style={theme === 'light' 
+        ? { background: 'linear-gradient(135deg, #f4f0eb 0%, #a1a79e 45%, #384c37 100%)' } 
+        : { background: 'linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a)' }}
+    >
       {/* Animated Bubble Background */}
       <BubbleBackground 
         interactive
@@ -221,7 +226,7 @@ function ContactSupportPageContent() {
       />
       {/* Themed background overlay */}
       <div className={`fixed inset-0 -z-10 ${
-        theme === 'light' ? 'bg-[#F5F5DC]/60' : 'bg-black/20'
+        theme === 'light' ? 'bg-white/35' : 'bg-black/25'
       }`} />
 
       <div className="relative z-10 p-3 md:p-6 grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 pb-24 md:pb-6">
