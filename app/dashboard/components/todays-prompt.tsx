@@ -352,7 +352,7 @@ export default function TodaysPrompt() {
           <div className="mb-3">
             <textarea
               className={`w-full min-h-[140px] md:min-h-[120px] max-h-52 rounded-xl border-2 px-3 md:px-4 py-2.5 md:py-3 focus:outline-none resize-none text-sm md:text-base transition-all duration-200 ${theme === 'dark' ? 'border-white/10 bg-white/5 text-white placeholder:text-white/40 focus:border-orange-400 focus:bg-white/10 focus:shadow-[0_0_0_3px_rgba(251,146,60,0.3)]' : 'border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 focus:border-orange-400 focus:bg-orange-50/30 focus:shadow-[0_0_0_3px_rgba(251,146,60,0.2)]'}`}
-              placeholder={`Write your reflection (timer: ${min}:${sec})...`}
+              placeholder="Write your reflection..."
               maxLength={1200}
               value={reflection}
               onChange={(e) => {
@@ -376,7 +376,7 @@ export default function TodaysPrompt() {
               }}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
-              disabled={submitted || timer === 0}
+              disabled={submitted}
             />
             {/* Word count indicator */}
             <div className={`flex items-center justify-between mt-1.5 text-xs ${
@@ -510,7 +510,7 @@ export default function TodaysPrompt() {
                   e.preventDefault()
                   handleSave()
                 }}
-                disabled={reflection.trim().length === 0 || timer === 0}
+                disabled={reflection.trim().length === 0}
                 className="w-full md:w-auto bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold px-5 md:px-7 py-2.5 md:py-2 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base shadow-lg hover:shadow-xl"
               >
                 Save Reflection
@@ -551,26 +551,7 @@ export default function TodaysPrompt() {
                 )}
               </div>
               
-              {/* Timer with Pulse Animation */}
-              <motion.span
-                animate={{
-                  opacity: timer <= 60 && timer > 0 ? [1, 0.5, 1] : 1,
-                  scale: timer <= 60 && timer > 0 ? [1, 1.05, 1] : 1
-                }}
-                transition={{
-                  duration: 1.5,
-                  repeat: timer <= 60 && timer > 0 ? Infinity : 0,
-                  ease: "easeInOut"
-                }}
-                className={`text-xs md:text-sm font-mono ${
-                  timer <= 60 && timer > 0
-                    ? theme === 'dark' ? 'text-orange-300 font-semibold' : 'text-orange-600 font-semibold'
-                    : theme === 'dark' ? 'text-white/50' : 'text-gray-500'
-                } motion-reduce:!opacity-100 motion-reduce:!transform-none`}
-              >
-                {timer > 0 ? `${min}:${sec}` : "Time's up!"}
-              </motion.span>
-            </div>
+                          </div>
           </div>
         </>
       ) : (
