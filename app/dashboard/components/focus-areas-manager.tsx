@@ -253,10 +253,10 @@ export default function FocusAreasManager() {
 
   if (loading) {
     return (
-      <section className={`backdrop-blur-xl rounded-2xl md:rounded-3xl p-6 flex items-center justify-center min-h-[300px] ${
+      <section className={`rounded-2xl md:rounded-3xl p-6 flex items-center justify-center min-h-[300px] transition-all duration-200 ${
         theme === 'dark'
-          ? 'bg-white/5 border border-white/10'
-          : 'bg-white/80 border border-gray-300'
+          ? 'glass-light shadow-soft-lg'
+          : 'glass-medium shadow-soft-md'
       }`}>
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="h-8 w-8 text-purple-400 animate-spin" />
@@ -267,10 +267,10 @@ export default function FocusAreasManager() {
   }
 
   return (
-    <section className={`backdrop-blur-xl rounded-2xl md:rounded-3xl p-5 md:p-6 shadow-lg ${
+    <section className={`rounded-2xl md:rounded-3xl p-5 md:p-6 transition-all duration-200 ${
       theme === 'dark'
-        ? 'bg-gradient-to-br from-purple-500/5 to-pink-500/5 border border-purple-400/20'
-        : 'bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-400/30'
+        ? 'glass-light shadow-soft-lg bg-gradient-to-br from-[#C8B8D8]/10 to-[#B8C8E8]/10 border border-[#C8B8D8]/20'
+        : 'glass-medium shadow-soft-md bg-gradient-to-br from-[#C8B8D8]/15 to-[#B8C8E8]/15 border border-[#C8B8D8]/25'
     }`}>
       {/* Header */}
       <div className="flex items-center justify-between gap-3 mb-5">

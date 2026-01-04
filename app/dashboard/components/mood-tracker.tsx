@@ -10,19 +10,19 @@ import { useTheme } from "@/contexts/ThemeContext";
 const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const getMoodColor = (mood?: MoodType) => {
-  if (!mood) return "bg-gray-50";
+  if (!mood) return "bg-gray-100/50";
   const happyMoods: MoodType[] = ["😊", "😄", "🙏"];
   const neutralMoods: MoodType[] = ["😐", "🤔"];
   const sadMoods: MoodType[] = ["😔"];
   const calmMoods: MoodType[] = ["😌"];
   const strongMoods: MoodType[] = ["💪"];
   
-  if (happyMoods.includes(mood)) return "bg-green-400";
-  if (calmMoods.includes(mood)) return "bg-blue-400";
-  if (strongMoods.includes(mood)) return "bg-purple-400";
-  if (neutralMoods.includes(mood)) return "bg-yellow-400";
-  if (sadMoods.includes(mood)) return "bg-red-400";
-  return "bg-orange-400";
+  if (happyMoods.includes(mood)) return "bg-[#B8D8B8]";
+  if (calmMoods.includes(mood)) return "bg-[#B8C8E8]";
+  if (strongMoods.includes(mood)) return "bg-[#C8B8D8]";
+  if (neutralMoods.includes(mood)) return "bg-[#E8D8B8]";
+  if (sadMoods.includes(mood)) return "bg-[#D8B8B8]";
+  return "bg-[#F4C6B8]";
 };
 
 interface WeekDay {
@@ -84,7 +84,7 @@ export default function MoodTracker() {
   const activeData = weekData[activeDay];
 
   return (
-    <section className={`backdrop-blur-xl border rounded-2xl md:rounded-3xl px-3 md:px-7 pt-4 md:pt-5 pb-4 md:pb-5 flex flex-col ${theme === 'dark' ? 'bg-white/5 border-white/10 shadow-2xl shadow-black/50' : 'bg-white/80 border-gray-300'}`}>
+    <section className={`rounded-2xl md:rounded-3xl px-4 md:px-7 pt-5 md:pt-6 pb-5 md:pb-6 flex flex-col transition-all duration-200 ${theme === 'dark' ? 'glass-light shadow-soft-lg' : 'glass-medium shadow-soft-md'}`}>
       <div className="flex items-center justify-between mb-4">
         <h4 className={`font-semibold text-base ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Mood Tracker</h4>
         {currentStreak > 0 && (

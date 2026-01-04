@@ -4,88 +4,166 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(0.9789 0.0082 121.6272);
-  --foreground: oklch(0 0 0);
-  --card: oklch(1.0000 0 0);
-  --card-foreground: oklch(0 0 0);
-  --popover: oklch(1.0000 0 0);
-  --popover-foreground: oklch(0 0 0);
-  --primary: oklch(0.5106 0.2301 276.9656);
-  --primary-foreground: oklch(1.0000 0 0);
-  --secondary: oklch(0.7038 0.1230 182.5025);
-  --secondary-foreground: oklch(1.0000 0 0);
-  --muted: oklch(0.9551 0 0);
-  --muted-foreground: oklch(0.3211 0 0);
-  --accent: oklch(0.7686 0.1647 70.0804);
-  --accent-foreground: oklch(0 0 0);
-  --destructive: oklch(0.6368 0.2078 25.3313);
-  --destructive-foreground: oklch(1.0000 0 0);
-  --border: oklch(0 0 0);
-  --input: oklch(0.5555 0 0);
-  --ring: oklch(0.7853 0.1041 274.7134);
-  --chart-1: oklch(0.5106 0.2301 276.9656);
-  --chart-2: oklch(0.7038 0.1230 182.5025);
-  --chart-3: oklch(0.7686 0.1647 70.0804);
-  --chart-4: oklch(0.6559 0.2118 354.3084);
-  --chart-5: oklch(0.7227 0.1920 149.5793);
-  --radius: 1rem;
-  --sidebar: oklch(0.9789 0.0082 121.6272);
-  --sidebar-foreground: oklch(0 0 0);
-  --sidebar-primary: oklch(0.5106 0.2301 276.9656);
-  --sidebar-primary-foreground: oklch(1.0000 0 0);
-  --sidebar-accent: oklch(0.7686 0.1647 70.0804);
-  --sidebar-accent-foreground: oklch(0 0 0);
-  --sidebar-border: oklch(0 0 0);
-  --sidebar-ring: oklch(0.7853 0.1041 274.7134);
+  /* ===== WELLNESS DESIGN SYSTEM - LIGHT MODE ===== */
+  
+  /* Backgrounds - Warm Beige Theme */
+  --background: #F5F5DC;
+  --background-secondary: #FDFAF5;
+  --background-tertiary: #EAE8E0;
+  
+  /* Text Colors */
+  --foreground: #2C2C2C;
+  --text-secondary: #5A5A5A;
+  --text-tertiary: #8B8B8B;
+  
+  /* Glass Effects */
+  --glass-light: rgba(255, 255, 255, 0.75);
+  --glass-medium: rgba(255, 255, 255, 0.85);
+  --glass-heavy: rgba(255, 255, 255, 0.95);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  
+  /* Cards */
+  --card: rgba(255, 255, 255, 0.75);
+  --card-foreground: #2C2C2C;
+  
+  /* Popovers */
+  --popover: rgba(255, 255, 255, 0.85);
+  --popover-foreground: #2C2C2C;
+  
+  /* Primary Accent - Muted Sage Green */
+  --primary: #A8B5A0;
+  --primary-foreground: #FFFFFF;
+  
+  /* Secondary Accent - Soft Lavender */
+  --secondary: #C8B5D4;
+  --secondary-foreground: #FFFFFF;
+  
+  /* Muted/Disabled */
+  --muted: rgba(0, 0, 0, 0.08);
+  --muted-foreground: #8B8B8B;
+  
+  /* Accent - Soft Peach */
+  --accent: #F4C6B8;
+  --accent-foreground: #2C2C2C;
+  
+  /* Destructive */
+  --destructive: #D8B8B8;
+  --destructive-foreground: #FFFFFF;
+  
+  /* Borders & Inputs */
+  --border: rgba(0, 0, 0, 0.1);
+  --input: rgba(0, 0, 0, 0.1);
+  --ring: rgba(168, 181, 160, 0.5);
+  
+  /* Chart Colors - Soft Wellness Palette */
+  --chart-1: #B8D8B8;
+  --chart-2: #B8C8E8;
+  --chart-3: #E8D8B8;
+  --chart-4: #D8B8B8;
+  --chart-5: #C8B8D8;
+  
+  /* Border Radius - Increased for softer look */
+  --radius: 1.25rem;
+  
+  /* Sidebar */
+  --sidebar: rgba(255, 255, 255, 0.75);
+  --sidebar-foreground: #2C2C2C;
+  --sidebar-primary: #A8B5A0;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #F4C6B8;
+  --sidebar-accent-foreground: #2C2C2C;
+  --sidebar-border: rgba(0, 0, 0, 0.08);
+  --sidebar-ring: rgba(168, 181, 160, 0.5);
+  
+  /* Typography */
   --font-sans: 'Geist', 'Geist Fallback';
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
   --font-serif: 'Source Serif 4', 'Source Serif 4 Fallback';
+  
+  /* Shadows - Softer for wellness aesthetic */
   --shadow-x: 0px;
-  --shadow-y: 1px;
-  --shadow-blur: 2px;
+  --shadow-y: 2px;
+  --shadow-blur: 8px;
   --shadow-spread: 0px;
-  --shadow-opacity: 0.05;
+  --shadow-opacity: 0.04;
   --shadow-color: #000000;
 }
 
 .dark {
-  --background: oklch(0 0 0);
-  --foreground: oklch(1.0000 0 0);
-  --card: oklch(0.2455 0.0217 257.2823);
-  --card-foreground: oklch(1.0000 0 0);
-  --popover: oklch(0.2455 0.0217 257.2823);
-  --popover-foreground: oklch(1.0000 0 0);
-  --primary: oklch(0.6801 0.1583 276.9349);
-  --primary-foreground: oklch(0 0 0);
-  --secondary: oklch(0.7845 0.1325 181.9120);
-  --secondary-foreground: oklch(0 0 0);
-  --muted: oklch(0.3211 0 0);
-  --muted-foreground: oklch(0.8452 0 0);
-  --accent: oklch(0.8790 0.1534 91.6054);
-  --accent-foreground: oklch(0 0 0);
-  --destructive: oklch(0.7106 0.1661 22.2162);
-  --destructive-foreground: oklch(0 0 0);
-  --border: oklch(0.4459 0 0);
-  --input: oklch(1.0000 0 0);
-  --ring: oklch(0.6801 0.1583 276.9349);
-  --chart-1: oklch(0.6801 0.1583 276.9349);
-  --chart-2: oklch(0.7845 0.1325 181.9120);
-  --chart-3: oklch(0.8790 0.1534 91.6054);
-  --chart-4: oklch(0.7253 0.1752 349.7607);
-  --chart-5: oklch(0.8003 0.1821 151.7110);
-  --sidebar: oklch(0 0 0);
-  --sidebar-foreground: oklch(1.0000 0 0);
-  --sidebar-primary: oklch(0.6801 0.1583 276.9349);
-  --sidebar-primary-foreground: oklch(0 0 0);
-  --sidebar-accent: oklch(0.8790 0.1534 91.6054);
-  --sidebar-accent-foreground: oklch(0 0 0);
-  --sidebar-border: oklch(1.0000 0 0);
-  --sidebar-ring: oklch(0.6801 0.1583 276.9349);
+  /* ===== WELLNESS DESIGN SYSTEM - DARK MODE ===== */
+  
+  /* Backgrounds - Dark Charcoal Theme (soft, not harsh) */
+  --background: #1A1D1F;
+  --background-secondary: #252829;
+  --background-tertiary: #2F3335;
+  
+  /* Text Colors */
+  --foreground: #E8E8E8;
+  --text-secondary: #B8B8B8;
+  --text-tertiary: #888888;
+  
+  /* Glass Effects */
+  --glass-light: rgba(40, 45, 48, 0.6);
+  --glass-medium: rgba(40, 45, 48, 0.75);
+  --glass-heavy: rgba(40, 45, 48, 0.9);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  
+  /* Cards */
+  --card: rgba(40, 45, 48, 0.6);
+  --card-foreground: #E8E8E8;
+  
+  /* Popovers */
+  --popover: rgba(40, 45, 48, 0.75);
+  --popover-foreground: #E8E8E8;
+  
+  /* Primary Accent - Dark Sage */
+  --primary: #7A8A72;
+  --primary-foreground: #FFFFFF;
+  
+  /* Secondary Accent - Dark Lavender */
+  --secondary: #9A87A6;
+  --secondary-foreground: #FFFFFF;
+  
+  /* Muted/Disabled */
+  --muted: rgba(255, 255, 255, 0.1);
+  --muted-foreground: #888888;
+  
+  /* Accent - Dark Peach */
+  --accent: #C69888;
+  --accent-foreground: #FFFFFF;
+  
+  /* Destructive */
+  --destructive: #AA8A8A;
+  --destructive-foreground: #FFFFFF;
+  
+  /* Borders & Inputs */
+  --border: rgba(255, 255, 255, 0.15);
+  --input: rgba(255, 255, 255, 0.15);
+  --ring: rgba(122, 138, 114, 0.5);
+  
+  /* Chart Colors - Dark Wellness Palette */
+  --chart-1: #8AAA8A;
+  --chart-2: #8A9ABA;
+  --chart-3: #BAA88A;
+  --chart-4: #AA8A8A;
+  --chart-5: #9A8AAA;
+  
+  /* Sidebar */
+  --sidebar: rgba(40, 45, 48, 0.6);
+  --sidebar-foreground: #E8E8E8;
+  --sidebar-primary: #7A8A72;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #C69888;
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-ring: rgba(122, 138, 114, 0.5);
+  
+  /* Shadows - Stronger for dark mode depth */
   --shadow-x: 0px;
-  --shadow-y: 1px;
-  --shadow-blur: 2px;
+  --shadow-y: 2px;
+  --shadow-blur: 8px;
   --shadow-spread: 0px;
-  --shadow-opacity: 0.05;
+  --shadow-opacity: 0.3;
   --shadow-color: #000000;
 }
 
@@ -213,7 +291,106 @@
   
   /* Focus visible for keyboard navigation */
   *:focus-visible {
-    @apply outline-2 outline-offset-2 outline-orange-500;
+    @apply outline-2 outline-offset-2 outline-primary;
+  }
+  
+  /* ===== GLASS EFFECT UTILITIES ===== */
+  .glass-light {
+    background: var(--glass-light);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+  }
+  
+  .glass-medium {
+    background: var(--glass-medium);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+  }
+  
+  .glass-heavy {
+    background: var(--glass-heavy);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--glass-border);
+  }
+  
+  /* Glass fallback for unsupported browsers */
+  @supports not (backdrop-filter: blur(16px)) {
+    .glass-light {
+      background: rgba(255, 255, 255, 0.95);
+    }
+    .glass-medium {
+      background: rgba(255, 255, 255, 0.97);
+    }
+    .glass-heavy {
+      background: rgba(255, 255, 255, 0.99);
+    }
+    .dark .glass-light {
+      background: rgba(40, 45, 48, 0.95);
+    }
+    .dark .glass-medium {
+      background: rgba(40, 45, 48, 0.97);
+    }
+    .dark .glass-heavy {
+      background: rgba(40, 45, 48, 0.99);
+    }
+  }
+  
+  /* ===== SOFT SHADOW UTILITIES ===== */
+  .shadow-soft {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+  
+  .shadow-soft-md {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  }
+  
+  .shadow-soft-lg {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  }
+  
+  .dark .shadow-soft {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+  
+  .dark .shadow-soft-md {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  }
+  
+  .dark .shadow-soft-lg {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* ===== HOVER LIFT EFFECT ===== */
+  .hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-2px);
+  }
+  
+  /* ===== REDUCED MOTION SUPPORT ===== */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+  
+  /* ===== iOS SAFE AREA SUPPORT ===== */
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
   /* Mobile menu fade-in animation */

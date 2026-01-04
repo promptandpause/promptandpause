@@ -407,13 +407,17 @@ export async function POST(request: NextRequest) {
  * Returns information about the cron endpoint
  */
 export async function GET(request: NextRequest) {
-  // Signed GET alternative for Vercel Cron (which cannot set headers)
-  // Query params: ts (unix seconds), sig = HMAC-SHA256(`${ts}`, CRON_SECRET)
+  // Vercel Cron sends GET requests with Authorization: Bearer <CRON_SECRET> header
+  // Also supports signed GET with ts & sig query params as fallback
   try {
     const { searchParams, origin } = new URL(request.url)
     const ts = searchParams.get('ts')
     const sig = searchParams.get('sig')
     const secret = process.env.CRON_SECRET
+    const authHeader = request.headers.get('authorization')
+
+    // Check if request has valid Bearer token (Vercel Cron standard)
+    const hasValidBearerToken = secret && authHeader === `Bearer ${secret}`
 
     const withinWindow = (t: string | null) => {
       if (!t) return false
@@ -432,7 +436,8 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    if (ts && sig && withinWindow(ts) && validSig(ts)) {
+    // Accept either: Bearer token auth OR signed GET params
+    if (hasValidBearerToken || (ts && sig && withinWindow(ts) && validSig(ts))) {
       // Forward to POST handler internally with Authorization header
       const resp = await fetch(`${origin}/api/cron/send-daily-prompts`, {
         method: 'POST',

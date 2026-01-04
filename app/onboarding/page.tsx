@@ -188,7 +188,7 @@ export default function Onboarding() {
 
   // Glass effect + animated background
   return (
-    <div className="min-h-screen flex items-center justify-center relative bg-gradient-to-tr from-[#fdf6ee] via-[#f3f2ee] to-[#e8e6e1] overflow-hidden py-4 sm:py-8">
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden py-4 sm:py-8" style={{ background: 'linear-gradient(135deg, #FDFAF5 0%, #F5F5DC 50%, #EAE8E0 100%)' }}>
       {/* Blurred, moving background object */}
       <motion.div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] rounded-full bg-white/20 blur-3xl"
@@ -197,7 +197,7 @@ export default function Onboarding() {
       />
 
       {/* Liquid glass/auth card */}
-      <div className="w-full max-w-md z-10 mx-4 sm:mx-6 px-4 sm:px-6 py-6 sm:py-8 rounded-2xl sm:rounded-3xl shadow-xl bg-white/30 backdrop-blur-xl border border-white/40">
+      <div className="w-full max-w-md z-10 mx-4 sm:mx-6 px-5 sm:px-7 py-6 sm:py-8 rounded-2xl sm:rounded-3xl glass-medium shadow-soft-lg">
         {step === -1 ? (
           <div className="flex flex-col gap-6 sm:gap-8 items-center justify-center px-2 py-6 sm:py-10 text-center">
             <h2 className="text-lg sm:text-xl font-semibold text-neutral-800 mb-2">Welcome to Prompt & Pause</h2>
@@ -215,7 +215,7 @@ export default function Onboarding() {
             </label>
             <Button
               disabled={!acceptedTerms}
-              className="bg-black text-white rounded px-8 py-3 sm:py-2 text-base sm:text-lg mt-2 disabled:opacity-30 w-full sm:w-auto touch-manipulation"
+              className="bg-[rgba(90,90,90,0.9)] hover:bg-[rgba(70,70,70,0.95)] text-white rounded-2xl px-8 py-3 sm:py-2 text-base sm:text-lg mt-2 disabled:opacity-30 w-full sm:w-auto touch-manipulation shadow-soft hover:shadow-soft-md transition-all duration-200"
               onClick={() => setStep(0)}
             >
               Start
@@ -230,7 +230,7 @@ export default function Onboarding() {
           </span>
           <div className="w-full h-1 bg-gray-300/20 rounded">
             <motion.div
-className="h-full bg-[#e4572e] rounded"
+className="h-full bg-gradient-to-r from-[#A8B5A0] to-[#B8D8D8] rounded"
               initial={{ width: 0 }}
               animate={{ width: `${((Math.min(step + 1, steps.length)) / steps.length) * 100}%` }}
               transition={{ duration: 0.5 }}
@@ -253,7 +253,7 @@ className="h-full bg-[#e4572e] rounded"
                 {steps[step].options.map((opt: string) => (
                   <Button
                     key={opt}
-                    className={`w-full min-h-[48px] h-auto py-3 rounded-md text-base sm:text-lg font-semibold bg-gradient-to-tr from-[#222] to-[#acacac] text-white border border-zinc-200 shadow focus:outline-none transition hover:from-[#333] hover:to-[#bcbcbc] active:scale-[.98] touch-manipulation ${answers[steps[step].key] === opt ? "ring-2 ring-[#e4572e] border-[#e4572e] shadow-xl text-white" : ""}`}
+                    className={`w-full min-h-[48px] h-auto py-3 rounded-xl text-base sm:text-lg font-medium transition-all duration-200 touch-manipulation ${answers[steps[step].key] === opt ? "bg-[rgba(90,90,90,0.9)] text-white ring-2 ring-[#A8B5A0] shadow-soft-md" : "bg-white/80 text-gray-900 border border-gray-200/50 hover:bg-white/90 shadow-soft hover:shadow-soft-md"}`}
                     onClick={() => selectOption(opt)}
                   >
                     {opt}
@@ -328,7 +328,7 @@ className="h-full bg-[#e4572e] rounded"
                   (step === 3 && !answers.delivery) ||
                   (step === 4 && (!answers.focus || answers.focus.length === 0))
                 }
-                className="bg-gradient-to-tr from-[#222] to-[#acacac] text-white px-6 sm:px-8 py-3 sm:py-2 rounded-md text-base sm:text-lg shadow border-none hover:from-[#3a3a3a] hover:to-[#bababa] disabled:opacity-30 disabled:cursor-not-allowed touch-manipulation"
+                className="bg-[rgba(90,90,90,0.9)] hover:bg-[rgba(70,70,70,0.95)] text-white px-6 sm:px-8 py-3 sm:py-2 rounded-xl text-base sm:text-lg shadow-soft hover:shadow-soft-md border-none disabled:opacity-30 disabled:cursor-not-allowed touch-manipulation transition-all duration-200"
               >
                 {isSubmitting ? "Saving..." : (step === steps.length - 1 ? "Finish" : "Next")}
               </Button>

@@ -58,11 +58,11 @@ export default function ActivityCalendar() {
   }, [])
 
   const getIntensityColor = (count: number) => {
-    if (count === 0) return "bg-gray-50"
-    if (count === 1) return "bg-green-400/30"
-    if (count === 2) return "bg-green-400/50"
-    if (count >= 3) return "bg-green-400/70"
-    return "bg-green-400"
+    if (count === 0) return "bg-gray-100/50"
+    if (count === 1) return "bg-[#B8D8B8]/40"
+    if (count === 2) return "bg-[#B8D8B8]/60"
+    if (count >= 3) return "bg-[#B8D8B8]/80"
+    return "bg-[#B8D8B8]"
   }
 
   const formatDate = (dateStr: string) => {
@@ -87,7 +87,7 @@ export default function ActivityCalendar() {
 
   if (loading) {
     return (
-      <Card className={`backdrop-blur-xl border rounded-3xl p-6 h-fit flex flex-col transition-all duration-300 ${theme === 'dark' ? 'bg-white/5 border-white/10 hover:bg-white/10 shadow-2xl shadow-black/50' : 'bg-white/80 border-gray-300 hover:bg-white/15'}`}>
+      <Card className={`rounded-3xl p-6 h-fit flex flex-col transition-all duration-200 ${theme === 'dark' ? 'glass-light shadow-soft-lg' : 'glass-medium shadow-soft-md'}`}>
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Calendar className="h-5 w-5 text-purple-400" />
@@ -113,7 +113,7 @@ export default function ActivityCalendar() {
   }
 
   return (
-    <Card className={`backdrop-blur-xl border rounded-3xl p-6 h-fit flex flex-col transition-all duration-300 ${theme === 'dark' ? 'bg-white/5 border-white/10 hover:bg-white/10 shadow-2xl shadow-black/50' : 'bg-white/80 border-gray-300 hover:bg-white/15'}`}>
+    <Card className={`rounded-3xl p-6 h-fit flex flex-col transition-all duration-200 ${theme === 'dark' ? 'glass-light shadow-soft-lg' : 'glass-medium shadow-soft-md'}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">

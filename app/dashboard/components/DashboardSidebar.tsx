@@ -101,7 +101,7 @@ export function DashboardSidebar() {
   return (
     <>
       {/* Desktop Sidebar */}
-      <Card className={`hidden md:flex md:col-span-2 backdrop-blur-xl ${theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-white/80 border-gray-300'} rounded-3xl p-6 h-fit sticky top-6 flex-col gap-6 ${theme === 'dark' ? 'shadow-2xl shadow-black/50' : 'shadow-lg'}`}>
+      <Card className={`hidden md:flex md:col-span-2 rounded-3xl p-6 h-fit sticky top-6 flex-col gap-6 transition-all duration-200 ${theme === 'dark' ? 'glass-light shadow-soft-lg' : 'glass-medium shadow-soft-md'}`}>
         {/* Logo Section */}
         <div className={`text-center pb-4 border-b ${theme === 'dark' ? 'border-white/10' : 'border-gray-300'}`}>
           <div className="flex items-center justify-center gap-2 mb-2">
@@ -235,7 +235,7 @@ export function DashboardSidebar() {
       </Card>
 
       {/* Mobile Navigation - Bottom fixed bar */}
-      <div className={`md:hidden fixed bottom-0 left-0 right-0 backdrop-blur-xl border-t-2 p-3 z-50 ${theme === 'dark' ? 'bg-white/5 border-white/10 shadow-2xl shadow-black/50' : 'bg-white/80 border-gray-300 shadow-lg'}`}>
+      <div className={`md:hidden fixed bottom-0 left-0 right-0 p-3 pb-6 z-50 safe-area-bottom transition-all duration-200 ${theme === 'dark' ? 'glass-light shadow-soft-lg border-t border-white/10' : 'glass-heavy shadow-soft-lg border-t border-gray-200/50'}`}>
         <div className="flex justify-around items-center">
           {sidebarNav.map((item) => (
             <Link key={item.label} href={item.href} className="flex flex-col items-center gap-1">

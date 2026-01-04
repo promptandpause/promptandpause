@@ -113,10 +113,10 @@ export default function MoodAnalytics() {
 
   if (loading) {
     return (
-      <section className={`backdrop-blur-xl rounded-2xl md:rounded-3xl p-6 md:p-8 flex items-center justify-center min-h-[400px] ${
+      <section className={`rounded-2xl md:rounded-3xl p-6 md:p-8 flex items-center justify-center min-h-[400px] transition-all duration-200 ${
         theme === 'dark'
-          ? 'bg-white/5 border border-white/10'
-          : 'bg-white/80 border border-gray-300'
+          ? 'glass-light shadow-soft-lg'
+          : 'glass-medium shadow-soft-md'
       }`}>
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="h-8 w-8 text-blue-400 animate-spin" />
@@ -152,10 +152,10 @@ export default function MoodAnalytics() {
   }))
 
   return (
-    <section className={`backdrop-blur-xl rounded-2xl md:rounded-3xl p-4 sm:p-6 md:p-8 shadow-xl ${
+    <section className={`rounded-2xl md:rounded-3xl p-4 sm:p-6 md:p-8 transition-all duration-200 ${
       theme === 'dark'
-        ? 'bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-blue-400/20'
-        : 'bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border-2 border-blue-400/40'
+        ? 'glass-light shadow-soft-lg bg-gradient-to-br from-[#B8C8E8]/10 to-[#B8D8D8]/10 border border-[#B8C8E8]/20'
+        : 'glass-medium shadow-soft-md bg-gradient-to-br from-[#B8C8E8]/15 to-[#B8D8D8]/15 border border-[#B8C8E8]/25'
     }`}>
       {/* Header */}
       <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">

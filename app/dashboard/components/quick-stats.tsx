@@ -50,7 +50,7 @@ export default function QuickStats() {
 
   if (loading) {
     return (
-      <section className={`backdrop-blur-xl border rounded-3xl p-4 md:p-7 flex flex-row gap-3 md:gap-8 justify-between ${theme === 'dark' ? 'bg-white/5 border-white/10 shadow-2xl shadow-black/50' : 'bg-white/80 border-gray-300'}`}>
+      <section className={`rounded-3xl p-4 md:p-7 flex flex-row gap-3 md:gap-8 justify-between transition-all duration-200 ${theme === 'dark' ? 'glass-light shadow-soft-lg' : 'glass-medium shadow-soft-md'}`}>
         <div className="flex flex-col items-center gap-2 flex-1">
           <Skeleton className={`h-7 md:h-6 w-10 md:w-12 rounded-lg ${theme === 'dark' ? 'bg-white/10' : 'bg-white/80'}`} />
           <Skeleton className={`h-3 w-16 md:w-24 rounded-full ${theme === 'dark' ? 'bg-white/10' : 'bg-white/80'}`} />
@@ -89,7 +89,7 @@ export default function QuickStats() {
   }
 
   return (
-    <section className={`backdrop-blur-xl border rounded-3xl p-4 md:p-7 flex flex-row gap-3 md:gap-8 justify-between ${theme === 'dark' ? 'bg-white/5 border-white/10 shadow-2xl shadow-black/50' : 'bg-white/80 border-gray-300'}`}>
+    <section className={`rounded-3xl p-4 md:p-7 flex flex-row gap-3 md:gap-8 justify-between transition-all duration-200 ${theme === 'dark' ? 'glass-light shadow-soft-lg' : 'glass-medium shadow-soft-md'}`}>
       {/* Reflections */}
       <div className="flex flex-col items-center justify-center gap-1.5 md:gap-2 flex-1 min-w-0">
         <div className="flex items-center gap-1">

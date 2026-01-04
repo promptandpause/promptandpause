@@ -233,7 +233,7 @@ export default function TodaysPrompt() {
       {/* Prompt limit banner for free users */}
       {tier === 'freemium' && <PromptLimitBanner />}
       
-      <section className={`rounded-2xl md:rounded-3xl backdrop-blur-xl border-2 p-4 md:p-7 flex flex-col gap-4 md:gap-6 relative ${theme === 'dark' ? 'bg-white/5 border-white/10 shadow-2xl shadow-black/50' : 'bg-white/90 border-gray-400 shadow-xl'}`} style={{ pointerEvents: 'auto' }}>
+      <section className={`rounded-2xl md:rounded-3xl p-5 md:p-8 flex flex-col gap-4 md:gap-6 relative transition-all duration-200 ${theme === 'dark' ? 'glass-light shadow-soft-lg' : 'glass-medium shadow-soft-md'}`} style={{ pointerEvents: 'auto' }}>
         <div className="flex items-center justify-between gap-3 mb-1">
           <h3 className={`text-lg md:text-xl font-extrabold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Today's Prompt</h3>
           <span className={`text-xs px-2.5 md:px-3 py-1 rounded-lg font-semibold whitespace-nowrap ${theme === 'dark' ? 'bg-orange-500/30 text-orange-300 border border-orange-500/40' : 'bg-orange-500/20 text-gray-900 border border-orange-400/30'}`}>5 min</span>
