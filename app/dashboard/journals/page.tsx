@@ -11,7 +11,7 @@ import { Card } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
 import { useTheme } from "@/contexts/ThemeContext"
 import { motion, AnimatePresence } from "framer-motion"
-import { Filter, Search, Trash2, Pencil, Flame } from "lucide-react"
+import { Filter, Search, Trash2, Pencil, Flame, ChevronLeft, ChevronRight, X, Eye } from "lucide-react"
 import { DashboardSidebar } from "../components/DashboardSidebar"
 import { BubbleBackground } from "@/components/ui/bubble-background"
 
@@ -41,6 +41,11 @@ export default function JournalsPage() {
   const [filterDate, setFilterDate] = useState<string>("") // YYYY-MM-DD
   const [searchText, setSearchText] = useState("")
   const [heatmapDays, setHeatmapDays] = useState<{ date: string; count: number }[]>([])
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1)
+  const [showAllJournals, setShowAllJournals] = useState(false)
+  const journalsPerPage = 5
 
   const [editingId, setEditingId] = useState<string | null>(null)
   const [text, setText] = useState("")
@@ -96,18 +101,24 @@ export default function JournalsPage() {
   }, [router, supabase, toast])
 
   const filtered = useMemo(() => {
-    return journals.filter((j) => {
-      const matchesTag = filterTag ? (j.tags || []).includes(filterTag) : true
-      const matchesMood = filterMood ? j.mood === filterMood : true
-      const matchesDate = filterDate
-        ? j.created_at.slice(0, 10) === filterDate
-        : true
-      const matchesSearch = searchText
-        ? j.journal_text.toLowerCase().includes(searchText.toLowerCase())
-        : true
-      return matchesTag && matchesMood && matchesDate && matchesSearch
-    })
+    let f = journals
+    if (filterTag) f = f.filter(j => j.tags?.includes(filterTag))
+    if (filterMood) f = f.filter(j => j.mood === filterMood)
+    if (filterDate) f = f.filter(j => j.created_at.startsWith(filterDate))
+    if (searchText) f = f.filter(j => j.journal_text.toLowerCase().includes(searchText.toLowerCase()))
+    return f.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
   }, [journals, filterTag, filterMood, filterDate, searchText])
+  
+  // Pagination logic
+  const totalPages = Math.ceil(filtered.length / journalsPerPage)
+  const startIndex = (currentPage - 1) * journalsPerPage
+  const endIndex = startIndex + journalsPerPage
+  const paginatedJournals = showAllJournals ? filtered : filtered.slice(startIndex, endIndex)
+  
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [filterTag, filterMood, filterDate, searchText])
 
   function toggleTag(tag: string) {
     setTags((prev) => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag])
@@ -235,7 +246,7 @@ export default function JournalsPage() {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <label className={`text-[11px] font-semibold ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>Filter by date</label>
+                  <label className={`text-[11px] font-semibold mb-2 ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>Filter by date</label>
                   <Input
                     type="date"
                     value={filterDate}
@@ -250,7 +261,7 @@ export default function JournalsPage() {
                       <button
                         key={m}
                         onClick={() => setFilterMood(filterMood === m ? null : m)}
-                        className={`px-2 py-1 rounded-lg text-sm border ${filterMood === m ? 'bg-green-500/20 border-green-400' : 'border-gray-200 bg-white/60'}`}
+                        className={`px-2 py-1 rounded-lg text-sm border ${filterMood === m ? 'bg-green-500/20 border-green-400' : theme === 'dark' ? 'border-white/20 bg-white/10 text-white/80' : 'border-gray-200 bg-white/60 text-gray-800'}`}
                       >
                         {m}
                       </button>
@@ -262,7 +273,7 @@ export default function JournalsPage() {
                     <Badge
                       key={tag}
                       onClick={() => setFilterTag(filterTag === tag ? null : tag)}
-                      className={`cursor-pointer ${filterTag === tag ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-800'}`}
+                      className={`cursor-pointer ${filterTag === tag ? 'bg-green-600 text-white' : theme === 'dark' ? 'bg-white/10 text-white/80 border-white/20' : 'bg-gray-100 text-gray-800 border-gray-200'}`}
                     >
                       {tag}
                     </Badge>
@@ -304,7 +315,7 @@ export default function JournalsPage() {
                     <button
                       key={m}
                       onClick={() => setMood(m)}
-                      className={`px-3 py-2 rounded-lg text-lg border ${mood === m ? 'bg-green-500/20 border-green-400' : 'border-gray-200 bg-white/60'}`}
+                      className={`px-3 py-2 rounded-lg text-lg border ${mood === m ? 'bg-green-500/20 border-green-400' : theme === 'dark' ? 'border-white/20 bg-white/10 text-white/80' : 'border-gray-200 bg-white/60 text-gray-800'}`}
                       disabled={saving}
                     >
                       {m}
@@ -314,12 +325,12 @@ export default function JournalsPage() {
               </div>
               <div>
                 <p className={`text-xs font-semibold mb-2 ${theme === 'dark' ? 'text-white/80' : 'text-gray-800'}`}>Tags (optional)</p>
-                <div className="flex gap-1.5 flex-wrap">
+                <div className="flex gap-1 flex-wrap">
                   {availableTags.map(tag => (
                     <button
                       key={tag}
                       onClick={() => toggleTag(tag)}
-                      className={`px-3 py-1.5 rounded-full text-xs font-semibold border ${tags.includes(tag) ? 'bg-green-500/25 border-green-400' : 'border-gray-200 bg-white/60'}`}
+                      className={`px-3 py-1.5 rounded-full text-xs font-semibold border ${tags.includes(tag) ? 'bg-green-500/25 border-green-400' : theme === 'dark' ? 'border-white/20 bg-white/10 text-white/80' : 'border-gray-200 bg-white/60 text-gray-800'}`}
                       disabled={saving}
                     >
                       {tag}
@@ -338,42 +349,132 @@ export default function JournalsPage() {
 
           {/* List Card */}
           <Card className={`backdrop-blur-xl border-2 rounded-3xl p-3 md:p-6 ${theme === 'dark' ? 'bg-white/5 border-white/10 shadow-2xl shadow-black/50' : 'bg-white/90 border-gray-400 shadow-xl'}`}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                Your Journals ({filtered.length})
+              </h3>
+              {!showAllJournals && filtered.length > journalsPerPage && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowAllJournals(true)}
+                  className={`text-xs ${theme === 'dark' ? 'text-white/60 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
+                >
+                  <Eye className="h-3 w-3 mr-1" />
+                  See All
+                </Button>
+              )}
+              {showAllJournals && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowAllJournals(false)}
+                  className={`text-xs ${theme === 'dark' ? 'text-white/60 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
+                >
+                  <X className="h-3 w-3 mr-1" />
+                  Show Less
+                </Button>
+              )}
+            </div>
+            
             <AnimatePresence>
               {loading ? (
                 <p className={`${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>Loading...</p>
               ) : filtered.length === 0 ? (
                 <p className={`${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>No journals yet.</p>
               ) : (
-                <div className="space-y-3">
-                  {filtered.map((entry) => (
-                    <motion.div
-                      key={entry.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className={`rounded-2xl p-4 ${theme === 'dark' ? 'glass-light' : 'glass-medium'} border ${theme === 'dark' ? 'border-white/10' : 'border-gray-200'}`}
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="space-y-2 flex-1">
-                          <div className="flex items-center gap-2">
-                            {entry.mood && <span className="text-xl">{entry.mood}</span>}
-                            <div className="flex gap-1 flex-wrap">
-                              {(entry.tags || []).map(tag => (
-                                <Badge key={tag} className="bg-green-500/20 text-green-800 border border-green-400/40">{tag}</Badge>
-                              ))}
+                <>
+                  <div className="space-y-3">
+                    {paginatedJournals.map((entry) => (
+                      <motion.div
+                        key={entry.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className={`rounded-2xl p-4 ${theme === 'dark' ? 'glass-light' : 'glass-medium'} border ${theme === 'dark' ? 'border-white/10' : 'border-gray-200'}`}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="space-y-2 flex-1">
+                            <div className="flex items-center gap-2">
+                              {entry.mood && <span className="text-xl">{entry.mood}</span>}
+                              <div className="flex gap-1 flex-wrap">
+                                {(entry.tags || []).map(tag => (
+                                  <Badge key={tag} className="bg-green-500/20 text-green-800 border border-green-400/40">{tag}</Badge>
+                                ))}
+                              </div>
                             </div>
+                            <p className={`${theme === 'dark' ? 'text-white/90' : 'text-gray-900'}`}>{entry.journal_text}</p>
+                            <p className="text-xs text-gray-500">{new Date(entry.created_at).toLocaleString()}</p>
                           </div>
-                          <p className={`${theme === 'dark' ? 'text-white/90' : 'text-gray-900'}`}>{entry.journal_text}</p>
-                          <p className="text-xs text-gray-500">{new Date(entry.created_at).toLocaleString()}</p>
+                          <div className="flex flex-col gap-2">
+                            <Button variant="ghost" size="icon" onClick={() => startEdit(entry)}><Pencil className="h-4 w-4" /></Button>
+                            <Button variant="ghost" size="icon" onClick={() => handleDelete(entry.id)}><Trash2 className="h-4 w-4 text-red-500" /></Button>
+                          </div>
                         </div>
-                        <div className="flex flex-col gap-2">
-                          <Button variant="ghost" size="icon" onClick={() => startEdit(entry)}><Pencil className="h-4 w-4" /></Button>
-                          <Button variant="ghost" size="icon" onClick={() => handleDelete(entry.id)}><Trash2 className="h-4 w-4 text-red-500" /></Button>
+                      </motion.div>
+                    ))}
+                  </div>
+                  
+                  {/* Pagination Controls */}
+                  {!showAllJournals && totalPages > 1 && (
+                    <div className="flex items-center justify-between mt-6 pt-4 border-t ${theme === 'dark' ? 'border-white/10' : 'border-gray-200'}">
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                          disabled={currentPage === 1}
+                          className={`px-3 py-1 ${theme === 'dark' ? 'text-white/60 hover:text-white' : 'text-gray-600 hover:text-gray-900'} ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                          Previous
+                        </Button>
+                        
+                        <div className="flex items-center gap-1">
+                          {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                            let pageNum
+                            if (totalPages <= 5) {
+                              pageNum = i + 1
+                            } else if (currentPage <= 3) {
+                              pageNum = i + 1
+                            } else if (currentPage >= totalPages - 2) {
+                              pageNum = totalPages - 4 + i
+                            } else {
+                              pageNum = currentPage - 2 + i
+                            }
+                            
+                            return (
+                              <Button
+                                key={pageNum}
+                                variant={currentPage === pageNum ? "default" : "ghost"}
+                                size="sm"
+                                onClick={() => setCurrentPage(pageNum)}
+                                className={`w-8 h-8 text-xs ${currentPage === pageNum ? 'bg-green-500 text-white' : theme === 'dark' ? 'text-white/60 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
+                              >
+                                {pageNum}
+                              </Button>
+                            )
+                          })}
                         </div>
+                        
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                          disabled={currentPage === totalPages}
+                          className={`px-3 py-1 ${theme === 'dark' ? 'text-white/60 hover:text-white' : 'text-gray-600 hover:text-gray-900'} ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                          Next
+                          <ChevronRight className="h-4 w-4" />
+                        </Button>
                       </div>
-                    </motion.div>
-                  ))}
-                </div>
+                      
+                      <span className={`text-xs ${theme === 'dark' ? 'text-white/60' : 'text-gray-500'}`}>
+                        Page {currentPage} of {totalPages}
+                      </span>
+                    </div>
+                  )}
+                </>
               )}
             </AnimatePresence>
           </Card>

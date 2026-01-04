@@ -188,6 +188,25 @@ export function useTier(): UseTierResult {
   useEffect(() => {
     fetchTierData()
     
+    // Check for trial expiry on mount/sign-in
+    const checkTrialExpiry = async () => {
+      try {
+        const response = await fetch('/api/user/check-trial', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        })
+        const result = await response.json()
+        if (result.success && result.downgraded) {
+          // User was downgraded, refresh tier data
+          fetchTierData()
+        }
+      } catch (err) {
+        console.error('Failed to check trial expiry:', err)
+      }
+    }
+    
+    checkTrialExpiry()
+    
     // Set up real-time subscription to profile changes
     const supabase = getSupabaseClient()
     let realtimeChannel: any = null
