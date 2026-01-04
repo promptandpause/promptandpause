@@ -1396,7 +1396,7 @@ function SettingsPageContent() {
                           type="time"
                           value={reminderTime}
                           onChange={(e) => setReminderTime(e.target.value)}
-                          className={`text-sm h-10 ${
+                          className={`text-sm h-10 w-full min-w-0 ${
                             theme === 'dark'
                               ? 'bg-white/10 border border-white/20 text-white'
                               : 'bg-white border-2 border-gray-300 text-gray-900'
