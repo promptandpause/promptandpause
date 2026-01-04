@@ -54,6 +54,11 @@ export default function HeroSection() {
             <Link href="/auth/signup" className="inline-block w-full sm:w-auto text-center bg-white text-gray-900 font-sans font-semibold px-10 py-5 rounded-xl text-lg hover:bg-gray-100 hover:scale-105 hover:shadow-2xl transition-all duration-300 touch-manipulation shadow-xl">
               Begin Your Journey
             </Link>
+            
+            {/* Trial Information */}
+            <p className="font-sans text-white/80 text-sm md:text-base font-light mt-4 sm:mt-6">
+              Start with a <span className="font-semibold text-white">7-day free trial</span> - no credit card required
+            </p>
           </div>
         </div>
       </div>
