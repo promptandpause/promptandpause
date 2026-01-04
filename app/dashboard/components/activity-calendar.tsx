@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Skeleton } from "@/components/ui/skeleton"
 import { calculateReflectionStreak, getDailyActivity } from "@/lib/services/analyticsService"
 import { supabaseReflectionService } from "@/lib/services/supabaseReflectionService"
 import { DailyActivity } from "@/lib/types/reflection"
@@ -18,9 +17,9 @@ export default function ActivityCalendar() {
   const [hoveredDay, setHoveredDay] = useState<DailyActivity | null>(null)
   const [currentStreak, setCurrentStreak] = useState(0)
   const [totalReflections, setTotalReflections] = useState(0)
-  const [loading, setLoading] = useState(true)
   const supabase = getSupabaseClient()
 
+  // Pre-load data on mount without loading state
   useEffect(() => {
     let isMounted = true
 
@@ -44,12 +43,9 @@ export default function ActivityCalendar() {
           setActivities(activityData)
           setCurrentStreak(streak)
           setTotalReflections(reflections.length)
-          setLoading(false)
         }
       } catch (error) {
-        if (isMounted) {
-          setLoading(false)
-        }
+        console.error('Failed to load activity data:', error)
       }
     }
 
@@ -85,33 +81,7 @@ export default function ActivityCalendar() {
     weeks.push(activities.slice(i, i + 7))
   }
 
-  if (loading) {
-    return (
-      <Card className={`rounded-3xl p-6 h-fit flex flex-col transition-all duration-200 ${theme === 'dark' ? 'glass-light shadow-soft-lg' : 'glass-medium shadow-soft-md'}`}>
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-purple-400" />
-            <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Activity</h3>
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          <div className={`rounded-lg p-3 border ${theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200'}`}>
-            <Skeleton className={`h-4 w-16 mb-2 ${theme === 'dark' ? 'bg-white/10' : 'bg-white/80'}`} />
-            <Skeleton className={`h-6 w-12 ${theme === 'dark' ? 'bg-white/10' : 'bg-white/80'}`} />
-          </div>
-          <div className={`rounded-lg p-3 border ${theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200'}`}>
-            <Skeleton className={`h-4 w-16 mb-2 ${theme === 'dark' ? 'bg-white/10' : 'bg-white/80'}`} />
-            <Skeleton className={`h-6 w-12 ${theme === 'dark' ? 'bg-white/10' : 'bg-white/80'}`} />
-          </div>
-        </div>
-        <div className="space-y-2">
-          <Skeleton className={`h-4 w-24 ${theme === 'dark' ? 'bg-white/10' : 'bg-white/80'}`} />
-          <Skeleton className={`h-32 w-full ${theme === 'dark' ? 'bg-white/10' : 'bg-white/80'}`} />
-        </div>
-      </Card>
-    )
-  }
-
+  
   return (
     <Card className={`rounded-3xl p-6 h-fit flex flex-col transition-all duration-200 ${theme === 'dark' ? 'glass-light shadow-soft-lg' : 'glass-medium shadow-soft-md'}`}>
       {/* Header */}

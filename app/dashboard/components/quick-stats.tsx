@@ -4,18 +4,17 @@ import { useState, useEffect } from "react"
 import { TrendingUp, TrendingDown, Minus } from "lucide-react"
 import { calculateReflectionStreak, calculateMoodTrends } from "@/lib/services/analyticsService"
 import { supabaseReflectionService } from "@/lib/services/supabaseReflectionService"
-import { Skeleton } from "@/components/ui/skeleton"
 import { getSupabaseClient } from "@/lib/supabase/client"
 import { useTheme } from "@/contexts/ThemeContext"
 
 export default function QuickStats() {
   const { theme } = useTheme()
-  const [loading, setLoading] = useState(true)
   const [totalReflections, setTotalReflections] = useState(0)
   const [currentStreak, setCurrentStreak] = useState(0)
   const [moodTrend, setMoodTrend] = useState<'improving' | 'declining' | 'stable'>('stable')
   const supabase = getSupabaseClient()
 
+  // Pre-load data on mount without loading state
   useEffect(() => {
     let isMounted = true
 
@@ -35,37 +34,15 @@ export default function QuickStats() {
           setTotalReflections(reflections.length)
           setCurrentStreak(streak)
           setMoodTrend(moodData.trend)
-          setLoading(false)
         }
       } catch (error) {
-        if (isMounted) {
-          setLoading(false)
-        }
+        console.error('Failed to load stats:', error)
       }
     }
 
     loadStats()
     return () => { isMounted = false }
   }, [])
-
-  if (loading) {
-    return (
-      <section className={`rounded-3xl p-4 md:p-7 flex flex-row gap-3 md:gap-8 justify-between transition-all duration-200 ${theme === 'dark' ? 'glass-light shadow-soft-lg' : 'glass-medium shadow-soft-md'}`}>
-        <div className="flex flex-col items-center gap-2 flex-1">
-          <Skeleton className={`h-7 md:h-6 w-10 md:w-12 rounded-lg ${theme === 'dark' ? 'bg-white/10' : 'bg-white/80'}`} />
-          <Skeleton className={`h-3 w-16 md:w-24 rounded-full ${theme === 'dark' ? 'bg-white/10' : 'bg-white/80'}`} />
-        </div>
-        <div className="flex flex-col items-center gap-2 flex-1">
-          <Skeleton className={`h-7 md:h-6 w-10 md:w-12 rounded-lg ${theme === 'dark' ? 'bg-white/10' : 'bg-white/80'}`} />
-          <Skeleton className={`h-3 w-16 md:w-24 rounded-full ${theme === 'dark' ? 'bg-white/10' : 'bg-white/80'}`} />
-        </div>
-        <div className="flex flex-col items-center gap-2 flex-1">
-          <Skeleton className={`h-7 md:h-6 w-14 md:w-16 rounded-lg ${theme === 'dark' ? 'bg-white/10' : 'bg-white/80'}`} />
-          <Skeleton className={`h-3 w-20 md:w-32 rounded-full ${theme === 'dark' ? 'bg-white/10' : 'bg-white/80'}`} />
-        </div>
-      </section>
-    )
-  }
 
   const getTrendIcon = () => {
     if (moodTrend === 'improving') return <TrendingUp className="h-5 w-5 md:h-6 md:w-6 text-green-400" />

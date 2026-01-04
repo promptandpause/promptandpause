@@ -12,7 +12,7 @@ import {
   Bell, ChevronLeft, ChevronRight, HelpCircle, Lock, Palette, 
   Shield, Trash2, Upload, User, Zap, CreditCard, Smartphone, 
   Globe2, Loader2, CheckCircle2, XCircle, Settings2, SmartphoneCharging, 
-  ArrowRight, Mail, KeyRound, Eye, EyeOff, Copy, Check, ExternalLink, NotebookPen, Clock, 
+  ArrowRight, Mail, KeyRound, Eye, EyeOff, Copy, Check, ExternalLink, NotebookPen, 
   LayoutDashboard, Archive, Settings, Crown, Calendar 
 } from "lucide-react"
 import { SlackIcon } from "@/components/icons/SlackIcon"
@@ -129,6 +129,22 @@ type SettingsView = 'main' | 'profile' | 'notifications' | 'security' | 'prefere
 function PushNotificationRow({ theme }: { theme: string }) {
   const { isSupported, isSubscribed, isLoading, error, subscribe, unsubscribe } = usePushNotifications()
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-between">
+        <div>
+          <Label className={`text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            Push Notifications
+          </Label>
+          <p className={`text-xs ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
+            Checking device capabilities...
+          </p>
+        </div>
+        <Switch checked={false} disabled />
+      </div>
+    )
+  }
+
   if (!isSupported) {
     return (
       <div className="flex items-center justify-between">
@@ -137,10 +153,10 @@ function PushNotificationRow({ theme }: { theme: string }) {
             Push Notifications
           </Label>
           <p className={`text-xs ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
-            Not supported on this device
+            {error ?? 'Not supported on this device'}
           </p>
         </div>
-        <Switch checked={false} disabled={true} />
+        <Switch checked={false} disabled />
       </div>
     )
   }
@@ -1396,7 +1412,7 @@ function SettingsPageContent() {
                           type="time"
                           value={reminderTime}
                           onChange={(e) => setReminderTime(e.target.value)}
-                          className={`text-sm h-10 w-full min-w-0 ${
+                          className={`text-sm h-10 ${
                             theme === 'dark'
                               ? 'bg-white/10 border border-white/20 text-white'
                               : 'bg-white border-2 border-gray-300 text-gray-900'
@@ -2216,26 +2232,17 @@ function SettingsPageContent() {
                   <Label className={`text-sm ${
                     theme === 'dark' ? 'text-white' : 'text-gray-900'
                   }`}>Reminder Time</Label>
-                  <div className={`flex items-center gap-2 rounded-xl px-3 h-11 border ${
-                    theme === 'dark'
-                      ? 'bg-white/5 border-white/15'
-                      : 'bg-white border-gray-300'
-                  }`}>
-                    <Clock className={`h-4 w-4 ${
-                      theme === 'dark' ? 'text-white' : 'text-gray-700'
-                    }`} />
-                    <input
-                      id="reminder-time"
-                      type="time"
-                      value={reminderTime}
-                      onChange={(e) => setReminderTime(e.target.value)}
-                      className={`flex-1 bg-transparent outline-none text-sm ${
-                        theme === 'dark'
-                          ? 'text-white placeholder:text-white/50'
-                          : 'text-gray-900 placeholder:text-gray-500'
-                      }`}
-                    />
-                  </div>
+                  <Input
+                    id="reminder-time"
+                    type="time"
+                    value={reminderTime}
+                    onChange={(e) => setReminderTime(e.target.value)}
+                    className={`text-sm h-11 ${
+                      theme === 'dark'
+                        ? 'bg-white/10 border border-white/20 text-white'
+                        : 'bg-white border-2 border-gray-300 text-gray-900'
+                    }`}
+                  />
                 </div>
                 <Button 
                   onClick={handleSaveNotifications}

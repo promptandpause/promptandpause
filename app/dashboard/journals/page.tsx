@@ -240,17 +240,17 @@ export default function JournalsPage() {
               </div>
               
               {/* Search and Date Filter Row */}
-              <div className="grid grid-cols-2 sm:flex sm:flex-row gap-3 items-stretch sm:items-end">
-                <div className="relative col-span-2 sm:flex-1 sm:max-w-[200px] min-w-0">
+              <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-end">
+                <div className="relative sm:flex-1 sm:max-w-[200px]">
                   <Search className="h-4 w-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
                   <Input
-                    className={`pl-9 h-10 w-full min-w-0 ${theme === 'dark' ? 'bg-white/10 border-white/20 text-white placeholder:text-white/50' : 'bg-white border-gray-300 text-gray-900'}`}
+                    className={`pl-9 h-10 ${theme === 'dark' ? 'bg-white/10 border-white/20 text-white placeholder:text-white/50' : 'bg-white border-gray-300 text-gray-900'}`}
                     placeholder="Search text..."
                     value={searchText}
                     onChange={(e) => setSearchText(e.target.value)}
                   />
                 </div>
-                <div className="col-span-2 sm:flex-1 sm:max-w-[180px] min-w-0">
+                <div className="sm:flex-1 sm:max-w-[180px]">
                   <label className={`text-[11px] font-semibold mb-1 block ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
                     Filter by date
                   </label>
@@ -258,7 +258,7 @@ export default function JournalsPage() {
                     type="date"
                     value={filterDate}
                     onChange={(e) => setFilterDate(e.target.value)}
-                    className={`h-10 w-full min-w-0 ${theme === 'dark' ? 'bg-white/10 border-white/20 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
+                    className={`h-10 ${theme === 'dark' ? 'bg-white/10 border-white/20 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
                   />
                 </div>
               </div>
