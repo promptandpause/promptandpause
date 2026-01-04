@@ -5,7 +5,7 @@ import { useRouter, usePathname } from "next/navigation"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { ChevronRight, HelpCircle, LogOut, Crown, Archive, Settings, LayoutDashboard, User, LifeBuoy, Trophy } from "lucide-react"
+import { ChevronRight, HelpCircle, LogOut, Crown, Archive, Settings, LayoutDashboard, User, LifeBuoy, Trophy, NotebookPen } from "lucide-react"
 import Link from "next/link"
 import { getSupabaseClient } from "@/lib/supabase/client"
 import { useTier } from "@/hooks/useTier"
@@ -32,6 +32,7 @@ export function DashboardSidebar() {
     { icon: LayoutDashboard, label: "dashboard", href: "/dashboard", active: pathname === "/dashboard" },
     { icon: Trophy, label: "achievements", href: "/dashboard/achievements", active: pathname === "/dashboard/achievements" },
     { icon: Archive, label: "archive", href: "/dashboard/archive", active: pathname === "/dashboard/archive" },
+    { icon: NotebookPen, label: "journals", href: "/dashboard/journals", active: pathname === "/dashboard/journals" },
     { icon: Settings, label: "settings", href: "/dashboard/settings", active: pathname?.startsWith("/dashboard/settings") || false },
   ]
 
@@ -169,7 +170,7 @@ export function DashboardSidebar() {
         </nav>
 
         {/* Only show premium upsell if user is on free tier */}
-        {!loading && !features?.isPremium && (
+        {!loading && tier !== 'premium' && (
           <div className={`pt-4 border-t ${theme === 'dark' ? 'border-white/10' : 'border-gray-300'}`}>
             <Card className={`rounded-2xl p-5 ${theme === 'dark' ? 'bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border-2 border-yellow-500/30 shadow-2xl shadow-yellow-500/20' : 'bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-400 shadow-lg'}`}>
               <div className="text-center space-y-4">

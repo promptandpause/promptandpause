@@ -53,6 +53,12 @@ export default function TodaysPrompt() {
   const [newBadges, setNewBadges] = useState<AchievementBadge[]>([])
   const [currentBadgeIndex, setCurrentBadgeIndex] = useState(0)
   const [showBadgeModal, setShowBadgeModal] = useState(false)
+  // Self-Journal state
+  const [showSelfJournal, setShowSelfJournal] = useState(false)
+  const [journalText, setJournalText] = useState("")
+  const [journalMood, setJournalMood] = useState<MoodType>("😊")
+  const [journalTags, setJournalTags] = useState<string[]>([])
+  const [journalSaving, setJournalSaving] = useState(false)
   
   // Update word count when reflection changes
   useEffect(() => {
@@ -228,10 +234,51 @@ export default function TodaysPrompt() {
     )
   }
 
+  function toggleJournalTag(tag: string) {
+    setJournalTags(prev => 
+      prev.includes(tag) 
+        ? prev.filter(t => t !== tag) 
+        : [...prev, tag]
+    )
+  }
+
+  async function handleSaveJournal() {
+    if (journalText.trim().length === 0) {
+      toast({ title: "Add something first", description: "Your journal is empty.", variant: "destructive" })
+      return
+    }
+    try {
+      setJournalSaving(true)
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error("Not signed in")
+
+      const { error } = await supabase
+        .from('self_journals')
+        .insert({
+          user_id: user.id,
+          journal_text: journalText.trim(),
+          mood: journalMood,
+          tags: journalTags,
+        })
+
+      if (error) throw error
+
+      toast({ title: "Journal saved", description: "Your self-journal has been saved privately." })
+      setShowSelfJournal(false)
+      setJournalText("")
+      setJournalTags([])
+      setJournalMood("😊")
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message || "Failed to save journal", variant: "destructive" })
+    } finally {
+      setJournalSaving(false)
+    }
+  }
+
   return (
     <>
       {/* Prompt limit banner for free users */}
-      {tier === 'freemium' && <PromptLimitBanner />}
+      {tier === 'free' && <PromptLimitBanner />}
       
       <section className={`rounded-2xl md:rounded-3xl p-5 md:p-8 flex flex-col gap-4 md:gap-6 relative transition-all duration-200 ${theme === 'dark' ? 'glass-light shadow-soft-lg' : 'glass-medium shadow-soft-md'}`} style={{ pointerEvents: 'auto' }}>
         <div className="flex items-center justify-between gap-3 mb-1">
@@ -264,29 +311,39 @@ export default function TodaysPrompt() {
       {!todaysPrompt && (
         <div className="flex flex-col md:flex-row items-center justify-between py-3 md:py-4 gap-3 md:gap-4">
           <div className={`text-sm md:text-base ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>No prompt generated yet.</div>
-          <Button 
-            type="button"
-            onClick={async () => {
-              try {
-                const result = await generatePromptAsync()
-                if (result) {
-                  setTodaysPrompt(result.prompt_text)
-                  setFocusAreaUsed(result.focus_area_used || null)
-                  setPromptProvider(result.ai_provider)
-                  setPromptModel(result.ai_model)
-                  toast({ title: 'Prompt Generated! 🎉', description: `Using ${result.focus_area_used ? result.focus_area_used + ' focus area' : 'general reflection'}` })
-                } else {
+          <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+            <Button 
+              type="button"
+              onClick={async () => {
+                try {
+                  const result = await generatePromptAsync()
+                  if (result) {
+                    setTodaysPrompt(result.prompt_text)
+                    setFocusAreaUsed(result.focus_area_used || null)
+                    setPromptProvider(result.ai_provider)
+                    setPromptModel(result.ai_model)
+                    toast({ title: 'Prompt Generated! 🎉', description: `Using ${result.focus_area_used ? result.focus_area_used + ' focus area' : 'general reflection'}` })
+                  } else {
+                    toast({ title: 'Error', description: 'Failed to generate prompt', variant: 'destructive' })
+                  }
+                } catch (e) {
                   toast({ title: 'Error', description: 'Failed to generate prompt', variant: 'destructive' })
                 }
-              } catch (e) {
-                toast({ title: 'Error', description: 'Failed to generate prompt', variant: 'destructive' })
-              }
-            }}
-            disabled={isGenerating}
-            className={`w-full md:w-auto text-sm ${theme === 'dark' ? 'bg-green-500/20 hover:bg-green-500/30 text-green-300 border border-green-500/40' : 'bg-green-100 hover:bg-green-200 text-gray-900 border border-green-300'}`}
-          >
-            {isGenerating ? 'Generating...' : "Generate today's prompt"}
-          </Button>
+              }}
+              disabled={isGenerating}
+              className={`w-full sm:w-auto text-sm ${theme === 'dark' ? 'bg-green-500/20 hover:bg-green-500/30 text-green-300 border border-green-500/40' : 'bg-green-100 hover:bg-green-200 text-gray-900 border border-green-300'}`}
+            >
+              {isGenerating ? 'Generating...' : "Generate today's prompt"}
+            </Button>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setShowSelfJournal(true)}
+              className={`w-full sm:w-auto text-sm font-semibold ${theme === 'dark' ? 'bg-white/10 text-white border border-white/20 hover:bg-white/15' : 'bg-white text-gray-900 border border-gray-300 hover:bg-gray-50'}`}
+            >
+              Self-Journal
+            </Button>
+          </div>
         </div>
       )}
       {!submitted ? (
@@ -592,6 +649,91 @@ export default function TodaysPrompt() {
             // TODO: Implement share functionality
           }}
         />
+      )}
+
+      {/* Self-Journal Modal */}
+      {showSelfJournal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setShowSelfJournal(false)} />
+          <div className={`relative w-full max-w-2xl rounded-2xl p-5 md:p-6 shadow-2xl ${theme === 'dark' ? 'glass-light' : 'glass-medium'}`}>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className={`text-lg md:text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Self-Journal</h3>
+                <p className={`text-xs md:text-sm ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>No timer, no AI. Saved privately. Does not affect streaks or mood stats.</p>
+              </div>
+              <Button variant="ghost" size="sm" onClick={() => setShowSelfJournal(false)}>Close</Button>
+            </div>
+
+            <div className="space-y-3">
+              <textarea
+                className={`w-full min-h-[180px] rounded-xl border-2 px-3 md:px-4 py-3 focus:outline-none resize-none text-sm md:text-base transition-all duration-200 ${theme === 'dark' ? 'border-white/10 bg-white/5 text-white placeholder:text-white/40 focus:border-green-400 focus:bg-white/10 focus:shadow-[0_0_0_3px_rgba(74,222,128,0.2)]' : 'border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 focus:border-green-500 focus:bg-green-50/30 focus:shadow-[0_0_0_3px_rgba(34,197,94,0.2)]'}`}
+                placeholder="Write anything on your mind..."
+                value={journalText}
+                onChange={(e) => setJournalText(e.target.value)}
+                disabled={journalSaving}
+              />
+
+              <div>
+                <label className={`text-xs md:text-sm font-semibold mb-2 block ${theme === 'dark' ? 'text-white/90' : 'text-gray-800'}`}>How are you feeling?</label>
+                <div className="flex gap-1.5 md:gap-2 flex-wrap">
+                  {moods.map((mood) => (
+                    <button
+                      key={mood}
+                      type="button"
+                      onClick={() => setJournalMood(mood)}
+                      className={`text-xl md:text-2xl p-2 md:p-3 rounded-lg transition-colors duration-200 cursor-pointer ${
+                        journalMood === mood
+                          ? "bg-green-500/30 ring-2 ring-green-400"
+                          : theme === 'dark' 
+                            ? "bg-white/5 hover:bg-white/10"
+                            : "bg-gray-50 hover:bg-white"
+                      }`}
+                      disabled={journalSaving}
+                    >
+                      {mood}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className={`text-xs md:text-sm font-semibold mb-2 block ${theme === 'dark' ? 'text-white/90' : 'text-gray-800'}`}>Add tags (optional)</label>
+                <div className="flex gap-1.5 md:gap-2 flex-wrap">
+                  {availableTags.map(tag => (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => toggleJournalTag(tag)}
+                      className={`px-2.5 md:px-3 py-1 md:py-1.5 rounded-full text-xs font-semibold border-2 cursor-pointer transition-colors duration-200 ${
+                        journalTags.includes(tag)
+                          ? theme === 'dark'
+                            ? "bg-green-500/30 text-white border-green-400 hover:bg-green-500/40"
+                            : "bg-green-100 text-gray-900 border-green-300 hover:bg-green-200"
+                          : theme === 'dark'
+                            ? "bg-white/5 text-white/80 border-white/20 hover:bg-white/10"
+                            : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                      }`}
+                      disabled={journalSaving}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row justify-end gap-2 pt-2">
+                <Button variant="ghost" onClick={() => setShowSelfJournal(false)} disabled={journalSaving}>Cancel</Button>
+                <Button 
+                  onClick={handleSaveJournal}
+                  disabled={journalSaving || journalText.trim().length === 0}
+                  className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white"
+                >
+                  {journalSaving ? "Saving..." : "Save Journal"}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
       </section>
     </>

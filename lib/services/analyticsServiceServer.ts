@@ -252,6 +252,14 @@ export async function generateWeeklyDigestServer(
     const weekStartStr = start.toISOString().split('T')[0]
     const weekEndStr = end.toISOString().split('T')[0]
 
+    // Fetch user preference for including self journals
+    const { data: prefs } = await supabase
+      .from('user_preferences')
+      .select('include_self_journal_in_insights')
+      .eq('user_id', userId)
+      .maybeSingle()
+    const includeSelfJournals = prefs?.include_self_journal_in_insights === true
+
     // Fetch week's reflections directly from database with fresh data
     const { data: weekReflections, error } = await supabase
       .from('reflections')
@@ -264,12 +272,50 @@ export async function generateWeeklyDigestServer(
     if (error) {
       throw error
     }
-    
     const reflections = weekReflections || []
+
+    // Optionally pull self journals if user opted in
+    let selfJournals: any[] = []
+    if (includeSelfJournals) {
+      const { data: journals } = await supabase
+        .from('self_journals')
+        .select('*')
+        .eq('user_id', userId)
+        .gte('created_at', `${weekStartStr}T00:00:00Z`)
+        .lte('created_at', `${weekEndStr}T23:59:59Z`)
+        .order('created_at', { ascending: false })
+      selfJournals = journals || []
+    }
+
+    // Normalize reflections + self journals into one list for insights (streaks remain reflections only)
+    const combined = [
+      ...reflections.map(r => ({
+        date: r.date,
+        mood: r.mood,
+        tags: r.tags || [],
+        word_count: r.word_count,
+        reflection_text: r.reflection_text || '',
+        prompt_text: r.prompt_text || '',
+        is_self_journal: false,
+      })),
+      ...selfJournals.map(j => {
+        const text = j.journal_text || ''
+        const wc = text.trim().split(/\s+/).filter(Boolean).length
+        return {
+          date: (j.created_at || '').slice(0, 10),
+          mood: j.mood,
+          tags: j.tags || [],
+          word_count: wc,
+          reflection_text: text,
+          prompt_text: '(Self-Journal)',
+          is_self_journal: true,
+        }
+      }),
+    ]
 
     // Calculate top tags
     const tagCounts: Record<string, number> = {}
-    reflections.forEach(r => {
+    combined.forEach(r => {
       if (r.tags && Array.isArray(r.tags)) {
         r.tags.forEach((tag: string) => {
           tagCounts[tag] = (tagCounts[tag] || 0) + 1
@@ -283,7 +329,7 @@ export async function generateWeeklyDigestServer(
 
     // Calculate mood distribution - validate and filter moods
     const moodCounts: Record<string, number> = {}
-    reflections.forEach(r => {
+    combined.forEach(r => {
       if (r.mood) {
         const validMood = validateMood(r.mood)
         moodCounts[validMood] = (moodCounts[validMood] || 0) + 1
@@ -295,14 +341,14 @@ export async function generateWeeklyDigestServer(
     }))
 
     // Calculate average word count
-    const totalWords = reflections.reduce((sum, r) => sum + (r.word_count || 0), 0)
-    const averageWordCount = reflections.length > 0 
-      ? Math.round(totalWords / reflections.length) 
+    const totalWords = combined.reduce((sum, r) => sum + (r.word_count || 0), 0)
+    const averageWordCount = combined.length > 0 
+      ? Math.round(totalWords / combined.length) 
       : 0
 
     // Get reflection summaries
     const { decryptIfEncrypted } = await import('@/lib/utils/crypto')
-    const reflectionSummaries = reflections.slice(0, 7).map(r => {
+    const reflectionSummaries = combined.slice(0, 7).map(r => {
       const raw = r.reflection_text || ''
       const plain = decryptIfEncrypted(raw) || raw
       return {
@@ -318,7 +364,7 @@ export async function generateWeeklyDigestServer(
     return {
       weekStart: weekStartStr,
       weekEnd: weekEndStr,
-      totalReflections: reflections.length,
+      totalReflections: combined.length,
       topTags,
       moodDistribution,
       averageWordCount,

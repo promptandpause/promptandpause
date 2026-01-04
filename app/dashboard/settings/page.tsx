@@ -153,6 +153,7 @@ function SettingsPageContent() {
   const [pushNotifications, setPushNotifications] = useState(false) // Push notifications (not implemented yet)
   const [dailyReminders, setDailyReminders] = useState(true) // Email reminders
   const [weeklyDigest, setWeeklyDigest] = useState(false) // Weekly email digest
+  const [includeSelfJournalInInsights, setIncludeSelfJournalInInsights] = useState(false) // Opt-in for self-journal in weekly insights
   const [reminderTime, setReminderTime] = useState("09:00")
   
   // Security states
@@ -233,6 +234,7 @@ function SettingsPageContent() {
         setPushNotifications(cachedPreferences.push_notifications ?? false)
         setDailyReminders(cachedPreferences.daily_reminders ?? true)
         setWeeklyDigest(cachedPreferences.weekly_digest ?? false)
+        setIncludeSelfJournalInInsights(cachedPreferences.include_self_journal_in_insights ?? false)
         setReminderTime(cachedPreferences.reminder_time || '09:00')
         setPromptFrequency(cachedPreferences.prompt_frequency || 'daily')
         setCustomDays(cachedPreferences.custom_days || [])
@@ -276,6 +278,7 @@ function SettingsPageContent() {
           setPushNotifications(prefs.push_notifications ?? false)
           setDailyReminders(prefs.daily_reminders ?? true)
           setWeeklyDigest(prefs.weekly_digest ?? false)
+          setIncludeSelfJournalInInsights(prefs.include_self_journal_in_insights ?? false)
           setReminderTime(prefs.reminder_time || '09:00')
           setPromptFrequency(prefs.prompt_frequency || 'daily')
           setCustomDays(prefs.custom_days || [])
@@ -365,6 +368,7 @@ function SettingsPageContent() {
           push_notifications: pushNotifications,
           daily_reminders: dailyReminders,
           weekly_digest: weeklyDigest,
+          include_self_journal_in_insights: includeSelfJournalInInsights,
           reminder_time: reminderTime,
         }),
       })
@@ -419,6 +423,8 @@ function SettingsPageContent() {
       }
 
       try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) throw new Error("Not signed in")
         const { error } = await supabase.auth.updateUser({
           password: newPassword
         })
@@ -1170,6 +1176,23 @@ function SettingsPageContent() {
                     <span className="font-medium">Settings</span>
                   </button>
                 </div>
+                {/* Mobile Logout */}
+                <div className="mb-4 md:hidden">
+                  <Button
+                    variant="ghost"
+                    className={`w-full justify-center ${
+                      theme === 'dark'
+                        ? 'text-red-300 hover:text-red-200 hover:bg-red-500/10'
+                        : 'text-red-600 hover:text-red-700 hover:bg-red-50'
+                    }`}
+                    onClick={async () => {
+                      await supabase.auth.signOut()
+                      router.push('/auth/signin')
+                    }}
+                  >
+                    Logout
+                  </Button>
+                </div>
 
                 {/* Detail Views */}
                 {currentView === 'profile' && (
@@ -1296,7 +1319,7 @@ function SettingsPageContent() {
                           }`}>Daily Reminders</Label>
                           <p className={`text-xs ${
                             theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-                          }`}>Daily prompt reminders</p>
+                          }`}>Receive daily email reminders</p>
                         </div>
                         <Switch checked={dailyReminders} onCheckedChange={setDailyReminders} />
                       </div>
@@ -1307,9 +1330,23 @@ function SettingsPageContent() {
                           }`}>Weekly Digest</Label>
                           <p className={`text-xs ${
                             theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-                          }`}>Weekly reflection summary</p>
+                          }`}>Summary of your week every Sunday</p>
                         </div>
                         <Switch checked={weeklyDigest} onCheckedChange={setWeeklyDigest} />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Label className={`text-sm ${
+                            theme === 'dark' ? 'text-white' : 'text-gray-900'
+                          }`}>Include Self-Journal in Weekly Insights</Label>
+                          <p className={`text-xs ${
+                            theme === 'dark' ? 'text-white/60' : 'text-gray-600'
+                          }`}>Opt-in to include private self-journals in insights</p>
+                        </div>
+                        <Switch
+                          checked={includeSelfJournalInInsights}
+                          onCheckedChange={setIncludeSelfJournalInInsights}
+                        />
                       </div>
                       <div className="space-y-1.5">
                         <Label htmlFor="reminder-time-mobile" className={`text-sm font-medium ${
@@ -1932,7 +1969,7 @@ function SettingsPageContent() {
                       <div className={`p-4 rounded-xl ${
                         theme === 'dark'
                           ? 'bg-red-500/15 border border-red-400/40'
-                          : 'bg-red-100 border-2 border-red-400'
+                          : 'bg-red-100 border-2 border-red-300'
                       }`}>
                         <p className={`font-medium mb-1 ${
                           theme === 'dark' ? 'text-red-200' : 'text-red-700'
@@ -2129,18 +2166,32 @@ function SettingsPageContent() {
                     }`}>Weekly Digest</Label>
                     <p className={`text-xs ${
                       theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-                    }`}>Receive weekly summary of your reflections</p>
+                    }`}>Summary of your week every Sunday</p>
                   </div>
                   <Switch
                     checked={weeklyDigest}
                     onCheckedChange={setWeeklyDigest}
                   />
                 </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="reminder-time" className={`text-sm font-medium ${
-                    theme === 'dark' ? 'text-white/90' : 'text-gray-700'
-                  }`}>Daily Reminder Time</Label>
-                  <Input
+                <div className="flex items-center justify-between gap-2 md:gap-3">
+                  <div className="space-y-0.5 flex-1">
+                    <Label className={`text-sm ${
+                      theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    }`}>Include Self-Journal in Weekly Insights</Label>
+                    <p className={`text-xs ${
+                      theme === 'dark' ? 'text-white/60' : 'text-gray-600'
+                    }`}>Opt-in to include private self-journals in insights</p>
+                  </div>
+                  <Switch
+                    checked={includeSelfJournalInInsights}
+                    onCheckedChange={setIncludeSelfJournalInInsights}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className={`text-sm ${
+                    theme === 'dark' ? 'text-white' : 'text-gray-900'
+                  }`}>Reminder Time</Label>
+                  <input
                     id="reminder-time"
                     type="time"
                     value={reminderTime}
