@@ -23,6 +23,10 @@ const nextConfig = {
           { key: 'X-Frame-Options', value: 'DENY' },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'Referrer-Policy', value: 'no-referrer' },
+          // Performance and caching headers
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+          // Cookie security headers
+          { key: 'Set-Cookie', value: 'SameSite=Lax; Secure; HttpOnly; Path=/' },
           // Comprehensive CSP with all required services
           { 
             key: 'Content-Security-Policy', 
@@ -41,6 +45,31 @@ const nextConfig = {
               "upgrade-insecure-requests"
             ].join('; ')
           },
+        ],
+      },
+      // Specific headers for dashboard routes
+      {
+        source: '/dashboard/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'no-cache, no-store, must-revalidate' },
+          { key: 'Pragma', value: 'no-cache' },
+          { key: 'Expires', value: '0' },
+          { key: 'Set-Cookie', value: 'SameSite=Strict; Secure; HttpOnly; Path=/dashboard' },
+        ],
+      },
+      // Static assets caching
+      {
+        source: '/_next/static/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+        ],
+      },
+      // API routes
+      {
+        source: '/api/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'no-store, must-revalidate' },
+          { key: 'Set-Cookie', value: 'SameSite=Strict; Secure; HttpOnly; Path=/api' },
         ],
       },
     ]
