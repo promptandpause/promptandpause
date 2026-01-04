@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -10,7 +10,57 @@ export default function PWAWelcomePage() {
   const router = useRouter()
   const [isChecking, setIsChecking] = useState(true)
   const [videoError, setVideoError] = useState(false)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const loadingVideoRef = useRef<HTMLVideoElement>(null)
   const supabase = createClient()
+
+  // Force video playback for PWA - handles autoplay restrictions on iOS and Android
+  useEffect(() => {
+    const playVideo = async (video: HTMLVideoElement | null) => {
+      if (!video) return
+      try {
+        // Ensure video is muted (required for autoplay on all mobile platforms)
+        video.muted = true
+        // Set playback rate to normal (some Android devices need this)
+        video.playbackRate = 1.0
+        // Load the video first (helps on Android)
+        video.load()
+        await video.play()
+      } catch (err) {
+        // Autoplay blocked - video will show first frame as fallback
+        setVideoError(true)
+      }
+    }
+
+    // Small delay to ensure DOM is ready (helps Android WebView)
+    const timer = setTimeout(() => {
+      playVideo(videoRef.current)
+      playVideo(loadingVideoRef.current)
+    }, 100)
+
+    // Handle visibility change (app returning from background)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        playVideo(videoRef.current)
+        playVideo(loadingVideoRef.current)
+      }
+    }
+
+    // Handle page focus (Android Chrome specific)
+    const handleFocus = () => {
+      playVideo(videoRef.current)
+      playVideo(loadingVideoRef.current)
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    window.addEventListener('focus', handleFocus)
+    
+    return () => {
+      clearTimeout(timer)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      window.removeEventListener('focus', handleFocus)
+    }
+  }, [isChecking])
 
   useEffect(() => {
     // Check if user is already authenticated
@@ -43,12 +93,14 @@ export default function PWAWelcomePage() {
       <main className="relative w-screen h-screen overflow-hidden">
         {/* Video Background */}
         <video 
+          ref={loadingVideoRef}
           className="absolute inset-0 w-full h-full object-cover z-0" 
           autoPlay 
           muted 
           loop 
           playsInline
-          preload="metadata"
+          webkit-playsinline="true"
+          preload="auto"
         >
           <source
             src="https://cdn.pixabay.com/video/2024/08/27/228447_large.mp4"
@@ -76,12 +128,14 @@ export default function PWAWelcomePage() {
         />
       ) : (
         <video 
+          ref={videoRef}
           className="absolute inset-0 w-full h-full object-cover z-0" 
           autoPlay 
           muted 
           loop 
           playsInline
-          preload="metadata"
+          webkit-playsinline="true"
+          preload="auto"
           onError={() => setVideoError(true)}
         >
           <source
