@@ -74,7 +74,7 @@ export default function TermsOfServicePage() {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="text-sm text-neutral-500"
           >
-            Effective Date: January 2025
+            Effective Date: January 2026
           </motion.p>
         </motion.div>
       </section>
@@ -135,9 +135,10 @@ export default function TermsOfServicePage() {
               <p>Prompt & Pause provides:</p>
               <ul className="space-y-2 list-disc list-inside ml-4">
                 <li>Daily mental health reflection prompts delivered via email or Slack</li>
-                <li>AI-powered personalized prompts using Groq API and OpenAI API</li>
-                <li>Reflection tracking and history</li>
-                <li>Premium features including advanced analytics and customization</li>
+                <li>AI-powered personalized prompts using multiple AI providers (OpenAI, Anthropic, Groq, etc.)</li>
+                <li>Reflection tracking and mood analytics</li>
+                <li>Premium features including advanced analytics, custom focus areas, and unlimited prompts</li>
+                <li>Self-journaling features for private reflection</li>
               </ul>
               <p className="mt-6">
                 We reserve the right to modify, suspend, or discontinue any aspect of the Service at any time, with or
@@ -155,10 +156,11 @@ export default function TermsOfServicePage() {
             <div className="space-y-4 text-neutral-300 leading-relaxed">
               <h3 className="text-2xl font-bold mt-6">Account Creation</h3>
               <ul className="space-y-2 list-disc list-inside ml-4">
-                <li>You must be at least 16 years old (UK/EU) or 13 years old (US) to create an account</li>
-                <li>You must provide accurate and complete information</li>
+                <li>You must be at least 16 years old to create an account (UK/EU) or 13 years old (US)</li>
+                <li>You must provide accurate, complete, and current information</li>
                 <li>You are responsible for maintaining the confidentiality of your account credentials</li>
                 <li>You are responsible for all activities under your account</li>
+                <li>You agree to update your information if it changes</li>
               </ul>
 
               <h3 className="text-2xl font-bold mt-6">Account Security</h3>
@@ -170,9 +172,16 @@ export default function TermsOfServicePage() {
                 <li>Not use another user's account without permission</li>
               </ul>
 
-              <p className="mt-6 p-4 bg-red-900/20 border border-red-900/50 rounded-lg">
-                <strong>Security Notice:</strong> We are not liable for any loss or damage arising from your failure to
-                protect your account credentials.
+              <h3 className="text-2xl font-bold mt-6">AI Transparency</h3>
+              <p className="p-4 bg-blue-900/20 border border-blue-900/50 rounded-lg">
+                <strong>AI Disclosure:</strong> Our service uses artificial intelligence to generate personalized prompts. 
+                AI-generated content is for reflection purposes only and should not be considered medical or therapeutic advice.
+              </p>
+              
+              <h3 className="text-2xl font-bold mt-6">Mental Health Disclaimer</h3>
+              <p className="p-4 bg-yellow-900/20 border border-yellow-900/50 rounded-lg">
+                <strong>Important:</strong> Prompt & Pause is not a substitute for professional mental health services. 
+                If you are experiencing a mental health crisis, please contact emergency services or a qualified healthcare provider.
               </p>
             </div>
           </div>
@@ -184,10 +193,13 @@ export default function TermsOfServicePage() {
               <h3 className="text-2xl font-bold">Pricing</h3>
               <ul className="space-y-2 list-disc list-inside ml-4">
                 <li>
-                  <strong>Free Tier:</strong> £0/month - 3 prompts per week
+                  <strong>Free Tier:</strong> £0/month - 3 prompts per week, basic features
                 </li>
                 <li>
-                  <strong>Premium Tier:</strong> £12/month or £99/year
+                  <strong>Premium Tier:</strong> £12/month or £99/year - Unlimited prompts, advanced analytics, custom focus areas
+                </li>
+                <li>
+                  <strong>7-Day Trial:</strong> Full Premium access for new users
                 </li>
               </ul>
 
@@ -209,10 +221,10 @@ export default function TermsOfServicePage() {
                 within 14 days of purchase.
               </p>
 
-              <h3 className="text-2xl font-bold mt-6">Cancellation</h3>
+              <h3 className="text-2xl font-bold mt-6">Data Processing Addendum</h3>
               <p>
-                You may cancel your subscription at any time. Cancellation takes effect at the end of your current
-                billing period. No refunds for partial periods.
+                Our data processing complies with UK Data Protection Act 2018, EU GDPR, and US state privacy laws. 
+                Detailed data processing information is available in our Privacy Policy.
               </p>
             </div>
           </div>
@@ -413,7 +425,7 @@ export default function TermsOfServicePage() {
                 Continued use of the Service after changes constitutes acceptance of the new Terms. If you do not agree
                 to the changes, you must stop using the Service and terminate your account.
               </p>
-              <p className="text-sm text-neutral-500 mt-6">Last updated: January 2025</p>
+              <p className="text-sm text-neutral-500 mt-6">Last updated: January 2026</p>
             </div>
           </div>
 

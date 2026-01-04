@@ -43,6 +43,7 @@ import {
   cacheUserPreferences,
   invalidateCacheOnLogout
 } from "@/lib/services/cacheService"
+import { usePushNotifications } from "@/lib/hooks/usePushNotifications"
 import {
   Select,
   SelectContent,
@@ -124,6 +125,53 @@ const promptFrequencies = [
 
 type SettingsView = 'main' | 'profile' | 'notifications' | 'security' | 'preferences' | 'subscription' | 'integrations' | 'danger'
 
+// Push Notification Row Component - integrates with real push subscription
+function PushNotificationRow({ theme }: { theme: string }) {
+  const { isSupported, isSubscribed, isLoading, error, subscribe, unsubscribe } = usePushNotifications()
+
+  if (!isSupported) {
+    return (
+      <div className="flex items-center justify-between">
+        <div>
+          <Label className={`text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            Push Notifications
+          </Label>
+          <p className={`text-xs ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
+            Not supported on this device
+          </p>
+        </div>
+        <Switch checked={false} disabled={true} />
+      </div>
+    )
+  }
+
+  const handleToggle = async (checked: boolean) => {
+    if (checked) {
+      await subscribe()
+    } else {
+      await unsubscribe()
+    }
+  }
+
+  return (
+    <div className="flex items-center justify-between">
+      <div>
+        <Label className={`text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+          Push Notifications
+        </Label>
+        <p className={`text-xs ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
+          {error ? error : isSubscribed ? 'Enabled on this device' : 'Receive notifications on your device'}
+        </p>
+      </div>
+      <Switch 
+        checked={isSubscribed} 
+        onCheckedChange={handleToggle} 
+        disabled={isLoading}
+      />
+    </div>
+  )
+}
+
 export default function SettingsPage() {
   return (
     <AuthGuard redirectPath="/dashboard/settings">
@@ -156,7 +204,7 @@ function SettingsPageContent() {
   const [timezoneInfo, setTimezoneInfo] = useState<any>(null)
   
   // Notification states
-  const [pushNotifications, setPushNotifications] = useState(false) // Push notifications (not implemented yet)
+  const [pushNotificationsDb, setPushNotificationsDb] = useState(false) // Push notifications preference in DB
   const [dailyReminders, setDailyReminders] = useState(true) // Email reminders
   const [weeklyDigest, setWeeklyDigest] = useState(false) // Weekly email digest
   const [includeSelfJournalInInsights, setIncludeSelfJournalInInsights] = useState(false) // Opt-in for self-journal in weekly insights
@@ -237,7 +285,7 @@ function SettingsPageContent() {
 
       if (cachedPreferences) {
         setLanguage(cachedPreferences.language || 'en')
-        setPushNotifications(cachedPreferences.push_notifications ?? false)
+        setPushNotificationsDb(cachedPreferences.push_notifications ?? false)
         setDailyReminders(cachedPreferences.daily_reminders ?? true)
         setWeeklyDigest(cachedPreferences.weekly_digest ?? false)
         setIncludeSelfJournalInInsights(cachedPreferences.include_self_journal_in_insights ?? false)
@@ -281,7 +329,7 @@ function SettingsPageContent() {
         const { success, data: prefs } = await preferencesResponse.json()
         if (success && prefs) {
           setLanguage(prefs.language || 'en')
-          setPushNotifications(prefs.push_notifications ?? false)
+          setPushNotificationsDb(prefs.push_notifications ?? false)
           setDailyReminders(prefs.daily_reminders ?? true)
           setWeeklyDigest(prefs.weekly_digest ?? false)
           setIncludeSelfJournalInInsights(prefs.include_self_journal_in_insights ?? false)
@@ -371,7 +419,7 @@ function SettingsPageContent() {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          push_notifications: pushNotifications,
+          push_notifications: pushNotificationsDb,
           daily_reminders: dailyReminders,
           weekly_digest: weeklyDigest,
           include_self_journal_in_insights: includeSelfJournalInInsights,
@@ -1302,17 +1350,7 @@ function SettingsPageContent() {
                       }`}>Notifications</h3>
                     </div>
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <Label className={`text-sm ${
-                            theme === 'dark' ? 'text-white' : 'text-gray-900'
-                          }`}>Push Notifications</Label>
-                          <p className={`text-xs ${
-                            theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-                          }`}>Receive device notifications</p>
-                        </div>
-                          <Switch checked={pushNotifications} onCheckedChange={setPushNotifications} disabled={true} />
-                      </div>
+                      <PushNotificationRow theme={theme} />
                       <div className="flex items-center justify-between">
                         <div>
                           <Label className={`text-sm ${
@@ -2131,21 +2169,7 @@ function SettingsPageContent() {
                 }`}>Notifications</h3>
               </div>
               <div className="space-y-4">
-                <div className="flex items-center justify-between gap-2 md:gap-3">
-                  <div className="space-y-0.5 flex-1">
-                    <Label className={`text-sm ${
-                      theme === 'dark' ? 'text-white' : 'text-gray-900'
-                    }`}>Push Notifications</Label>
-                    <p className={`text-xs ${
-                      theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-                    }`}>Receive notifications on your device</p>
-                  </div>
-                    <Switch
-                      checked={pushNotifications}
-                      onCheckedChange={setPushNotifications}
-                      disabled={true}
-                    />
-                </div>
+                <PushNotificationRow theme={theme} />
                 <div className="flex items-center justify-between gap-2 md:gap-3">
                   <div className="space-y-0.5 flex-1">
                     <Label className={`text-sm ${

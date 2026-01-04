@@ -2,8 +2,75 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import { isAdminUser, isSuperAdmin } from '@/lib/services/adminUserService'
 
+/**
+ * Apply security headers to response
+ */
+function applySecurityHeaders(response: NextResponse): NextResponse {
+  // HTTP Strict Transport Security (HSTS)
+  response.headers.set(
+    'Strict-Transport-Security',
+    'max-age=31536000; includeSubDomains; preload'
+  )
+  
+  // Content Security Policy
+  response.headers.set(
+    'Content-Security-Policy',
+    [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://www.googletagmanager.com https://www.google-analytics.com",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      "img-src 'self' data: blob: https: https://www.googletagmanager.com",
+      "font-src 'self' https://fonts.gstatic.com data:",
+      "connect-src 'self' https://*.supabase.co https://api.stripe.com https://ipapi.co https://www.google-analytics.com wss://*.supabase.co",
+      "frame-src 'self' https://js.stripe.com https://hooks.stripe.com",
+      "object-src 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "frame-ancestors 'none'",
+      "upgrade-insecure-requests",
+    ].join('; ')
+  )
+  
+  // XSS Protection
+  response.headers.set('X-XSS-Protection', '1; mode=block')
+  
+  // Prevent clickjacking
+  response.headers.set('X-Frame-Options', 'DENY')
+  
+  // Prevent MIME sniffing
+  response.headers.set('X-Content-Type-Options', 'nosniff')
+  
+  // Referrer Policy
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
+  
+  // Permissions Policy
+  response.headers.set(
+    'Permissions-Policy',
+    'accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(self "https://js.stripe.com"), usb=()'
+  )
+  
+  // Additional security headers
+  response.headers.set('X-DNS-Prefetch-Control', 'on')
+  response.headers.set('X-Download-Options', 'noopen')
+  response.headers.set('X-Permitted-Cross-Domain-Policies', 'none')
+  
+  return response
+}
+
+/**
+ * Get client IP from request
+ */
+function getClientIP(request: NextRequest): string {
+  const forwarded = request.headers.get('x-forwarded-for')
+  if (forwarded) {
+    return forwarded.split(',')[0].trim()
+  }
+  return request.headers.get('x-real-ip') || 'unknown'
+}
+
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
+  const clientIP = getClientIP(request)
 
   // ABSOLUTE FIRST PRIORITY - BYPASS EVERYTHING FOR ADMIN LOGIN
   if (pathname === '/admin-panel/login') {
@@ -77,6 +144,9 @@ export default async function middleware(request: NextRequest) {
       },
     }
   )
+
+  // Apply security headers to all responses
+  response = applySecurityHeaders(response)
 
   // Check maintenance mode FIRST before auth checks
   try {

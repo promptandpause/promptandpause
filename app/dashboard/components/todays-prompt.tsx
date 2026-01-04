@@ -278,7 +278,7 @@ export default function TodaysPrompt() {
   return (
     <>
       {/* Prompt limit banner for free users */}
-      {tier === 'free' && <PromptLimitBanner />}
+      {tier === 'free' && <div className="mb-4 md:mb-6"><PromptLimitBanner /></div>}
       
       <section className={`rounded-2xl md:rounded-3xl p-5 md:p-8 flex flex-col gap-4 md:gap-6 relative transition-all duration-200 ${theme === 'dark' ? 'glass-light shadow-soft-lg' : 'glass-medium shadow-soft-md'}`} style={{ pointerEvents: 'auto' }}>
         <div className="flex items-center justify-between gap-3 mb-1">

@@ -97,3 +97,84 @@ self.addEventListener('message', (event) => {
     self.skipWaiting()
   }
 })
+
+// ============================================================================
+// PUSH NOTIFICATIONS
+// ============================================================================
+
+// Handle push events - display notification
+self.addEventListener('push', (event) => {
+  if (!event.data) return
+
+  let data
+  try {
+    data = event.data.json()
+  } catch (e) {
+    data = {
+      title: 'Prompt & Pause',
+      body: event.data.text(),
+      icon: '/apple-icon.png',
+      badge: '/icon.png',
+    }
+  }
+
+  const options = {
+    body: data.body || 'You have a new reflection prompt waiting.',
+    icon: data.icon || '/apple-icon.png',
+    badge: data.badge || '/icon.png',
+    vibrate: [100, 50, 100],
+    data: {
+      url: data.url || '/dashboard',
+      dateOfArrival: Date.now(),
+    },
+    actions: [
+      {
+        action: 'open',
+        title: 'View Prompt',
+      },
+      {
+        action: 'dismiss',
+        title: 'Later',
+      },
+    ],
+    tag: data.tag || 'prompt-notification',
+    renotify: true,
+    requireInteraction: false,
+  }
+
+  event.waitUntil(
+    self.registration.showNotification(data.title || 'Prompt & Pause', options)
+  )
+})
+
+// Handle notification click - open the app
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close()
+
+  const urlToOpen = event.notification.data?.url || '/dashboard'
+
+  if (event.action === 'dismiss') {
+    return
+  }
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      // If app is already open, focus it
+      for (const client of clientList) {
+        if (client.url.includes(self.location.origin) && 'focus' in client) {
+          client.navigate(urlToOpen)
+          return client.focus()
+        }
+      }
+      // Otherwise open new window
+      if (clients.openWindow) {
+        return clients.openWindow(urlToOpen)
+      }
+    })
+  )
+})
+
+// Handle notification close
+self.addEventListener('notificationclose', (event) => {
+  // Analytics or cleanup if needed
+})

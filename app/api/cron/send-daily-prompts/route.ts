@@ -3,6 +3,7 @@ import { createServiceRoleClient } from '@/lib/supabase/server'
 import { sendDailyPromptEmail } from '@/lib/services/emailService'
 import { sendDailyPromptToSlack } from '@/lib/services/slackService'
 import { generatePrompt } from '@/lib/services/aiService'
+import { sendPushNotifications, isPushConfigured } from '@/lib/services/pushService'
 import { GeneratePromptContext } from '@/lib/types/reflection'
 import crypto from 'crypto'
 
@@ -307,8 +308,40 @@ export async function POST(request: NextRequest) {
           }
         }
 
+        // Send push notification if user has subscriptions
+        let pushSent = false
+        if (isPushConfigured()) {
+          const { data: pushSubs } = await supabase
+            .from('push_subscriptions')
+            .select('endpoint, p256dh, auth')
+            .eq('user_id', profile.id)
+
+          if (pushSubs && pushSubs.length > 0) {
+            const failedEndpoints = await sendPushNotifications(
+              pushSubs,
+              {
+                title: 'Your Daily Prompt is Ready',
+                body: promptText.length > 100 ? promptText.substring(0, 97) + '...' : promptText,
+                url: '/dashboard',
+                tag: `prompt-${today}`,
+              }
+            )
+
+            // Clean up failed subscriptions
+            if (failedEndpoints.length > 0) {
+              await supabase
+                .from('push_subscriptions')
+                .delete()
+                .eq('user_id', profile.id)
+                .in('endpoint', failedEndpoints)
+            }
+
+            pushSent = pushSubs.length > failedEndpoints.length
+          }
+        }
+
         // Track results
-        if (emailSent || slackSent) {
+        if (emailSent || slackSent || pushSent) {
           sentCount++
           results.push({
             user_id: profile.id,
@@ -317,6 +350,7 @@ export async function POST(request: NextRequest) {
             channels: {
               email: emailSent,
               slack: slackSent,
+              push: pushSent,
             },
           })
         } else {

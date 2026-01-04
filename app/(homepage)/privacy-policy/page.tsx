@@ -74,7 +74,7 @@ export default function PrivacyPolicyPage() {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="text-sm text-neutral-500"
           >
-            Last Updated: January 2025
+            Last Updated: January 2026
           </motion.p>
         </motion.div>
       </section>
@@ -115,8 +115,9 @@ export default function PrivacyPolicyPage() {
                 reflection service.
               </p>
               <p>
-                We operate in compliance with the UK General Data Protection Regulation (UK GDPR), the EU GDPR, and
-                applicable US privacy laws including the California Consumer Privacy Act (CCPA).
+                We operate in compliance with the UK General Data Protection Regulation (UK GDPR), the EU GDPR, 
+                the UK Data Protection Act 2018, and applicable US privacy laws including the California Consumer Privacy Act (CCPA), 
+                Colorado Privacy Act (CPRA), Virginia Consumer Data Protection Act (VCDPA), and other state regulations.
               </p>
               <p>
                 <strong>Data Controller:</strong> Prompt & Pause, registered in the United Kingdom.
@@ -148,7 +149,10 @@ export default function PrivacyPolicyPage() {
                 </h3>
                 <ul className="space-y-2 text-neutral-300 list-disc list-inside">
                   <li>Your responses to daily prompts</li>
-                  <li>Reflection history and patterns</li>
+                  <li>Self-journal entries (private, not shared with AI)</li>
+                  <li>Mood tracking and emotional patterns</li>
+                  <li>Custom focus areas and preferences</li>
+                  <li>Reflection history and streaks</li>
                   <li>Timestamps of interactions</li>
                   <li>Delivery preferences (email, Slack)</li>
                 </ul>
@@ -192,8 +196,8 @@ export default function PrivacyPolicyPage() {
                   <strong>Service Delivery:</strong> To provide daily mental health prompts and reflection tools
                 </li>
                 <li>
-                  <strong>AI Processing:</strong> To generate personalized prompts using Groq API and OpenAI API (your
-                  data is processed but not used to train AI models)
+                  <strong>AI Processing:</strong> To generate personalized prompts using multiple AI providers (OpenAI, Anthropic, Groq, etc.). 
+                  Your reflection data is processed for personalization only and is NOT used to train AI models.
                 </li>
                 <li>
                   <strong>Communication:</strong> To send prompts via email (Resend) or Slack
@@ -448,7 +452,7 @@ export default function PrivacyPolicyPage() {
                 We may update this Privacy Policy from time to time. We will notify you of material changes via email or
                 prominent notice on our website. Continued use after changes constitutes acceptance.
               </p>
-              <p className="text-sm text-neutral-500">Last updated: January 2025</p>
+              <p className="text-sm text-neutral-500">Last updated: January 2026</p>
             </div>
           </div>
 

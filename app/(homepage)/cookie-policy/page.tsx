@@ -136,7 +136,7 @@ export default function CookiePolicyPage() {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="text-sm text-neutral-500"
           >
-            Last Updated: January 2025
+            Last Updated: January 2026
           </motion.p>
         </motion.div>
       </section>
