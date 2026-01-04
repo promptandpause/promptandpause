@@ -6,9 +6,11 @@ import { FREEMIUM_FOCUS_AREAS } from '@/lib/constants/focusAreas'
 /**
  * AI Service for Generating Personalized Mental Health Prompts
  * 
- * Uses OpenRouter (primary, FREE) with OpenAI as fallback
- * - OpenRouter: Free tier with multiple model options
- * - OpenAI: Backup with GPT-4o-mini
+ * Uses OpenAI GPT (primary) with free providers as fallback
+ * - OpenAI: Primary with GPT-4o-mini
+ * - OpenRouter: Fallback with free tier models
+ * - Gemini: Secondary fallback
+ * - HuggingFace: Final fallback (100% free)
  */
 
 // Initialize clients
@@ -39,30 +41,29 @@ const openai = new OpenAI({
 // ============================================================================
 
 // OpenRouter free/cheap models - prioritized by cost and quality
-// Updated with currently available models as of Jan 2025
+// Updated with currently available models as of Jan 2026
 export const OPENROUTER_MODELS = [
-  // Tier 1: Free models (verified available)
-  'google/gemini-2.0-flash-exp:free',
-  'meta-llama/llama-3.2-3b-instruct:free',
-  'qwen/qwen-2.5-7b-instruct:free',
-  'microsoft/phi-3-medium-128k-instruct:free',
+  // Tier 1: Free models (verified available Jan 2026)
+  'meta-llama/llama-3.3-70b-instruct:free',
+  'google/gemma-3-27b-it:free',
+  'deepseek/deepseek-r1-0528:free',
+  'qwen/qwen3-coder:free',
+  'mistralai/devstral-2512:free',
+  'nvidia/nemotron-3-nano-30b-a3b:free',
+  'openai/gpt-oss-120b:free',
   
-  // Tier 2: Ultra-cheap (<$0.10/1M tokens)
-  'google/gemini-flash-1.5-8b',
-  'anthropic/claude-3-haiku',
-  'meta-llama/llama-3.1-8b-instruct',
-  
-  // Tier 3: Reliable fallback
+  // Tier 2: Ultra-cheap fallback
   'openai/gpt-4o-mini',
 ]
 
 // Hugging Face free models - all 100% free, no credit card required
+// Updated Jan 2026
 export const HUGGINGFACE_MODELS = [
-  'meta-llama/Meta-Llama-3-8B-Instruct',
-  'mistralai/Mistral-7B-Instruct-v0.3',
-  'microsoft/Phi-3-mini-4k-instruct',
-  'google/gemma-2-9b-it',
-  'Qwen/Qwen2.5-7B-Instruct',
+  'meta-llama/Llama-3.3-70B-Instruct',
+  'mistralai/Mistral-Small-24B-Instruct-2501',
+  'Qwen/Qwen3-32B',
+  'google/gemma-3-27b-it',
+  'microsoft/Phi-4',
 ]
 
 const GEMINI_MODEL = 'gemini-2.5-flash' // Stable, fast, high quality
@@ -86,7 +87,23 @@ export async function generatePrompt(context: GeneratePromptContext): Promise<{
   // Build the user context
   const userContext = buildUserContext(context)
 
-  // Try OpenRouter first (FREE with 8 model fallback chain)
+  // Try OpenAI GPT first (primary provider)
+  if (process.env.OPENAI_API_KEY) {
+    try {
+      const prompt = await generateWithOpenAI(systemPrompt, userContext)
+      
+      if (prompt) {
+        return {
+          prompt,
+          provider: 'openai',
+          model: OPENAI_MODEL,
+        }
+      }
+    } catch (error) {
+    }
+  }
+
+  // Try OpenRouter as fallback (FREE with multi-model fallback chain)
   if (openrouter) {
     try {
       const result = await generateWithOpenRouter(systemPrompt, userContext)
@@ -96,22 +113,6 @@ export async function generatePrompt(context: GeneratePromptContext): Promise<{
           prompt: result.text,
           provider: 'openai', // OpenRouter uses OpenAI-compatible API
           model: result.model,
-        }
-      }
-    } catch (error) {
-    }
-  }
-
-  // Try Hugging Face as fallback (100% FREE, no credit card)
-  if (huggingface) {
-    try {
-      const prompt = await generateWithHuggingFace(systemPrompt, userContext)
-      
-      if (prompt) {
-        return {
-          prompt,
-          provider: 'openai',
-          model: HUGGINGFACE_MODEL,
         }
       }
     } catch (error) {
@@ -134,16 +135,16 @@ export async function generatePrompt(context: GeneratePromptContext): Promise<{
     }
   }
 
-  // Final fallback to OpenAI if configured
-  if (process.env.OPENAI_API_KEY) {
+  // Final fallback to Hugging Face (100% FREE, no credit card)
+  if (huggingface) {
     try {
-      const prompt = await generateWithOpenAI(systemPrompt, userContext)
+      const prompt = await generateWithHuggingFace(systemPrompt, userContext)
       
       if (prompt) {
         return {
           prompt,
           provider: 'openai',
-          model: OPENAI_MODEL,
+          model: 'huggingface',
         }
       }
     } catch (error) {
