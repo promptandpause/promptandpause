@@ -1,6 +1,6 @@
 "use client"
 import { useState } from "react";
-import { GradientCanvas } from "../gradient-canvas";
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { getSupabaseClient } from "@/lib/supabase/client";
@@ -14,7 +14,7 @@ export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   return (
     <main className="w-screen h-screen flex">
-      <div className="w-full lg:w-1/2 h-screen flex items-center justify-center bg-white">
+      <div className="w-full lg:w-1/2 h-full flex items-center justify-center" style={{backgroundColor: '#F2F0EF'}}>
         <div className="w-full max-w-sm space-y-6 px-4">
           <div className="text-center">
             <h1 className="text-lg font-medium tracking-tight">Reset Your Password</h1>
@@ -102,8 +102,13 @@ export default function ForgotPasswordPage() {
           </p>
         </div>
       </div>
-      <div className="hidden lg:block lg:w-1/2 h-screen">
-        <GradientCanvas />
+      <div className="hidden lg:flex lg:w-1/2 h-full items-center justify-center bg-white">
+        <DotLottieReact
+          src="https://lottie.host/2dcd8b98-5feb-4f95-baca-5552a6eb4b1f/s3mk2bKMoJ.lottie"
+          loop
+          autoplay
+          style={{ width: '80%', height: '80%' }}
+        />
       </div>
     </main>
   );
