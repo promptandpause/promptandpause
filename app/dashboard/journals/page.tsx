@@ -239,39 +239,41 @@ export default function JournalsPage() {
                 </div>
               </div>
               
-              {/* Search and Filter Row */}
-              <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-end">
-                <div className="relative flex-1 sm:max-w-[200px]">
+              {/* Search and Date Filter Row */}
+              <div className="grid grid-cols-2 sm:flex sm:flex-row gap-3 items-stretch sm:items-end">
+                <div className="relative col-span-2 sm:flex-1 sm:max-w-[200px]">
                   <Search className="h-4 w-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
                   <Input
-                    className={`pl-9 h-10 ${theme === 'dark' ? 'bg-white/10 border-white/20 text-white placeholder:text-white/50' : 'bg-white border-gray-300 text-gray-900'}`}
+                    className={`pl-9 h-10 w-full ${theme === 'dark' ? 'bg-white/10 border-white/20 text-white placeholder:text-white/50' : 'bg-white border-gray-300 text-gray-900'}`}
                     placeholder="Search text..."
                     value={searchText}
                     onChange={(e) => setSearchText(e.target.value)}
                   />
                 </div>
-                <div className="flex-1 sm:max-w-[180px]">
+                <div className="col-span-2 sm:flex-1 sm:max-w-[180px]">
                   <label className={`text-[11px] font-semibold mb-1 block ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>Filter by date</label>
                   <Input
                     type="date"
                     value={filterDate}
                     onChange={(e) => setFilterDate(e.target.value)}
-                    className={`h-10 ${theme === 'dark' ? 'bg-white/10 border-white/20 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
+                    className={`h-10 w-full ${theme === 'dark' ? 'bg-white/10 border-white/20 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
                   />
                 </div>
-                <div className="flex items-center gap-2 h-10">
-                  <Filter className="h-4 w-4 text-gray-400 flex-shrink-0" />
-                  <div className="flex gap-1 flex-wrap">
-                    {moods.map(m => (
-                      <button
-                        key={m}
-                        onClick={() => setFilterMood(filterMood === m ? null : m)}
-                        className={`px-2 py-1.5 rounded-lg text-sm border transition-colors ${filterMood === m ? 'bg-green-500/20 border-green-400' : theme === 'dark' ? 'border-white/20 bg-white/10 text-white/80 hover:bg-white/15' : 'border-gray-200 bg-white/60 text-gray-800 hover:bg-gray-100'}`}
-                      >
-                        {m}
-                      </button>
-                    ))}
-                  </div>
+              </div>
+              
+              {/* Mood Filter Row */}
+              <div className="flex items-center gap-2">
+                <Filter className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                <div className="flex gap-1.5 flex-wrap">
+                  {moods.map(m => (
+                    <button
+                      key={m}
+                      onClick={() => setFilterMood(filterMood === m ? null : m)}
+                      className={`w-8 h-8 rounded-full text-base flex items-center justify-center border transition-colors ${filterMood === m ? 'bg-green-500/20 border-green-400 scale-110' : theme === 'dark' ? 'border-white/20 bg-white/10 hover:bg-white/15' : 'border-gray-200 bg-white/60 hover:bg-gray-100'}`}
+                    >
+                      {m}
+                    </button>
+                  ))}
                 </div>
               </div>
               
