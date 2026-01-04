@@ -201,6 +201,17 @@ export default function Onboarding() {
         {step === -1 ? (
           <div className="flex flex-col gap-6 sm:gap-8 items-center justify-center px-2 py-6 sm:py-10 text-center">
             <h2 className="text-lg sm:text-xl font-semibold text-neutral-800 mb-2">Welcome to Prompt & Pause</h2>
+            
+            {/* Trial Information */}
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 mb-4">
+              <p className="text-sm font-semibold text-blue-900 mb-1">
+                Start with a 7-day free trial
+              </p>
+              <p className="text-xs text-blue-700">
+                No credit card required • Full access to all features
+              </p>
+            </div>
+            
             <div className="text-xs sm:text-sm text-gray-800/80 leading-relaxed">
               <strong>Disclaimer:</strong> Prompt & Pause is not a doctor, registered therapist, or a provider of professional medical, clinical, or crisis care. This service is for self-reflection and general wellness, not diagnosis, treatment, or urgent care. If you are in a crisis, please seek help from a qualified provider or call emergency services.
             </div>
