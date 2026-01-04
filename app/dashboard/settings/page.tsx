@@ -263,6 +263,31 @@ function SettingsPageContent() {
     }
   }, [])
 
+  // Handle Stripe checkout success/cancel redirects
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const success = urlParams.get('success')
+    const canceled = urlParams.get('canceled')
+    
+    if (success === 'true') {
+      toast({
+        title: "Payment Successful! 🎉",
+        description: "Your subscription has been activated. Welcome to Premium!",
+      })
+      // Clean URL
+      window.history.replaceState({}, '', '/dashboard/settings')
+      // Reload data to update subscription status
+      loadUserData()
+    } else if (canceled === 'true') {
+      toast({
+        title: "Payment Cancelled",
+        description: "You can upgrade anytime from the settings page.",
+      })
+      // Clean URL
+      window.history.replaceState({}, '', '/dashboard/settings')
+    }
+  }, [])
+
   // Load user data from Supabase
   useEffect(() => {
     loadUserData()
@@ -707,7 +732,18 @@ function SettingsPageContent() {
 
       const { checkoutUrl } = await response.json()
       if (checkoutUrl) {
-        window.location.href = checkoutUrl
+        // Check if mobile/PWA - use same window for better UX
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+        const isPWA = window.matchMedia('(display-mode: standalone)').matches
+        
+        if (isMobile || isPWA) {
+          // Mobile/PWA: use same window to avoid tab switching issues
+          window.location.href = checkoutUrl
+        } else {
+          // Desktop: open in new tab
+          window.open(checkoutUrl, '_blank', 'noopener,noreferrer')
+          setIsLoading(false)
+        }
       } else {
         throw new Error('No checkout URL returned')
       }
