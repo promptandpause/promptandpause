@@ -142,15 +142,19 @@ export function useTier(): UseTierResult {
         setTier('free')
         setSubscriptionStatus(null)
       } else if (profile) {
-        // Determine tier based on subscription_status
-        const userTier = profile.subscription_status === 'premium' ? 'premium' : 'free'
+        // Determine tier using helper (handles expired trials/subscriptions)
+        const subscriptionEnd = profile.subscription_end_date 
+          ? new Date(profile.subscription_end_date) 
+          : null
+        const userTier = getUserTier(
+          profile.subscription_status,
+          null,
+          subscriptionEnd
+        )
+
         setTier(userTier)
         setSubscriptionStatus(profile.subscription_status || null)
-        setSubscriptionEndDate(
-          profile.subscription_end_date 
-            ? new Date(profile.subscription_end_date) 
-            : null
-        )
+        setSubscriptionEndDate(subscriptionEnd)
         
         // Set trial info
         setIsTrial(profile.is_trial || false)

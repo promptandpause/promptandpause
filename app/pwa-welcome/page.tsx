@@ -172,9 +172,9 @@ export default function PWAWelcomePage() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col h-full px-6 py-10 safe-area-top safe-area-bottom">
+      <div className="relative z-10 flex flex-col h-full px-6 py-12 safe-area-top safe-area-bottom justify-between">
         {/* Logo - Center Top */}
-        <div className="flex justify-center pt-10 mb-14">
+        <div className="flex justify-center pt-12 mb-14">
           <Link href="/" className="inline-flex">
             <Image
               src="https://res.cloudinary.com/dh1rrfpmq/image/upload/v1766460430/prompt_pause-JRsbZR3dxCXndC8YMcyX6XU3XeT2Vw_vdvqfj.svg"
@@ -190,18 +190,18 @@ export default function PWAWelcomePage() {
         {/* Main Content */}
         <div className="flex-1 flex flex-col justify-center max-w-lg mx-auto w-full gap-3">
           {/* Heading */}
-          <h1 className="font-serif text-white text-3xl sm:text-4xl md:text-5xl font-normal tracking-tight mb-6 leading-[1.15] drop-shadow-2xl">
+          <h1 className="font-serif text-white text-3xl sm:text-4xl md:text-5xl font-normal tracking-tight mb-5 leading-[1.15] drop-shadow-2xl">
             Find Balance in your life with clarity.
           </h1>
 
           {/* Subheading */}
-          <p className="font-sans text-white/85 text-base sm:text-lg font-light leading-relaxed mb-8 drop-shadow-lg">
+          <p className="font-sans text-white/85 text-base sm:text-lg font-light leading-relaxed mb-7 drop-shadow-lg">
             Take a moment for yourself. Daily reflection prompts to help you process stress, track your mood, and rediscover calm.
           </p>
         </div>
 
         {/* Login Button - Bottom */}
-        <div className="w-full max-w-md mx-auto pb-2">
+        <div className="w-full max-w-md mx-auto pb-8">
           <Link 
             href="/auth/signin"
             className="block w-full text-center bg-white/25 border border-white/30 backdrop-blur-xl text-white font-sans font-semibold px-8 py-4 rounded-2xl text-lg shadow-2xl hover:bg-white/35 hover:border-white/40 transition-all duration-300 touch-manipulation"

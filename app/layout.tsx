@@ -78,7 +78,9 @@ export const metadata: Metadata = {
       { url: '/icon.png', type: 'image/png', sizes: '32x32' },
       { url: '/icon.png', type: 'image/png', sizes: '64x64' },
     ],
-    apple: [{ url: '/PandP_APPiconApple.svg', type: 'image/svg+xml', sizes: '1024x1024' }],
+    apple: [
+      { url: '/apple-icon.png', type: 'image/png', sizes: '180x180' },
+    ],
     shortcut: [{ url: '/favicon.ico' }],
   },
   manifest: '/manifest.json',

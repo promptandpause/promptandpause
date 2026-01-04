@@ -36,12 +36,19 @@ export async function GET(request: NextRequest) {
     }
     const supabase = createServiceRoleClient()
 
-    // Find all users with expired trials (premium status but subscription_end_date in the past)
+    // Find all users with expired trials (premium status but trial/subscription end is past)
     const { data: expiredUsers, error: fetchError } = await supabase
       .from('profiles')
-      .select('id, email, full_name, subscription_end_date, subscription_status, subscription_id')
+      .select('id, email, full_name, subscription_end_date, subscription_status, subscription_id, trial_end_date, is_trial')
       .eq('subscription_status', 'premium')
-      .lt('subscription_end_date', new Date().toISOString())
+      .or(
+        [
+          `subscription_end_date.lt.${new Date().toISOString()}`,
+          `trial_end_date.lt.${new Date().toISOString()}`,
+          // If we somehow have a premium trial with no end date, treat as expired to be safe
+          'subscription_end_date.is.null,trial_end_date.is.null,is_trial.eq.true',
+        ].join(',')
+      )
       .is('subscription_id', null) // Only users without Stripe subscription (trial users)
 
     if (fetchError) {
@@ -73,7 +80,10 @@ export async function GET(request: NextRequest) {
         const { error: updateError } = await supabase
           .from('profiles')
           .update({
-            subscription_status: 'freemium',
+            subscription_status: 'free',
+            subscription_end_date: null,
+            is_trial: false,
+            trial_end_date: null,
             updated_at: new Date().toISOString(),
           })
           .eq('id', user.id)
@@ -110,7 +120,7 @@ export async function GET(request: NextRequest) {
             user_id: user.id,
             event_type: 'downgraded',
             old_status: 'premium',
-            new_status: 'freemium',
+            new_status: 'free',
             metadata: {
               reason: 'trial_expired',
               trial_end_date: user.subscription_end_date,
