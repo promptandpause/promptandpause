@@ -1,0 +1,245 @@
+name: Scheduled Cron Jobs
+
+on:
+  schedule:
+    # Send daily prompts - runs every hour
+    - cron: '0 * * * *'
+    # Welcome emails - runs every 15 minutes
+    - cron: '*/15 * * * *'
+    # Check trial expiry - runs daily at midnight UTC
+    - cron: '0 0 * * *'
+    # Expire trials - runs daily at 1am UTC
+    - cron: '0 1 * * *'
+    # Regenerate weekly insights - Mon and Fri at 6am UTC
+    - cron: '0 6 * * 1,5'
+  
+  # Allow manual trigger for testing
+  workflow_dispatch:
+    inputs:
+      job_type:
+        description: 'Which cron job to run'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - daily-prompts
+          - welcome-emails
+          - check-trial-expiry
+          - expire-trials
+          - weekly-insights
+
+env:
+  APP_URL: ${{ secrets.APP_URL }}
+  CRON_SECRET: ${{ secrets.CRON_SECRET }}
+
+jobs:
+  # Determine which jobs to run based on schedule or manual input
+  determine-jobs:
+    runs-on: ubuntu-latest
+    outputs:
+      run_daily_prompts: ${{ steps.check.outputs.run_daily_prompts }}
+      run_welcome_emails: ${{ steps.check.outputs.run_welcome_emails }}
+      run_check_trial: ${{ steps.check.outputs.run_check_trial }}
+      run_expire_trials: ${{ steps.check.outputs.run_expire_trials }}
+      run_weekly_insights: ${{ steps.check.outputs.run_weekly_insights }}
+    steps:
+      - name: Determine which jobs to run
+        id: check
+        run: |
+          # Get current time info
+          HOUR=$(date -u +%H)
+          MINUTE=$(date -u +%M)
+          DAY_OF_WEEK=$(date -u +%u)
+          
+          # Default all to false
+          echo "run_daily_prompts=false" >> $GITHUB_OUTPUT
+          echo "run_welcome_emails=false" >> $GITHUB_OUTPUT
+          echo "run_check_trial=false" >> $GITHUB_OUTPUT
+          echo "run_expire_trials=false" >> $GITHUB_OUTPUT
+          echo "run_weekly_insights=false" >> $GITHUB_OUTPUT
+          
+          # Manual trigger - check input
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            JOB_TYPE="${{ github.event.inputs.job_type }}"
+            if [ "$JOB_TYPE" == "all" ] || [ "$JOB_TYPE" == "daily-prompts" ]; then
+              echo "run_daily_prompts=true" >> $GITHUB_OUTPUT
+            fi
+            if [ "$JOB_TYPE" == "all" ] || [ "$JOB_TYPE" == "welcome-emails" ]; then
+              echo "run_welcome_emails=true" >> $GITHUB_OUTPUT
+            fi
+            if [ "$JOB_TYPE" == "all" ] || [ "$JOB_TYPE" == "check-trial-expiry" ]; then
+              echo "run_check_trial=true" >> $GITHUB_OUTPUT
+            fi
+            if [ "$JOB_TYPE" == "all" ] || [ "$JOB_TYPE" == "expire-trials" ]; then
+              echo "run_expire_trials=true" >> $GITHUB_OUTPUT
+            fi
+            if [ "$JOB_TYPE" == "all" ] || [ "$JOB_TYPE" == "weekly-insights" ]; then
+              echo "run_weekly_insights=true" >> $GITHUB_OUTPUT
+            fi
+            exit 0
+          fi
+          
+          # Scheduled trigger - determine based on time
+          # Every hour at minute 0 - daily prompts
+          if [ "$MINUTE" -lt "5" ]; then
+            echo "run_daily_prompts=true" >> $GITHUB_OUTPUT
+          fi
+          
+          # Every 15 minutes - welcome emails
+          MINUTE_MOD=$((MINUTE % 15))
+          if [ "$MINUTE_MOD" -lt "5" ]; then
+            echo "run_welcome_emails=true" >> $GITHUB_OUTPUT
+          fi
+          
+          # Midnight UTC - check trial expiry
+          if [ "$HOUR" == "00" ] && [ "$MINUTE" -lt "5" ]; then
+            echo "run_check_trial=true" >> $GITHUB_OUTPUT
+          fi
+          
+          # 1am UTC - expire trials
+          if [ "$HOUR" == "01" ] && [ "$MINUTE" -lt "5" ]; then
+            echo "run_expire_trials=true" >> $GITHUB_OUTPUT
+          fi
+          
+          # 6am UTC on Monday (1) or Friday (5) - weekly insights
+          if [ "$HOUR" == "06" ] && [ "$MINUTE" -lt "5" ]; then
+            if [ "$DAY_OF_WEEK" == "1" ] || [ "$DAY_OF_WEEK" == "5" ]; then
+              echo "run_weekly_insights=true" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+  send-daily-prompts:
+    needs: determine-jobs
+    if: needs.determine-jobs.outputs.run_daily_prompts == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Daily Prompts
+        run: |
+          echo "🔔 Triggering daily prompts cron job..."
+          
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X GET \
+            "${{ env.APP_URL }}/api/cron/send-daily-prompts" \
+            -H "Authorization: Bearer ${{ env.CRON_SECRET }}" \
+            -H "Content-Type: application/json")
+          
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+          
+          echo "Response Code: $HTTP_CODE"
+          echo "Response Body: $BODY"
+          
+          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
+            echo "✅ Daily prompts cron job completed successfully"
+          else
+            echo "❌ Daily prompts cron job failed with status $HTTP_CODE"
+            exit 1
+          fi
+
+  send-welcome-emails:
+    needs: determine-jobs
+    if: needs.determine-jobs.outputs.run_welcome_emails == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Welcome Emails
+        run: |
+          echo "📧 Triggering welcome emails cron job..."
+          
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X GET \
+            "${{ env.APP_URL }}/api/cron/send-welcome-emails" \
+            -H "Authorization: Bearer ${{ env.CRON_SECRET }}" \
+            -H "Content-Type: application/json")
+          
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+          
+          echo "Response Code: $HTTP_CODE"
+          echo "Response Body: $BODY"
+          
+          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
+            echo "✅ Welcome emails cron job completed successfully"
+          else
+            echo "❌ Welcome emails cron job failed with status $HTTP_CODE"
+            exit 1
+          fi
+
+  check-trial-expiry:
+    needs: determine-jobs
+    if: needs.determine-jobs.outputs.run_check_trial == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Trial Expiry
+        run: |
+          echo "⏰ Triggering trial expiry check cron job..."
+          
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X GET \
+            "${{ env.APP_URL }}/api/cron/check-trial-expiry" \
+            -H "Authorization: Bearer ${{ env.CRON_SECRET }}" \
+            -H "Content-Type: application/json")
+          
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+          
+          echo "Response Code: $HTTP_CODE"
+          echo "Response Body: $BODY"
+          
+          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
+            echo "✅ Trial expiry check completed successfully"
+          else
+            echo "❌ Trial expiry check failed with status $HTTP_CODE"
+            exit 1
+          fi
+
+  expire-trials:
+    needs: determine-jobs
+    if: needs.determine-jobs.outputs.run_expire_trials == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Expire Trials
+        run: |
+          echo "🔄 Triggering expire trials cron job..."
+          
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X GET \
+            "${{ env.APP_URL }}/api/cron/expire-trials" \
+            -H "Authorization: Bearer ${{ env.CRON_SECRET }}" \
+            -H "Content-Type: application/json")
+          
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+          
+          echo "Response Code: $HTTP_CODE"
+          echo "Response Body: $BODY"
+          
+          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
+            echo "✅ Expire trials completed successfully"
+          else
+            echo "❌ Expire trials failed with status $HTTP_CODE"
+            exit 1
+          fi
+
+  regenerate-weekly-insights:
+    needs: determine-jobs
+    if: needs.determine-jobs.outputs.run_weekly_insights == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Regenerate Weekly Insights
+        run: |
+          echo "📊 Triggering weekly insights regeneration..."
+          
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X GET \
+            "${{ env.APP_URL }}/api/cron/regenerate-weekly-insights" \
+            -H "Authorization: Bearer ${{ env.CRON_SECRET }}" \
+            -H "Content-Type: application/json")
+          
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+          
+          echo "Response Code: $HTTP_CODE"
+          echo "Response Body: $BODY"
+          
+          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
+            echo "✅ Weekly insights regeneration completed successfully"
+          else
+            echo "❌ Weekly insights regeneration failed with status $HTTP_CODE"
+            exit 1
+          fi
