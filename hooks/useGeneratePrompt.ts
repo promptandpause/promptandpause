@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { useInvalidateReflectionStats } from './useReflectionStats'
+import { PromptType } from '@/lib/types/reflection'
 
 /**
  * Generated prompt response
@@ -12,6 +13,7 @@ export interface GeneratedPrompt {
   ai_provider: string
   ai_model: string
   focus_area_used?: string
+  prompt_type?: PromptType
   date_generated: string
 }
 
@@ -85,6 +87,7 @@ export function useGeneratePrompt() {
         ai_provider: data.data.ai_provider,
         ai_model: data.data.ai_model,
         focus_area_used: data.data.focus_area_used,
+        prompt_type: data.data.prompt_type,
         date_generated: data.data.date_generated,
       }
 

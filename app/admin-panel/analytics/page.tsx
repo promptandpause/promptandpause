@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -37,11 +37,7 @@ export default function AnalyticsPage() {
   const [days, setDays] = useState('30')
   const [engagement, setEngagement] = useState<EngagementData | null>(null)
 
-  useEffect(() => {
-    loadAnalytics()
-  }, [days])
-
-  async function loadAnalytics() {
+  const loadAnalytics = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch(`/api/admin/analytics/engagement?days=${days}`)
@@ -53,7 +49,11 @@ export default function AnalyticsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [days])
+
+  useEffect(() => {
+    loadAnalytics()
+  }, [loadAnalytics])
 
   if (loading) {
     return (

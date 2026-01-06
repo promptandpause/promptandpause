@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -54,11 +54,10 @@ export default function EmailTrackingPage() {
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
 
-  useEffect(() => {
-    fetchData()
-  }, [page, statusFilter, templateFilter])
+  const searchEmailRef = useRef(searchEmail)
+  searchEmailRef.current = searchEmail
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true)
     try {
       // Fetch stats
@@ -80,7 +79,7 @@ export default function EmailTrackingPage() {
         page: page.toString(),
         ...(statusFilter && { status: statusFilter }),
         ...(templateFilter && { template_id: templateFilter }),
-        ...(searchEmail && { recipient_email: searchEmail }),
+        ...(searchEmailRef.current && { recipient_email: searchEmailRef.current }),
       })
 
       const logsRes = await fetch(`/api/admin/emails?${params}`)
@@ -93,7 +92,11 @@ export default function EmailTrackingPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [page, statusFilter, templateFilter])
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
 
   const handleSearch = () => {
     setPage(1)

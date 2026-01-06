@@ -18,7 +18,7 @@ export default async function AdminLayout({
   const user = await getCurrentUser()
   
   if (!user) {
-    redirect('/auth/signin?redirect=/admin-panel')
+    redirect('/auth?redirect=/admin-panel')
   }
 
   const hasAdminAccess = user.email ? await isAdminUser(user.email) : false

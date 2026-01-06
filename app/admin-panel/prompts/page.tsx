@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -40,17 +40,16 @@ export default function PromptLibraryPage() {
     is_active: true,
   })
 
-  useEffect(() => {
-    fetchPrompts()
-  }, [page, categoryFilter])
+  const searchRef = useRef(search)
+  searchRef.current = search
 
-  const fetchPrompts = async () => {
+  const fetchPrompts = useCallback(async () => {
     setLoading(true)
     try {
       const params = new URLSearchParams({
         page: page.toString(),
         ...(categoryFilter && { category: categoryFilter }),
-        ...(search && { search }),
+        ...(searchRef.current && { search: searchRef.current }),
       })
 
       const res = await fetch(`/api/admin/prompts?${params}`)
@@ -63,7 +62,11 @@ export default function PromptLibraryPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [categoryFilter, page])
+
+  useEffect(() => {
+    fetchPrompts()
+  }, [fetchPrompts])
 
   const handleSearch = () => {
     setPage(1)

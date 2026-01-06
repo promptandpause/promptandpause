@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -26,11 +26,7 @@ export default function TemplateVersionHistory({ templateId }: TemplateVersionHi
   const [versions, setVersions] = useState<VersionHistoryItem[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    loadVersionHistory()
-  }, [templateId])
-
-  async function loadVersionHistory() {
+  const loadVersionHistory = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch(`/api/admin/email-templates/${templateId}/versions`)
@@ -43,7 +39,11 @@ export default function TemplateVersionHistory({ templateId }: TemplateVersionHi
     } finally {
       setLoading(false)
     }
-  }
+  }, [templateId])
+
+  useEffect(() => {
+    loadVersionHistory()
+  }, [loadVersionHistory])
 
   async function handleRollback(versionId: string) {
     if (!confirm('Rollback to this version? Current changes will be saved in history.')) {

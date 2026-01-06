@@ -1,7 +1,7 @@
 "use client"
 
 import { AuthGuard } from "@/components/auth/AuthGuard"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { getSupabaseClient } from "@/lib/supabase/client"
 import { useTheme } from "@/contexts/ThemeContext"
@@ -34,17 +34,17 @@ function AchievementsPageContent() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [userId, setUserId] = useState<string | null>(null)
 
-  useEffect(() => {
-    loadUser()
-  }, [])
-
-  async function loadUser() {
+  const loadUser = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser()
     if (user) {
       setUserId(user.id)
       loadAchievements(user.id)
     }
-  }
+  }, [supabase])
+
+  useEffect(() => {
+    loadUser()
+  }, [loadUser])
 
   async function loadAchievements(uid: string) {
     setLoading(true)

@@ -30,8 +30,8 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     
     if (error) {
-      // Redirect to signin with error
-      return NextResponse.redirect(`${origin}/auth/signin?error=auth_callback_error`)
+      // Redirect to auth with error
+      return NextResponse.redirect(`${origin}/login?error=auth_callback_error`)
     }
 
     // Get user to check if they've completed onboarding
@@ -69,6 +69,6 @@ export async function GET(request: Request) {
     }
   }
 
-  // If no code or user, redirect to signin
-  return NextResponse.redirect(`${origin}/auth/signin`)
+  // If no code or user, redirect to auth
+  return NextResponse.redirect(`${origin}/login`)
 }

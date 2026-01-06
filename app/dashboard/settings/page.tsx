@@ -1,7 +1,7 @@
 "use client"
 
 import { AuthGuard } from "@/components/auth/AuthGuard"
-import { useState, useEffect } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -250,54 +250,11 @@ function SettingsPageContent() {
   // Downgrade dialog state
   const [showDowngradeDialog, setShowDowngradeDialog] = useState(false)
 
-  // Auto-detect timezone on component mount
-  useEffect(() => {
-    // Detect user's timezone from browser
-    const detectedTimezone = detectUserTimezone()
-    const tzInfo = getTimezoneInfo(detectedTimezone)
-    setTimezoneInfo(tzInfo)
-    
-    // Set as default if no timezone loaded yet
-    if (!timezone) {
-      setTimezone(detectedTimezone)
-    }
-  }, [])
-
-  // Handle Stripe checkout success/cancel redirects
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const success = urlParams.get('success')
-    const canceled = urlParams.get('canceled')
-    
-    if (success === 'true') {
-      toast({
-        title: "Payment Successful! 🎉",
-        description: "Your subscription has been activated. Welcome to Premium!",
-      })
-      // Clean URL
-      window.history.replaceState({}, '', '/dashboard/settings')
-      // Reload data to update subscription status
-      loadUserData()
-    } else if (canceled === 'true') {
-      toast({
-        title: "Payment Cancelled",
-        description: "You can upgrade anytime from the settings page.",
-      })
-      // Clean URL
-      window.history.replaceState({}, '', '/dashboard/settings')
-    }
-  }, [])
-
-  // Load user data from Supabase
-  useEffect(() => {
-    loadUserData()
-  }, [])
-
-  async function loadUserData() {
+  const loadUserData = useCallback(async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
-        router.push('/auth/signin')
+        router.push('/auth')
         return
       }
 
@@ -360,43 +317,75 @@ function SettingsPageContent() {
             setTimezoneInfo(getTimezoneInfo(detectedTz))
           }
           setHasPassword(profile.password_set ?? false)
-          cacheUserProfile(profile, user.id) // Cache for next time
+          cacheUserProfile(profile, user.id)
         }
-      } else if (!cachedProfile) {
-        setFullName(user.user_metadata?.full_name || user.user_metadata?.name || '')
       }
 
       if (preferencesResponse.ok) {
-        const { success, data: prefs } = await preferencesResponse.json()
-        if (success && prefs) {
-          setLanguage(prefs.language || 'en')
-          setPushNotificationsDb(prefs.push_notifications ?? false)
-          setDailyReminders(prefs.daily_reminders ?? true)
-          setWeeklyDigest(prefs.weekly_digest ?? false)
-          setIncludeSelfJournalInInsights(prefs.include_self_journal_in_insights ?? false)
-          setReminderTime(prefs.reminder_time || '09:00')
-          setPromptFrequency(prefs.prompt_frequency || 'daily')
-          setCustomDays(prefs.custom_days || [])
-          setPrivacyMode(prefs.privacy_mode ?? false)
-          setBillingCycle(prefs.billing_cycle || 'monthly')
-          // Check Slack connection
-          if (prefs.slack_webhook_url) {
-            setSlackConnected(true)
-            setSlackChannel(prefs.slack_channel_name || 'Connected')
-          }
-          cacheUserPreferences(prefs, user.id) // Cache for next time
+        const { success, data: preferences } = await preferencesResponse.json()
+        if (success && preferences) {
+          setLanguage(preferences.language || 'en')
+          setPushNotificationsDb(preferences.push_notifications ?? false)
+          setDailyReminders(preferences.daily_reminders ?? true)
+          setWeeklyDigest(preferences.weekly_digest ?? false)
+          setIncludeSelfJournalInInsights(preferences.include_self_journal_in_insights ?? false)
+          setReminderTime(preferences.reminder_time || '09:00')
+          setPromptFrequency(preferences.prompt_frequency || 'daily')
+          setCustomDays(preferences.custom_days || [])
+          setPrivacyMode(preferences.privacy_mode ?? false)
+          setBillingCycle(preferences.billing_cycle || 'monthly')
+          cacheUserPreferences(preferences, user.id)
         }
       }
+
+      setIsLoading(false)
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to load user data.",
-        variant: "destructive",
-      })
-    } finally {
       setIsLoading(false)
     }
-  }
+  }, [router, supabase])
+
+  // Auto-detect timezone on component mount
+  useEffect(() => {
+    // Detect user's timezone from browser
+    const detectedTimezone = detectUserTimezone()
+    const tzInfo = getTimezoneInfo(detectedTimezone)
+    setTimezoneInfo(tzInfo)
+    
+    // Set as default if no timezone loaded yet
+    if (!timezone) {
+      setTimezone(detectedTimezone)
+    }
+  }, [timezone])
+
+  // Handle Stripe checkout success/cancel redirects
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const success = urlParams.get('success')
+    const canceled = urlParams.get('canceled')
+    
+    if (success === 'true') {
+      toast({
+        title: "Payment Successful! 🎉",
+        description: "Your subscription has been activated. Welcome to Premium!",
+      })
+      // Clean URL
+      window.history.replaceState({}, '', '/dashboard/settings')
+      // Reload data to update subscription status
+      loadUserData()
+    } else if (canceled === 'true') {
+      toast({
+        title: "Payment Cancelled",
+        description: "You can upgrade anytime from the settings page.",
+      })
+      // Clean URL
+      window.history.replaceState({}, '', '/dashboard/settings')
+    }
+  }, [loadUserData, toast])
+
+  // Load user data from Supabase
+  useEffect(() => {
+    loadUserData()
+  }, [loadUserData])
 
   // Sync dark mode with theme context
   useEffect(() => {
@@ -1288,7 +1277,7 @@ function SettingsPageContent() {
                     }`}
                     onClick={async () => {
                       await supabase.auth.signOut()
-                      router.push('/auth/signin')
+                      router.push('/auth')
                     }}
                   >
                     Logout

@@ -120,35 +120,35 @@ function ContactSupportPageContent() {
 
   // Load user profile
   useEffect(() => {
-    loadUserProfile()
-  }, [])
+    async function loadUserProfile() {
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) {
+          router.push('/auth/signin')
+          return
+        }
 
-  async function loadUserProfile() {
-    try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        router.push('/auth/signin')
-        return
+        const response = await fetch('/api/user/profile')
+        if (response.ok) {
+          const { data } = await response.json()
+          setUserProfile({
+            full_name: data?.full_name || user.email?.split('@')[0] || 'User',
+            email: user.email || ''
+          })
+        } else {
+          setUserProfile({
+            full_name: user.email?.split('@')[0] || 'User',
+            email: user.email || ''
+          })
+        }
+      } catch (error) {
+      } finally {
+        setLoading(false)
       }
-
-      const response = await fetch('/api/user/profile')
-      if (response.ok) {
-        const { data } = await response.json()
-        setUserProfile({
-          full_name: data?.full_name || user.email?.split('@')[0] || 'User',
-          email: user.email || ''
-        })
-      } else {
-        setUserProfile({
-          full_name: user.email?.split('@')[0] || 'User',
-          email: user.email || ''
-        })
-      }
-    } catch (error) {
-    } finally {
-      setLoading(false)
     }
-  }
+
+    loadUserProfile()
+  }, [router, supabase])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()

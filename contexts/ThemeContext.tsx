@@ -31,29 +31,29 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
 
     // Load from database
-    loadThemeFromDatabase()
-  }, [])
+    const loadThemeFromDatabase = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return
 
-  const loadThemeFromDatabase = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('dark_mode')
+          .eq('id', user.id)
+          .single()
 
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('dark_mode')
-        .eq('id', user.id)
-        .single()
-
-      if (profile && profile.dark_mode !== null) {
-        const dbTheme = profile.dark_mode ? 'dark' : 'light'
-        setThemeState(dbTheme)
-        localStorage.setItem('theme', dbTheme)
-        applyTheme(dbTheme)
+        if (profile && profile.dark_mode !== null) {
+          const dbTheme = profile.dark_mode ? 'dark' : 'light'
+          setThemeState(dbTheme)
+          localStorage.setItem('theme', dbTheme)
+          applyTheme(dbTheme)
+        }
+      } catch (error) {
       }
-    } catch (error) {
     }
-  }
+
+    loadThemeFromDatabase()
+  }, [supabase])
 
   const applyTheme = (newTheme: Theme) => {
     const root = document.documentElement

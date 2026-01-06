@@ -1,134 +1,170 @@
 "use client"
-import { useState } from "react";
-import dynamic from 'next/dynamic';
-import Link from "next/link";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { getSupabaseClient } from "@/lib/supabase/client";
 
-const DotLottieReact = dynamic(
-  () => import('@lottiefiles/dotlottie-react').then((mod) => mod.DotLottieReact),
-  { ssr: false }
-);
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { useToast } from "@/hooks/use-toast"
+import { getSupabaseClient } from "@/lib/supabase/client"
+import AuthShell from "@/components/auth/AuthShell"
+import NoSSR from "@/components/auth/NoSSR"
+import { Suspense } from "react"
+import { Mail, Check } from "lucide-react"
 
-export default function ForgotPasswordPage() {
-  const supabase = getSupabaseClient()
+function ForgotPasswordPageContent() {
+  const router = useRouter()
   const { toast } = useToast()
-  const [showOptions, setShowOptions] = useState(false)
-  const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const supabase = getSupabaseClient()
+  
+  const [isLoading, setIsLoading] = useState(false)
+  const [email, setEmail] = useState("")
+  const [isSent, setIsSent] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!email) {
+      toast({
+        title: "Error",
+        description: "Please enter your email address",
+        variant: "destructive",
+      })
+      return
+    }
+
+    try {
+      setIsLoading(true)
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/change-password`,
+      })
+
+      if (error) throw error
+
+      setIsSent(true)
+      toast({
+        title: "Reset Email Sent",
+        description: "Check your inbox for password reset instructions",
+      })
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to send reset email",
+        variant: "destructive",
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  if (isSent) {
+    return (
+      <AuthShell
+        heroEyebrow="Prompt & Pause"
+        heroTitle="Check Your Email"
+        heroSubtitle="We've sent password reset instructions to your inbox"
+      >
+        <div className="w-full max-w-md text-center">
+          <div className="w-16 h-16 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Mail className="w-8 h-8 text-white" />
+          </div>
+          <h2 className="text-2xl font-semibold text-white mb-4">Email Sent!</h2>
+          <p className="text-white/70 mb-6">
+            We've sent a password reset link to <strong>{email}</strong>. 
+            Please check your email and follow the instructions.
+          </p>
+          <div className="space-y-3">
+            <Button
+              onClick={() => router.push("/login")}
+              className="w-full bg-white/20 hover:bg-white/30 text-white border border-white/30 hover:border-white/40"
+            >
+              Back to Sign In
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsSent(false)
+                setEmail("")
+              }}
+              className="w-full bg-transparent border-white/20 text-white hover:bg-white/10"
+            >
+              Send Another Email
+            </Button>
+          </div>
+        </div>
+      </AuthShell>
+    )
+  }
+
   return (
-    <main className="w-screen h-screen flex">
-      <div className="w-full lg:w-1/2 h-full flex items-center justify-center relative" style={{backgroundColor: '#F2F0EF'}}>
-        {/* Mobile-only logo */}
-        <Link href="/" className="absolute top-6 left-1/2 -translate-x-1/2 lg:hidden">
-          <Image
-            src="https://res.cloudinary.com/dh1rrfpmq/image/upload/v1735646356/prompt_pause-JRsbZR3dxCXndC8YMcyX6XU3XeT2Vw_vdvqfj.svg"
-            alt="Prompt & Pause"
-            width={140}
-            height={36}
-            className="h-9 w-auto"
-            priority
-          />
-        </Link>
-        
-        <div className="w-full max-w-sm space-y-6 px-4">
-          <div className="text-center">
-            <h1 className="text-lg font-medium tracking-tight">Reset Your Password</h1>
-            <p className="text-xs text-muted-foreground">We'll send you instructions to reset your password</p>
+    <AuthShell
+      heroEyebrow="Prompt & Pause"
+      heroTitle="Reset Password"
+      heroSubtitle="Enter your email to receive password reset instructions"
+    >
+      <div className="w-full max-w-md">
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Mail className="w-8 h-8 text-white" />
           </div>
-          <Button
-            className="h-11 w-full rounded-none shadow-none bg-muted text-muted-foreground hover:bg-muted/80 transition-colors duration-200 ease flex items-center justify-center"
-            type="button"
-            aria-expanded={showOptions}
-            onClick={() => setShowOptions(o => !o)}
-          >
-            {showOptions ? "Hide" : "Show"} reset form
-          </Button>
-          <div className={`overflow-hidden transition-all duration-300 ${showOptions ? 'max-h-52 opacity-100 mt-4' : 'max-h-0 opacity-0 pointer-events-none'}`}>
-            <form onSubmit={async (e) => {
-              e.preventDefault();
-              
-              if (!email) {
-                toast({
-                  title: "Error",
-                  description: "Please enter your email address",
-                  variant: "destructive",
-                })
-                return
-              }
-              
-              try {
-                setIsLoading(true)
-                const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                  redirectTo: `${window.location.origin}/auth/change-password`,
-                })
-                
-                if (error) throw error
-                
-                setSubmitted(true)
-                toast({
-                  title: "Check your email",
-                  description: "We've sent you password reset instructions.",
-                })
-              } catch (error: any) {
-                toast({
-                  title: "Error",
-                  description: error.message || "Failed to send reset email",
-                  variant: "destructive",
-                })
-              } finally {
-                setIsLoading(false)
-              }
-            }}>
-              <input
-                type="email"
-                placeholder="Email"
-                className="h-11 w-full bg-white border outline-none px-3 rounded shadow-sm focus:ring-2 mb-2 disabled:opacity-50"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                disabled={isLoading || submitted}
-                required
-              />
-              <Button 
-                type="submit" 
-                disabled={isLoading || submitted}
-                className="h-11 w-full rounded bg-neutral-900 text-neutral-50 hover:bg-neutral-800 transition-colors duration-200 ease mb-2 disabled:opacity-50"
-              >
-                {isLoading ? (
-                  <div className="flex items-center gap-2">
-                    <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
-                    Sending...
-                  </div>
-                ) : submitted ? (
-                  "Email sent!"
-                ) : (
-                  "Send reset instructions"
-                )}
-              </Button>
-            </form>
-            {submitted && (
-              <div className="text-xs text-green-700 text-center mt-2">
-                Check your inbox for reset instructions. You can close this page.
-              </div>
-            )}
-          </div>
-          <p className="text-center text-xs text-muted-foreground">
-            Remembered your password?{' '}
-            <a href="/auth/signin" className="underline hover:text-neutral-900 transition-colors duration-200 ease">Back to Login</a>
+          <p className="text-white/70">
+            Enter your email address and we'll send you a link to reset your password.
           </p>
         </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email" className="text-white/90">
+              Email Address
+            </Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className="w-full bg-white/20 hover:bg-white/30 text-white border border-white/30 hover:border-white/40 disabled:opacity-50"
+          >
+            {isLoading ? "Sending..." : "Send Reset Link"}
+          </Button>
+
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => router.push("/login")}
+            className="w-full bg-transparent border-white/20 text-white hover:bg-white/10"
+          >
+            Back to Sign In
+          </Button>
+        </form>
       </div>
-      <div className="hidden lg:flex lg:w-1/2 h-full items-center justify-center bg-white">
-        <DotLottieReact
-          src="https://lottie.host/2dcd8b98-5feb-4f95-baca-5552a6eb4b1f/s3mk2bKMoJ.lottie"
-          loop
-          autoplay
-          style={{ width: '80%', height: '80%' }}
-        />
-      </div>
-    </main>
-  );
+    </AuthShell>
+  )
+}
+
+export default function ForgotPasswordPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen relative flex flex-col items-center justify-center p-4 overflow-hidden bg-black">
+          <div className="absolute inset-0 bg-black/30" />
+          <div className="relative z-10 flex-1 flex items-center justify-center">
+            <div className="w-16 h-16 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full flex items-center justify-center">
+              <div className="animate-spin h-8 w-8 border-2 border-white border-t-transparent rounded-full" />
+            </div>
+          </div>
+        </div>
+      }
+    >
+      <ForgotPasswordPageContent />
+    </Suspense>
+  )
 }

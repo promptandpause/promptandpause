@@ -81,11 +81,10 @@ export async function generateWeeklyInsights(
   digest: WeeklyDigest,
   userName: string | null
 ): Promise<{
-  summary: string
-  keyInsights: string[]
-  recommendations: string[]
-  moodAnalysis: string
-  growthAreas: string[]
+  headline: string
+  observations: string[]
+  reflection: string
+  question: string
   provider: AIProvider
   model: string
 }> {
@@ -111,13 +110,13 @@ export async function generateWeeklyInsights(
   // Try Hugging Face as fallback (100% FREE, no credit card)
   if (huggingface) {
     try {
-      const insights = await generateInsightsWithHuggingFace(systemPrompt, userContext)
+      const result = await generateInsightsWithHuggingFace(systemPrompt, userContext)
       
-      if (insights) {
+      if (result) {
         return {
-          ...insights,
+          ...result.insights,
           provider: 'huggingface',
-          model: HUGGINGFACE_MODEL,
+          model: result.model,
         }
       }
     } catch (error) {
@@ -175,11 +174,10 @@ async function generateInsightsWithOpenRouter(
   systemPrompt: string,
   userContext: string
 ): Promise<{ insights: {
-  summary: string
-  keyInsights: string[]
-  recommendations: string[]
-  moodAnalysis: string
-  growthAreas: string[]
+  headline: string
+  observations: string[]
+  reflection: string
+  question: string
 }; model: string } | null> {
   if (!openrouter) {
     return null
@@ -245,11 +243,13 @@ async function generateInsightsWithHuggingFace(
   systemPrompt: string,
   userContext: string
 ): Promise<{
-  summary: string
-  keyInsights: string[]
-  recommendations: string[]
-  moodAnalysis: string
-  growthAreas: string[]
+  insights: {
+    headline: string
+    observations: string[]
+    reflection: string
+    question: string
+  }
+  model: string
 } | null> {
   if (!huggingface) {
     return null
@@ -269,7 +269,7 @@ async function generateInsightsWithHuggingFace(
 
       const text = completion.choices[0]?.message?.content?.trim()
       if (text) {
-        return parseAIResponse(text)
+        return { insights: parseAIResponse(text), model }
       }
     } catch (error: any) {
       const status = error?.status
@@ -308,11 +308,10 @@ async function generateInsightsWithGemini(
   systemPrompt: string,
   userContext: string
 ): Promise<{
-  summary: string
-  keyInsights: string[]
-  recommendations: string[]
-  moodAnalysis: string
-  growthAreas: string[]
+  headline: string
+  observations: string[]
+  reflection: string
+  question: string
 } | null> {
   if (!gemini) {
     return null
@@ -352,11 +351,10 @@ async function generateInsightsWithOpenAI(
   systemPrompt: string,
   userContext: string
 ): Promise<{
-  summary: string
-  keyInsights: string[]
-  recommendations: string[]
-  moodAnalysis: string
-  growthAreas: string[]
+  headline: string
+  observations: string[]
+  reflection: string
+  question: string
 } | null> {
   if (!process.env.OPENAI_API_KEY) {
     throw new Error('OPENAI_API_KEY not configured')
@@ -387,43 +385,43 @@ async function generateInsightsWithOpenAI(
  * Build the system prompt for AI insight generation
  */
 function buildInsightSystemPrompt(): string {
-  return `You are a compassionate mental health insights assistant for "Prompt & Pause", a UK-based reflection service.
+  return `You are generating a weekly reflection summary.
 
-Your role is to analyze a user's weekly reflection data and generate personalized, actionable insights.
+Rules:
+- Do not diagnose.
+- Do not give advice.
+- Do not tell the user what to do.
+- Do not exaggerate emotional conclusions.
+- Be specific, but cautious.
+- Sound like a thoughtful observer, not a coach.
 
-Guidelines:
-- Be warm, encouraging, and non-judgmental
-- Focus on growth, patterns, and positive reinforcement
-- Avoid clinical/therapy language
-- Be specific to their data (reference their stats, moods, topics)
-- Provide actionable recommendations
-- Keep insights concise but meaningful
-- Consider UK cultural context
-- Use British English spelling
+Structure (always exactly this):
+1. One-sentence overview of the week.
+2. 2–3 neutral observations.
+3. One short thematic reflection.
+4. One gentle reflective question.
+
+Tone:
+- Calm
+- Respectful
+- Grounded
+- Adult
 
 Output Format (use this exact structure):
 
-SUMMARY:
-[2-3 sentences summarizing their week's reflection journey]
+HEADLINE:
+[one sentence]
 
-KEY_INSIGHTS:
-- [Insight 1]
-- [Insight 2]
-- [Insight 3]
+OBSERVATIONS:
+- [observation 1]
+- [observation 2]
+- [observation 3 if needed]
 
-RECOMMENDATIONS:
-- [Recommendation 1]
-- [Recommendation 2]
-- [Recommendation 3]
+THEME_REFLECTION:
+[short paragraph]
 
-MOOD_ANALYSIS:
-[2-3 sentences about their mood patterns and what they might indicate]
-
-GROWTH_AREAS:
-- [Area 1]
-- [Area 2]
-
-Keep each section concise and actionable. Be specific to their data.`
+GENTLE_QUESTION:
+[one question]`
 }
 
 /**
@@ -466,6 +464,42 @@ function buildWeeklyContext(digest: WeeklyDigest, userName: string | null): stri
       context += `- ${date}: "${prompt}" - ${snippet}\n`
     })
   }
+
+  if (digest.signals) {
+    context += `\n**Engagement Signals:**\n`
+    context += `- Days with entries: ${digest.signals.daysWithEntries}\n`
+    context += `- Days skipped: ${digest.signals.daysSkipped}\n`
+    context += `\n**Mood Signals:**\n`
+    context += `- Most common mood: ${digest.signals.moodMostCommon || 'N/A'}\n`
+    context += `- Mood variance (rough): ${digest.signals.moodVariance ?? 'N/A'}\n`
+    context += `\n**Reflection Length:**\n`
+    context += `- Average words: ${digest.signals.reflectionLength.average}\n`
+    context += `- Median words: ${digest.signals.reflectionLength.median}\n`
+    context += `- Short entries count: ${digest.signals.reflectionLength.shortCount}\n`
+    context += `- Long entries count: ${digest.signals.reflectionLength.longCount}\n`
+    context += `- First half average: ${digest.signals.reflectionLength.firstHalfAverage}\n`
+    context += `- Second half average: ${digest.signals.reflectionLength.secondHalfAverage}\n`
+
+    if (digest.signals.repeatedWords.length > 0) {
+      context += `\n**Repeated Words:**\n`
+      digest.signals.repeatedWords.slice(0, 6).forEach(({ word, count }) => {
+        context += `- ${word}: ${count}\n`
+      })
+    }
+
+    if (digest.signals.promptTypeDepth.length > 0) {
+      context += `\n**Prompt Types Written Most Deeply:**\n`
+      digest.signals.promptTypeDepth.slice(0, 4).forEach(({ promptType, averageWordCount, count }) => {
+        context += `- ${promptType}: avg ${averageWordCount} words (${count} entries)\n`
+      })
+    }
+
+    if (digest.signals.selectedFocusAreas.length > 0) {
+      context += `\n**User Focus Areas (contextual lens only):**\n`
+      context += `- ${digest.signals.selectedFocusAreas.slice(0, 3).join(', ')}\n`
+      context += `Note: Do not mention focus areas explicitly. They should only subtly influence tone and angle.\n`
+    }
+  }
   
   return context
 }
@@ -474,63 +508,43 @@ function buildWeeklyContext(digest: WeeklyDigest, userName: string | null): stri
  * Parse AI response into structured format
  */
 function parseAIResponse(response: string): {
-  summary: string
-  keyInsights: string[]
-  recommendations: string[]
-  moodAnalysis: string
-  growthAreas: string[]
+  headline: string
+  observations: string[]
+  reflection: string
+  question: string
 } {
   const sections = {
-    summary: '',
-    keyInsights: [] as string[],
-    recommendations: [] as string[],
-    moodAnalysis: '',
-    growthAreas: [] as string[],
+    headline: '',
+    observations: [] as string[],
+    reflection: '',
+    question: '',
   }
 
-  // Split response into sections
-  const summaryMatch = response.match(/SUMMARY:\s*\n([\s\S]*?)(?=\n\nKEY_INSIGHTS:|\nKEY_INSIGHTS:|$)/i)
-  const insightsMatch = response.match(/KEY_INSIGHTS:\s*\n([\s\S]*?)(?=\n\nRECOMMENDATIONS:|\nRECOMMENDATIONS:|$)/i)
-  const recommendationsMatch = response.match(/RECOMMENDATIONS:\s*\n([\s\S]*?)(?=\n\nMOOD_ANALYSIS:|\nMOOD_ANALYSIS:|$)/i)
-  const moodMatch = response.match(/MOOD_ANALYSIS:\s*\n([\s\S]*?)(?=\n\nGROWTH_AREAS:|\nGROWTH_AREAS:|$)/i)
-  const growthMatch = response.match(/GROWTH_AREAS:\s*\n([\s\S]*?)$/i)
+  const headlineMatch = response.match(/HEADLINE:\s*\n([\s\S]*?)(?=\n\nOBSERVATIONS:|\nOBSERVATIONS:|$)/i)
+  const observationsMatch = response.match(/OBSERVATIONS:\s*\n([\s\S]*?)(?=\n\nTHEME_REFLECTION:|\nTHEME_REFLECTION:|$)/i)
+  const reflectionMatch = response.match(/THEME_REFLECTION:\s*\n([\s\S]*?)(?=\n\nGENTLE_QUESTION:|\nGENTLE_QUESTION:|$)/i)
+  const questionMatch = response.match(/GENTLE_QUESTION:\s*\n([\s\S]*?)$/i)
 
-  // Extract summary
-  if (summaryMatch) {
-    sections.summary = summaryMatch[1].trim()
-  }
+  if (headlineMatch) sections.headline = headlineMatch[1].trim()
 
-  // Extract insights (bullet points)
-  if (insightsMatch) {
-    sections.keyInsights = insightsMatch[1]
+  if (observationsMatch) {
+    sections.observations = observationsMatch[1]
       .split('\n')
-      .filter(line => line.trim().startsWith('-'))
-      .map(line => line.trim().replace(/^-\s*/, ''))
-      .filter(line => line.length > 0)
+      .map(line => line.trim())
+      .filter(line => line.startsWith('-'))
+      .map(line => line.replace(/^[-*]\s*/, ''))
+      .filter(Boolean)
+      .slice(0, 3)
   }
 
-  // Extract recommendations (bullet points)
-  if (recommendationsMatch) {
-    sections.recommendations = recommendationsMatch[1]
-      .split('\n')
-      .filter(line => line.trim().startsWith('-'))
-      .map(line => line.trim().replace(/^-\s*/, ''))
-      .filter(line => line.length > 0)
-  }
+  if (reflectionMatch) sections.reflection = reflectionMatch[1].trim()
+  if (questionMatch) sections.question = questionMatch[1].trim()
 
-  // Extract mood analysis
-  if (moodMatch) {
-    sections.moodAnalysis = moodMatch[1].trim()
-  }
-
-  // Extract growth areas (bullet points)
-  if (growthMatch) {
-    sections.growthAreas = growthMatch[1]
-      .split('\n')
-      .filter(line => line.trim().startsWith('-'))
-      .map(line => line.trim().replace(/^-\s*/, ''))
-      .filter(line => line.length > 0)
-  }
+  // Guardrails if model returns partial output
+  if (!sections.headline) sections.headline = 'This week left a few clear patterns.'
+  if (sections.observations.length === 0) sections.observations = ['Your entries captured the week as it was, without forcing it to be neat.']
+  if (!sections.reflection) sections.reflection = 'A few themes showed up more than once, which can be its own kind of signal.'
+  if (!sections.question) sections.question = 'What felt most worth naming this week?'
 
   return sections
 }
@@ -542,46 +556,39 @@ function generateBasicInsights(
   digest: WeeklyDigest,
   userName: string | null
 ): {
-  summary: string
-  keyInsights: string[]
-  recommendations: string[]
-  moodAnalysis: string
-  growthAreas: string[]
+  headline: string
+  observations: string[]
+  reflection: string
+  question: string
   provider: AIProvider
   model: string
 } {
   const name = userName || 'there'
-  
+
+  const observations: string[] = []
+  if (digest.signals) {
+    observations.push(`You wrote on ${digest.signals.daysWithEntries} day${digest.signals.daysWithEntries === 1 ? '' : 's'} this week.`)
+    if (digest.signals.daysSkipped > 0) {
+      observations.push(`${digest.signals.daysSkipped} day${digest.signals.daysSkipped === 1 ? '' : 's'} passed without an entry.`)
+    }
+    if (digest.signals.reflectionLength.longCount > digest.signals.reflectionLength.shortCount) {
+      observations.push('Your entries tended to run longer, especially when you stayed with a thought.')
+    } else if (digest.signals.reflectionLength.shortCount > 0) {
+      observations.push('Your entries were mostly shorter—more like quick check-ins than deep dives.')
+    }
+  } else {
+    observations.push(`You wrote ${digest.totalReflections} reflection${digest.totalReflections === 1 ? '' : 's'} this week.`)
+  }
+
   return {
-    summary: `Hi ${name}! This week you completed ${digest.totalReflections} reflection${digest.totalReflections !== 1 ? 's' : ''} with an average of ${digest.averageWordCount} words. ${digest.currentStreak > 0 ? `You are on a ${digest.currentStreak}-day streak! 🔥` : 'Keep building your reflection habit!'}`,
-    
-    keyInsights: [
-      digest.totalReflections >= 5 
-        ? 'You showed strong commitment to reflection this week'
-        : 'There is room to reflect more consistently',
-      digest.averageWordCount > 150
-        ? 'Your detailed reflections help you process emotions deeply'
-        : 'Consider writing more to gain deeper insights',
-      digest.topTags.length > 0
-        ? `Your main focus was ${digest.topTags[0].tag}`
-        : 'Try adding tags to track themes'
-    ],
-    
-    recommendations: [
-      'Continue your daily reflection practice',
-      'Explore new reflection prompts',
-      'Review past reflections to see your growth'
-    ],
-    
-    moodAnalysis: digest.moodDistribution.length > 0
-      ? `Your most common mood this week was ${digest.moodDistribution[0].mood}. This gives insight into your emotional patterns.`
-      : 'Track your moods to understand your emotional patterns better.',
-    
-    growthAreas: [
-      'Building consistency in daily reflections',
-      'Exploring deeper emotional awareness'
-    ],
-    
+    headline: digest.totalReflections === 0
+      ? `This week was quieter on the page.`
+      : `This week held a steady thread, even when the days varied.`,
+    observations: observations.slice(0, 3),
+    reflection: digest.topTags.length > 0
+      ? `A few of your entries kept circling back to ${digest.topTags[0].tag}. Not necessarily as a problem—just as something that stayed present.`
+      : `Even without obvious themes, the way you showed up matters.`,
+    question: `What would feel most worth carrying forward into next week, and what can stay here?`,
     provider: 'fallback',
     model: 'none',
   }

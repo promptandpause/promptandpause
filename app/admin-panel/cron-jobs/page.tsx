@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -69,25 +69,7 @@ export default function CronJobsPage() {
   const [totalPages, setTotalPages] = useState(1)
   const limit = 50
 
-  useEffect(() => {
-    loadStats()
-  }, [])
-
-  useEffect(() => {
-    loadRuns()
-  }, [currentPage, jobFilter, statusFilter])
-
-  async function loadStats() {
-    try {
-      const response = await fetch('/api/admin/cron-jobs/stats')
-      if (!response.ok) throw new Error('Failed to fetch stats')
-      const data = await response.json()
-      setStats(data.stats)
-    } catch (error) {
-    }
-  }
-
-  async function loadRuns() {
+  const loadRuns = useCallback(async () => {
     try {
       setLoading(true)
       const params = new URLSearchParams({
@@ -112,6 +94,24 @@ export default function CronJobsPage() {
     } catch (error) {
     } finally {
       setLoading(false)
+    }
+  }, [currentPage, jobFilter, limit, statusFilter])
+
+  useEffect(() => {
+    loadStats()
+  }, [])
+
+  useEffect(() => {
+    loadRuns()
+  }, [loadRuns])
+
+  async function loadStats() {
+    try {
+      const response = await fetch('/api/admin/cron-jobs/stats')
+      if (!response.ok) throw new Error('Failed to fetch stats')
+      const data = await response.json()
+      setStats(data.stats)
+    } catch (error) {
     }
   }
 

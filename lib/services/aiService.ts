@@ -1,7 +1,6 @@
 import OpenAI from 'openai'
 import { GoogleGenerativeAI } from '@google/generative-ai'
-import { GeneratePromptContext, AIProvider } from '@/lib/types/reflection'
-import { FREEMIUM_FOCUS_AREAS } from '@/lib/constants/focusAreas'
+import { GeneratePromptContext, AIProvider, MoodType, PromptType } from '@/lib/types/reflection'
 
 /**
  * AI Service for Generating Personalized Mental Health Prompts
@@ -69,6 +68,128 @@ export const HUGGINGFACE_MODELS = [
 const GEMINI_MODEL = 'gemini-2.5-flash' // Stable, fast, high quality
 const OPENAI_MODEL = 'gpt-4o-mini'
 
+const PROMPT_TYPES: PromptType[] = [
+  'noticing',
+  'naming',
+  'contrast',
+  'perspective',
+  'closure',
+  'grounding',
+]
+
+type MoodTrend = 'low' | 'neutral' | 'high' | 'mixed'
+
+function getMoodTrend(moods: MoodType[]): MoodTrend {
+  const recent = (moods || []).slice(0, 7)
+  if (recent.length === 0) return 'neutral'
+
+  const positiveMoods: MoodType[] = ['😊', '😄', '😌', '🙏', '💪']
+  const difficultMoods: MoodType[] = ['😔', '🤔']
+  const neutralMoods: MoodType[] = ['😐']
+
+  const positiveCount = recent.filter(m => positiveMoods.includes(m)).length
+  const difficultCount = recent.filter(m => difficultMoods.includes(m)).length
+  const neutralCount = recent.filter(m => neutralMoods.includes(m)).length
+
+  const total = recent.length
+  if (difficultCount / total >= 0.5 && difficultCount >= positiveCount + 1) return 'low'
+  if (positiveCount / total >= 0.5 && positiveCount >= difficultCount + 1) return 'high'
+  if (neutralCount / total >= 0.5) return 'neutral'
+  return 'mixed'
+}
+
+function weightedPick(weights: Record<PromptType, number>): PromptType | null {
+  const entries = Object.entries(weights) as Array<[PromptType, number]>
+  const total = entries.reduce((sum, [, w]) => sum + Math.max(0, w), 0)
+  if (total <= 0) return null
+
+  let r = Math.random() * total
+  for (const [type, w] of entries) {
+    r -= Math.max(0, w)
+    if (r <= 0) return type
+  }
+  return entries[0]?.[0] ?? null
+}
+
+function selectPromptType(context: GeneratePromptContext): PromptType {
+  const moodTrend = getMoodTrend(context.recent_moods || [])
+  const streak = context.current_streak ?? 0
+  const allowDeeper = streak >= 7
+
+  const baseWeights: Record<PromptType, number> = {
+    noticing: 3,
+    naming: 3,
+    contrast: 3,
+    perspective: 3,
+    closure: 2,
+    grounding: 2,
+  }
+
+  if (moodTrend === 'low') {
+    baseWeights.grounding = 6
+    baseWeights.naming = 5
+    baseWeights.closure = 4
+    baseWeights.noticing = 2
+    baseWeights.perspective = 1
+    baseWeights.contrast = 1
+  } else if (moodTrend === 'high') {
+    baseWeights.perspective = 6
+    baseWeights.contrast = 6
+    baseWeights.noticing = 5
+    baseWeights.closure = 3
+    baseWeights.naming = 1
+    baseWeights.grounding = 1
+  }
+
+  if (allowDeeper && moodTrend !== 'low') {
+    baseWeights.perspective += 1
+    baseWeights.contrast += 1
+    baseWeights.noticing += 1
+  }
+
+  const recentTypes = (context.recent_prompt_types || []).filter(Boolean)
+
+  const tryAvoid = (avoidCount: number): PromptType | null => {
+    const avoid = new Set(recentTypes.slice(0, avoidCount))
+    const weights: Record<PromptType, number> = { ...baseWeights }
+    for (const t of PROMPT_TYPES) {
+      if (avoid.has(t)) weights[t] = 0
+    }
+    return weightedPick(weights)
+  }
+
+  return (
+    tryAvoid(4) ||
+    tryAvoid(2) ||
+    weightedPick(baseWeights) ||
+    'noticing'
+  )
+}
+
+function sanitizeGeneratedPrompt(text: string): string | null {
+  if (!text) return null
+  const firstNonEmptyLine = text
+    .split('\n')
+    .map(l => l.trim())
+    .find(l => l.length > 0)
+
+  let cleaned = (firstNonEmptyLine || '').trim()
+  cleaned = cleaned.replace(/^prompt\s*:\s*/i, '')
+  cleaned = cleaned.replace(/^[-*]\s+/, '')
+  cleaned = cleaned.replace(/^["'“”]+/, '').replace(/["'“”]+$/, '')
+  cleaned = cleaned.trim()
+
+  const firstQuestionMark = cleaned.indexOf('?')
+  if (firstQuestionMark >= 0) {
+    cleaned = cleaned.slice(0, firstQuestionMark + 1).trim()
+  } else if (cleaned.length > 0) {
+    cleaned = cleaned.replace(/[.!]+$/, '') + '?' 
+    cleaned = cleaned.trim()
+  }
+
+  return cleaned || null
+}
+
 /**
  * Generate a personalized mental health reflection prompt
  * 
@@ -80,23 +201,26 @@ export async function generatePrompt(context: GeneratePromptContext): Promise<{
   prompt: string
   provider: AIProvider
   model: string
+  prompt_type?: PromptType
 }> {
-  // Build the system prompt
-  const systemPrompt = buildSystemPrompt()
-  
-  // Build the user context
+  const promptType = selectPromptType(context)
+  const allowDeeper = (context.current_streak ?? 0) >= 7
+
+  const systemPrompt = buildSystemPrompt(promptType, allowDeeper)
   const userContext = buildUserContext(context)
 
   // Try OpenAI GPT first (primary provider)
   if (process.env.OPENAI_API_KEY) {
     try {
-      const prompt = await generateWithOpenAI(systemPrompt, userContext)
+      const rawPrompt = await generateWithOpenAI(systemPrompt, userContext)
+      const prompt = rawPrompt ? sanitizeGeneratedPrompt(rawPrompt) : null
       
       if (prompt) {
         return {
           prompt,
           provider: 'openai',
           model: OPENAI_MODEL,
+          prompt_type: promptType,
         }
       }
     } catch (error) {
@@ -109,10 +233,15 @@ export async function generatePrompt(context: GeneratePromptContext): Promise<{
       const result = await generateWithOpenRouter(systemPrompt, userContext)
       
       if (result) {
+        const prompt = sanitizeGeneratedPrompt(result.text)
+        if (!prompt) {
+          throw new Error('OpenRouter returned empty prompt')
+        }
         return {
-          prompt: result.text,
+          prompt,
           provider: 'openai', // OpenRouter uses OpenAI-compatible API
           model: result.model,
+          prompt_type: promptType,
         }
       }
     } catch (error) {
@@ -122,13 +251,15 @@ export async function generatePrompt(context: GeneratePromptContext): Promise<{
   // Try Gemini as fallback
   if (gemini) {
     try {
-      const prompt = await generateWithGemini(systemPrompt, userContext)
+      const rawPrompt = await generateWithGemini(systemPrompt, userContext)
+      const prompt = rawPrompt ? sanitizeGeneratedPrompt(rawPrompt) : null
       
       if (prompt) {
         return {
           prompt,
           provider: 'gemini',
           model: GEMINI_MODEL,
+          prompt_type: promptType,
         }
       }
     } catch (error) {
@@ -138,13 +269,15 @@ export async function generatePrompt(context: GeneratePromptContext): Promise<{
   // Final fallback to Hugging Face (100% FREE, no credit card)
   if (huggingface) {
     try {
-      const prompt = await generateWithHuggingFace(systemPrompt, userContext)
+      const rawPrompt = await generateWithHuggingFace(systemPrompt, userContext)
+      const prompt = rawPrompt ? sanitizeGeneratedPrompt(rawPrompt) : null
       
       if (prompt) {
         return {
           prompt,
           provider: 'openai',
           model: 'huggingface',
+          prompt_type: promptType,
         }
       }
     } catch (error) {
@@ -165,7 +298,7 @@ export async function generatePrompt(context: GeneratePromptContext): Promise<{
  * On 404 (model not available), skips to next. On 5xx, retries same model.
  * Only falls back to Gemini/OpenAI if all OpenRouter models fail.
  */
-
+ 
 async function generateWithOpenRouter(
   systemPrompt: string,
   userContext: string
@@ -173,13 +306,13 @@ async function generateWithOpenRouter(
   if (!openrouter) {
     return null
   }
-
+ 
   // Allow override via env variable for testing
-  const modelPrefs = (process.env.OPENROUTER_MODEL_PREFS || '')
+  const envModels = (process.env.OPENROUTER_MODEL_PREFS || '')
     .split(',')
     .map(m => m.trim())
     .filter(Boolean)
-    || OPENROUTER_MODELS
+  const modelPrefs = envModels.length > 0 ? envModels : OPENROUTER_MODELS
 
   for (const model of modelPrefs) {
     try {
@@ -193,7 +326,7 @@ async function generateWithOpenRouter(
         max_tokens: 800,  // Increased to handle longer multi-paragraph prompts
         top_p: 0.95,
       })
-
+ 
       const text = completion.choices[0]?.message?.content?.trim()
       if (text) {
         return { text, model }
@@ -226,7 +359,7 @@ async function generateWithOpenRouter(
   }
   return null
 }
-
+ 
 /**
  * Generate prompt using Hugging Face with multi-model fallback (100% FREE, no credit card)
  */
@@ -237,7 +370,7 @@ async function generateWithHuggingFace(
   if (!huggingface) {
     return null
   }
-
+ 
   for (const model of HUGGINGFACE_MODELS) {
     try {
       const completion = await huggingface.chat.completions.create({
@@ -250,7 +383,7 @@ async function generateWithHuggingFace(
         max_tokens: 800,  // Increased to handle longer multi-paragraph prompts
         top_p: 0.95,
       })
-
+ 
       const prompt = completion.choices[0]?.message?.content?.trim()
       if (prompt) {
         return prompt
@@ -284,11 +417,10 @@ async function generateWithHuggingFace(
   }
   return null
 }
-
+ 
 /**
  * Generate prompt using Google Gemini (FREE tier)
  */
-
 async function generateWithGemini(
   systemPrompt: string,
   userContext: string
@@ -296,13 +428,13 @@ async function generateWithGemini(
   if (!gemini) {
     return null
   }
-
+ 
   try {
     const model = gemini.getGenerativeModel({ model: GEMINI_MODEL })
-    
+     
     // Combine system prompt and user context for Gemini
     const fullPrompt = `${systemPrompt}\n\n${userContext}`
-    
+     
     const result = await model.generateContent({
       contents: [{ role: 'user', parts: [{ text: fullPrompt }] }],
       generationConfig: {
@@ -311,7 +443,7 @@ async function generateWithGemini(
         topP: 0.95,
       },
     })
-
+ 
     const response = result.response
     const prompt = response.text()?.trim()
     return prompt || null
@@ -322,11 +454,10 @@ async function generateWithGemini(
     return null
   }
 }
-
+ 
 /**
  * Generate prompt using OpenAI (GPT-4o-mini)
  */
-
 async function generateWithOpenAI(
   systemPrompt: string,
   userContext: string
@@ -334,7 +465,7 @@ async function generateWithOpenAI(
   if (!process.env.OPENAI_API_KEY) {
     throw new Error('OPENAI_API_KEY not configured')
   }
-
+ 
   try {
     const completion = await openai.chat.completions.create({
       model: OPENAI_MODEL,
@@ -346,7 +477,7 @@ async function generateWithOpenAI(
       max_tokens: 800,   // Increased to handle longer multi-paragraph prompts
       top_p: 0.95,       // Add nucleus sampling for better quality
     })
-
+ 
     const prompt = completion.choices[0]?.message?.content?.trim()
     return prompt || null
   } catch (error) {
@@ -358,66 +489,42 @@ async function generateWithOpenAI(
  * Build the system prompt for the AI with enhanced personalization
  */
 
-function buildSystemPrompt(): string {
-  return `You are a warm, empathetic friend helping someone on their mental wellness journey through "Prompt & Pause", a UK-based reflection service.
+function buildSystemPrompt(promptType: PromptType, allowDeeper: boolean): string {
+  const depthGuidance = allowDeeper
+    ? 'Depth: You may gently connect to a broader pattern (last week, repeated theme) while staying concrete and answerable in 3–5 minutes.'
+    : 'Depth: Keep it immediate and simple (today / this moment).'
 
-Your role is to create deeply personal, conversational reflection prompts that feel like a caring friend checking in - not a therapist or coach, but someone who truly understands and cares.
+  return `You write a single daily reflection question for "Prompt & Pause".
 
-**Core Principles:**
-1. Write as if you're having a genuine conversation with this specific person
-2. Reference their actual life context, struggles, and growth areas naturally
-3. Make it feel like you remember their journey and care about their progress
-4. Be vulnerable and human - acknowledge that growth is hard and messy
-5. Use everyday language they'd use with a close friend
+Output rules:
+- Return ONLY the question text.
+- Exactly ONE question (a single "?").
+- No preamble, no labels, no quotes, no markdown, no emojis.
+- Do NOT use the word "why".
+- No therapy/clinical language. Avoid terms like: processing, trauma, healing, coping mechanisms, inner child, self-care routine.
+- No advice or instructions. Do not use "should". Do not promise outcomes.
+- Avoid clichés and motivational slogans.
+- Make it feel answerable in 3–5 minutes.
 
-**Tone & Style:**
-- Conversational and natural (like texting a friend)
-- Warm but not overly cheerful or toxic positivity
-- Specific to their situation, not generic advice
-- Acknowledge difficulty when relevant
-- Validate their feelings and experiences
-- Mix deep questions with lighter check-ins
+Verb constraint:
+- Start the question with exactly ONE of these words: Notice, Name, Recall, Consider, Describe, Acknowledge.
 
-**Length & Format:**
-- 1-3 sentences maximum (15-25 words ideal)
-- Can be a question, gentle prompt, or invitation to reflect
-- No emojis, quotes, or explanations
-- Sound human, not formulaic
+Prompt type:
+- Today's prompt type is "${promptType}".
 
-**What Makes It Personal:**
-- Reference their specific focus areas naturally
-- Connect to their reason for joining
-- Notice patterns in their recent moods/topics
-- Meet them where they are emotionally
-- Build on previous reflections
+Type definitions:
+- grounding: anchor in the present moment and the body/senses; practical and gentle.
+- naming: identify and label an emotion or need; simple and specific.
+- noticing: observe a small moment, signal, or shift from today.
+- contrast: compare two moments (e.g., draining vs steadying) without judgment.
+- perspective: widen the lens (future self, friend viewpoint) without advice.
+- closure: allow a small "good enough" wrap-up; release perfection.
 
-**Examples of Human-Like Prompts:**
+${depthGuidance}
 
-For someone working on anxiety:
-- "What's one moment today when your mind felt quieter, even if just for a second?"
-- "When you felt anxious earlier, what did your body actually need in that moment?"
+Use the provided user context (focus areas, recent moods, recent topics) to make the question specific.
 
-For someone focusing on relationships:
-- "Think about a recent conversation that left you feeling off - what boundary might have been crossed?"
-- "Who in your life makes you feel most like yourself, and why?"
-
-For someone dealing with work stress:
-- "If you could change one thing about your work day to protect your peace, what would it be?"
-- "What's a work win you're not giving yourself credit for?"
-
-For someone exploring self-worth:
-- "What would you do differently today if you truly believed you deserved good things?"
-- "Whose opinion of you matters more than your own, and why?"
-
-**Avoid:**
-- Clinical/therapy language ("processing", "coping mechanisms", "self-care routine")
-- Generic prompts that could apply to anyone
-- Overly philosophical or abstract questions
-- Toxic positivity ("Just be grateful!", "Choose happiness!")
-- Multiple questions in one prompt
-- Formulaic patterns ("How did you...", "What made you..." every time)
-
-**Generate ONE highly personalized prompt that feels like it was written specifically for this person's journey right now. Make it human, specific, and genuinely caring.**`
+Return the question now.`
 }
 
 /**
@@ -460,72 +567,54 @@ export function selectFocusArea(
  */
 
 function buildUserContext(context: GeneratePromptContext): string {
-  // If we have no context, provide a general but still personal prompt
-  if (!context.user_reason && 
-      (!context.focus_areas || context.focus_areas.length === 0) &&
-      (!context.recent_moods || context.recent_moods.length === 0) &&
-      (!context.recent_topics || context.recent_topics.length === 0)) {
-    return `This person is just starting their reflection journey. Generate a warm, welcoming prompt that helps them explore their current emotional state and what brought them here today. Make it feel safe and non-intimidating.`
+  const hasAnyContext =
+    !!context.user_reason ||
+    (context.focus_areas && context.focus_areas.length > 0) ||
+    !!context.focus_area_name ||
+    (context.recent_moods && context.recent_moods.length > 0) ||
+    (context.recent_topics && context.recent_topics.length > 0)
+
+  if (!hasAnyContext) {
+    return 'No user details available. Use a simple, grounded check-in that works for most people.'
   }
 
-  let profile: string[] = []
-  
-  // Build a narrative profile, not just bullet points
+  const lines: string[] = []
+
   if (context.user_reason) {
-    profile.push(`**Their Journey:**\nThey came to Prompt & Pause because: "${context.user_reason}"\nThis is what matters to them right now. Honor this in your prompt.`)
+    lines.push(`Reason for joining: ${context.user_reason}`)
   }
 
-  if (context.focus_areas && context.focus_areas.length > 0) {
-    const areas = context.focus_areas.join(', ')
-    const areaCount = context.focus_areas.length
-    
-    if (areaCount === 1) {
-      profile.push(`**Current Focus:**\nThey're specifically working on: ${areas}\nThis is their main area of growth. Your prompt should directly relate to this.`)
-    } else {
-      profile.push(`**Growth Areas:**\nThey're juggling multiple things: ${areas}\nThese areas might intersect or conflict. Consider the whole picture.`)
-    }
+  if (typeof context.current_streak === 'number') {
+    lines.push(`Current reflection streak: ${context.current_streak} day(s)`)
   }
 
-  // Embed selected focus area if provided
   if (context.focus_area_name) {
-    profile.push(`**Today's Focus:**\n🎯 This person wants to explore: ${context.focus_area_name}\n\nPrioritize this above all others. Make your prompt directly relevant to this specific area of their life.`)
+    lines.push(`Today's focus area: ${context.focus_area_name}`)
+  } else if (context.focus_areas && context.focus_areas.length > 0) {
+    lines.push(`Focus areas: ${context.focus_areas.join(', ')}`)
   }
 
   if (context.recent_moods && context.recent_moods.length > 0) {
     const moodPattern = analyzeMoodPattern(context.recent_moods)
-    profile.push(`**Emotional State:**\nRecent moods: ${context.recent_moods.join(' → ')}\n${moodPattern}\nMeet them where they are emotionally.`)
+    lines.push(`Recent moods: ${context.recent_moods.join(' → ')}`)
+    lines.push(`Mood note: ${moodPattern}`)
   }
 
   if (context.recent_topics && context.recent_topics.length > 0) {
-    const topics = context.recent_topics.slice(0, 5).join(', ')
-    profile.push(`**What's Been On Their Mind:**\nRecent reflection topics: ${topics}\nThese themes are active in their life. Build on these or explore a connected angle.`)
+    lines.push(`Recent topics: ${context.recent_topics.slice(0, 5).join(', ')}`)
   }
 
-  // Create a conversational instruction
-  const instruction = `
-**Your Task:**
-Based on this person's unique context, generate ONE highly personalized reflection prompt that:
-- Speaks directly to their situation (not generic)
-- Feels like it was written by someone who knows them
-- Connects naturally to their focus areas or recent experiences
-- Uses conversational, everyday language
-- Helps them explore something meaningful TODAY
-- Feels supportive but not prescriptive
-
-Don't just reference their focus areas - actually understand what they might be struggling with or exploring, and meet them there with a genuinely helpful question.
-
-Generate the prompt now (no quotes, no explanation, just the prompt):`
-
-  return profile.join('\n\n') + instruction
+  return lines.join('\n')
 }
 
 /**
  * Analyze mood patterns to provide context
  */
 function analyzeMoodPattern(moods: string[]): string {
-  if (moods.length === 0) return 'No recent mood data.'
-  
-  const moodEmojis = moods.slice(0, 7) // Last 7 moods
+  const recent = (moods || []).slice(0, 7)
+  if (recent.length === 0) return 'No recent mood data.'
+
+  const moodEmojis = recent.slice(0, 7) // Last 7 moods
   
   // Count mood types
   const moodCounts: Record<string, number> = {}
@@ -534,13 +623,13 @@ function analyzeMoodPattern(moods: string[]): string {
   })
   
   // Identify patterns
-  const happyMoods = ['😊', '😄', '😌', '🙏']
+  const happyMoods = ['😊', '😄', '😌', '🙏', '💪']
   const difficultMoods = ['😔', '🤔']
   const neutralMoods = ['😐']
   
-  const happyCount = moodEmojis.filter(m => happyMoods.includes(m)).length
-  const difficultCount = moodEmojis.filter(m => difficultMoods.includes(m)).length
-  const neutralCount = moodEmojis.filter(m => neutralMoods.includes(m)).length
+  const happyCount = happyMoods.reduce((sum, mood) => sum + (moodCounts[mood] || 0), 0)
+  const difficultCount = difficultMoods.reduce((sum, mood) => sum + (moodCounts[mood] || 0), 0)
+  const neutralCount = neutralMoods.reduce((sum, mood) => sum + (moodCounts[mood] || 0), 0)
   
   // Provide nuanced interpretation
   if (difficultCount > happyCount * 2) {

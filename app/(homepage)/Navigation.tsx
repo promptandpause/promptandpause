@@ -83,7 +83,7 @@ export default function Navigation() {
               Contact
             </Link>
             <Link
-              href="/auth/signin"
+              href="/login"
               className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg hover:scale-105 transition-all duration-300 border border-white/20"
             >
               Login
@@ -151,7 +151,7 @@ export default function Navigation() {
             Contact
           </Link>
           <Link
-            href="/auth/signin"
+            href="/login"
             onClick={closeMenu}
             className="mt-4 px-8 py-3 bg-white text-black text-xl font-medium rounded-lg hover:bg-white/90 transition-all duration-300 animate-fade-in"
             style={{ animationDelay: "0.5s" }}

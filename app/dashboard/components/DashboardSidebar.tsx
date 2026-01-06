@@ -39,65 +39,66 @@ export function DashboardSidebar() {
   // Fetch user profile on mount
   useEffect(() => {
     let isMounted = true
-    loadUserProfile(isMounted)
-    return () => { isMounted = false }
-  }, [])
 
-  async function loadUserProfile(isMounted: boolean) {
-    try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user || !isMounted) return
+    async function loadUserProfile() {
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user || !isMounted) return
 
-      // 1. LOAD FROM CACHE FIRST (instant UI)
-      const cachedProfile = getCachedUserProfile(user.id)
-      if (cachedProfile && isMounted) {
-        setUserProfile({
-          full_name: cachedProfile.full_name || user.email?.split('@')[0] || 'User',
-          subscription_tier: tier
-        })
-        setLoading(false) // Show UI immediately
-      }
+        // 1. LOAD FROM CACHE FIRST (instant UI)
+        const cachedProfile = getCachedUserProfile(user.id)
+        if (cachedProfile && isMounted) {
+          setUserProfile({
+            full_name: cachedProfile.full_name || user.email?.split('@')[0] || 'User',
+            subscription_tier: tier
+          })
+          setLoading(false) // Show UI immediately
+        }
 
-      // 2. FETCH FRESH DATA IN BACKGROUND
-      const response = await fetch('/api/user/profile')
-      if (!response.ok) {
-        if (!cachedProfile && isMounted) {
+        // 2. FETCH FRESH DATA IN BACKGROUND
+        const response = await fetch('/api/user/profile')
+        if (!response.ok) {
+          if (!cachedProfile && isMounted) {
+            setUserProfile({
+              full_name: user.email?.split('@')[0] || 'User',
+              subscription_tier: tier
+            })
+          }
+          return
+        }
+        
+        const { success, data } = await response.json()
+        if (success && data && isMounted) {
+          const profileData = {
+            full_name: data.full_name || user.email?.split('@')[0] || 'User',
+            subscription_tier: tier
+          }
+          setUserProfile(profileData)
+          cacheUserProfile(data, user.id) // Cache for next time
+        } else if (!cachedProfile && isMounted) {
           setUserProfile({
             full_name: user.email?.split('@')[0] || 'User',
             subscription_tier: tier
           })
         }
-        return
-      }
-      
-      const { success, data } = await response.json()
-      if (success && data && isMounted) {
-        const profileData = {
-          full_name: data.full_name || user.email?.split('@')[0] || 'User',
-          subscription_tier: tier
+      } catch (error) {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user && isMounted) {
+          setUserProfile({
+            full_name: user.email?.split('@')[0] || 'User',
+            subscription_tier: tier
+          })
         }
-        setUserProfile(profileData)
-        cacheUserProfile(data, user.id) // Cache for next time
-      } else if (!cachedProfile && isMounted) {
-        setUserProfile({
-          full_name: user.email?.split('@')[0] || 'User',
-          subscription_tier: tier
-        })
-      }
-    } catch (error) {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user && isMounted) {
-        setUserProfile({
-          full_name: user.email?.split('@')[0] || 'User',
-          subscription_tier: tier
-        })
-      }
-    } finally {
-      if (isMounted) {
-        setLoading(false)
+      } finally {
+        if (isMounted) {
+          setLoading(false)
+        }
       }
     }
-  }
+
+    loadUserProfile()
+    return () => { isMounted = false }
+  }, [supabase, tier])
 
   return (
     <>
@@ -224,7 +225,7 @@ export function DashboardSidebar() {
               onClick={async () => {
                 invalidateCacheOnLogout() // Clear all cached data
                 await supabase.auth.signOut()
-                router.push('/auth/signin')
+                router.push('/auth')
               }}
               className={`w-full justify-start text-sm font-medium transition-all duration-300 h-12 rounded-xl ${theme === 'dark' ? 'text-white/60 hover:bg-red-500/20 hover:text-red-400 hover:border hover:border-red-500/30' : 'text-gray-600 hover:bg-red-50 hover:text-red-600 hover:border hover:border-red-300'}`}
             >

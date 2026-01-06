@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -47,11 +47,7 @@ export default function UsersPage() {
   const [total, setTotal] = useState(0)
   const limit = 50
 
-  useEffect(() => {
-    loadUsers()
-  }, [search, subscriptionFilter, activityFilter, page])
-
-  async function loadUsers() {
+  const loadUsers = useCallback(async () => {
     try {
       setLoading(true)
       const params = new URLSearchParams({
@@ -73,7 +69,11 @@ export default function UsersPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [activityFilter, limit, page, search, subscriptionFilter])
+
+  useEffect(() => {
+    loadUsers()
+  }, [loadUsers])
 
   async function handleExport() {
     try {

@@ -45,10 +45,10 @@ export default function MoodTracker() {
     loadWeekData();
     (async () => {
       const streak = await supabaseAnalyticsService.getCurrentStreak();
-      setPreviousStreak(currentStreak);
+      setPreviousStreak(() => currentStreak);
       setCurrentStreak(streak);
     })();
-  }, []);
+  }, [currentStreak]);
 
   const loadWeekData = async () => {
     const today = new Date();

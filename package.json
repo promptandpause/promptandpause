@@ -5,7 +5,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
-    "lint": "next lint",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings 0",
     "start": "next start",
     "security:headers": "node ./scripts/security/headers-check.mjs",
     "security:rl-smoke": "node ./scripts/security/ratelimit-smoke.mjs",
@@ -13,11 +13,11 @@
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",
-    "@google/generative-ai": "^0.24.1",
+    "@google/generative-ai": "^0.15.0",
     "@hookform/resolvers": "^5.2.2",
     "@hubspot/api-client": "^13.4.0",
-    "@lottiefiles/dotlottie-react": "^0.17.5",
-    "@paper-design/shaders-react": "^0.0.59",
+    "@lottiefiles/dotlottie-react": "^0.17.12",
+    "@paper-design/shaders-react": "^0.0.68",
     "@radix-ui/react-accordion": "1.2.12",
     "@radix-ui/react-alert-dialog": "1.1.15",
     "@radix-ui/react-aspect-ratio": "1.1.7",
@@ -47,16 +47,15 @@
     "@radix-ui/react-tooltip": "1.2.8",
     "@react-email/render": "^2.0.0",
     "@stripe/stripe-js": "^8.0.0",
-    "lenis": "^1.1.17",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.75.0",
-    "@types/pdfkit": "^0.17.3",
     "@upstash/ratelimit": "^2.0.6",
     "@upstash/redis": "^1.35.5",
     "@vercel/analytics": "latest",
     "autoprefixer": "^10.4.21",
     "axios": "^1.12.2",
     "class-variance-authority": "^0.7.1",
+    "cloudinary": "^2.8.0",
     "clsx": "^2.1.1",
     "cmdk": "1.1.1",
     "date-fns": "4.1.0",
@@ -64,6 +63,7 @@
     "framer-motion": "^12.23.24",
     "geist": "latest",
     "input-otp": "1.4.2",
+    "lenis": "^1.1.17",
     "lottie-react": "^2.4.1",
     "lucide-react": "^0.545.0",
     "next": "^16.1.1",
@@ -84,10 +84,21 @@
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^1.1.2",
-    "zod": "4.1.12",
-    "web-push": "^3.6.7"
+    "web-push": "^3.6.7",
+    "zod": "4.1.12"
+  },
+  "pnpm": {
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "react",
+        "react-dom"
+      ]
+    }
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "eslint": "^9.17.0",
+    "eslint-config-next": "16.1.1",
     "@tailwindcss/postcss": "^4.1.14",
     "@types/node": "^24",
     "@types/react": "^19",

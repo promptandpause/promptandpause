@@ -296,6 +296,7 @@ export async function generateWeeklyDigestServer(
         word_count: r.word_count,
         reflection_text: r.reflection_text || '',
         prompt_text: r.prompt_text || '',
+        prompt_type: r.prompt_type || r.personalization_context?.prompt_type || null,
         is_self_journal: false,
       })),
       ...selfJournals.map(j => {
@@ -308,10 +309,133 @@ export async function generateWeeklyDigestServer(
           word_count: wc,
           reflection_text: text,
           prompt_text: '(Self-Journal)',
+          prompt_type: null,
           is_self_journal: true,
         }
       }),
     ]
+
+    // Fetch user's focus areas (premium custom + onboarding preferences) to help bias insights language
+    const { data: userPrefs } = await supabase
+      .from('user_preferences')
+      .select('focus_areas')
+      .eq('user_id', userId)
+      .maybeSingle()
+    const selectedFocusAreas: string[] = Array.isArray(userPrefs?.focus_areas)
+      ? userPrefs!.focus_areas
+      : []
+
+    // Calculate engagement signals (days with entries vs skipped)
+    const dateSet = new Set<string>()
+    combined.forEach((r) => {
+      if (r.date) dateSet.add(r.date)
+    })
+    const daysWithEntries = dateSet.size
+    const daysSkipped = Math.max(0, 7 - daysWithEntries)
+
+    // Calculate mood distribution - validate and filter moods
+    const moodCounts: Record<string, number> = {}
+    combined.forEach(r => {
+      if (r.mood) {
+        const validMood = validateMood(r.mood)
+        moodCounts[validMood] = (moodCounts[validMood] || 0) + 1
+      }
+    })
+    const moodDistribution = Object.entries(moodCounts).map(([mood, count]) => ({
+      mood: mood as MoodType,
+      count,
+    }))
+
+    // Mood variance (simple numeric spread based on stable mapping)
+    const moodScores: Record<MoodType, number> = {
+      '😔': 1,
+      '😐': 2,
+      '🤔': 2,
+      '😊': 3,
+      '😌': 3,
+      '🙏': 3,
+      '💪': 3,
+      '😄': 4,
+    }
+    const moods: MoodType[] = combined
+      .filter(r => r.mood)
+      .map(r => validateMood(r.mood))
+    const moodMostCommon = moodDistribution.length > 0
+      ? moodDistribution.slice().sort((a, b) => b.count - a.count)[0]?.mood ?? null
+      : null
+    const moodVariance = (() => {
+      if (moods.length < 2) return null
+      const scores = moods.map(m => moodScores[m] ?? 2)
+      const mean = scores.reduce((s, v) => s + v, 0) / scores.length
+      const variance = scores.reduce((s, v) => s + Math.pow(v - mean, 2), 0) / scores.length
+      return Number(variance.toFixed(2))
+    })()
+
+    // Reflection length pattern
+    const wcValues = combined.map(r => Number(r.word_count || 0)).filter(n => Number.isFinite(n) && n >= 0)
+    const sortedWc = wcValues.slice().sort((a, b) => a - b)
+    const median = sortedWc.length === 0
+      ? 0
+      : (sortedWc.length % 2 === 1
+        ? sortedWc[(sortedWc.length - 1) / 2]
+        : Math.round((sortedWc[sortedWc.length / 2 - 1] + sortedWc[sortedWc.length / 2]) / 2))
+    const avg = wcValues.length === 0 ? 0 : Math.round(wcValues.reduce((s, v) => s + v, 0) / wcValues.length)
+    const shortThreshold = Math.max(40, Math.round(avg * 0.6))
+    const longThreshold = Math.max(120, Math.round(avg * 1.4))
+    const shortCount = wcValues.filter(w => w > 0 && w <= shortThreshold).length
+    const longCount = wcValues.filter(w => w >= longThreshold).length
+    const firstHalf = combined.slice(0, Math.ceil(combined.length / 2))
+    const secondHalf = combined.slice(Math.ceil(combined.length / 2))
+    const avgOf = (rows: Array<{ word_count: number }>) => {
+      const vals = rows.map(r => Number(r.word_count || 0)).filter(n => Number.isFinite(n) && n >= 0)
+      return vals.length === 0 ? 0 : Math.round(vals.reduce((s, v) => s + v, 0) / vals.length)
+    }
+
+    // Repeated words/themes (simple frequency; avoid sentiment theatrics)
+    const { decryptIfEncrypted } = await import('@/lib/utils/crypto')
+    const stop = new Set([
+      'the','and','for','that','with','this','from','have','had','was','were','are','but','not','you','your','i','me','my','we','our','they','them','a','an','to','of','in','on','at','it','as','is','be','been','so','if','or','by','do','did','just','really','very','can','could','would','should'
+    ])
+    const wordCounts: Record<string, number> = {}
+    combined.forEach(r => {
+      const raw = r.reflection_text || ''
+      const plain = decryptIfEncrypted(raw) || raw
+      const text = plain.toLowerCase()
+      const tokens = text
+        .replace(/[^a-z0-9\s']/g, ' ')
+        .split(/\s+/)
+        .map((t: string) => t.trim())
+        .filter(Boolean)
+        .filter((t: string) => t.length >= 4)
+        .filter((t: string) => !stop.has(t))
+      for (const t of tokens) {
+        wordCounts[t] = (wordCounts[t] || 0) + 1
+      }
+    })
+    const repeatedWords = Object.entries(wordCounts)
+      .map(([word, count]) => ({ word, count }))
+      .filter(x => x.count >= 3)
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10)
+
+    // Prompt category responded to most deeply -> use prompt_type as proxy for category
+    const promptTypeMap = new Map<string, { totalWords: number; count: number }>()
+    combined.forEach(r => {
+      const pt = (r.prompt_type || '').toString().trim()
+      if (!pt) return
+      const entry = promptTypeMap.get(pt) || { totalWords: 0, count: 0 }
+      entry.totalWords += Number(r.word_count || 0)
+      entry.count += 1
+      promptTypeMap.set(pt, entry)
+    })
+    const promptTypeDepth = Array.from(promptTypeMap.entries())
+      .map(([promptType, v]) => ({
+        promptType,
+        count: v.count,
+        averageWordCount: v.count > 0 ? Math.round(v.totalWords / v.count) : 0,
+      }))
+      .sort((a, b) => b.averageWordCount - a.averageWordCount)
+      .slice(0, 5)
 
     // Calculate top tags
     const tagCounts: Record<string, number> = {}
@@ -327,19 +451,6 @@ export async function generateWeeklyDigestServer(
       .sort((a, b) => b.count - a.count)
       .slice(0, 5)
 
-    // Calculate mood distribution - validate and filter moods
-    const moodCounts: Record<string, number> = {}
-    combined.forEach(r => {
-      if (r.mood) {
-        const validMood = validateMood(r.mood)
-        moodCounts[validMood] = (moodCounts[validMood] || 0) + 1
-      }
-    })
-    const moodDistribution = Object.entries(moodCounts).map(([mood, count]) => ({
-      mood: mood as MoodType,
-      count,
-    }))
-
     // Calculate average word count
     const totalWords = combined.reduce((sum, r) => sum + (r.word_count || 0), 0)
     const averageWordCount = combined.length > 0 
@@ -347,7 +458,6 @@ export async function generateWeeklyDigestServer(
       : 0
 
     // Get reflection summaries
-    const { decryptIfEncrypted } = await import('@/lib/utils/crypto')
     const reflectionSummaries = combined.slice(0, 7).map(r => {
       const raw = r.reflection_text || ''
       const plain = decryptIfEncrypted(raw) || raw
@@ -370,6 +480,23 @@ export async function generateWeeklyDigestServer(
       averageWordCount,
       currentStreak,
       reflectionSummaries,
+      signals: {
+        daysWithEntries,
+        daysSkipped,
+        moodVariance,
+        moodMostCommon,
+        reflectionLength: {
+          shortCount,
+          longCount,
+          average: avg,
+          median,
+          firstHalfAverage: avgOf(firstHalf as any),
+          secondHalfAverage: avgOf(secondHalf as any),
+        },
+        repeatedWords,
+        promptTypeDepth,
+        selectedFocusAreas,
+      },
     }
   } catch (error) {
     // Return empty digest on error
@@ -384,6 +511,23 @@ export async function generateWeeklyDigestServer(
       averageWordCount: 0,
       currentStreak: 0,
       reflectionSummaries: [],
+      signals: {
+        daysWithEntries: 0,
+        daysSkipped: 7,
+        moodVariance: null,
+        moodMostCommon: null,
+        reflectionLength: {
+          shortCount: 0,
+          longCount: 0,
+          average: 0,
+          median: 0,
+          firstHalfAverage: 0,
+          secondHalfAverage: 0,
+        },
+        repeatedWords: [],
+        promptTypeDepth: [],
+        selectedFocusAreas: [],
+      },
     }
   }
 }

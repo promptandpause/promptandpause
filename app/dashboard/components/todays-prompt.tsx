@@ -30,11 +30,9 @@ export default function TodaysPrompt() {
   const { generatePrompt: generatePromptAsync, isLoading: isGenerating } = useGeneratePrompt()
   const { stats: reflectionStats } = useReflectionStats()
   const [reflection, setReflection] = useState("");
-  const [timer, setTimer] = useState(300); // 5 min in seconds
-  const [timerStarted, setTimerStarted] = useState(false); // Track if timer has started
   const [submitted, setSubmitted] = useState(false);
   const [feedback, setFeedback] = useState<"helped" | "irrelevant" | null>(null);
-  const [selectedMood, setSelectedMood] = useState<MoodType>("😊")
+  const [selectedMood, setSelectedMood] = useState<MoodType | null>(null)
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [savedReflectionId, setSavedReflectionId] = useState<string | null>(null)
   const [todaysPrompt, setTodaysPrompt] = useState("")
@@ -66,20 +64,15 @@ export default function TodaysPrompt() {
     setWordCount(words)
   }, [reflection])
   
-  // Limit to 150 words maximum
-  const MAX_WORDS = 150
-  const isMaxWordsReached = wordCount >= MAX_WORDS
-  
-  // Get encouraging message based on word count (max 150 words)
+  // Word count feedback (no enforced limit)
   function getEncouragingMessage(words: number): string | null {
     if (words === 0) return null
-    if (words >= 150) return "Perfect length! 🌟"
-    if (words >= 120) return "Almost there! ✨"
-    if (words >= 100) return "Excellent depth! 🌱"
-    if (words >= 75) return "Great momentum! 💚"
-    if (words >= 50) return "Keep it flowing! 🌿"
-    if (words >= 25) return "Good start! 💫"
-    return "Just begin... 🌺"
+    if (words < 15) return "Good start."
+    if (words < 40) return "You're making progress."
+    if (words < 80) return "Keep going."
+    if (words < 140) return "This is taking shape."
+    if (words < 220) return "That's a solid reflection."
+    return "Plenty here. Stop when you're ready."
   }
   
   // Load today's reflection or prompt from backend
@@ -131,19 +124,8 @@ export default function TodaysPrompt() {
 
     init()
     return () => { isMounted = false }
-  }, [])
+  }, [supabase])
   
-  // Timer logic
-  // Decrement every second if timer > 0, timer has started, and prompt not submitted
-  useEffect(() => {
-    if (timer > 0 && timerStarted && !submitted) {
-      const interval = setInterval(() => setTimer(t => t - 1), 1000);
-      return () => clearInterval(interval);
-    }
-  }, [timer, timerStarted, submitted]);
-  const min = Math.floor(timer / 60);
-  const sec = String(timer % 60).padStart(2, '0');
-
   // Save logic
   async function handleSave() {
     if (reflection.trim().length === 0 || !todaysPrompt) return;
@@ -152,7 +134,7 @@ export default function TodaysPrompt() {
       const saved = await supabaseReflectionService.saveReflection({
         prompt_text: todaysPrompt,
         reflection_text: reflection.trim(),
-        mood: selectedMood,
+        mood: selectedMood || "😊",
         tags: selectedTags,
       })
 
@@ -283,7 +265,6 @@ export default function TodaysPrompt() {
       <section className={`rounded-2xl md:rounded-3xl p-5 md:p-8 flex flex-col gap-4 md:gap-6 relative transition-all duration-200 ${theme === 'dark' ? 'glass-light shadow-soft-lg' : 'glass-medium shadow-soft-md'}`} style={{ pointerEvents: 'auto' }}>
         <div className="flex items-center justify-between gap-3 mb-1">
           <h3 className={`text-lg md:text-xl font-extrabold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Today's Prompt</h3>
-          <span className={`text-xs px-2.5 md:px-3 py-1 rounded-lg font-semibold whitespace-nowrap ${theme === 'dark' ? 'bg-orange-500/30 text-orange-300 border border-orange-500/40' : 'bg-orange-500/20 text-gray-900 border border-orange-400/30'}`}>5 min</span>
         </div>
       {todaysPrompt && (
         <>
@@ -356,38 +337,16 @@ export default function TodaysPrompt() {
               maxLength={1200}
               value={reflection}
               onChange={(e) => {
-                const newText = e.target.value
-                const newWordCount = newText.trim().split(/\s+/).filter(Boolean).length
-                
-                // Start timer on first keystroke
-                if (!timerStarted && newText.length > 0) {
-                  setTimerStarted(true)
-                }
-                
-                // Only allow update if under word limit
-                if (newWordCount <= MAX_WORDS) {
-                  setReflection(newText)
-                } else {
-                  // If over limit, try to trim to exactly MAX_WORDS
-                  const words = newText.trim().split(/\s+/).filter(Boolean)
-                  const trimmedText = words.slice(0, MAX_WORDS).join(' ')
-                  setReflection(trimmedText)
-                }
+                setReflection(e.target.value)
               }}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
               disabled={submitted}
             />
             {/* Word count indicator */}
-            <div className={`flex items-center justify-between mt-1.5 text-xs ${
-              isMaxWordsReached 
-                ? theme === 'dark' ? 'text-orange-300' : 'text-orange-600'
-                : theme === 'dark' ? 'text-white/50' : 'text-gray-500'
-            }`}>
-              <span>
-                {wordCount}/{MAX_WORDS} words
-                {isMaxWordsReached && ' (limit reached)'}
-              </span>
+            <div className={`flex items-center justify-between mt-1.5 text-xs ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>
+              <span className="italic">{getEncouragingMessage(wordCount) || ''}</span>
+              <span>{wordCount} words</span>
             </div>
           </div>
           
@@ -440,7 +399,7 @@ export default function TodaysPrompt() {
                 </motion.button>
               ))}
             </motion.div>
-            <p className={`text-xs mt-1.5 ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>Selected: {selectedMood}</p>
+            <p className={`text-xs mt-1.5 ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>Selected: {selectedMood || 'None'}</p>
           </div>
           
           {/* Tag Selector with Stagger Animation */}
@@ -533,18 +492,14 @@ export default function TodaysPrompt() {
                         : theme === 'dark' ? 'text-white/50' : 'text-gray-500'
                   }`}
                 >
-                  {wordCount}/{MAX_WORDS}
+                  {wordCount}
                 </motion.span>
                 <span className={`text-xs ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`}>words</span>
                 {getEncouragingMessage(wordCount) && (
                   <motion.span
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className={`text-xs italic ml-1 ${
-                      isMaxWordsReached
-                        ? theme === 'dark' ? 'text-orange-300' : 'text-orange-600'
-                        : theme === 'dark' ? 'text-green-300' : 'text-green-600'
-                    }`}
+                    className={`text-xs italic ml-1 ${theme === 'dark' ? 'text-green-300' : 'text-green-600'}`}
                   >
                     {getEncouragingMessage(wordCount)}
                   </motion.span>

@@ -31,7 +31,7 @@ export default function WeeklyDigest() {
 
     loadDigest()
     return () => { isMounted = false }
-  }, [])
+  }, [supabase])
   
   if (!digest) return null
   

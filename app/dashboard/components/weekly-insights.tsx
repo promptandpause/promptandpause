@@ -16,11 +16,15 @@ interface WeeklyInsightsData {
   topTags: { tag: string; count: number }[]
   moodDistribution: { mood: string; count: number }[]
   insights: {
-    summary: string
-    keyInsights: string[]
-    recommendations: string[]
-    moodAnalysis: string
-    growthAreas: string[]
+    headline?: string
+    observations?: string[]
+    reflection?: string
+    question?: string
+    summary?: string
+    keyInsights?: string[]
+    recommendations?: string[]
+    moodAnalysis?: string
+    growthAreas?: string[]
     provider: string
     model: string
   }
@@ -107,6 +111,13 @@ export default function WeeklyInsights() {
       month: 'short',
     })
   }
+
+  const headline = data.insights.headline || data.insights.summary || ''
+  const observations = (data.insights.observations && data.insights.observations.length > 0)
+    ? data.insights.observations
+    : (data.insights.keyInsights || [])
+  const reflectionText = data.insights.reflection || data.insights.moodAnalysis || ''
+  const questionText = data.insights.question || ''
 
   return (
     <section className={`rounded-2xl md:rounded-3xl p-6 md:p-8 relative overflow-hidden transition-all duration-200 ${
@@ -201,26 +212,26 @@ export default function WeeklyInsights() {
           <Brain className="h-4 w-4 text-purple-400" />
           <h5 className={`font-medium text-sm ${
             theme === 'dark' ? 'text-white' : 'text-gray-900'
-          }`}>AI Summary</h5>
+          }`}>This Week</h5>
         </div>
         <p className={`text-sm leading-relaxed ${
           theme === 'dark' ? 'text-white/80' : 'text-gray-700'
         }`}>
-          {data.insights.summary}
+          {headline}
         </p>
       </div>
 
-      {/* Key Insights */}
-      {data.insights.keyInsights.length > 0 && (
+      {/* Observations */}
+      {observations.length > 0 && (
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-3">
             <TrendingUp className="h-4 w-4 text-green-400" />
             <h5 className={`font-medium text-sm ${
               theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}>Key Insights</h5>
+            }`}>Observations</h5>
           </div>
           <ul className="space-y-2">
-            {data.insights.keyInsights.slice(0, showAll ? undefined : 2).map((insight, i) => (
+            {observations.slice(0, showAll ? undefined : 2).map((insight, i) => (
               <motion.li
                 key={i}
                 initial={{ opacity: 0, x: -10 }}
@@ -238,31 +249,20 @@ export default function WeeklyInsights() {
         </div>
       )}
 
-      {/* Recommendations */}
-      {data.insights.recommendations.length > 0 && (
+      {/* Theme Reflection */}
+      {reflectionText && (
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-3">
             <Target className="h-4 w-4 text-blue-400" />
             <h5 className={`font-medium text-sm ${
               theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}>Recommendations</h5>
+            }`}>Theme Reflection</h5>
           </div>
-          <ul className="space-y-2">
-            {data.insights.recommendations.slice(0, showAll ? undefined : 2).map((rec, i) => (
-              <motion.li
-                key={i}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.1 }}
-                className={`flex items-start gap-2 text-sm ${
-                  theme === 'dark' ? 'text-white/70' : 'text-gray-600'
-                }`}
-              >
-                <span className="text-blue-400 mt-0.5">→</span>
-                <span>{rec}</span>
-              </motion.li>
-            ))}
-          </ul>
+          <p className={`text-sm leading-relaxed ${
+            theme === 'dark' ? 'text-white/70' : 'text-gray-600'
+          }`}>
+            {reflectionText}
+          </p>
         </div>
       )}
 
@@ -270,7 +270,7 @@ export default function WeeklyInsights() {
       <AnimatePresence>
         {showAll && (
           <>
-            {data.insights.moodAnalysis && (
+            {questionText && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
@@ -279,36 +279,12 @@ export default function WeeklyInsights() {
               >
                 <h5 className={`font-medium text-sm mb-2 ${
                   theme === 'dark' ? 'text-white' : 'text-gray-900'
-                }`}>Mood Analysis</h5>
+                }`}>Gentle Invitation</h5>
                 <p className={`text-sm leading-relaxed ${
                   theme === 'dark' ? 'text-white/70' : 'text-gray-600'
                 }`}>
-                  {data.insights.moodAnalysis}
+                  {questionText}
                 </p>
-              </motion.div>
-            )}
-
-            {/* Growth Areas */}
-            {data.insights.growthAreas.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="mb-6 overflow-hidden"
-              >
-                <h5 className={`font-medium text-sm mb-2 ${
-                  theme === 'dark' ? 'text-white' : 'text-gray-900'
-                }`}>Growth Areas</h5>
-                <ul className="space-y-2">
-                  {data.insights.growthAreas.map((area, i) => (
-                    <li key={i} className={`flex items-start gap-2 text-sm ${
-                      theme === 'dark' ? 'text-white/70' : 'text-gray-600'
-                    }`}>
-                      <span className="text-yellow-400 mt-0.5">★</span>
-                      <span>{area}</span>
-                    </li>
-                  ))}
-                </ul>
               </motion.div>
             )}
 

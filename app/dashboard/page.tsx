@@ -32,7 +32,7 @@ export default function DashboardPage() {
         {/* Subtle overlay for readability */}
         <div className={`fixed inset-0 -z-10 ${theme === 'light' ? 'bg-white/35' : 'bg-black/25'}`} />
 
-        {/* Calming ambient animation (low cost, CSS only) */}
+        {/* Calming ambient animation (CSS only) */}
         <div className="fixed inset-0 -z-20 pointer-events-none overflow-hidden">
           <div className="absolute inset-0 calm-ambient-blobs" />
         </div>

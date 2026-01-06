@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -55,25 +55,7 @@ export default function SubscriptionsPage() {
   const [totalPages, setTotalPages] = useState(1)
   const limit = 50
 
-  useEffect(() => {
-    loadStats()
-  }, [])
-
-  useEffect(() => {
-    loadSubscriptions()
-  }, [currentPage, statusFilter, cycleFilter])
-
-  async function loadStats() {
-    try {
-      const response = await fetch('/api/admin/subscriptions/stats')
-      if (!response.ok) throw new Error('Failed to fetch stats')
-      const data = await response.json()
-      setStats(data.stats)
-    } catch (error) {
-    }
-  }
-
-  async function loadSubscriptions() {
+  const loadSubscriptions = useCallback(async () => {
     try {
       setLoading(true)
       const params = new URLSearchParams({
@@ -98,6 +80,24 @@ export default function SubscriptionsPage() {
     } catch (error) {
     } finally {
       setLoading(false)
+    }
+  }, [currentPage, cycleFilter, limit, statusFilter])
+
+  useEffect(() => {
+    loadStats()
+  }, [])
+
+  useEffect(() => {
+    loadSubscriptions()
+  }, [loadSubscriptions])
+
+  async function loadStats() {
+    try {
+      const response = await fetch('/api/admin/subscriptions/stats')
+      if (!response.ok) throw new Error('Failed to fetch stats')
+      const data = await response.json()
+      setStats(data.stats)
+    } catch (error) {
     }
   }
 

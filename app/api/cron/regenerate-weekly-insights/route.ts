@@ -80,11 +80,10 @@ export async function GET(request: NextRequest) {
           insights = await generateWeeklyInsights(digest, user.full_name)
         } catch (error) {
           insights = {
-            summary: 'Unable to generate AI insights at this time.',
-            keyInsights: [],
-            recommendations: [],
-            moodAnalysis: '',
-            growthAreas: [],
+            headline: 'Unable to generate insights at this time.',
+            observations: [],
+            reflection: '',
+            question: '',
             provider: 'none',
             model: 'none',
           }

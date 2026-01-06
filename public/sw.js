@@ -5,7 +5,7 @@ const RUNTIME_CACHE = 'runtime-cache-v1'
 const PRECACHE_ASSETS = [
   '/',
   '/pwa-welcome',
-  '/auth/signin',
+  '/login',
   '/dashboard',
   '/icon.png',
   '/apple-icon.png',

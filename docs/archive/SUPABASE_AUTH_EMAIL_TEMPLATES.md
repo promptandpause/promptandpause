@@ -1,5 +1,20 @@
 # Supabase Auth Email Templates
 
+> **⚠️ ARCHIVED**: This document contains the OLD dark theme templates.
+> 
+> **For the NEW 2026 templates**, see: `Sql scripts/update_supabase_email_templates_2026.sql`
+> 
+> The new templates use the soft reflection theme matching the dashboard:
+> - Warm cream background (#f4f0eb)
+> - Forest green accent (#384c37)
+> - Rounded corners and subtle shadows
+> - CDN-hosted logo linking to promptandpause.com
+> - Copyright © 2026
+
+---
+
+## OLD TEMPLATES (Dark Theme - Archived)
+
 Custom branded email templates for Supabase authentication flows.
 
 ## 🎯 Overview

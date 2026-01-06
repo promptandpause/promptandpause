@@ -27,19 +27,20 @@ const APP_NAME = 'Prompt & Pause'
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://promptandpause.com'
 
 
-// Brand colors from new professional template system
-const BG_CREAM = BRAND_COLORS.backgroundLight // Primary background
-const BG_WHITE = BRAND_COLORS.backgroundPure // Card/content background 
-const BG_LIGHT = BRAND_COLORS.backgroundSection // Secondary background
-const BORDER_COLOR = BRAND_COLORS.borderLight // Light borders
-const TEXT_DARK = BRAND_COLORS.textDark // Primary text
-const TEXT_GRAY = BRAND_COLORS.textGray // Secondary text
-const TEXT_MUTED = BRAND_COLORS.textMuted // Muted text
-const PRIMARY_ACCENT = BRAND_COLORS.primary // Gold accent (primary)
-const SECONDARY_ACCENT = BRAND_COLORS.primaryLight // Light gold accent
+// Brand colors from professional template system - Dashboard matching theme
+const BG_CREAM = BRAND_COLORS.backgroundLight   // #f4f0eb - Warm cream
+const BG_WHITE = BRAND_COLORS.backgroundPure    // #ffffff - Pure white
+const BG_LIGHT = BRAND_COLORS.backgroundSection // #f8f6f3 - Soft cream sections
+const BORDER_COLOR = BRAND_COLORS.border        // #e2e8f0 - Slate border
+const TEXT_DARK = BRAND_COLORS.textDark         // #1e293b - Slate dark
+const TEXT_GRAY = BRAND_COLORS.textGray         // #475569 - Slate gray
+const TEXT_MUTED = BRAND_COLORS.textMuted       // #94a3b8 - Slate muted
+const PRIMARY_ACCENT = BRAND_COLORS.primary     // #384c37 - Forest green
+const SECONDARY_ACCENT = BRAND_COLORS.primaryLight // #4a6349 - Light forest
+const GOLD_ACCENT = '#c9a227'                   // Warm gold for special CTAs
 
-// Logo URL (hosted on Vercel Blob Storage)
-const LOGO_URL = 'https://yhrnbdl0wz3eilae.public.blob.vercel-storage.com/prompt%26pause-JRsbZR3dxCXndC8YMcyX6XU3XeT2Vw.svg'
+// Brand CDN Logo URL - Links to homepage
+const LOGO_URL = 'https://res.cloudinary.com/dh1rrfpmq/image/upload/v1766460430/prompt_pause-JRsbZR3dxCXndC8YMcyX6XU3XeT2Vw_vdvqfj.svg'
 
 // =============================================================================
 // CUSTOMIZATION CACHING AND DB INTEGRATION
@@ -649,20 +650,20 @@ export async function logEmailDelivery(
  */
 function generateWelcomeEmailHTML(name: string): string {
   const welcomeContent = `
-    ${h1(`Welcome to ${APP_NAME}! 🌟`)}
+    ${h1(`Welcome to ${APP_NAME}`)}
     
     ${paragraph(`Hi ${name},`)}
     
-    ${paragraph('Welcome to your daily reflection journey! We\'re so glad you\'re here.')}
+    ${paragraph('Welcome to your daily reflection journey. We\'re so glad you\'re here.')}
     
     ${paragraph(`${APP_NAME} is designed to help you pause, reflect, and connect with yourself through guided daily prompts. Each day, you\'ll receive a thoughtful question to inspire meaningful self-reflection.`)}
     
     ${infoBox(`
-      ${h3('Getting Started:', { align: 'left' })}
-      <ul style="color: ${TEXT_GRAY}; line-height: 1.8; margin: 16px 0 0 0; padding-left: 20px; font-size: 15px; font-family: 'trebuchet ms', geneva;">
-        <li style="margin-bottom: 8px;">Complete your onboarding to personalize your experience</li>
-        <li style="margin-bottom: 8px;">Receive your first daily prompt</li>
-        <li style="margin-bottom: 8px;">Reflect, write, and track your emotional journey</li>
+      ${h3('Getting Started', { align: 'left' })}
+      <ul style="color: ${TEXT_GRAY}; line-height: 1.8; margin: 16px 0 0 0; padding-left: 20px; font-size: 15px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <li style="margin-bottom: 10px;">Complete your onboarding to personalize your experience</li>
+        <li style="margin-bottom: 10px;">Receive your first daily prompt</li>
+        <li style="margin-bottom: 10px;">Reflect, write, and track your emotional journey</li>
         <li>Review your progress in your dashboard</li>
       </ul>
     `)}
@@ -671,7 +672,7 @@ function generateWelcomeEmailHTML(name: string): string {
       ${standardButton({ href: 'https://promptandpause.com/dashboard', label: 'Go to Dashboard' })}
     </div>
     
-    ${paragraph('If you have any questions, just reply to this email. We\'re here to help!', { align: 'center', fontSize: '14px', color: TEXT_MUTED })}
+    ${paragraph('If you have any questions, just reply to this email. We\'re here to help.', { align: 'center', fontSize: '14px', color: TEXT_MUTED })}
   `
 
   return contentSection(welcomeContent)
@@ -693,32 +694,32 @@ function generateDailyPromptEmailHTML(name: string, prompt: string): string {
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
       <tr>
         <td align="center" style="padding: 20px 0;">
-          <span style="display: inline-block; font-size: 12px; color: ${PRIMARY_ACCENT}; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; background: rgba(211, 157, 53, 0.1); padding: 8px 16px; border-radius: 20px; font-family: Rubik, sans-serif;">
+          <span style="display: inline-block; font-size: 11px; color: ${PRIMARY_ACCENT}; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; background: rgba(56, 76, 55, 0.08); padding: 8px 18px; border-radius: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
             ${today}
           </span>
         </td>
       </tr>
     </table>
     
-    ${h1('✨ Your Daily Reflection Prompt')}
+    ${h1('Your Daily Reflection Prompt')}
     
-    ${paragraph(`Good day, ${name}! 👋`, { align: 'center' })}
+    ${paragraph(`Good day, ${name}`, { align: 'center' })}
     
     ${paragraph('Take a moment to pause and reflect on today\'s question:', { align: 'center', fontSize: '15px' })}
     
-    <!-- Professional Prompt Card -->
+    <!-- Prompt Card with soft reflection styling -->
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 32px 0;">
       <tr>
-        <td style="background: ${BG_LIGHT}; padding: 32px 24px; border-radius: 12px; border: 1px solid ${BORDER_COLOR};">
+        <td style="background: linear-gradient(135deg, ${BG_LIGHT} 0%, ${BG_WHITE} 100%); padding: 32px 28px; border-radius: 16px; border: 1px solid ${BORDER_COLOR}; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);">
           <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
             <tr>
               <td align="center" style="padding-bottom: 16px;">
-                <p style="font-size: 11px; color: ${PRIMARY_ACCENT}; text-transform: uppercase; letter-spacing: 1.5px; margin: 0; font-weight: 600; font-family: Rubik, sans-serif;">Today's Prompt</p>
+                <p style="font-size: 11px; color: ${PRIMARY_ACCENT}; text-transform: uppercase; letter-spacing: 1.5px; margin: 0; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Today's Prompt</p>
               </td>
             </tr>
             <tr>
               <td align="center">
-                <p style="font-size: 20px; color: ${TEXT_DARK}; line-height: 1.6; margin: 0; font-weight: 400; font-style: italic; font-family: 'trebuchet ms', geneva;">
+                <p style="font-size: 19px; color: ${TEXT_DARK}; line-height: 1.6; margin: 0; font-weight: 400; font-style: italic; font-family: Georgia, 'Times New Roman', serif;">
                   "${prompt}"
                 </p>
               </td>
@@ -728,15 +729,15 @@ function generateDailyPromptEmailHTML(name: string, prompt: string): string {
       </tr>
     </table>
     
-    ${paragraph('Set aside a few minutes today to explore this question. There are no right or wrong answers—just your authentic thoughts and feelings.', { align: 'center', fontSize: '14px' })}
+    ${paragraph('Set aside a few minutes today to explore this question. There are no right or wrong answers - just your authentic thoughts and feelings.', { align: 'center', fontSize: '14px' })}
     
     <div style="text-align: center; margin: 40px 0;">
-      ${standardButton({ href: 'https://promptandpause.com/dashboard', label: 'Start Reflecting ✍️' })}
+      ${standardButton({ href: 'https://promptandpause.com/dashboard', label: 'Start Reflecting' })}
     </div>
     
     ${infoBox(`
-      <p style="margin: 0; color: ${TEXT_GRAY}; font-size: 14px; line-height: 1.6; font-family: 'trebuchet ms', geneva;">
-        <strong style="color: ${TEXT_DARK}; font-weight: 600;">💡 Tip:</strong> Try writing for at least 3-5 minutes without overthinking. Let your thoughts flow naturally.
+      <p style="margin: 0; color: ${TEXT_GRAY}; font-size: 14px; line-height: 1.6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <strong style="color: ${TEXT_DARK}; font-weight: 600;">Tip:</strong> Try writing for at least 3-5 minutes without overthinking. Let your thoughts flow naturally.
       </p>
     `)}
   `
@@ -749,53 +750,62 @@ function generateDailyPromptEmailHTML(name: string, prompt: string): string {
  */
 function generateWeeklyDigestEmailHTML(name: string, digest: WeeklyDigest): string {
   const topTagsHTML = digest.topTags
-    .map(({ tag, count }) => `<span style="display: inline-block; background: #e6f0ff; color: ${PRIMARY_ACCENT}; padding: 6px 12px; border-radius: 20px; margin: 4px; font-size: 14px;">${tag} (${count})</span>`)
+    .map(({ tag, count }) => `<span style="display: inline-block; background: rgba(56, 76, 55, 0.08); color: ${PRIMARY_ACCENT}; padding: 6px 14px; border-radius: 20px; margin: 4px; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">${tag} (${count})</span>`)
     .join('')
 
   const moodEmojis = digest.moodDistribution
     .map(({ mood, count }) => `${mood} (${count})`)
-    .join(' • ')
+    .join(' \u2022 ')
 
   const bodyHTML = `
-    <h1 style="color: ${PRIMARY_ACCENT}; font-size: 28px; margin: 0 0 16px 0; font-weight: 600; text-align: center;">Your Week in Review 📊</h1>
-    <p style="color: ${TEXT_MUTED}; font-size: 14px; margin: 0 0 32px 0; text-align: center;">
+    ${h1('Your Week in Review')}
+    <p style="color: ${TEXT_MUTED}; font-size: 13px; margin: 0 0 32px 0; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
       ${new Date(digest.weekStart).toLocaleDateString('en-GB')} - ${new Date(digest.weekEnd).toLocaleDateString('en-GB')}
     </p>
     
-    <p style="color: ${TEXT_GRAY}; font-size: 16px; line-height: 1.8; margin: 0 0 16px 0;">Hi ${name},</p>
+    ${paragraph(`Hi ${name},`)}
     
-    <p style="color: ${TEXT_GRAY}; font-size: 16px; line-height: 1.8; margin: 0 0 32px 0;">
-      Here's a summary of your reflection journey this week:
-    </p>
+    ${paragraph('Here\'s a summary of your reflection journey this week:')}
     
-    <div style="background: ${BG_LIGHT}; padding: 32px; border-radius: 12px; margin: 32px 0; border: 1px solid ${BORDER_COLOR};">
-      <div style="text-align: center;">
-        <div style="margin-bottom: 24px;">
-          <p style="color: ${TEXT_MUTED}; font-size: 13px; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;">Reflections Completed</p>
-          <p style="color: ${PRIMARY_ACCENT}; font-size: 36px; font-weight: 700; margin: 0;">${digest.totalReflections}</p>
-        </div>
-        <div style="margin-bottom: 24px;">
-          <p style="color: ${TEXT_MUTED}; font-size: 13px; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;">Current Streak</p>
-          <p style="color: ${PRIMARY_ACCENT}; font-size: 36px; font-weight: 700; margin: 0;">${digest.currentStreak} days 🔥</p>
-        </div>
-        <div>
-          <p style="color: ${TEXT_MUTED}; font-size: 13px; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;">Average Words per Reflection</p>
-          <p style="color: ${PRIMARY_ACCENT}; font-size: 36px; font-weight: 700; margin: 0;">${digest.averageWordCount}</p>
-        </div>
-      </div>
-    </div>
+    <!-- Stats Card with soft reflection styling -->
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 32px 0;">
+      <tr>
+        <td style="background: linear-gradient(135deg, ${BG_LIGHT} 0%, ${BG_WHITE} 100%); padding: 32px; border-radius: 16px; border: 1px solid ${BORDER_COLOR}; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);">
+          <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
+            <tr>
+              <td align="center" style="padding-bottom: 24px; border-bottom: 1px solid ${BORDER_COLOR};">
+                <p style="color: ${TEXT_MUTED}; font-size: 11px; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 1px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Reflections Completed</p>
+                <p style="color: ${PRIMARY_ACCENT}; font-size: 40px; font-weight: 700; margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">${digest.totalReflections}</p>
+              </td>
+            </tr>
+            <tr>
+              <td align="center" style="padding: 24px 0; border-bottom: 1px solid ${BORDER_COLOR};">
+                <p style="color: ${TEXT_MUTED}; font-size: 11px; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 1px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Current Streak</p>
+                <p style="color: ${PRIMARY_ACCENT}; font-size: 40px; font-weight: 700; margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">${digest.currentStreak} days</p>
+              </td>
+            </tr>
+            <tr>
+              <td align="center" style="padding-top: 24px;">
+                <p style="color: ${TEXT_MUTED}; font-size: 11px; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 1px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Average Words</p>
+                <p style="color: ${PRIMARY_ACCENT}; font-size: 40px; font-weight: 700; margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">${digest.averageWordCount}</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
     
     ${digest.topTags.length > 0 ? `
     <div style="margin: 32px 0;">
-      <h3 style="color: ${TEXT_DARK}; font-size: 16px; margin: 0 0 16px 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Top Themes</h3>
+      <h3 style="color: ${TEXT_DARK}; font-size: 14px; margin: 0 0 16px 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Top Themes</h3>
       <div style="text-align: center;">${topTagsHTML}</div>
     </div>
     ` : ''}
     
     ${digest.moodDistribution.length > 0 ? `
     <div style="margin: 32px 0;">
-      <h3 style="color: ${TEXT_DARK}; font-size: 16px; margin: 0 0 16px 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Your Moods This Week</h3>
-      <p style="color: ${TEXT_GRAY}; font-size: 16px; line-height: 1.8; text-align: center;">${moodEmojis}</p>
+      <h3 style="color: ${TEXT_DARK}; font-size: 14px; margin: 0 0 16px 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Your Moods This Week</h3>
+      <p style="color: ${TEXT_GRAY}; font-size: 15px; line-height: 1.8; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">${moodEmojis}</p>
     </div>
     ` : ''}
     
@@ -803,9 +813,7 @@ function generateWeeklyDigestEmailHTML(name: string, digest: WeeklyDigest): stri
       ${standardButton({ href: 'https://promptandpause.com/dashboard/archive', label: 'View Full Archive' })}
     </div>
     
-    <p style="color: ${TEXT_GRAY}; font-size: 15px; line-height: 1.8; margin: 32px 0 0 0; text-align: center;">
-      Keep up the great work! 🌟
-    </p>
+    ${paragraph('Keep up the great work!', { align: 'center' })}
   `
 
   return buildBaseEmail({
@@ -820,32 +828,28 @@ function generateWeeklyDigestEmailHTML(name: string, digest: WeeklyDigest): stri
  */
 function generateSubscriptionConfirmationHTML(name: string, planName: string): string {
   const bodyHTML = `
-    <h1 style="color: ${PRIMARY_ACCENT}; font-size: 32px; margin: 0 0 24px 0; font-weight: 600; text-align: center;">🎉 Welcome to Premium!</h1>
+    ${h1('Welcome to Premium')}
     
-    <p style="color: ${TEXT_GRAY}; font-size: 16px; line-height: 1.8; margin: 0 0 16px 0; text-align: center;">Hi ${name},</p>
+    ${paragraph(`Hi ${name},`, { align: 'center' })}
     
-    <p style="color: ${TEXT_GRAY}; font-size: 16px; line-height: 1.8; margin: 0 0 32px 0;">
-      Thank you for upgrading to ${planName}! Your subscription is now active, and you have full access to all premium features.
-    </p>
+    ${paragraph(`Thank you for upgrading to ${planName}. Your subscription is now active, and you have full access to all premium features.`)}
     
-    <div style="background: ${BG_LIGHT}; padding: 24px; margin: 32px 0; border-radius: 12px; border-left: 4px solid ${PRIMARY_ACCENT};">
-      <h3 style="margin-top: 0; color: ${TEXT_DARK}; font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Premium Features Unlocked:</h3>
-      <ul style="color: ${TEXT_GRAY}; line-height: 2; margin: 16px 0 0 0; padding-left: 20px; font-size: 15px;">
-        <li>Unlimited AI-generated personalized prompts</li>
-        <li>Advanced mood tracking and insights</li>
-        <li>Export your reflections</li>
-        <li>Priority email support</li>
+    ${infoBox(`
+      ${h3('Premium Features Unlocked', { align: 'left' })}
+      <ul style="color: ${TEXT_GRAY}; line-height: 1.9; margin: 16px 0 0 0; padding-left: 20px; font-size: 15px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <li style="margin-bottom: 8px;">Unlimited AI-generated personalized prompts</li>
+        <li style="margin-bottom: 8px;">Advanced mood tracking and insights</li>
+        <li style="margin-bottom: 8px;">Export your reflections</li>
+        <li style="margin-bottom: 8px;">Priority email support</li>
         <li>Weekly digest reports</li>
       </ul>
-    </div>
+    `)}
     
     <div style="text-align: center; margin: 40px 0;">
       ${standardButton({ href: 'https://promptandpause.com/dashboard', label: 'Explore Premium Features' })}
     </div>
     
-    <p style="color: ${TEXT_GRAY}; font-size: 15px; line-height: 1.8; margin: 32px 0 0 0; text-align: center;">
-      You can manage your subscription anytime from your <a href="https://promptandpause.com/dashboard/settings" target="_blank" rel="noopener noreferrer" style="color: ${PRIMARY_ACCENT}; text-decoration: none;">settings page</a>.
-    </p>
+    ${paragraph(`You can manage your subscription anytime from your <a href="https://promptandpause.com/dashboard/settings" target="_blank" rel="noopener noreferrer" style="color: ${PRIMARY_ACCENT}; text-decoration: none; font-weight: 500;">settings page</a>.`, { align: 'center', fontSize: '14px' })}
   `
 
   return buildBaseEmail({
@@ -860,14 +864,11 @@ function generateSubscriptionConfirmationHTML(name: string, planName: string): s
  */
 function generateTrialExpiredEmailHTML(name: string): string {
   const bodyHTML = `
-    ${h1('Your 7-Day Premium Trial Has Ended', { align: 'center' })}
+    ${h1('Your 7-Day Premium Trial Has Ended')}
     
-    ${paragraph(`Hi ${name},`, { align: 'left' })}
+    ${paragraph(`Hi ${name},`)}
     
-    ${paragraph(
-      'Your 7-day premium trial of Prompt & Pause has come to an end. We hope you enjoyed exploring all the premium features!',
-      { align: 'left' }
-    )}
+    ${paragraph('Your 7-day premium trial of Prompt & Pause has come to an end. We hope you enjoyed exploring all the premium features.')}
     
     ${infoBox(`
       ${h3('What happens now?', { align: 'left', color: TEXT_DARK })}
@@ -875,7 +876,7 @@ function generateTrialExpiredEmailHTML(name: string): string {
         'You\'ve been moved to our <strong>Free tier</strong>, which still gives you access to core features:',
         { align: 'left', color: TEXT_GRAY }
       )}
-      <ul style="color: ${TEXT_GRAY}; line-height: 1.8; margin: 16px 0 0 0; padding-left: 20px; font-size: 15px; font-family: 'trebuchet ms', geneva;">
+      <ul style="color: ${TEXT_GRAY}; line-height: 1.8; margin: 16px 0 0 0; padding-left: 20px; font-size: 15px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
         <li style="margin-bottom: 8px;">3 personalized prompts per week</li>
         <li style="margin-bottom: 8px;">Basic mood tracking</li>
         <li style="margin-bottom: 8px;">Access to last 50 reflections</li>
@@ -883,21 +884,18 @@ function generateTrialExpiredEmailHTML(name: string): string {
       </ul>
     `)}
     
-    ${paragraph(
-      'Want to continue enjoying daily prompts, unlimited archive access, weekly insights, and more?',
-      { align: 'center', fontSize: '16px' }
-    )}
+    ${paragraph('Want to continue enjoying daily prompts, unlimited archive access, weekly insights, and more?', { align: 'center' })}
     
     <div style="text-align: center; margin: 40px 0;">
       ${ctaButton('Upgrade to Premium', `${APP_URL}/pricing`)}
     </div>
     
-    <!-- Premium Features Reminder -->
+    <!-- Premium Features Card -->
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 32px 0;">
       <tr>
-        <td style="background: ${BG_LIGHT}; padding: 24px; border-radius: 12px; border-left: 4px solid ${PRIMARY_ACCENT};">
-          ${h3('Premium Features You\'ll Unlock:', { align: 'left', color: PRIMARY_ACCENT })}
-          <ul style="color: ${TEXT_GRAY}; line-height: 2; margin: 16px 0 0 0; padding-left: 20px; font-size: 15px; font-family: 'trebuchet ms', geneva;">
+        <td style="background: linear-gradient(135deg, ${BG_LIGHT} 0%, ${BG_WHITE} 100%); padding: 28px; border-radius: 16px; border-left: 3px solid ${PRIMARY_ACCENT}; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);">
+          ${h3('Premium Features You\'ll Unlock', { align: 'left' })}
+          <ul style="color: ${TEXT_GRAY}; line-height: 1.9; margin: 16px 0 0 0; padding-left: 20px; font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
             <li style="margin-bottom: 8px;"><strong>Daily personalized prompts</strong> (7 days/week)</li>
             <li style="margin-bottom: 8px;"><strong>Unlimited reflection archive</strong></li>
             <li style="margin-bottom: 8px;"><strong>Weekly AI-generated insights</strong></li>
@@ -910,11 +908,11 @@ function generateTrialExpiredEmailHTML(name: string): string {
           <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin-top: 24px;">
             <tr>
               <td style="text-align: center; padding: 16px 0; border-top: 1px solid ${BORDER_COLOR};">
-                <p style="margin: 0; color: ${TEXT_DARK}; font-size: 18px; font-weight: 600; font-family: Rubik, sans-serif;">
-                  Only £12/month or £99/year
+                <p style="margin: 0; color: ${TEXT_DARK}; font-size: 18px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                  Only \u00a312/month or \u00a399/year
                 </p>
-                <p style="margin: 4px 0 0 0; color: ${PRIMARY_ACCENT}; font-size: 14px; font-family: 'trebuchet ms', geneva;">
-                  Save £45 with annual plan
+                <p style="margin: 4px 0 0 0; color: ${PRIMARY_ACCENT}; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                  Save \u00a345 with annual plan
                 </p>
               </td>
             </tr>
@@ -923,15 +921,9 @@ function generateTrialExpiredEmailHTML(name: string): string {
       </tr>
     </table>
     
-    ${paragraph(
-      'You can continue using Prompt & Pause with the free tier, or upgrade anytime from your dashboard settings.',
-      { align: 'center', fontSize: '14px', color: TEXT_MUTED }
-    )}
+    ${paragraph('You can continue using Prompt & Pause with the free tier, or upgrade anytime from your dashboard settings.', { align: 'center', fontSize: '14px', color: TEXT_MUTED })}
     
-    ${paragraph(
-      'Thank you for trying Prompt & Pause Premium. We hope to see you back soon! 🌟',
-      { align: 'center', fontSize: '15px' }
-    )}
+    ${paragraph('Thank you for trying Prompt & Pause Premium. We hope to see you back soon.', { align: 'center' })}
   `
 
   return contentSection(bodyHTML)
@@ -942,31 +934,25 @@ function generateTrialExpiredEmailHTML(name: string): string {
  */
 function generateSubscriptionCancellationHTML(name: string, planName: string): string {
   const bodyHTML = `
-    <h1 style="color: ${TEXT_DARK}; font-size: 28px; margin: 0 0 24px 0; font-weight: 600; text-align: center;">Subscription Cancelled</h1>
+    ${h1('Subscription Cancelled', { color: TEXT_DARK })}
     
-    <p style="color: ${TEXT_GRAY}; font-size: 16px; line-height: 1.8; margin: 0 0 16px 0;">Hi ${name},</p>
+    ${paragraph(`Hi ${name},`)}
     
-    <p style="color: ${TEXT_GRAY}; font-size: 16px; line-height: 1.8; margin: 0 0 32px 0;">
-      We've received your request to cancel your ${planName} subscription. We're sorry to see you go!
-    </p>
+    ${paragraph(`We've received your request to cancel your ${planName} subscription. We're sorry to see you go.`)}
     
-    <div style="background: ${BG_LIGHT}; padding: 24px; margin: 32px 0; border-left: 4px solid ${PRIMARY_ACCENT}; border-radius: 8px;">
-      <p style="margin: 0; color: ${TEXT_GRAY}; font-size: 16px; line-height: 1.8;">
+    ${infoBox(`
+      <p style="margin: 0; color: ${TEXT_GRAY}; font-size: 15px; line-height: 1.7; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
         <strong style="color: ${TEXT_DARK}; font-weight: 600;">Your premium access will continue until the end of your current billing period.</strong> After that, you'll be switched to our free tier, but all your reflections and data will remain safe.
       </p>
-    </div>
+    `)}
     
-    <p style="color: ${TEXT_GRAY}; font-size: 16px; line-height: 1.8; margin: 32px 0;">
-      If you change your mind, you can resubscribe anytime from your settings page. We'd love to have you back!
-    </p>
+    ${paragraph('If you change your mind, you can resubscribe anytime from your settings page. We\'d love to have you back.')}
     
     <div style="text-align: center; margin: 40px 0;">
       ${standardButton({ href: 'https://promptandpause.com/dashboard/settings', label: 'View Account Settings' })}
     </div>
     
-    <p style="color: ${TEXT_GRAY}; font-size: 15px; line-height: 1.8; margin: 32px 0 0 0; text-align: center;">
-      We'd love to hear your feedback. Reply to this email to let us know how we can improve.
-    </p>
+    ${paragraph('We\'d love to hear your feedback. Reply to this email to let us know how we can improve.', { align: 'center', fontSize: '14px', color: TEXT_MUTED })}
   `
 
   return buildBaseEmail({
@@ -981,59 +967,45 @@ function generateSubscriptionCancellationHTML(name: string, planName: string): s
  */
 function generateDataExportEmailHTML(name: string): string {
   const bodyHTML = `
-    <h1 style="color: ${PRIMARY_ACCENT}; font-size: 32px; margin: 0 0 24px 0; font-weight: 600; text-align: center;">Your Data Export is Ready 📦</h1>
+    ${h1('Your Data Export is Ready')}
     
-    <p style="color: ${TEXT_GRAY}; font-size: 16px; line-height: 1.8; margin: 0 0 16px 0;">
-      Hi ${name},
-    </p>
+    ${paragraph(`Hi ${name},`)}
     
-    <p style="color: ${TEXT_GRAY}; font-size: 16px; line-height: 1.8; margin: 0 0 32px 0;">
-      We've compiled all your data from ${APP_NAME} into a comprehensive PDF document. You'll find it attached to this email.
-    </p>
+    ${paragraph(`We've compiled all your data from ${APP_NAME} into a comprehensive PDF document. You'll find it attached to this email.`)}
     
-    <div style="background: ${BG_LIGHT}; padding: 24px; margin: 32px 0; border-left: 4px solid ${PRIMARY_ACCENT}; border-radius: 8px;">
-      <h3 style="margin-top: 0; color: ${TEXT_DARK}; font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">What's Included:</h3>
-      <ul style="color: ${TEXT_GRAY}; line-height: 1.8; margin: 16px 0 0 0; padding-left: 20px; font-size: 15px;">
+    ${infoBox(`
+      ${h3('What\'s Included', { align: 'left' })}
+      <ul style="color: ${TEXT_GRAY}; line-height: 1.8; margin: 16px 0 0 0; padding-left: 20px; font-size: 15px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
         <li style="margin-bottom: 8px;">Your profile information</li>
         <li style="margin-bottom: 8px;">All your reflections and journal entries</li>
         <li style="margin-bottom: 8px;">Mood tracking data</li>
         <li style="margin-bottom: 8px;">Account preferences and settings</li>
         <li>Usage statistics</li>
       </ul>
-    </div>
+    `)}
     
-    <div style="background: #FEF3C7; border-left: 4px solid #F59E0B; padding: 16px 20px; margin: 32px 0; border-radius: 0 8px 8px 0;">
-      <p style="margin: 0; color: #78350F; font-size: 14px; line-height: 1.6;">
-        <strong style="font-weight: 600;">⚠️ Important:</strong> This file contains sensitive personal information. Please store it securely and don't share it with anyone.
-      </p>
-    </div>
+    <!-- Warning box -->
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 24px 0;">
+      <tr>
+        <td style="background: #fffbeb; border-left: 3px solid #f59e0b; padding: 16px 20px; border-radius: 0 8px 8px 0;">
+          <p style="margin: 0; color: #92400e; font-size: 14px; line-height: 1.6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <strong style="font-weight: 600;">Important:</strong> This file contains sensitive personal information. Please store it securely and don't share it with anyone.
+          </p>
+        </td>
+      </tr>
+    </table>
     
-    <p style="color: ${TEXT_GRAY}; font-size: 16px; line-height: 1.8; margin: 32px 0;">
-      If you have any questions about your data or need assistance, please don't hesitate to reply to this email.
-    </p>
+    ${paragraph('If you have any questions about your data or need assistance, please don\'t hesitate to reply to this email.')}
     
     <div style="text-align: center; margin: 40px 0;">
-      ${standardButton({ href: 'https://promptandpause.com/dashboard/settings', label: 'Go to Dashboard' })}
+      ${standardButton({ href: 'https://promptandpause.com/dashboard', label: 'Go to Dashboard' })}
     </div>
-  `
-
-  const customFooter = `
-    <p style="color: ${TEXT_GRAY}; font-size: 13px; margin: 0 0 8px 0;">
-      ${APP_NAME} • Your data, your privacy
-    </p>
-    <p style="color: ${TEXT_MUTED}; font-size: 12px; margin: 0;">
-      © 2026 ${APP_NAME}. All rights reserved.
-    </p>
-    <p style="color: ${TEXT_MUTED}; font-size: 12px; margin: 8px 0 0 0;">
-      Questions? Contact us at <a href="mailto:support@promptandpause.com" style="color: ${PRIMARY_ACCENT}; text-decoration: none;">support@promptandpause.com</a>
-    </p>
   `
 
   return buildBaseEmail({
     preheader: 'Your data export PDF is attached to this email',
     title: 'Your Data Export',
-    bodyHTML,
-    footerHTML: customFooter
+    bodyHTML
   })
 }
 
@@ -1616,7 +1588,7 @@ export async function sendAdminCredentialsEmail(
     }
 
     const roleDisplay = role === 'super_admin' ? 'Super Admin' : role === 'admin' ? 'Admin' : 'Employee'
-    const loginUrl = `${APP_URL}/auth/signin`
+    const loginUrl = `${APP_URL}/login`
 
     const html = emailWrapper(`
       ${h1('Welcome to the Team! 🎉')}

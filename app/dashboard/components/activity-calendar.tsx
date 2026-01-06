@@ -51,7 +51,7 @@ export default function ActivityCalendar() {
 
     loadActivityData()
     return () => { isMounted = false }
-  }, [])
+  }, [supabase])
 
   const getIntensityColor = (count: number) => {
     if (count === 0) return "bg-gray-100/50"

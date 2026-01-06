@@ -328,7 +328,7 @@ function CTASection() {
         </h2>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <a
-              href="/auth/signup"
+              href="/auth"
               className="px-10 py-5 bg-white text-black border-2 border-white text-base font-medium tracking-wide transition-all duration-300 hover:bg-transparent hover:text-white cursor-pointer text-center"
             >
               START FREE

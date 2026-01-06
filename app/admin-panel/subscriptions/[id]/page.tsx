@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -73,11 +73,7 @@ export default function SubscriptionDetailPage() {
   const [newCycle, setNewCycle] = useState('')
   const [giftTrialMonths, setGiftTrialMonths] = useState<number>(1)
 
-  useEffect(() => {
-    loadSubscription()
-  }, [userId])
-
-  async function loadSubscription() {
+  const loadSubscription = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch(`/api/admin/subscriptions/${userId}`)
@@ -93,7 +89,11 @@ export default function SubscriptionDetailPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [userId])
+
+  useEffect(() => {
+    loadSubscription()
+  }, [loadSubscription])
 
   async function handleUpdate() {
     if (!subscription) return

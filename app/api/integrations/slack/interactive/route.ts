@@ -92,7 +92,7 @@ async function handleBlockActions(payload: any) {
     return NextResponse.json({ success: true })
   }
 
-  const promptText = action.value || 'What emotion am I feeling right now, and what might be causing it?'
+  const promptText = action.value || 'Name the emotion that feels most present right now?'
   return NextResponse.json({
     response_action: 'push',
     view: {

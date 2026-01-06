@@ -97,11 +97,10 @@ export async function POST(request: NextRequest) {
     } catch (error) {
       // Continue without AI insights if generation fails
       insights = {
-        summary: 'Unable to generate AI insights at this time.',
-        keyInsights: [],
-        recommendations: [],
-        moodAnalysis: '',
-        growthAreas: [],
+        headline: 'Unable to generate insights at this time.',
+        observations: [],
+        reflection: '',
+        question: '',
         provider: 'none',
         model: 'none'
       }

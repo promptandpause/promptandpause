@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -50,11 +50,7 @@ export default function ActivityLogsPage() {
   const [totalPages, setTotalPages] = useState(1)
   const limit = 50
 
-  useEffect(() => {
-    loadLogs()
-  }, [currentPage, actionType])
-
-  async function loadLogs() {
+  const loadLogs = useCallback(async () => {
     try {
       setLoading(true)
       const params = new URLSearchParams({
@@ -76,7 +72,11 @@ export default function ActivityLogsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [actionType, currentPage, limit])
+
+  useEffect(() => {
+    loadLogs()
+  }, [loadLogs])
 
   async function handleSearch() {
     if (!search.trim()) {

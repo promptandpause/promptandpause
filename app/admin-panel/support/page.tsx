@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -50,11 +50,10 @@ export default function SupportTicketsPage() {
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
 
-  useEffect(() => {
-    fetchData()
-  }, [page, statusFilter, priorityFilter])
+  const searchRef = useRef(search)
+  searchRef.current = search
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true)
     try {
       const statsRes = await fetch('/api/admin/support/stats')
@@ -67,7 +66,7 @@ export default function SupportTicketsPage() {
         page: page.toString(),
         ...(statusFilter && { status: statusFilter }),
         ...(priorityFilter && { priority: priorityFilter }),
-        ...(search && { search }),
+        ...(searchRef.current && { search: searchRef.current }),
       })
 
       const ticketsRes = await fetch(`/api/admin/support?${params}`)
@@ -80,7 +79,11 @@ export default function SupportTicketsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [page, priorityFilter, statusFilter])
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
 
   const handleSearch = () => {
     setPage(1)

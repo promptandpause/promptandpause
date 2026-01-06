@@ -3,7 +3,8 @@ import { createClient } from '@/lib/supabase/server'
 import { generatePrompt, selectFocusArea } from '@/lib/services/aiService'
 import { getUserPreferences, getUserTier, listFocusAreas } from '@/lib/services/userService'
 import { reflectionServiceServer } from '@/lib/services/reflectionServiceServer'
-import { GeneratePromptContext } from '@/lib/types/reflection'
+import { calculateReflectionStreakServer } from '@/lib/services/analyticsServiceServer'
+import { GeneratePromptContext, PromptType } from '@/lib/types/reflection'
 import { rateLimit } from '@/lib/utils/rateLimit'
 
 /**
@@ -60,6 +61,7 @@ export async function POST(request: NextRequest) {
           prompt_text: existingPrompt.prompt_text,
           ai_provider: existingPrompt.ai_provider,
           ai_model: existingPrompt.ai_model,
+          prompt_type: existingPrompt.personalization_context?.prompt_type || undefined,
           date_generated: existingPrompt.date_generated,
           message: 'Using existing prompt for today',
         },
@@ -83,6 +85,30 @@ export async function POST(request: NextRequest) {
 
     const { tier } = tierResult
     const { areas: allFocusAreas } = allAreasResult
+
+    const [currentStreak, recentPromptsResult] = await Promise.all([
+      calculateReflectionStreakServer(user.id),
+      supabase
+        .from('prompts_history')
+        .select('personalization_context')
+        .eq('user_id', user.id)
+        .order('date_generated', { ascending: false })
+        .limit(12),
+    ])
+
+    const validPromptTypes = new Set<PromptType>([
+      'noticing',
+      'naming',
+      'contrast',
+      'perspective',
+      'closure',
+      'grounding',
+    ])
+    const isPromptType = (value: any): value is PromptType => validPromptTypes.has(value)
+
+    const recentPromptTypes: PromptType[] = (recentPromptsResult.data || [])
+      .map((p: any) => p?.personalization_context?.prompt_type)
+      .filter(isPromptType)
     
     // Get list of all focus areas for context
     const focusAreaNames = allFocusAreas.map((a) => a.name)
@@ -103,9 +129,11 @@ export async function POST(request: NextRequest) {
         .filter((tag, index, self) => self.indexOf(tag) === index)
         .slice(0, 5),
       user_reason: preferencesResult.preferences?.reason || undefined,
+      current_streak: currentStreak,
+      recent_prompt_types: recentPromptTypes,
     }
     // Generate prompt using AI service
-    const { prompt, provider, model } = await generatePrompt(context)
+    const { prompt, provider, model, prompt_type } = await generatePrompt(context)
 
     // Save prompt to database
     const { data: savedPrompt, error: saveError } = await supabase
@@ -116,7 +144,7 @@ export async function POST(request: NextRequest) {
         ai_provider: provider,
         ai_model: model,
         focus_area_used: selectedFocusArea,
-        personalization_context: context,
+        personalization_context: { ...context, prompt_type },
         date_generated: today,
         used: false,
       })
@@ -131,6 +159,7 @@ export async function POST(request: NextRequest) {
           prompt_text: prompt,
           ai_provider: provider,
           ai_model: model,
+          prompt_type: prompt_type || undefined,
           focus_area_used: selectedFocusArea,
           date_generated: today,
           warning: 'Prompt generated but not saved to database',
@@ -170,6 +199,7 @@ export async function POST(request: NextRequest) {
           ai_provider: savedPrompt.ai_provider,
           ai_model: savedPrompt.ai_model,
           focus_area_used: savedPrompt.focus_area_used,
+          prompt_type: savedPrompt.personalization_context?.prompt_type || undefined,
           date_generated: savedPrompt.date_generated,
         },
       }, { headers })

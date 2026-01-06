@@ -10,6 +10,8 @@ export type DeliveryMethod = "email" | "slack" | "both"
 export type PromptFrequency = "daily" | "weekdays" | "every-other-day" | "twice-weekly" | "weekly" | "custom"
 export type AIProvider = "gemini" | "openai" | "groq"
 
+export type PromptType = "noticing" | "naming" | "contrast" | "perspective" | "closure" | "grounding"
+
 // Focus area data types
 export interface FocusArea {
   id: string
@@ -120,6 +122,7 @@ export interface PromptHistory {
   provider?: string // New field: tracks which provider generated it
   model?: string // New field: specific model used (e.g., deepseek/deepseek-chat-v3.1:free)
   focus_area_used?: string // New field: focus area prioritized for this prompt
+  prompt_type?: PromptType
   personalization_context: Record<string, any> | null
   date_generated: string
   used: boolean
@@ -133,6 +136,8 @@ export interface GeneratePromptContext {
   recent_moods: MoodType[]
   recent_topics: string[]
   user_reason?: string
+  current_streak?: number
+  recent_prompt_types?: PromptType[]
 }
 
 export interface GeneratePromptResult {
@@ -140,6 +145,7 @@ export interface GeneratePromptResult {
   provider: string // e.g., "openai", "gemini", "openrouter"
   model: string // specific model used
   focus_area_used?: string // focus area that was prioritized
+  prompt_type?: PromptType
 }
 
 // =============================================================================
@@ -199,6 +205,23 @@ export interface WeeklyDigest {
     prompt: string
     snippet: string
   }[]
+  signals?: {
+    daysWithEntries: number
+    daysSkipped: number
+    moodVariance: number | null
+    moodMostCommon: MoodType | null
+    reflectionLength: {
+      shortCount: number
+      longCount: number
+      average: number
+      median: number
+      firstHalfAverage: number
+      secondHalfAverage: number
+    }
+    repeatedWords: { word: string; count: number }[]
+    promptTypeDepth: { promptType: string; averageWordCount: number; count: number }[]
+    selectedFocusAreas: string[]
+  }
 }
 
 export interface DailyActivity {

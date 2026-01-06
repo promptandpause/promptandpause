@@ -109,3 +109,40 @@ export function getRandomFocusAreas(count: number = 1): FreemiumFocusArea[] {
   const shuffled = [...FREEMIUM_FOCUS_AREAS].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, Math.min(count, FREEMIUM_FOCUS_AREAS.length));
 }
+
+export const CORE_FOCUS_AREA_TAXONOMY: Array<{
+  name: string
+  description: string
+  examplePrompt: string
+}> = [
+  {
+    name: 'Clarity',
+    description: 'For mental fog, decisions, and overload. Sorting, naming, distinguishing.',
+    examplePrompt: "What’s one thing that feels unclear right now — and one thing that doesn’t?",
+  },
+  {
+    name: 'Emotional Balance',
+    description: 'For regulating feelings without fixing them. Grounding, normalising, containing.',
+    examplePrompt: 'What emotion has been asking for your attention lately?',
+  },
+  {
+    name: 'Work & Responsibility',
+    description: 'For stress, pressure, boundaries, and meaning at work. Perspective and realism.',
+    examplePrompt: 'What part of your day took more energy than you expected?',
+  },
+  {
+    name: 'Relationships',
+    description: 'For family, partners, friends, and social tension. Empathy and boundaries.',
+    examplePrompt: 'Where did you hold back in a conversation this week?',
+  },
+  {
+    name: 'Change & Uncertainty',
+    description: 'For transitions, waiting periods, and unsettled seasons. Patience and orientation.',
+    examplePrompt: 'What feels unfinished right now — and how does that sit with you?',
+  },
+  {
+    name: 'Grounding',
+    description: 'For low moods, skipped days, or instability. Present-focused and stabilising.',
+    examplePrompt: 'Right now, what feels solid beneath you?',
+  },
+]

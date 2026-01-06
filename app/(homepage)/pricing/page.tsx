@@ -216,7 +216,7 @@ function PricingCardsSection() {
             </div>
 
             <a
-              href="/auth/signup"
+              href="/auth"
               className="block w-full px-10 py-5 border-2 border-black bg-transparent text-black text-base font-medium tracking-wide transition-all duration-300 hover:bg-black hover:text-white cursor-pointer text-center"
             >
               START FREE
@@ -722,7 +722,7 @@ function FinalCTASection() {
         </p>
         <div className="flex flex-col sm:flex-row gap-6 justify-center">
           <a
-            href="/auth/signup"
+            href="/auth"
             className="px-10 py-5 bg-black text-white border-2 border-black text-base font-medium tracking-wide transition-all duration-300 hover:bg-neutral-800 cursor-pointer text-center"
           >
             START FREE

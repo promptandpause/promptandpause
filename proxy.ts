@@ -231,9 +231,7 @@ export default async function middleware(request: NextRequest) {
   const publicPaths = [
     '/',
     '/homepage',
-    '/auth/signin',
-    '/auth/signup',
-    '/auth/forgot-password',
+    '/login',
     '/auth/verify',
     '/auth/callback', // OAuth callback
   ]
@@ -320,7 +318,7 @@ export default async function middleware(request: NextRequest) {
   // Protect dashboard routes - require authentication AND completed onboarding
   if (request.nextUrl.pathname.startsWith('/dashboard')) {
     if (!user) {
-      const redirectUrl = new URL('/auth/signin', request.url)
+      const redirectUrl = new URL('/login', request.url)
       redirectUrl.searchParams.set('redirect', request.nextUrl.pathname)
       return NextResponse.redirect(redirectUrl)
     }
@@ -343,7 +341,7 @@ export default async function middleware(request: NextRequest) {
   // Protect onboarding route - require authentication and email verification
   if (request.nextUrl.pathname === '/onboarding') {
     if (!user) {
-      return NextResponse.redirect(new URL('/auth/signin', request.url))
+      return NextResponse.redirect(new URL('/login', request.url))
     }
 
     // Check if email is verified (only for email/password users)
@@ -368,8 +366,8 @@ export default async function middleware(request: NextRequest) {
     return response
   }
 
-  // Redirect authenticated users away from auth pages
-  if (request.nextUrl.pathname.startsWith('/auth') && user) {
+  // Redirect authenticated users away from auth landing pages
+  if ((request.nextUrl.pathname === '/auth' || request.nextUrl.pathname === '/login') && user) {
     // Check if they've completed onboarding
     const { data: preferences } = await supabase
       .from('user_preferences')

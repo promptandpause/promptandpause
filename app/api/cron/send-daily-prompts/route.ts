@@ -4,7 +4,7 @@ import { sendDailyPromptEmail } from '@/lib/services/emailService'
 import { sendDailyPromptToSlack } from '@/lib/services/slackService'
 import { generatePrompt } from '@/lib/services/aiService'
 import { sendPushNotifications, isPushConfigured } from '@/lib/services/pushService'
-import { GeneratePromptContext } from '@/lib/types/reflection'
+import { GeneratePromptContext, PromptType } from '@/lib/types/reflection'
 import crypto from 'crypto'
 
 /**
@@ -63,6 +63,41 @@ export async function POST(request: NextRequest) {
     const currentHour = now.getUTCHours()
     const currentMinute = now.getUTCMinutes()
     const today = now.toISOString().split('T')[0]
+
+    const FALLBACK_PROMPT_TEXT = 'Name the emotion that feels most present right now?'
+
+    const validPromptTypes = new Set<PromptType>([
+      'noticing',
+      'naming',
+      'contrast',
+      'perspective',
+      'closure',
+      'grounding',
+    ])
+    const isPromptType = (value: any): value is PromptType => validPromptTypes.has(value)
+
+    const calculateStreakFromDates = (dates: string[]): number => {
+      if (!dates || dates.length === 0) return 0
+      const dateSet = new Set(dates)
+
+      const todayDate = new Date()
+      let streak = 0
+
+      for (let i = 0; i < 365; i++) {
+        const checkDate = new Date(todayDate)
+        checkDate.setDate(todayDate.getDate() - i)
+        const dateStr = checkDate.toISOString().split('T')[0]
+
+        const hasReflection = dateSet.has(dateStr)
+        if (hasReflection) {
+          streak++
+        } else if (i > 0) {
+          break
+        }
+      }
+
+      return streak
+    }
 
     // Create initial cron job log entry
     const { data: cronLog, error: cronLogError } = await supabase
@@ -226,18 +261,34 @@ export async function POST(request: NextRequest) {
             .eq('id', existingPrompt.id)
             .single()
           
-          promptText = existingPromptData?.prompt_text || 'What emotion am I feeling right now, and what might be causing it?'
+          promptText = existingPromptData?.prompt_text || FALLBACK_PROMPT_TEXT
         } else {
           // Generate new prompt
           // Fetch recent reflections for context
           const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
           const { data: recentReflections } = await supabase
             .from('reflections')
-            .select('mood, tags')
+            .select('date, mood, tags')
             .eq('user_id', profile.id)
             .gte('date', thirtyDaysAgo)
             .order('date', { ascending: false })
-            .limit(10)
+            .limit(30)
+
+          const reflectionDates: string[] = (recentReflections || [])
+            .map((r: any) => r?.date)
+            .filter((d: any) => typeof d === 'string' && d.length > 0)
+          const currentStreak = calculateStreakFromDates(reflectionDates)
+
+          const { data: recentPrompts } = await supabase
+            .from('prompts_history')
+            .select('personalization_context')
+            .eq('user_id', profile.id)
+            .order('date_generated', { ascending: false })
+            .limit(12)
+
+          const recentPromptTypes: PromptType[] = (recentPrompts || [])
+            .map((p: any) => p?.personalization_context?.prompt_type)
+            .filter(isPromptType)
 
           const context: GeneratePromptContext = {
             focus_areas: userPrefs.focus_areas || [],
@@ -247,10 +298,12 @@ export async function POST(request: NextRequest) {
               .filter((tag, index, self) => self.indexOf(tag) === index)
               .slice(0, 5) || [],
             user_reason: userPrefs.reason || undefined,
+            current_streak: currentStreak,
+            recent_prompt_types: recentPromptTypes,
           }
 
           try {
-            const { prompt, provider, model } = await generatePrompt(context)
+            const { prompt, provider, model, prompt_type } = await generatePrompt(context)
             promptText = prompt
 
             // Save the generated prompt
@@ -261,13 +314,13 @@ export async function POST(request: NextRequest) {
                 prompt_text: promptText,
                 ai_provider: provider,
                 ai_model: model,
-                personalization_context: context,
+                personalization_context: { ...context, prompt_type },
                 date_generated: today,
                 used: false,
               })
           } catch (genError) {
             // Use fallback prompt
-            promptText = 'What emotion am I feeling right now, and what might be causing it?'
+            promptText = FALLBACK_PROMPT_TEXT
           }
         }
 

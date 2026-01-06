@@ -1,6 +1,6 @@
 'use client'
 
-import { use, useEffect, useState } from 'react'
+import { use, useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Card } from '@/components/ui/card'
@@ -57,11 +57,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
     language: ''
   })
 
-  useEffect(() => {
-    loadUser()
-  }, [id])
-
-  async function loadUser() {
+  const loadUser = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch(`/api/admin/users/${id}`)
@@ -80,7 +76,11 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
     } finally {
       setLoading(false)
     }
-  }
+  }, [id])
+
+  useEffect(() => {
+    loadUser()
+  }, [loadUser])
 
   async function handleSave() {
     try {

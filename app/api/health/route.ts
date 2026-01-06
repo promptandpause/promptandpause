@@ -541,71 +541,113 @@ async function checkMiddleware(): Promise<SystemStatus> {
 }
 
 /**
- * Check Cron Jobs (Daily Prompts)
+ * Check Cron Jobs via cron-job.org API
+ * Returns status for all 5 cron jobs
  */
-async function checkDailyCron(): Promise<SystemStatus> {
+async function checkCronJobs(): Promise<SystemStatus[]> {
   const startTime = Date.now()
-  try {
-    // Check if cron secret is configured
-    const cronSecret = process.env.CRON_SECRET
-    
-    if (!cronSecret) {
-      throw new Error('Cron secret not configured')
-    }
-
-    const responseTime = Date.now() - startTime
-
-    return {
-      name: 'Daily Prompts Cron',
-      status: 'operational',
-      responseTime,
+  const cronJobApiKey = process.env.CRONJOB_ORG_API_KEY
+  const cronSecret = process.env.CRON_SECRET
+  
+  // Define all cron jobs
+  const cronJobs = [
+    { name: 'Daily Prompts Cron', endpoint: 'send-daily-prompts' },
+    { name: 'Welcome Emails Cron', endpoint: 'send-welcome-emails' },
+    { name: 'Trial Expiry Check Cron', endpoint: 'check-trial-expiry' },
+    { name: 'Expire Trials Cron', endpoint: 'expire-trials' },
+    { name: 'Weekly Insights Cron', endpoint: 'regenerate-weekly-insights' },
+  ]
+  
+  // If no cron secret configured, all crons are down
+  if (!cronSecret) {
+    return cronJobs.map(job => ({
+      name: job.name,
+      status: 'down' as const,
+      responseTime: 0,
       lastChecked: new Date().toISOString(),
-      category: 'internal'
-    }
-  } catch (error) {
-    return {
-      name: 'Daily Prompts Cron',
-      status: 'down',
-      responseTime: Date.now() - startTime,
-      lastChecked: new Date().toISOString(),
-      error: error instanceof Error ? error.message : 'Unknown error',
-      category: 'internal'
+      error: 'Cron secret not configured',
+      category: 'internal' as const
+    }))
+  }
+  
+  // If cron-job.org API key is configured, check actual job status
+  if (cronJobApiKey) {
+    try {
+      const response = await fetch('https://api.cron-job.org/jobs', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${cronJobApiKey}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      
+      if (response.ok) {
+        const data = await response.json()
+        const jobs = data.jobs || []
+        const responseTime = Date.now() - startTime
+        
+        return cronJobs.map(cronJob => {
+          // Find matching job from cron-job.org by URL
+          const matchingJob = jobs.find((j: any) => 
+            j.url?.includes(cronJob.endpoint)
+          )
+          
+          if (matchingJob) {
+            // Check job status from cron-job.org
+            const isEnabled = matchingJob.enabled === true
+            const lastStatus = matchingJob.lastStatus
+            
+            let status: 'operational' | 'degraded' | 'down' = 'operational'
+            let error: string | undefined
+            
+            if (!isEnabled) {
+              status = 'down'
+              error = 'Job is disabled'
+            } else if (lastStatus === 1) {
+              status = 'operational'
+            } else if (lastStatus === 0) {
+              status = 'degraded'
+              error = 'Last execution had issues'
+            } else if (lastStatus === -1) {
+              status = 'down'
+              error = 'Last execution failed'
+            }
+            
+            return {
+              name: cronJob.name,
+              status,
+              responseTime,
+              lastChecked: new Date().toISOString(),
+              error,
+              category: 'internal' as const
+            }
+          }
+          
+          // Job not found in cron-job.org
+          return {
+            name: cronJob.name,
+            status: 'degraded' as const,
+            responseTime,
+            lastChecked: new Date().toISOString(),
+            error: 'Job not found in cron-job.org',
+            category: 'internal' as const
+          }
+        })
+      }
+    } catch (error) {
+      // Fall through to basic check if API fails
     }
   }
-}
-
-/**
- * Check Cron Jobs (Weekly Insights)
- */
-async function checkWeeklyCron(): Promise<SystemStatus> {
-  const startTime = Date.now()
-  try {
-    // Check if cron secret is configured
-    const cronSecret = process.env.CRON_SECRET
-    
-    if (!cronSecret) {
-      throw new Error('Cron secret not configured')
-    }
-
-    const responseTime = Date.now() - startTime
-
-    return {
-      name: 'Weekly Insights Cron',
-      status: 'operational',
-      responseTime,
-      lastChecked: new Date().toISOString(),
-      category: 'internal'
-    }
-  } catch (error) {
-    return {
-      name: 'Weekly Insights Cron',
-      status: 'down',
-      responseTime: Date.now() - startTime,
-      lastChecked: new Date().toISOString(),
-      error: error instanceof Error ? error.message : 'Unknown error',
-      category: 'internal'
-    }
-  }
+  
+  // Fallback: Just check if cron secret is configured (basic check)
+  const responseTime = Date.now() - startTime
+  return cronJobs.map(job => ({
+    name: job.name,
+    status: 'operational' as const,
+    responseTime,
+    lastChecked: new Date().toISOString(),
+    category: 'internal' as const
+  }))
 }
 
 /**
@@ -747,8 +789,7 @@ export async function GET() {
       api,
       middleware,
       dashboard,
-      dailyCron,
-      weeklyCron,
+      cronJobs,
     ] = await Promise.all([
       checkApplication(),
       checkSupabase(),
@@ -763,8 +804,7 @@ export async function GET() {
       checkAPIRoutes(),
       checkMiddleware(),
       checkDashboard(),
-      checkDailyCron(),
-      checkWeeklyCron(),
+      checkCronJobs(),
     ])
 
     const systems = [
@@ -781,8 +821,7 @@ export async function GET() {
       api,
       middleware,
       dashboard,
-      dailyCron,
-      weeklyCron,
+      ...cronJobs,
     ]
 
     // Reset tracking for operational systems

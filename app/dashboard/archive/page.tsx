@@ -55,54 +55,55 @@ function ArchivePageContent() {
   // Load reflections from Supabase
   useEffect(() => {
     let isMounted = true
-    loadReflections(isMounted)
-    return () => { isMounted = false }
-  }, [])
 
-  const loadReflections = async (isMounted: boolean) => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user || !isMounted) return
+    const loadReflections = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user || !isMounted) return
 
-      // Fetch reflections and stats in parallel
-      const [reflections, streak] = await Promise.all([
-        supabaseReflectionService.getAllReflections(),
-        calculateReflectionStreak(user.id)
-      ])
+        // Fetch reflections and stats in parallel
+        const [reflections, streak] = await Promise.all([
+          supabaseReflectionService.getAllReflections(),
+          calculateReflectionStreak(user.id)
+        ])
 
-      if (!isMounted) return
+        if (!isMounted) return
 
-      // For free users, limit to last 50 reflections (if archiveLimit is set)
-      const limitedReflections = tier === 'free' && reflections.length > 50
-        ? reflections.slice(0, 50)
-        : reflections
+        // For free users, limit to last 50 reflections (if archiveLimit is set)
+        const limitedReflections = tier === 'free' && reflections.length > 50
+          ? reflections.slice(0, 50)
+          : reflections
 
-      setArchivedReflections(limitedReflections)
-      setCurrentStreak(streak)
+        setArchivedReflections(limitedReflections)
+        setCurrentStreak(streak)
 
-      // Calculate most used tag
-      const tagCounts: Record<string, number> = {}
-      reflections.forEach(r => {
-        r.tags.forEach(tag => {
-          tagCounts[tag] = (tagCounts[tag] || 0) + 1
+        // Calculate most used tag
+        const tagCounts: Record<string, number> = {}
+        reflections.forEach(r => {
+          r.tags.forEach(tag => {
+            tagCounts[tag] = (tagCounts[tag] || 0) + 1
+          })
         })
-      })
-      const mostUsed = Object.entries(tagCounts).sort((a, b) => b[1] - a[1])[0]
-      if (mostUsed) {
-        setMostUsedTag(mostUsed[0])
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to load reflections. Please refresh the page.",
-        variant: "destructive",
-      })
-    } finally {
-      if (isMounted) {
-        setLoading(false)
+        const mostUsed = Object.entries(tagCounts).sort((a, b) => b[1] - a[1])[0]
+        if (mostUsed) {
+          setMostUsedTag(mostUsed[0])
+        }
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to load reflections. Please refresh the page.",
+          variant: "destructive",
+        })
+      } finally {
+        if (isMounted) {
+          setLoading(false)
+        }
       }
     }
-  }
+
+    loadReflections()
+    return () => { isMounted = false }
+  }, [supabase, tier, toast])
 
   const filteredReflections = archivedReflections.filter(item => {
     // For premium users, enable search functionality

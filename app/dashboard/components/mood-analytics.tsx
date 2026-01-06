@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { 
   BarChart3, 
@@ -87,11 +87,7 @@ export default function MoodAnalytics() {
   const [loading, setLoading] = useState(true)
   const [timeRange, setTimeRange] = useState(30)
 
-  useEffect(() => {
-    fetchMoodAnalytics()
-  }, [timeRange])
-
-  const fetchMoodAnalytics = async () => {
+  const fetchMoodAnalytics = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch(`/api/premium/mood-analytics?days=${timeRange}`)
@@ -109,7 +105,11 @@ export default function MoodAnalytics() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [timeRange])
+
+  useEffect(() => {
+    fetchMoodAnalytics()
+  }, [fetchMoodAnalytics])
 
   if (loading) {
     return (

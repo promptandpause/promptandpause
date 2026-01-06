@@ -74,8 +74,19 @@ const nextConfig = {
       },
     ]
   },
-  // Add empty turbopack config to silence warning about webpack config
-  turbopack: {},
+
+	async redirects() {
+	  return [
+		  { source: '/auth', destination: '/login', permanent: false },
+		  { source: '/auth/signin', destination: '/login', permanent: false },
+		  { source: '/auth/signup', destination: '/login', permanent: false },
+		  { source: '/auth/forgot-password', destination: '/login', permanent: false },
+	  ]
+	},
+  // Add turbopack config to set root to the promptandpause repo directory
+  turbopack: {
+    root: __dirname,
+  },
   
   webpack: (config, { isServer }) => {
     if (isServer) {

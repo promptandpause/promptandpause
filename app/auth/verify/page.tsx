@@ -1,187 +1,209 @@
 "use client"
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import dynamic from 'next/dynamic';
-import Link from "next/link";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { getSupabaseClient } from "@/lib/supabase/client";
 
-const DotLottieReact = dynamic(
-  () => import('@lottiefiles/dotlottie-react').then((mod) => mod.DotLottieReact),
-  { ssr: false }
-);
+import { useState, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Mail, ArrowLeft, Check } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
+import { getSupabaseClient } from "@/lib/supabase/client"
+import AuthShell from "@/components/auth/AuthShell"
+import NoSSR from "@/components/auth/NoSSR"
+import { Suspense } from "react"
 
-export default function VerifyPage() {
+function VerifyPageContent() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const supabase = getSupabaseClient()
   const { toast } = useToast()
-  const [showOptions, setShowOptions] = useState(false)
-  const [email, setEmail] = useState("");
-  const [verifying, setVerifying] = useState(true);
-  const [verified, setVerified] = useState(false);
-  const [isResending, setIsResending] = useState(false);
+  
+  const [otp, setOtp] = useState(["", "", "", "", "", ""])
+  const [email, setEmail] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [isVerified, setIsVerified] = useState(false)
 
-  // Check if user is already verified from URL params or session
   useEffect(() => {
-    async function checkVerification() {
-      const { data: { user } } = await supabase.auth.getUser()
-      
-      if (user && user.email_confirmed_at) {
-        setVerified(true)
-        toast({
-          title: "Email verified!",
-          description: "Your email has been verified successfully.",
-        })
-        // Redirect to onboarding after 2 seconds
-        setTimeout(() => router.push('/onboarding'), 2000)
-      } else {
-        setVerifying(false)
+    const emailParam = searchParams.get('email')
+    if (emailParam) {
+      setEmail(emailParam)
+    }
+  }, [searchParams])
+
+  const handleOtpChange = (index: number, value: string) => {
+    if (value.length <= 1 && /^\d*$/.test(value)) {
+      const newOtp = [...otp]
+      newOtp[index] = value
+      setOtp(newOtp)
+
+      // Auto-focus next input
+      if (value && index < 5) {
+        const nextInput = document.getElementById(`otp-${index + 1}`)
+        nextInput?.focus()
       }
     }
-    checkVerification()
-  }, [])
+  }
 
-  async function handleResendEmail(e: React.FormEvent) {
-    e.preventDefault();
+  const handleVerify = async (e: React.FormEvent) => {
+    e.preventDefault()
     
-    if (!email) {
+    const otpCode = otp.join("")
+    if (otpCode.length !== 6) {
       toast({
         title: "Error",
-        description: "Please enter your email address",
-        variant: "destructive",
+        description: "Please enter all 6 digits",
+        variant: "destructive"
       })
       return
     }
+
+    if (!email) {
+      toast({
+        title: "Error", 
+        description: "Email is required",
+        variant: "destructive"
+      })
+      return
+    }
+
+    setIsLoading(true)
     
     try {
-      setIsResending(true)
-      const { error } = await supabase.auth.resend({
-        type: 'signup',
-        email: email,
+      const { error } = await supabase.auth.verifyOtp({
+        email,
+        token: otpCode,
+        type: 'signup'
       })
-      
+
       if (error) throw error
-      
+
+      setIsVerified(true)
       toast({
-        title: "Email sent",
-        description: "We've resent the verification email. Please check your inbox.",
+        title: "Success! 🎉",
+        description: "Your email has been verified successfully.",
       })
+      
+      // Redirect to dashboard after 2 seconds
+      setTimeout(() => router.push('/onboarding'), 2000)
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message || "Failed to resend verification email",
-        variant: "destructive",
+        description: error.message || "Invalid verification code",
+        variant: "destructive"
       })
     } finally {
-      setIsResending(false)
+      setIsLoading(false)
     }
   }
-  return (
-    <main className="w-screen h-screen flex">
-      <div className="w-full lg:w-1/2 h-full flex items-center justify-center relative" style={{backgroundColor: '#F2F0EF'}}>
-        {/* Mobile-only logo */}
-        <Link href="/" className="absolute top-6 left-1/2 -translate-x-1/2 lg:hidden">
-          <Image
-            src="https://res.cloudinary.com/dh1rrfpmq/image/upload/v1735646356/prompt_pause-JRsbZR3dxCXndC8YMcyX6XU3XeT2Vw_vdvqfj.svg"
-            alt="Prompt & Pause"
-            width={140}
-            height={36}
-            className="h-9 w-auto"
-            priority
-          />
-        </Link>
-        
-        <div className="w-full max-w-sm space-y-6 px-4">
-          <div className="text-center">
-            <h1 className="text-lg font-medium tracking-tight">Verify Your Email</h1>
-            <p className="text-xs text-muted-foreground">
-              {verifying ? "Checking verification status..." : verified ? "Your email has been verified!" : "Click the link in your verification email"}
-            </p>
+
+  if (isVerified) {
+    return (
+      <AuthShell
+        heroEyebrow="Prompt & Pause"
+        heroTitle="Email Verified!"
+        heroSubtitle="Your account is ready to use"
+      >
+        <div className="w-full max-w-md text-center">
+          <div className="w-16 h-16 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Check className="w-8 h-8 text-white" />
           </div>
-          
-          {verifying ? (
-            <div className="text-center py-4">
-              <div className="animate-spin h-8 w-8 border-2 border-neutral-900 border-t-transparent rounded-full mx-auto mb-2"></div>
-              <p className="text-xs text-muted-foreground">Verifying...</p>
-            </div>
-          ) : verified ? (
-            <div className="text-center py-4">
-              <div className="h-16 w-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-2">
-                <svg className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <p className="text-sm text-green-700 mb-2">Email verified successfully!</p>
-              <p className="text-xs text-muted-foreground">Redirecting to onboarding...</p>
-            </div>
-          ) : (
-            <>
-              <div className="space-y-4">
-                <div className="text-center py-4 px-4 bg-muted/50 rounded">
-                  <p className="text-xs text-muted-foreground mb-2">
-                    We've sent you a verification email. Please check your inbox and click the verification link.
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Don't forget to check your spam folder if you don't see it.
-                  </p>
-                </div>
-                
-                <Button
-                  className="h-11 w-full rounded-none shadow-none bg-muted text-muted-foreground hover:bg-muted/80 transition-colors duration-200 ease flex items-center justify-center"
-                  type="button"
-                  aria-expanded={showOptions}
-                  onClick={() => setShowOptions(o => !o)}
-                >
-                  {showOptions ? "Hide" : "Show"} resend options
-                </Button>
-                
-                <div className={`overflow-hidden transition-all duration-300 ${showOptions ? 'max-h-52 opacity-100 mt-4' : 'max-h-0 opacity-0 pointer-events-none'}`}>
-                  <form onSubmit={handleResendEmail}>
-                    <input
-                      type="email"
-                      placeholder="Your Email"
-                      className="h-11 w-full bg-white border outline-none px-3 rounded shadow-sm focus:ring-2 mb-2 disabled:opacity-50"
-                      value={email}
-                      onChange={e => setEmail(e.target.value)}
-                      disabled={isResending}
-                      required
-                    />
-                    <Button 
-                      type="submit" 
-                      disabled={isResending}
-                      className="h-11 w-full rounded bg-neutral-900 text-neutral-50 hover:bg-neutral-800 transition-colors duration-200 ease mb-2 disabled:opacity-50"
-                    >
-                      {isResending ? (
-                        <div className="flex items-center gap-2">
-                          <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
-                          Sending...
-                        </div>
-                      ) : (
-                        "Resend Verification Email"
-                      )}
-                    </Button>
-                  </form>
-                </div>
-              </div>
-              
-              <p className="text-center text-xs text-muted-foreground">
-                Already verified?{' '}
-                <a href="/auth/signin" className="underline hover:text-neutral-900 transition-colors duration-200 ease">Back to Login</a>
-              </p>
-            </>
-          )}
+          <p className="text-white/70 mb-6">Redirecting you to get started...</p>
+          <Button
+            onClick={() => router.push('/onboarding')}
+            className="w-full bg-white/20 hover:bg-white/30 text-white border border-white/30 hover:border-white/40"
+          >
+            Get Started Now
+          </Button>
         </div>
+      </AuthShell>
+    )
+  }
+
+  return (
+    <AuthShell
+      heroEyebrow="Prompt & Pause"
+      heroTitle="Verify Your Email"
+      heroSubtitle="Enter the 6-digit code sent to your email"
+    >
+      <div className="w-full max-w-md">
+        <form onSubmit={handleVerify} className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="email" className="text-white/90">
+              Email Address
+            </Label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50 w-4 h-4" />
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
+                placeholder="your@email.com"
+                required
+                readOnly={!!searchParams.get('email')}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <Label className="text-white/90 text-center block">
+              Verification Code
+            </Label>
+            <div className="flex gap-2 justify-center">
+              {otp.map((_, index) => (
+                <Input
+                  key={index}
+                  id={`otp-${index}`}
+                  type="text"
+                  maxLength={1}
+                  inputMode="numeric"
+                  value={otp[index]}
+                  onChange={(e) => handleOtpChange(index, e.target.value)}
+                  className="w-12 h-12 text-center bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
+                  required
+                />
+              ))}
+            </div>
+          </div>
+
+          <Button
+            type="submit"
+            disabled={isLoading || otp.join("").length !== 6}
+            className="w-full bg-white/20 hover:bg-white/30 text-white border border-white/30 hover:border-white/40 disabled:opacity-50"
+          >
+            {isLoading ? "Verifying..." : "Verify Email"}
+          </Button>
+
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => router.push('/login')}
+            className="w-full bg-transparent border-white/20 text-white hover:bg-white/10"
+          >
+            Back to Sign In
+          </Button>
+        </form>
       </div>
-      <div className="hidden lg:flex lg:w-1/2 h-full items-center justify-center bg-white">
-        <DotLottieReact
-          src="https://lottie.host/2dcd8b98-5feb-4f95-baca-5552a6eb4b1f/s3mk2bKMoJ.lottie"
-          loop
-          autoplay
-          style={{ width: '80%', height: '80%' }}
-        />
-      </div>
-    </main>
-  );
+    </AuthShell>
+  )
+}
+
+export default function VerifyPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen relative flex flex-col items-center justify-center p-4 overflow-hidden bg-black">
+          <div className="absolute inset-0 bg-black/30" />
+          <div className="relative z-10 flex-1 flex items-center justify-center">
+            <div className="w-16 h-16 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full flex items-center justify-center">
+              <div className="animate-spin h-8 w-8 border-2 border-white border-t-transparent rounded-full" />
+            </div>
+          </div>
+        </div>
+      }
+    >
+      <VerifyPageContent />
+    </Suspense>
+  )
 }

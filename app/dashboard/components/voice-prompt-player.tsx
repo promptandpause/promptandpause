@@ -71,7 +71,14 @@ export default function VoicePromptPlayer({ promptText, userName }: VoicePromptP
     }
 
     return () => {
-      stopSpeech()
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel()
+      }
+      setIsPlaying(false)
+      setIsPaused(false)
+      setProgress(0)
+      setCurrentTime(0)
+      stopProgressTracking()
     }
   }, [])
 

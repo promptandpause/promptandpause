@@ -42,7 +42,7 @@ export default function QuickStats() {
 
     loadStats()
     return () => { isMounted = false }
-  }, [])
+  }, [supabase])
 
   const getTrendIcon = () => {
     if (moodTrend === 'improving') return <TrendingUp className="h-5 w-5 md:h-6 md:w-6 text-green-400" />

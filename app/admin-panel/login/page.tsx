@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -21,11 +21,7 @@ export default function AdminLoginPage() {
 
   const redirectPath = searchParams.get('redirect') || '/admin-panel'
 
-  useEffect(() => {
-    checkExistingAuth()
-  }, [])
-
-  async function checkExistingAuth() {
+  const checkExistingAuth = useCallback(async () => {
     try {
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
@@ -44,7 +40,11 @@ export default function AdminLoginPage() {
     } finally {
       setCheckingAuth(false)
     }
-  }
+  }, [redirectPath, router])
+
+  useEffect(() => {
+    checkExistingAuth()
+  }, [checkExistingAuth])
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()

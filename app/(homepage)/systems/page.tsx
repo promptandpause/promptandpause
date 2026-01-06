@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { CheckCircle2, AlertCircle, XCircle, Clock, Activity, ChevronDown, RefreshCw } from 'lucide-react'
 import { SystemRow } from './_components/SystemRow'
@@ -29,11 +29,17 @@ export default function SystemsPage() {
   const [lastManualRefresh, setLastManualRefresh] = useState<number>(0)
   const [cooldownRemaining, setCooldownRemaining] = useState<number>(0)
 
-  const fetchHealthStatus = async (isManualRefresh = false) => {
+  const lastManualRefreshRef = useRef(lastManualRefresh)
+
+  useEffect(() => {
+    lastManualRefreshRef.current = lastManualRefresh
+  }, [lastManualRefresh])
+
+  const fetchHealthStatus = useCallback(async (isManualRefresh = false) => {
     // Check cooldown for manual refresh
     if (isManualRefresh) {
       const now = Date.now()
-      const timeSinceLastRefresh = now - lastManualRefresh
+      const timeSinceLastRefresh = now - lastManualRefreshRef.current
       const cooldownMs = 3 * 60 * 1000 // 3 minutes
       
       if (timeSinceLastRefresh < cooldownMs) {
@@ -46,7 +52,9 @@ export default function SystemsPage() {
     try {
       if (isManualRefresh) {
         setRefreshing(true)
-        setLastManualRefresh(Date.now())
+        const refreshTime = Date.now()
+        lastManualRefreshRef.current = refreshTime
+        setLastManualRefresh(refreshTime)
         setCooldownRemaining(0)
       }
       
@@ -74,7 +82,7 @@ export default function SystemsPage() {
       setLoading(false)
       if (isManualRefresh) setRefreshing(false)
     }
-  }
+  }, [])
 
   useEffect(() => {
     fetchHealthStatus()
@@ -83,7 +91,7 @@ export default function SystemsPage() {
     const interval = setInterval(fetchHealthStatus, 300000)
     
     return () => clearInterval(interval)
-  }, [])
+  }, [fetchHealthStatus])
   
   // Cooldown timer effect
   useEffect(() => {

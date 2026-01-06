@@ -11,7 +11,7 @@ function Switch({
 }: React.ComponentProps<typeof SwitchPrimitive.Root>) {
   return (
     <>
-      {/* Mobile: ON/OFF Toggle */}
+      {/* Mobile: ON/OFF Toggle with enhanced animations */}
       <SwitchPrimitive.Root
         data-slot="switch"
         className={cn(
@@ -19,13 +19,14 @@ function Switch({
           'focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-1',
           'disabled:cursor-not-allowed disabled:opacity-50',
           'outline-none',
+          'active:scale-95 transition-transform duration-150',
           className,
         )}
         {...props}
       >
-        <div className="block overflow-hidden cursor-pointer border border-[#999999] rounded-[16px]">
+        <div className="block overflow-hidden cursor-pointer border border-[#999999] rounded-[16px] shadow-sm">
           <div className={cn(
-            'w-[200%] transition-[margin] duration-300 ease-in',
+            'w-[200%] transition-[margin] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]',
             'data-[state=checked]:ml-0 data-[state=unchecked]:ml-[-100%]',
           )}
           data-state={props.checked ? 'checked' : 'unchecked'}>
@@ -41,14 +42,15 @@ function Switch({
           className={cn(
             'w-[10px] h-[18px] mx-[4px] bg-white border border-[#271616] rounded-[12px]',
             'absolute top-1/2 -translate-y-1/2',
-            'transition-all duration-300 ease-in',
-            'data-[state=checked]:right-0',
-            'data-[state=unchecked]:right-[48px]',
+            'transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]',
+            'data-[state=checked]:right-0 data-[state=checked]:scale-110',
+            'data-[state=unchecked]:right-[48px] data-[state=unchecked]:scale-100',
+            'shadow-md',
           )}
         />
       </SwitchPrimitive.Root>
 
-      {/* Desktop: Simple Toggle */}
+      {/* Desktop: Simple Toggle with spring animation */}
       <SwitchPrimitive.Root
         data-slot="switch"
         className={cn(
@@ -62,6 +64,7 @@ function Switch({
           'focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-1',
           'disabled:cursor-not-allowed disabled:opacity-50',
           'outline-none',
+          'active:scale-[0.98] hover:shadow-md',
           className,
         )}
         {...props}
@@ -71,9 +74,10 @@ function Switch({
             'block rounded-full bg-white',
             'w-[24px] h-[24px]',
             'shadow-[0_2px_4px_rgba(0,0,0,0.2)]',
-            'transition-transform duration-200 ease-in-out',
-            'data-[state=checked]:translate-x-[38px]',
-            'data-[state=unchecked]:translate-x-0',
+            'transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]',
+            'data-[state=checked]:translate-x-[38px] data-[state=checked]:scale-105',
+            'data-[state=unchecked]:translate-x-0 data-[state=unchecked]:scale-100',
+            'hover:shadow-lg',
           )}
         />
       </SwitchPrimitive.Root>

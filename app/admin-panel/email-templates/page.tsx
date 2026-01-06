@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { EmailTemplateWithCustomization } from '@/lib/types/emailTemplate'
 import TemplateList from './components/TemplateList'
@@ -18,11 +18,7 @@ export default function EmailTemplatesPage() {
   const [previewHTML, setPreviewHTML] = useState('')
   const [previewSubject, setPreviewSubject] = useState('')
 
-  useEffect(() => {
-    loadTemplates()
-  }, [])
-
-  async function loadTemplates() {
+  const loadTemplates = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch('/api/admin/email-templates')
@@ -32,14 +28,19 @@ export default function EmailTemplatesPage() {
       setTemplates(data.templates)
       
       // Select first template by default
-      if (data.templates.length > 0 && !selectedTemplate) {
-        setSelectedTemplate(data.templates[0])
-      }
+      setSelectedTemplate((prev) => {
+        if (prev) return prev
+        return data.templates.length > 0 ? data.templates[0] : null
+      })
     } catch (error) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    loadTemplates()
+  }, [loadTemplates])
 
   async function handleTemplateSelect(template: EmailTemplateWithCustomization) {
     setSelectedTemplate(template)

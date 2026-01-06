@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
         prompt = todayPrompt.prompt_text
       } else {
         // Use a default prompt if none exists
-        prompt = "What emotion am I feeling right now, and what might be causing it?"
+        prompt = 'Name the emotion that feels most present right now?'
       }
     }
 
