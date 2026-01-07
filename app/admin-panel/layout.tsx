@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 import { getCurrentUser } from '@/lib/supabase/server'
 import { isAdminUser } from '@/lib/services/adminUserService'
 import AdminSidebar from './components/AdminSidebar'
@@ -17,9 +18,18 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
+  // Get current pathname to skip auth check for login page
+  const headersList = await headers()
+  const pathname = headersList.get('x-pathname') || ''
+
+  // Skip auth checks for login page - it has its own layout
+  if (pathname === '/admin-panel/login') {
+    return <>{children}</>
+  }
+
   // Get current user and session
   const supabase = await getCurrentUser()
-  
+
   if (!supabase) {
     redirect('/admin-panel/login')
   }
