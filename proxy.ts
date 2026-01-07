@@ -103,6 +103,9 @@ export default async function middleware(request: NextRequest) {
     },
   })
 
+  // Set x-pathname header for layouts to detect current route
+  response.headers.set('x-pathname', pathname)
+
   if (pathname.startsWith('/dashboard')) {
     // Set performance cookies for dashboard routes
     response.cookies.set('dashboard_loaded', 'true', {
@@ -180,6 +183,8 @@ export default async function middleware(request: NextRequest) {
               headers: request.headers,
             },
           })
+          // Preserve x-pathname header
+          response.headers.set('x-pathname', pathname)
           response.cookies.set({
             name,
             value,
@@ -197,6 +202,8 @@ export default async function middleware(request: NextRequest) {
               headers: request.headers,
             },
           })
+          // Preserve x-pathname header
+          response.headers.set('x-pathname', pathname)
           response.cookies.set({
             name,
             value: '',
