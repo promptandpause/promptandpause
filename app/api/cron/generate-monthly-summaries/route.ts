@@ -7,14 +7,15 @@ import { generateMonthlyReflectionSummaryServer, getPreviousMonthRange } from '@
  *
  * Runs monthly to generate a calm, one-page monthly summary for premium users.
  * Schedule is configured in vercel.json.
+ * Security: POST-only with Bearer token
  */
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
     const authHeader = request.headers.get('authorization')
-    const isValidCronRequest = authHeader === `Bearer ${process.env.CRON_SECRET}`
+    const cronSecret = process.env.CRON_SECRET
 
-    if (!isValidCronRequest) {
-      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
+    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+      return NextResponse.json({ success: false, error: 'Unauthorized - Valid Bearer token required' }, { status: 401 })
     }
 
     const supabase = createServiceRoleClient()
@@ -88,4 +89,19 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     )
   }
+}
+
+/**
+ * GET /api/cron/generate-monthly-summaries
+ * Returns endpoint documentation only (no execution)
+ */
+export async function GET(request: NextRequest) {
+  return NextResponse.json({
+    endpoint: '/api/cron/generate-monthly-summaries',
+    method: 'POST',
+    description: 'Generates monthly reflection summaries for all premium users',
+    requiresAuth: true,
+    security: 'Requires Bearer token with CRON_SECRET in Authorization header',
+    schedule: 'First day of each month'
+  })
 }

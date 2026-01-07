@@ -6,31 +6,24 @@ import { logger } from '@/lib/utils/logger'
 /**
  * Cron Job: Check for Expired Trials
  * 
- * This API route should be called daily (via Vercel Cron or external service like Cron-job.org)
+ * This API route should be called daily (via Vercel Cron)
  * to check for expired trials and:
  * 1. Downgrade users from premium to freemium
  * 2. Send trial expiration email notifications
  * 
- * Set up in vercel.json:
- * {
- *   "crons": [{
- *     "path": "/api/cron/check-trial-expiry",
- *     "schedule": "0 9 * * *"  // Run daily at 9 AM UTC
- *   }]
- * }
- * 
- * Or use authorization header for security
+ * Security: POST-only with Bearer token
+ * Schedule: Daily at 9 AM UTC (configured in vercel.json)
  */
 
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    // Verify authorization (for security)
+    // Security: Require Bearer token with CRON_SECRET
     const authHeader = request.headers.get('authorization')
     const cronSecret = process.env.CRON_SECRET
 
-    if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: 'Unauthorized - Valid Bearer token required' },
         { status: 401 }
       )
     }
@@ -152,7 +145,17 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// Support POST method as well (some cron services use POST)
-export async function POST(request: NextRequest) {
-  return GET(request)
+/**
+ * GET /api/cron/check-trial-expiry
+ * Returns endpoint documentation only (no execution)
+ */
+export async function GET(request: NextRequest) {
+  return NextResponse.json({
+    endpoint: '/api/cron/check-trial-expiry',
+    method: 'POST',
+    description: 'Checks for expired trials and downgrades users',
+    requiresAuth: true,
+    security: 'Requires Bearer token with CRON_SECRET in Authorization header',
+    schedule: 'Daily at 9 AM UTC'
+  })
 }

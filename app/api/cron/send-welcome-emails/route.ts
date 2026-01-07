@@ -9,17 +9,17 @@ import { sendWelcomeEmail } from '@/lib/services/emailService'
  * Runs every 5 minutes to ensure timely delivery
  * 
  * Trigger: Every 5 minutes
- * Vercel Cron: star-slash-5 star star star star (every 5 minutes)
+ * Security: POST-only with Bearer token
  */
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    // Verify cron secret to prevent unauthorized access
+    // Security: Require Bearer token with CRON_SECRET
     const authHeader = request.headers.get('authorization')
     const cronSecret = process.env.CRON_SECRET
     
-    if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: 'Unauthorized - Valid Bearer token required' },
         { status: 401 }
       )
     }
@@ -123,4 +123,19 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     )
   }
+}
+
+/**
+ * GET /api/cron/send-welcome-emails
+ * Returns endpoint documentation only (no execution)
+ */
+export async function GET(request: NextRequest) {
+  return NextResponse.json({
+    endpoint: '/api/cron/send-welcome-emails',
+    method: 'POST',
+    description: 'Processes email queue and sends welcome emails to new users',
+    requiresAuth: true,
+    security: 'Requires Bearer token with CRON_SECRET in Authorization header',
+    schedule: 'Every 5 minutes'
+  })
 }

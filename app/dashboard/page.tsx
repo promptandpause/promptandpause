@@ -8,11 +8,14 @@ import WeeklyReflectionCard from "./components/weekly-reflection-card"
 import MonthlyReflectionCard from "./components/monthly-reflection-card"
 import FromYourPastCard from "./components/from-your-past-card"
 import YourRhythm from "./components/your-rhythm"
-import HistorySearchCard from "./components/history-search-card"
 import SettingsLinkCard from "./components/settings-link-card"
 import GlobalDataSync from "./components/global-data-sync"
 import { DashboardSidebar } from "./components/DashboardSidebar"
 import { useTheme } from "@/contexts/ThemeContext"
+import HistorySearchCard from "./components/history-search-card"
+import Link from "next/link"
+import { useEffect, useState } from "react"
+import { getSupabaseClient } from "@/lib/supabase/client"
 
 export default function DashboardPage() {
   const { tier, features = {} } = useTier()
@@ -78,16 +81,145 @@ export default function DashboardPage() {
               {tier === 'premium' && <MonthlyReflectionCard />}
               {tier === 'premium' && <FromYourPastCard />}
               <YourRhythm />
-              <HistorySearchCard />
               <SettingsLinkCard />
             </div>
 
             {/* Right Sidebar - Pre-loaded components */}
             <div className="hidden md:block md:col-span-3 space-y-4 md:space-y-6">
+              <HowItWorksCard theme={theme} />
+              <FocusAreasCard theme={theme} />
+              <ExpectationsCard theme={theme} />
+              <SupportCard theme={theme} />
+              <HistorySearchCard />
             </div>
           </div>
         </div>
       </div>
     </AuthGuard>
+  )
+}
+
+function CardShell({
+  children,
+  theme,
+}: {
+  children: React.ReactNode
+  theme: string
+}) {
+  return (
+    <section
+      className={`rounded-2xl md:rounded-3xl p-5 md:p-6 transition-all duration-200 ${
+        theme === "dark" ? "glass-light shadow-soft-lg" : "glass-medium shadow-soft-md"
+      }`}
+    >
+      {children}
+    </section>
+  )
+}
+
+function HowItWorksCard({ theme }: { theme: string }) {
+  return (
+    <CardShell theme={theme}>
+      <div className="space-y-2">
+        <p className={theme === "dark" ? "text-white/60 text-xs uppercase tracking-[0.14em]" : "text-gray-500 text-xs uppercase tracking-[0.14em]"}>
+          How this space works
+        </p>
+        <div className={theme === "dark" ? "text-white/80 text-sm space-y-2" : "text-gray-800 text-sm space-y-2"}>
+          <p>One daily question, at your pace.</p>
+          <p>Insights appear occasionally, not every day.</p>
+          <p>Your reflections are private and yours alone.</p>
+        </div>
+      </div>
+    </CardShell>
+  )
+}
+
+function FocusAreasCard({ theme }: { theme: string }) {
+  const supabase = getSupabaseClient()
+  const [focusAreas, setFocusAreas] = useState<string[] | null>(null)
+
+  useEffect(() => {
+    let mounted = true
+    ;(async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return
+        const { data } = await supabase
+          .from("user_preferences")
+          .select("focus_areas")
+          .eq("user_id", user.id)
+          .single()
+        if (mounted) setFocusAreas((data as any)?.focus_areas || [])
+      } catch (e) {
+        if (mounted) setFocusAreas([])
+      }
+    })()
+    return () => {
+      mounted = false
+    }
+  }, [supabase])
+
+  return (
+    <CardShell theme={theme}>
+      <div className="space-y-3">
+        <div className="flex items-start justify-between gap-2">
+          <div>
+            <p className={theme === "dark" ? "text-white/60 text-xs uppercase tracking-[0.14em]" : "text-gray-500 text-xs uppercase tracking-[0.14em]"}>
+              Your focus areas
+            </p>
+          </div>
+          <Link
+            href="/dashboard/settings"
+            className={theme === "dark" ? "text-xs text-white/60 hover:text-white underline-offset-4 hover:underline" : "text-xs text-gray-600 hover:text-gray-900 underline-offset-4 hover:underline"}
+          >
+            Edit
+          </Link>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {(focusAreas && focusAreas.length > 0 ? focusAreas : ["Add your focus areas"]).map((area, idx) => (
+            <span
+              key={idx}
+              className={`px-3 py-1.5 rounded-full text-xs ${
+                theme === "dark" ? "bg-white/10 text-white/80 border border-white/10" : "bg-white text-gray-800 border border-gray-200"
+              }`}
+            >
+              {area}
+            </span>
+          ))}
+        </div>
+      </div>
+    </CardShell>
+  )
+}
+
+function ExpectationsCard({ theme }: { theme: string }) {
+  return (
+    <CardShell theme={theme}>
+      <div className="space-y-2">
+        <p className={theme === "dark" ? "text-white/60 text-xs uppercase tracking-[0.14em]" : "text-gray-500 text-xs uppercase tracking-[0.14em]"}>
+          What to expect
+        </p>
+        <div className={theme === "dark" ? "text-white/80 text-sm space-y-2" : "text-gray-800 text-sm space-y-2"}>
+          <p>Daily prompt: once a day, at your chosen time.</p>
+          <p>Weekly reflection: appears occasionally.</p>
+          <p>Monthly reflection: appears after month-end.</p>
+        </div>
+      </div>
+    </CardShell>
+  )
+}
+
+function SupportCard({ theme }: { theme: string }) {
+  return (
+    <CardShell theme={theme}>
+      <div className="space-y-2">
+        <p className={theme === "dark" ? "text-white/60 text-xs uppercase tracking-[0.14em]" : "text-gray-500 text-xs uppercase tracking-[0.14em]"}>
+          Need help?
+        </p>
+        <div className={theme === "dark" ? "text-white/80 text-sm space-y-2" : "text-gray-800 text-sm space-y-2"}>
+          <p>Questions or feedback? Reply to any email or contact support.</p>
+        </div>
+      </div>
+    </CardShell>
   )
 }

@@ -11,17 +11,17 @@ import { sendWeeklyDigestEmail } from '@/lib/services/emailService'
  * This ensures insights are fresh and up-to-date throughout the week
  * 
  * Schedule: Monday and Friday at 6:00 AM UTC
+ * Security: POST-only with Bearer token
  */
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    // Verify this is called by Vercel Cron or authenticated admin
+    // Security: Require Bearer token with CRON_SECRET
     const authHeader = request.headers.get('authorization')
-    const isValidCronRequest = authHeader === `Bearer ${process.env.CRON_SECRET}`
-    
-    // Verify request has valid CRON_SECRET
-    if (!isValidCronRequest) {
+    const cronSecret = process.env.CRON_SECRET
+
+    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
+        { success: false, error: 'Unauthorized - Valid Bearer token required' },
         { status: 401 }
       )
     }
@@ -160,5 +160,17 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// Also support POST method for manual triggers from admin panel
-export const POST = GET
+/**
+ * GET /api/cron/regenerate-weekly-insights
+ * Returns endpoint documentation only (no execution)
+ */
+export async function GET(request: NextRequest) {
+  return NextResponse.json({
+    endpoint: '/api/cron/regenerate-weekly-insights',
+    method: 'POST',
+    description: 'Regenerates weekly insights for all premium users',
+    requiresAuth: true,
+    security: 'Requires Bearer token with CRON_SECRET in Authorization header',
+    schedule: 'Monday and Friday at 6:00 AM UTC'
+  })
+}

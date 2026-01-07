@@ -27,33 +27,13 @@ import crypto from 'crypto'
 
 export async function POST(request: NextRequest) {
   try {
-    // Security: Verify cron secret OR admin authentication
+    // Security: Require Bearer token with CRON_SECRET (no admin fallback for automation)
     const authHeader = request.headers.get('authorization')
     const cronSecret = process.env.CRON_SECRET
-    let isAuthorized = false
 
-    // Check if request is from Vercel Cron (with secret)
-    if (cronSecret && authHeader === `Bearer ${cronSecret}`) {
-      isAuthorized = true
-    } else {
-      // Check if request is from authenticated admin user
-      const { createClient } = require('@/lib/supabase/server')
-      const supabaseAuth = await createClient()
-      const { data: { user }, error: authError } = await supabaseAuth.auth.getUser()
-      
-      if (user && !authError) {
-        // Check if user is admin
-        const { checkAdminAuth } = require('@/lib/services/adminService')
-        const adminAuth = await checkAdminAuth(user.email || '')
-        if (adminAuth.isAdmin) {
-          isAuthorized = true
-        }
-      }
-    }
-
-    if (!isAuthorized) {
+    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
       return NextResponse.json(
-        { error: 'Unauthorized - Admin access or cron secret required' },
+        { error: 'Unauthorized - Valid Bearer token required' },
         { status: 401 }
       )
     }
@@ -491,64 +471,16 @@ export async function POST(request: NextRequest) {
 
 /**
  * GET /api/cron/send-daily-prompts
- * Returns information about the cron endpoint
+ * Returns endpoint documentation only (no execution)
  */
 export async function GET(request: NextRequest) {
-  // Vercel Cron sends GET requests with Authorization: Bearer <CRON_SECRET> header
-  // Also supports signed GET with ts & sig query params as fallback
-  try {
-    const { searchParams, origin } = new URL(request.url)
-    const ts = searchParams.get('ts')
-    const sig = searchParams.get('sig')
-    const secret = process.env.CRON_SECRET
-    const authHeader = request.headers.get('authorization')
-
-    // Check if request has valid Bearer token (Vercel Cron standard)
-    const hasValidBearerToken = secret && authHeader === `Bearer ${secret}`
-
-    const withinWindow = (t: string | null) => {
-      if (!t) return false
-      const now = Math.floor(Date.now() / 1000)
-      const n = Number(t)
-      return Number.isFinite(n) && Math.abs(now - n) <= 300 // 5 min window
-    }
-
-    const validSig = (t: string | null) => {
-      if (!secret || !t || !sig) return false
-      const h = crypto.createHmac('sha256', secret).update(String(t)).digest('hex')
-      try {
-        return crypto.timingSafeEqual(Buffer.from(h), Buffer.from(sig))
-      } catch {
-        return false
-      }
-    }
-
-    // Accept either: Bearer token auth OR signed GET params
-    if (hasValidBearerToken || (ts && sig && withinWindow(ts) && validSig(ts))) {
-      // Forward to POST handler internally with Authorization header
-      const resp = await fetch(`${origin}/api/cron/send-daily-prompts`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${secret}`,
-        },
-      })
-      const json = await resp.json().catch(() => ({ forwarded: true }))
-      return NextResponse.json(json, { status: resp.status })
-    }
-
-    // Otherwise return informational payload (unchanged behavior)
-    return NextResponse.json({
-      endpoint: '/api/cron/send-daily-prompts',
-      method: 'POST',
-      description: 'Automated cron job that sends daily prompt emails to eligible users',
-      requiresAuth: true,
-      security: 'Requires Bearer token with CRON_SECRET in Authorization header or signed GET with ts & sig',
-      schedule: 'Should be called every hour',
-      signedGet: {
-        url: '/api/cron/send-daily-prompts?ts={unix_seconds}&sig=HMAC_SHA256(ts, CRON_SECRET)'
-      }
-    })
-  } catch (e) {
-    return NextResponse.json({ error: 'Failed to process request' }, { status: 500 })
-  }
+  return NextResponse.json({
+    endpoint: '/api/cron/send-daily-prompts',
+    method: 'POST',
+    description: 'Automated cron job that sends daily prompt emails to eligible users',
+    requiresAuth: true,
+    security: 'Requires Bearer token with CRON_SECRET in Authorization header',
+    schedule: 'Should be called every hour',
+    example: 'curl -X POST https://yourapp.com/api/cron/send-daily-prompts -H "Authorization: Bearer $CRON_SECRET"'
+  })
 }

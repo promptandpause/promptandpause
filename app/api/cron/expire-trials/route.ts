@@ -9,18 +9,18 @@ import { sendTrialExpirationEmail } from '@/lib/services/emailService'
  * 1. Revert users to free tier
  * 2. Send trial expiration notification emails
  * 
- * Trigger: Daily at 00:00 UTC
- * Vercel Cron: 0 0 * * *
+ * Security: POST-only with Bearer token
+ * Schedule: Daily at 00:00 UTC
  */
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    // Verify cron secret to prevent unauthorized access
+    // Security: Require Bearer token with CRON_SECRET
     const authHeader = request.headers.get('authorization')
     const cronSecret = process.env.CRON_SECRET
     
-    if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: 'Unauthorized - Valid Bearer token required' },
         { status: 401 }
       )
     }
@@ -104,4 +104,19 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     )
   }
+}
+
+/**
+ * GET /api/cron/expire-trials
+ * Returns endpoint documentation only (no execution)
+ */
+export async function GET(request: NextRequest) {
+  return NextResponse.json({
+    endpoint: '/api/cron/expire-trials',
+    method: 'POST',
+    description: 'Expires trial subscriptions and sends notification emails',
+    requiresAuth: true,
+    security: 'Requires Bearer token with CRON_SECRET in Authorization header',
+    schedule: 'Daily at 00:00 UTC'
+  })
 }

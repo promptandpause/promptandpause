@@ -3,6 +3,11 @@
 import { useEffect, useState } from "react"
 import { X } from "lucide-react"
 
+const COOKIE_CONSENT_STATUS_KEY = "cookieConsent"
+const COOKIE_CONSENT_VERSION_KEY = "cookieConsentVersion"
+// Bump this when you make a material change to cookie policy/handling
+const COOKIE_CONSENT_VERSION = "v1"
+
 export default function CookieConsent() {
   const [showConsent, setShowConsent] = useState(false)
   const [isClosing, setIsClosing] = useState(false)
@@ -12,18 +17,17 @@ export default function CookieConsent() {
     if (typeof window === 'undefined') return
 
     try {
-      // Check if user has made a choice (accepted or never show again)
-      const consentStatus = localStorage.getItem("cookieConsent")
-      
-      // If no consent status exists, show the popup
-      if (!consentStatus) {
-        // 3-second delay for better UX
-        const timer = setTimeout(() => {
-          setShowConsent(true)
-        }, 3000)
+      // Check if user has made a choice (accepted or never show again) and version matches
+      const consentStatus = localStorage.getItem(COOKIE_CONSENT_STATUS_KEY)
+      const consentVersion = localStorage.getItem(COOKIE_CONSENT_VERSION_KEY)
 
-        // Cleanup timeout on unmount
-        return () => clearTimeout(timer)
+      const hasValidConsent =
+        consentStatus &&
+        (consentStatus === "accepted" || consentStatus === "never_show") &&
+        consentVersion === COOKIE_CONSENT_VERSION
+
+      if (!hasValidConsent) {
+        setShowConsent(true)
       }
     } catch (error) {
     }
@@ -31,8 +35,9 @@ export default function CookieConsent() {
 
   const handleAccept = () => {
     try {
-      // Save acceptance to localStorage (persists forever)
-      localStorage.setItem("cookieConsent", "accepted")
+      // Save acceptance to localStorage (persists across redeploys until version bump)
+      localStorage.setItem(COOKIE_CONSENT_STATUS_KEY, "accepted")
+      localStorage.setItem(COOKIE_CONSENT_VERSION_KEY, COOKIE_CONSENT_VERSION)
       // Set cookie with 1 year expiration
       document.cookie = "cookieConsent=accepted; max-age=31536000; path=/; SameSite=Lax"
       closePopup()
@@ -44,7 +49,8 @@ export default function CookieConsent() {
   const handleNeverShowAgain = () => {
     try {
       // Save "never show" status to localStorage
-      localStorage.setItem("cookieConsent", "never_show")
+      localStorage.setItem(COOKIE_CONSENT_STATUS_KEY, "never_show")
+      localStorage.setItem(COOKIE_CONSENT_VERSION_KEY, COOKIE_CONSENT_VERSION)
       closePopup()
     } catch (error) {
       closePopup()
