@@ -1,7 +1,7 @@
 'use client'
 
 import { Suspense } from 'react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -19,10 +19,15 @@ function AdminLoginContent() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [checkingAuth, setCheckingAuth] = useState(true)
+  const hasCheckedAuthRef = useRef(false)
 
   const redirectPath = searchParams.get('redirect') || '/admin-panel'
 
   const checkExistingAuth = useCallback(async () => {
+    // Prevent multiple checks using ref
+    if (hasCheckedAuthRef.current) return
+    hasCheckedAuthRef.current = true
+
     try {
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
@@ -31,13 +36,14 @@ function AdminLoginContent() {
         // Check admin access via API
         const response = await fetch('/api/admin/verify-access')
         const data = await response.json()
-        
+
         if (data.hasAccess) {
           router.push(redirectPath)
           return
         }
       }
     } catch (error) {
+      console.error('Auth check failed:', error)
     } finally {
       setCheckingAuth(false)
     }

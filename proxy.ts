@@ -84,10 +84,6 @@ export default async function middleware(request: NextRequest) {
   const hostname = request.headers.get('host') || ''
   const isAdminSubdomain = hostname.startsWith('admin.')
 
-  // ABSOLUTE FIRST PRIORITY - BYPASS EVERYTHING FOR ADMIN LOGIN
-  if (pathname === '/admin-panel/login') {
-    return NextResponse.next()
-  }
   // Skip proxy for static files and public assets
   if (
     pathname.startsWith('/_next') ||
@@ -314,13 +310,8 @@ export default async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith('/admin-panel')) {
     // Allow access to admin login page without authentication
     if (request.nextUrl.pathname === '/admin-panel/login') {
-      // If already authenticated and is admin, redirect to admin panel
-      if (user) {
-        const hasAdminAccess = user.email ? await isAdminUser(user.email) : false
-        if (hasAdminAccess) {
-          return NextResponse.redirect(new URL('/admin-panel', request.url))
-        }
-      }
+      // Just return response - don't redirect authenticated users
+      // The login page component will handle redirecting authenticated admins
       return response
     }
 
