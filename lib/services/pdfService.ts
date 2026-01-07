@@ -416,7 +416,7 @@ async function generateContent(
       // Tags as simple text
       if (reflection.tags && reflection.tags.length > 0) {
         y -= 10
-        const tagsText = reflection.tags.slice(0, 5).map(t => sanitizeText(t)).join(' • ')
+        const tagsText = reflection.tags.slice(0, 5).map((t: string) => sanitizeText(t)).join(' • ')
         page.drawText(tagsText.substring(0, 80), {
           x: 50,
           y,
@@ -437,7 +437,7 @@ async function generateContent(
         y,
         size: 12,
         font,
-        color: grayColor,
+        color: lightGray,
       })
     }
   }

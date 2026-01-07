@@ -1,5 +1,6 @@
 "use client"
 
+import { Suspense } from "react"
 import { LoginForm } from "../_components/login-form";
 import { AuthLottie } from "../_components/auth-lottie";
 
@@ -20,7 +21,9 @@ export default function LoginPage() {
             <p className="mt-2 text-xs font-medium tracking-wide text-white/70">Pause. Reflect. Grow.</p>
           </div>
           <div className="rounded-3xl border border-white/20 bg-white/10 p-6 backdrop-blur-xl shadow-2xl sm:p-8">
-            <LoginForm />
+            <Suspense fallback={<div className="text-white/50">Loading...</div>}>
+              <LoginForm />
+            </Suspense>
           </div>
         </div>
       </div>

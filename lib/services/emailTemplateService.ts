@@ -350,9 +350,9 @@ export async function restoreToDefault(
     templateId,
     {
       ...DEFAULT_EMAIL_CUSTOMIZATION,
-      custom_css: null,
-      custom_header_text: null,
-      custom_footer_text: null,
+      custom_css: undefined,
+      custom_header_text: undefined,
+      custom_footer_text: undefined,
       notes: 'Restored to default customization',
     },
     createdBy

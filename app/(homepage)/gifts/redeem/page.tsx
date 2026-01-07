@@ -1,5 +1,6 @@
 "use client"
 
+import { Suspense } from 'react'
 import type { FormEvent } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
@@ -15,7 +16,7 @@ type RedeemResult = {
   error?: string
 }
 
-export default function GiftRedeemPage() {
+function GiftRedeemContent() {
   const searchParams = useSearchParams()
 
   const initialToken = useMemo(() => {
@@ -211,5 +212,17 @@ export default function GiftRedeemPage() {
       </main>
       <Footer />
     </>
+  )
+}
+
+export default function GiftRedeemPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-neutral-500">Loading...</div>
+      </div>
+    }>
+      <GiftRedeemContent />
+    </Suspense>
   )
 }

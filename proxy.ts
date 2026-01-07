@@ -58,6 +58,14 @@ function applySecurityHeaders(response: NextResponse): NextResponse {
 }
 
 /**
+ * Check if pathname is a static asset
+ */
+function isStaticFile(pathname: string): boolean {
+  const staticExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.ico', '.css', '.js', '.woff', '.woff2', '.ttf', '.eot', '.webp']
+  return staticExtensions.some(ext => pathname.endsWith(ext))
+}
+
+/**
  * Get client IP from request
  */
 function getClientIP(request: NextRequest): string {
@@ -87,7 +95,7 @@ export default async function middleware(request: NextRequest) {
     pathname.startsWith('/favicon.ico') ||
     pathname.startsWith('/api/auth') ||
     pathname.startsWith('/api/admin/verify-access') ||
-    pathname.match(/\.(jpg|jpeg|png|gif|svg|ico|css|js|woff|woff2|ttf|eot)$)
+    isStaticFile(pathname)
   ) {
     return NextResponse.next()
   }

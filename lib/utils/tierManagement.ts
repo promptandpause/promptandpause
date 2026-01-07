@@ -19,7 +19,7 @@ export type SubscriptionStatus = 'active' | 'cancelled' | 'past_due' | 'trialing
 export const FREE_TIER_FEATURES = {
   // Prompts
   promptsPerWeek: 3,
-  promptDays: ['monday', 'wednesday', 'friday'],
+  promptDays: ['monday', 'wednesday', 'friday'] as string[],
   dailyPrompts: false,
   customPromptTime: true, // Can choose time
   
@@ -58,7 +58,7 @@ export const FREE_TIER_FEATURES = {
 export const PREMIUM_TIER_FEATURES = {
   // Prompts
   promptsPerWeek: 7,
-  promptDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
+  promptDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as string[],
   dailyPrompts: true,
   customPromptTime: true,
   

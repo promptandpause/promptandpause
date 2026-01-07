@@ -54,8 +54,8 @@ export const reflectionService = {
     const newReflection: Reflection = {
       ...reflection,
       id: crypto.randomUUID(),
-      createdAt: Date.now(),
-      wordCount: reflection.reflection.split(/\s+/).filter(Boolean).length,
+      created_at: new Date().toISOString(),
+      word_count: reflection.reflection_text.split(/\s+/).filter(Boolean).length,
     }
     
     reflections.unshift(newReflection) // Add to beginning
@@ -151,8 +151,15 @@ export const moodService = {
     
     const moods = this.getAllMoods()
     const existingIndex = moods.findIndex(m => m.date === date)
-    
-    const moodEntry: MoodEntry = { date, mood, reflectionId }
+
+    const moodEntry: MoodEntry = {
+      id: crypto.randomUUID(),
+      user_id: 'local', // Placeholder for localStorage
+      date,
+      mood,
+      reflection_id: reflectionId || null,
+      created_at: new Date().toISOString(),
+    }
     
     if (existingIndex !== -1) {
       moods[existingIndex] = moodEntry
@@ -264,14 +271,14 @@ export const analyticsService = {
     }))
     
     // Calculate average word count
-    const totalWords = weekReflections.reduce((sum, r) => sum + r.wordCount, 0)
+    const totalWords = weekReflections.reduce((sum, r) => sum + r.word_count, 0)
     const averageWordCount = weekReflections.length > 0 ? Math.round(totalWords / weekReflections.length) : 0
-    
+
     // Get reflection summaries
     const reflectionSummaries = weekReflections.slice(0, 7).map(r => ({
       date: r.date,
-      prompt: r.prompt,
-      snippet: r.reflection.slice(0, 100) + (r.reflection.length > 100 ? "..." : ""),
+      prompt: r.prompt_text,
+      snippet: r.reflection_text.slice(0, 100) + (r.reflection_text.length > 100 ? "..." : ""),
     }))
     
     return {
