@@ -79,8 +79,10 @@ const nextConfig = {
 	  return [
 		  { source: '/auth', destination: '/login', permanent: false },
 		  { source: '/auth/signin', destination: '/login', permanent: false },
-		  { source: '/auth/signup', destination: '/login', permanent: false },
-		  { source: '/auth/forgot-password', destination: '/login', permanent: false },
+		  { source: '/auth/signup', destination: '/signup', permanent: false },
+		  { source: '/auth/forgot-password', destination: '/forgot-password', permanent: false },
+		  { source: '/auth/verify', destination: '/verify', permanent: false },
+		  { source: '/auth/change-password', destination: '/change-password', permanent: false },
 	  ]
 	},
   // Add turbopack config to set root to the promptandpause repo directory

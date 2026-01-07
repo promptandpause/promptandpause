@@ -86,10 +86,10 @@ function HeroSection() {
         <motion.div style={{ opacity }} className="absolute inset-0 flex items-center justify-center z-10 px-6">
           <div className="text-center text-white max-w-5xl">
             <h1 className="text-4xl md:text-6xl lg:text-8xl font-bold mb-8 leading-tight text-balance">
-              Everything You Need for Daily Reflection
+              Everything you need for a quiet reflection practice
             </h1>
             <p className="text-lg md:text-2xl lg:text-3xl leading-relaxed text-balance max-w-3xl mx-auto">
-              Simple tools designed for busy minds. No overwhelm, no bloat—just what works.
+              Simple tools for busy days. No overwhelm, no performance—just a place to write.
             </p>
           </div>
         </motion.div>
@@ -102,19 +102,19 @@ function CoreFeaturesSection() {
   const features = [
     {
       icon: Sparkles,
-      title: "AI-Personalized Prompts",
+      title: "Personalized prompts",
       description:
-        "Every prompt is tailored to your focus areas—work stress, relationships, career transitions, grief, gratitude.",
+        "One thoughtful question at a time, tailored to your chosen focus areas—work stress, relationships, change, grounding.",
     },
     {
       icon: Clock,
       title: "Flexible Delivery",
-      description: "Choose your time (7am-9pm) and method (email or Slack). Prompts arrive when you need them.",
+      description: "Choose your time (7am-9pm) and method (email or Slack). Prompts arrive when you choose.",
     },
     {
       icon: Brain,
-      title: "Mood Tracking",
-      description: "Rate your day 1-10. Track patterns over time. See what's improving (or what needs support).",
+      title: "Optional check-in",
+      description: "A simple moment-to-moment check-in you can use or skip. No charts, no scoring.",
     },
     {
       icon: Lock,
@@ -125,12 +125,12 @@ function CoreFeaturesSection() {
       icon: Archive,
       title: "Searchable Archive",
       description:
-        "Every prompt and reflection saved. Search by date, mood, or keyword. Your mental health history, always accessible.",
+        "Every prompt and reflection saved. Browse by date or search by keyword when you want to revisit something.",
     },
     {
       icon: Flame,
-      title: "Streak Tracking",
-      description: "Build consistency with daily streak counters. No judgment—just gentle accountability.",
+      title: "A steady rhythm",
+      description: "A quiet sense of continuity without streak pressure or performance language.",
     },
   ]
 
@@ -169,21 +169,21 @@ function PremiumFeaturesSection() {
           <div className="backdrop-blur-xl bg-white/5 border border-white/10 p-10 lg:p-12 rounded-3xl hover:bg-white/10 hover:scale-[1.02] transition-all duration-500">
             <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">Weekly Insight Digest</h3>
             <p className="text-white/80 leading-relaxed text-lg">
-              AI-generated summary of your week every Sunday. See themes, mood trends, and encouraging observations.
+              A calm weekly reflection you can open when you want perspective. No scores, no comparison.
             </p>
           </div>
 
           <div className="backdrop-blur-xl bg-white/5 border border-white/10 p-10 lg:p-12 rounded-3xl hover:bg-white/10 hover:scale-[1.02] transition-all duration-500">
-            <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">Voice Note Prompts</h3>
+            <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">Monthly Reflection</h3>
             <p className="text-white/80 leading-relaxed text-lg">
-              Listen to your daily prompt in natural UK voice. Perfect for commutes or dog walks.
+              A short monthly summary for gentle perspective over time.
             </p>
           </div>
 
           <div className="backdrop-blur-xl bg-white/5 border border-white/10 p-10 lg:p-12 rounded-3xl hover:bg-white/10 hover:scale-[1.02] transition-all duration-500">
-            <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">Advanced Analytics</h3>
+            <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">From Your Past</h3>
             <p className="text-white/80 leading-relaxed text-lg">
-              Visual mood charts, category breakdowns, and reflection frequency reports.
+              A rare, optional resurfacing of a past reflection—dismissible, with a long cooldown.
             </p>
           </div>
         </div>
@@ -264,7 +264,7 @@ function DeliveryOptionsSection() {
               </li>
               <li className="flex items-start gap-3">
                 <Check className="w-6 h-6 flex-shrink-0 mt-1" />
-                <span>Optional team channel sharing (coming soon)</span>
+                <span>Private delivery, where you already work</span>
               </li>
               <li className="flex items-start gap-3">
                 <Check className="w-6 h-6 flex-shrink-0 mt-1" />

@@ -232,12 +232,16 @@ export default async function middleware(request: NextRequest) {
     '/',
     '/homepage',
     '/login',
-    '/auth/verify',
+    '/signup',
+    '/forgot-password',
+    '/verify',
+    '/change-password',
+    '/auth',
     '/auth/callback', // OAuth callback
   ]
 
   const isPublicPath = publicPaths.some((path) =>
-    request.nextUrl.pathname.startsWith(path)
+    request.nextUrl.pathname === path || request.nextUrl.pathname.startsWith(`${path}/`)
   )
   const isStaticAsset =
     request.nextUrl.pathname.startsWith('/_next') ||
@@ -261,7 +265,7 @@ export default async function middleware(request: NextRequest) {
     const isEmailVerified = user.email_confirmed_at !== null
     
     if (!isOAuthUser && !isEmailVerified) {
-      return NextResponse.redirect(new URL('/auth/verify', request.url))
+      return NextResponse.redirect(new URL('/verify', request.url))
     }
     
     // Check if user has completed onboarding
@@ -349,7 +353,7 @@ export default async function middleware(request: NextRequest) {
     const isEmailVerified = user.email_confirmed_at !== null
     
     if (!isOAuthUser && !isEmailVerified) {
-      return NextResponse.redirect(new URL('/auth/verify', request.url))
+      return NextResponse.redirect(new URL('/verify', request.url))
     }
 
     // If user has already completed onboarding, redirect to dashboard

@@ -7,13 +7,6 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Mail, Slack, ChevronLeft, ChevronRight, Sparkles, Heart, Brain, Target, Clock, Check } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { getSupabaseClient } from "@/lib/supabase/client"
-import dynamic from "next/dynamic"
-
-// Dynamic import for Lottie to avoid SSR issues
-const DotLottieReact = dynamic(
-  () => import("@lottiefiles/dotlottie-react").then(m => m.DotLottieReact),
-  { ssr: false }
-)
 
 const steps = [
   {
@@ -33,8 +26,8 @@ const steps = [
     type: "slider",
     min: 1,
     max: 10,
-    minLabel: "Struggling",
-    maxLabel: "Thriving",
+    minLabel: "Low",
+    maxLabel: "High",
     key: "mood"
   },
   {
@@ -56,11 +49,12 @@ const steps = [
     question: "Any specific focus areas?",
     type: "multi",
     options: [
+      "Clarity",
+      "Emotional Balance",
+      "Work & Responsibility",
       "Relationships",
-      "Career",
-      "Self-esteem",
-      "Gratitude",
-      "Grief"
+      "Change & Uncertainty",
+      "Grounding"
     ],
     key: "focus"
   },
@@ -168,8 +162,8 @@ export default function Onboarding() {
       setStep(steps.length + 1)
       
       toast({
-        title: "Welcome to Prompt & Pause! 🎉",
-        description: "Your preferences have been saved. Redirecting to dashboard...",
+        title: "Saved",
+        description: "Your preferences have been saved. Redirecting to the dashboard...",
       })
       
       // Redirect to dashboard after a short delay
@@ -586,12 +580,9 @@ export default function Onboarding() {
                   >
                     {/* Success Animation */}
                     <div className="motion-reduce:hidden">
-                      <DotLottieReact
-                        src="https://lottie.host/74035e34-689a-490c-ae79-cbf7d5cfb579/xkxsTNCXfh.lottie"
-                        loop
-                        autoplay
-                        style={{ width: "100px", height: "100px", margin: "0 auto" }}
-                      />
+                      <div className="w-[100px] h-[100px] mx-auto rounded-full bg-[#384c37]/20 border border-[#384c37]/30 flex items-center justify-center">
+                        <Check className="w-10 h-10 text-[#384c37]" />
+                      </div>
                     </div>
                     
                     {/* Static fallback */}

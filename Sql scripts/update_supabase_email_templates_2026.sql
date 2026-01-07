@@ -486,7 +486,7 @@
               </p>
               
               <div style="text-align: center; margin: 32px 0;">
-                <a href="{{ .SiteURL }}/auth/verify?token={{ .Token }}&type=recovery" style="display: inline-block; background: linear-gradient(135deg, #384c37 0%, #4a6349 100%); color: #ffffff; padding: 16px 44px; text-decoration: none; border-radius: 10px; font-weight: 600; font-size: 15px; letter-spacing: 0.02em; box-shadow: 0 4px 14px rgba(56, 76, 55, 0.25);">
+                <a href="{{ .SiteURL }}/verify?token={{ .Token }}&type=recovery" style="display: inline-block; background: linear-gradient(135deg, #384c37 0%, #4a6349 100%); color: #ffffff; padding: 16px 44px; text-decoration: none; border-radius: 10px; font-weight: 600; font-size: 15px; letter-spacing: 0.02em; box-shadow: 0 4px 14px rgba(56, 76, 55, 0.25);">
                   Verify Identity
                 </a>
               </div>
@@ -504,7 +504,7 @@
               
               <p style="color: #94a3b8; font-size: 13px; line-height: 1.6; margin: 32px 0 0 0;">
                 Link not working? Copy and paste this URL:<br>
-                <a href="{{ .SiteURL }}/auth/verify?token={{ .Token }}&type=recovery" style="color: #384c37; word-break: break-all; text-decoration: underline;">{{ .SiteURL }}/auth/verify?token={{ .Token }}&type=recovery</a>
+                <a href="{{ .SiteURL }}/verify?token={{ .Token }}&type=recovery" style="color: #384c37; word-break: break-all; text-decoration: underline;">{{ .SiteURL }}/verify?token={{ .Token }}&type=recovery</a>
               </p>
               
               <p style="color: #94a3b8; font-size: 13px; margin: 16px 0 0 0;">

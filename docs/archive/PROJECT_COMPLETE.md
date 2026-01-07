@@ -74,12 +74,12 @@
 - ✅ Session management
 
 **Files:**
-- `app/auth/signin/page.tsx` - Sign in page
-- `app/auth/signup/page.tsx` - Sign up page
-- `app/auth/forgot-password/page.tsx` - Password reset
-- `app/auth/change-password/page.tsx` - Password change
-- `app/auth/verify/page.tsx` - Email verification
-- `app/auth/callback/route.ts` - OAuth callback
+- `app/(auth)/login/page.tsx` - Sign in page
+- `app/(auth)/signup/page.tsx` - Sign up page
+- `app/(auth)/forgot-password/page.tsx` - Password reset
+- `app/(auth)/change-password/page.tsx` - Password change
+- `app/(auth)/verify/page.tsx` - Email verification
+- `app/(auth)/auth/callback/route.ts` - OAuth callback
 
 ---
 
@@ -217,7 +217,7 @@
 5. **Subscription Cancellation** - On cancel
 
 **Integration Points:**
-- `app/auth/callback/route.ts` - Welcome email
+- `app/(auth)/auth/callback/route.ts` - Welcome email
 - `app/api/stripe/webhook/route.ts` - Subscription emails
 - `app/api/emails/send-prompt/route.ts` - Manual prompt email
 - `app/api/emails/send-digest/route.ts` - Manual digest email

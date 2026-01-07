@@ -394,6 +394,9 @@ Rules:
 - Do not exaggerate emotional conclusions.
 - Be specific, but cautious.
 - Sound like a thoughtful observer, not a coach.
+- If comparison signals are provided, you may optionally include AT MOST ONE comparative observation.
+- Comparison must be neutral and factual (no "better/worse", "improved/declined", "progress", "growth").
+- Comparison is never required; omit it if it would sharpen the tone.
 
 Structure (always exactly this):
 1. One-sentence overview of the week.
@@ -498,6 +501,15 @@ function buildWeeklyContext(digest: WeeklyDigest, userName: string | null): stri
       context += `\n**User Focus Areas (contextual lens only):**\n`
       context += `- ${digest.signals.selectedFocusAreas.slice(0, 3).join(', ')}\n`
       context += `Note: Do not mention focus areas explicitly. They should only subtly influence tone and angle.\n`
+    }
+
+    if (digest.signals.comparison) {
+      context += `\n**Gentle Self-Comparison Signals (optional, use at most one line):**\n`
+      context += `- Baseline period: ${digest.signals.comparison.baselinePeriod}\n`
+      context += `- Reflection length trend: ${digest.signals.comparison.reflectionLengthTrend}\n`
+      context += `- Consistency trend: ${digest.signals.comparison.consistencyTrend}\n`
+      context += `- Mood variance trend: ${digest.signals.comparison.moodVarianceTrend}\n`
+      context += `Note: If you choose to mention comparison, keep it neutral and factual, and only one observation.\n`
     }
   }
   

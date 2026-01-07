@@ -5,7 +5,7 @@
 
 **Transform Your Mental Wellness Journey with Daily Reflection**
 
-<a href="https://www.promptandpause.com" target="_blank">Visit Our Website</a> | <a href="https://www.promptandpause.com/auth/signup" target="_blank">Start Your Free Trial</a> | <a href="mailto:support@promptandpause.com" target="_blank">Contact Us</a>
+<a href="https://www.promptandpause.com" target="_blank">Visit Our Website</a> | <a href="https://www.promptandpause.com/signup" target="_blank">Start Your Free Trial</a> | <a href="mailto:support@promptandpause.com" target="_blank">Contact Us</a>
 
 ---
 
@@ -71,7 +71,7 @@ Unlike generic journaling apps, Prompt & Pause delivers **deeply personalized pr
 
 **Ready to transform your mental wellness journey?**
 
-👉 <a href="https://www.promptandpause.com/auth/signup" target="_blank">Start Your Free Trial</a>  
+👉 <a href="https://www.promptandpause.com/signup" target="_blank">Start Your Free Trial</a>  
 👉 <a href="https://www.promptandpause.com/pricing" target="_blank">View Pricing</a>  
 👉 <a href="https://www.promptandpause.com" target="_blank">Learn More</a>
 
@@ -137,6 +137,6 @@ Follow our journey and get mental wellness tips:
 
 *Building a world where daily reflection is accessible to everyone.*
 
-<a href="https://www.promptandpause.com/auth/signup" target="_blank">Get Started</a> | <a href="https://www.promptandpause.com" target="_blank">Learn More</a> | <a href="mailto:support@promptandpause.com" target="_blank">Contact Us</a>
+<a href="https://www.promptandpause.com/signup" target="_blank">Get Started</a> | <a href="https://www.promptandpause.com" target="_blank">Learn More</a> | <a href="mailto:support@promptandpause.com" target="_blank">Contact Us</a>
 
 </div>

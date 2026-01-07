@@ -1,7 +1,7 @@
 {
-  "name": "Prompt & Pause - Mental Wellness",
+  "name": "Prompt & Pause - Quiet Reflection",
   "short_name": "Prompt & Pause",
-  "description": "Transform your mental wellness with AI-powered daily reflection prompts. Track mood, reduce stress, and build mindfulness habits.",
+  "description": "Five quiet minutes a day to make sense of your life. One thoughtful prompt at a time—private, calm, and without pressure or performance.",
   "start_url": "/pwa-welcome",
   "display": "standalone",
   "background_color": "#0f172a",

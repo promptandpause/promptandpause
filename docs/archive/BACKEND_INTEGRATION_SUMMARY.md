@@ -153,9 +153,9 @@ Based on the Implementation Roadmap, here's the critical path:
    - Test redirects for logged-out users
 
 2. **Authentication** - Connect auth pages
-   - Update `app/auth/signin/page.tsx`
-   - Update `app/auth/signup/page.tsx`
-   - Create `app/auth/callback/route.ts`
+   - Update `app/(auth)/login/page.tsx`
+   - Update `app/(auth)/signup/page.tsx`
+   - Create `app/(auth)/auth/callback/route.ts`
    - Test Google OAuth + email/password
 
 3. **User Service** - Create `lib/services/userService.ts`

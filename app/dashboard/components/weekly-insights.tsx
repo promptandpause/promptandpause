@@ -75,7 +75,7 @@ export default function WeeklyInsights() {
       const result = await response.json()
 
       if (result.success && result.emailSent) {
-        toast.success('Weekly digest sent to your email! 📧')
+        toast.success('Weekly recap sent to your email')
       } else {
         toast.error('Failed to send email')
       }
@@ -95,7 +95,7 @@ export default function WeeklyInsights() {
       }`}>
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="h-8 w-8 text-purple-400 animate-spin" />
-          <p className={theme === 'dark' ? 'text-white/60 text-sm' : 'text-gray-500 text-sm'}>Generating your insights...</p>
+          <p className={theme === 'dark' ? 'text-white/60 text-sm' : 'text-gray-500 text-sm'}>Preparing your weekly recap...</p>
         </div>
       </section>
     )
@@ -136,7 +136,7 @@ export default function WeeklyInsights() {
             <h4 className={`font-semibold text-base sm:text-lg ${
               theme === 'dark' ? 'text-white' : 'text-gray-900'
             }`}>
-              Your Weekly Insights
+              Your Weekly Recap
             </h4>
             <p className={`text-xs mt-0.5 ${
               theme === 'dark' ? 'text-white/60' : 'text-gray-500'
@@ -160,7 +160,7 @@ export default function WeeklyInsights() {
           ) : (
             <>
               <Mail className="h-4 w-4 mr-2" />
-              Email Me
+              Email this recap
             </>
           )}
         </Button>
@@ -187,10 +187,10 @@ export default function WeeklyInsights() {
         }`}>
           <p className={`text-[10px] md:text-xs mb-1 ${
             theme === 'dark' ? 'text-white/60' : 'text-gray-500'
-          }`}>Streak</p>
+          }`}>Days in a row</p>
           <p className={`text-xl md:text-2xl font-bold ${
             theme === 'dark' ? 'text-white' : 'text-gray-900'
-          }`}>{data.currentStreak} 🔥</p>
+          }`}>{data.currentStreak}</p>
         </div>
         <div className={`backdrop-blur-sm rounded-lg p-3 ${
           theme === 'dark'
@@ -199,7 +199,7 @@ export default function WeeklyInsights() {
         }`}>
           <p className={`text-[10px] md:text-xs mb-1 ${
             theme === 'dark' ? 'text-white/60' : 'text-gray-500'
-          }`}>Avg Words</p>
+          }`}>Avg length</p>
           <p className={`text-xl md:text-2xl font-bold ${
             theme === 'dark' ? 'text-white' : 'text-gray-900'
           }`}>{data.averageWordCount}</p>
@@ -339,7 +339,7 @@ export default function WeeklyInsights() {
         <p className={`text-[10px] text-center ${
           theme === 'dark' ? 'text-white/40' : 'text-gray-400'
         }`}>
-          Powered by AI
+          Generated automatically
         </p>
       </div>
     </section>

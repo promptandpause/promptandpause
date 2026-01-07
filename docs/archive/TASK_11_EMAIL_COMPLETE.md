@@ -21,7 +21,7 @@ Integrated Resend email service to send transactional emails for user onboarding
   - `NEXT_PUBLIC_APP_URL` - App URL for email links
 
 ### 2. Welcome Email Integration
-**File:** `app/auth/callback/route.ts`
+**File:** `app/(auth)/auth/callback/route.ts`
 
 **When it sends:**
 - New user signs up via Google OAuth
@@ -534,7 +534,7 @@ GROUP BY email_type, error_message;
 - ✅ `TASK_11_EMAIL_COMPLETE.md` - This summary
 
 ### Files Updated in Task 11:
-- ✅ `app/auth/callback/route.ts` - Welcome email integration
+- ✅ `app/(auth)/auth/callback/route.ts` - Welcome email integration
 - ✅ `app/api/stripe/webhook/route.ts` - Subscription emails
 
 ### Existing Files (Already Production-Ready):

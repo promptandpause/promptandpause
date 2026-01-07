@@ -260,6 +260,13 @@ export async function generateWeeklyDigestServer(
       .maybeSingle()
     const includeSelfJournals = prefs?.include_self_journal_in_insights === true
 
+    const toDateOnly = (d: Date) => d.toISOString().split('T')[0]
+    const addDays = (d: Date, days: number) => {
+      const next = new Date(d)
+      next.setUTCDate(next.getUTCDate() + days)
+      return next
+    }
+
     // Fetch week's reflections directly from database with fresh data
     const { data: weekReflections, error } = await supabase
       .from('reflections')
@@ -371,15 +378,148 @@ export async function generateWeeklyDigestServer(
       return Number(variance.toFixed(2))
     })()
 
-    // Reflection length pattern
+    // Pre-compute current average word count for safe comparison + length signals
     const wcValues = combined.map(r => Number(r.word_count || 0)).filter(n => Number.isFinite(n) && n >= 0)
+    const currentAvgWords = wcValues.length === 0
+      ? 0
+      : Math.round(wcValues.reduce((s, v) => s + v, 0) / wcValues.length)
+
+    // Gentle self-comparison (previous 2 weeks) — server-only signal used as optional AI input.
+    // Safety gates:
+    // - Require >= 2 prior weeks with enough days present
+    // - Do not populate if mood variance is extreme
+    const computeVariance = (ms: MoodType[]) => {
+      if (ms.length < 2) return null
+      const scores = ms.map(m => moodScores[m] ?? 2)
+      const mean = scores.reduce((s, v) => s + v, 0) / scores.length
+      const variance = scores.reduce((s, v) => s + Math.pow(v - mean, 2), 0) / scores.length
+      return Number(variance.toFixed(2))
+    }
+
+    const computeComparisonSignals = async (): Promise<WeeklyDigest['signals'] extends { comparison?: infer C } ? C | undefined : any> => {
+      const baselineStart = addDays(start, -14)
+      const baselineEnd = addDays(start, -1)
+      const baselineStartStr = toDateOnly(baselineStart)
+      const baselineEndStr = toDateOnly(baselineEnd)
+
+      const { data: baselineReflections, error: baselineReflectionsError } = await supabase
+        .from('reflections')
+        .select('date, mood, word_count, reflection_text, prompt_text, prompt_type, personalization_context')
+        .eq('user_id', userId)
+        .gte('date', baselineStartStr)
+        .lte('date', baselineEndStr)
+
+      if (baselineReflectionsError) return undefined
+
+      let baselineSelfJournals: any[] = []
+      if (includeSelfJournals) {
+        const { data: journals } = await supabase
+          .from('self_journals')
+          .select('created_at, mood, journal_text, tags')
+          .eq('user_id', userId)
+          .gte('created_at', `${baselineStartStr}T00:00:00Z`)
+          .lte('created_at', `${baselineEndStr}T23:59:59Z`)
+        baselineSelfJournals = journals || []
+      }
+
+      const baselineCombined = [
+        ...(baselineReflections || []).map((r: any) => ({
+          date: r.date,
+          mood: r.mood,
+          word_count: r.word_count,
+          prompt_type: r.prompt_type || r.personalization_context?.prompt_type || null,
+          reflection_text: r.reflection_text || '',
+        })),
+        ...baselineSelfJournals.map((j: any) => {
+          const text = j.journal_text || ''
+          const wc = text.trim().split(/\s+/).filter(Boolean).length
+          return {
+            date: (j.created_at || '').slice(0, 10),
+            mood: j.mood,
+            word_count: wc,
+            prompt_type: null,
+            reflection_text: text,
+          }
+        }),
+      ]
+
+      const w1Start = baselineStartStr
+      const w1End = toDateOnly(addDays(baselineStart, 6))
+      const w2Start = toDateOnly(addDays(baselineStart, 7))
+      const w2End = baselineEndStr
+
+      const daysInRange = (rows: any[], s: string, e: string) => {
+        const set = new Set<string>()
+        rows.forEach(r => {
+          if (!r.date) return
+          if (r.date >= s && r.date <= e) set.add(r.date)
+        })
+        return set.size
+      }
+
+      const baselineWeek1Days = daysInRange(baselineCombined, w1Start, w1End)
+      const baselineWeek2Days = daysInRange(baselineCombined, w2Start, w2End)
+      const baselineTotalDays = baselineWeek1Days + baselineWeek2Days
+
+      // “2 full prior weeks exist” (pragmatic): require at least 2 separate weeks with >=2 days each.
+      if (baselineWeek1Days < 2 || baselineWeek2Days < 2) return undefined
+
+      const baselineWc = baselineCombined.map(r => Number(r.word_count || 0)).filter((n: number) => Number.isFinite(n) && n >= 0)
+      const baselineAvgWords = baselineWc.length === 0 ? 0 : Math.round(baselineWc.reduce((s: number, v: number) => s + v, 0) / baselineWc.length)
+
+      const baselineMoods: MoodType[] = baselineCombined
+        .filter(r => r.mood)
+        .map((r: any) => validateMood(r.mood))
+      const baselineVariance = computeVariance(baselineMoods)
+
+      const EXTREME_VARIANCE_THRESHOLD = 1.6
+      if ((moodVariance != null && moodVariance > EXTREME_VARIANCE_THRESHOLD) || (baselineVariance != null && baselineVariance > EXTREME_VARIANCE_THRESHOLD)) {
+        return undefined
+      }
+
+      const lengthTrend = (() => {
+        if (baselineAvgWords === 0 || currentAvgWords === 0) return 'stable' as const
+        const delta = currentAvgWords - baselineAvgWords
+        const pct = delta / Math.max(1, baselineAvgWords)
+        if (pct <= -0.15 || delta <= -20) return 'shorter' as const
+        if (pct >= 0.15 || delta >= 20) return 'longer' as const
+        return 'stable' as const
+      })()
+
+      const baselineDaysPerWeek = Math.round(baselineTotalDays / 2)
+      const consistencyTrend = (() => {
+        const delta = daysWithEntries - baselineDaysPerWeek
+        if (delta >= 1) return 'more_consistent' as const
+        if (delta <= -1) return 'less_consistent' as const
+        return 'stable' as const
+      })()
+
+      const varianceTrend = (() => {
+        if (moodVariance == null || baselineVariance == null) return 'stable' as const
+        const delta = moodVariance - baselineVariance
+        if (delta <= -0.15) return 'steadier' as const
+        if (delta >= 0.15) return 'more_variable' as const
+        return 'stable' as const
+      })()
+
+      return {
+        baselinePeriod: 'previous_2_weeks',
+        reflectionLengthTrend: lengthTrend,
+        consistencyTrend,
+        moodVarianceTrend: varianceTrend,
+      }
+    }
+
+    const comparison = await computeComparisonSignals()
+
+    // Reflection length pattern
     const sortedWc = wcValues.slice().sort((a, b) => a - b)
     const median = sortedWc.length === 0
       ? 0
       : (sortedWc.length % 2 === 1
         ? sortedWc[(sortedWc.length - 1) / 2]
         : Math.round((sortedWc[sortedWc.length / 2 - 1] + sortedWc[sortedWc.length / 2]) / 2))
-    const avg = wcValues.length === 0 ? 0 : Math.round(wcValues.reduce((s, v) => s + v, 0) / wcValues.length)
+    const avg = currentAvgWords
     const shortThreshold = Math.max(40, Math.round(avg * 0.6))
     const longThreshold = Math.max(120, Math.round(avg * 1.4))
     const shortCount = wcValues.filter(w => w > 0 && w <= shortThreshold).length
@@ -496,6 +636,7 @@ export async function generateWeeklyDigestServer(
         repeatedWords,
         promptTypeDepth,
         selectedFocusAreas,
+        ...(comparison ? { comparison } : {}),
       },
     }
   } catch (error) {

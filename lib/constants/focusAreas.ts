@@ -16,64 +16,40 @@ export interface FreemiumFocusArea {
 
 export const FREEMIUM_FOCUS_AREAS: FreemiumFocusArea[] = [
   {
-    name: 'Career',
-    description: 'Work growth, professional development, and career goals',
-    icon: '💼',
-    color: '#3B82F6', // Blue
+    name: 'Clarity',
+    description: 'Mental fog, decisions, and overload. Sorting, naming, distinguishing.',
+    icon: '🔎',
+    color: '#3B82F6',
   },
   {
     name: 'Relationships',
-    description: 'Family, friendships, romantic relationships, and social connections',
-    icon: '💞',
+    description: 'Family, partners, friends, and social tension. Empathy and boundaries.',
+    icon: '👥',
     color: '#EC4899', // Pink
   },
   {
-    name: 'Health',
-    description: 'Physical fitness, nutrition, sleep, and overall wellness',
-    icon: '🏥',
-    color: '#10B981', // Green
-  },
-  {
-    name: 'Finances',
-    description: 'Money management, savings, investments, and financial goals',
-    icon: '💰',
-    color: '#F59E0B', // Amber
-  },
-  {
-    name: 'Personal Growth',
-    description: 'Learning, skill development, self-improvement, and education',
-    icon: '🌱',
-    color: '#8B5CF6', // Purple
-  },
-  {
-    name: 'Mindfulness',
-    description: 'Meditation, presence, calm, and mental peace',
-    icon: '🧘',
-    color: '#06B6D4', // Cyan
-  },
-  {
-    name: 'Gratitude',
-    description: 'Appreciation, positive perspective, and thankfulness',
-    icon: '🙏',
-    color: '#FBBF24', // Yellow
-  },
-  {
-    name: 'Family',
-    description: 'Family dynamics, parenting, generational issues, and kinship',
-    icon: '👨‍👩‍👧‍👦',
-    color: '#F97316', // Orange
-  },
-  {
-    name: 'Self-Esteem',
-    description: 'Confidence, self-worth, identity, and personal validation',
-    icon: '💪',
-    color: '#EF4444', // Red
-  },
-  {
-    name: 'Work-Life Balance',
-    description: 'Managing priorities, boundaries, and lifestyle harmony',
+    name: 'Emotional Balance',
+    description: 'Regulating feelings without fixing them. Grounding, normalising, containing.',
     icon: '⚖️',
-    color: '#6366F1', // Indigo
+    color: '#10B981',
+  },
+  {
+    name: 'Work & Responsibility',
+    description: 'Pressure, boundaries, and meaning at work. Perspective and realism.',
+    icon: '💼',
+    color: '#F59E0B',
+  },
+  {
+    name: 'Change & Uncertainty',
+    description: 'Transitions, waiting periods, and unsettled seasons. Patience and orientation.',
+    icon: '🧭',
+    color: '#8B5CF6',
+  },
+  {
+    name: 'Grounding',
+    description: 'Present-focused and stabilising, especially on harder or skipped days.',
+    icon: '🪨',
+    color: '#06B6D4',
   },
 ];
 

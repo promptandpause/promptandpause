@@ -56,52 +56,37 @@ function getExamplePrompt(focusAreaName: string): string {
   const name = focusAreaName.toLowerCase()
   
   // Career/Work related
-  if (name.includes('career') || name.includes('work') || name.includes('job') || name.includes('professional')) {
-    return 'What\'s one work challenge this week that\'s been teaching you something about yourself?'
+  if (name.includes('work') || name.includes('responsibility') || name.includes('job') || name.includes('professional')) {
+    return 'Where did you spend more energy than you expected this week?'
   }
   
   // Relationships
   if (name.includes('relationship') || name.includes('love') || name.includes('family') || name.includes('friend')) {
-    return 'Which relationship in your life feels most nurturing right now, and why?'
+    return 'Which relationship has been taking up the most space in your mind lately?'
   }
   
   // Health/Fitness
-  if (name.includes('health') || name.includes('fitness') || name.includes('exercise') || name.includes('body')) {
-    return 'How is your body feeling today, and what is it asking for?'
+  if (name.includes('ground') || name.includes('steady') || name.includes('present')) {
+    return 'Right now, what’s one small thing you can notice that tells you you’re here?'
   }
   
   // Mental health/anxiety
-  if (name.includes('mental') || name.includes('anxiety') || name.includes('stress') || name.includes('mind')) {
-    return 'When did you feel most calm today, even if just for a moment?'
+  if (name.includes('emotion') || name.includes('balance') || name.includes('regulat') || name.includes('calm')) {
+    return 'What feeling has been most present lately, without trying to explain it away?'
   }
   
   // Self-care/wellbeing
-  if (name.includes('self') || name.includes('care') || name.includes('wellbeing') || name.includes('wellness')) {
-    return 'What\'s one small thing you could do tomorrow to honor your needs?'
+  if (name.includes('clarity') || name.includes('clear') || name.includes('decision') || name.includes('overload')) {
+    return 'What feels most unclear right now — and what feels certain enough to stand on?'
   }
-  
+
   // Creativity/hobbies
-  if (name.includes('creative') || name.includes('art') || name.includes('hobby') || name.includes('passion')) {
-    return 'What creative idea has been quietly waiting for your attention?'
-  }
-  
-  // Money/finance
-  if (name.includes('money') || name.includes('finance') || name.includes('financial') || name.includes('budget')) {
-    return 'What would financial peace look like for you in 3 months?'
-  }
-  
-  // Personal growth
-  if (name.includes('growth') || name.includes('learning') || name.includes('development') || name.includes('goals')) {
-    return 'What\'s something you\'re learning about yourself lately?'
-  }
-  
-  // Home/living space
-  if (name.includes('home') || name.includes('house') || name.includes('space') || name.includes('living')) {
-    return 'How does your living space affect your mood and energy?'
+  if (name.includes('change') || name.includes('uncertain') || name.includes('transition') || name.includes('unknown')) {
+    return 'What feels unsettled right now — and what would count as “enough clarity for today”?'
   }
   
   // Default for other topics
-  return `What aspect of your ${focusAreaName} deserves more attention this week?`
+  return `What feels most worth naming in your ${focusAreaName} right now?`
 }
 
 export default function FocusAreasManager() {
@@ -331,7 +316,7 @@ export default function FocusAreasManager() {
                 <Input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g., Career Growth, Health & Fitness"
+                  placeholder="e.g., Clarity, Grounding, Work & Responsibility"
                   className="bg-white border-2 border-gray-300 text-gray-900 placeholder:text-gray-400 h-12 text-base rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all shadow-sm"
                   maxLength={50}
                 />

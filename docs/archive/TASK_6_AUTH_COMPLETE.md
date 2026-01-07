@@ -14,7 +14,7 @@ Successfully completed full authentication integration with Supabase Auth. All a
 ## ✅ Completed Items (7/8)
 
 ### 1. ✅ **OAuth Callback Route** - ALREADY COMPLETE
-**File:** `app/auth/callback/route.ts`
+**File:** `app/(auth)/auth/callback/route.ts`
 
 **Implementation:**
 - ✅ OAuth callback handler for Google sign-in
@@ -28,7 +28,7 @@ Successfully completed full authentication integration with Supabase Auth. All a
 ---
 
 ### 2. ✅ **Sign In Pages** - ALREADY COMPLETE
-**Files:** `app/auth/signin/page.tsx`, `app/auth/login-form.tsx`
+**Files:** `app/(auth)/login/page.tsx`, `app/(auth)/_components/login-form.tsx`
 
 **Implementation:**
 - ✅ Email/password sign-in via `supabase.auth.signInWithPassword()`
@@ -45,7 +45,7 @@ Successfully completed full authentication integration with Supabase Auth. All a
 ---
 
 ### 3. ✅ **Sign Up Pages** - ALREADY COMPLETE
-**Files:** `app/auth/signup/page.tsx`, `app/auth/signup-form.tsx`
+**Files:** `app/(auth)/signup/page.tsx`, `app/(auth)/_components/signup-form.tsx`
 
 **Implementation:**
 - ✅ Email/password registration via `supabase.auth.signUp()`
@@ -64,7 +64,7 @@ Successfully completed full authentication integration with Supabase Auth. All a
 ---
 
 ### 4. ✅ **Forgot Password Page** - UPDATED
-**File:** `app/auth/forgot-password/page.tsx`
+**File:** `app/(auth)/forgot-password/page.tsx`
 
 **New Features:**
 - ✅ Integrated `supabase.auth.resetPasswordForEmail()`
@@ -82,7 +82,7 @@ Successfully completed full authentication integration with Supabase Auth. All a
 ---
 
 ### 5. ✅ **Change Password Page** - UPDATED
-**File:** `app/auth/change-password/page.tsx`
+**File:** `app/(auth)/change-password/page.tsx`
 
 **New Features:**
 - ✅ Session verification on mount
@@ -102,7 +102,7 @@ Successfully completed full authentication integration with Supabase Auth. All a
 ---
 
 ### 6. ✅ **Email Verification Page** - UPDATED
-**File:** `app/auth/verify/page.tsx`
+**File:** `app/(auth)/verify/page.tsx`
 
 **New Features:**
 - ✅ Automatic verification status check on mount
@@ -122,7 +122,7 @@ Successfully completed full authentication integration with Supabase Auth. All a
 ---
 
 ### 7. 🟡 **Auth Server Actions** - OPTIONAL (Not Created)
-**File:** `app/auth/actions.ts` (would be created if needed)
+**File:** `app/(auth)/actions.ts` (would be created if needed)
 
 **Status:** **NOT CREATED** - Currently not needed because:
 - All auth operations work directly in client components
@@ -230,17 +230,17 @@ User Journey:
 
 ### Already Complete (4 files):
 ```
-app/auth/
-├── callback/route.ts ✅ (OAuth callback - PERFECT)
-├── signin/page.tsx ✅ (Sign in wrapper - PERFECT)
-├── login-form.tsx ✅ (Sign in form - PERFECT)
+app/(auth)/
+├── auth/callback/route.ts ✅ (OAuth callback - PERFECT)
+├── login/page.tsx ✅ (Sign in wrapper - PERFECT)
+├── _components/login-form.tsx ✅ (Sign in form - PERFECT)
 ├── signup/page.tsx ✅ (Sign up wrapper - PERFECT)
 └── signup/signup-form.tsx ✅ (Sign up form - PERFECT)
 ```
 
 ### Updated (3 files):
 ```
-app/auth/
+app/(auth)/
 ├── forgot-password/page.tsx 🔄 (Added Supabase integration)
 ├── change-password/page.tsx 🔄 (Added complete flow)
 └── verify/page.tsx 🔄 (Added real verification)
@@ -248,7 +248,7 @@ app/auth/
 
 ### Optional/Not Created (1 file):
 ```
-app/auth/
+app/(auth)/
 └── actions.ts 🟡 (Optional server actions - not needed currently)
 ```
 

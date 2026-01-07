@@ -57,9 +57,9 @@ lib/services/
 **Files to Update:**
 
 ```
-app/auth/
-├── signin/page.tsx          # Connect to Supabase Auth
-├── login-form.tsx           # Add Supabase sign-in logic
+app/(auth)/
+├── login/page.tsx           # Connect to Supabase Auth
+├── _components/login-form.tsx # Add Supabase sign-in logic
 ├── signup/page.tsx          # Connect to Supabase Auth
 ├── signup-form.tsx          # Add Supabase sign-up logic
 ├── forgot-password/page.tsx # Add password reset flow
@@ -70,9 +70,9 @@ app/auth/
 **New Files to Create:**
 
 ```
-app/auth/
-├── callback/route.ts        # Auth callback handler (required for OAuth)
-└── actions.ts               # Server actions for auth operations
+app/(auth)/
+├── auth/callback/route.ts   # Auth callback handler (required for OAuth)
+└── _components/*            # Shared auth UI
 ```
 
 **Implementation:**

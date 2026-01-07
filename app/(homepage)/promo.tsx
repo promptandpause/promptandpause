@@ -29,8 +29,8 @@ export default function Section() {
       </h3>
 
       <p className="absolute bottom-12 right-6 text-white text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-5xl z-10">
-        No hour-long sessions. Just 5 minutes of guided reflection via email or Slack, fitting seamlessly into your
-        morning coffee or lunch break. Join 500+ UK adults finding clarity with proven results.
+        No hour-long sessions. Just a few quiet minutes with one prompt—something you can fit into a morning coffee or a lunch break.
+        No pressure. No performance.
       </p>
     </div>
   )

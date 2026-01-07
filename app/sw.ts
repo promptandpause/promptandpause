@@ -3,11 +3,13 @@
 const CACHE_NAME = 'prompt-and-pause-v1'
 const RUNTIME_CACHE = 'runtime-cache-v1'
 
+declare const self: ServiceWorkerGlobalScope
+
 // Assets to cache on install
 const PRECACHE_ASSETS = [
   '/',
   '/pwa-welcome',
-  '/auth/signin',
+  '/login',
   '/dashboard',
   '/icon.png',
   '/apple-icon.png',
@@ -82,7 +84,15 @@ self.addEventListener('fetch', (event: FetchEvent) => {
 
           // If no cache, return offline page for navigation requests
           if (request.mode === 'navigate') {
-            return caches.match('/pwa-welcome')
+            return caches.match('/pwa-welcome').then((fallback) => {
+              return (
+                fallback ||
+                new Response('Offline', {
+                  status: 503,
+                  statusText: 'Service Unavailable',
+                })
+              )
+            })
           }
 
           // For other requests, return a basic response

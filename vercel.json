@@ -9,6 +9,10 @@
       "schedule": "0 6 * * 1,5"
     },
     {
+      "path": "/api/cron/generate-monthly-summaries",
+      "schedule": "0 6 1 * *"
+    },
+    {
       "path": "/api/cron/check-trial-expiry",
       "schedule": "0 0 * * *"
     },

@@ -86,7 +86,7 @@ Visit `http://localhost:3000`
 
 ### Create Your First User
 
-1. Go to `/auth/signup`
+1. Go to `/signup`
 2. Sign up with email or Google
 3. Verify email (check inbox)
 4. Complete onboarding

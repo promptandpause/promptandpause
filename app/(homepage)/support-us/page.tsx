@@ -156,8 +156,7 @@ function WaysToSupportSection() {
             <h3 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">Upgrade to Premium</h3>
             <p className="text-2xl font-bold text-neutral-900 mb-4">£12/month or £99/year</p>
             <p className="text-neutral-600 leading-relaxed text-lg mb-8">
-              Get daily personalized prompts, advanced analytics, and priority support—while funding free access for
-              others.
+              Get daily prompts, weekly and monthly reflections, and export—while helping fund free access for others.
             </p>
             <a
               href="/pricing"
@@ -191,8 +190,7 @@ function WaysToSupportSection() {
             <h3 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">Spread the Word</h3>
             <p className="text-2xl font-bold text-neutral-900 mb-4">Free</p>
             <p className="text-neutral-600 leading-relaxed text-lg mb-8">
-              Share Prompt & Pause with friends, on LinkedIn, or in your workplace Slack. Word-of-mouth is our best
-              marketing.
+              If it’s been useful, you can share it with someone who might appreciate a quiet prompt.
             </p>
             <div className="flex gap-4">
               <a

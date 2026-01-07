@@ -185,7 +185,7 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
           data: {
             full_name: formData.name,
           },
-          emailRedirectTo: `${window.location.origin}/auth/verify`,
+          emailRedirectTo: `${window.location.origin}/verify`,
         },
       })
       
@@ -228,7 +228,7 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
     try {
       setIsLoading(true)
       const { error } = await supabase.auth.resetPasswordForEmail(formData.email, {
-        redirectTo: `${window.location.origin}/auth/change-password`,
+        redirectTo: `${window.location.origin}/change-password`,
       })
       
       if (error) throw error
@@ -285,25 +285,6 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
     setFormData((prev) => ({ ...prev, password: "", confirmPassword: "", name: "", otp: ["", "", "", "", "", ""] }))
   }
 
-  const getCardHeight = () => {
-    switch (step) {
-      case "login":
-        return showEmailPassword ? "sm:h-[560px]" : "sm:h-[340px]"
-      case "signup":
-        return "sm:h-[680px]"
-      case "forgot-password":
-        return "sm:h-[380px]"
-      case "reset-password":
-        return "sm:h-[520px]"
-      case "otp":
-        return "sm:h-[380px]"
-      case "success":
-        return "sm:h-[320px]"
-      default:
-        return "sm:h-[340px]"
-    }
-  }
-
   const passwordStrength = getPasswordStrength(formData.password)
   const isSignupValid =
     step === "signup" &&
@@ -315,17 +296,17 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
     passwordRequirements.every((req) => req.test(formData.password))
 
   return (
-    <div className={`w-full sm:w-[450px] sm:max-w-[450px] transition-all duration-700 ease-out ${getCardHeight()}`}>
-      <div className="relative h-full">
+    <div className="w-full max-w-md sm:max-w-[450px] transition-all duration-300 ease-out">
+      <div className="relative overflow-hidden rounded-3xl">
         {/* Glass morphism card */}
         <div className="absolute inset-0 bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl">
           <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent rounded-3xl" />
         </div>
 
         {/* Content */}
-        <div className="relative h-full p-6 sm:p-8 flex flex-col">
+        <div className="relative p-6 sm:p-8">
           {step === "login" && (
-            <div className="flex-1 flex flex-col justify-center space-y-6">
+            <div className="space-y-6">
               <div className="text-center space-y-2">
                 <h1 className="text-2xl sm:text-3xl font-bold text-white">Welcome Back!</h1>
                 <p className="text-white/70 text-xs sm:text-sm">Enter your credentials to access your account</p>
@@ -465,7 +446,7 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
           )}
 
           {step === "signup" && (
-            <div className="flex-1 flex flex-col justify-center space-y-6">
+            <div className="space-y-6">
               <div className="text-center space-y-2">
                 <h1 className="text-2xl font-semibold text-white">Create Account</h1>
                 <p className="text-white/70">Join us today</p>
@@ -624,7 +605,7 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
           )}
 
           {step === "forgot-password" && (
-            <div className="flex-1 flex flex-col justify-center space-y-6">
+            <div className="space-y-6">
               <button
                 onClick={resetToLogin}
                 className="absolute top-6 left-6 text-white/70 hover:text-white transition-colors"
@@ -668,7 +649,7 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
           )}
 
           {step === "reset-password" && (
-            <div className="flex-1 flex flex-col justify-center space-y-6">
+            <div className="space-y-6">
               <button
                 onClick={() => setStep("forgot-password")}
                 className="absolute top-6 left-6 text-white/70 hover:text-white transition-colors"
@@ -750,7 +731,7 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
           )}
 
           {step === "otp" && (
-            <div className="flex-1 flex flex-col justify-center space-y-6">
+            <div className="space-y-6">
               <button
                 onClick={resetToLogin}
                 className="absolute top-6 left-6 text-white/70 hover:text-white transition-colors"
@@ -791,7 +772,7 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
           )}
 
           {step === "success" && (
-            <div className="flex-1 flex flex-col justify-center items-center space-y-6">
+            <div className="flex flex-col items-center space-y-6">
               <div className="w-16 h-16 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full flex items-center justify-center">
                 <Check className="w-8 h-8 text-white" />
               </div>

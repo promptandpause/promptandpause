@@ -14,11 +14,10 @@ export default function Featured() {
         />
       </div>
       <div className="flex-1 text-left lg:h-[800px] flex flex-col justify-center lg:mr-12 lg:order-1">
-        <h3 className="uppercase mb-4">AI-Personalized Prompts</h3>
+        <h3 className="uppercase mb-4">One thoughtful question</h3>
         <p className="text-2xl lg:text-4xl mb-8">
-          Our AI learns your patterns and tailors daily prompts to your current mood, goals, and life challenges—whether
-          it's job hunt anxiety or creative burnout. UK and US-focused support integrated with NHS and local mental health resources,
-          designed for the unique stressors of modern life.
+          Prompt &amp; Pause gives you a single prompt at a time—so your attention stays on what matters, not on metrics.
+          Write privately, at your own pace, and return when you want a little more perspective.
         </p>
         <Link href="/our-mission" className="bg-black text-white border border-black px-4 py-2 text-sm transition-all duration-300 hover:bg-white hover:text-black cursor-pointer w-fit inline-block text-center">
           LEARN MORE

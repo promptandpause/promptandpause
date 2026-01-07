@@ -13,10 +13,6 @@ import { useReflectionStats } from "@/hooks/useReflectionStats";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import VoicePromptPlayer from "./voice-prompt-player";
 import { useTheme } from "@/contexts/ThemeContext";
-import CelebrationModal from "./celebration-modal";
-import BadgeUnlockModal from "./badge-unlock-modal";
-import { achievementService } from "@/lib/services/achievementService";
-import { Badge as AchievementBadge } from "@/lib/types/achievements";
 import { PromptLimitBanner } from "@/components/tier/TierGate";
 
 const moods: MoodType[] = ["😔", "😐", "😊", "😄", "🤔", "😌", "🙏", "💪"]
@@ -40,17 +36,8 @@ export default function TodaysPrompt() {
   const [promptProvider, setPromptProvider] = useState<string | null>(null)
   const [promptModel, setPromptModel] = useState<string | null>(null)
   const [userName, setUserName] = useState<string | null>(null)
-  const [showCelebration, setShowCelebration] = useState(false)
-  const [celebrationData, setCelebrationData] = useState<{
-    streak: number
-    wordCount: number
-    isMilestone: boolean
-  } | null>(null)
   const [isFocused, setIsFocused] = useState(false)
   const [wordCount, setWordCount] = useState(0)
-  const [newBadges, setNewBadges] = useState<AchievementBadge[]>([])
-  const [currentBadgeIndex, setCurrentBadgeIndex] = useState(0)
-  const [showBadgeModal, setShowBadgeModal] = useState(false)
   // Self-Journal state
   const [showSelfJournal, setShowSelfJournal] = useState(false)
   const [journalText, setJournalText] = useState("")
@@ -68,7 +55,7 @@ export default function TodaysPrompt() {
   function getEncouragingMessage(words: number): string | null {
     if (words === 0) return null
     if (words < 15) return "Good start."
-    if (words < 40) return "You're making progress."
+    if (words < 40) return "Keep going, if you want to."
     if (words < 80) return "Keep going."
     if (words < 140) return "This is taking shape."
     if (words < 220) return "That's a solid reflection."
@@ -142,46 +129,9 @@ export default function TodaysPrompt() {
 
       setSavedReflectionId(saved.id)
       setSubmitted(true)
-
-      // Get current user and streak for celebration and achievements
-      const { data: { user } } = await supabase.auth.getUser()
-      const currentStreak = await supabaseAnalyticsService.getCurrentStreak()
-      
-      // Check if this is a milestone (7, 30, 100, etc.)
-      const isMilestone = currentStreak > 0 && (currentStreak % 7 === 0 || currentStreak === 30 || currentStreak === 100 || currentStreak === 365)
-      
-      // Show celebration modal
-      setCelebrationData({
-        streak: currentStreak,
-        wordCount: saved.word_count,
-        isMilestone
-      })
-      setShowCelebration(true)
-
-      // Check for new badge achievements
-      if (user) {
-        const totalReflections = await achievementService.getTotalReflectionCount(user.id)
-        const badges = await achievementService.checkReflectionBadges(
-          user.id,
-          totalReflections,
-          currentStreak,
-          selectedTags
-        )
-        
-        if (badges.length > 0) {
-          setNewBadges(badges)
-          setCurrentBadgeIndex(0)
-          // Show badge modal after celebration (3-4s delay)
-          setTimeout(() => {
-            setShowBadgeModal(true)
-          }, isMilestone ? 4000 : 3000)
-        }
-      }
-
-      // Also show toast for backup
       toast({
-        title: "Reflection Saved! 🎉",
-        description: `Your reflection has been saved to the archive. Word count: ${saved.word_count}`,
+        title: "Saved",
+        description: "Your reflection has been saved.",
       })
     } catch (error) {
       toast({
@@ -264,19 +214,10 @@ export default function TodaysPrompt() {
       
       <section className={`rounded-2xl md:rounded-3xl p-5 md:p-8 flex flex-col gap-4 md:gap-6 relative transition-all duration-200 ${theme === 'dark' ? 'glass-light shadow-soft-lg' : 'glass-medium shadow-soft-md'}`} style={{ pointerEvents: 'auto' }}>
         <div className="flex items-center justify-between gap-3 mb-1">
-          <h3 className={`text-lg md:text-xl font-extrabold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Today's Prompt</h3>
+          <h3 className={`text-lg md:text-xl font-extrabold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Today</h3>
         </div>
       {todaysPrompt && (
         <>
-          {/* Focus Area Badge */}
-          {focusAreaUsed && (
-            <div className="flex items-center gap-2 mb-3">
-              <UIBadge className={`text-xs ${theme === 'dark' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/40' : 'bg-blue-500/20 text-blue-700 border border-blue-400'}`}>
-                🎯 {focusAreaUsed}
-              </UIBadge>
-            </div>
-          )}
-          
           <blockquote className={`italic text-base md:text-xl mb-0 font-medium leading-relaxed ${theme === 'dark' ? 'text-white/90' : 'text-gray-900'}`}>
             "{todaysPrompt}"
           </blockquote>
@@ -300,10 +241,7 @@ export default function TodaysPrompt() {
                   const result = await generatePromptAsync()
                   if (result) {
                     setTodaysPrompt(result.prompt_text)
-                    setFocusAreaUsed(result.focus_area_used || null)
-                    setPromptProvider(result.ai_provider)
-                    setPromptModel(result.ai_model)
-                    toast({ title: 'Prompt Generated! 🎉', description: `Using ${result.focus_area_used ? result.focus_area_used + ' focus area' : 'general reflection'}` })
+                    toast({ title: 'Prompt generated', description: `${result.focus_area_used ? 'Focus area: ' + result.focus_area_used : 'General reflection'}` })
                   } else {
                     toast({ title: 'Error', description: 'Failed to generate prompt', variant: 'destructive' })
                   }
@@ -472,7 +410,7 @@ export default function TodaysPrompt() {
                 disabled={reflection.trim().length === 0}
                 className="w-full md:w-auto bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold px-5 md:px-7 py-2.5 md:py-2 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base shadow-lg hover:shadow-xl"
               >
-                Save Reflection
+                Reflect
               </Button>
             </motion.div>
             
@@ -512,7 +450,7 @@ export default function TodaysPrompt() {
       ) : (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-3 md:space-y-4 mt-1 md:mt-2">
           <div className={`p-3 md:p-4 rounded-xl ${theme === 'dark' ? 'bg-green-500/20 border border-green-500/30' : 'bg-green-500/20 border border-green-400/30'}`}>
-            <div className={`font-semibold text-base md:text-lg mb-2 ${theme === 'dark' ? 'text-green-300' : 'text-green-700'}`}>✓ Reflection saved!</div>
+            <div className={`font-semibold text-base md:text-lg mb-2 ${theme === 'dark' ? 'text-green-300' : 'text-green-700'}`}>Saved.</div>
             <div className={`text-xs md:text-sm mb-2 leading-relaxed ${theme === 'dark' ? 'text-white/80' : 'text-gray-700'}`}>{reflection}</div>
             <div className="flex items-center gap-2 mt-2 md:mt-3">
               <span className="text-xl md:text-2xl">{selectedMood}</span>
@@ -547,44 +485,6 @@ export default function TodaysPrompt() {
             </div>
           </div>
         </motion.div>
-      )}
-      
-      {/* Celebration Modal */}
-      {celebrationData && (
-        <CelebrationModal
-          isOpen={showCelebration}
-          onClose={() => setShowCelebration(false)}
-          title={celebrationData.isMilestone ? `${celebrationData.streak} Day Milestone! 🎉` : "Reflection Saved! 🌟"}
-          message={celebrationData.isMilestone ? "You're on an amazing journey!" : "Your reflection has been saved to the archive."}
-          streakCount={celebrationData.streak}
-          wordCount={celebrationData.wordCount}
-          isMilestone={celebrationData.isMilestone}
-          duration={celebrationData.isMilestone ? 4000 : 3000}
-        />
-      )}
-      
-      {/* Badge Unlock Modal - Shows one badge at a time */}
-      {newBadges.length > 0 && currentBadgeIndex < newBadges.length && (
-        <BadgeUnlockModal
-          isOpen={showBadgeModal}
-          badge={newBadges[currentBadgeIndex]}
-          onClose={() => {
-            if (currentBadgeIndex < newBadges.length - 1) {
-              // Show next badge
-              setCurrentBadgeIndex(prev => prev + 1)
-            } else {
-              // All badges shown, close modal
-              setShowBadgeModal(false)
-              setTimeout(() => {
-                setNewBadges([])
-                setCurrentBadgeIndex(0)
-              }, 300) // Give animation time to complete
-            }
-          }}
-          onShare={() => {
-            // TODO: Implement share functionality
-          }}
-        />
       )}
 
       {/* Self-Journal Modal */}

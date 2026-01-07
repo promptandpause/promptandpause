@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useToast } from "@/hooks/use-toast"
 import { supabaseReflectionService } from "@/lib/services/supabaseReflectionService"
-import { calculateReflectionStreak } from "@/lib/services/analyticsService"
 import { getSupabaseClient } from "@/lib/supabase/client"
 import { Reflection } from "@/lib/types/reflection"
 import { useTier } from "@/hooks/useTier"
@@ -49,8 +48,6 @@ function ArchivePageContent() {
   const [showAll, setShowAll] = useState(false)
   const [archivedReflections, setArchivedReflections] = useState<Reflection[]>([])
   const [loading, setLoading] = useState(true)
-  const [currentStreak, setCurrentStreak] = useState(0)
-  const [mostUsedTag, setMostUsedTag] = useState("")
 
   // Load reflections from Supabase
   useEffect(() => {
@@ -61,11 +58,7 @@ function ArchivePageContent() {
         const { data: { user } } = await supabase.auth.getUser()
         if (!user || !isMounted) return
 
-        // Fetch reflections and stats in parallel
-        const [reflections, streak] = await Promise.all([
-          supabaseReflectionService.getAllReflections(),
-          calculateReflectionStreak(user.id)
-        ])
+        const reflections = await supabaseReflectionService.getAllReflections()
 
         if (!isMounted) return
 
@@ -75,19 +68,6 @@ function ArchivePageContent() {
           : reflections
 
         setArchivedReflections(limitedReflections)
-        setCurrentStreak(streak)
-
-        // Calculate most used tag
-        const tagCounts: Record<string, number> = {}
-        reflections.forEach(r => {
-          r.tags.forEach(tag => {
-            tagCounts[tag] = (tagCounts[tag] || 0) + 1
-          })
-        })
-        const mostUsed = Object.entries(tagCounts).sort((a, b) => b[1] - a[1])[0]
-        if (mostUsed) {
-          setMostUsedTag(mostUsed[0])
-        }
       } catch (error) {
         toast({
           title: "Error",
@@ -222,7 +202,7 @@ function ArchivePageContent() {
             <div className="flex flex-col md:flex-row md:items-center md:items-center md:justify-between gap-3 md:gap-4">
               <div>
                 <h2 className={`text-xl md:text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Archive</h2>
-                <p className={`text-xs md:text-base ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>Browse your past reflections and track your journey</p>
+                <p className={`text-xs md:text-base ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>Browse your past reflections.</p>
               </div>
               <div className="flex items-center gap-2 md:gap-4 overflow-x-auto pb-2 md:pb-0">
                 {/* Search - Premium Feature */}
@@ -371,90 +351,6 @@ function ArchivePageContent() {
               </div>
             </div>
           </Card>
-
-          {/* Stats Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
-            {loading ? (
-              // Loading skeletons
-              Array(4).fill(0).map((_, index) => (
-                <Card key={index} className={`backdrop-blur-xl rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-md ${
-                  theme === 'dark'
-                    ? 'bg-white/5 border border-white/10'
-                    : 'bg-white/90 border-2 border-gray-300'
-                }`}>
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-                    <div className="space-y-2 flex-1">
-                      <Skeleton className={`h-3 md:h-4 w-20 md:w-24 ${
-                        theme === 'dark' ? 'bg-white/10' : 'bg-gray-200'
-                      }`} />
-                      <Skeleton className={`h-6 md:h-8 w-12 md:w-16 ${
-                        theme === 'dark' ? 'bg-white/10' : 'bg-gray-200'
-                      }`} />
-                    </div>
-                    <Skeleton className={`h-6 w-6 md:h-8 md:w-8 rounded-full self-end md:self-auto ${
-                      theme === 'dark' ? 'bg-white/10' : 'bg-gray-200'
-                    }`} />
-                  </div>
-                </Card>
-              ))
-            ) : (
-              [
-                { 
-                  title: "Total Reflections", 
-                  value: archivedReflections.length.toString(), 
-                  icon: Archive, 
-                  color: "text-blue-400" 
-                },
-                { 
-                  title: "This Month", 
-                  value: archivedReflections.filter(r => {
-                    const monthAgo = new Date()
-                    monthAgo.setMonth(monthAgo.getMonth() - 1)
-                    return new Date(r.date) >= monthAgo
-                  }).length.toString(), 
-                  icon: Calendar, 
-                  color: "text-green-400" 
-                },
-                { 
-                  title: "Current Streak", 
-                  value: `${currentStreak} day${currentStreak !== 1 ? 's' : ''}`, 
-                  icon: "🔥", 
-                  color: "text-orange-400" 
-                },
-                { 
-                  title: "Most Used Tag", 
-                  value: mostUsedTag || "N/A", 
-                  icon: "🏷️", 
-                  color: "text-purple-400" 
-                },
-              ].map((stat, index) => (
-                <Card
-                  key={index}
-                  className={`backdrop-blur-xl rounded-2xl md:rounded-3xl p-4 md:p-6 transition-all duration-700 ease-out hover:scale-[1.02] shadow-md ${
-                    theme === 'dark'
-                      ? 'bg-white/5 border border-white/10 hover:bg-white/10'
-                      : 'bg-white/90 border-2 border-gray-300 hover:bg-white'
-                  }`}
-                >
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-                    <div className="flex-1">
-                      <p className={`text-xs md:text-sm truncate ${
-                        theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-                      }`}>{stat.title}</p>
-                      <p className={`text-xl md:text-2xl font-bold mt-1 ${
-                        theme === 'dark' ? 'text-white' : 'text-gray-900'
-                      }`}>{stat.value}</p>
-                    </div>
-                    {typeof stat.icon === 'string' ? (
-                      <span className="text-2xl md:text-3xl self-end md:self-auto">{stat.icon}</span>
-                    ) : (
-                      <stat.icon className={`h-6 w-6 md:h-8 md:w-8 ${stat.color} self-end md:self-auto`} />
-                    )}
-                  </div>
-                </Card>
-              ))
-            )}
-          </div>
 
           {/* Reflections List */}
           <Card className={`backdrop-blur-xl rounded-3xl p-4 md:p-6 shadow-xl ${

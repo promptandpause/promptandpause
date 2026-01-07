@@ -12,18 +12,18 @@ Your authentication system is **fully integrated** with Supabase! Here's what's 
    - Redirects authenticated users away from auth pages
    - Ensures users complete onboarding before accessing dashboard
 
-2. **`app/auth/callback/route.ts`** - OAuth callback handler
+2. **`app/(auth)/auth/callback/route.ts`** - OAuth callback handler
    - Handles Google OAuth redirect
    - Exchanges code for session
    - Routes users to onboarding or dashboard
 
-3. **`app/auth/login-form.tsx`** - Sign in functionality
+3. **`app/(auth)/_components/login-form.tsx`** - Sign in functionality
    - Google OAuth sign in
    - Email/password sign in
    - Loading states
    - Error handling
 
-4. **`app/auth/signup/signup-form.tsx`** - Sign up functionality
+4. **`app/(auth)/_components/signup-form.tsx`** - Sign up functionality
    - Google OAuth sign up
    - Email/password sign up
    - Password validation

@@ -59,7 +59,7 @@ export default function JournalsPage() {
         setLoading(true)
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) {
-          router.push("/auth/signin")
+          router.push("/login")
           return
         }
         const { data, error } = await supabase

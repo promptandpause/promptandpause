@@ -1808,8 +1808,9 @@ function SettingsPageContent() {
                               {[
                                 "Daily prompts (7 days/week)",
                                 "Unlimited archive access",
-                                "Advanced analytics",
+                                "Weekly & monthly reflections",
                                 "Slack integration",
+                                "Export reflections",
                               ].map((feature, index) => (
                                 <div key={index} className={`flex items-center gap-2 text-xs ${
                                   theme === 'dark' ? 'text-white' : 'text-gray-900'
@@ -1846,7 +1847,7 @@ function SettingsPageContent() {
                               }`} />
                               <p className={`text-sm font-semibold ${
                                 theme === 'dark' ? 'text-white' : 'text-gray-900'
-                              }`}>You're on Premium!</p>
+                              }`}>Premium plan</p>
                             </div>
                             <div className={`grid grid-cols-2 gap-2 text-[11px] ${
                               theme === 'dark' ? 'text-white/90' : 'text-gray-800'
@@ -1854,8 +1855,9 @@ function SettingsPageContent() {
                               {[
                                 "Daily prompts",
                                 "Unlimited archive",
-                                "Advanced analytics",
+                                "Weekly & monthly reflections",
                                 "Slack integration",
+                                "Export",
                               ].map((feature, index) => (
                                 <div key={index} className="flex items-center gap-1.5">
                                   <Check className="h-3 w-3 text-green-600 flex-shrink-0" />
@@ -1890,7 +1892,7 @@ function SettingsPageContent() {
                               {[
                                 "3 prompts per week",
                                 "Last 50 reflections",
-                                "Basic mood tracking",
+                                "Optional check-in",
                                 "Email delivery only",
                               ].map((feature, index) => (
                                 <div key={index} className={`flex items-start gap-2 text-xs ${

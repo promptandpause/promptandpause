@@ -746,10 +746,10 @@ Response to Client
 5. Get user session
 6. Check maintenance mode (redirect non-admins)
 7. Check if authenticated
-   ├─ No → redirect to /auth/login
+   ├─ No → redirect to /login
    └─ Yes → continue
 8. Check email verification (email/password users only)
-   ├─ Not verified → redirect to /auth/verify
+   ├─ Not verified → redirect to /verify
    └─ Verified → continue
 9. Check onboarding completion
    ├─ Not completed → redirect to /onboarding

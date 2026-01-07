@@ -7,7 +7,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://promptandpause.com'
 export const metadata: Metadata = {
   title: 'Prompt & Pause | Pause. Reflect. Grow.',
   description:
-    'Five quiet minutes a day to make sense of your life. Personalized daily reflection prompts to help you process stress, track your mood, and rediscover calm.',
+    'Five quiet minutes a day to make sense of your life. One thoughtful prompt at a time—private, calm, and without pressure or performance.',
   alternates: { canonical: siteUrl + '/' },
   openGraph: {
     images: [{ url: '/opengraph-image.png', width: 1200, height: 630, alt: 'Prompt & Pause social preview' }],

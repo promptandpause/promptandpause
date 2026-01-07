@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import dynamic from "next/dynamic"
 import { useTheme } from "@/contexts/ThemeContext"
 import { Badge, getRarityColor } from "@/lib/types/achievements"
 import { Button } from "@/components/ui/button"
@@ -14,12 +13,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-
-// Dynamic import for Lottie to avoid SSR issues
-const DotLottieReact = dynamic(
-  () => import("@lottiefiles/dotlottie-react").then(m => m.DotLottieReact),
-  { ssr: false }
-)
 
 interface BadgeUnlockModalProps {
   badge: Badge | null
@@ -107,25 +100,7 @@ export default function BadgeUnlockModal({
             onClick={onClose}
           />
 
-          {/* Background Confetti (if badge has Lottie) */}
-          {showConfetti && badge.lottieUrl && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[101] flex items-center justify-center pointer-events-none motion-reduce:hidden"
-              aria-hidden="true"
-            >
-              <div className="w-full h-full max-w-2xl max-h-2xl">
-                <DotLottieReact
-                  src={badge.lottieUrl}
-                  loop={false}
-                  autoplay
-                  style={{ width: "100%", height: "100%" }}
-                />
-              </div>
-            </motion.div>
-          )}
+          {/* Background Confetti removed to avoid WASM fetch errors in dev */}
 
           {/* Modal */}
           <motion.div

@@ -1080,7 +1080,7 @@ export async function getEmailLogs(params: {
   limit?: number
   offset?: number
   recipient_email?: string
-  template_id?: string
+  template_name?: string
   status?: string
   start_date?: string
   end_date?: string
@@ -1091,7 +1091,7 @@ export async function getEmailLogs(params: {
       limit = 50, 
       offset = 0, 
       recipient_email,
-      template_id,
+      template_name,
       status,
       start_date,
       end_date
@@ -1099,10 +1099,7 @@ export async function getEmailLogs(params: {
 
     let query = supabase
       .from('email_logs')
-      .select(`
-        *,
-        email_templates(name, subject)
-      `, { count: 'exact' })
+      .select('*', { count: 'exact' })
       .order('sent_at', { ascending: false })
       .range(offset, offset + limit - 1)
 
@@ -1110,8 +1107,8 @@ export async function getEmailLogs(params: {
       query = query.ilike('recipient_email', `%${recipient_email}%`)
     }
 
-    if (template_id) {
-      query = query.eq('template_id', template_id)
+    if (template_name) {
+      query = query.eq('template_name', template_name)
     }
 
     if (status) {

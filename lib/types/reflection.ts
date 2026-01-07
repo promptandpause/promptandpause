@@ -221,6 +221,12 @@ export interface WeeklyDigest {
     repeatedWords: { word: string; count: number }[]
     promptTypeDepth: { promptType: string; averageWordCount: number; count: number }[]
     selectedFocusAreas: string[]
+    comparison?: {
+      baselinePeriod: 'previous_2_weeks'
+      reflectionLengthTrend: 'shorter' | 'longer' | 'stable'
+      consistencyTrend: 'more_consistent' | 'less_consistent' | 'stable'
+      moodVarianceTrend: 'steadier' | 'more_variable' | 'stable'
+    }
   }
 }
 

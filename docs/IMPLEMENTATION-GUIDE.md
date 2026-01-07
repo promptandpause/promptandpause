@@ -973,7 +973,7 @@ git add app/dashboard/
 git commit -m "feat: redesign dashboard with new visual system"
 
 # Phase 4: Other screens
-git add app/onboarding/ app/auth/
+git add app/onboarding/ app/(auth)/
 git commit -m "feat: apply new design to onboarding and auth screens"
 ```
 

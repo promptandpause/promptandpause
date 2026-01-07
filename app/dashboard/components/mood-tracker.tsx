@@ -86,7 +86,7 @@ export default function MoodTracker() {
   return (
     <section className={`rounded-2xl md:rounded-3xl px-4 md:px-7 pt-5 md:pt-6 pb-5 md:pb-6 flex flex-col transition-all duration-200 ${theme === 'dark' ? 'glass-light shadow-soft-lg' : 'glass-medium shadow-soft-md'}`}>
       <div className="flex items-center justify-between mb-4">
-        <h4 className={`font-semibold text-base ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Mood Tracker</h4>
+        <h4 className={`font-semibold text-base ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Check-in</h4>
         {currentStreak > 0 && (
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
@@ -113,7 +113,7 @@ export default function MoodTracker() {
             >
               {currentStreak}
             </motion.span>
-            {' '}day streak 🔥
+            {' '}days in a row
           </motion.div>
         )}
       </div>
@@ -206,7 +206,7 @@ export default function MoodTracker() {
               <div className="flex items-center justify-center py-2">
                 <p className={`text-xs italic ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`}>
                   {activeDay === 6
-                    ? "Complete today's reflection to track your mood"
+                    ? "If you want, write a short reflection for today"
                     : "No reflection for this day"}
                 </p>
               </div>

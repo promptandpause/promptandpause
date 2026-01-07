@@ -6,7 +6,7 @@ export function organizationJsonLd() {
     alternateName: "Prompt and Pause",
     url: "https://promptandpause.com",
     logo: "https://promptandpause.com/icon.png",
-    description: "AI-powered mental wellness platform providing personalized daily reflection prompts for mindfulness, stress relief, and personal growth.",
+    description: "A calm reflection practice with one thoughtful prompt at a time—private, quiet, and without pressure or performance.",
     foundingDate: "2024",
     contactPoint: {
       "@type": "ContactPoint",
@@ -29,7 +29,7 @@ export function websiteJsonLd() {
     name: "Prompt & Pause",
     alternateName: "Prompt and Pause",
     url: "https://promptandpause.com",
-    description: "Transform your mental wellness with AI-powered daily reflection prompts. Track mood, reduce stress, and build mindfulness habits.",
+    description: "Five quiet minutes a day to make sense of your life. One thoughtful prompt at a time—private, calm, and without pressure or performance.",
     inLanguage: "en-GB",
     publisher: {
       "@type": "Organization",
@@ -54,7 +54,7 @@ export function premiumProductJsonLd() {
     name: "Prompt & Pause Premium",
     applicationCategory: "HealthApplication",
     operatingSystem: "Web, iOS, Android",
-    description: "Premium mental wellness subscription with unlimited custom focus areas, weekly AI-generated insights, advanced analytics, and priority support.",
+    description: "Premium subscription with weekly and monthly reflection summaries, gentle perspective over time, and export/retrieval features.",
     brand: { 
       "@type": "Brand", 
       name: "Prompt & Pause" 

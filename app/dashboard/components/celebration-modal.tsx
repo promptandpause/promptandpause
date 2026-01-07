@@ -2,14 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import dynamic from "next/dynamic"
 import { useTheme } from "@/contexts/ThemeContext"
-
-// Dynamic import for Lottie to avoid SSR issues
-const DotLottieReact = dynamic(
-  () => import("@lottiefiles/dotlottie-react").then(m => m.DotLottieReact),
-  { ssr: false }
-)
 
 interface CelebrationModalProps {
   isOpen: boolean
@@ -89,20 +82,7 @@ export default function CelebrationModal({
               `}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Lottie Animation */}
-              <div className="flex justify-center mb-6 motion-reduce:hidden" aria-hidden="true">
-                <div className="w-32 h-32">
-                  <DotLottieReact
-                    src="https://lottie.host/fdd87f0c-d722-4ee7-807d-3cacc38b3eaa/pVAFsFi3si.lottie"
-                    loop={false}
-                    autoplay
-                    style={{ width: "100%", height: "100%" }}
-                  />
-                </div>
-              </div>
-
-              {/* Static fallback for reduced motion */}
-              <div className="hidden motion-reduce:flex justify-center mb-6">
+              <div className="flex justify-center mb-6">
                 <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-pink-500 rounded-full flex items-center justify-center">
                   <span className="text-4xl">🎉</span>
                 </div>

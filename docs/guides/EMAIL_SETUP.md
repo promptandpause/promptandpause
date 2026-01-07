@@ -43,7 +43,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 
 ### 1. Welcome Email
 **Trigger:** New user signs up via OAuth (Google)  
-**Sent from:** `app/auth/callback/route.ts`  
+**Sent from:** `app/(auth)/auth/callback/route.ts`  
 **Function:** `sendWelcomeEmail(email, name)`
 
 **When it fires:**
@@ -212,7 +212,7 @@ CREATE TABLE email_delivery_log (
 
 **Steps:**
 1. Create a new Google account or use a test account
-2. Sign up at `/auth/signup` using Google OAuth
+2. Sign up at `/signup` using Google OAuth
 3. Complete signup flow
 4. Check email inbox for welcome email
 5. Verify:
@@ -509,7 +509,7 @@ LIMIT 5;
 
 **Solution:**
 - Add welcome email to email/password signup flow
-- Add to signup route: `app/auth/signup/components/signup-form.tsx`
+- Add to signup route: `app/(auth)/_components/signup-form.tsx`
 
 ---
 
@@ -545,7 +545,7 @@ Restart dev server after adding.
 ## 📚 Related Files
 
 ### Created/Updated in Task 11:
-- ✅ `app/auth/callback/route.ts` - Welcome email integration
+- ✅ `app/(auth)/auth/callback/route.ts` - Welcome email integration
 - ✅ `app/api/stripe/webhook/route.ts` - Subscription email integration
 - ✅ `app/api/emails/send-prompt/route.ts` - Manual prompt email endpoint
 - ✅ `app/api/emails/send-digest/route.ts` - Manual digest email endpoint

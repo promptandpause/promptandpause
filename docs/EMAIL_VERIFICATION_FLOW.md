@@ -27,7 +27,7 @@ Sign up with email/password
     ↓
 Receive verification email
     ↓
-Redirect to /auth/verify
+Redirect to /verify
     ↓
 Click link in email
     ↓
@@ -55,7 +55,7 @@ const isEmailVerified = user.email_confirmed_at !== null
 
 if (!isOAuthUser && !isEmailVerified) {
   console.log('[PROXY] Email not verified - redirecting to verify page')
-  return NextResponse.redirect(new URL('/auth/verify', request.url))
+  return NextResponse.redirect(new URL('/verify', request.url))
 }
 ```
 
@@ -71,7 +71,7 @@ if (!isOAuthUser && !isEmailVerified) {
 }
 ```
 
-### Verify Page (`app/auth/verify/page.tsx`)
+### Verify Page (`app/(auth)/verify/page.tsx`)
 
 **Features:**
 - Auto-detects if user is already verified
@@ -135,18 +135,18 @@ const isOAuthUser = user.app_metadata?.provider !== 'email'
 - `/onboarding`
 - `/dashboard`
 - `/dashboard/*` (all dashboard routes)
-- Any protected route except `/auth/verify`
+- Any protected route except `/verify`
 
 ### Always Accessible:
 - `/` (homepage)
-- `/auth/signin`
-- `/auth/signup`
-- `/auth/verify`
+- `/login`
+- `/signup`
+- `/verify`
 - `/auth/callback`
-- `/auth/forgot-password`
+- `/forgot-password`
 
 ### OAuth Users:
-- Skip `/auth/verify` entirely
+- Skip `/verify` entirely
 - Go directly to `/onboarding` after signup
 - Then to `/dashboard` after completing onboarding
 
@@ -194,32 +194,32 @@ Ensure Supabase has email verification enabled:
 
 ### Test Email/Password Flow:
 1. Sign up with email/password
-2. Should redirect to `/auth/verify`
+2. Should redirect to `/verify`
 3. Check email for verification link
 4. Click link → redirects to `/onboarding`
 5. Complete onboarding → access `/dashboard`
 
 ### Test Google SSO Flow:
 1. Sign up with Google
-2. Should skip `/auth/verify`
+2. Should skip `/verify`
 3. Go directly to `/onboarding`
 4. Complete onboarding → access `/dashboard`
 
 ### Test Unverified Access:
 1. Sign up with email/password
 2. Try to access `/dashboard` directly
-3. Should redirect to `/auth/verify`
+3. Should redirect to `/verify`
 4. Try to access `/onboarding` directly
-5. Should redirect to `/auth/verify`
+5. Should redirect to `/verify`
 
 ## Edge Cases
 
 ### User Deletes Verification Email:
-- Can request resend on `/auth/verify` page
+- Can request resend on `/verify` page
 - Enter email and click "Resend Verification Email"
 
 ### User Already Verified:
-- `/auth/verify` page auto-detects and redirects to onboarding
+- `/verify` page auto-detects and redirects to onboarding
 - No manual action needed
 
 ### OAuth User Tries to Access Verify Page:

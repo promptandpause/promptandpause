@@ -45,7 +45,7 @@ Created individual layout files with SEO metadata for:
 ### **4. Private Area Protection** (noindex)
 Created layouts to prevent search indexing:
 - ✅ `app/dashboard/layout.tsx` - Dashboard and all child routes
-- ✅ `app/auth/layout.tsx` - Sign in, sign up, forgot password, verify
+- ✅ `app/(auth)/layout.tsx` - Sign in, sign up, forgot password, verify
 - ✅ `app/admin-panel/layout.tsx` - Updated to include robots: noindex
 - ✅ `app/onboarding/layout.tsx` - Onboarding flow
 
@@ -95,7 +95,7 @@ Created layouts to prevent search indexing:
 
 ### Private Area Layouts (3)
 18. `app/dashboard/layout.tsx`
-19. `app/auth/layout.tsx`
+19. `app/(auth)/layout.tsx`
 20. `app/onboarding/layout.tsx`
 
 ### Utility Files (1)

@@ -28,7 +28,6 @@ export default function PricingPage() {
       gestureOrientation: "vertical",
       smoothWheel: true,
       wheelMultiplier: 1,
-      smoothTouch: false,
       touchMultiplier: 2,
       infinite: false,
     })
@@ -169,7 +168,7 @@ function PricingCardsSection() {
               </div>
               <div className="flex items-start gap-3">
                 <Check className="w-6 h-6 flex-shrink-0 mt-1 text-black" />
-                <span className="text-lg">Basic mood tracking (1-10 scale)</span>
+                <span className="text-lg">Optional check-in (simple, no charts)</span>
               </div>
               <div className="flex items-start gap-3">
                 <Check className="w-6 h-6 flex-shrink-0 mt-1 text-black" />
@@ -202,7 +201,7 @@ function PricingCardsSection() {
                 </div>
                 <div className="flex items-start gap-3">
                   <X className="w-5 h-5 flex-shrink-0 mt-0.5 text-neutral-400" />
-                  <span className="text-neutral-500">Advanced analytics</span>
+                  <span className="text-neutral-500">Monthly reflection</span>
                 </div>
                 <div className="flex items-start gap-3">
                   <X className="w-5 h-5 flex-shrink-0 mt-0.5 text-neutral-400" />
@@ -281,7 +280,7 @@ function PricingCardsSection() {
               </div>
               <div className="flex items-start gap-3">
                 <Check className="w-6 h-6 flex-shrink-0 mt-1 text-black" />
-                <span className="text-lg">Advanced mood analytics & charts</span>
+                <span className="text-lg">Monthly reflection summary</span>
               </div>
               <div className="flex items-start gap-3">
                 <Check className="w-6 h-6 flex-shrink-0 mt-1 text-black" />
@@ -297,7 +296,7 @@ function PricingCardsSection() {
               </div>
               <div className="flex items-start gap-3">
                 <Check className="w-6 h-6 flex-shrink-0 mt-1 text-black" />
-                <span className="text-lg">Export reflections (PDF/TXT)</span>
+                <span className="text-lg">Export reflections</span>
               </div>
               <div className="flex items-start gap-3">
                 <Check className="w-6 h-6 flex-shrink-0 mt-1 text-black" />
@@ -376,9 +375,9 @@ function ComparisonTableSection() {
                 <td className="py-6 px-4 text-center bg-neutral-100 font-bold">Unlimited</td>
               </tr>
               <tr className="border-b border-neutral-200">
-                <td className="py-6 px-4 font-medium">Mood tracking</td>
-                <td className="py-6 px-4 text-center">Basic (1-10 scale)</td>
-                <td className="py-6 px-4 text-center bg-neutral-100 font-bold">Advanced with charts</td>
+                <td className="py-6 px-4 font-medium">Optional check-in</td>
+                <td className="py-6 px-4 text-center">Simple</td>
+                <td className="py-6 px-4 text-center bg-neutral-100 font-bold">Simple</td>
               </tr>
               <tr className="border-b border-neutral-200">
                 <td className="py-6 px-4 font-medium">Weekly digest</td>
@@ -684,7 +683,7 @@ function EnterpriseSection() {
             </div>
             <div className="flex items-start gap-3">
               <TrendingUp className="w-6 h-6 flex-shrink-0 mt-1" />
-              <span className="text-lg">Anonymous usage analytics</span>
+              <span className="text-lg">Organization-level setup and support</span>
             </div>
             <div className="flex items-start gap-3">
               <TrendingUp className="w-6 h-6 flex-shrink-0 mt-1" />
@@ -722,13 +721,7 @@ function FinalCTASection() {
         </p>
         <div className="flex flex-col sm:flex-row gap-6 justify-center">
           <a
-            href="/auth"
-            className="px-10 py-5 bg-black text-white border-2 border-black text-base font-medium tracking-wide transition-all duration-300 hover:bg-neutral-800 cursor-pointer text-center"
-          >
-            START FREE
-          </a>
-          <a
-            href="/pricing"
+            href="/signup"
             className="px-10 py-5 border-2 border-black bg-transparent text-black text-base font-medium tracking-wide transition-all duration-300 hover:bg-black hover:text-white cursor-pointer text-center"
           >
             TRY PREMIUM FREE FOR 7 DAYS

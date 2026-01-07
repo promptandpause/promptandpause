@@ -433,22 +433,22 @@ function FAQSection({
       {
         question: "What makes Prompt & Pause different from journaling apps?",
         answer:
-          "We deliver one personalized question daily via email or Slack—no app download needed. Most journaling apps give you a blank page, which can be overwhelming. Our AI tailors prompts to your specific challenges based on your onboarding preferences and engagement patterns. The simplicity of one question per day removes decision fatigue and makes reflection accessible even on your busiest days.",
+          "We deliver one personalized question daily via email or Slack—no app download needed. Most journaling apps start with a blank page, which can be overwhelming. Prompt & Pause offers a single, focused question to help you begin. You can reflect in a few minutes, and return whenever it feels helpful.",
       },
       {
         question: "Is this a replacement for therapy?",
         answer:
-          "Absolutely not. Prompt & Pause is a self-reflection tool designed to complement professional mental health support, not replace it. Think of it as a daily check-in with yourself between therapy sessions. If you're experiencing a mental health crisis, suicidal thoughts, or need clinical intervention, please contact a qualified mental health professional or use the crisis resources listed on this page.",
+          "No. Prompt & Pause is a self-reflection tool, not medical or therapeutic care. If you’re in crisis, thinking about harming yourself, or need urgent support, please contact local emergency services or use the crisis resources on this page.",
       },
       {
         question: "How do you personalize prompts?",
         answer:
-          "During onboarding, you complete a brief quiz selecting focus areas like work stress, relationships, grief, anxiety, or personal growth. Our AI uses this information along with the time of year, day of week, and your engagement patterns to generate relevant questions. For example, if you selected 'work stress' and it's Monday morning, you might receive a prompt about setting intentions for the week. Premium users get deeper personalization based on their reflection history.",
+          "During onboarding, you choose a few focus areas (for example: work stress, relationships, change, grief, grounding). We use those preferences (and context like time of year and day of week) to select or generate prompts that fit what you asked for. Premium users can also get weekly/monthly perspective based on their reflection history.",
       },
       {
         question: "Can I use this alongside therapy?",
         answer:
-          "Yes! Many users find Prompt & Pause works well alongside therapy. You can use our daily prompts to track patterns between sessions, practice skills your therapist suggests, or bring insights to your next appointment. It's a tool for self-awareness, not a clinical treatment.",
+          "Yes, many people use reflection alongside other kinds of support. You can use Prompt & Pause as a private place to think things through and to notice what you want to bring up elsewhere. It’s not a clinical treatment.",
       },
       {
         question: "What if I miss a day?",

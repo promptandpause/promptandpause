@@ -4,12 +4,12 @@ import { AuthGuard } from "@/components/auth/AuthGuard"
 import { useTier } from "@/hooks/useTier"
 import { PromptLimitBanner } from "@/components/tier/TierGate"
 import TodaysPrompt from "./components/todays-prompt"
-import MoodTracker from "./components/mood-tracker"
-import WeeklyInsights from "./components/weekly-insights"
-import MoodAnalytics from "./components/mood-analytics"
-import FocusAreasManager from "./components/focus-areas-manager"
-import QuickStats from "./components/quick-stats"
-import ActivityCalendar from "./components/activity-calendar"
+import WeeklyReflectionCard from "./components/weekly-reflection-card"
+import MonthlyReflectionCard from "./components/monthly-reflection-card"
+import FromYourPastCard from "./components/from-your-past-card"
+import YourRhythm from "./components/your-rhythm"
+import HistorySearchCard from "./components/history-search-card"
+import SettingsLinkCard from "./components/settings-link-card"
 import GlobalDataSync from "./components/global-data-sync"
 import { DashboardSidebar } from "./components/DashboardSidebar"
 import { useTheme } from "@/contexts/ThemeContext"
@@ -74,16 +74,16 @@ export default function DashboardPage() {
             <div className="col-span-1 md:col-span-7 space-y-4 md:space-y-6">
               {/* Show prompt limit warning for free users - Moved to inside TodaysPrompt */}
               <TodaysPrompt />
-              <MoodTracker />
-              {tier === 'premium' && <WeeklyInsights />}
-              {tier === 'premium' && <MoodAnalytics />}
-              <QuickStats />
+              {tier === 'premium' && <WeeklyReflectionCard />}
+              {tier === 'premium' && <MonthlyReflectionCard />}
+              {tier === 'premium' && <FromYourPastCard />}
+              <YourRhythm />
+              <HistorySearchCard />
+              <SettingsLinkCard />
             </div>
 
             {/* Right Sidebar - Pre-loaded components */}
             <div className="hidden md:block md:col-span-3 space-y-4 md:space-y-6">
-              <ActivityCalendar />
-              {tier === 'premium' && <FocusAreasManager />}
             </div>
           </div>
         </div>

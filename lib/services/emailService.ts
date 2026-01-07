@@ -42,6 +42,72 @@ const GOLD_ACCENT = '#c9a227'                   // Warm gold for special CTAs
 // Brand CDN Logo URL - Links to homepage
 const LOGO_URL = 'https://res.cloudinary.com/dh1rrfpmq/image/upload/v1766460430/prompt_pause-JRsbZR3dxCXndC8YMcyX6XU3XeT2Vw_vdvqfj.svg'
 
+function renderTemplateString(template: string, variables: Record<string, string | number | null | undefined>): string {
+  return template.replace(/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/g, (_match, key: string) => {
+    const value = variables[key]
+    if (value === null || value === undefined) return _match
+    return String(value)
+  })
+}
+
+async function getSubjectForTemplate(
+  templateKey: string,
+  variables: Record<string, string | number | null | undefined> = {}
+): Promise<string> {
+  try {
+    const result = await getTemplateByKey(templateKey)
+    if (result.success && result.data?.subject_template) {
+      return renderTemplateString(result.data.subject_template, variables)
+    }
+  } catch (error) {
+    logger.error('email_subject_template_fetch_error', { error, templateKey })
+  }
+  return APP_NAME
+}
+
+async function logEmailSend(params: {
+  userId: string
+  recipientEmail: string
+  subject: string
+  templateName: string
+  provider: string
+  status: string
+  providerMessageId?: string | null
+  errorMessage?: string | null
+  metadata?: Record<string, any>
+  sentAt?: string
+}): Promise<void> {
+  try {
+    const supabase = createServiceRoleClient()
+
+    const { error } = await supabase
+      .from('email_logs')
+      .insert({
+        user_id: params.userId,
+        recipient_email: params.recipientEmail,
+        subject: params.subject,
+        template_name: params.templateName,
+        provider: params.provider,
+        status: params.status,
+        provider_message_id: params.providerMessageId || null,
+        error_message: params.errorMessage || null,
+        metadata: params.metadata || null,
+        sent_at: params.sentAt || new Date().toISOString(),
+      })
+
+    if (error) {
+      logger.error('email_logs_insert_error', {
+        error,
+        templateName: params.templateName,
+        recipientEmail: params.recipientEmail,
+        status: params.status,
+      })
+    }
+  } catch (error) {
+    logger.error('email_logs_unexpected_insert_error', { error, templateName: params.templateName })
+  }
+}
+
 // =============================================================================
 // CUSTOMIZATION CACHING AND DB INTEGRATION
 // =============================================================================
@@ -198,7 +264,7 @@ function applyCustomization(html: string, customization: EmailTemplateCustomizat
   if (customization.custom_header_text) {
     // Inject after logo in header
     customized = customized.replace(
-      /(<!-- Header with Logo -->.*?<\/td>)/s,
+      /(<!--[\s\S]*?Header with Logo[\s\S]*?<\/td>)/,
       `$1\n<tr><td style="padding: 16px 20px; text-align: center;">${customization.custom_header_text}</td></tr>`
     )
   }
@@ -206,7 +272,7 @@ function applyCustomization(html: string, customization: EmailTemplateCustomizat
   // Replace footer text if provided
   if (customization.custom_footer_text) {
     customized = customized.replace(
-      /(<!-- Footer -->.*?)<p style="color: [^"]+; font-size: 13px[^>]+>[^<]+<\/p>/s,
+      /(<!--[\s\S]*?Footer[\s\S]*?)<p style="color: [^"]+; font-size: 13px[^>]+>[^<]+<\/p>/,
       `$1<p style="color: ${TEXT_GRAY}; font-size: 13px; margin: 0 0 8px 0;">${customization.custom_footer_text}</p>`
     )
   }
@@ -305,17 +371,39 @@ export async function sendWelcomeEmail(
       generateWelcomeEmailHTML(displayName)
     )
 
+    const subject = await getSubjectForTemplate('welcome', { userName: displayName })
+
     const { data, error } = await resend.emails.send({
       from: `${APP_NAME} <${FROM_EMAIL}>`,
       to: email,
-      subject: `Welcome to ${APP_NAME}! 🌟`,
+      subject,
       html,
     })
 
     if (error) {
       logger.error('email_welcome_send_error', { error, email })
+      await logEmailSend({
+        userId: 'unknown',
+        recipientEmail: email,
+        subject,
+        templateName: 'welcome',
+        provider: 'resend',
+        status: 'failed',
+        providerMessageId: null,
+        errorMessage: error.message,
+      })
       return { success: false, error: error.message }
     }
+
+    await logEmailSend({
+      userId: 'unknown',
+      recipientEmail: email,
+      subject,
+      templateName: 'welcome',
+      provider: 'resend',
+      status: 'sent',
+      providerMessageId: data?.id || null,
+    })
     return { success: true, emailId: data?.id }
   } catch (error) {
     logger.error('email_welcome_unexpected_error', { error, email })
@@ -352,25 +440,57 @@ export async function sendDailyPromptEmail(
       generateDailyPromptEmailHTML(displayName, prompt)
     )
 
+    const subject = await getSubjectForTemplate('daily_prompt', { userName: displayName })
+
     const { data, error } = await resend.emails.send({
       from: `${APP_NAME} <${FROM_EMAIL}>`,
       to: email,
-      subject: `Your Daily Reflection Prompt ✨`,
+      subject,
       html,
     })
 
     if (error) {
       logger.error('email_prompt_send_error', { error, email, userId })
       await logEmailDelivery(userId, 'daily_prompt', email, 'failed', null, error.message)
+      await logEmailSend({
+        userId,
+        recipientEmail: email,
+        subject,
+        templateName: 'daily_prompt',
+        provider: 'resend',
+        status: 'failed',
+        providerMessageId: null,
+        errorMessage: error.message,
+      })
       return { success: false, error: error.message }
     }
     await logEmailDelivery(userId, 'daily_prompt', email, 'sent', data?.id || null)
+
+    await logEmailSend({
+      userId,
+      recipientEmail: email,
+      subject,
+      templateName: 'daily_prompt',
+      provider: 'resend',
+      status: 'sent',
+      providerMessageId: data?.id || null,
+    })
     
     return { success: true, emailId: data?.id }
   } catch (error) {
     logger.error('email_prompt_unexpected_error', { error, email, userId })
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     await logEmailDelivery(userId, 'daily_prompt', email, 'failed', null, errorMessage)
+    await logEmailSend({
+      userId,
+      recipientEmail: email,
+      subject: APP_NAME,
+      templateName: 'daily_prompt',
+      provider: 'resend',
+      status: 'failed',
+      providerMessageId: null,
+      errorMessage,
+    })
     return { success: false, error: errorMessage }
   }
 }
@@ -401,25 +521,61 @@ export async function sendWeeklyDigestEmail(
       generateWeeklyDigestEmailHTML(displayName, digestData)
     )
 
+    const subject = await getSubjectForTemplate('weekly_digest', {
+      userName: displayName,
+      weekStart: digestData.weekStart,
+      weekEnd: digestData.weekEnd,
+    })
+
     const { data, error } = await resend.emails.send({
       from: `${APP_NAME} <${FROM_EMAIL}>`,
       to: email,
-      subject: `Your Weekly Reflection Summary 📊`,
+      subject,
       html,
     })
 
     if (error) {
       logger.error('email_digest_send_error', { error, email, userId })
       await logEmailDelivery(userId, 'weekly_digest', email, 'failed', null, error.message)
+      await logEmailSend({
+        userId,
+        recipientEmail: email,
+        subject,
+        templateName: 'weekly_digest',
+        provider: 'resend',
+        status: 'failed',
+        providerMessageId: null,
+        errorMessage: error.message,
+      })
       return { success: false, error: error.message }
     }
     await logEmailDelivery(userId, 'weekly_digest', email, 'sent', data?.id || null)
+
+    await logEmailSend({
+      userId,
+      recipientEmail: email,
+      subject,
+      templateName: 'weekly_digest',
+      provider: 'resend',
+      status: 'sent',
+      providerMessageId: data?.id || null,
+    })
     
     return { success: true, emailId: data?.id }
   } catch (error) {
     logger.error('email_digest_unexpected_error', { error, email, userId })
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     await logEmailDelivery(userId, 'weekly_digest', email, 'failed', null, errorMessage)
+    await logEmailSend({
+      userId,
+      recipientEmail: email,
+      subject: APP_NAME,
+      templateName: 'weekly_digest',
+      provider: 'resend',
+      status: 'failed',
+      providerMessageId: null,
+      errorMessage,
+    })
     return { success: false, error: errorMessage }
   }
 }
@@ -459,25 +615,57 @@ export async function sendTrialExpiredEmail(
       generateTrialExpiredEmailHTML(displayName)
     )
 
+    const subject = await getSubjectForTemplate('trial_expired', { userName: displayName })
+
     const { data, error } = await resend.emails.send({
       from: `${APP_NAME} <${FROM_EMAIL}>`,
       to: email,
-      subject: `Your 7-Day Premium Trial Has Ended`,
+      subject,
       html,
     })
 
     if (error) {
       logger.error('email_trial_expired_send_error', { error, email, userId })
       await logEmailDelivery(userId, 'trial_expired', email, 'failed', null, error.message)
+      await logEmailSend({
+        userId,
+        recipientEmail: email,
+        subject,
+        templateName: 'trial_expired',
+        provider: 'resend',
+        status: 'failed',
+        providerMessageId: null,
+        errorMessage: error.message,
+      })
       return { success: false, error: error.message }
     }
     await logEmailDelivery(userId, 'trial_expired', email, 'sent', data?.id || null)
+
+    await logEmailSend({
+      userId,
+      recipientEmail: email,
+      subject,
+      templateName: 'trial_expired',
+      provider: 'resend',
+      status: 'sent',
+      providerMessageId: data?.id || null,
+    })
     
     return { success: true, emailId: data?.id }
   } catch (error) {
     logger.error('email_trial_expired_unexpected_error', { error, email, userId })
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     await logEmailDelivery(userId, 'trial_expired', email, 'failed', null, errorMessage)
+    await logEmailSend({
+      userId,
+      recipientEmail: email,
+      subject: APP_NAME,
+      templateName: 'trial_expired',
+      provider: 'resend',
+      status: 'failed',
+      providerMessageId: null,
+      errorMessage,
+    })
     return { success: false, error: errorMessage }
   }
 }
@@ -499,12 +687,11 @@ export async function sendSubscriptionEmail(
     const displayName = userName || email.split('@')[0]
     const emailType = type === 'confirmation' ? 'subscription_confirm' : 'subscription_cancelled'
 
-    const subject = type === 'confirmation'
-      ? `Welcome to Premium! 🎉`
-      : `Subscription Cancelled`
+    const templateKey = type === 'confirmation' ? 'subscription_confirmation' : 'subscription_cancelled'
+    const subject = await getSubjectForTemplate(templateKey, { userName: displayName, planName })
 
     const html = await generateWithCustomization(
-      emailType === 'subscription_confirm' ? 'subscription_confirm' : 'subscription_cancelled',
+      templateKey,
       () => type === 'confirmation'
         ? generateSubscriptionConfirmationHTML(displayName, planName)
         : generateSubscriptionCancellationHTML(displayName, planName)
@@ -520,9 +707,31 @@ export async function sendSubscriptionEmail(
     if (error) {
       logger.error('email_subscription_send_error', { error, email, userId, type, planName })
       await logEmailDelivery(userId, emailType, email, 'failed', null, error.message)
+      await logEmailSend({
+        userId,
+        recipientEmail: email,
+        subject,
+        templateName: templateKey,
+        provider: 'resend',
+        status: 'failed',
+        providerMessageId: null,
+        errorMessage: error.message,
+        metadata: { planName, type },
+      })
       return { success: false, error: error.message }
     }
     await logEmailDelivery(userId, emailType, email, 'sent', data?.id || null)
+
+    await logEmailSend({
+      userId,
+      recipientEmail: email,
+      subject,
+      templateName: templateKey,
+      provider: 'resend',
+      status: 'sent',
+      providerMessageId: data?.id || null,
+      metadata: { planName, type },
+    })
     
     return { success: true, emailId: data?.id }
   } catch (error) {
@@ -530,6 +739,17 @@ export async function sendSubscriptionEmail(
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     const emailType = type === 'confirmation' ? 'subscription_confirm' : 'subscription_cancelled'
     await logEmailDelivery(userId, emailType, email, 'failed', null, errorMessage)
+    await logEmailSend({
+      userId,
+      recipientEmail: email,
+      subject: APP_NAME,
+      templateName: type === 'confirmation' ? 'subscription_confirmation' : 'subscription_cancelled',
+      provider: 'resend',
+      status: 'failed',
+      providerMessageId: null,
+      errorMessage,
+      metadata: { planName, type },
+    })
     return { success: false, error: errorMessage }
   }
 }
@@ -564,10 +784,12 @@ export async function sendDataExportEmail(
       generateDataExportEmailHTML(displayName)
     )
 
+    const subject = await getSubjectForTemplate('data_export', { userName: displayName })
+
     const { data, error } = await resend.emails.send({
       from: `${APP_NAME} <${FROM_EMAIL}>`,
       to: email,
-      subject: `Your Data Export from ${APP_NAME} 📦`,
+      subject,
       html,
       attachments: [
         {
@@ -580,15 +802,45 @@ export async function sendDataExportEmail(
     if (error) {
       logger.error('email_data_export_send_error', { error, email, userId })
       await logEmailDelivery(userId, 'data_export', email, 'failed', null, error.message)
+      await logEmailSend({
+        userId,
+        recipientEmail: email,
+        subject,
+        templateName: 'data_export',
+        provider: 'resend',
+        status: 'failed',
+        providerMessageId: null,
+        errorMessage: error.message,
+      })
       return { success: false, error: error.message }
     }
     await logEmailDelivery(userId, 'data_export', email, 'sent', data?.id || null)
+
+    await logEmailSend({
+      userId,
+      recipientEmail: email,
+      subject,
+      templateName: 'data_export',
+      provider: 'resend',
+      status: 'sent',
+      providerMessageId: data?.id || null,
+    })
     
     return { success: true, emailId: data?.id }
   } catch (error) {
     logger.error('email_data_export_unexpected_error', { error, email, userId })
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     await logEmailDelivery(userId, 'data_export', email, 'failed', null, errorMessage)
+    await logEmailSend({
+      userId,
+      recipientEmail: email,
+      subject: APP_NAME,
+      templateName: 'data_export',
+      provider: 'resend',
+      status: 'failed',
+      providerMessageId: null,
+      errorMessage,
+    })
     return { success: false, error: errorMessage }
   }
 }
@@ -649,33 +901,38 @@ export async function logEmailDelivery(
  * Generate welcome email HTML using professional template system
  */
 function generateWelcomeEmailHTML(name: string): string {
-  const welcomeContent = `
+  const dashboardUrl = `${APP_URL.replace(/\/$/, '')}/dashboard`
+  const bodyHTML = contentSection(`
     ${h1(`Welcome to ${APP_NAME}`)}
     
     ${paragraph(`Hi ${name},`)}
     
-    ${paragraph('Welcome to your daily reflection journey. We\'re so glad you\'re here.')}
+    ${paragraph(`Welcome to ${APP_NAME}. This is a private space designed to help you pause and reflect — at your own pace.`)}
     
-    ${paragraph(`${APP_NAME} is designed to help you pause, reflect, and connect with yourself through guided daily prompts. Each day, you\'ll receive a thoughtful question to inspire meaningful self-reflection.`)}
+    ${paragraph(`Here\'s how most people use ${APP_NAME}:`)}
     
     ${infoBox(`
-      ${h3('Getting Started', { align: 'left' })}
-      <ul style="color: ${TEXT_GRAY}; line-height: 1.8; margin: 16px 0 0 0; padding-left: 20px; font-size: 15px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-        <li style="margin-bottom: 10px;">Complete your onboarding to personalize your experience</li>
-        <li style="margin-bottom: 10px;">Receive your first daily prompt</li>
-        <li style="margin-bottom: 10px;">Reflect, write, and track your emotional journey</li>
-        <li>Review your progress in your dashboard</li>
+      <ul style="color: ${TEXT_GRAY}; line-height: 1.8; margin: 0; padding-left: 20px; font-size: 15px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <li style="margin-bottom: 10px;">Each day, you\'ll see one thoughtful question. You can write a little or a lot — there\'s no right length.</li>
+        <li style="margin-bottom: 10px;">Over time, you may receive gentle weekly or monthly reflections that offer perspective on your entries. These are optional.</li>
+        <li>Occasionally, something you wrote in the past may resurface — only when it feels relevant.</li>
       </ul>
     `)}
     
+    ${paragraph('You can adjust when your daily prompt arrives, or update your focus areas, anytime in Settings.')}
+    
     <div style="text-align: center; margin: 40px 0;">
-      ${standardButton({ href: 'https://promptandpause.com/dashboard', label: 'Go to Dashboard' })}
+      ${standardButton({ href: dashboardUrl, label: 'Open your dashboard' })}
     </div>
     
-    ${paragraph('If you have any questions, just reply to this email. We\'re here to help.', { align: 'center', fontSize: '14px', color: TEXT_MUTED })}
-  `
+    ${paragraph('If you ever have questions, just reply to this email — we read every message.', { align: 'center', fontSize: '14px', color: TEXT_MUTED })}
+  `)
 
-  return contentSection(welcomeContent)
+  return buildBaseEmail({
+    preheader: 'Welcome to Prompt & Pause',
+    title: 'Welcome to Prompt & Pause',
+    bodyHTML,
+  })
 }
 
 /**
@@ -753,59 +1010,26 @@ function generateWeeklyDigestEmailHTML(name: string, digest: WeeklyDigest): stri
     .map(({ tag, count }) => `<span style="display: inline-block; background: rgba(56, 76, 55, 0.08); color: ${PRIMARY_ACCENT}; padding: 6px 14px; border-radius: 20px; margin: 4px; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">${tag} (${count})</span>`)
     .join('')
 
-  const moodEmojis = digest.moodDistribution
-    .map(({ mood, count }) => `${mood} (${count})`)
-    .join(' \u2022 ')
-
   const bodyHTML = `
-    ${h1('Your Week in Review')}
+    ${h1('A Gentle Weekly Recap')}
     <p style="color: ${TEXT_MUTED}; font-size: 13px; margin: 0 0 32px 0; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
       ${new Date(digest.weekStart).toLocaleDateString('en-GB')} - ${new Date(digest.weekEnd).toLocaleDateString('en-GB')}
     </p>
     
     ${paragraph(`Hi ${name},`)}
     
-    ${paragraph('Here\'s a summary of your reflection journey this week:')}
+    ${paragraph('Here is a small recap from your reflections this week:')}
     
-    <!-- Stats Card with soft reflection styling -->
-    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 32px 0;">
-      <tr>
-        <td style="background: linear-gradient(135deg, ${BG_LIGHT} 0%, ${BG_WHITE} 100%); padding: 32px; border-radius: 16px; border: 1px solid ${BORDER_COLOR}; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);">
-          <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
-            <tr>
-              <td align="center" style="padding-bottom: 24px; border-bottom: 1px solid ${BORDER_COLOR};">
-                <p style="color: ${TEXT_MUTED}; font-size: 11px; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 1px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Reflections Completed</p>
-                <p style="color: ${PRIMARY_ACCENT}; font-size: 40px; font-weight: 700; margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">${digest.totalReflections}</p>
-              </td>
-            </tr>
-            <tr>
-              <td align="center" style="padding: 24px 0; border-bottom: 1px solid ${BORDER_COLOR};">
-                <p style="color: ${TEXT_MUTED}; font-size: 11px; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 1px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Current Streak</p>
-                <p style="color: ${PRIMARY_ACCENT}; font-size: 40px; font-weight: 700; margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">${digest.currentStreak} days</p>
-              </td>
-            </tr>
-            <tr>
-              <td align="center" style="padding-top: 24px;">
-                <p style="color: ${TEXT_MUTED}; font-size: 11px; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 1px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Average Words</p>
-                <p style="color: ${PRIMARY_ACCENT}; font-size: 40px; font-weight: 700; margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">${digest.averageWordCount}</p>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
+    ${infoBox(`
+      <p style="margin: 0; color: ${TEXT_GRAY}; font-size: 15px; line-height: 1.7; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <strong style="color: ${TEXT_DARK}; font-weight: 600;">Reflections this week:</strong> ${digest.totalReflections}
+      </p>
+    `)}
     
     ${digest.topTags.length > 0 ? `
     <div style="margin: 32px 0;">
-      <h3 style="color: ${TEXT_DARK}; font-size: 14px; margin: 0 0 16px 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Top Themes</h3>
+      <h3 style="color: ${TEXT_DARK}; font-size: 14px; margin: 0 0 16px 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Themes You Touched On</h3>
       <div style="text-align: center;">${topTagsHTML}</div>
-    </div>
-    ` : ''}
-    
-    ${digest.moodDistribution.length > 0 ? `
-    <div style="margin: 32px 0;">
-      <h3 style="color: ${TEXT_DARK}; font-size: 14px; margin: 0 0 16px 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Your Moods This Week</h3>
-      <p style="color: ${TEXT_GRAY}; font-size: 15px; line-height: 1.8; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">${moodEmojis}</p>
     </div>
     ` : ''}
     
@@ -813,11 +1037,11 @@ function generateWeeklyDigestEmailHTML(name: string, digest: WeeklyDigest): stri
       ${standardButton({ href: 'https://promptandpause.com/dashboard/archive', label: 'View Full Archive' })}
     </div>
     
-    ${paragraph('Keep up the great work!', { align: 'center' })}
+    ${paragraph('If you want, you can revisit anything you wrote this week.', { align: 'center' })}
   `
 
   return buildBaseEmail({
-    preheader: `Your weekly summary: ${digest.totalReflections} reflections, ${digest.currentStreak} day streak`,
+    preheader: `Your weekly reflection summary (${digest.totalReflections} reflections)`,
     title: 'Your Weekly Reflection Summary',
     bodyHTML
   })
@@ -832,21 +1056,21 @@ function generateSubscriptionConfirmationHTML(name: string, planName: string): s
     
     ${paragraph(`Hi ${name},`, { align: 'center' })}
     
-    ${paragraph(`Thank you for upgrading to ${planName}. Your subscription is now active, and you have full access to all premium features.`)}
+    ${paragraph(`Your ${planName} subscription is active.`)}
     
     ${infoBox(`
-      ${h3('Premium Features Unlocked', { align: 'left' })}
+      ${h3('Included with Premium', { align: 'left' })}
       <ul style="color: ${TEXT_GRAY}; line-height: 1.9; margin: 16px 0 0 0; padding-left: 20px; font-size: 15px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-        <li style="margin-bottom: 8px;">Unlimited AI-generated personalized prompts</li>
-        <li style="margin-bottom: 8px;">Advanced mood tracking and insights</li>
-        <li style="margin-bottom: 8px;">Export your reflections</li>
-        <li style="margin-bottom: 8px;">Priority email support</li>
-        <li>Weekly digest reports</li>
+        <li style="margin-bottom: 8px;">Daily prompts</li>
+        <li style="margin-bottom: 8px;">Weekly and monthly reflections</li>
+        <li style="margin-bottom: 8px;">From Your Past resurfacing</li>
+        <li style="margin-bottom: 8px;">Export reflections</li>
+        <li>Email + Slack delivery</li>
       </ul>
     `)}
     
     <div style="text-align: center; margin: 40px 0;">
-      ${standardButton({ href: 'https://promptandpause.com/dashboard', label: 'Explore Premium Features' })}
+      ${standardButton({ href: 'https://promptandpause.com/dashboard', label: 'Open your dashboard' })}
     </div>
     
     ${paragraph(`You can manage your subscription anytime from your <a href="https://promptandpause.com/dashboard/settings" target="_blank" rel="noopener noreferrer" style="color: ${PRIMARY_ACCENT}; text-decoration: none; font-weight: 500;">settings page</a>.`, { align: 'center', fontSize: '14px' })}
@@ -864,11 +1088,11 @@ function generateSubscriptionConfirmationHTML(name: string, planName: string): s
  */
 function generateTrialExpiredEmailHTML(name: string): string {
   const bodyHTML = `
-    ${h1('Your 7-Day Premium Trial Has Ended')}
+    ${h1('Your trial has ended')}
     
     ${paragraph(`Hi ${name},`)}
     
-    ${paragraph('Your 7-day premium trial of Prompt & Pause has come to an end. We hope you enjoyed exploring all the premium features.')}
+    ${paragraph('Your trial has come to an end.')}
     
     ${infoBox(`
       ${h3('What happens now?', { align: 'left', color: TEXT_DARK })}
@@ -878,28 +1102,28 @@ function generateTrialExpiredEmailHTML(name: string): string {
       )}
       <ul style="color: ${TEXT_GRAY}; line-height: 1.8; margin: 16px 0 0 0; padding-left: 20px; font-size: 15px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
         <li style="margin-bottom: 8px;">3 personalized prompts per week</li>
-        <li style="margin-bottom: 8px;">Basic mood tracking</li>
+        <li style="margin-bottom: 8px;">Optional check-in</li>
         <li style="margin-bottom: 8px;">Access to last 50 reflections</li>
         <li>Email delivery at your chosen time</li>
       </ul>
     `)}
     
-    ${paragraph('Want to continue enjoying daily prompts, unlimited archive access, weekly insights, and more?', { align: 'center' })}
+    ${paragraph('If you want to continue with Premium features, you can upgrade at any time.', { align: 'center' })}
     
     <div style="text-align: center; margin: 40px 0;">
-      ${ctaButton('Upgrade to Premium', `${APP_URL}/pricing`)}
+      ${ctaButton('View pricing', `${APP_URL}/pricing`)}
     </div>
     
     <!-- Premium Features Card -->
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 32px 0;">
       <tr>
         <td style="background: linear-gradient(135deg, ${BG_LIGHT} 0%, ${BG_WHITE} 100%); padding: 28px; border-radius: 16px; border-left: 3px solid ${PRIMARY_ACCENT}; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);">
-          ${h3('Premium Features You\'ll Unlock', { align: 'left' })}
+          ${h3('Premium includes', { align: 'left' })}
           <ul style="color: ${TEXT_GRAY}; line-height: 1.9; margin: 16px 0 0 0; padding-left: 20px; font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
             <li style="margin-bottom: 8px;"><strong>Daily personalized prompts</strong> (7 days/week)</li>
             <li style="margin-bottom: 8px;"><strong>Unlimited reflection archive</strong></li>
-            <li style="margin-bottom: 8px;"><strong>Weekly AI-generated insights</strong></li>
-            <li style="margin-bottom: 8px;"><strong>Advanced mood analytics & trends</strong></li>
+            <li style="margin-bottom: 8px;"><strong>Weekly reflection</strong></li>
+            <li style="margin-bottom: 8px;"><strong>Monthly reflection</strong></li>
             <li style="margin-bottom: 8px;"><strong>Export reflections</strong> (PDF/TXT)</li>
             <li style="margin-bottom: 8px;"><strong>Custom focus areas</strong> (unlimited)</li>
             <li><strong>Priority email support</strong> (24hr response)</li>
@@ -908,11 +1132,8 @@ function generateTrialExpiredEmailHTML(name: string): string {
           <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin-top: 24px;">
             <tr>
               <td style="text-align: center; padding: 16px 0; border-top: 1px solid ${BORDER_COLOR};">
-                <p style="margin: 0; color: ${TEXT_DARK}; font-size: 18px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-                  Only \u00a312/month or \u00a399/year
-                </p>
-                <p style="margin: 4px 0 0 0; color: ${PRIMARY_ACCENT}; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-                  Save \u00a345 with annual plan
+                <p style="margin: 0; color: ${TEXT_DARK}; font-size: 14px; font-weight: 500; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                  View pricing for current plans.
                 </p>
               </td>
             </tr>
@@ -923,7 +1144,7 @@ function generateTrialExpiredEmailHTML(name: string): string {
     
     ${paragraph('You can continue using Prompt & Pause with the free tier, or upgrade anytime from your dashboard settings.', { align: 'center', fontSize: '14px', color: TEXT_MUTED })}
     
-    ${paragraph('Thank you for trying Prompt & Pause Premium. We hope to see you back soon.', { align: 'center' })}
+    ${paragraph('You can keep using Prompt & Pause on the free tier, or return to Premium later.', { align: 'center' })}
   `
 
   return contentSection(bodyHTML)
@@ -961,12 +1182,11 @@ function generateSubscriptionCancellationHTML(name: string, planName: string): s
     bodyHTML
   })
 }
-
 /**
  * Generate data export email HTML
  */
 function generateDataExportEmailHTML(name: string): string {
-  const bodyHTML = `
+  const bodyHTML = contentSection(`
     ${h1('Your Data Export is Ready')}
     
     ${paragraph(`Hi ${name},`)}
@@ -974,13 +1194,10 @@ function generateDataExportEmailHTML(name: string): string {
     ${paragraph(`We've compiled all your data from ${APP_NAME} into a comprehensive PDF document. You'll find it attached to this email.`)}
     
     ${infoBox(`
-      ${h3('What\'s Included', { align: 'left' })}
-      <ul style="color: ${TEXT_GRAY}; line-height: 1.8; margin: 16px 0 0 0; padding-left: 20px; font-size: 15px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-        <li style="margin-bottom: 8px;">Your profile information</li>
+      ${h3('Your export includes:', { align: 'left' })}
+      <ul style="margin: 16px 0; padding-left: 20px; color: ${TEXT_GRAY};">
         <li style="margin-bottom: 8px;">All your reflections and journal entries</li>
-        <li style="margin-bottom: 8px;">Mood tracking data</li>
         <li style="margin-bottom: 8px;">Account preferences and settings</li>
-        <li>Usage statistics</li>
       </ul>
     `)}
     
@@ -1000,7 +1217,7 @@ function generateDataExportEmailHTML(name: string): string {
     <div style="text-align: center; margin: 40px 0;">
       ${standardButton({ href: 'https://promptandpause.com/dashboard', label: 'Go to Dashboard' })}
     </div>
-  `
+  `)
 
   return buildBaseEmail({
     preheader: 'Your data export PDF is attached to this email',
@@ -1033,17 +1250,41 @@ export async function sendSupportConfirmationEmail(
       generateSupportConfirmationEmailHTML(userName, subject, requestId)
     )
 
+    const resolvedSubject = await getSubjectForTemplate('support_confirmation', { userName, subject, requestId })
+
     const { data, error } = await resend.emails.send({
       from: `${APP_NAME} Support <${FROM_EMAIL}>`,
       to: email,
-      subject: `We received your support request #${requestId}`,
+      subject: resolvedSubject,
       html,
     })
 
     if (error) {
       logger.error('email_support_confirmation_send_error', { error, email })
+      await logEmailSend({
+        userId: 'unknown',
+        recipientEmail: email,
+        subject: resolvedSubject,
+        templateName: 'support_confirmation',
+        provider: 'resend',
+        status: 'failed',
+        providerMessageId: null,
+        errorMessage: error.message,
+        metadata: { requestId },
+      })
       return { success: false, error: error.message }
     }
+
+    await logEmailSend({
+      userId: 'unknown',
+      recipientEmail: email,
+      subject: resolvedSubject,
+      templateName: 'support_confirmation',
+      provider: 'resend',
+      status: 'sent',
+      providerMessageId: data?.id || null,
+      metadata: { requestId },
+    })
     return { success: true, emailId: data?.id }
   } catch (error) {
     logger.error('email_support_confirmation_unexpected_error', { error, email })
@@ -1332,17 +1573,41 @@ export async function sendMaintenanceStartEmail(
       generateMaintenanceStartEmailHTML(displayName, details)
     )
 
+    const subject = await getSubjectForTemplate('maintenance_start', { maintenanceDate: details.scheduledDate, userName: displayName })
+
     const { data, error } = await resend.emails.send({
       from: `${APP_NAME} <${FROM_EMAIL}>`,
       to: email,
-      subject: `Scheduled Maintenance: ${details.scheduledDate}`,
+      subject,
       html,
     })
 
     if (error) {
       logger.error('email_maintenance_start_send_error', { error, email })
+      await logEmailSend({
+        userId: 'unknown',
+        recipientEmail: email,
+        subject,
+        templateName: 'maintenance_start',
+        provider: 'resend',
+        status: 'failed',
+        providerMessageId: null,
+        errorMessage: error.message,
+        metadata: { scheduledDate: details.scheduledDate },
+      })
       return { success: false, error: error.message }
     }
+
+    await logEmailSend({
+      userId: 'unknown',
+      recipientEmail: email,
+      subject,
+      templateName: 'maintenance_start',
+      provider: 'resend',
+      status: 'sent',
+      providerMessageId: data?.id || null,
+      metadata: { scheduledDate: details.scheduledDate },
+    })
     return { success: true, emailId: data?.id }
   } catch (error) {
     logger.error('email_maintenance_start_unexpected_error', { error, email })
@@ -1380,17 +1645,41 @@ export async function sendMaintenanceCompleteEmail(
       generateMaintenanceCompleteEmailHTML(displayName, details)
     )
 
+    const subject = await getSubjectForTemplate('maintenance_complete', { userName: displayName })
+
     const { data, error } = await resend.emails.send({
       from: `${APP_NAME} <${FROM_EMAIL}>`,
       to: email,
-      subject: `Maintenance Complete - All Systems Operational`,
+      subject,
       html,
     })
 
     if (error) {
       logger.error('email_maintenance_complete_send_error', { error, email })
+      await logEmailSend({
+        userId: 'unknown',
+        recipientEmail: email,
+        subject,
+        templateName: 'maintenance_complete',
+        provider: 'resend',
+        status: 'failed',
+        providerMessageId: null,
+        errorMessage: error.message,
+        metadata: { completedAt: details.completedAt },
+      })
       return { success: false, error: error.message }
     }
+
+    await logEmailSend({
+      userId: 'unknown',
+      recipientEmail: email,
+      subject,
+      templateName: 'maintenance_complete',
+      provider: 'resend',
+      status: 'sent',
+      providerMessageId: data?.id || null,
+      metadata: { completedAt: details.completedAt },
+    })
     return { success: true, emailId: data?.id }
   } catch (error) {
     logger.error('email_maintenance_complete_unexpected_error', { error, email })
@@ -1421,19 +1710,19 @@ function generateMaintenanceStartEmailHTML(
     .join('')
 
   const bodyHTML = `
-    <h1 style="color: ${PRIMARY_ACCENT}; font-size: 28px; margin: 0 0 24px 0; font-weight: 600; text-align: center;">🛠️ Scheduled Maintenance Notice</h1>
+    <h1 style="color: ${PRIMARY_ACCENT}; font-size: 28px; margin: 0 0 24px 0; font-weight: 600; text-align: center;">Scheduled Maintenance Notice</h1>
     
     <p style="color: ${TEXT_GRAY}; font-size: 16px; line-height: 1.8; margin: 0 0 16px 0;">
       Hi ${name},
     </p>
     
     <p style="color: ${TEXT_GRAY}; font-size: 16px; line-height: 1.8; margin: 0 0 32px 0;">
-      We're writing to inform you about planned maintenance on ${APP_NAME}. We'll be making improvements to ensure you continue to have the best experience possible.
+      We're writing to let you know about planned maintenance on ${APP_NAME}.
     </p>
     
     <!-- Maintenance Window Card -->
     <div style="background: #FEF3C7; padding: 24px; margin: 32px 0; border-left: 4px solid #F59E0B; border-radius: 8px;">
-      <h3 style="margin-top: 0; color: #78350F; font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">⏰ Maintenance Window</h3>
+      <h3 style="margin-top: 0; color: #78350F; font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Maintenance Window</h3>
       <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
         <tr>
           <td style="color: #92400E; font-size: 14px; padding: 8px 0;"><strong>Date:</strong></td>
@@ -1463,7 +1752,7 @@ function generateMaintenanceStartEmailHTML(
     
     <div style="background: #E0E7FF; border-left: 4px solid ${PRIMARY_ACCENT}; padding: 16px 20px; margin: 32px 0; border-radius: 0 8px 8px 0;">
       <p style="margin: 0; color: #3730A3; font-size: 14px; line-height: 1.6;">
-        <strong style="color: ${PRIMARY_ACCENT}; font-weight: 600;">🔒 Your Data is Safe:</strong> All your reflections and personal information remain secure during maintenance. No data will be lost.
+        <strong style="color: ${PRIMARY_ACCENT}; font-weight: 600;">Your data:</strong> Your reflections and personal information remain secure during maintenance.
       </p>
     </div>
     
@@ -1497,19 +1786,18 @@ function generateMaintenanceCompleteEmailHTML(
   const { completedAt, improvements, notes } = details
 
   const bodyHTML = `
-    <h1 style="color: ${SECONDARY_ACCENT}; font-size: 28px; margin: 0 0 24px 0; font-weight: 600; text-align: center;">✅ Maintenance Complete!</h1>
+    <h1 style="color: ${SECONDARY_ACCENT}; font-size: 28px; margin: 0 0 24px 0; font-weight: 600; text-align: center;">Maintenance complete</h1>
     
     <p style="color: ${TEXT_GRAY}; font-size: 16px; line-height: 1.8; margin: 0 0 16px 0;">
       Hi ${name},
     </p>
     
     <p style="color: ${TEXT_GRAY}; font-size: 16px; line-height: 1.8; margin: 0 0 32px 0;">
-      Great news! Our scheduled maintenance has been completed successfully. All ${APP_NAME} services are now fully operational and running smoothly.
+      Maintenance has been completed. ${APP_NAME} is available again.
     </p>
     
-    <!-- Success Card -->
+    <!-- Status Card -->
     <div style="background: #DCFCE7; padding: 24px; margin: 32px 0; border-left: 4px solid #22C55E; border-radius: 8px; text-align: center;">
-      <p style="font-size: 48px; margin: 0 0 16px 0;">🎉</p>
       <p style="color: #14532D; font-size: 18px; font-weight: 600; margin: 0;">
         All Systems Operational
       </p>
@@ -1534,11 +1822,11 @@ function generateMaintenanceCompleteEmailHTML(
     ` : ''}
     
     <div style="text-align: center; margin: 40px 0;">
-      ${standardButton({ href: 'https://promptandpause.com/dashboard', label: 'Continue Your Journey' })}
+      ${standardButton({ href: 'https://promptandpause.com/dashboard', label: 'Open dashboard' })}
     </div>
     
     <p style="color: ${TEXT_GRAY}; font-size: 16px; line-height: 1.8; margin: 32px 0 0 0; text-align: center;">
-      Thank you for your patience and understanding! 🙏
+      Thank you for your patience.
     </p>
   `
 
@@ -1578,7 +1866,7 @@ export async function getTemplateVariables(templateKey: string): Promise<string[
  */
 export async function sendAdminCredentialsEmail(
   email: string,
-  fullName: string,
+  name: string,
   password: string,
   role: string
 ): Promise<{ success: boolean; emailId?: string; error?: string }> {
@@ -1591,9 +1879,9 @@ export async function sendAdminCredentialsEmail(
     const loginUrl = `${APP_URL}/login`
 
     const html = emailWrapper(`
-      ${h1('Welcome to the Team! 🎉')}
+      ${h1('Admin account created')}
       
-      ${paragraph(`Hi ${fullName},`)}
+      ${paragraph(`Hi ${name},`)}
       
       ${paragraph(`Your admin account has been created for ${APP_NAME}. You now have ${roleDisplay} access to the admin panel.`)}
       
@@ -1644,20 +1932,43 @@ export async function sendAdminCredentialsEmail(
       
       ${paragraph(`If you have any questions or need assistance, please contact your administrator.`)}
       
-      ${paragraph('Welcome aboard! 🚀')}
     `)
+
+    const subject = `Your ${APP_NAME} admin account` 
 
     const { data, error } = await resend.emails.send({
       from: `${APP_NAME} Admin <${FROM_EMAIL}>`,
       to: email,
-      subject: `Your ${APP_NAME} Admin Account - Action Required`,
+      subject,
       html,
     })
 
     if (error) {
       logger.error('email_admin_credentials_send_error', { error, email })
+      await logEmailSend({
+        userId: 'unknown',
+        recipientEmail: email,
+        subject,
+        templateName: 'admin_credentials',
+        provider: 'resend',
+        status: 'failed',
+        providerMessageId: null,
+        errorMessage: error.message,
+        metadata: { role },
+      })
       return { success: false, error: error.message }
     }
+
+    await logEmailSend({
+      userId: 'unknown',
+      recipientEmail: email,
+      subject,
+      templateName: 'admin_credentials',
+      provider: 'resend',
+      status: 'sent',
+      providerMessageId: data?.id || null,
+      metadata: { role },
+    })
     return { success: true, emailId: data?.id }
   } catch (error) {
     logger.error('email_admin_credentials_unexpected_error', { error, email })
@@ -1685,24 +1996,22 @@ export async function sendTrialExpirationEmail(
     }
 
     const displayName = userName || email.split('@')[0]
-    const upgradeUrl = `${APP_URL}/dashboard/subscription`
+    const upgradeUrl = `${APP_URL}/pricing`
+
+    const subject = await getSubjectForTemplate('trial_expired', { userName: displayName })
 
     const html = emailWrapper(`
-      ${h1('Your 7-Day Premium Trial Has Ended')}
+      ${h1('Your trial has ended')}
       
       ${paragraph('Hi ' + displayName + ',')}
       
-      ${paragraph('Your 7-day premium trial has come to an end. We hope you enjoyed exploring all the premium features!')}
+      ${paragraph('Your trial has come to an end.')}
       
-      ${infoBox('<strong>What happens now?</strong><br/>• Your account has been switched to our Free tier<br/>• You can still use all core features<br/>• Upgrade anytime to regain premium access')}
+      ${infoBox('<strong>What happens now?</strong><br/>• Your account has moved to the Free tier<br/>• You can keep using the core features<br/>• You can upgrade at any time if you want the Premium features')}
       
-      ${h2('Premium Features You Will Miss:')}
+      ${ctaButton('View pricing', upgradeUrl)}
       
-      ${paragraph('• <strong>Custom Focus Areas:</strong> Create personalized reflection topics<br/>• <strong>Weekly AI Insights:</strong> Get deep analysis of your reflections<br/>• <strong>Advanced Analytics:</strong> Track patterns and growth over time<br/>• <strong>Priority Support:</strong> Get help when you need it')}
-      
-      ${ctaButton('Upgrade to Premium', upgradeUrl)}
-      
-      ${paragraph('Thank you for trying Prompt & Pause Premium. We would love to have you back!')}
+      ${paragraph('If you choose to return to Premium later, you can do that from your account settings.')}
       
       ${paragraph('If you have any questions, just reply to this email.')}
     `)
@@ -1710,14 +2019,34 @@ export async function sendTrialExpirationEmail(
     const { data, error } = await resend.emails.send({
       from: `${APP_NAME} <${FROM_EMAIL}>`,
       to: email,
-      subject: `Your Premium Trial Has Ended - Upgrade to Continue`,
+      subject,
       html,
     })
 
     if (error) {
       logger.error('email_trial_expiration_send_error', { error, email })
+      await logEmailSend({
+        userId: 'unknown',
+        recipientEmail: email,
+        subject,
+        templateName: 'trial_expired',
+        provider: 'resend',
+        status: 'failed',
+        providerMessageId: null,
+        errorMessage: error.message,
+      })
       return { success: false, error: error.message }
     }
+
+    await logEmailSend({
+      userId: 'unknown',
+      recipientEmail: email,
+      subject,
+      templateName: 'trial_expired',
+      provider: 'resend',
+      status: 'sent',
+      providerMessageId: data?.id || null,
+    })
     return { success: true, emailId: data?.id }
   } catch (error) {
     logger.error('email_trial_expiration_unexpected_error', { error, email })

@@ -134,10 +134,10 @@ export default function TermsOfServicePage() {
             <div className="space-y-4 text-neutral-300 leading-relaxed">
               <p>Prompt & Pause provides:</p>
               <ul className="space-y-2 list-disc list-inside ml-4">
-                <li>Daily mental health reflection prompts delivered via email or Slack</li>
+                <li>Daily reflection prompts delivered via email or Slack</li>
                 <li>AI-powered personalized prompts using multiple AI providers (OpenAI, Anthropic, Groq, etc.)</li>
-                <li>Reflection tracking and mood analytics</li>
-                <li>Premium features including advanced analytics, custom focus areas, and unlimited prompts</li>
+                <li>A private reflection archive and search</li>
+                <li>Premium features including weekly/monthly perspective, custom focus areas, and additional prompts</li>
                 <li>Self-journaling features for private reflection</li>
               </ul>
               <p className="mt-6">
@@ -196,7 +196,7 @@ export default function TermsOfServicePage() {
                   <strong>Free Tier:</strong> £0/month - 3 prompts per week, basic features
                 </li>
                 <li>
-                  <strong>Premium Tier:</strong> £12/month or £99/year - Unlimited prompts, advanced analytics, custom focus areas
+                  <strong>Premium Tier:</strong> £12/month or £99/year - Additional prompts, custom focus areas, and premium reflection features
                 </li>
                 <li>
                   <strong>7-Day Trial:</strong> Full Premium access for new users
@@ -467,8 +467,8 @@ export default function TermsOfServicePage() {
       {/* CTA Section */}
       <section className="py-20 px-4 bg-black">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 uppercase">Ready to Start Your Reflection Journey?</h2>
-          <p className="text-xl text-neutral-400 mb-8">Join thousands finding clarity through daily prompts.</p>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 uppercase">Start with one prompt</h2>
+          <p className="text-xl text-neutral-400 mb-8">Start with one prompt when you’re ready.</p>
           <Link
             href="/pricing"
             className="inline-block px-8 py-4 bg-white text-black font-bold uppercase hover:bg-neutral-200 transition-colors duration-300"

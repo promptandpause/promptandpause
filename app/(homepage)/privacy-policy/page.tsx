@@ -150,9 +150,9 @@ export default function PrivacyPolicyPage() {
                 <ul className="space-y-2 text-neutral-300 list-disc list-inside">
                   <li>Your responses to daily prompts</li>
                   <li>Self-journal entries (private, not shared with AI)</li>
-                  <li>Mood tracking and emotional patterns</li>
+                  <li>Optional check-in information (if you choose to use it)</li>
                   <li>Custom focus areas and preferences</li>
-                  <li>Reflection history and streaks</li>
+                  <li>Reflection history</li>
                   <li>Timestamps of interactions</li>
                   <li>Delivery preferences (email, Slack)</li>
                 </ul>
