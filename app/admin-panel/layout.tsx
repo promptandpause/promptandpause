@@ -43,14 +43,14 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="min-h-screen bg-neutral-100">
+    <div className="min-h-screen bg-white">
       <div className="flex h-screen overflow-hidden">
         {/* Sidebar */}
         <AdminSidebar userEmail={supabase.email || ''} />
-
+        
         {/* Main content area */}
-        <main className="flex-1 overflow-y-auto bg-neutral-50">
-          <div className="w-full p-6 md:p-8">
+        <main className="flex-1 overflow-y-auto bg-gray-50">
+          <div className="w-full">
             {children}
           </div>
         </main>
