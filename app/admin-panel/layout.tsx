@@ -9,32 +9,48 @@ export const metadata = {
   robots: { index: false, follow: false },
 }
 
+// Admin session timeout: 1 hour
+const ADMIN_SESSION_TIMEOUT_MS = 60 * 60 * 1000
+
 export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  // Double-check admin authentication on the server
-  const user = await getCurrentUser()
+  // Get current user and session
+  const supabase = await getCurrentUser()
   
-  if (!user) {
-    redirect('/auth?redirect=/admin-panel')
+  if (!supabase) {
+    redirect('/admin-panel/login')
   }
 
-  const hasAdminAccess = user.email ? await isAdminUser(user.email) : false
+  // Check admin access
+  const hasAdminAccess = supabase.email ? await isAdminUser(supabase.email) : false
   if (!hasAdminAccess) {
     redirect('/dashboard')
   }
 
+  // Check session timeout using session created_at
+  if (supabase.created_at) {
+    const sessionCreatedAt = new Date(supabase.created_at).getTime()
+    const now = Date.now()
+    const sessionAge = now - sessionCreatedAt
+
+    if (sessionAge > ADMIN_SESSION_TIMEOUT_MS) {
+      // Session expired, redirect to login
+      redirect('/admin-panel/login?reason=session_expired')
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-neutral-100">
       <div className="flex h-screen overflow-hidden">
         {/* Sidebar */}
-        <AdminSidebar userEmail={user.email || ''} />
-        
+        <AdminSidebar userEmail={supabase.email || ''} />
+
         {/* Main content area */}
-        <main className="flex-1 overflow-y-auto bg-slate-900">
-          <div className="container mx-auto p-6 md:p-8 max-w-7xl">
+        <main className="flex-1 overflow-y-auto bg-neutral-50">
+          <div className="w-full p-6 md:p-8">
             {children}
           </div>
         </main>

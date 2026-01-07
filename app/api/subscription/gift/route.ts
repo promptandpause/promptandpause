@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { checkAdminAuth } from '@/lib/services/adminService'
 
 /**
  * POST /api/subscription/gift
@@ -18,9 +19,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check if user is admin
-    const adminEmail = process.env.ADMIN_EMAIL
-    if (!adminEmail || user.email?.toLowerCase() !== adminEmail.toLowerCase()) {
+    const adminAuth = await checkAdminAuth(user.email || undefined)
+    if (!adminAuth.isAdmin) {
       return NextResponse.json(
         { error: 'Admin access required.' },
         { status: 403 }

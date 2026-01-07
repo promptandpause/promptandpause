@@ -1,14 +1,14 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { Card } from '@/components/ui/card'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { CreditCard, DollarSign, TrendingDown, Users, Search, Download } from 'lucide-react'
+import { Search, Download, ExternalLink } from 'lucide-react'
 import { format } from 'date-fns'
 
 interface Subscription {
@@ -45,6 +45,9 @@ const CYCLE_COLORS: Record<string, string> = {
 }
 
 export default function SubscriptionsPage() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
   const [stats, setStats] = useState<SubscriptionStats | null>(null)
   const [loading, setLoading] = useState(true)
@@ -54,6 +57,8 @@ export default function SubscriptionsPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const limit = 50
+
+  const [selectedSubscriptionId, setSelectedSubscriptionId] = useState<string | null>(null)
 
   const loadSubscriptions = useCallback(async () => {
     try {
@@ -90,6 +95,15 @@ export default function SubscriptionsPage() {
   useEffect(() => {
     loadSubscriptions()
   }, [loadSubscriptions])
+
+  useEffect(() => {
+    setSelectedSubscriptionId(searchParams.get('id'))
+  }, [searchParams])
+
+  const selectedRow = useMemo(() => {
+    if (!selectedSubscriptionId) return null
+    return subscriptions.find((s) => s.id === selectedSubscriptionId) || null
+  }, [selectedSubscriptionId, subscriptions])
 
   async function loadStats() {
     try {
@@ -215,232 +229,274 @@ export default function SubscriptionsPage() {
     )
   }
 
-  const statCards = stats ? [
-    {
-      title: 'MRR',
-      value: `$${stats.mrr.toLocaleString()}`,
-      icon: DollarSign,
-      color: 'text-green-400',
-      bgColor: 'bg-green-500/10',
-    },
-    {
-      title: 'Premium Subscribers',
-      value: stats.premium.toLocaleString(),
-      icon: Users,
-      color: 'text-blue-400',
-      bgColor: 'bg-blue-500/10',
-    },
-    {
-      title: 'Free Users',
-      value: stats.freemium.toLocaleString(),
-      icon: CreditCard,
-      color: 'text-purple-400',
-      bgColor: 'bg-purple-500/10',
-    },
-    {
-      title: 'Recent Cancellations',
-      value: stats.recent_cancellations.toLocaleString(),
-      icon: TrendingDown,
-      color: 'text-red-400',
-      bgColor: 'bg-red-500/10',
-    },
-  ] : []
-
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white">Subscriptions</h1>
-          <p className="text-slate-400 mt-1">Manage user subscriptions and billing</p>
+          <h1 className="text-2xl font-semibold text-neutral-900">Subscriptions</h1>
+          <p className="text-sm text-neutral-500">Manage subscriptions and billing.</p>
         </div>
-        <Button
-          onClick={handleExport}
-          className="bg-slate-700 hover:bg-slate-600 text-white border border-slate-600"
-        >
+
+        <Button onClick={handleExport} variant="outline" className="border-neutral-200 bg-white">
           <Download className="h-4 w-4 mr-2" />
           Export CSV
         </Button>
       </div>
 
-      {/* Stats Grid */}
       {stats && (
-        <div className="grid gap-4 md:grid-cols-4">
-          {statCards.map((card) => {
-            const Icon = card.icon
-            return (
-              <Card key={card.title} className="bg-slate-800/50 border-slate-700">
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className={`p-2 rounded-lg ${card.bgColor}`}>
-                      <Icon className={`h-5 w-5 ${card.color}`} />
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-sm text-slate-400">{card.title}</p>
-                    <p className="text-2xl font-bold text-white">{card.value}</p>
-                  </div>
-                </div>
-              </Card>
-            )
-          })}
+        <div className="text-xs text-neutral-500">
+          Total {stats.total} · Premium {stats.premium} · Free {stats.freemium} · Cancelled {stats.cancelled}
         </div>
       )}
 
-      {/* Filters */}
-      <Card className="bg-slate-800/50 border-slate-700 p-4">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1 flex gap-2">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-6">
+        {/* Left pane: list */}
+        <div className="bg-white border border-neutral-200 rounded-xl overflow-hidden">
+          {/* Filters */}
+          <div className="p-4 border-b border-neutral-200 space-y-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
               <Input
-                placeholder="Search by email or name..."
+                placeholder="Search by email or name"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                className="pl-9 bg-slate-900 border-slate-700 text-white"
+                className="pl-9 bg-white border-neutral-200"
               />
             </div>
-            <Button onClick={handleSearch} className="bg-blue-600 hover:bg-blue-700">
-              Search
-            </Button>
-          </div>
-          
-          <div className="flex gap-2">
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[180px] bg-slate-900 border-slate-700 text-white">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Statuses</SelectItem>
-                <SelectItem value="freemium">Freemium</SelectItem>
-                <SelectItem value="premium">Premium</SelectItem>
-                <SelectItem value="cancelled">Cancelled</SelectItem>
-              </SelectContent>
-            </Select>
 
-            <Select value={cycleFilter} onValueChange={setCycleFilter}>
-              <SelectTrigger className="w-[180px] bg-slate-900 border-slate-700 text-white">
-                <SelectValue placeholder="Billing" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Cycles</SelectItem>
-                <SelectItem value="monthly">Monthly</SelectItem>
-                <SelectItem value="yearly">Yearly</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </Card>
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_180px_180px] gap-3">
+              <Button onClick={handleSearch} className="bg-neutral-900 hover:bg-neutral-800">
+                Search
+              </Button>
 
-      {/* Subscriptions Table */}
-      <Card className="bg-slate-800/50 border-slate-700">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-slate-700">
-                <th className="text-left p-4 text-slate-400 font-medium">User</th>
-                <th className="text-left p-4 text-slate-400 font-medium">Status</th>
-                <th className="text-left p-4 text-slate-400 font-medium">Billing Cycle</th>
-                <th className="text-left p-4 text-slate-400 font-medium">Subscribed</th>
-                <th className="text-left p-4 text-slate-400 font-medium">End Date</th>
-                <th className="text-left p-4 text-slate-400 font-medium">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan={6} className="p-4">
-                    <div className="flex justify-center">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-                    </div>
-                  </td>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="bg-white border-neutral-200">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All statuses</SelectItem>
+                  <SelectItem value="freemium">Freemium</SelectItem>
+                  <SelectItem value="premium">Premium</SelectItem>
+                  <SelectItem value="cancelled">Cancelled</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select value={cycleFilter} onValueChange={setCycleFilter}>
+                <SelectTrigger className="bg-white border-neutral-200">
+                  <SelectValue placeholder="Billing" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All cycles</SelectItem>
+                  <SelectItem value="monthly">Monthly</SelectItem>
+                  <SelectItem value="yearly">Yearly</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="text-xs text-neutral-500">Showing {subscriptions.length} subscriptions</div>
+          </div>
+
+          {/* Subscriptions Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-neutral-200">
+                  <th className="text-left p-4 text-neutral-500 font-medium">User</th>
+                  <th className="text-left p-4 text-neutral-500 font-medium">Status</th>
+                  <th className="text-left p-4 text-neutral-500 font-medium">Billing</th>
+                  <th className="text-left p-4 text-neutral-500 font-medium">Subscribed</th>
+                  <th className="text-left p-4 text-neutral-500 font-medium">End date</th>
+                  <th className="text-left p-4 text-neutral-500 font-medium">Record</th>
                 </tr>
-              ) : subscriptions.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="p-8 text-center text-slate-400">
-                    No subscriptions found
-                  </td>
-                </tr>
-              ) : (
-                subscriptions.map((sub) => (
-                  <tr key={sub.id} className="border-b border-slate-700/50 hover:bg-slate-900/50">
-                    <td className="p-4">
-                      <div>
-                        <p className="text-sm font-medium text-white">{sub.full_name || 'No name'}</p>
-                        <p className="text-xs text-slate-400">{sub.email}</p>
-                      </div>
-                    </td>
-                    <td className="p-4">
-                      <Badge className={`${getStatusColor(sub.subscription_status)} border capitalize`}>
-                        {sub.subscription_status}
-                      </Badge>
-                    </td>
-                    <td className="p-4">
-                      {sub.billing_cycle ? (
-                        <Badge className={`${getCycleColor(sub.billing_cycle)} border capitalize`}>
-                          {sub.billing_cycle}
-                        </Badge>
-                      ) : (
-                        <span className="text-sm text-slate-500">-</span>
-                      )}
-                    </td>
-                    <td className="p-4 text-sm text-slate-300">
-                      {format(new Date(sub.created_at), 'MMM dd, yyyy')}
-                    </td>
-                    <td className="p-4 text-sm text-slate-300">
-                      {sub.subscription_end_date 
-                        ? format(new Date(sub.subscription_end_date), 'MMM dd, yyyy')
-                        : '-'
-                      }
-                    </td>
-                    <td className="p-4">
-                      <Link href={`/admin-panel/subscriptions/${sub.id}`}>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="border-slate-700 text-blue-400 hover:bg-slate-800 hover:text-blue-300"
-                        >
-                          View
-                        </Button>
-                      </Link>
+              </thead>
+              <tbody>
+                {loading ? (
+                  Array.from({ length: 10 }).map((_, i) => (
+                    <tr key={i} className="border-b border-neutral-200">
+                      <td className="p-4" colSpan={6}>
+                        <div className="space-y-2">
+                          <Skeleton className="h-4 w-64" />
+                          <Skeleton className="h-3 w-40" />
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : subscriptions.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="p-8 text-center text-neutral-500">
+                      No subscriptions found.
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  subscriptions.map((sub) => {
+                    const isSelected = selectedSubscriptionId === sub.id
+                    return (
+                      <tr
+                        key={sub.id}
+                        className={`border-b border-neutral-200 hover:bg-neutral-50 cursor-pointer ${
+                          isSelected ? 'bg-neutral-50' : 'bg-white'
+                        }`}
+                        onClick={() => {
+                          router.replace(`/admin-panel/subscriptions?id=${sub.id}`)
+                        }}
+                      >
+                        <td className="p-4">
+                          <div>
+                            <p className="text-sm font-medium text-neutral-900">{sub.full_name || 'No name'}</p>
+                            <p className="text-xs text-neutral-500">{sub.email}</p>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <Badge className={`${getStatusColor(sub.subscription_status)} border capitalize`}>
+                            {sub.subscription_status}
+                          </Badge>
+                        </td>
+                        <td className="p-4">
+                          {sub.billing_cycle ? (
+                            <Badge className={`${getCycleColor(sub.billing_cycle)} border capitalize`}>
+                              {sub.billing_cycle}
+                            </Badge>
+                          ) : (
+                            <span className="text-sm text-neutral-500">—</span>
+                          )}
+                        </td>
+                        <td className="p-4 text-sm text-neutral-700">
+                          {format(new Date(sub.created_at), 'MMM dd, yyyy')}
+                        </td>
+                        <td className="p-4 text-sm text-neutral-700">
+                          {sub.subscription_end_date
+                            ? format(new Date(sub.subscription_end_date), 'MMM dd, yyyy')
+                            : '—'}
+                        </td>
+                        <td className="p-4">
+                          <Link
+                            href={`/admin-panel/subscriptions/${sub.id}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="inline-flex items-center gap-2 text-sm text-neutral-700 hover:text-neutral-900"
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                            Full
+                          </Link>
+                        </td>
+                      </tr>
+                    )
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between px-4 py-3 border-t border-neutral-200 bg-white">
+              <p className="text-xs text-neutral-500">Page {currentPage} of {totalPages}</p>
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  variant="outline"
+                  size="sm"
+                  className="border-neutral-200"
+                >
+                  Previous
+                </Button>
+                <Button
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  variant="outline"
+                  size="sm"
+                  className="border-neutral-200"
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between p-4 border-t border-slate-700">
-            <p className="text-sm text-slate-400">
-              Page {currentPage} of {totalPages}
-            </p>
-            <div className="flex gap-2">
-              <Button
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                variant="outline"
-                size="sm"
-                className="border-slate-700 text-white hover:bg-slate-800 disabled:opacity-50"
-              >
-                Previous
-              </Button>
-              <Button
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-                variant="outline"
-                size="sm"
-                className="border-slate-700 text-white hover:bg-slate-800 disabled:opacity-50"
-              >
-                Next
-              </Button>
+        {/* Right pane: detail */}
+        <div className="bg-white border border-neutral-200 rounded-xl overflow-hidden">
+          {!selectedSubscriptionId ? (
+            <div className="p-10 text-sm text-neutral-500">Select a subscription to view details.</div>
+          ) : loading ? (
+            <div className="p-6 space-y-4">
+              <Skeleton className="h-6 w-56" />
+              <Skeleton className="h-4 w-72" />
+              <Skeleton className="h-40 w-full" />
             </div>
-          </div>
-        )}
-      </Card>
+          ) : !selectedRow ? (
+            <div className="p-6 text-sm text-neutral-500">Subscription not found.</div>
+          ) : (
+            <div>
+              <div className="px-6 py-5 border-b border-neutral-200">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <h2 className="text-lg font-semibold text-neutral-900 truncate">
+                      {selectedRow.full_name || 'User'}
+                    </h2>
+                    <p className="text-sm text-neutral-500 truncate">{selectedRow.email}</p>
+                  </div>
+                  <Link
+                    href={`/admin-panel/subscriptions/${selectedRow.id}`}
+                    className="inline-flex items-center gap-2 text-sm text-neutral-700 hover:text-neutral-900"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                    Full record
+                  </Link>
+                </div>
+              </div>
+
+              <div className="px-6 py-6">
+                <div className="grid grid-cols-1 gap-5">
+                  <div className="space-y-1">
+                    <div className="text-xs text-neutral-500">Status</div>
+                    <div className="text-sm text-neutral-900 capitalize">{selectedRow.subscription_status}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-xs text-neutral-500">Billing cycle</div>
+                    <div className="text-sm text-neutral-900">{selectedRow.billing_cycle || '—'}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-xs text-neutral-500">Subscribed</div>
+                    <div className="text-sm text-neutral-900">{format(new Date(selectedRow.created_at), 'MMM dd, yyyy')}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-xs text-neutral-500">End date</div>
+                    <div className="text-sm text-neutral-900">
+                      {selectedRow.subscription_end_date
+                        ? format(new Date(selectedRow.subscription_end_date), 'MMM dd, yyyy')
+                        : '—'}
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-xs text-neutral-500">Stripe customer</div>
+                    {selectedRow.stripe_customer_id ? (
+                      <a
+                        href={`https://dashboard.stripe.com/customers/${selectedRow.stripe_customer_id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-neutral-900 underline underline-offset-4"
+                      >
+                        {selectedRow.stripe_customer_id}
+                      </a>
+                    ) : (
+                      <div className="text-sm text-neutral-700">—</div>
+                    )}
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-xs text-neutral-500">Stripe subscription</div>
+                    <div className="text-sm text-neutral-900 font-mono break-all">
+                      {selectedRow.subscription_id || '—'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   )
 }

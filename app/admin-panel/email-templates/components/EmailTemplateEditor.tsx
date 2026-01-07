@@ -6,6 +6,17 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 import { EmailTemplateWithCustomization } from '@/lib/types/emailTemplate'
 import { Save, RotateCcw } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
@@ -53,9 +64,13 @@ export default function EmailTemplateEditor({ template, onSave }: EmailTemplateE
     }
   }
 
-  async function handleRestore() {
-    if (!confirm('Restore to default settings?')) return
+  const [restoreConfirmOpen, setRestoreConfirmOpen] = useState(false)
 
+  async function handleRestore() {
+    setRestoreConfirmOpen(true)
+  }
+
+  async function confirmRestore() {
     try {
       const response = await fetch(`/api/admin/email-templates/${template.id}/restore`, {
         method: 'POST',
@@ -64,6 +79,7 @@ export default function EmailTemplateEditor({ template, onSave }: EmailTemplateE
       if (!response.ok) throw new Error('Failed to restore')
 
       toast({ title: 'Success', description: 'Restored to defaults' })
+      setRestoreConfirmOpen(false)
       onSave()
     } catch (error) {
       toast({ title: 'Error', description: 'Failed to restore', variant: 'destructive' })
@@ -190,14 +206,31 @@ export default function EmailTemplateEditor({ template, onSave }: EmailTemplateE
           <Save className="h-4 w-4 mr-2" />
           {saving ? 'Saving...' : 'Save Changes'}
         </Button>
-        <Button
-          onClick={handleRestore}
-          variant="outline"
-          className="border-slate-600 text-slate-300 hover:bg-slate-800"
-        >
-          <RotateCcw className="h-4 w-4 mr-2" />
-          Restore Defaults
-        </Button>
+        <AlertDialog open={restoreConfirmOpen} onOpenChange={setRestoreConfirmOpen}>
+          <AlertDialogTrigger asChild>
+            <Button
+              variant="outline"
+              className="border-slate-600 text-slate-300 hover:bg-slate-800"
+            >
+              <RotateCcw className="h-4 w-4 mr-2" />
+              Restore Defaults
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent className="bg-slate-900 border-slate-700">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-white">Restore to Defaults</AlertDialogTitle>
+              <AlertDialogDescription className="text-slate-400">
+                Are you sure you want to restore this template to its default settings? All customizations will be lost.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="bg-slate-800 text-white border-slate-700">Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={confirmRestore} className="bg-blue-600 hover:bg-blue-700">
+                Restore
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </Card>
   )

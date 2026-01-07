@@ -5,6 +5,8 @@ import { sendWelcomeEmail } from '@/lib/services/emailService'
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
+  const nextParam = requestUrl.searchParams.get('next')
+  const safeNext = nextParam && nextParam.startsWith('/') ? nextParam : null
   const origin = requestUrl.origin
 
   if (code) {
@@ -44,7 +46,7 @@ export async function GET(request: Request) {
         return NextResponse.redirect(`${origin}/onboarding`)
       }
 
-      return NextResponse.redirect(`${origin}/dashboard`)
+      return NextResponse.redirect(`${origin}${safeNext || '/dashboard'}`)
     }
   }
 

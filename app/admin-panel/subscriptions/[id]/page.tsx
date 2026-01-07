@@ -8,10 +8,22 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { 
-  ArrowLeft, 
-  CreditCard, 
-  Calendar, 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
+import { useToast } from '@/hooks/use-toast'
+import {
+  ArrowLeft,
+  CreditCard,
+  Calendar,
   AlertCircle,
   CheckCircle,
   XCircle,
@@ -63,6 +75,7 @@ const EVENT_COLORS: Record<string, string> = {
 export default function SubscriptionDetailPage() {
   const params = useParams()
   const router = useRouter()
+  const { toast } = useToast()
   const userId = params.id as string
 
   const [subscription, setSubscription] = useState<Subscription | null>(null)
@@ -129,7 +142,6 @@ export default function SubscriptionDetailPage() {
     }
 
     if (Object.keys(updates).length === 0) {
-      alert('No changes to update')
       return
     }
 
@@ -149,23 +161,24 @@ export default function SubscriptionDetailPage() {
       const result = await response.json()
       loadSubscription()
     } catch (error) {
-      alert(`Failed to update subscription: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'Failed to update subscription',
+        variant: 'destructive'
+      })
     } finally {
       setUpdating(false)
     }
   }
 
+  const [giftTrialConfirmOpen, setGiftTrialConfirmOpen] = useState(false)
+
   async function handleGiftTrial() {
     if (!subscription) return
 
-    if (!confirm(`Gift ${giftTrialMonths} month${giftTrialMonths > 1 ? 's' : ''} of Premium access to this user?`)) {
-      return
-    }
-
     try {
       setUpdating(true)
-      
-      // Calculate trial end date
+
       const endDate = new Date()
       endDate.setMonth(endDate.getMonth() + giftTrialMonths)
 
@@ -174,7 +187,7 @@ export default function SubscriptionDetailPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           subscription_status: 'premium',
-          billing_cycle: 'gift_trial', // Mark as gift trial
+          billing_cycle: 'gift_trial',
           subscription_end_date: endDate.toISOString(),
         }),
       })
@@ -184,39 +197,52 @@ export default function SubscriptionDetailPage() {
         throw new Error(errorData.error || 'Failed to gift trial')
       }
 
-      alert(`Successfully gifted ${giftTrialMonths} month${giftTrialMonths > 1 ? 's' : ''} Premium trial!`)
+      toast({
+        title: 'Success',
+        description: `Successfully gifted ${giftTrialMonths} month${giftTrialMonths > 1 ? 's' : ''} Premium trial!`
+      })
+      setGiftTrialConfirmOpen(false)
       loadSubscription()
     } catch (error) {
-      alert(`Failed to gift trial: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'Failed to gift trial',
+        variant: 'destructive'
+      })
     } finally {
       setUpdating(false)
     }
   }
 
+  const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false)
+  const [cancelReason, setCancelReason] = useState('')
+
   async function handleCancel() {
     if (!subscription) return
-
-    const reason = prompt('Enter cancellation reason (optional):')
-    if (reason === null) return // User cancelled the prompt
-
-    if (!confirm('Are you sure you want to cancel this subscription?')) {
-      return
-    }
 
     try {
       setUpdating(true)
       const response = await fetch(`/api/admin/subscriptions/${userId}/cancel`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reason }),
+        body: JSON.stringify({ reason: cancelReason || 'Admin cancelled' }),
       })
 
       if (!response.ok) throw new Error('Failed to cancel subscription')
 
-      alert('Subscription cancelled successfully')
+      toast({
+        title: 'Success',
+        description: 'Subscription cancelled successfully'
+      })
+      setCancelConfirmOpen(false)
+      setCancelReason('')
       loadSubscription()
     } catch (error) {
-      alert('Failed to cancel subscription')
+      toast({
+        title: 'Error',
+        description: 'Failed to cancel subscription',
+        variant: 'destructive'
+      })
     } finally {
       setUpdating(false)
     }
@@ -276,7 +302,7 @@ export default function SubscriptionDetailPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <Link href="/admin-panel/subscriptions">
+          <Link href={`/admin-panel/subscriptions?id=${userId}`}>
             <Button variant="ghost" className="text-slate-400 hover:text-white -ml-4 mb-2">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Subscriptions
@@ -315,7 +341,10 @@ export default function SubscriptionDetailPage() {
                     className="border-slate-700 text-slate-300 hover:bg-slate-800"
                     onClick={() => {
                       navigator.clipboard.writeText(subscription.id)
-                      alert('UUID copied to clipboard!')
+                      toast({
+                        title: 'Copied',
+                        description: 'UUID copied to clipboard'
+                      })
                     }}
                   >
                     Copy
@@ -490,13 +519,30 @@ export default function SubscriptionDetailPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <Button
-                onClick={handleGiftTrial}
-                disabled={updating}
-                className="w-full bg-yellow-600 hover:bg-yellow-700 text-white"
-              >
-                {updating ? 'Gifting...' : `Gift ${giftTrialMonths} Month${giftTrialMonths > 1 ? 's' : ''} Premium`}
-              </Button>
+              <AlertDialog open={giftTrialConfirmOpen} onOpenChange={setGiftTrialConfirmOpen}>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    disabled={updating}
+                    className="w-full bg-yellow-600 hover:bg-yellow-700 text-white"
+                  >
+                    Gift {giftTrialMonths} Month{giftTrialMonths > 1 ? 's' : ''} Premium
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="bg-slate-900 border-slate-700">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="text-white">Gift Premium Trial</AlertDialogTitle>
+                    <AlertDialogDescription className="text-slate-400">
+                      Are you sure you want to gift {giftTrialMonths} month{giftTrialMonths > 1 ? 's' : ''} of Premium access to this user?
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="bg-slate-800 text-white border-slate-700">Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleGiftTrial} className="bg-yellow-600 hover:bg-yellow-700">
+                      Confirm Gift
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </Card>
 
@@ -508,14 +554,41 @@ export default function SubscriptionDetailPage() {
             <p className="text-sm text-slate-400 mb-4">
               Cancelling a subscription will immediately revoke premium access. This action cannot be undone.
             </p>
-            <Button
-              onClick={handleCancel}
-              disabled={updating || subscription.subscription_status === 'cancelled'}
-              variant="destructive"
-              className="w-full"
-            >
-              {updating ? 'Cancelling...' : 'Cancel Subscription'}
-            </Button>
+            <AlertDialog open={cancelConfirmOpen} onOpenChange={setCancelConfirmOpen}>
+              <AlertDialogTrigger asChild>
+                <Button
+                  disabled={updating || subscription.subscription_status === 'cancelled'}
+                  variant="destructive"
+                  className="w-full"
+                >
+                  Cancel Subscription
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="bg-slate-900 border-slate-700">
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="text-white">Cancel Subscription</AlertDialogTitle>
+                  <AlertDialogDescription className="text-slate-400">
+                    Are you sure you want to cancel this subscription? This will immediately revoke premium access.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <div className="py-4">
+                  <label className="text-sm text-slate-400 mb-2 block">Cancellation Reason (optional)</label>
+                  <input
+                    type="text"
+                    value={cancelReason}
+                    onChange={(e) => setCancelReason(e.target.value)}
+                    placeholder="e.g., User requested, Refund, etc."
+                    className="w-full bg-slate-800 border-slate-700 text-white px-3 py-2 rounded"
+                  />
+                </div>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className="bg-slate-800 text-white border-slate-700">Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleCancel} className="bg-red-600 hover:bg-red-700">
+                    Confirm Cancellation
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </Card>
         </TabsContent>
       </Tabs>

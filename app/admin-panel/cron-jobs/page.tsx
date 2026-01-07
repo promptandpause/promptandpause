@@ -6,6 +6,17 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 import { Clock, CheckCircle, XCircle, Activity, TrendingUp, Play, RefreshCw, Loader2, AlertCircle } from 'lucide-react'
 import { format } from 'date-fns'
 import { toast } from 'sonner'
@@ -122,15 +133,21 @@ export default function CronJobsPage() {
     toast.success('Data refreshed')
   }
 
+  const [triggerConfirmOpen, setTriggerConfirmOpen] = useState(false)
+  const [jobToTrigger, setJobToTrigger] = useState<string | null>(null)
+
   async function triggerJob(jobName: string) {
-    if (!confirm(`Are you sure you want to manually trigger "${jobName}"?\n\nThis will send emails to eligible users.`)) {
-      return
-    }
+    setJobToTrigger(jobName)
+    setTriggerConfirmOpen(true)
+  }
+
+  async function confirmTrigger() {
+    if (!jobToTrigger) return
 
     try {
-      setTriggering(jobName)
-      
-      const response = await fetch(`/api/cron/${jobName}`, {
+      setTriggering(jobToTrigger)
+
+      const response = await fetch(`/api/cron/${jobToTrigger}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -141,7 +158,6 @@ export default function CronJobsPage() {
 
       if (response.ok) {
         toast.success(`Job triggered successfully! Processed ${data.stats?.totalProcessed || 0} users.`)
-        // Reload data after a short delay
         setTimeout(() => {
           loadStats()
           loadRuns()
@@ -153,6 +169,8 @@ export default function CronJobsPage() {
       toast.error('Failed to trigger cron job')
     } finally {
       setTriggering(null)
+      setTriggerConfirmOpen(false)
+      setJobToTrigger(null)
     }
   }
 
@@ -257,23 +275,40 @@ export default function CronJobsPage() {
                       </p>
                     </div>
                   </div>
-                  <Button
-                    onClick={() => triggerJob(job.name)}
-                    disabled={triggering === job.name}
-                    className="bg-blue-500 hover:bg-blue-600 text-white min-w-[140px]"
-                  >
-                    {triggering === job.name ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Running...
-                      </>
-                    ) : (
-                      <>
-                        <Play className="h-4 w-4 mr-2" />
-                        Run Now
-                      </>
-                    )}
-                  </Button>
+                  <AlertDialog open={triggerConfirmOpen && jobToTrigger === job.name} onOpenChange={(open) => !open && setTriggerConfirmOpen(false)}>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        disabled={triggering === job.name}
+                        className="bg-blue-500 hover:bg-blue-600 text-white min-w-[140px]"
+                      >
+                        {triggering === job.name ? (
+                          <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            Running...
+                          </>
+                        ) : (
+                          <>
+                            <Play className="h-4 w-4 mr-2" />
+                            Run Now
+                          </>
+                        )}
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent className="bg-slate-900 border-slate-700">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle className="text-white">Trigger Cron Job</AlertDialogTitle>
+                        <AlertDialogDescription className="text-slate-400">
+                          Are you sure you want to manually trigger "{job.displayName}"? This will send emails to eligible users.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel className="bg-slate-800 text-white border-slate-700">Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={confirmTrigger} className="bg-blue-600 hover:bg-blue-700">
+                          Confirm
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </div>
             </Card>

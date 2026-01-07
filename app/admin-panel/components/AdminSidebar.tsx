@@ -3,25 +3,15 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { 
-  LayoutDashboard, 
   Users, 
-  BarChart3, 
   Settings, 
   LogOut,
-  Shield,
   Activity,
   CreditCard,
-  Clock,
-  Mail,
-  MessageSquare,
-  BookOpen,
-  FileText,
-  Wrench,
-  UserCog,
-  UserCircle
+  Tag,
+  Gift,
+  LayoutDashboard
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
 import { getSupabaseClient } from '@/lib/supabase/client'
 
 interface AdminSidebarProps {
@@ -29,90 +19,12 @@ interface AdminSidebarProps {
 }
 
 const navigationItems = [
-  {
-    title: 'Dashboard',
-    href: '/admin-panel',
-    icon: LayoutDashboard,
-    description: 'Overview & key metrics'
-  },
-  {
-    title: 'Users',
-    href: '/admin-panel/users',
-    icon: Users,
-    description: 'User management'
-  },
-  {
-    title: 'Subscriptions',
-    href: '/admin-panel/subscriptions',
-    icon: CreditCard,
-    description: 'Billing & subscriptions'
-  },
-  {
-    title: 'Analytics',
-    href: '/admin-panel/analytics',
-    icon: BarChart3,
-    description: 'Engagement & revenue'
-  },
-  {
-    title: 'Activity Logs',
-    href: '/admin-panel/activity',
-    icon: Activity,
-    description: 'Admin audit trail'
-  },
-  {
-    title: 'Cron Jobs',
-    href: '/admin-panel/cron-jobs',
-    icon: Clock,
-    description: 'Job monitoring'
-  },
-  {
-    title: 'Email Tracking',
-    href: '/admin-panel/emails',
-    icon: Mail,
-    description: 'Email delivery logs'
-  },
-  {
-    title: 'Email Templates',
-    href: '/admin-panel/email-templates',
-    icon: FileText,
-    description: 'Template management'
-  },
-  {
-    title: 'Maintenance',
-    href: '/admin-panel/maintenance',
-    icon: Wrench,
-    description: 'Maintenance windows'
-  },
-  {
-    title: 'Support Tickets',
-    href: '/admin-panel/support',
-    icon: MessageSquare,
-    description: 'User support'
-  },
-  {
-    title: 'Prompt Library',
-    href: '/admin-panel/prompts',
-    icon: BookOpen,
-    description: 'Prompt management'
-  },
-  {
-    title: 'Admin Users',
-    href: '/admin-panel/admin-users',
-    icon: UserCog,
-    description: 'Manage admin access'
-  },
-  {
-    title: 'My Profile',
-    href: '/admin-panel/profile',
-    icon: UserCircle,
-    description: 'Your admin account'
-  },
-  {
-    title: 'Settings',
-    href: '/admin-panel/settings',
-    icon: Settings,
-    description: 'System configuration'
-  },
+  { title: 'Users', href: '/admin-panel/users', icon: Users },
+  { title: 'Subscriptions', href: '/admin-panel/subscriptions', icon: CreditCard },
+  { title: 'Discounts', href: '/admin-panel/discounts', icon: Tag },
+  { title: 'Gifts', href: '/admin-panel/gifts', icon: Gift },
+  { title: 'Activity / Logs', href: '/admin-panel/activity', icon: Activity },
+  { title: 'Settings', href: '/admin-panel/settings', icon: Settings },
 ]
 
 export default function AdminSidebar({ userEmail }: AdminSidebarProps) {
@@ -126,83 +38,55 @@ export default function AdminSidebar({ userEmail }: AdminSidebarProps) {
   }
 
   return (
-    <aside className="w-64 bg-slate-950 border-r border-slate-800 flex flex-col">
-      {/* Header */}
-      <div className="p-6">
-        <div className="flex items-center gap-2 mb-2">
-          <Shield className="h-6 w-6 text-blue-500" />
-          <h1 className="text-xl font-bold text-white">Admin Panel</h1>
-        </div>
-        <p className="text-sm text-slate-400">Prompt & Pause</p>
+    <aside className="w-60 bg-white border-r border-neutral-200 flex flex-col">
+      <div className="px-4 py-4">
+        <div className="text-sm font-semibold text-neutral-900">Admin</div>
+        <div className="text-xs text-neutral-500 truncate">{userEmail}</div>
       </div>
 
-      <Separator className="bg-slate-800" />
+      <div className="h-px bg-neutral-200" />
 
-      {/* Admin info */}
-      <div className="px-6 py-4">
-        <div className="flex items-center gap-2 text-sm">
-          <div className="h-8 w-8 rounded-full bg-blue-500/20 flex items-center justify-center">
-            <Shield className="h-4 w-4 text-blue-400" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-xs text-slate-400 truncate">Logged in as</p>
-            <p className="text-sm text-white font-medium truncate">{userEmail}</p>
-          </div>
-        </div>
-      </div>
-
-      <Separator className="bg-slate-800" />
-
-      {/* Navigation */}
-      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+      <nav className="flex-1 px-2 py-2 overflow-y-auto">
         {navigationItems.map((item) => {
-          const isActive = pathname === item.href || 
-            (item.href !== '/admin-panel' && pathname.startsWith(item.href))
+          const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`)
           const Icon = item.icon
 
           return (
-            <Link key={item.href} href={item.href}>
-              <Button
-                variant="ghost"
-                className={`w-full justify-start gap-3 h-auto py-3 px-3 ${
-                  isActive
-                    ? 'bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 hover:text-blue-300'
-                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                }`}
-              >
-                <Icon className="h-5 w-5 flex-shrink-0" />
-                <div className="flex-1 text-left">
-                  <div className="font-medium">{item.title}</div>
-                  <div className="text-xs opacity-70">{item.description}</div>
-                </div>
-              </Button>
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm ${
+                isActive
+                  ? 'bg-neutral-100 text-neutral-900'
+                  : 'text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900'
+              }`}
+            >
+              <Icon className="h-4 w-4 text-neutral-500" />
+              <span>{item.title}</span>
             </Link>
           )
         })}
       </nav>
 
-      <Separator className="bg-slate-800" />
+      <div className="h-px bg-neutral-200" />
 
-      {/* Footer actions */}
-      <div className="p-3 space-y-1">
-        <Link href="/dashboard">
-          <Button
-            variant="ghost"
-            className="w-full justify-start gap-3 text-slate-300 hover:bg-slate-800 hover:text-white"
-          >
-            <LayoutDashboard className="h-4 w-4" />
-            <span>User Dashboard</span>
-          </Button>
-        </Link>
-        
-        <Button
-          variant="ghost"
-          onClick={handleSignOut}
-          className="w-full justify-start gap-3 text-slate-300 hover:bg-slate-800 hover:text-white"
+      <div className="p-2">
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900"
         >
-          <LogOut className="h-4 w-4" />
+          <LayoutDashboard className="h-4 w-4 text-neutral-500" />
+          <span>User Dashboard</span>
+        </Link>
+
+        <button
+          type="button"
+          onClick={handleSignOut}
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900"
+        >
+          <LogOut className="h-4 w-4 text-neutral-500" />
           <span>Sign Out</span>
-        </Button>
+        </button>
       </div>
     </aside>
   )

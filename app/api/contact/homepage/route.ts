@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { Resend } from 'resend'
+import { withRateLimit, getIdentifier } from '@/lib/security/rateLimit'
 
 const HomepageContactSchema = z.object({
   name: z.string().min(2).max(100),
@@ -14,6 +15,12 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit: 3 contact form submissions per hour per IP
+    const rateLimitResult = await withRateLimit(request, 'auth')
+    if (!rateLimitResult.allowed) {
+      return rateLimitResult.response!
+    }
+
     const body = await request.json()
     const parsed = HomepageContactSchema.safeParse(body)
     if (!parsed.success) {

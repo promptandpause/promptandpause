@@ -861,7 +861,7 @@ export async function sendDataExportEmail(
  */
 export async function logEmailDelivery(
   userId: string,
-  emailType: 'daily_prompt' | 'weekly_digest' | 'welcome' | 'subscription_confirm' | 'subscription_cancelled' | 'data_export' | 'trial_expired',
+  emailType: 'daily_prompt' | 'weekly_digest' | 'welcome' | 'subscription_confirm' | 'subscription_cancelled' | 'data_export' | 'trial_expired' | 'discount_invitation' | 'gift_recipient' | 'gift_buyer_confirm' | 'gift_activated' | 'gift_redeemed_buyer' | 'gift_expiring_soon',
   recipientEmail: string,
   status: 'sent' | 'delivered' | 'opened' | 'clicked' | 'bounced' | 'failed',
   resendEmailId: string | null,
@@ -2054,6 +2054,426 @@ export async function sendTrialExpirationEmail(
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',
     }
+  }
+}
+
+/**
+ * Send discount invitation email (student/NHS)
+ */
+export async function sendDiscountInvitationEmail(
+  email: string,
+  name: string,
+  discountType: 'student' | 'nhs',
+  billingCycle: 'monthly' | 'yearly',
+  checkoutUrl: string,
+  expiresAt: string
+): Promise<{ success: boolean; emailId?: string; error?: string }> {
+  try {
+    const discountLabel = discountType === 'student' ? 'Student' : 'NHS'
+    const pricing = billingCycle === 'monthly' ? '£7.20/month' : '£59/year'
+    const expiryDate = new Date(expiresAt).toLocaleDateString('en-GB', { 
+      day: 'numeric', 
+      month: 'long', 
+      year: 'numeric' 
+    })
+
+    const html = emailWrapper(`
+      ${h1(`Your ${discountLabel} discount is ready`)}
+      
+      ${paragraph(`Hi ${name},`)}
+      
+      ${paragraph(`Good news! You've been approved for ${discountLabel} discount pricing on Prompt & Pause Premium.`)}
+      
+      ${infoBox(`
+        <strong>Your discount:</strong><br/>
+        • 40% off Premium<br/>
+        • ${pricing} (${billingCycle})<br/>
+        • Full Premium features<br/>
+        • Valid until ${expiryDate}
+      `)}
+      
+      ${paragraph('To activate your discount, click the button below and complete payment. This link is unique to you and expires in 7 days.')}
+      
+      <div style="text-align: center; margin: 40px 0;">
+        ${ctaButton('Activate my discount', checkoutUrl)}
+      </div>
+      
+      ${paragraph('Once activated, you\'ll have full access to Premium features including weekly insights, monthly summaries, and unlimited reflections.')}
+      
+      ${paragraph('If you have any questions, just reply to this email.')}
+      
+      ${paragraph('– The Prompt & Pause team', { fontSize: '14px', color: TEXT_MUTED })}
+    `)
+
+    const { data, error } = await resend.emails.send({
+      from: `${APP_NAME} <${FROM_EMAIL}>`,
+      to: email,
+      subject: `Your ${discountLabel} discount is ready`,
+      html,
+    })
+
+    if (error) {
+      logger.error('email_discount_invitation_send_error', { error, email, discountType })
+      await logEmailDelivery('unknown', 'discount_invitation', email, 'failed', null, error.message)
+      return { success: false, error: error.message }
+    }
+
+    await logEmailDelivery('unknown', 'discount_invitation', email, 'sent', data?.id || null)
+
+    return { success: true, emailId: data?.id }
+  } catch (error) {
+    logger.error('email_discount_invitation_unexpected_error', { error, email })
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    await logEmailDelivery('unknown', 'discount_invitation', email, 'failed', null, errorMessage)
+    return {
+      success: false,
+      error: errorMessage,
+    }
+  }
+}
+
+/**
+ * Send gift activation confirmation email
+ */
+export async function sendGiftActivatedEmail(
+  email: string,
+  name: string,
+  durationMonths: number,
+  endDate: Date
+): Promise<{ success: boolean; emailId?: string; error?: string }> {
+  try {
+    const endDateStr = endDate.toLocaleDateString('en-GB', { 
+      day: 'numeric', 
+      month: 'long', 
+      year: 'numeric' 
+    })
+
+    const html = emailWrapper(`
+      ${h1('Gift subscription activated!')}
+      
+      ${paragraph(`Hi ${name},`)}
+      
+      ${paragraph(`Great news! Your gift subscription has been activated successfully.`)}
+      
+      ${infoBox(`
+        <strong>Your gift subscription:</strong><br/>
+        • ${durationMonths} month${durationMonths > 1 ? 's' : ''} of Premium<br/>
+        • Active until ${endDateStr}<br/>
+        • Full access to all Premium features<br/>
+        • No billing until gift expires
+      `)}
+      
+      ${paragraph('You now have access to:')}
+      
+      ${paragraph(`
+        <ul style="color: ${TEXT_GRAY}; line-height: 1.8; margin: 0; padding-left: 20px;">
+          <li>Unlimited daily reflections</li>
+          <li>Weekly insights and digests</li>
+          <li>Monthly reflection summaries</li>
+          <li>Advanced analytics and patterns</li>
+          <li>"From your past" resurfacing</li>
+        </ul>
+      `)}
+      
+      <div style="text-align: center; margin: 40px 0;">
+        ${ctaButton('Start reflecting', `${APP_URL}/dashboard`)}
+      </div>
+      
+      ${paragraph(`Your subscription will automatically downgrade to the Free tier on ${endDateStr}. If you'd like to continue with Premium features after that, you can subscribe from your account settings.`)}
+      
+      ${paragraph('Enjoy your gift subscription!')}
+      
+      ${paragraph('– The Prompt & Pause team', { fontSize: '14px', color: TEXT_MUTED })}
+    `)
+
+    const { data, error } = await resend.emails.send({
+      from: `${APP_NAME} <${FROM_EMAIL}>`,
+      to: email,
+      subject: 'Gift subscription activated',
+      html,
+    })
+
+    if (error) {
+      logger.error('email_gift_activated_send_error', { error, email })
+      await logEmailDelivery('unknown', 'gift_activated', email, 'failed', null, error.message)
+      return { success: false, error: error.message }
+    }
+
+    await logEmailDelivery('unknown', 'gift_activated', email, 'sent', data?.id || null)
+
+    return { success: true, emailId: data?.id }
+  } catch (error) {
+    logger.error('email_gift_activated_unexpected_error', { error, email })
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    await logEmailDelivery('unknown', 'gift_activated', email, 'failed', null, errorMessage)
+    return {
+      success: false,
+      error: errorMessage,
+    }
+  }
+}
+
+/**
+ * Send gift email to recipient (purchase flow)
+ */
+export async function sendGiftRecipientEmail(params: {
+  recipientEmail: string
+  recipientName?: string | null
+  durationMonths: number
+  redemptionToken: string
+  expiresAt: string
+  giftMessage?: string | null
+  purchaserName?: string | null
+}): Promise<{ success: boolean; emailId?: string; error?: string }> {
+  const {
+    recipientEmail,
+    recipientName,
+    durationMonths,
+    redemptionToken,
+    expiresAt,
+    giftMessage,
+    purchaserName,
+  } = params
+
+  try {
+    const displayName = recipientName || recipientEmail.split('@')[0]
+    const expiryDate = new Date(expiresAt).toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    })
+
+    const redeemUrl = `${APP_URL.replace(/\/$/, '')}/gifts/redeem`
+    const fromLine = purchaserName ? `from ${purchaserName}` : 'from someone who cares about you'
+
+    const html = emailWrapper(`
+      ${h1('You’ve received a gift subscription')}
+
+      ${paragraph(`Hi ${displayName},`)}
+
+      ${paragraph(`You’ve received a ${durationMonths}-month Premium gift subscription ${fromLine}.`)}
+
+      ${giftMessage ? paragraph(`Message: “${giftMessage}”`) : ''}
+
+      ${infoBox(`
+        <strong>Gift details</strong><br/>
+        • Duration: ${durationMonths} month${durationMonths > 1 ? 's' : ''}<br/>
+        • Gift code: <strong>${redemptionToken}</strong><br/>
+        • Expires: ${expiryDate}
+      `)}
+
+      ${paragraph('To redeem: sign in (or create an account), then enter your gift code on the redemption page.')}
+
+      <div style="text-align: center; margin: 40px 0;">
+        ${ctaButton('Redeem gift', redeemUrl)}
+      </div>
+
+      ${paragraph('If you have any trouble redeeming, reply to this email and we’ll help.')}
+
+      ${paragraph('– The Prompt & Pause team', { fontSize: '14px', color: TEXT_MUTED })}
+    `)
+
+    const { data, error } = await resend.emails.send({
+      from: `${APP_NAME} <${FROM_EMAIL}>`,
+      to: recipientEmail,
+      subject: 'You’ve received a gift subscription',
+      html,
+    })
+
+    if (error) {
+      logger.error('email_gift_recipient_send_error', { error, recipientEmail })
+      await logEmailDelivery('unknown', 'gift_recipient', recipientEmail, 'failed', null, error.message)
+      return { success: false, error: error.message }
+    }
+
+    await logEmailDelivery('unknown', 'gift_recipient', recipientEmail, 'sent', data?.id || null)
+    return { success: true, emailId: data?.id }
+  } catch (error) {
+    logger.error('email_gift_recipient_unexpected_error', { error, recipientEmail })
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    await logEmailDelivery('unknown', 'gift_recipient', recipientEmail, 'failed', null, errorMessage)
+    return { success: false, error: errorMessage }
+  }
+}
+
+/**
+ * Send purchase confirmation email to buyer
+ */
+export async function sendGiftBuyerConfirmationEmail(params: {
+  buyerEmail: string
+  buyerName?: string | null
+  durationMonths: number
+  redemptionToken: string
+  expiresAt: string
+  recipientEmail?: string | null
+}): Promise<{ success: boolean; emailId?: string; error?: string }> {
+  const { buyerEmail, buyerName, durationMonths, redemptionToken, expiresAt, recipientEmail } = params
+
+  try {
+    const displayName = buyerName || buyerEmail.split('@')[0]
+    const expiryDate = new Date(expiresAt).toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    })
+
+    const html = emailWrapper(`
+      ${h1('Gift subscription purchased')}
+
+      ${paragraph(`Hi ${displayName},`)}
+
+      ${paragraph(`Thanks — your ${durationMonths}-month gift subscription purchase is confirmed.`)}
+
+      ${infoBox(`
+        <strong>Gift details</strong><br/>
+        • Duration: ${durationMonths} month${durationMonths > 1 ? 's' : ''}<br/>
+        • Gift code: <strong>${redemptionToken}</strong><br/>
+        • Expires: ${expiryDate}
+        ${recipientEmail ? `<br/>• Recipient: ${recipientEmail}` : ''}
+      `)}
+
+      ${paragraph('If your recipient can’t find the gift email, you can forward them the gift code above. They’ll need an account to redeem.')}
+
+      ${paragraph('If you have any questions, reply to this email.')}
+
+      ${paragraph('– The Prompt & Pause team', { fontSize: '14px', color: TEXT_MUTED })}
+    `)
+
+    const { data, error } = await resend.emails.send({
+      from: `${APP_NAME} <${FROM_EMAIL}>`,
+      to: buyerEmail,
+      subject: 'Gift subscription purchased',
+      html,
+    })
+
+    if (error) {
+      logger.error('email_gift_buyer_confirm_send_error', { error, buyerEmail })
+      await logEmailDelivery('unknown', 'gift_buyer_confirm', buyerEmail, 'failed', null, error.message)
+      return { success: false, error: error.message }
+    }
+
+    await logEmailDelivery('unknown', 'gift_buyer_confirm', buyerEmail, 'sent', data?.id || null)
+    return { success: true, emailId: data?.id }
+  } catch (error) {
+    logger.error('email_gift_buyer_confirm_unexpected_error', { error, buyerEmail })
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    await logEmailDelivery('unknown', 'gift_buyer_confirm', buyerEmail, 'failed', null, errorMessage)
+    return { success: false, error: errorMessage }
+  }
+}
+
+/**
+ * Optional: notify buyer when gift is redeemed
+ */
+export async function sendGiftRedeemedBuyerEmail(params: {
+  buyerEmail: string
+  buyerName?: string | null
+  durationMonths: number
+  redeemedAt: string
+}): Promise<{ success: boolean; emailId?: string; error?: string }> {
+  const { buyerEmail, buyerName, durationMonths, redeemedAt } = params
+
+  try {
+    const displayName = buyerName || buyerEmail.split('@')[0]
+    const redeemedDate = new Date(redeemedAt).toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    })
+
+    const html = emailWrapper(`
+      ${h1('Your gift was redeemed')}
+
+      ${paragraph(`Hi ${displayName},`)}
+
+      ${paragraph(`Just a quick note — your ${durationMonths}-month gift subscription was redeemed on ${redeemedDate}.`)}
+
+      ${paragraph('Thanks for giving a little space for reflection.')}
+
+      ${paragraph('– The Prompt & Pause team', { fontSize: '14px', color: TEXT_MUTED })}
+    `)
+
+    const { data, error } = await resend.emails.send({
+      from: `${APP_NAME} <${FROM_EMAIL}>`,
+      to: buyerEmail,
+      subject: 'Your gift was redeemed',
+      html,
+    })
+
+    if (error) {
+      logger.error('email_gift_redeemed_buyer_send_error', { error, buyerEmail })
+      await logEmailDelivery('unknown', 'gift_redeemed_buyer', buyerEmail, 'failed', null, error.message)
+      return { success: false, error: error.message }
+    }
+
+    await logEmailDelivery('unknown', 'gift_redeemed_buyer', buyerEmail, 'sent', data?.id || null)
+    return { success: true, emailId: data?.id }
+  } catch (error) {
+    logger.error('email_gift_redeemed_buyer_unexpected_error', { error, buyerEmail })
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    await logEmailDelivery('unknown', 'gift_redeemed_buyer', buyerEmail, 'failed', null, errorMessage)
+    return { success: false, error: errorMessage }
+  }
+}
+
+/**
+ * Optional: expiring soon reminder (7 days)
+ */
+export async function sendGiftExpiringSoonEmail(params: {
+  email: string
+  name?: string | null
+  endDate: string
+}): Promise<{ success: boolean; emailId?: string; error?: string }> {
+  const { email, name, endDate } = params
+
+  try {
+    const displayName = name || email.split('@')[0]
+    const endDateStr = new Date(endDate).toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    })
+
+    const settingsUrl = `${APP_URL.replace(/\/$/, '')}/dashboard/settings`
+
+    const html = emailWrapper(`
+      ${h1('Your gift subscription ends soon')}
+
+      ${paragraph(`Hi ${displayName},`)}
+
+      ${paragraph(`A quick reminder: your gift subscription is set to end on ${endDateStr}.`)}
+
+      ${paragraph('Nothing is required from you. When it ends, your account will move back to the Free tier.')}
+
+      <div style="text-align: center; margin: 40px 0;">
+        ${ctaButton('View your settings', settingsUrl)}
+      </div>
+
+      ${paragraph('If you’d like to continue with Premium features after that, you can choose a plan in Settings.')}
+
+      ${paragraph('– The Prompt & Pause team', { fontSize: '14px', color: TEXT_MUTED })}
+    `)
+
+    const { data, error } = await resend.emails.send({
+      from: `${APP_NAME} <${FROM_EMAIL}>`,
+      to: email,
+      subject: 'Your gift subscription ends soon',
+      html,
+    })
+
+    if (error) {
+      logger.error('email_gift_expiring_soon_send_error', { error, email })
+      await logEmailDelivery('unknown', 'gift_expiring_soon', email, 'failed', null, error.message)
+      return { success: false, error: error.message }
+    }
+
+    await logEmailDelivery('unknown', 'gift_expiring_soon', email, 'sent', data?.id || null)
+    return { success: true, emailId: data?.id }
+  } catch (error) {
+    logger.error('email_gift_expiring_soon_unexpected_error', { error, email })
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    await logEmailDelivery('unknown', 'gift_expiring_soon', email, 'failed', null, errorMessage)
+    return { success: false, error: errorMessage }
   }
 }
 

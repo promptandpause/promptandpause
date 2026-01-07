@@ -410,7 +410,11 @@ export default function JournalsPage() {
                               {entry.mood && <span className="text-xl">{entry.mood}</span>}
                               <div className="flex gap-1 flex-wrap">
                                 {(entry.tags || []).map(tag => (
-                                  <Badge key={tag} className="bg-green-500/20 text-green-800 border border-green-400/40">{tag}</Badge>
+                                  <Badge key={tag} className={`${
+                                    theme === 'dark'
+                                      ? 'bg-green-500/20 text-green-300 border border-green-400/40'
+                                      : 'bg-green-100 text-green-800 border border-green-300'
+                                  }`}>{tag}</Badge>
                                 ))}
                               </div>
                             </div>

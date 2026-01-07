@@ -84,11 +84,11 @@ export default function DashboardPage() {
               <SettingsLinkCard />
             </div>
 
-            {/* Right Sidebar - Pre-loaded components */}
-            <div className="hidden md:block md:col-span-3 space-y-4 md:space-y-6">
+            {/* Right Sidebar - Desktop only, shown as collapsible on mobile */}
+            <div className="md:block md:col-span-3 space-y-4 md:space-y-6">
               <HowItWorksCard theme={theme} />
               <FocusAreasCard theme={theme} />
-              <ExpectationsCard theme={theme} />
+              <ExpectationsCard theme={theme} tier={tier} />
               <SupportCard theme={theme} />
               <HistorySearchCard />
             </div>
@@ -192,7 +192,7 @@ function FocusAreasCard({ theme }: { theme: string }) {
   )
 }
 
-function ExpectationsCard({ theme }: { theme: string }) {
+function ExpectationsCard({ theme, tier }: { theme: string; tier: string }) {
   return (
     <CardShell theme={theme}>
       <div className="space-y-2">
@@ -201,8 +201,14 @@ function ExpectationsCard({ theme }: { theme: string }) {
         </p>
         <div className={theme === "dark" ? "text-white/80 text-sm space-y-2" : "text-gray-800 text-sm space-y-2"}>
           <p>Daily prompt: once a day, at your chosen time.</p>
-          <p>Weekly reflection: appears occasionally.</p>
-          <p>Monthly reflection: appears after month-end.</p>
+          {tier === 'premium' ? (
+            <>
+              <p>Weekly reflection: appears occasionally.</p>
+              <p>Monthly reflection: appears after month-end.</p>
+            </>
+          ) : (
+            <p className="text-gray-500 italic">Weekly & monthly reflections are premium features</p>
+          )}
         </div>
       </div>
     </CardShell>

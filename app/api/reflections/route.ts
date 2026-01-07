@@ -2,6 +2,16 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { canCreateReflection, getWeeklyPromptAllowance } from '@/lib/utils/tierManagement'
 import { decryptIfEncrypted, encryptIfPossible } from '@/lib/utils/crypto'
+import { z } from 'zod'
+
+// Zod schema for reflection creation
+const CreateReflectionSchema = z.object({
+  prompt_text: z.string().min(1, 'Prompt text is required').max(1000, 'Prompt text too long'),
+  reflection_text: z.string().min(1, 'Reflection text is required').max(10000, 'Reflection text too long'),
+  mood: z.string().max(50, 'Mood too long').optional().default('😊'),
+  tags: z.array(z.string().max(50, 'Tag too long')).max(10, 'Too many tags').optional().default([]),
+  word_count: z.number().int().min(0).optional()
+})
 
 /**
  * GET /api/reflections
@@ -26,6 +36,20 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const startDate = searchParams.get('startDate')
     const endDate = searchParams.get('endDate')
+
+    // Validate date formats if provided
+    if (startDate && isNaN(Date.parse(startDate))) {
+      return NextResponse.json(
+        { error: 'Invalid startDate format' },
+        { status: 400 }
+      )
+    }
+    if (endDate && isNaN(Date.parse(endDate))) {
+      return NextResponse.json(
+        { error: 'Invalid endDate format' },
+        { status: 400 }
+      )
+    }
 
     let query = supabase
       .from('reflections')
@@ -76,15 +100,17 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { prompt_text, reflection_text, mood, tags, word_count } = body
 
-    // Validation
-    if (!prompt_text || !reflection_text) {
+    // Validate input with Zod
+    const parsed = CreateReflectionSchema.safeParse(body)
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: 'Prompt and reflection text are required' },
+        { error: 'Invalid input', details: parsed.error.flatten() },
         { status: 400 }
       )
     }
+
+    const { prompt_text, reflection_text, mood, tags, word_count } = parsed.data
 
     // CHECK TIER LIMITS: Enforce weekly reflection limit for free users
     // Fetch user's subscription tier

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { sendDataExportEmail } from '@/lib/services/emailService'
 import { generateUserDataPDF } from '@/lib/services/pdfService'
+import { withRateLimit } from '@/lib/security/rateLimit'
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,6 +16,12 @@ export async function POST(request: NextRequest) {
         { success: false, error: 'Unauthorized' },
         { status: 401 }
       )
+    }
+
+    // Rate limit: 3 exports per hour per user (expensive PDF generation + email)
+    const rateLimitResult = await withRateLimit(request, 'export', user.id)
+    if (!rateLimitResult.allowed) {
+      return rateLimitResult.response!
     }
 
     // Fetch all user data in parallel

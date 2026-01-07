@@ -2,14 +2,19 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { useSearchParams } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { getSupabaseClient } from "@/lib/supabase/client"
 
 export function LoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { toast } = useToast()
   const supabase = getSupabaseClient()
+
+  const nextParam = searchParams.get('next')
+  const safeNext = nextParam && nextParam.startsWith('/') ? nextParam : null
   
   const [showOptions, setShowOptions] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -19,10 +24,13 @@ export function LoginForm() {
   async function handleGoogleSignIn() {
     try {
       setIsLoading(true)
+      const redirectTo = safeNext
+        ? `${window.location.origin}/auth/callback?next=${encodeURIComponent(safeNext)}`
+        : `${window.location.origin}/auth/callback`
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo,
         },
       })
       
@@ -69,7 +77,7 @@ export function LoginForm() {
         if (!preferences) {
           router.push('/onboarding')
         } else {
-          router.push('/dashboard')
+          router.push(safeNext || '/dashboard')
         }
       }
     } catch (error: any) {

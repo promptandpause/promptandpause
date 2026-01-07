@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import Stripe from 'stripe'
 import { createClient } from '@supabase/supabase-js'
+import { sendGiftBuyerConfirmationEmail, sendGiftRecipientEmail, sendSubscriptionEmail } from '@/lib/services/emailService'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-12-18.acacia',
+  apiVersion: '2025-10-29.clover',
 })
 
 // Initialize Supabase Admin client (bypasses RLS)
@@ -89,23 +90,70 @@ export async function POST(req: NextRequest) {
 }
 
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
+  // Handle gift purchases (mode: 'payment' with gift metadata)
+  if (session.mode === 'payment' && session.metadata?.gift_type === 'subscription') {
+    const { data: gift } = await supabaseAdmin
+      .from('gift_subscriptions')
+      .update({
+        stripe_payment_intent_id: session.payment_intent as string,
+        stripe_customer_id: session.customer as string,
+        status: 'pending',
+      })
+      .eq('stripe_checkout_session_id', session.id)
+      .select()
+      .single()
+
+    if (gift) {
+      await supabaseAdmin.from('subscription_events').insert({
+        user_id: null,
+        event_type: 'gift_purchased',
+        old_status: null,
+        new_status: 'pending',
+        stripe_event_id: session.id,
+        metadata: {
+          gift_id: gift.id,
+          duration_months: gift.duration_months,
+          purchaser_email: gift.purchaser_email,
+          recipient_email: gift.recipient_email,
+        },
+      })
+
+      sendGiftBuyerConfirmationEmail({
+        buyerEmail: gift.purchaser_email,
+        buyerName: gift.purchaser_name,
+        durationMonths: gift.duration_months,
+        redemptionToken: gift.redemption_token,
+        expiresAt: gift.expires_at,
+        recipientEmail: gift.recipient_email,
+      }).catch(() => {})
+
+      if (gift.recipient_email) {
+        sendGiftRecipientEmail({
+          recipientEmail: gift.recipient_email,
+          durationMonths: gift.duration_months,
+          redemptionToken: gift.redemption_token,
+          expiresAt: gift.expires_at,
+          giftMessage: gift.gift_message,
+          purchaserName: gift.purchaser_name,
+        }).catch(() => {})
+      }
+    }
+    return
+  }
+
+  // Regular subscription flow
   const userId = session.metadata?.supabase_user_id
   if (!userId) {
     return
   }
-  // Get subscription details
-  if (session.subscription) {
-    const subscription = await stripe.subscriptions.retrieve(
-      session.subscription as string
-    )
-    await handleSubscriptionUpdate(subscription)
-  }
+
+  const subscription = await stripe.subscriptions.retrieve(session.subscription as string)
+  await handleSubscriptionUpdate(subscription, session)
 }
 
-async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
+async function handleSubscriptionUpdate(subscription: Stripe.Subscription, session?: Stripe.Checkout.Session) {
   const customerId = subscription.customer as string
   
-  // Get user ID from customer
   const { data: profile, error: profileError } = await supabaseAdmin
     .from('profiles')
     .select('id')
@@ -118,14 +166,32 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
 
   const userId = profile.id
   const stripeStatus = subscription.status
-  const currentPeriodEnd = new Date(subscription.current_period_end * 1000).toISOString()
-  
-  // Determine subscription status based on price ID
+  const currentPeriodEnd = new Date((subscription as any).current_period_end * 1000).toISOString()
   const priceId = subscription.items.data[0]?.price.id
-  const isMonthly = priceId === process.env.STRIPE_PRICE_MONTHLY
-  const isYearly = priceId === process.env.STRIPE_PRICE_ANNUAL
-  
-  // Set status based on subscription - using correct schema field names
+
+  // Detect discount types and plan name
+  let discount_type = null
+  let planName = 'Monthly Premium'
+
+  if (priceId === process.env.STRIPE_PRICE_STUDENT_MONTHLY) {
+    discount_type = 'student'
+    planName = 'Student Monthly'
+  } else if (priceId === process.env.STRIPE_PRICE_STUDENT_ANNUAL) {
+    discount_type = 'student'
+    planName = 'Student Annual'
+  } else if (priceId === process.env.STRIPE_PRICE_NHS_MONTHLY) {
+    discount_type = 'nhs'
+    planName = 'NHS Monthly'
+  } else if (priceId === process.env.STRIPE_PRICE_NHS_ANNUAL) {
+    discount_type = 'nhs'
+    planName = 'NHS Annual'
+  } else if (priceId === process.env.STRIPE_PRICE_ANNUAL) {
+    planName = 'Annual Premium'
+  }
+
+  const isMonthly = priceId === process.env.STRIPE_PRICE_MONTHLY || (discount_type && (priceId === process.env.STRIPE_PRICE_STUDENT_MONTHLY || priceId === process.env.STRIPE_PRICE_NHS_MONTHLY))
+  const isYearly = priceId === process.env.STRIPE_PRICE_ANNUAL || (discount_type && (priceId === process.env.STRIPE_PRICE_STUDENT_ANNUAL || priceId === process.env.STRIPE_PRICE_NHS_ANNUAL))
+
   const subscriptionStatus = (stripeStatus === 'active' || stripeStatus === 'trialing') && (isMonthly || isYearly)
     ? 'premium'
     : stripeStatus === 'canceled'
@@ -133,14 +199,17 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
     : 'freemium'
 
   const billingCycle = isYearly ? 'yearly' : 'monthly'
-  // Update profile with CORRECT field names from your schema
+
   const { error: updateError } = await supabaseAdmin
     .from('profiles')
     .update({
-      subscription_status: subscriptionStatus,  // ✅ Your actual field
-      subscription_id: subscription.id,         // ✅ Your actual field
-      billing_cycle: billingCycle,              // ✅ Your actual field
+      subscriptionStatus,
+      subscription_id: subscription.id,
+      stripe_customer_id: customerId,
+      billingCycle,
       subscription_end_date: currentPeriodEnd,
+      discount_type,
+      discount_verified_at: discount_type ? new Date().toISOString() : null,
       updated_at: new Date().toISOString(),
     })
     .eq('id', userId)
@@ -149,30 +218,57 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
     throw updateError
   }
 
-  // Log subscription event
+  // Mark discount invitation as completed if applicable
+  if (discount_type && session?.metadata?.admin_id) {
+    await supabaseAdmin
+      .from('discount_invitations')
+      .update({
+        status: 'completed',
+        completed_at: new Date().toISOString(),
+      })
+      .eq('user_id', userId)
+      .eq('status', 'pending')
+  }
+
   await supabaseAdmin
     .from('subscription_events')
     .insert({
       user_id: userId,
-      event_type: subscriptionStatus === 'premium' ? 'upgraded' : 'downgraded',
+      event_type: discount_type ? 'discount_activated' : (subscriptionStatus === 'premium' ? 'upgraded' : 'downgraded'),
       old_status: null,
       new_status: subscriptionStatus,
       stripe_event_id: subscription.id,
       metadata: {
-        billing_cycle: billingCycle,
+        session_id: session?.id,
+        discount_type,
         price_id: priceId,
-        stripe_status: stripeStatus
-      }
+      },
     })
+
+  // Send confirmation email
+  const { data: userProfile } = await supabaseAdmin
+    .from('profiles')
+    .select('email, full_name')
+    .eq('id', userId)
+    .single()
+
+  if (userProfile?.email) {
+    sendSubscriptionEmail(
+      userProfile.email,
+      userId,
+      'confirmation',
+      planName,
+      userProfile.full_name
+    ).catch(() => {})
+  }
 }
 
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   const customerId = subscription.customer as string
   
-  // Get user ID from customer
   const { data: profile, error: profileError } = await supabaseAdmin
     .from('profiles')
-    .select('id')
+    .select('id, subscription_status')
     .eq('stripe_customer_id', customerId)
     .single()
 
@@ -181,12 +277,13 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   }
 
   const userId = profile.id
-  // Downgrade to cancelled - using correct schema field names
+
   const { error: updateError } = await supabaseAdmin
     .from('profiles')
     .update({
-      subscription_status: 'cancelled',  // ✅ Your actual field
-      billing_cycle: null,               // Clear billing cycle
+      subscription_status: 'cancelled',
+      billing_cycle: null,
+      subscription_end_date: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     })
     .eq('id', userId)
@@ -195,22 +292,40 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
     throw updateError
   }
 
-  // Log subscription event
   await supabaseAdmin
     .from('subscription_events')
     .insert({
       user_id: userId,
       event_type: 'cancelled',
-      old_status: 'premium',
+      old_status: profile.subscription_status,
       new_status: 'cancelled',
-      stripe_event_id: subscription.id
+      stripe_event_id: subscription.id,
     })
+
+  const { data: cancelProfile } = await supabaseAdmin
+    .from('profiles')
+    .select('email, full_name')
+    .eq('id', userId)
+    .single()
+
+  if (cancelProfile?.email) {
+    const priceId = subscription.items.data[0]?.price.id
+    const planName = priceId === process.env.STRIPE_PRICE_ANNUAL ? 'Annual Premium' : 'Monthly Premium'
+    
+    sendSubscriptionEmail(
+      cancelProfile.email,
+      userId,
+      'cancellation',
+      planName,
+      cancelProfile.full_name
+    ).catch(() => {})
+  }
 }
 
 async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
-  if (invoice.subscription) {
+  if ((invoice as any).subscription) {
     const subscription = await stripe.subscriptions.retrieve(
-      invoice.subscription as string
+      (invoice as any).subscription as string
     )
     await handleSubscriptionUpdate(subscription)
   }
@@ -218,6 +333,25 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
 
 async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
   const customerId = invoice.customer as string
-  // Optionally notify the user about payment failure
-  // You could send an email or in-app notification here
+
+  const { data: profile } = await supabaseAdmin
+    .from('profiles')
+    .select('id')
+    .eq('stripe_customer_id', customerId)
+    .single()
+
+  if (!profile) {
+    return
+  }
+
+  await supabaseAdmin
+    .from('subscription_events')
+    .insert({
+      user_id: profile.id,
+      event_type: 'payment_failed',
+      old_status: 'premium',
+      new_status: 'premium',
+      stripe_event_id: invoice.id,
+      metadata: { invoice_id: invoice.id, amount: invoice.amount_due },
+    })
 }

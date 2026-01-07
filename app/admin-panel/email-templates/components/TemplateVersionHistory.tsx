@@ -4,6 +4,17 @@ import { useCallback, useEffect, useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 import { Clock, RotateCcw, User } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 
@@ -25,6 +36,8 @@ export default function TemplateVersionHistory({ templateId }: TemplateVersionHi
   const { toast } = useToast()
   const [versions, setVersions] = useState<VersionHistoryItem[]>([])
   const [loading, setLoading] = useState(true)
+  const [rollbackConfirmOpen, setRollbackConfirmOpen] = useState(false)
+  const [versionToRollback, setVersionToRollback] = useState<string | null>(null)
 
   const loadVersionHistory = useCallback(async () => {
     try {
@@ -46,15 +59,18 @@ export default function TemplateVersionHistory({ templateId }: TemplateVersionHi
   }, [loadVersionHistory])
 
   async function handleRollback(versionId: string) {
-    if (!confirm('Rollback to this version? Current changes will be saved in history.')) {
-      return
-    }
+    setVersionToRollback(versionId)
+    setRollbackConfirmOpen(true)
+  }
+
+  async function confirmRollback() {
+    if (!versionToRollback) return
 
     try {
       const response = await fetch(`/api/admin/email-templates/${templateId}/rollback`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ versionId }),
+        body: JSON.stringify({ versionId: versionToRollback }),
       })
 
       if (!response.ok) throw new Error('Rollback failed')
@@ -63,15 +79,16 @@ export default function TemplateVersionHistory({ templateId }: TemplateVersionHi
         title: 'Success',
         description: 'Template rolled back successfully',
       })
-
-      // Reload history
-      await loadVersionHistory()
+      loadVersionHistory()
     } catch (error) {
       toast({
         title: 'Error',
         description: 'Failed to rollback template',
         variant: 'destructive',
       })
+    } finally {
+      setRollbackConfirmOpen(false)
+      setVersionToRollback(null)
     }
   }
 
@@ -167,15 +184,33 @@ export default function TemplateVersionHistory({ templateId }: TemplateVersionHi
 
                 {/* Rollback Button (not for current version) */}
                 {index !== 0 && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleRollback(version.id)}
-                    className="border-slate-600 text-slate-300 hover:bg-slate-800 flex-shrink-0"
-                  >
-                    <RotateCcw className="h-3 w-3 mr-1" />
-                    Rollback
-                  </Button>
+                  <AlertDialog open={rollbackConfirmOpen && versionToRollback === version.id} onOpenChange={(open) => !open && setRollbackConfirmOpen(false)}>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleRollback(version.id)}
+                        className="border-slate-600 text-slate-300 hover:bg-slate-800 flex-shrink-0"
+                      >
+                        <RotateCcw className="h-3 w-3 mr-1" />
+                        Rollback
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent className="bg-slate-900 border-slate-700">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle className="text-white">Rollback Template</AlertDialogTitle>
+                        <AlertDialogDescription className="text-slate-400">
+                          Are you sure you want to rollback to this version? Current changes will be saved in history.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel className="bg-slate-800 text-white border-slate-700">Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={confirmRollback} className="bg-blue-600 hover:bg-blue-700">
+                          Rollback
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 )}
               </div>
             </div>

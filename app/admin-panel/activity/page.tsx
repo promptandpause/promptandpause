@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useToast } from '@/hooks/use-toast'
 import { Download, Search, Filter } from 'lucide-react'
 import { format } from 'date-fns'
 
@@ -42,6 +43,7 @@ const ACTION_COLORS: Record<string, string> = {
 }
 
 export default function ActivityLogsPage() {
+  const { toast } = useToast()
   const [logs, setLogs] = useState<ActivityLog[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -132,7 +134,11 @@ export default function ActivityLogsPage() {
       window.URL.revokeObjectURL(url)
       document.body.removeChild(a)
     } catch (error) {
-      alert('Failed to export logs')
+      toast({
+        title: 'Error',
+        description: 'Failed to export logs',
+        variant: 'destructive'
+      })
     }
   }
 

@@ -7,6 +7,17 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 import { Calendar, Clock, Trash2, Plus, Loader2 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 
@@ -127,11 +138,19 @@ export default function ScheduledMaintenance({ onScheduleChange }: ScheduledMain
     }
   }
 
+  const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false)
+  const [windowToCancel, setWindowToCancel] = useState<string | null>(null)
+
   async function handleCancel(windowId: string) {
-    if (!confirm('Cancel this scheduled maintenance window?')) return
+    setWindowToCancel(windowId)
+    setCancelConfirmOpen(true)
+  }
+
+  async function confirmCancel() {
+    if (!windowToCancel) return
 
     try {
-      const response = await fetch(`/api/admin/maintenance/${windowId}/cancel`, {
+      const response = await fetch(`/api/admin/maintenance/${windowToCancel}/cancel`, {
         method: 'POST',
       })
 
@@ -150,6 +169,9 @@ export default function ScheduledMaintenance({ onScheduleChange }: ScheduledMain
         description: 'Failed to cancel maintenance window',
         variant: 'destructive',
       })
+    } finally {
+      setCancelConfirmOpen(false)
+      setWindowToCancel(null)
     }
   }
 
@@ -330,15 +352,33 @@ export default function ScheduledMaintenance({ onScheduleChange }: ScheduledMain
                   </div>
                 </div>
 
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => handleCancel(window.id)}
-                  className="border-red-500/30 text-red-400 hover:bg-red-500/10"
-                >
-                  <Trash2 className="h-3 w-3 mr-1" />
-                  Cancel
-                </Button>
+                <AlertDialog open={cancelConfirmOpen && windowToCancel === window.id} onOpenChange={(open) => !open && setCancelConfirmOpen(false)}>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleCancel(window.id)}
+                      className="border-red-500/30 text-red-400 hover:bg-red-500/10"
+                    >
+                      <Trash2 className="h-3 w-3 mr-1" />
+                      Cancel
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent className="bg-slate-900 border-slate-700">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle className="text-white">Cancel Maintenance Window</AlertDialogTitle>
+                      <AlertDialogDescription className="text-slate-400">
+                        Are you sure you want to cancel this scheduled maintenance window?
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel className="bg-slate-800 text-white border-slate-700">Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={confirmCancel} className="bg-red-600 hover:bg-red-700">
+                        Confirm
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             </div>
           ))

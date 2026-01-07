@@ -162,7 +162,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Link href="/admin-panel/users">
+          <Link href={`/admin-panel/users?id=${id}`}>
             <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Users

@@ -23,6 +23,17 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -166,11 +177,19 @@ export default function AdminUsersPage() {
     }
   }
 
-  async function handleDeactivateUser(userId: string) {
-    if (!confirm('Are you sure you want to deactivate this admin user?')) return
+  const [deactivateConfirmOpen, setDeactivateConfirmOpen] = useState(false)
+  const [userToDeactivate, setUserToDeactivate] = useState<AdminUser | null>(null)
+
+  async function handleDeactivateUser(user: AdminUser) {
+    setUserToDeactivate(user)
+    setDeactivateConfirmOpen(true)
+  }
+
+  async function confirmDeactivate() {
+    if (!userToDeactivate) return
 
     try {
-      const response = await fetch(`/api/admin/admin-users/${userId}`, {
+      const response = await fetch(`/api/admin/admin-users/${userToDeactivate.id}`, {
         method: 'DELETE'
       })
 
@@ -192,6 +211,9 @@ export default function AdminUsersPage() {
         description: error.message,
         variant: 'destructive'
       })
+    } finally {
+      setDeactivateConfirmOpen(false)
+      setUserToDeactivate(null)
     }
   }
 
@@ -387,14 +409,32 @@ export default function AdminUsersPage() {
                             <Edit className="h-4 w-4" />
                           </Button>
                           {user.is_active && (
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => handleDeactivateUser(user.user_id)}
-                              className="text-red-400 hover:text-red-300"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                            <AlertDialog open={deactivateConfirmOpen && userToDeactivate?.id === user.id} onOpenChange={(open) => !open && setDeactivateConfirmOpen(false)}>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => handleDeactivateUser(user)}
+                                  className="text-red-400 hover:text-red-300"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent className="bg-slate-900 border-slate-700">
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle className="text-white">Deactivate Admin User</AlertDialogTitle>
+                                  <AlertDialogDescription className="text-slate-400">
+                                    Are you sure you want to deactivate {user.full_name || user.email}? This will revoke their admin access.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel className="bg-slate-800 text-white border-slate-700">Cancel</AlertDialogCancel>
+                                  <AlertDialogAction onClick={confirmDeactivate} className="bg-red-600 hover:bg-red-700">
+                                    Deactivate
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
                           )}
                         </div>
                       </TableCell>

@@ -7,6 +7,17 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 import { BookOpen, Search, Plus, Edit, Trash2, CheckCircle, XCircle } from 'lucide-react'
 import { format } from 'date-fns'
 
@@ -121,15 +132,26 @@ export default function PromptLibraryPage() {
     }
   }
 
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
+  const [promptToDelete, setPromptToDelete] = useState<string | null>(null)
+
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this prompt?')) return
+    setPromptToDelete(id)
+    setDeleteConfirmOpen(true)
+  }
+
+  const confirmDelete = async () => {
+    if (!promptToDelete) return
 
     try {
-      const res = await fetch(`/api/admin/prompts/${id}`, { method: 'DELETE' })
+      const res = await fetch(`/api/admin/prompts/${promptToDelete}`, { method: 'DELETE' })
       if (res.ok) {
         fetchPrompts()
       }
     } catch (error) {
+    } finally {
+      setDeleteConfirmOpen(false)
+      setPromptToDelete(null)
     }
   }
 
@@ -239,14 +261,32 @@ export default function PromptLibraryPage() {
                         <Edit className="h-3 w-3 mr-1" />
                         Edit
                       </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleDelete(prompt.id)}
-                        className="bg-red-900/20 border-red-800 hover:bg-red-900/40 text-red-400"
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
+                      <AlertDialog open={deleteConfirmOpen && promptToDelete === prompt.id} onOpenChange={(open) => !open && setDeleteConfirmOpen(false)}>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleDelete(prompt.id)}
+                            className="bg-red-900/20 border-red-800 hover:bg-red-900/40 text-red-400"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent className="bg-slate-900 border-slate-700">
+                          <AlertDialogHeader>
+                            <AlertDialogTitle className="text-white">Delete Prompt</AlertDialogTitle>
+                            <AlertDialogDescription className="text-slate-400">
+                              Are you sure you want to delete "{prompt.title}"? This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel className="bg-slate-800 text-white border-slate-700">Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   </CardContent>
                 </Card>

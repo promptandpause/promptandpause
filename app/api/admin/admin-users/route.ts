@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { 
-  getAllAdminUsers, 
+import {
+  getAllAdminUsers,
   createAdminUser,
-  CreateAdminUserDTO 
+  CreateAdminUserDTO
 } from '@/lib/services/adminUserService'
 import { sendAdminCredentialsEmail } from '@/lib/services/emailService'
+import { verifyAdminAccess, logAdminAction } from '@/lib/middleware/verifyAdminAccess'
 
 /**
  * GET /api/admin/admin-users
@@ -13,17 +13,15 @@ import { sendAdminCredentialsEmail } from '@/lib/services/emailService'
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-
-    if (authError || !user) {
+    const auth = await verifyAdminAccess(request)
+    if (!auth.success) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
+        { error: auth.error },
+        { status: auth.statusCode || 403 }
       )
     }
 
-    const result = await getAllAdminUsers(user.email!)
+    const result = await getAllAdminUsers(auth.adminEmail!)
 
     if (!result.success) {
       return NextResponse.json(
@@ -46,17 +44,16 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/admin/admin-users
- * Create a new admin user
+ * Create a new admin user (requires super_admin or admin role)
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-
-    if (authError || !user) {
+    // Require super_admin or admin role to create other admins
+    const auth = await verifyAdminAccess(request, 'admin')
+    if (!auth.success) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
+        { error: auth.error },
+        { status: auth.statusCode || 403 }
       )
     }
 
@@ -79,12 +76,20 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Additional restriction: only super_admin can create other super_admins
+    if (role === 'super_admin' && auth.adminRole !== 'super_admin') {
+      return NextResponse.json(
+        { error: 'Forbidden: Only super_admin can create super_admin accounts' },
+        { status: 403 }
+      )
+    }
+
     const dto: CreateAdminUserDTO = {
       email,
       full_name,
       role,
       department,
-      created_by_email: user.email!
+      created_by_email: auth.adminEmail!
     }
 
     const result = await createAdminUser(dto)
@@ -95,6 +100,16 @@ export async function POST(request: NextRequest) {
         { status: result.error?.includes('permission') ? 403 : 400 }
       )
     }
+
+    // Log admin creation
+    await logAdminAction(
+      auth.adminEmail!,
+      'admin_user_created',
+      'admin_user',
+      result.admin_user?.id,
+      { role, email },
+      request
+    )
 
     // Send credentials email
     if (result.password && result.admin_user) {

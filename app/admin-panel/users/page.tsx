@@ -1,19 +1,10 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { Card } from '@/components/ui/card'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
 import {
   Select,
   SelectContent,
@@ -22,8 +13,9 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Search, Download, Eye, ChevronLeft, ChevronRight } from 'lucide-react'
-import { formatDistanceToNow } from 'date-fns'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Search, Download, ExternalLink } from 'lucide-react'
+import { format, formatDistanceToNow } from 'date-fns'
 
 interface User {
   id: string
@@ -37,7 +29,39 @@ interface User {
   last_reflection_date: string | null
 }
 
+interface UserDetail {
+  id: string
+  email: string
+  full_name: string
+  timezone: string
+  language: string
+  subscription_status: string
+  stripe_customer_id: string | null
+  billing_cycle: string | null
+  created_at: string
+  updated_at: string
+  stats: {
+    total_prompts: number
+    total_reflections: number
+  }
+}
+
+interface AdminUserRow {
+  email: string
+}
+
+interface ActivityLogRow {
+  id: string
+  admin_email: string
+  action_type: string
+  target_user_email: string | null
+  created_at: string
+}
+
 export default function UsersPage() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -46,6 +70,17 @@ export default function UsersPage() {
   const [page, setPage] = useState(0)
   const [total, setTotal] = useState(0)
   const limit = 50
+
+  const [adminEmails, setAdminEmails] = useState<Set<string>>(new Set())
+
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
+  const [selectedUserDetail, setSelectedUserDetail] = useState<UserDetail | null>(null)
+  const [detailLoading, setDetailLoading] = useState(false)
+  const [detailError, setDetailError] = useState<string | null>(null)
+
+  const [activeTab, setActiveTab] = useState<'overview' | 'subscription' | 'activity' | 'record'>('overview')
+  const [recentLogs, setRecentLogs] = useState<ActivityLogRow[]>([])
+  const [logsLoading, setLogsLoading] = useState(false)
 
   const loadUsers = useCallback(async () => {
     try {
@@ -71,9 +106,89 @@ export default function UsersPage() {
     }
   }, [activityFilter, limit, page, search, subscriptionFilter])
 
+  const loadAdminUsers = useCallback(async () => {
+    try {
+      const res = await fetch('/api/admin/admin-users')
+      if (!res.ok) return
+      const data = await res.json()
+      const emails = new Set<string>(
+        (Array.isArray(data.users) ? (data.users as AdminUserRow[]) : [])
+          .map((u) => (typeof u.email === 'string' ? u.email.toLowerCase() : ''))
+          .filter((email): email is string => Boolean(email))
+      )
+      setAdminEmails(emails)
+    } catch {
+    }
+  }, [])
+
   useEffect(() => {
     loadUsers()
   }, [loadUsers])
+
+  useEffect(() => {
+    loadAdminUsers()
+  }, [loadAdminUsers])
+
+  useEffect(() => {
+    const id = searchParams.get('id')
+    setSelectedUserId(id)
+  }, [searchParams])
+
+  const selectedUserRow = useMemo(() => {
+    if (!selectedUserId) return null
+    return users.find((u) => u.id === selectedUserId) || null
+  }, [selectedUserId, users])
+
+  const loadSelectedUserDetail = useCallback(async (id: string) => {
+    try {
+      setDetailLoading(true)
+      setDetailError(null)
+      const res = await fetch(`/api/admin/users/${id}`)
+      if (!res.ok) throw new Error('Failed to fetch user')
+      const data = await res.json()
+      setSelectedUserDetail(data.data)
+    } catch (err: any) {
+      setDetailError(err.message || 'Failed to load user')
+      setSelectedUserDetail(null)
+    } finally {
+      setDetailLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!selectedUserId) {
+      setSelectedUserDetail(null)
+      setDetailError(null)
+      return
+    }
+
+    loadSelectedUserDetail(selectedUserId)
+  }, [loadSelectedUserDetail, selectedUserId])
+
+  useEffect(() => {
+    if (activeTab !== 'activity') return
+    const email = selectedUserDetail?.email || selectedUserRow?.email
+    if (!email) return
+
+    const loadLogs = async () => {
+      try {
+        setLogsLoading(true)
+        const params = new URLSearchParams({
+          limit: '10',
+          offset: '0',
+          search: email,
+        })
+        const res = await fetch(`/api/admin/activity?${params}`)
+        if (!res.ok) return
+        const data = await res.json()
+        setRecentLogs((data.logs || []) as ActivityLogRow[])
+      } finally {
+        setLogsLoading(false)
+      }
+    }
+
+    loadLogs()
+  }, [activeTab, selectedUserDetail?.email, selectedUserRow?.email])
 
   async function handleExport() {
     try {
@@ -88,216 +203,370 @@ export default function UsersPage() {
     }
   }
 
-  const getStatusBadge = (status: string) => {
-    const styles = {
-      premium: 'bg-yellow-500/10 text-yellow-400 border-yellow-400/30',
-      freemium: 'bg-blue-500/10 text-blue-400 border-blue-400/30',
-      cancelled: 'bg-red-500/10 text-red-400 border-red-400/30',
-    }
-    return styles[status as keyof typeof styles] || styles.freemium
+  const getPlanLabel = (status: string) => {
+    if (status === 'premium') return 'Premium'
+    if (status === 'cancelled') return 'Cancelled'
+    return 'Free'
   }
 
-  const getActivityBadge = (status: string) => {
-    const styles = {
-      active: 'bg-green-500/10 text-green-400 border-green-400/30',
-      moderate: 'bg-blue-500/10 text-blue-400 border-blue-400/30',
-      inactive: 'bg-slate-500/10 text-slate-400 border-slate-400/30',
-      dormant: 'bg-slate-500/10 text-slate-400 border-slate-400/30',
+  const getPlanPillClass = (status: string) => {
+    if (status === 'premium') return 'bg-neutral-900 text-white'
+    if (status === 'cancelled') return 'bg-neutral-200 text-neutral-800'
+    return 'bg-white text-neutral-800 border border-neutral-200'
+  }
+
+  const getActivityDotClass = (status: string) => {
+    const map: Record<string, string> = {
+      active: 'bg-emerald-500',
+      moderate: 'bg-amber-500',
+      inactive: 'bg-neutral-300',
+      dormant: 'bg-neutral-300',
     }
-    return styles[status as keyof typeof styles] || styles.inactive
+    return map[status] || 'bg-neutral-300'
   }
 
   const totalPages = Math.ceil(total / limit)
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white">Users</h1>
-          <p className="text-slate-400 mt-1">Manage and view all users</p>
+          <h1 className="text-2xl font-semibold text-neutral-900">Users</h1>
+          <p className="text-sm text-neutral-500">Search and manage users.</p>
         </div>
-        <Button 
-          onClick={handleExport}
-          className="bg-blue-500 hover:bg-blue-600 text-white"
-        >
+
+        <Button onClick={handleExport} variant="outline" className="border-neutral-200 bg-white">
           <Download className="h-4 w-4 mr-2" />
           Export CSV
         </Button>
       </div>
 
-      {/* Filters */}
-      <Card className="bg-slate-800/50 border-slate-700 p-6">
-        <div className="grid gap-4 md:grid-cols-4">
-          {/* Search */}
-          <div className="md:col-span-2">
+      <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-6">
+        {/* Left pane: user list */}
+        <div className="bg-white border border-neutral-200 rounded-xl overflow-hidden">
+          <div className="p-4 border-b border-neutral-200 space-y-3">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
               <Input
-                placeholder="Search by email or name..."
                 value={search}
                 onChange={(e) => {
                   setSearch(e.target.value)
                   setPage(0)
                 }}
-                className="pl-10 bg-slate-900 border-slate-700 text-white"
+                placeholder="Search name or email"
+                className="pl-9 bg-white border-neutral-200"
               />
             </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <Select
+                value={subscriptionFilter}
+                onValueChange={(value) => {
+                  setSubscriptionFilter(value)
+                  setPage(0)
+                }}
+              >
+                <SelectTrigger className="bg-white border-neutral-200">
+                  <SelectValue placeholder="Plan" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All plans</SelectItem>
+                  <SelectItem value="premium">Premium</SelectItem>
+                  <SelectItem value="freemium">Free</SelectItem>
+                  <SelectItem value="cancelled">Cancelled</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select
+                value={activityFilter}
+                onValueChange={(value) => {
+                  setActivityFilter(value)
+                  setPage(0)
+                }}
+              >
+                <SelectTrigger className="bg-white border-neutral-200">
+                  <SelectValue placeholder="Activity" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All activity</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="moderate">Moderate</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                  <SelectItem value="dormant">Dormant</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="text-xs text-neutral-500">Showing {users.length} of {total}</div>
           </div>
 
-          {/* Subscription Filter */}
-          <Select 
-            value={subscriptionFilter} 
-            onValueChange={(value) => {
-              setSubscriptionFilter(value)
-              setPage(0)
-            }}
-          >
-            <SelectTrigger className="bg-slate-900 border-slate-700 text-white">
-              <SelectValue placeholder="All Plans" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Plans</SelectItem>
-              <SelectItem value="premium">Premium</SelectItem>
-              <SelectItem value="freemium">Free</SelectItem>
-              <SelectItem value="cancelled">Cancelled</SelectItem>
-            </SelectContent>
-          </Select>
-
-          {/* Activity Filter */}
-          <Select 
-            value={activityFilter} 
-            onValueChange={(value) => {
-              setActivityFilter(value)
-              setPage(0)
-            }}
-          >
-            <SelectTrigger className="bg-slate-900 border-slate-700 text-white">
-              <SelectValue placeholder="All Activity" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Activity</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="moderate">Moderate</SelectItem>
-              <SelectItem value="inactive">Inactive</SelectItem>
-              <SelectItem value="dormant">Dormant</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="mt-4 text-sm text-slate-400">
-          Showing {users.length} of {total} users
-        </div>
-      </Card>
-
-      {/* Table */}
-      <Card className="bg-slate-800/50 border-slate-700">
-        <Table>
-          <TableHeader>
-            <TableRow className="border-slate-700 hover:bg-slate-800/50">
-              <TableHead className="text-slate-300">User</TableHead>
-              <TableHead className="text-slate-300">Plan</TableHead>
-              <TableHead className="text-slate-300">Activity</TableHead>
-              <TableHead className="text-slate-300">Reflections</TableHead>
-              <TableHead className="text-slate-300">Engagement</TableHead>
-              <TableHead className="text-slate-300">Last Active</TableHead>
-              <TableHead className="text-slate-300">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
+          <div className="divide-y divide-neutral-200">
             {loading ? (
-              Array.from({ length: 10 }).map((_, i) => (
-                <TableRow key={i} className="border-slate-700">
-                  <TableCell><Skeleton className="h-10 w-full bg-slate-700" /></TableCell>
-                  <TableCell><Skeleton className="h-6 w-20 bg-slate-700" /></TableCell>
-                  <TableCell><Skeleton className="h-6 w-20 bg-slate-700" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-12 bg-slate-700" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-16 bg-slate-700" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-24 bg-slate-700" /></TableCell>
-                  <TableCell><Skeleton className="h-8 w-20 bg-slate-700" /></TableCell>
-                </TableRow>
-              ))
+              <div className="p-4 space-y-3">
+                {Array.from({ length: 10 }).map((_, i) => (
+                  <div key={i} className="space-y-2">
+                    <Skeleton className="h-4 w-40" />
+                    <Skeleton className="h-3 w-64" />
+                  </div>
+                ))}
+              </div>
             ) : users.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={7} className="text-center text-slate-400 py-8">
-                  No users found
-                </TableCell>
-              </TableRow>
+              <div className="p-8 text-sm text-neutral-500">No users found.</div>
             ) : (
-              users.map((user) => (
-                <TableRow key={user.id} className="border-slate-700 hover:bg-slate-800/30">
-                  <TableCell>
-                    <div>
-                      <div className="font-medium text-white">{user.full_name || 'No name'}</div>
-                      <div className="text-sm text-slate-400">{user.email}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge className={getStatusBadge(user.subscription_status)}>
-                      {user.subscription_status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge className={getActivityBadge(user.activity_status)}>
-                      {user.activity_status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-white">
-                    {user.total_reflections}
-                  </TableCell>
-                  <TableCell className="text-white">
-                    {user.engagement_rate_percent.toFixed(0)}%
-                  </TableCell>
-                  <TableCell className="text-slate-400 text-sm">
-                    {user.last_reflection_date 
-                      ? formatDistanceToNow(new Date(user.last_reflection_date), { addSuffix: true })
-                      : 'Never'}
-                  </TableCell>
-                  <TableCell>
-                    <Link href={`/admin-panel/users/${user.id}`}>
-                      <Button variant="ghost" size="sm" className="text-blue-400 hover:text-blue-300 hover:bg-blue-500/10">
-                        <Eye className="h-4 w-4 mr-1" />
-                        View
-                      </Button>
-                    </Link>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              users.map((u) => {
+                const isSelected = selectedUserId === u.id
+                const isAdmin = adminEmails.has((u.email || '').toLowerCase())
+                return (
+                  <button
+                    key={u.id}
+                    type="button"
+                    onClick={() => {
+                      setActiveTab('overview')
+                      router.replace(`/admin-panel/users?id=${u.id}`)
+                    }}
+                    className={`w-full text-left px-4 py-3 hover:bg-neutral-50 ${
+                      isSelected ? 'bg-neutral-50' : 'bg-white'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="text-sm font-medium text-neutral-900 truncate">
+                          {u.full_name || 'No name'}
+                        </div>
+                        <div className="text-xs text-neutral-500 truncate">{u.email}</div>
+                        <div className="mt-2 flex items-center gap-2">
+                          <span className={`h-2 w-2 rounded-full ${getActivityDotClass(u.activity_status)}`} />
+                          <span className="text-xs text-neutral-500">
+                            {u.last_reflection_date
+                              ? `Last reflection ${formatDistanceToNow(new Date(u.last_reflection_date), { addSuffix: true })}`
+                              : 'No reflections yet'}
+                          </span>
+                        </div>
+                      </div>
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between p-4 border-t border-slate-700">
-            <div className="text-sm text-slate-400">
-              Page {page + 1} of {totalPages}
-            </div>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setPage(p => Math.max(0, p - 1))}
-                disabled={page === 0}
-                className="border-slate-700 text-white hover:bg-slate-800"
-              >
-                <ChevronLeft className="h-4 w-4" />
-                Previous
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
-                disabled={page >= totalPages - 1}
-                className="border-slate-700 text-white hover:bg-slate-800"
-              >
-                Next
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
+                      <div className="flex flex-col items-end gap-2 flex-shrink-0">
+                        {isAdmin && (
+                          <span className="text-[11px] px-2 py-1 rounded-full bg-neutral-100 text-neutral-700 border border-neutral-200">
+                            Admin
+                          </span>
+                        )}
+                        <span className={`text-[11px] px-2 py-1 rounded-full ${getPlanPillClass(u.subscription_status)}`}>
+                          {getPlanLabel(u.subscription_status)}
+                        </span>
+                      </div>
+                    </div>
+                  </button>
+                )
+              })
+            )}
           </div>
-        )}
-      </Card>
+
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between px-4 py-3 border-t border-neutral-200 bg-white">
+              <div className="text-xs text-neutral-500">Page {page + 1} of {totalPages}</div>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  className="border-neutral-200"
+                  onClick={() => setPage((p) => Math.max(0, p - 1))}
+                  disabled={page === 0}
+                >
+                  Previous
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  className="border-neutral-200"
+                  onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                  disabled={page >= totalPages - 1}
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Right pane: detail */}
+        <div className="bg-white border border-neutral-200 rounded-xl overflow-hidden">
+          {!selectedUserId ? (
+            <div className="p-10 text-sm text-neutral-500">
+              Select a user to view details.
+            </div>
+          ) : detailLoading ? (
+            <div className="p-6 space-y-4">
+              <Skeleton className="h-6 w-56" />
+              <Skeleton className="h-4 w-72" />
+              <Skeleton className="h-40 w-full" />
+            </div>
+          ) : detailError ? (
+            <div className="p-6 text-sm text-red-600">{detailError}</div>
+          ) : !selectedUserDetail ? (
+            <div className="p-6 text-sm text-neutral-500">User not found.</div>
+          ) : (
+            <div>
+              <div className="px-6 py-5 border-b border-neutral-200">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <h2 className="text-lg font-semibold text-neutral-900 truncate">
+                      {selectedUserDetail.full_name || 'User'}
+                    </h2>
+                    <p className="text-sm text-neutral-500 truncate">{selectedUserDetail.email}</p>
+                  </div>
+                  <Link
+                    href={`/admin-panel/users/${selectedUserDetail.id}`}
+                    className="inline-flex items-center gap-2 text-sm text-neutral-700 hover:text-neutral-900"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                    Full record
+                  </Link>
+                </div>
+              </div>
+
+              <div className="px-6 py-4">
+                <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
+                  <TabsList className="bg-neutral-100 border border-neutral-200">
+                    <TabsTrigger value="overview" className="data-[state=active]:bg-white">Overview</TabsTrigger>
+                    <TabsTrigger value="subscription" className="data-[state=active]:bg-white">Subscription</TabsTrigger>
+                    <TabsTrigger value="activity" className="data-[state=active]:bg-white">Activity</TabsTrigger>
+                    <TabsTrigger value="record" className="data-[state=active]:bg-white">Record</TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="overview" className="mt-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-1">
+                        <div className="text-xs text-neutral-500">Name</div>
+                        <div className="text-sm text-neutral-900">{selectedUserDetail.full_name || '—'}</div>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-xs text-neutral-500">Email</div>
+                        <div className="text-sm text-neutral-900">{selectedUserDetail.email}</div>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-xs text-neutral-500">Plan</div>
+                        <div className="text-sm text-neutral-900">{getPlanLabel(selectedUserDetail.subscription_status)}</div>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-xs text-neutral-500">Created</div>
+                        <div className="text-sm text-neutral-900">
+                          {selectedUserRow?.signup_date
+                            ? format(new Date(selectedUserRow.signup_date), 'MMM dd, yyyy')
+                            : format(new Date(selectedUserDetail.created_at), 'MMM dd, yyyy')}
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-xs text-neutral-500">Reflections</div>
+                        <div className="text-sm text-neutral-900">{selectedUserDetail.stats?.total_reflections ?? selectedUserRow?.total_reflections ?? 0}</div>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-xs text-neutral-500">Last reflection</div>
+                        <div className="text-sm text-neutral-900">
+                          {selectedUserRow?.last_reflection_date
+                            ? formatDistanceToNow(new Date(selectedUserRow.last_reflection_date), { addSuffix: true })
+                            : '—'}
+                        </div>
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="subscription" className="mt-6">
+                    <div className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-1">
+                          <div className="text-xs text-neutral-500">Plan</div>
+                          <div className="text-sm text-neutral-900">{getPlanLabel(selectedUserDetail.subscription_status)}</div>
+                        </div>
+                        <div className="space-y-1">
+                          <div className="text-xs text-neutral-500">Billing cycle</div>
+                          <div className="text-sm text-neutral-900">{selectedUserDetail.billing_cycle || '—'}</div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <div className="text-xs text-neutral-500">Stripe customer</div>
+                        {selectedUserDetail.stripe_customer_id ? (
+                          <a
+                            href={`https://dashboard.stripe.com/customers/${selectedUserDetail.stripe_customer_id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-neutral-900 underline underline-offset-4"
+                          >
+                            {selectedUserDetail.stripe_customer_id}
+                          </a>
+                        ) : (
+                          <div className="text-sm text-neutral-700">—</div>
+                        )}
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="activity" className="mt-6">
+                    <div className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-1">
+                          <div className="text-xs text-neutral-500">Total prompts</div>
+                          <div className="text-sm text-neutral-900">{selectedUserDetail.stats?.total_prompts ?? 0}</div>
+                        </div>
+                        <div className="space-y-1">
+                          <div className="text-xs text-neutral-500">Total reflections</div>
+                          <div className="text-sm text-neutral-900">{selectedUserDetail.stats?.total_reflections ?? 0}</div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="text-sm font-medium text-neutral-900">Recent admin/system events</div>
+                        <div className="mt-3 border border-neutral-200 rounded-lg overflow-hidden">
+                          {logsLoading ? (
+                            <div className="p-4 text-sm text-neutral-500">Loading…</div>
+                          ) : recentLogs.length === 0 ? (
+                            <div className="p-4 text-sm text-neutral-500">No recent events found.</div>
+                          ) : (
+                            <div className="divide-y divide-neutral-200">
+                              {recentLogs.map((log) => (
+                                <div key={log.id} className="px-4 py-3">
+                                  <div className="flex items-center justify-between gap-4">
+                                    <div className="text-sm text-neutral-900">
+                                      {log.action_type.replace(/_/g, ' ')}
+                                    </div>
+                                    <div className="text-xs text-neutral-500">
+                                      {format(new Date(log.created_at), 'MMM dd, yyyy HH:mm')}
+                                    </div>
+                                  </div>
+                                  <div className="mt-1 text-xs text-neutral-500">{log.admin_email}</div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="record" className="mt-6">
+                    <div className="space-y-2">
+                      <div className="text-sm font-medium text-neutral-900">Open full user record</div>
+                      <div className="text-sm text-neutral-500">
+                        Use the full record page for edit/delete operations.
+                      </div>
+                      <div>
+                        <Link href={`/admin-panel/users/${selectedUserDetail.id}`} className="inline-flex">
+                          <Button type="button" variant="outline" className="border-neutral-200 bg-white">
+                            <ExternalLink className="h-4 w-4 mr-2" />
+                            Open full record
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  </TabsContent>
+                </Tabs>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   )
 }

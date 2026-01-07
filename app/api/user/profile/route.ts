@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getUserProfile, updateUserProfile } from '@/lib/services/userService'
+import { z } from 'zod'
+
+// Zod schema for user profile update
+const UpdateProfileSchema = z.object({
+  full_name: z.string().min(1, 'Full name is required').max(100, 'Full name too long').optional(),
+  timezone: z.string().optional(),
+  language: z.string().optional()
+})
 
 /**
  * GET /api/user/profile
@@ -55,7 +63,16 @@ export async function PATCH(request: NextRequest) {
 
     const body = await request.json()
 
-    const result = await updateUserProfile(user.id, body)
+    // Validate input with Zod
+    const parsed = UpdateProfileSchema.safeParse(body)
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Invalid input', details: parsed.error.flatten() },
+        { status: 400 }
+      )
+    }
+
+    const result = await updateUserProfile(user.id, parsed.data)
 
     if (result.error) {
       throw new Error(result.error)

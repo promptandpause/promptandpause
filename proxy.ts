@@ -72,6 +72,10 @@ export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const clientIP = getClientIP(request)
 
+  // Detect admin subdomain
+  const hostname = request.headers.get('host') || ''
+  const isAdminSubdomain = hostname.startsWith('admin.')
+
   // ABSOLUTE FIRST PRIORITY - BYPASS EVERYTHING FOR ADMIN LOGIN
   if (pathname === '/admin-panel/login') {
     return NextResponse.next()
@@ -83,7 +87,7 @@ export default async function middleware(request: NextRequest) {
     pathname.startsWith('/favicon.ico') ||
     pathname.startsWith('/api/auth') ||
     pathname.startsWith('/api/admin/verify-access') ||
-    pathname.match(/\.(jpg|jpeg|png|gif|svg|ico|css|js|woff|woff2|ttf|eot)$/)
+    pathname.match(/\.(jpg|jpeg|png|gif|svg|ico|css|js|woff|woff2|ttf|eot)$)
   ) {
     return NextResponse.next()
   }
@@ -139,6 +143,20 @@ export default async function middleware(request: NextRequest) {
     return response
   }
 
+  // RESTRICTION: Admin subdomain should only serve admin panel routes
+  if (isAdminSubdomain && !pathname.startsWith('/admin-panel')) {
+    // Redirect to admin panel root on admin subdomain
+    return NextResponse.redirect(new URL('/admin-panel', request.url))
+  }
+
+  // RESTRICTION: Admin panel routes should only be accessible on admin subdomain
+  if (!isAdminSubdomain && pathname.startsWith('/admin-panel')) {
+    // Redirect to admin subdomain
+    const adminUrl = new URL(request.url)
+    adminUrl.hostname = `admin.${adminUrl.hostname}`
+    return NextResponse.redirect(adminUrl)
+  }
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -188,39 +206,43 @@ export default async function middleware(request: NextRequest) {
   // Apply security headers to all responses
   response = applySecurityHeaders(response)
 
-  // Check maintenance mode FIRST before auth checks
-  try {
-    const { data: maintenanceMode, error: maintenanceError } = await supabase
-      .from('maintenance_mode')
-      .select('is_enabled')
-      .limit(1)
-      .single()
-    if (maintenanceMode?.is_enabled) {
-      // Get user to check if admin
-      const { data: { user } } = await supabase.auth.getUser()
+  // BYPASS maintenance mode check for admin subdomain
+  // Admin panel on admin subdomain is always accessible regardless of maintenance mode
+  if (!isAdminSubdomain) {
+    // Check maintenance mode FIRST before auth checks (only for main domain)
+    try {
+      const { data: maintenanceMode, error: maintenanceError } = await supabase
+        .from('maintenance_mode')
+        .select('is_enabled')
+        .limit(1)
+        .single()
+      if (maintenanceMode?.is_enabled) {
+        // Get user to check if admin
+        const { data: { user } } = await supabase.auth.getUser()
 
-      // Allow admin users to bypass maintenance mode
-      const isAdmin = user?.email ? await isAdminUser(user.email) : false
-      // Allow access to admin login page during maintenance
-      if (pathname === '/admin-panel/login') {
-        return response
-      }
+        // Allow admin users to bypass maintenance mode on main domain
+        const isAdmin = user?.email ? await isAdminUser(user.email) : false
+        // Allow access to admin login page during maintenance
+        if (pathname === '/admin-panel/login') {
+          return response
+        }
 
-      // Allow authenticated admins to access admin panel during maintenance
-      if (isAdmin && pathname.startsWith('/admin-panel')) {
-        // Continue to normal admin panel auth checks below
-      } else if (!isAdmin && !pathname.startsWith('/admin-panel')) {
-        // Redirect non-admins to maintenance page
-        const maintenanceUrl = new URL('/maintenance', request.url)
-        return NextResponse.redirect(maintenanceUrl)
-      } else if (!isAdmin && pathname.startsWith('/admin-panel') && pathname !== '/admin-panel/login') {
-        // Non-admin trying to access admin panel - redirect to maintenance
-        const maintenanceUrl = new URL('/maintenance', request.url)
-        return NextResponse.redirect(maintenanceUrl)
+        // Allow authenticated admins to access admin panel during maintenance
+        if (isAdmin && pathname.startsWith('/admin-panel')) {
+          // Continue to normal admin panel auth checks below
+        } else if (!isAdmin && !pathname.startsWith('/admin-panel')) {
+          // Redirect non-admins to maintenance page
+          const maintenanceUrl = new URL('/maintenance', request.url)
+          return NextResponse.redirect(maintenanceUrl)
+        } else if (!isAdmin && pathname.startsWith('/admin-panel') && pathname !== '/admin-panel/login') {
+          // Non-admin trying to access admin panel - redirect to maintenance
+          const maintenanceUrl = new URL('/maintenance', request.url)
+          return NextResponse.redirect(maintenanceUrl)
+        }
       }
+    } catch (error) {
+      // Continue on error to prevent site lockout
     }
-  } catch (error) {
-    // Continue on error to prevent site lockout
   }
 
   const {

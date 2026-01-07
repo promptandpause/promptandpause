@@ -4,6 +4,17 @@ import { useEffect, useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 import { Power, AlertCircle, CheckCircle, Loader2 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 
@@ -45,15 +56,18 @@ export default function MaintenanceStatus({ onStatusChange }: MaintenanceStatusP
     }
   }
 
+  const [enableConfirmOpen, setEnableConfirmOpen] = useState(false)
+  const [disableConfirmOpen, setDisableConfirmOpen] = useState(false)
+
   async function handleToggle(enable: boolean) {
-    if (enable && !confirm('Enable maintenance mode? Users will see the maintenance page.')) {
-      return
+    if (enable) {
+      setEnableConfirmOpen(true)
+    } else {
+      setDisableConfirmOpen(true)
     }
+  }
 
-    if (!enable && !confirm('Disable maintenance mode? Site will return to normal operation.')) {
-      return
-    }
-
+  async function confirmToggle(enable: boolean) {
     try {
       setToggling(true)
       const endpoint = enable
@@ -82,6 +96,8 @@ export default function MaintenanceStatus({ onStatusChange }: MaintenanceStatusP
       })
     } finally {
       setToggling(false)
+      setEnableConfirmOpen(false)
+      setDisableConfirmOpen(false)
     }
   }
 
@@ -165,42 +181,76 @@ export default function MaintenanceStatus({ onStatusChange }: MaintenanceStatusP
       {/* Control Buttons */}
       <div className="space-y-2 pt-4 border-t border-slate-700">
         {isActive ? (
-          <Button
-            onClick={() => handleToggle(false)}
-            disabled={toggling}
-            className="w-full bg-green-600 hover:bg-green-700 text-white"
-          >
-            {toggling ? (
-              <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Disabling...
-              </>
-            ) : (
-              <>
-                <Power className="h-4 w-4 mr-2" />
-                Disable Maintenance Mode
-              </>
-            )}
-          </Button>
+          <AlertDialog open={disableConfirmOpen} onOpenChange={setDisableConfirmOpen}>
+            <AlertDialogTrigger asChild>
+              <Button
+                disabled={toggling}
+                className="w-full bg-green-600 hover:bg-green-700 text-white"
+              >
+                {toggling ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Disabling...
+                  </>
+                ) : (
+                  <>
+                    <Power className="h-4 w-4 mr-2" />
+                    Disable Maintenance Mode
+                  </>
+                )}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="bg-slate-900 border-slate-700">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-white">Disable Maintenance Mode</AlertDialogTitle>
+                <AlertDialogDescription className="text-slate-400">
+                  Are you sure? Site will return to normal operation.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="bg-slate-800 text-white border-slate-700">Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={() => confirmToggle(false)} className="bg-green-600 hover:bg-green-700">
+                  Confirm
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         ) : (
-          <Button
-            onClick={() => handleToggle(true)}
-            disabled={toggling}
-            variant="destructive"
-            className="w-full bg-orange-600 hover:bg-orange-700"
-          >
-            {toggling ? (
-              <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Enabling...
-              </>
-            ) : (
-              <>
-                <AlertCircle className="h-4 w-4 mr-2" />
-                Enable Maintenance Mode
-              </>
-            )}
-          </Button>
+          <AlertDialog open={enableConfirmOpen} onOpenChange={setEnableConfirmOpen}>
+            <AlertDialogTrigger asChild>
+              <Button
+                disabled={toggling}
+                variant="destructive"
+                className="w-full bg-orange-600 hover:bg-orange-700"
+              >
+                {toggling ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Enabling...
+                  </>
+                ) : (
+                  <>
+                    <AlertCircle className="h-4 w-4 mr-2" />
+                    Enable Maintenance Mode
+                  </>
+                )}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="bg-slate-900 border-slate-700">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-white">Enable Maintenance Mode</AlertDialogTitle>
+                <AlertDialogDescription className="text-slate-400">
+                  Are you sure? Users will see the maintenance page.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="bg-slate-800 text-white border-slate-700">Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={() => confirmToggle(true)} className="bg-orange-600 hover:bg-orange-700">
+                  Confirm
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         )}
 
         <p className="text-xs text-slate-500 text-center pt-2">

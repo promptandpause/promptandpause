@@ -1,6 +1,7 @@
 import { createServiceRoleClient } from '@/lib/supabase/server'
 import { headers } from 'next/headers'
 import { logger } from '@/lib/utils/logger'
+import { isAdminUser } from '@/lib/services/adminUserService'
 
 /**
  * Admin Service
@@ -19,18 +20,6 @@ import { logger } from '@/lib/utils/logger'
 // ============================================================================
 
 /**
- * Check if a user email is an admin
- * Compares against ADMIN_EMAIL environment variable
- */
-export function isAdminEmail(email: string): boolean {
-  const adminEmail = process.env.ADMIN_EMAIL
-  if (!adminEmail) {
-    return false
-  }
-  return email.toLowerCase() === adminEmail.toLowerCase()
-}
-
-/**
  * Verify admin authentication
  * Returns admin email if authenticated, null otherwise
  */
@@ -42,7 +31,7 @@ export async function checkAdminAuth(userEmail?: string): Promise<{
   try {
     // If email is provided (from API route), use it
     if (userEmail) {
-      const isAdmin = isAdminEmail(userEmail)
+      const isAdmin = await isAdminUser(userEmail)
       return {
         isAdmin,
         email: isAdmin ? userEmail : null,

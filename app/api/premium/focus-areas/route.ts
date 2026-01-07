@@ -1,6 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getUserTier } from '@/lib/utils/tierManagement'
+import { z } from 'zod'
+
+// Zod schemas for focus area operations
+const CreateFocusAreaSchema = z.object({
+  name: z.string().min(1, 'Name is required').max(100, 'Name too long').trim(),
+  description: z.string().max(500, 'Description too long').optional(),
+  icon: z.string().max(10, 'Icon too long').optional().default('🎯'),
+  color: z.string().max(100, 'Color too long').optional().default('from-purple-500/20 to-pink-500/20 border-purple-400/30')
+})
+
+const UpdateFocusAreaSchema = z.object({
+  id: z.string().uuid('Invalid focus area ID'),
+  name: z.string().min(1, 'Name is required').max(100, 'Name too long').trim().optional(),
+  description: z.string().max(500, 'Description too long').optional(),
+  icon: z.string().max(10, 'Icon too long').optional(),
+  color: z.string().max(100, 'Color too long').optional()
+})
+
+const DeleteFocusAreaSchema = z.object({
+  id: z.string().uuid('Invalid focus area ID')
+})
 
 /**
  * GET /api/premium/focus-areas
@@ -157,23 +178,24 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Parse request body
+    // Parse and validate request body
     const body = await request.json()
-    const { name, description, icon, color } = body
-
-    if (!name || typeof name !== 'string' || name.trim().length === 0) {
+    const parsed = CreateFocusAreaSchema.safeParse(body)
+    if (!parsed.success) {
       return NextResponse.json(
-        { success: false, error: 'Name is required' },
+        { success: false, error: 'Invalid input', details: parsed.error.flatten() },
         { status: 400 }
       )
     }
+
+    const { name, description, icon, color } = parsed.data
 
     // Check if user already has a focus area with this name
     const { data: existing } = await supabase
       .from('focus_areas')
       .select('id')
       .eq('user_id', user.id)
-      .eq('name', name.trim())
+      .eq('name', name)
       .single()
 
     if (existing) {
@@ -188,10 +210,10 @@ export async function POST(request: NextRequest) {
       .from('focus_areas')
       .insert({
         user_id: user.id,
-        name: name.trim(),
-        description: description?.trim() || '',
-        icon: icon || '🎯',
-        color: color || 'from-purple-500/20 to-pink-500/20 border-purple-400/30',
+        name,
+        description: description || '',
+        icon,
+        color,
       })
       .select()
       .single()
@@ -281,16 +303,17 @@ export async function PATCH(request: NextRequest) {
       )
     }
 
-    // Parse request body
+    // Parse and validate request body
     const body = await request.json()
-    const { id, name, description, icon, color } = body
-
-    if (!id) {
+    const parsed = UpdateFocusAreaSchema.safeParse(body)
+    if (!parsed.success) {
       return NextResponse.json(
-        { success: false, error: 'Focus area ID is required' },
+        { success: false, error: 'Invalid input', details: parsed.error.flatten() },
         { status: 400 }
       )
     }
+
+    const { id, name, description, icon, color } = parsed.data
 
     // Update focus area (only if owned by user)
     const { data: updatedArea, error } = await supabase
@@ -395,16 +418,17 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    // Parse request body
+    // Parse and validate request body
     const body = await request.json()
-    const { id } = body
-
-    if (!id) {
+    const parsed = DeleteFocusAreaSchema.safeParse(body)
+    if (!parsed.success) {
       return NextResponse.json(
-        { success: false, error: 'Focus area ID is required' },
+        { success: false, error: 'Invalid input', details: parsed.error.flatten() },
         { status: 400 }
       )
     }
+
+    const { id } = parsed.data
 
     // Delete focus area (only if owned by user)
     const { error } = await supabase

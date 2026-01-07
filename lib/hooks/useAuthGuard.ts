@@ -31,12 +31,18 @@ export function useAuthGuard(redirectPath?: string, requireAdmin: boolean = fals
 
       // Check admin status if required
       if (requireAdmin) {
-        const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL
-        const userIsAdmin = adminEmail && user.email === adminEmail
-        setIsAdmin(!!userIsAdmin)
-        
-        if (!userIsAdmin) {
-          // Not an admin - redirect to dashboard
+        try {
+          const res = await fetch('/api/admin/auth/me')
+          const data = await res.json()
+          setIsAdmin(!!data?.isAdmin)
+
+          if (!data?.isAdmin) {
+            // Not an admin - redirect to dashboard
+            router.push('/dashboard')
+            return
+          }
+        } catch (_error) {
+          setIsAdmin(false)
           router.push('/dashboard')
           return
         }
