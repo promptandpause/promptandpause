@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import { sendWelcomeEmail } from '@/lib/services/emailService'
 
@@ -69,11 +69,13 @@ export async function POST(request: Request) {
       .from('user_preferences')
       .select('id')
       .eq('user_id', user.id)
-      .single()
+      .maybeSingle()
     
     let result
     
-    if (existing) {
+    const hadExistingPreferences = !!existing
+
+    if (hadExistingPreferences) {
       // Update existing preferences
       const { data, error } = await supabase
         .from('user_preferences')
@@ -106,23 +108,46 @@ export async function POST(request: Request) {
     
     // Create or update user profile record with 7-day premium trial
     // This is essential for useTier hook and other features
-    const { error: profileError } = await supabase
+    const serviceClient = createServiceRoleClient()
+
+    const { data: existingProfile } = await serviceClient
       .from('profiles')
-      .upsert({
-        id: user.id,
-        email: user.email,
-        subscription_status: 'premium',  // Start with premium trial
-        subscription_tier: 'premium',
-        trial_start_date: new Date().toISOString(),
-        trial_end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
-        is_trial: true,
-        updated_at: new Date().toISOString()
-      }, { onConflict: 'id' })
-    
-    if (profileError) {
-      // Don't fail the request, but log the error
-      // User preferences are saved, profile can be created later
-    } else {
+      .select('subscription_status, subscription_tier, is_trial, trial_end_date')
+      .eq('id', user.id)
+      .maybeSingle()
+
+    const existingStatus = existingProfile?.subscription_status || null
+    const existingTier = existingProfile?.subscription_tier || null
+    const isPaidUser = existingStatus === 'active' || existingStatus === 'trialing'
+    const shouldGrantTrial = !isPaidUser && existingStatus !== 'premium' && existingTier !== 'premium'
+
+    if (shouldGrantTrial) {
+      const { error: profileError } = await serviceClient
+        .from('profiles')
+        .upsert({
+          id: user.id,
+          email: user.email,
+          subscription_status: 'premium',
+          subscription_tier: 'premium',
+          trial_start_date: new Date().toISOString(),
+          trial_end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+          is_trial: true,
+          updated_at: new Date().toISOString(),
+        }, { onConflict: 'id' })
+
+      if (profileError) {
+        if (!hadExistingPreferences) {
+          await supabase
+            .from('user_preferences')
+            .delete()
+            .eq('user_id', user.id)
+        }
+
+        return NextResponse.json(
+          { error: 'Failed to provision trial: ' + profileError.message },
+          { status: 500 }
+        )
+      }
     }
     
     // Send welcome email after successful onboarding

@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { getCurrentUser } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import { isAdminUser } from '@/lib/services/adminUserService'
 import AdminSidebar from './components/AdminSidebar'
 
@@ -17,36 +17,39 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  // Get current user and session
-  const supabase = await getCurrentUser()
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
-  if (!supabase) {
-    redirect('/admin-panel/login')
+  if (!user) {
+    redirect('/admin-login')
   }
 
   // Check admin access
-  const hasAdminAccess = supabase.email ? await isAdminUser(supabase.email) : false
+  const hasAdminAccess = user.email ? await isAdminUser(user.email) : false
   if (!hasAdminAccess) {
     redirect('/dashboard')
   }
 
-  // Check session timeout using session created_at
-  if (supabase.created_at) {
-    const sessionCreatedAt = new Date(supabase.created_at).getTime()
-    const now = Date.now()
-    const sessionAge = now - sessionCreatedAt
+  // Validate actual auth session expiry (do not use user.created_at)
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
 
-    if (sessionAge > ADMIN_SESSION_TIMEOUT_MS) {
-      // Session expired, redirect to login
-      redirect('/admin-panel/login?reason=session_expired')
-    }
+  if (!session) {
+    redirect('/admin-login')
+  }
+
+  if (session.expires_at && Date.now() > session.expires_at * 1000) {
+    redirect('/admin-login?reason=session_expired')
   }
 
   return (
     <div className="min-h-screen bg-white">
       <div className="flex h-screen overflow-hidden">
         {/* Sidebar */}
-        <AdminSidebar userEmail={supabase.email || ''} />
+        <AdminSidebar userEmail={user.email || ''} />
         
         {/* Main content area */}
         <main className="flex-1 overflow-y-auto bg-gray-50">

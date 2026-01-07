@@ -242,9 +242,10 @@ export const supabaseMoodService = {
       .select('*')
       .eq('user_id', user.id)
       .eq('date', date)
-      .single()
+      .maybeSingle()
 
-    if (error && error.code !== 'PGRST116') {
+    if (error) {
+      return null
     }
 
     return data || null
