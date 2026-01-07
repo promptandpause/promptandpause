@@ -103,9 +103,6 @@ export default async function middleware(request: NextRequest) {
     },
   })
 
-  // Set x-pathname header for layouts to detect current route
-  response.headers.set('x-pathname', pathname)
-
   if (pathname.startsWith('/dashboard')) {
     // Set performance cookies for dashboard routes
     response.cookies.set('dashboard_loaded', 'true', {
@@ -151,17 +148,26 @@ export default async function middleware(request: NextRequest) {
   }
 
   // RESTRICTION: Admin subdomain should only serve admin panel routes
-  if (isAdminSubdomain && !pathname.startsWith('/admin-panel')) {
-    console.log('[MIDDLEWARE] Admin subdomain accessing non-admin route, redirecting to /admin-panel')
+  if (isAdminSubdomain && !pathname.startsWith('/admin-panel') && pathname !== '/admin-login') {
     // Redirect to admin panel root on admin subdomain
     return NextResponse.redirect(new URL('/admin-panel', request.url))
   }
 
+  if (isAdminSubdomain && pathname === '/admin-panel/login') {
+    const rewriteUrl = request.nextUrl.clone()
+    rewriteUrl.pathname = '/admin-login'
+    return applySecurityHeaders(NextResponse.rewrite(rewriteUrl))
+  }
+
   // RESTRICTION: Admin panel routes should only be accessible on admin subdomain
-  // EXCEPTION: Allow /admin-panel/login on main domain to avoid redirect loops
-  if (!isAdminSubdomain && pathname.startsWith('/admin-panel') && pathname !== '/admin-panel/login') {
-    console.log('[MIDDLEWARE] Admin panel route on non-admin subdomain, redirecting to admin subdomain')
+  if (!isAdminSubdomain && pathname.startsWith('/admin-panel')) {
     // Redirect to admin subdomain
+    const adminUrl = new URL(request.url)
+    adminUrl.hostname = `admin.${adminUrl.hostname}`
+    return NextResponse.redirect(adminUrl)
+  }
+
+  if (!isAdminSubdomain && pathname === '/admin-login') {
     const adminUrl = new URL(request.url)
     adminUrl.hostname = `admin.${adminUrl.hostname}`
     return NextResponse.redirect(adminUrl)
@@ -186,8 +192,6 @@ export default async function middleware(request: NextRequest) {
               headers: request.headers,
             },
           })
-          // Preserve x-pathname header
-          response.headers.set('x-pathname', pathname)
           response.cookies.set({
             name,
             value,
@@ -205,8 +209,6 @@ export default async function middleware(request: NextRequest) {
               headers: request.headers,
             },
           })
-          // Preserve x-pathname header
-          response.headers.set('x-pathname', pathname)
           response.cookies.set({
             name,
             value: '',
@@ -273,6 +275,7 @@ export default async function middleware(request: NextRequest) {
     '/verify',
     '/change-password',
     '/auth',
+    '/admin-login',
     '/auth/callback', // OAuth callback
   ]
 
@@ -320,14 +323,12 @@ export default async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith('/admin-panel')) {
     // Allow access to admin login page without authentication
     if (request.nextUrl.pathname === '/admin-panel/login') {
-      console.log('[MIDDLEWARE] Allowing access to /admin-panel/login')
       // Just return response - don't redirect authenticated users
       // The login page component will handle redirecting authenticated admins
       return response
     }
 
     if (!user) {
-      console.log('[MIDDLEWARE] No user found for admin panel route, redirecting to login')
       const redirectUrl = new URL('/admin-panel/login', request.url)
       redirectUrl.searchParams.set('redirect', request.nextUrl.pathname)
       return NextResponse.redirect(redirectUrl)
