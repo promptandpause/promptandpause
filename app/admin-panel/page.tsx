@@ -70,6 +70,13 @@ function AdminPanelContent() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  const gbp = new Intl.NumberFormat('en-GB', {
+    style: 'currency',
+    currency: 'GBP',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })
+
   useEffect(() => {
     loadDashboardData()
   }, [])
@@ -136,7 +143,7 @@ function AdminPanelContent() {
   const statCards = [
     {
       title: 'Monthly Recurring Revenue',
-      value: `$${stats.mrr.toFixed(2)}`,
+      value: gbp.format(stats.mrr),
       icon: DollarSign,
       description: `${stats.monthly_subs} monthly, ${stats.annual_subs} annual`,
       color: 'text-green-600',
@@ -359,9 +366,9 @@ function AdminPanelContent() {
           <div className="space-y-3">
             <p className="text-sm font-medium text-gray-600">ARPU</p>
             <p className="text-3xl font-semibold text-gray-900">
-              ${stats.total_users > 0
-                ? (stats.mrr / stats.total_users).toFixed(2)
-                : '0.00'}
+              {stats.total_users > 0
+                ? gbp.format(stats.mrr / stats.total_users)
+                : gbp.format(0)}
             </p>
             <p className="text-sm text-gray-500">
               Average Revenue Per User

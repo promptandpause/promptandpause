@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { sendSupportEmail, sendSupportConfirmationEmail } from '@/lib/services/emailService'
-import { createFreshdeskTicket } from '@/lib/services/freshdeskService'
 import { z } from 'zod'
 import { rateLimit } from '@/lib/utils/rateLimit'
 
@@ -54,19 +53,6 @@ export async function POST(request: NextRequest) {
 
     const { category, subject, message, priority, userEmail, userName, tier } = validation.data
 
-    // Build ticket payload for Freshdesk
-    const ticketPayload = {
-      subject,
-      message,
-      user_email: userEmail,
-      user_name: userName,
-      category,
-      priority,
-      status: 'open', // Always create as open
-      user_tier: tier || 'freemium',
-      source: 'dashboard'
-    }
-
     // Create ticket in local database first
     let localTicketId: string
     try {
@@ -99,37 +85,13 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create ticket in Freshdesk
-    let freshdeskTicketId: number
-    try {
-      freshdeskTicketId = await createFreshdeskTicket(ticketPayload)
-      // Update local ticket with Freshdesk ID
-      await supabase
-        .from('support_tickets')
-        .update({ 
-          metadata: { 
-            tier: tier || 'freemium',
-            source: 'dashboard',
-            freshdesk_ticket_id: freshdeskTicketId
-          } 
-        })
-        .eq('id', localTicketId)
-    } catch (freshdeskError) {
-      // Continue anyway - we have the local ticket
-      freshdeskTicketId = 0
-    }
-
-    // Build ticket URL
-    const freshdeskDomain = process.env.FRESHDESK_DOMAIN || 'your-domain.freshdesk.com'
-    const ticketUrl = `https://${freshdeskDomain}/a/tickets/${freshdeskTicketId}`
-
     // Send confirmation email to user
     try {
       await sendSupportConfirmationEmail(
         userEmail,
         userName,
         subject,
-        freshdeskTicketId.toString()
+        localTicketId
       )
     } catch (emailError) {
       // Don't fail the request if email notification fails
@@ -145,7 +107,7 @@ export async function POST(request: NextRequest) {
         userEmail,
         userName,
         tier: tier || 'freemium',
-        requestId: freshdeskTicketId.toString()
+        requestId: localTicketId
       })
     } catch (emailError) {
       // Don't fail the request if email notification fails
@@ -154,9 +116,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: 'Support ticket created successfully',
-      ticketId: localTicketId,
-      freshdeskTicketId: freshdeskTicketId || null,
-      ticketUrl: freshdeskTicketId ? ticketUrl : null
+      ticketId: localTicketId
     })
 
   } catch (error) {

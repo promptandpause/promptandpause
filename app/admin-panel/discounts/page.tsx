@@ -48,10 +48,10 @@ interface DiscountInvitationRow {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  pending: 'bg-yellow-500/10 text-yellow-400 border-yellow-400/30',
-  completed: 'bg-green-500/10 text-green-400 border-green-400/30',
-  expired: 'bg-slate-500/10 text-slate-400 border-slate-400/30',
-  cancelled: 'bg-red-500/10 text-red-400 border-red-400/30',
+  pending: 'bg-amber-50 text-amber-700 border-amber-200',
+  completed: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  expired: 'bg-neutral-50 text-neutral-700 border-neutral-200',
+  cancelled: 'bg-red-50 text-red-700 border-red-200',
 }
 
 export default function DiscountsAdminPage() {
@@ -60,8 +60,9 @@ export default function DiscountsAdminPage() {
 
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
+  const [listError, setListError] = useState<string | null>(null)
+  const [inviteError, setInviteError] = useState<string | null>(null)
+  const [inviteSuccess, setInviteSuccess] = useState<string | null>(null)
 
   const [invitations, setInvitations] = useState<DiscountInvitationRow[]>([])
 
@@ -105,19 +106,22 @@ export default function DiscountsAdminPage() {
   const loadInvitations = useCallback(async () => {
     try {
       setLoading(true)
-      setError(null)
+      setListError(null)
 
       const params = new URLSearchParams()
       if (statusFilter !== 'all') params.set('status', statusFilter)
       if (typeFilter !== 'all') params.set('discount_type', typeFilter)
 
       const res = await fetch(`/api/admin/discounts/invitations?${params}`)
-      if (!res.ok) throw new Error('Failed to fetch invitations')
+      if (!res.ok) {
+        const data = await res.json().catch(() => null)
+        throw new Error(data?.error || 'Failed to fetch invitations')
+      }
 
       const data = await res.json()
       setInvitations(data.invitations || [])
     } catch (err: any) {
-      setError(err.message || 'Failed to load invitations')
+      setListError(err.message || 'Failed to load invitations')
     } finally {
       setLoading(false)
     }
@@ -139,12 +143,12 @@ export default function DiscountsAdminPage() {
   async function handleSendInvite() {
     try {
       setSubmitting(true)
-      setError(null)
-      setSuccess(null)
+      setInviteError(null)
+      setInviteSuccess(null)
 
       const identifier = userIdentifier.trim()
       if (!identifier) {
-        setError('Enter a user UUID or email')
+        setInviteError('Enter a user UUID or email')
         return
       }
 
@@ -154,7 +158,10 @@ export default function DiscountsAdminPage() {
 
       if (!looksLikeUuid) {
         const usersRes = await fetch(`/api/admin/users?limit=10&offset=0&search=${encodeURIComponent(identifier)}`)
-        if (!usersRes.ok) throw new Error('Failed to resolve user by email')
+        if (!usersRes.ok) {
+          const usersErr = await usersRes.json().catch(() => null)
+          throw new Error(usersErr?.error || 'Failed to resolve user by email')
+        }
         const usersData = await usersRes.json()
         const match = (usersData?.data || []).find((u: any) => (u.email || '').toLowerCase() === identifier.toLowerCase())
         if (!match?.id) throw new Error('No user found with that email')
@@ -177,19 +184,19 @@ export default function DiscountsAdminPage() {
         throw new Error(data?.error || 'Failed to send invitation')
       }
 
-      setSuccess('Discount invite sent.')
+      setInviteSuccess('Discount invite sent.')
       setUserIdentifier('')
       setNotes('')
       await loadInvitations()
     } catch (err: any) {
-      setError(err.message || 'Failed to send invitation')
+      setInviteError(err.message || 'Failed to send invitation')
     } finally {
       setSubmitting(false)
     }
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6 p-6">
       <div>
         <h1 className="text-2xl font-semibold text-neutral-900">Discounts</h1>
         <p className="text-sm text-neutral-500">Send Student/NHS checkout links and track redemption status.</p>
@@ -259,8 +266,8 @@ export default function DiscountsAdminPage() {
                   {submitting ? 'Sending…' : 'Send invite'}
                 </Button>
 
-                {error && <span className="text-sm text-red-600">{error}</span>}
-                {success && <span className="text-sm text-emerald-700">{success}</span>}
+                {inviteError && <span className="text-sm text-red-600">{inviteError}</span>}
+                {inviteSuccess && <span className="text-sm text-emerald-700">{inviteSuccess}</span>}
               </div>
             </div>
           </div>
@@ -273,6 +280,12 @@ export default function DiscountsAdminPage() {
                   <div className="text-xs text-neutral-500">Showing {filteredInvitations.length} invitations</div>
                 </div>
               </div>
+
+              {listError && (
+                <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                  {listError}
+                </div>
+              )}
 
               <div className="grid grid-cols-1 md:grid-cols-[1fr_180px_180px] gap-3">
                 <Input

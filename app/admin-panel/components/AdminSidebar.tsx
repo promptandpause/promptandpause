@@ -29,6 +29,7 @@ import { getSupabaseClient } from '@/lib/supabase/client'
 
 interface AdminSidebarProps {
   userEmail: string
+  userRole: 'super_admin' | 'admin' | 'employee'
 }
 
 const navigationItems = [
@@ -130,10 +131,22 @@ const navigationItems = [
   },
 ]
 
-export default function AdminSidebar({ userEmail }: AdminSidebarProps) {
+export default function AdminSidebar({ userEmail, userRole }: AdminSidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const supabase = getSupabaseClient()
+
+  const visibleItems = navigationItems.filter((item) => {
+    if (item.href === '/admin-panel/admin-users') {
+      return userRole === 'super_admin' || userRole === 'admin'
+    }
+
+    if (item.href === '/admin-panel/settings') {
+      return userRole === 'super_admin'
+    }
+
+    return true
+  })
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
@@ -174,7 +187,7 @@ export default function AdminSidebar({ userEmail }: AdminSidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
-        {navigationItems.map((item) => {
+        {visibleItems.map((item) => {
           const isActive = pathname === item.href || 
             (item.href !== '/admin-panel' && pathname.startsWith(item.href))
           const Icon = item.icon

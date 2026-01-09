@@ -36,16 +36,19 @@ export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true)
   const [days, setDays] = useState('30')
   const [engagement, setEngagement] = useState<EngagementData | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   const loadAnalytics = useCallback(async () => {
     try {
       setLoading(true)
+      setError(null)
       const response = await fetch(`/api/admin/analytics/engagement?days=${days}`)
       if (!response.ok) throw new Error('Failed to fetch analytics')
       
       const data = await response.json()
       setEngagement(data.data)
-    } catch (error) {
+    } catch (error: any) {
+      setError(error?.message || 'Failed to load analytics')
     } finally {
       setLoading(false)
     }
@@ -58,21 +61,21 @@ export default function AnalyticsPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton className="h-8 w-64 bg-slate-800" />
+        <Skeleton className="h-8 w-64 bg-gray-200" />
         <div className="grid gap-4 md:grid-cols-4">
           {[1, 2, 3, 4].map(i => (
-            <Skeleton key={i} className="h-32 bg-slate-800" />
+            <Skeleton key={i} className="h-32 bg-gray-200" />
           ))}
         </div>
-        <Skeleton className="h-96 bg-slate-800" />
+        <Skeleton className="h-96 bg-gray-200" />
       </div>
     )
   }
 
-  if (!engagement) {
+  if (error || !engagement) {
     return (
-      <Card className="p-6 bg-red-500/10 border-red-500/20">
-        <p className="text-red-400">Failed to load analytics</p>
+      <Card className="p-6 bg-red-50 border-red-200">
+        <p className="text-red-700">{error || 'Failed to load analytics'}</p>
       </Card>
     )
   }
@@ -84,42 +87,42 @@ export default function AnalyticsPage() {
       title: 'Total Prompts Sent',
       value: overall.total_prompts_sent.toLocaleString(),
       icon: MessageSquare,
-      color: 'text-blue-400',
-      bgColor: 'bg-blue-500/10'
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-50'
     },
     {
       title: 'Total Reflections',
       value: overall.total_reflections.toLocaleString(),
       icon: TrendingUp,
-      color: 'text-green-400',
-      bgColor: 'bg-green-500/10'
+      color: 'text-emerald-600',
+      bgColor: 'bg-emerald-50'
     },
     {
       title: 'Engagement Rate',
       value: `${overall.overall_engagement_rate.toFixed(1)}%`,
       icon: BarChart3,
-      color: 'text-purple-400',
-      bgColor: 'bg-purple-500/10'
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-50'
     },
     {
       title: 'Avg Reflection Length',
       value: `${overall.avg_reflection_length} words`,
       icon: Users,
-      color: 'text-yellow-400',
-      bgColor: 'bg-yellow-500/10'
+      color: 'text-amber-700',
+      bgColor: 'bg-amber-50'
     },
   ]
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white">Analytics</h1>
-          <p className="text-slate-400 mt-1">Engagement and performance metrics</p>
+          <h1 className="text-2xl font-semibold text-gray-900">Analytics</h1>
+          <p className="text-sm text-gray-500 mt-1">Engagement and performance metrics</p>
         </div>
         <Select value={days} onValueChange={setDays}>
-          <SelectTrigger className="w-[180px] bg-slate-800 border-slate-700 text-white">
+          <SelectTrigger className="w-[180px] bg-white border-gray-200 text-gray-900">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -135,7 +138,7 @@ export default function AnalyticsPage() {
         {statCards.map((card) => {
           const Icon = card.icon
           return (
-            <Card key={card.title} className="bg-slate-800/50 border-slate-700">
+            <Card key={card.title} className="bg-white border border-gray-100">
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className={`p-2 rounded-lg ${card.bgColor}`}>
@@ -143,8 +146,8 @@ export default function AnalyticsPage() {
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm text-slate-400">{card.title}</p>
-                  <p className="text-2xl font-bold text-white">{card.value}</p>
+                  <p className="text-sm text-gray-500">{card.title}</p>
+                  <p className="text-2xl font-semibold text-gray-900">{card.value}</p>
                 </div>
               </div>
             </Card>
@@ -153,29 +156,29 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Reflection Trend Chart */}
-      <Card className="bg-slate-800/50 border-slate-700 p-6">
-        <h3 className="text-lg font-semibold text-white mb-4">Reflection Activity</h3>
+      <Card className="bg-white border border-gray-100 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Reflection Activity</h3>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={trend}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
             <XAxis 
               dataKey="date" 
-              stroke="#94a3b8"
-              tick={{ fill: '#94a3b8' }}
+              stroke="#9ca3af"
+              tick={{ fill: '#9ca3af' }}
             />
             <YAxis 
-              stroke="#94a3b8"
-              tick={{ fill: '#94a3b8' }}
+              stroke="#9ca3af"
+              tick={{ fill: '#9ca3af' }}
             />
             <Tooltip 
               contentStyle={{ 
-                backgroundColor: '#1e293b', 
-                border: '1px solid #334155',
+                backgroundColor: '#ffffff',
+                border: '1px solid #e5e7eb',
                 borderRadius: '8px',
-                color: '#fff'
+                color: '#111827'
               }}
             />
-            <Legend wrapperStyle={{ color: '#94a3b8' }} />
+            <Legend wrapperStyle={{ color: '#6b7280' }} />
             <Line 
               type="monotone" 
               dataKey="reflections" 
@@ -190,26 +193,26 @@ export default function AnalyticsPage() {
 
       {/* Engagement by Activity Status */}
       <div className="grid gap-4 md:grid-cols-2">
-        <Card className="bg-slate-800/50 border-slate-700 p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Engagement by User Status</h3>
+        <Card className="bg-white border border-gray-100 p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Engagement by User Status</h3>
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={byActivity}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis 
                 dataKey="status" 
-                stroke="#94a3b8"
-                tick={{ fill: '#94a3b8' }}
+                stroke="#9ca3af"
+                tick={{ fill: '#9ca3af' }}
               />
               <YAxis 
-                stroke="#94a3b8"
-                tick={{ fill: '#94a3b8' }}
+                stroke="#9ca3af"
+                tick={{ fill: '#9ca3af' }}
               />
               <Tooltip 
                 contentStyle={{ 
-                  backgroundColor: '#1e293b', 
-                  border: '1px solid #334155',
+                  backgroundColor: '#ffffff',
+                  border: '1px solid #e5e7eb',
                   borderRadius: '8px',
-                  color: '#fff'
+                  color: '#111827'
                 }}
                 formatter={(value: number) => `${value.toFixed(1)}%`}
               />
@@ -223,8 +226,8 @@ export default function AnalyticsPage() {
           </ResponsiveContainer>
         </Card>
 
-        <Card className="bg-slate-800/50 border-slate-700 p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">User Distribution</h3>
+        <Card className="bg-white border border-gray-100 p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">User Distribution</h3>
           <ResponsiveContainer width="100%" height={250}>
             <PieChart>
               <Pie
@@ -246,10 +249,10 @@ export default function AnalyticsPage() {
               </Pie>
               <Tooltip 
                 contentStyle={{ 
-                  backgroundColor: '#1e293b', 
-                  border: '1px solid #334155',
+                  backgroundColor: '#ffffff',
+                  border: '1px solid #e5e7eb',
                   borderRadius: '8px',
-                  color: '#fff'
+                  color: '#111827'
                 }}
               />
             </PieChart>
@@ -259,32 +262,32 @@ export default function AnalyticsPage() {
 
       {/* Summary Stats */}
       <div className="grid gap-4 md:grid-cols-3">
-        <Card className="bg-slate-800/50 border-slate-700 p-6">
-          <p className="text-sm text-slate-400">Daily Average</p>
-          <p className="text-3xl font-bold text-white mt-2">
+        <Card className="bg-white border border-gray-100 p-6">
+          <p className="text-sm text-gray-500">Daily Average</p>
+          <p className="text-3xl font-semibold text-gray-900 mt-2">
             {trend.length > 0 
               ? Math.round(trend.reduce((sum, day) => sum + day.reflections, 0) / trend.length)
               : 0}
           </p>
-          <p className="text-xs text-slate-500 mt-1">Reflections per day</p>
+          <p className="text-xs text-gray-500 mt-1">Reflections per day</p>
         </Card>
 
-        <Card className="bg-slate-800/50 border-slate-700 p-6">
-          <p className="text-sm text-slate-400">Peak Day</p>
-          <p className="text-3xl font-bold text-white mt-2">
+        <Card className="bg-white border border-gray-100 p-6">
+          <p className="text-sm text-gray-500">Peak Day</p>
+          <p className="text-3xl font-semibold text-gray-900 mt-2">
             {trend.length > 0 
               ? Math.max(...trend.map(d => d.reflections))
               : 0}
           </p>
-          <p className="text-xs text-slate-500 mt-1">Maximum reflections in a day</p>
+          <p className="text-xs text-gray-500 mt-1">Maximum reflections in a day</p>
         </Card>
 
-        <Card className="bg-slate-800/50 border-slate-700 p-6">
-          <p className="text-sm text-slate-400">Active Users</p>
-          <p className="text-3xl font-bold text-white mt-2">
+        <Card className="bg-white border border-gray-100 p-6">
+          <p className="text-sm text-gray-500">Active Users</p>
+          <p className="text-3xl font-semibold text-gray-900 mt-2">
             {byActivity.find(a => a.status === 'active')?.count || 0}
           </p>
-          <p className="text-xs text-slate-500 mt-1">Users active in last 7 days</p>
+          <p className="text-xs text-gray-500 mt-1">Users active in last 7 days</p>
         </Card>
       </div>
     </div>

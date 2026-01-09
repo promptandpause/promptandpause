@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
 import { 
   updateAdminEmail,
   UpdateAdminEmailDTO 
 } from '@/lib/services/adminUserService'
+import { verifyAdminAccess } from '@/lib/middleware/verifyAdminAccess'
 
 /**
  * PATCH /api/admin/admin-users/[id]/email
@@ -14,13 +14,11 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-
-    if (authError || !user) {
+    const auth = await verifyAdminAccess(request, 'super_admin')
+    if (!auth.success) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
+        { error: auth.error },
+        { status: auth.statusCode || 403 }
       )
     }
 
@@ -37,7 +35,7 @@ export async function PATCH(
     const dto: UpdateAdminEmailDTO = {
       user_id: params.id,
       new_email,
-      updated_by_email: user.email!
+      updated_by_email: auth.adminEmail!
     }
 
     const result = await updateAdminEmail(dto)

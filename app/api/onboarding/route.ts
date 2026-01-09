@@ -1,6 +1,5 @@
 import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
-import { sendWelcomeEmail } from '@/lib/services/emailService'
 
 /**
  * Onboarding API Route
@@ -150,15 +149,51 @@ export async function POST(request: Request) {
       }
     }
     
-    // Send welcome email after successful onboarding
-    try {
-      const displayName = user.user_metadata?.full_name || 
-                         user.user_metadata?.name || 
-                         user.email?.split('@')[0] || 
-                         'there'
-      await sendWelcomeEmail(user.email!, displayName)
-    } catch (emailError) {
-      // Don't fail the onboarding if email fails
+    // Send welcome email after successful onboarding (one-time)
+    if (!hadExistingPreferences) {
+      try {
+        const { data: existingWelcomeEmail } = await serviceClient
+          .from('email_logs')
+          .select('id')
+          .eq('recipient_email', user.email!)
+          .eq('template_name', 'welcome')
+          .in('status', ['sent', 'delivered', 'opened', 'clicked'])
+          .limit(1)
+          .maybeSingle()
+
+        if (!existingWelcomeEmail) {
+          const { data: existingWelcomeJob } = await serviceClient
+            .from('email_queue')
+            .select('id')
+            .eq('user_id', user.id)
+            .eq('email_type', 'welcome')
+            .in('status', ['pending', 'sent'])
+            .limit(1)
+            .maybeSingle()
+
+          if (!existingWelcomeJob) {
+            const displayName = user.user_metadata?.full_name ||
+                               user.user_metadata?.name ||
+                               user.email?.split('@')[0] ||
+                               'there'
+            await serviceClient
+              .from('email_queue')
+              .insert({
+                user_id: user.id,
+                email_type: 'welcome',
+                recipient_email: user.email!,
+                recipient_name: displayName,
+                scheduled_for: new Date().toISOString(),
+                status: 'pending',
+                retry_count: 0,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+              })
+          }
+        }
+      } catch (emailError) {
+        // Don't fail the onboarding if email fails
+      }
     }
     
     // Success response

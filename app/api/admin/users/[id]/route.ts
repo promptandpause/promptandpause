@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { checkAdminAuth, getUserById, updateUserProfile, deleteUser } from '@/lib/services/adminService'
+import { checkAdminAuth, getUserById, updateUserProfile, deleteUser, logAdminActivity } from '@/lib/services/adminService'
 
 /**
  * GET /api/admin/users/[id]
@@ -29,6 +29,17 @@ export async function GET(
     if (!result.success) {
       throw new Error(result.error || 'Failed to fetch user')
     }
+
+    // Record view event (best-effort)
+    await logAdminActivity({
+      admin_email: user.email || '',
+      action_type: 'user_viewed',
+      target_user_id: id,
+      target_user_email: result.user?.email,
+      ip_address: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined,
+      user_agent: request.headers.get('user-agent') || undefined,
+      details: { route: '/api/admin/users/[id]' },
+    })
 
     return NextResponse.json({
       success: true,

@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { isAdminUser } from '@/lib/services/adminUserService'
+import { getAdminRole, isAdminUser, updateLastLogin } from '@/lib/services/adminUserService'
 import AdminSidebar from './components/AdminSidebar'
 
 export const metadata = {
@@ -32,6 +32,12 @@ export default async function AdminLayout({
     redirect('/dashboard')
   }
 
+  const adminRole = user.email ? await getAdminRole(user.email) : null
+
+  if (user.email) {
+    await updateLastLogin(user.email)
+  }
+
   // Validate actual auth session expiry (do not use user.created_at)
   const {
     data: { session },
@@ -49,7 +55,7 @@ export default async function AdminLayout({
     <div className="min-h-screen bg-white">
       <div className="flex h-screen overflow-hidden">
         {/* Sidebar */}
-        <AdminSidebar userEmail={user.email || ''} />
+        <AdminSidebar userEmail={user.email || ''} userRole={adminRole || 'employee'} />
         
         {/* Main content area */}
         <main className="flex-1 overflow-y-auto bg-gray-50">

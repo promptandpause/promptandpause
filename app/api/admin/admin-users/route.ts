@@ -6,6 +6,7 @@ import {
 } from '@/lib/services/adminUserService'
 import { sendAdminCredentialsEmail } from '@/lib/services/emailService'
 import { verifyAdminAccess, logAdminAction } from '@/lib/middleware/verifyAdminAccess'
+import { createServiceRoleClient } from '@/lib/supabase/server'
 
 /**
  * GET /api/admin/admin-users
@@ -13,7 +14,7 @@ import { verifyAdminAccess, logAdminAction } from '@/lib/middleware/verifyAdminA
  */
 export async function GET(request: NextRequest) {
   try {
-    const auth = await verifyAdminAccess(request)
+    const auth = await verifyAdminAccess(request, 'admin')
     if (!auth.success) {
       return NextResponse.json(
         { error: auth.error },
@@ -113,12 +114,41 @@ export async function POST(request: NextRequest) {
 
     // Send credentials email
     if (result.password && result.admin_user) {
-      await sendAdminCredentialsEmail(
+      const emailResult = await sendAdminCredentialsEmail(
         result.admin_user.email,
         result.admin_user.full_name,
         result.password,
         result.admin_user.role
       )
+
+      if (!emailResult.success) {
+        // Roll back account creation so we don't create an admin who never received credentials.
+        try {
+          const supabase = createServiceRoleClient()
+          await supabase.auth.admin.deleteUser(result.admin_user.user_id)
+        } catch (rollbackError) {
+          // If rollback fails, still surface the email failure clearly.
+          return NextResponse.json(
+            {
+              error: 'Failed to send credentials email, and rollback failed. Please contact support.',
+              details: {
+                emailError: emailResult.error,
+              },
+            },
+            { status: 500 }
+          )
+        }
+
+        return NextResponse.json(
+          {
+            error: 'Failed to send credentials email. Admin user was not created.',
+            details: {
+              emailError: emailResult.error,
+            },
+          },
+          { status: 500 }
+        )
+      }
     }
 
     return NextResponse.json({

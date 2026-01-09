@@ -75,21 +75,64 @@ export async function logAdminActivity(log: AdminActivityLog): Promise<void> {
   try {
     const supabase = createServiceRoleClient()
     
-    const { error } = await supabase
-      .from('admin_activity_logs')
-      .insert({
-        admin_email: log.admin_email,
-        action_type: log.action_type,
-        target_user_id: log.target_user_id,
-        target_user_email: log.target_user_email,
-        details: log.details,
-        ip_address: log.ip_address,
-        user_agent: log.user_agent,
-      })
+    const { error } = await supabase.from('admin_activity_logs').insert({
+      admin_email: log.admin_email,
+      action_type: log.action_type,
+      target_user_id: log.target_user_id,
+      target_user_email: log.target_user_email,
+      details: log.details,
+      ip_address: log.ip_address,
+      user_agent: log.user_agent,
+    })
 
     if (error) {
-      logger.error('admin_activity_log_error', { error })
-      // Don't throw - logging failure shouldn't break the action
+      // Fallback: use the SQL helper function (admin_activity_log table) if installed
+      const { error: rpcError } = await supabase.rpc('log_admin_activity', {
+        p_admin_email: log.admin_email,
+        p_action_type: log.action_type,
+        p_target_type: log.target_user_id ? 'user' : null,
+        p_target_id: log.target_user_id ? log.target_user_id : null,
+        p_details: {
+          ...(log.details || {}),
+          target_user_email: log.target_user_email || null,
+        },
+        p_ip_address: log.ip_address || null,
+        p_user_agent: log.user_agent || null,
+      })
+
+      if (rpcError) {
+        // Final fallback: insert directly into the legacy admin_activity_log table
+        try {
+          const { data: adminUser, error: adminUserError } = await supabase
+            .from('admin_users')
+            .select('id')
+            .eq('email', log.admin_email)
+            .single()
+
+          if (adminUserError) {
+            throw adminUserError
+          }
+
+          const { error: legacyInsertError } = await supabase.from('admin_activity_log').insert({
+            admin_user_id: adminUser.id,
+            action_type: log.action_type,
+            target_type: log.target_user_id ? 'user' : null,
+            target_id: log.target_user_id ? log.target_user_id : null,
+            details: {
+              ...(log.details || {}),
+              target_user_email: log.target_user_email || null,
+            },
+            ip_address: log.ip_address,
+            user_agent: log.user_agent,
+          })
+
+          if (legacyInsertError) {
+            logger.error('admin_activity_log_error', { error, rpcError, legacyInsertError })
+          }
+        } catch (legacyError) {
+          logger.error('admin_activity_log_error', { error, rpcError, legacyError })
+        }
+      }
     }
   } catch (error) {
     logger.error('admin_activity_log_error', { error })
@@ -122,46 +165,98 @@ export async function getAdminActivityLogs(params: {
       end_date
     } = params
 
-    let query = supabase
-      .from('admin_activity_logs')
-      .select('*', { count: 'exact' })
-      .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1)
+    try {
+      let query = supabase
+        .from('admin_activity_logs')
+        .select('*', { count: 'exact' })
+        .order('created_at', { ascending: false })
+        .range(offset, offset + limit - 1)
 
-    if (admin_email) {
-      query = query.eq('admin_email', admin_email)
-    }
+      if (admin_email) {
+        query = query.eq('admin_email', admin_email)
+      }
 
-    if (action_type) {
-      query = query.eq('action_type', action_type)
-    }
+      if (action_type) {
+        query = query.eq('action_type', action_type)
+      }
 
-    if (target_user_id) {
-      query = query.eq('target_user_id', target_user_id)
-    }
+      if (target_user_id) {
+        query = query.eq('target_user_id', target_user_id)
+      }
 
-    if (search) {
-      query = query.or(`target_user_email.ilike.%${search}%,admin_email.ilike.%${search}%`)
-    }
+      if (search) {
+        query = query.or(`target_user_email.ilike.%${search}%,admin_email.ilike.%${search}%`)
+      }
 
-    if (start_date) {
-      query = query.gte('created_at', start_date)
-    }
+      if (start_date) {
+        query = query.gte('created_at', start_date)
+      }
 
-    if (end_date) {
-      query = query.lte('created_at', end_date)
-    }
+      if (end_date) {
+        query = query.lte('created_at', end_date)
+      }
 
-    const { data, error, count } = await query
+      const { data, error, count } = await query
 
-    if (error) {
-      throw error
-    }
+      if (error) {
+        throw error
+      }
 
-    return {
-      logs: data || [],
-      total: count || 0,
-      success: true,
+      return {
+        logs: data || [],
+        total: count || 0,
+        success: true,
+      }
+    } catch (error: any) {
+      // Fallback: admin_activity_log schema (from SQL scripts)
+      let query = supabase
+        .from('admin_activity_log')
+        .select(
+          'id, action_type, target_type, target_id, details, ip_address, user_agent, created_at, admin_users(email)',
+          { count: 'exact' }
+        )
+        .order('created_at', { ascending: false })
+        .range(offset, offset + limit - 1)
+
+      if (action_type) {
+        query = query.eq('action_type', action_type)
+      }
+
+      if (target_user_id) {
+        query = query.eq('target_id', target_user_id)
+      }
+
+      if (start_date) {
+        query = query.gte('created_at', start_date)
+      }
+
+      if (end_date) {
+        query = query.lte('created_at', end_date)
+      }
+
+      const { data, error: fallbackError, count } = await query
+
+      if (fallbackError) {
+        throw fallbackError
+      }
+
+      const logs = (data || []).map((row: any) => ({
+        id: row.id,
+        admin_email: row.admin_users?.email || '',
+        action_type: row.action_type,
+        target_user_id: row.target_id || null,
+        target_user_email: row.details?.target_user_email || null,
+        details: row.details || {},
+        ip_address: row.ip_address || null,
+        user_agent: row.user_agent || null,
+        created_at: row.created_at,
+      }))
+
+      return {
+        logs,
+        total: count || 0,
+        success: true,
+      }
     }
   } catch (error: any) {
     logger.error('get_admin_activity_logs_error', { error })
@@ -208,7 +303,11 @@ export async function getAllUsers(params: {
 
     // Apply filters
     if (subscription_status) {
-      query = query.eq('subscription_status', subscription_status)
+      if (subscription_status === 'free') {
+        query = query.or('subscription_status.is.null,subscription_status.eq.free')
+      } else {
+        query = query.eq('subscription_status', subscription_status)
+      }
     }
 
     if (activity_status) {
@@ -237,12 +336,129 @@ export async function getAllUsers(params: {
       success: true,
     }
   } catch (error: any) {
-    logger.error('get_all_users_error', { error })
-    return {
-      users: [],
-      total: 0,
-      success: false,
-      error: error.message,
+    // Fallback when the admin_user_stats view isn't installed
+    try {
+      const supabase = createServiceRoleClient()
+      const {
+        limit = 50,
+        offset = 0,
+        subscription_status,
+        activity_status,
+        search,
+        sort_by = 'signup_date',
+        sort_order = 'desc',
+      } = params
+
+      let query = supabase
+        .from('profiles')
+        .select('id, email, full_name, subscription_status, created_at', { count: 'exact' })
+
+      if (search) {
+        query = query.or(`email.ilike.%${search}%,full_name.ilike.%${search}%`)
+      }
+
+      if (subscription_status) {
+        if (subscription_status === 'free') {
+          query = query.or('subscription_status.is.null,subscription_status.eq.free')
+        } else {
+          query = query.eq('subscription_status', subscription_status)
+        }
+      }
+
+      const sortColumn = sort_by === 'signup_date' ? 'created_at' : sort_by
+      query = query.order(sortColumn, { ascending: sort_order === 'asc' })
+      query = query.range(offset, offset + limit - 1)
+
+      const { data: profiles, error: profileError, count } = await query
+
+      if (profileError) {
+        throw profileError
+      }
+
+      const ids = (profiles || []).map((p) => p.id).filter(Boolean)
+
+      // NOTE: This is a safe but potentially heavier fallback. It keeps the UI working
+      // even if the admin_user_stats view isn't installed.
+      const [reflectionRows, promptRows] = await Promise.all([
+        ids.length
+          ? supabase
+              .from('reflections')
+              .select('user_id, created_at')
+              .in('user_id', ids)
+              .order('created_at', { ascending: false })
+              .limit(5000)
+          : Promise.resolve({ data: [] as any[] }),
+        ids.length
+          ? supabase
+              .from('prompts_history')
+              .select('user_id, created_at')
+              .in('user_id', ids)
+              .order('created_at', { ascending: false })
+              .limit(5000)
+          : Promise.resolve({ data: [] as any[] }),
+      ])
+
+      const reflectionsByUser = new Map<string, { count: number; last: string | null }>()
+      for (const row of reflectionRows.data || []) {
+        const existing = reflectionsByUser.get(row.user_id) || { count: 0, last: null }
+        reflectionsByUser.set(row.user_id, {
+          count: existing.count + 1,
+          last: existing.last || row.created_at,
+        })
+      }
+
+      const promptsByUser = new Map<string, number>()
+      for (const row of promptRows.data || []) {
+        promptsByUser.set(row.user_id, (promptsByUser.get(row.user_id) || 0) + 1)
+      }
+
+      const now = Date.now()
+      const users = (profiles || []).map((p) => {
+        const reflection = reflectionsByUser.get(p.id) || { count: 0, last: null }
+        const promptCount = promptsByUser.get(p.id) || 0
+
+        let activity: string = 'dormant'
+        if (reflection.last) {
+          const lastMs = new Date(reflection.last).getTime()
+          const days = (now - lastMs) / (1000 * 60 * 60 * 24)
+          if (days <= 7) activity = 'active'
+          else if (days <= 30) activity = 'moderate'
+          else if (days <= 90) activity = 'inactive'
+          else activity = 'dormant'
+        } else {
+          activity = 'dormant'
+        }
+
+        const engagement = promptCount > 0 ? (reflection.count / promptCount) * 100 : 0
+
+        return {
+          id: p.id,
+          email: p.email,
+          full_name: p.full_name,
+          subscription_status: p.subscription_status,
+          signup_date: p.created_at,
+          total_reflections: reflection.count,
+          engagement_rate_percent: Math.round(engagement * 10) / 10,
+          activity_status: activity,
+          last_reflection_date: reflection.last,
+        }
+      })
+
+      const filteredUsers = activity_status ? users.filter((u) => u.activity_status === activity_status) : users
+
+      return {
+        users: filteredUsers,
+        total: activity_status ? filteredUsers.length : count || 0,
+        success: true,
+      }
+    } catch (fallbackError: any) {
+      logger.error('get_all_users_error', { error, fallbackError })
+      return {
+        users: [],
+        total: 0,
+        success: false,
+        error: error.message,
+      }
     }
   }
 }
@@ -414,36 +630,123 @@ export async function getDashboardStats() {
   try {
     const supabase = createServiceRoleClient()
 
+    const daysBack = 30
+    const cutoffDate = new Date(Date.now() - daysBack * 24 * 60 * 60 * 1000)
+    const cutoffDateISO = cutoffDate.toISOString()
+    const cutoffDateStr = cutoffDateISO.split('T')[0]
+
+    // Total users (always from live table)
+    const { count: totalUsersCount, error: totalUsersError } = await supabase
+      .from('profiles')
+      .select('id', { count: 'exact', head: true })
+
+    if (totalUsersError) throw totalUsersError
+
+    const totalUsers = totalUsersCount || 0
+
     // Get MRR and user counts
-    const { data: mrrData } = await supabase.rpc('calculate_mrr')
-    const mrr = mrrData?.[0] || { total_mrr: 0, monthly_subs: 0, annual_subs: 0, free_users: 0 }
+    let mrr = 0
+    let monthly_subs = 0
+    let annual_subs = 0
+    let free_users = 0
+
+    try {
+      const { data: mrrData, error: mrrError } = await supabase.rpc('calculate_mrr')
+      if (mrrError) throw mrrError
+
+      const row = mrrData?.[0] || {}
+      mrr = Number((row as any).total_mrr) || 0
+      monthly_subs = Number((row as any).monthly_subs) || 0
+      annual_subs = Number((row as any).annual_subs) || 0
+      free_users = Number((row as any).free_users) || 0
+    } catch (error: any) {
+      // Fallback: compute from live profiles table
+      const [monthlyCount, annualCount] = await Promise.all([
+        supabase
+          .from('profiles')
+          .select('id', { count: 'exact', head: true })
+          .eq('subscription_status', 'premium')
+          .eq('billing_cycle', 'monthly'),
+        supabase
+          .from('profiles')
+          .select('id', { count: 'exact', head: true })
+          .eq('subscription_status', 'premium')
+          .eq('billing_cycle', 'yearly'),
+      ])
+
+      if (monthlyCount.error) throw monthlyCount.error
+      if (annualCount.error) throw annualCount.error
+
+      monthly_subs = monthlyCount.count || 0
+      annual_subs = annualCount.count || 0
+      free_users = Math.max(0, totalUsers - monthly_subs - annual_subs)
+
+      // Keep same pricing assumptions as the SQL helper
+      mrr = monthly_subs * 12.0 + annual_subs * 8.25
+
+      logger.warn('calculate_mrr_rpc_unavailable_using_fallback', {
+        error: error?.message,
+      })
+    }
 
     // Get engagement stats
-    const { data: engagementData } = await supabase.rpc('get_engagement_stats', { days_back: 30 })
-    const engagement = engagementData?.[0] || { 
-      total_prompts_sent: 0, 
-      total_reflections: 0, 
-      overall_engagement_rate: 0,
-      avg_reflection_length: 0
+    let total_prompts_sent = 0
+    let total_reflections = 0
+    let engagement_rate = 0
+
+    try {
+      const { data: engagementData, error: engagementError } = await supabase.rpc('get_engagement_stats', { days_back: daysBack })
+      if (engagementError) throw engagementError
+
+      const row = engagementData?.[0] || {}
+      total_prompts_sent = Number((row as any).total_prompts_sent) || 0
+      total_reflections = Number((row as any).total_reflections) || 0
+      engagement_rate = Number((row as any).overall_engagement_rate) || 0
+    } catch (error: any) {
+      // Fallback: compute from live tables
+      // NOTE: prompts are stored in prompts_history (not prompts)
+      const [promptCount, reflectionCount] = await Promise.all([
+        supabase
+          .from('prompts_history')
+          .select('id', { count: 'exact', head: true })
+          .gte('date_generated', cutoffDateStr),
+        supabase
+          .from('reflections')
+          .select('id', { count: 'exact', head: true })
+          .gte('created_at', cutoffDateISO),
+      ])
+
+      if (promptCount.error) throw promptCount.error
+      if (reflectionCount.error) throw reflectionCount.error
+
+      total_prompts_sent = promptCount.count || 0
+      total_reflections = reflectionCount.count || 0
+      engagement_rate = total_prompts_sent > 0
+        ? Math.round((total_reflections / total_prompts_sent) * 1000) / 10
+        : 0
+
+      logger.warn('get_engagement_stats_rpc_unavailable_using_fallback', {
+        error: error?.message,
+      })
     }
 
     // Get new signups in last 30 days
     const { count: newSignups } = await supabase
       .from('profiles')
       .select('*', { count: 'exact', head: true })
-      .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
+      .gte('created_at', cutoffDateISO)
 
     return {
       stats: {
-        mrr: mrr.total_mrr,
-        total_users: mrr.free_users + mrr.monthly_subs + mrr.annual_subs,
-        free_users: mrr.free_users,
-        premium_users: mrr.monthly_subs + mrr.annual_subs,
-        monthly_subs: mrr.monthly_subs,
-        annual_subs: mrr.annual_subs,
-        engagement_rate: engagement.overall_engagement_rate,
-        total_prompts_sent: engagement.total_prompts_sent,
-        total_reflections: engagement.total_reflections,
+        mrr,
+        total_users: totalUsers,
+        free_users,
+        premium_users: monthly_subs + annual_subs,
+        monthly_subs,
+        annual_subs,
+        engagement_rate,
+        total_prompts_sent,
+        total_reflections,
         new_signups_30d: newSignups || 0,
       },
       success: true,
@@ -624,7 +927,11 @@ export async function getAllSubscriptions(params: {
 
     // Apply filters
     if (subscription_status) {
-      query = query.eq('subscription_status', subscription_status)
+      if (subscription_status === 'free') {
+        query = query.or('subscription_status.is.null,subscription_status.eq.free')
+      } else {
+        query = query.eq('subscription_status', subscription_status)
+      }
     }
 
     if (billing_cycle) {
@@ -647,8 +954,13 @@ export async function getAllSubscriptions(params: {
       throw error
     }
 
+    const subscriptions = (data || []).map((row: any) => ({
+      ...row,
+      subscription_status: row.subscription_status || 'free',
+    }))
+
     return {
-      subscriptions: data || [],
+      subscriptions,
       total: count || 0,
       success: true,
     }
@@ -1142,21 +1454,68 @@ export async function getEmailStats() {
     const supabase = createServiceRoleClient()
 
     // Get stats using the helper function
-    const { data: stats, error } = await supabase.rpc('get_email_stats')
+    try {
+      const { data: stats, error } = await supabase.rpc('get_email_stats')
+      if (error) throw error
 
-    if (error) throw error
+      const row = stats?.[0] || {}
 
-    return {
-      stats: stats?.[0] || {
-        total_sent: 0,
-        total_delivered: 0,
-        total_bounced: 0,
-        total_opened: 0,
-        delivery_rate: 0,
-        open_rate: 0,
-        bounce_rate: 0
-      },
-      success: true,
+      return {
+        stats: {
+          total_sent: Number(row.total_sent) || 0,
+          total_delivered: Number(row.total_delivered) || 0,
+          total_bounced: Number(row.total_bounced) || 0,
+          total_opened: Number(row.total_opened) || 0,
+          delivery_rate: Number(row.delivery_rate) || 0,
+          open_rate: Number(row.open_rate) || 0,
+          bounce_rate: Number(row.bounce_rate) || 0,
+        },
+        success: true,
+      }
+    } catch (error: any) {
+      // Fallback: compute from live email_logs when the RPC isn't installed yet
+      const [
+        sentCount,
+        deliveredCount,
+        bouncedCount,
+        openedCount,
+      ] = await Promise.all([
+        supabase.from('email_logs').select('id', { count: 'exact', head: true }),
+        supabase.from('email_logs').select('id', { count: 'exact', head: true }).in('status', ['delivered', 'opened', 'clicked']),
+        supabase.from('email_logs').select('id', { count: 'exact', head: true }).eq('status', 'bounced'),
+        supabase.from('email_logs').select('id', { count: 'exact', head: true }).in('status', ['opened', 'clicked']),
+      ])
+
+      if (sentCount.error) throw sentCount.error
+      if (deliveredCount.error) throw deliveredCount.error
+      if (bouncedCount.error) throw bouncedCount.error
+      if (openedCount.error) throw openedCount.error
+
+      const total_sent = sentCount.count || 0
+      const total_delivered = deliveredCount.count || 0
+      const total_bounced = bouncedCount.count || 0
+      const total_opened = openedCount.count || 0
+
+      const delivery_rate = total_sent > 0 ? Math.round((total_delivered / total_sent) * 1000) / 10 : 0
+      const open_rate = total_delivered > 0 ? Math.round((total_opened / total_delivered) * 1000) / 10 : 0
+      const bounce_rate = total_sent > 0 ? Math.round((total_bounced / total_sent) * 1000) / 10 : 0
+
+      logger.warn('get_email_stats_rpc_unavailable_using_fallback', {
+        error: error?.message,
+      })
+
+      return {
+        stats: {
+          total_sent,
+          total_delivered,
+          total_bounced,
+          total_opened,
+          delivery_rate,
+          open_rate,
+          bounce_rate,
+        },
+        success: true,
+      }
     }
   } catch (error: any) {
     logger.error('get_email_stats_error', { error })
@@ -1807,16 +2166,33 @@ export async function getFeatureFlags() {
   try {
     const supabase = createServiceRoleClient()
 
-    const { data, error } = await supabase
-      .from('feature_flags')
-      .select('*')
-      .order('name', { ascending: true })
+    // Support multiple schema variants:
+    // - Variant A: key/name/enabled
+    // - Variant B: name/is_enabled (+ rollout fields)
+    try {
+      const { data, error } = await supabase
+        .from('feature_flags')
+        .select('*')
+        .order('name', { ascending: true })
 
-    if (error) throw error
+      if (error) throw error
 
-    return {
-      flags: data || [],
-      success: true,
+      return {
+        flags: data || [],
+        success: true,
+      }
+    } catch (_e) {
+      const { data, error } = await supabase
+        .from('feature_flags')
+        .select('*')
+        .order('key', { ascending: true })
+
+      if (error) throw error
+
+      return {
+        flags: data || [],
+        success: true,
+      }
     }
   } catch (error: any) {
     return {
@@ -1838,17 +2214,37 @@ export async function updateFeatureFlag(
   try {
     const supabase = createServiceRoleClient()
 
-    const { data, error } = await supabase
-      .from('feature_flags')
-      .update({ 
-        enabled,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('key', key)
-      .select()
-      .single()
+    // Support multiple schema variants:
+    // - Variant A: key + enabled
+    // - Variant B: name + is_enabled
+    let data: any = null
+    try {
+      const result = await supabase
+        .from('feature_flags')
+        .update({
+          enabled,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('key', key)
+        .select()
+        .single()
 
-    if (error) throw error
+      if (result.error) throw result.error
+      data = result.data
+    } catch (_e) {
+      const result = await supabase
+        .from('feature_flags')
+        .update({
+          is_enabled: enabled,
+          updated_at: new Date().toISOString(),
+        } as any)
+        .eq('name', key)
+        .select()
+        .single()
+
+      if (result.error) throw result.error
+      data = result.data
+    }
 
     await logAdminActivity({
       admin_email: adminEmail,

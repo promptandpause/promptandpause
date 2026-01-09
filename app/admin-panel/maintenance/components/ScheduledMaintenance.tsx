@@ -44,6 +44,7 @@ export default function ScheduledMaintenance({ onScheduleChange }: ScheduledMain
   const [loading, setLoading] = useState(true)
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [creating, setCreating] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   // Form state
   const [scheduledDate, setScheduledDate] = useState('')
@@ -59,13 +60,19 @@ export default function ScheduledMaintenance({ onScheduleChange }: ScheduledMain
   async function loadWindows() {
     try {
       setLoading(true)
+      setError(null)
       const response = await fetch('/api/admin/maintenance?status=scheduled')
       
-      if (response.ok) {
-        const data = await response.json()
-        setWindows(data.maintenance_windows || [])
+      if (!response.ok) {
+        const data = await response.json().catch(() => null)
+        throw new Error(data?.error || 'Failed to load scheduled maintenance')
       }
-    } catch (error) {
+
+      const data = await response.json()
+      setWindows(data.maintenance_windows || [])
+    } catch (error: any) {
+      setWindows([])
+      setError(error?.message || 'Failed to load scheduled maintenance')
     } finally {
       setLoading(false)
     }
@@ -150,11 +157,14 @@ export default function ScheduledMaintenance({ onScheduleChange }: ScheduledMain
     if (!windowToCancel) return
 
     try {
-      const response = await fetch(`/api/admin/maintenance/${windowToCancel}/cancel`, {
-        method: 'POST',
+      const response = await fetch(`/api/admin/maintenance/${windowToCancel}`, {
+        method: 'DELETE',
       })
 
-      if (!response.ok) throw new Error('Failed to cancel')
+      if (!response.ok) {
+        const data = await response.json().catch(() => null)
+        throw new Error(data?.error || 'Failed to cancel')
+      }
 
       toast({
         title: 'Success',
@@ -163,10 +173,10 @@ export default function ScheduledMaintenance({ onScheduleChange }: ScheduledMain
 
       await loadWindows()
       onScheduleChange()
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: 'Error',
-        description: 'Failed to cancel maintenance window',
+        description: error?.message || 'Failed to cancel maintenance window',
         variant: 'destructive',
       })
     } finally {
@@ -183,66 +193,72 @@ export default function ScheduledMaintenance({ onScheduleChange }: ScheduledMain
 
   if (loading) {
     return (
-      <Card className="bg-slate-800/50 border-slate-700 p-6">
+      <Card className="bg-white border-neutral-200 p-6">
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 text-slate-400 animate-spin" />
+          <Loader2 className="h-8 w-8 text-neutral-500 animate-spin" />
         </div>
       </Card>
     )
   }
 
   return (
-    <Card className="bg-slate-800/50 border-slate-700 p-6 space-y-6">
+    <Card className="bg-white border-neutral-200 p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-white">Scheduled Maintenance</h2>
+        <h2 className="text-xl font-semibold text-neutral-900">Scheduled Maintenance</h2>
         <Button
           onClick={() => setShowCreateForm(!showCreateForm)}
           size="sm"
-          className="bg-blue-500 hover:bg-blue-600 text-white"
+          className="bg-blue-600 hover:bg-blue-700 text-white"
         >
           <Plus className="h-4 w-4 mr-2" />
           Schedule New
         </Button>
       </div>
 
+      {error && (
+        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
       {/* Create Form */}
       {showCreateForm && (
-        <div className="border border-slate-700 rounded-lg p-4 space-y-4 bg-slate-900/50">
-          <h3 className="text-sm font-semibold text-slate-300">Schedule New Maintenance</h3>
+        <div className="border border-neutral-200 rounded-lg p-4 space-y-4 bg-neutral-50">
+          <h3 className="text-sm font-semibold text-neutral-900">Schedule New Maintenance</h3>
 
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <Label className="text-slate-300 text-xs">Date (Weekend Only)</Label>
+              <Label className="text-neutral-600 text-xs">Date (Weekend Only)</Label>
               <Input
                 type="date"
                 value={scheduledDate}
                 onChange={(e) => setScheduledDate(e.target.value)}
-                className="bg-slate-800 border-slate-700 text-white"
+                className="bg-white border-neutral-200 text-neutral-900"
               />
             </div>
             <div>
-              <Label className="text-slate-300 text-xs">Start Time</Label>
+              <Label className="text-neutral-600 text-xs">Start Time</Label>
               <Input
                 type="time"
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
-                className="bg-slate-800 border-slate-700 text-white"
+                className="bg-white border-neutral-200 text-neutral-900"
               />
             </div>
             <div>
-              <Label className="text-slate-300 text-xs">End Time</Label>
+              <Label className="text-neutral-600 text-xs">End Time</Label>
               <Input
                 type="time"
                 value={endTime}
                 onChange={(e) => setEndTime(e.target.value)}
-                className="bg-slate-800 border-slate-700 text-white"
+                className="bg-white border-neutral-200 text-neutral-900"
               />
             </div>
           </div>
 
           <div>
-            <Label className="text-slate-300 text-xs mb-2">Affected Services</Label>
+            <Label className="text-neutral-600 text-xs mb-2">Affected Services</Label>
             <div className="flex flex-wrap gap-2">
               {COMMON_SERVICES.map((service) => (
                 <Badge
@@ -250,8 +266,8 @@ export default function ScheduledMaintenance({ onScheduleChange }: ScheduledMain
                   onClick={() => toggleService(service)}
                   className={`cursor-pointer ${
                     selectedServices.includes(service)
-                      ? 'bg-blue-500 text-white border-blue-500'
-                      : 'bg-slate-800 text-slate-300 border-slate-600'
+                      ? 'bg-blue-600 text-white border-blue-600'
+                      : 'bg-white text-neutral-700 border-neutral-200'
                   }`}
                   variant="outline"
                 >
@@ -262,11 +278,11 @@ export default function ScheduledMaintenance({ onScheduleChange }: ScheduledMain
           </div>
 
           <div>
-            <Label className="text-slate-300 text-xs">Description (Optional)</Label>
+            <Label className="text-neutral-600 text-xs">Description (Optional)</Label>
             <Textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="bg-slate-800 border-slate-700 text-white"
+              className="bg-white border-neutral-200 text-neutral-900"
               rows={2}
               placeholder="Brief description of the maintenance work..."
             />
@@ -293,7 +309,7 @@ export default function ScheduledMaintenance({ onScheduleChange }: ScheduledMain
             <Button
               onClick={() => setShowCreateForm(false)}
               variant="outline"
-              className="border-slate-600 text-slate-300"
+              className="border-neutral-200 bg-white text-neutral-900"
             >
               Cancel
             </Button>
@@ -304,21 +320,21 @@ export default function ScheduledMaintenance({ onScheduleChange }: ScheduledMain
       {/* Scheduled Windows List */}
       <div className="space-y-3 max-h-[500px] overflow-y-auto">
         {windows.length === 0 ? (
-          <div className="text-center py-8 text-slate-400">
-            <Calendar className="h-12 w-12 mx-auto mb-2 text-slate-600" />
+          <div className="text-center py-8 text-neutral-500">
+            <Calendar className="h-12 w-12 mx-auto mb-2 text-neutral-400" />
             <p>No scheduled maintenance windows</p>
           </div>
         ) : (
           windows.map((window) => (
             <div
               key={window.id}
-              className="border border-slate-700 rounded-lg p-4 hover:bg-slate-800/30 transition-colors"
+              className="border border-neutral-200 rounded-lg p-4 hover:bg-neutral-50 transition-colors"
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
-                    <Calendar className="h-4 w-4 text-blue-400" />
-                    <p className="text-sm font-medium text-white">
+                    <Calendar className="h-4 w-4 text-blue-600" />
+                    <p className="text-sm font-medium text-neutral-900">
                       {new Date(window.scheduled_date).toLocaleDateString('en-US', {
                         weekday: 'long',
                         year: 'numeric',
@@ -329,14 +345,14 @@ export default function ScheduledMaintenance({ onScheduleChange }: ScheduledMain
                   </div>
 
                   <div className="flex items-center gap-2 mb-2">
-                    <Clock className="h-4 w-4 text-slate-400" />
-                    <p className="text-sm text-slate-300">
+                    <Clock className="h-4 w-4 text-neutral-500" />
+                    <p className="text-sm text-neutral-700">
                       {window.start_time} - {window.end_time}
                     </p>
                   </div>
 
                   {window.description && (
-                    <p className="text-sm text-slate-400 mb-2">{window.description}</p>
+                    <p className="text-sm text-neutral-600 mb-2">{window.description}</p>
                   )}
 
                   <div className="flex flex-wrap gap-1">
@@ -344,7 +360,7 @@ export default function ScheduledMaintenance({ onScheduleChange }: ScheduledMain
                       <Badge
                         key={service}
                         variant="outline"
-                        className="text-xs bg-slate-900 border-slate-600"
+                        className="text-xs bg-neutral-50 border-neutral-200 text-neutral-700"
                       >
                         {service}
                       </Badge>
@@ -358,21 +374,21 @@ export default function ScheduledMaintenance({ onScheduleChange }: ScheduledMain
                       size="sm"
                       variant="outline"
                       onClick={() => handleCancel(window.id)}
-                      className="border-red-500/30 text-red-400 hover:bg-red-500/10"
+                      className="bg-red-50 border-red-200 text-red-700 hover:bg-red-100"
                     >
                       <Trash2 className="h-3 w-3 mr-1" />
                       Cancel
                     </Button>
                   </AlertDialogTrigger>
-                  <AlertDialogContent className="bg-slate-900 border-slate-700">
+                  <AlertDialogContent className="bg-white border-neutral-200">
                     <AlertDialogHeader>
-                      <AlertDialogTitle className="text-white">Cancel Maintenance Window</AlertDialogTitle>
-                      <AlertDialogDescription className="text-slate-400">
+                      <AlertDialogTitle className="text-neutral-900">Cancel Maintenance Window</AlertDialogTitle>
+                      <AlertDialogDescription className="text-neutral-500">
                         Are you sure you want to cancel this scheduled maintenance window?
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel className="bg-slate-800 text-white border-slate-700">Cancel</AlertDialogCancel>
+                      <AlertDialogCancel className="bg-white text-neutral-900 border-neutral-200">Cancel</AlertDialogCancel>
                       <AlertDialogAction onClick={confirmCancel} className="bg-red-600 hover:bg-red-700">
                         Confirm
                       </AlertDialogAction>

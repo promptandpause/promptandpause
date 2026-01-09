@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { Resend } from 'resend'
-import { withRateLimit, getIdentifier } from '@/lib/security/rateLimit'
+import { withRateLimit } from '@/lib/security/rateLimit'
 
 const HomepageContactSchema = z.object({
   name: z.string().min(2).max(100),

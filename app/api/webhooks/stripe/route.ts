@@ -203,10 +203,10 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription, sessi
   const { error: updateError } = await supabaseAdmin
     .from('profiles')
     .update({
-      subscriptionStatus,
+      subscription_status: subscriptionStatus,
       subscription_id: subscription.id,
       stripe_customer_id: customerId,
-      billingCycle,
+      billing_cycle: billingCycle,
       subscription_end_date: currentPeriodEnd,
       discount_type,
       discount_verified_at: discount_type ? new Date().toISOString() : null,

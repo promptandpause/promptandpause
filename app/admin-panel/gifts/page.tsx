@@ -44,14 +44,17 @@ interface GiftRow {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  pending: 'bg-yellow-500/10 text-yellow-400 border-yellow-400/30',
-  redeemed: 'bg-green-500/10 text-green-400 border-green-400/30',
-  expired: 'bg-slate-500/10 text-slate-400 border-slate-400/30',
-  refunded: 'bg-red-500/10 text-red-400 border-red-400/30',
+  pending: 'bg-amber-50 text-amber-700 border-amber-200',
+  redeemed: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  expired: 'bg-neutral-50 text-neutral-700 border-neutral-200',
+  refunded: 'bg-red-50 text-red-700 border-red-200',
 }
 
 function formatGBPFromPence(amountPaid: number) {
-  return `£${(amountPaid / 100).toFixed(2)}`
+  return new Intl.NumberFormat('en-GB', {
+    style: 'currency',
+    currency: 'GBP',
+  }).format((amountPaid || 0) / 100)
 }
 
 export default function GiftsAdminPage() {
@@ -101,7 +104,10 @@ export default function GiftsAdminPage() {
       if (search.trim()) params.set('search', search.trim())
 
       const res = await fetch(`/api/admin/gifts?${params}`)
-      if (!res.ok) throw new Error('Failed to fetch gifts')
+      if (!res.ok) {
+        const data = await res.json().catch(() => null)
+        throw new Error(data?.error || 'Failed to fetch gifts')
+      }
 
       const data = await res.json()
       setGifts(data.gifts || [])
@@ -126,7 +132,7 @@ export default function GiftsAdminPage() {
   }, [gifts, selectedGiftId])
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6 p-6">
       <div>
         <h1 className="text-2xl font-semibold text-neutral-900">Gifts</h1>
         <p className="text-sm text-neutral-500">Operational view of gift purchases and redemption status.</p>
@@ -158,7 +164,11 @@ export default function GiftsAdminPage() {
               </Select>
             </div>
 
-            {error && <div className="text-sm text-red-600">{error}</div>}
+            {error && (
+              <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {error}
+              </div>
+            )}
           </div>
 
           {loading ? (

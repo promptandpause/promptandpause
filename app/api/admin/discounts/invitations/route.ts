@@ -8,14 +8,14 @@ export async function GET(request: NextRequest) {
     const authSupabase = await createClient()
     const { data: { user }, error: authError } = await authSupabase.auth.getUser()
 
-    if (authError || !user) {
+    if (authError || !user?.email) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       )
     }
 
-    const adminAuth = await checkAdminAuth(user.email || undefined)
+    const adminAuth = await checkAdminAuth(user.email)
     if (!adminAuth.isAdmin) {
       return NextResponse.json(
         { error: 'Unauthorized - Admin access required' },
@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       return NextResponse.json(
-        { error: 'Failed to fetch invitations' },
+        { error: error.message || 'Failed to fetch invitations' },
         { status: 500 }
       )
     }

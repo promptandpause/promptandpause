@@ -45,6 +45,7 @@ BEGIN
       COUNT(*) FILTER (
         WHERE subscription_status IS NULL 
         OR subscription_status = 'free'
+        OR subscription_status = 'freemium'
         OR subscription_status = 'cancelled'
       ) AS free_count
     FROM profiles
@@ -80,7 +81,7 @@ BEGIN
     SELECT
       -- Count total prompts sent in period
       (SELECT COUNT(*) 
-       FROM prompts 
+       FROM prompts_history 
        WHERE created_at >= cutoff_date) AS prompts_count,
       
       -- Count total reflections in period
@@ -89,10 +90,10 @@ BEGIN
        WHERE created_at >= cutoff_date) AS reflections_count,
       
       -- Calculate average reflection length
-      (SELECT AVG(LENGTH(content))::NUMERIC 
+      (SELECT AVG(LENGTH(reflection_text))::NUMERIC 
        FROM reflections 
        WHERE created_at >= cutoff_date 
-       AND content IS NOT NULL) AS avg_length
+       AND reflection_text IS NOT NULL) AS avg_length
   )
   SELECT
     prompts_count AS total_prompts_sent,
@@ -137,7 +138,7 @@ BEGIN
     SELECT
       DATE(created_at) AS day,
       COUNT(*) AS count
-    FROM prompts
+    FROM prompts_history
     WHERE created_at >= cutoff_date
     GROUP BY DATE(created_at)
   ),
@@ -262,9 +263,9 @@ BEGIN
   WITH email_counts AS (
     SELECT
       COUNT(*) AS sent_count,
-      COUNT(*) FILTER (WHERE status = 'delivered') AS delivered_count,
+      COUNT(*) FILTER (WHERE status IN ('delivered', 'opened', 'clicked')) AS delivered_count,
       COUNT(*) FILTER (WHERE status = 'bounced') AS bounced_count,
-      COUNT(*) FILTER (WHERE status = 'opened') AS opened_count
+      COUNT(*) FILTER (WHERE status IN ('opened', 'clicked')) AS opened_count
     FROM email_logs
   )
   SELECT

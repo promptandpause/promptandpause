@@ -22,14 +22,14 @@ export async function POST(request: NextRequest) {
     const authSupabase = await createClient()
     const { data: { user: authUser }, error: authError } = await authSupabase.auth.getUser()
 
-    if (authError || !authUser) {
+    if (authError || !authUser?.email) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       )
     }
 
-    const adminAuth = await checkAdminAuth(authUser.email || undefined)
+    const adminAuth = await checkAdminAuth(authUser.email)
     if (!adminAuth.isAdmin) {
       return NextResponse.json(
         { error: 'Unauthorized - Admin access required' },
@@ -61,6 +61,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'User not found' },
         { status: 404 }
+      )
+    }
+
+    if (!userProfile.email) {
+      return NextResponse.json(
+        { error: 'User profile does not have an email address' },
+        { status: 400 }
       )
     }
 
@@ -125,6 +132,8 @@ export async function POST(request: NextRequest) {
         .eq('id', userProfile.id)
     }
 
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin
+
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
@@ -136,8 +145,8 @@ export async function POST(request: NextRequest) {
           quantity: 1,
         },
       ],
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/settings?discount_activated=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/settings?discount_cancelled=true`,
+      success_url: `${baseUrl}/dashboard/settings?discount_activated=true`,
+      cancel_url: `${baseUrl}/dashboard/settings?discount_cancelled=true`,
       metadata: {
         supabase_user_id: userProfile.id,
         discount_type,

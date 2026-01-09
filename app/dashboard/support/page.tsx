@@ -110,7 +110,7 @@ function ContactSupportPageContent() {
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
-  const [ticketId, setTicketId] = useState<number | null>(null)
+  const [ticketId, setTicketId] = useState<string | null>(null)
   
   // Form states
   const [selectedCategory, setSelectedCategory] = useState<string>("")
@@ -183,10 +183,10 @@ function ContactSupportPageContent() {
 
       if (response.ok && result.success) {
         setSubmitted(true)
-        setTicketId(result.ticketId || null)
+        setTicketId(typeof result.ticketId === 'string' ? result.ticketId : null)
         toast({
           title: "Support Ticket Created!",
-          description: `Ticket #${result.ticketId || 'created'}. We'll respond via email within 24-48 hours.`,
+          description: `Ticket created. We'll respond via email within 24-48 hours.`,
         })
         
         // Reset form after 5 seconds
@@ -303,7 +303,7 @@ function ContactSupportPageContent() {
                   <p className={`text-lg font-semibold mb-2 ${
                     theme === 'dark' ? 'text-blue-400' : 'text-blue-600'
                   }`}>
-                    Ticket #{ticketId}
+                    Ticket ID: {ticketId}
                   </p>
                 )}
                 <p className={`mb-2 ${

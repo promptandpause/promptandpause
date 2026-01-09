@@ -359,7 +359,8 @@ async function generateWithCustomization(
  */
 export async function sendWelcomeEmail(
   email: string,
-  name: string | null
+  name: string | null,
+  userId?: string | null
 ): Promise<{ success: boolean; emailId?: string; error?: string }> {
   try {
     if (!process.env.RESEND_API_KEY) {
@@ -383,7 +384,7 @@ export async function sendWelcomeEmail(
     if (error) {
       logger.error('email_welcome_send_error', { error, email })
       await logEmailSend({
-        userId: 'unknown',
+        userId: userId || 'unknown',
         recipientEmail: email,
         subject,
         templateName: 'welcome',
@@ -396,7 +397,7 @@ export async function sendWelcomeEmail(
     }
 
     await logEmailSend({
-      userId: 'unknown',
+      userId: userId || 'unknown',
       recipientEmail: email,
       subject,
       templateName: 'welcome',
@@ -1876,7 +1877,7 @@ export async function sendAdminCredentialsEmail(
     }
 
     const roleDisplay = role === 'super_admin' ? 'Super Admin' : role === 'admin' ? 'Admin' : 'Employee'
-    const loginUrl = `${APP_URL}/login`
+    const loginUrl = `${APP_URL}/admin-login`
 
     const html = emailWrapper(`
       ${h1('Admin account created')}

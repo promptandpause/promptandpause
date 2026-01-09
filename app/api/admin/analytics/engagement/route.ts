@@ -32,13 +32,55 @@ export async function GET(request: NextRequest) {
 
     const serviceSupabase = createServiceRoleClient()
 
+    const cutoffDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000)
+    const cutoffDateISO = cutoffDate.toISOString()
+    const cutoffDateStr = cutoffDateISO.split('T')[0]
+
     // Get overall engagement stats
-    const { data: engagementData } = await serviceSupabase.rpc('get_engagement_stats', { days_back: days })
-    const engagement = engagementData?.[0] || {
+    let engagement = {
       total_prompts_sent: 0,
       total_reflections: 0,
       overall_engagement_rate: 0,
-      avg_reflection_length: 0
+      avg_reflection_length: 0,
+    }
+
+    try {
+      const { data: engagementData, error: engagementError } = await serviceSupabase.rpc('get_engagement_stats', { days_back: days })
+      if (engagementError) throw engagementError
+
+      const row = engagementData?.[0] || {}
+      engagement = {
+        total_prompts_sent: Number((row as any).total_prompts_sent) || 0,
+        total_reflections: Number((row as any).total_reflections) || 0,
+        overall_engagement_rate: Number((row as any).overall_engagement_rate) || 0,
+        avg_reflection_length: Number((row as any).avg_reflection_length) || 0,
+      }
+    } catch {
+      const [promptCount, reflectionCount] = await Promise.all([
+        serviceSupabase
+          .from('prompts_history')
+          .select('id', { count: 'exact', head: true })
+          .gte('date_generated', cutoffDateStr),
+        serviceSupabase
+          .from('reflections')
+          .select('id', { count: 'exact', head: true })
+          .gte('created_at', cutoffDateISO),
+      ])
+
+      if (promptCount.error) throw promptCount.error
+      if (reflectionCount.error) throw reflectionCount.error
+
+      const total_prompts_sent = promptCount.count || 0
+      const total_reflections = reflectionCount.count || 0
+
+      engagement = {
+        total_prompts_sent,
+        total_reflections,
+        overall_engagement_rate: total_prompts_sent > 0
+          ? Math.round((total_reflections / total_prompts_sent) * 1000) / 10
+          : 0,
+        avg_reflection_length: 0,
+      }
     }
 
     // Get engagement by activity status

@@ -197,6 +197,17 @@ export async function createAdminUser(dto: CreateAdminUserDTO): Promise<{
       }
     }
 
+    // Additional restriction: only super_admin can create other super_admins
+    if (dto.role === 'super_admin') {
+      const creatorIsSuperAdmin = await isSuperAdmin(dto.created_by_email)
+      if (!creatorIsSuperAdmin) {
+        return {
+          success: false,
+          error: 'Only super admins can create super admin accounts'
+        }
+      }
+    }
+
     // Get creator's admin user ID
     const { data: creator } = await supabase
       .from('admin_users')
@@ -375,6 +386,17 @@ export async function updateAdminUser(
 }> {
   try {
     const supabase = createServiceRoleClient()
+
+    // Prevent role escalation to super_admin unless updater is super_admin
+    if (dto.role === 'super_admin') {
+      const updaterRole = await getAdminRole(dto.updated_by_email)
+      if (updaterRole !== 'super_admin') {
+        return {
+          success: false,
+          error: 'Only super admins can assign the super admin role'
+        }
+      }
+    }
 
     // Get target user's current role
     const { data: targetUser } = await supabase
@@ -618,6 +640,14 @@ export async function deactivateAdminUser(
       return {
         success: false,
         error: 'Admin user not found'
+      }
+    }
+
+    // Prevent self-deactivation (avoids locking out the current admin)
+    if (targetUser.email === deactivatedByEmail) {
+      return {
+        success: false,
+        error: 'You cannot deactivate your own admin account'
       }
     }
 

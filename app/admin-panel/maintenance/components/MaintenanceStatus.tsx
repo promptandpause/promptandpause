@@ -35,6 +35,7 @@ export default function MaintenanceStatus({ onStatusChange }: MaintenanceStatusP
   const [status, setStatus] = useState<MaintenanceInfo | null>(null)
   const [loading, setLoading] = useState(true)
   const [toggling, setToggling] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     loadStatus()
@@ -43,14 +44,20 @@ export default function MaintenanceStatus({ onStatusChange }: MaintenanceStatusP
   async function loadStatus() {
     try {
       setLoading(true)
+      setError(null)
       const response = await fetch('/api/admin/maintenance/status')
-      
-      if (response.ok) {
-        const data = await response.json()
-        // API returns { maintenance_mode: {...} }, extract the nested object
-        setStatus(data.maintenance_mode)
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => null)
+        throw new Error(data?.error || 'Failed to fetch maintenance status')
       }
-    } catch (error) {
+
+      const data = await response.json()
+      // API returns { maintenance_mode: {...} }, extract the nested object
+      setStatus(data.maintenance_mode)
+    } catch (error: any) {
+      setStatus(null)
+      setError(error?.message || 'Failed to fetch maintenance status')
     } finally {
       setLoading(false)
     }
@@ -103,9 +110,9 @@ export default function MaintenanceStatus({ onStatusChange }: MaintenanceStatusP
 
   if (loading) {
     return (
-      <Card className="bg-slate-800/50 border-slate-700 p-6">
+      <Card className="bg-white border-neutral-200 p-6">
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 text-slate-400 animate-spin" />
+          <Loader2 className="h-8 w-8 text-neutral-500 animate-spin" />
         </div>
       </Card>
     )
@@ -114,40 +121,50 @@ export default function MaintenanceStatus({ onStatusChange }: MaintenanceStatusP
   const isActive = status?.is_enabled || false
 
   return (
-    <Card className="bg-slate-800/50 border-slate-700 p-6 space-y-6">
+    <Card className="bg-white border-neutral-200 p-6 space-y-6">
       {/* Status Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-white">Current Status</h2>
+        <h2 className="text-xl font-semibold text-neutral-900">Current Status</h2>
         <Badge
           variant={isActive ? 'destructive' : 'outline'}
-          className={isActive ? 'bg-orange-500/20 text-orange-300 border-orange-500/30' : 'bg-green-500/20 text-green-300 border-green-500/30'}
+          className={
+            isActive
+              ? 'bg-amber-50 text-amber-800 border-amber-200'
+              : 'bg-emerald-50 text-emerald-800 border-emerald-200'
+          }
         >
           {isActive ? 'MAINTENANCE MODE' : 'OPERATIONAL'}
         </Badge>
       </div>
 
+      {error && (
+        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
       {/* Status Icon & Message */}
       <div className="flex flex-col items-center justify-center py-8 space-y-4">
         {isActive ? (
           <>
-            <AlertCircle className="h-20 w-20 text-orange-400" />
+            <AlertCircle className="h-20 w-20 text-amber-600" />
             <div className="text-center">
-              <p className="text-lg font-medium text-orange-300">
+              <p className="text-lg font-medium text-amber-800">
                 Maintenance Mode Active
               </p>
-              <p className="text-sm text-slate-400 mt-1">
+              <p className="text-sm text-neutral-500 mt-1">
                 Users are currently seeing the maintenance page
               </p>
             </div>
           </>
         ) : (
           <>
-            <CheckCircle className="h-20 w-20 text-green-400" />
+            <CheckCircle className="h-20 w-20 text-emerald-600" />
             <div className="text-center">
-              <p className="text-lg font-medium text-green-300">
+              <p className="text-lg font-medium text-emerald-800">
                 System Operational
               </p>
-              <p className="text-sm text-slate-400 mt-1">
+              <p className="text-sm text-neutral-500 mt-1">
                 All services are running normally
               </p>
             </div>
@@ -157,20 +174,20 @@ export default function MaintenanceStatus({ onStatusChange }: MaintenanceStatusP
 
       {/* Active Maintenance Details */}
       {isActive && status && (
-        <div className="border border-slate-700 rounded-lg p-4 space-y-3 bg-slate-900/50">
-          <h3 className="text-sm font-semibold text-slate-300">Maintenance Details</h3>
+        <div className="border border-neutral-200 rounded-lg p-4 space-y-3 bg-neutral-50">
+          <h3 className="text-sm font-semibold text-neutral-900">Maintenance Details</h3>
           
           {status.notes && (
             <div>
-              <p className="text-xs text-slate-500">Notes:</p>
-              <p className="text-sm text-slate-300">{status.notes}</p>
+              <p className="text-xs text-neutral-500">Notes:</p>
+              <p className="text-sm text-neutral-700">{status.notes}</p>
             </div>
           )}
 
           {status.enabled_at && (
             <div>
-              <p className="text-xs text-slate-500">Enabled At:</p>
-              <p className="text-sm text-slate-300">
+              <p className="text-xs text-neutral-500">Enabled At:</p>
+              <p className="text-sm text-neutral-700">
                 {new Date(status.enabled_at).toLocaleString()}
               </p>
             </div>
@@ -179,7 +196,7 @@ export default function MaintenanceStatus({ onStatusChange }: MaintenanceStatusP
       )}
 
       {/* Control Buttons */}
-      <div className="space-y-2 pt-4 border-t border-slate-700">
+      <div className="space-y-2 pt-4 border-t border-neutral-200">
         {isActive ? (
           <AlertDialog open={disableConfirmOpen} onOpenChange={setDisableConfirmOpen}>
             <AlertDialogTrigger asChild>
@@ -200,15 +217,15 @@ export default function MaintenanceStatus({ onStatusChange }: MaintenanceStatusP
                 )}
               </Button>
             </AlertDialogTrigger>
-            <AlertDialogContent className="bg-slate-900 border-slate-700">
+            <AlertDialogContent className="bg-white border-neutral-200">
               <AlertDialogHeader>
-                <AlertDialogTitle className="text-white">Disable Maintenance Mode</AlertDialogTitle>
-                <AlertDialogDescription className="text-slate-400">
+                <AlertDialogTitle className="text-neutral-900">Disable Maintenance Mode</AlertDialogTitle>
+                <AlertDialogDescription className="text-neutral-500">
                   Are you sure? Site will return to normal operation.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel className="bg-slate-800 text-white border-slate-700">Cancel</AlertDialogCancel>
+                <AlertDialogCancel className="bg-white text-neutral-900 border-neutral-200">Cancel</AlertDialogCancel>
                 <AlertDialogAction onClick={() => confirmToggle(false)} className="bg-green-600 hover:bg-green-700">
                   Confirm
                 </AlertDialogAction>
@@ -236,15 +253,15 @@ export default function MaintenanceStatus({ onStatusChange }: MaintenanceStatusP
                 )}
               </Button>
             </AlertDialogTrigger>
-            <AlertDialogContent className="bg-slate-900 border-slate-700">
+            <AlertDialogContent className="bg-white border-neutral-200">
               <AlertDialogHeader>
-                <AlertDialogTitle className="text-white">Enable Maintenance Mode</AlertDialogTitle>
-                <AlertDialogDescription className="text-slate-400">
+                <AlertDialogTitle className="text-neutral-900">Enable Maintenance Mode</AlertDialogTitle>
+                <AlertDialogDescription className="text-neutral-500">
                   Are you sure? Users will see the maintenance page.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel className="bg-slate-800 text-white border-slate-700">Cancel</AlertDialogCancel>
+                <AlertDialogCancel className="bg-white text-neutral-900 border-neutral-200">Cancel</AlertDialogCancel>
                 <AlertDialogAction onClick={() => confirmToggle(true)} className="bg-orange-600 hover:bg-orange-700">
                   Confirm
                 </AlertDialogAction>
@@ -253,7 +270,7 @@ export default function MaintenanceStatus({ onStatusChange }: MaintenanceStatusP
           </AlertDialog>
         )}
 
-        <p className="text-xs text-slate-500 text-center pt-2">
+        <p className="text-xs text-neutral-500 text-center pt-2">
           {isActive
             ? 'Disabling will restore normal site operation'
             : 'Enabling will show maintenance page to all users'}

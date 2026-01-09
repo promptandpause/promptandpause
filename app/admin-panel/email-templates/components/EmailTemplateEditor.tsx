@@ -87,26 +87,26 @@ export default function EmailTemplateEditor({ template, onSave }: EmailTemplateE
   }
 
   return (
-    <Card className="bg-slate-800/50 border-slate-700 p-6 space-y-6">
+    <Card className="bg-white border border-gray-100 p-6 space-y-6">
       <div>
-        <h2 className="text-xl font-semibold text-white mb-1">{template.name}</h2>
-        <p className="text-sm text-slate-400">{template.description}</p>
+        <h2 className="text-xl font-semibold text-gray-900 mb-1">{template.name}</h2>
+        <p className="text-sm text-gray-500">{template.description}</p>
       </div>
 
       <div className="space-y-4">
         <div>
-          <Label className="text-slate-300">Logo URL</Label>
+          <Label className="text-gray-700">Logo URL</Label>
           <Input
             value={customization.logo_url}
             onChange={(e) => setCustomization({ ...customization, logo_url: e.target.value })}
-            className="bg-slate-900 border-slate-700 text-white"
+            className="bg-white border-gray-200 text-gray-900"
             placeholder="https://..."
           />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label className="text-slate-300">Primary Color</Label>
+            <Label className="text-gray-700">Primary Color</Label>
             <div className="flex gap-2">
               <Input
                 type="color"
@@ -117,13 +117,13 @@ export default function EmailTemplateEditor({ template, onSave }: EmailTemplateE
               <Input
                 value={customization.primary_color}
                 onChange={(e) => setCustomization({ ...customization, primary_color: e.target.value })}
-                className="bg-slate-900 border-slate-700 text-white flex-1"
+                className="bg-white border-gray-200 text-gray-900 flex-1"
               />
             </div>
           </div>
 
           <div>
-            <Label className="text-slate-300">Secondary Color</Label>
+            <Label className="text-gray-700">Secondary Color</Label>
             <div className="flex gap-2">
               <Input
                 type="color"
@@ -134,13 +134,13 @@ export default function EmailTemplateEditor({ template, onSave }: EmailTemplateE
               <Input
                 value={customization.secondary_color}
                 onChange={(e) => setCustomization({ ...customization, secondary_color: e.target.value })}
-                className="bg-slate-900 border-slate-700 text-white flex-1"
+                className="bg-white border-gray-200 text-gray-900 flex-1"
               />
             </div>
           </div>
 
           <div>
-            <Label className="text-slate-300">Background Color</Label>
+            <Label className="text-gray-700">Background Color</Label>
             <div className="flex gap-2">
               <Input
                 type="color"
@@ -151,13 +151,13 @@ export default function EmailTemplateEditor({ template, onSave }: EmailTemplateE
               <Input
                 value={customization.background_color}
                 onChange={(e) => setCustomization({ ...customization, background_color: e.target.value })}
-                className="bg-slate-900 border-slate-700 text-white flex-1"
+                className="bg-white border-gray-200 text-gray-900 flex-1"
               />
             </div>
           </div>
 
           <div>
-            <Label className="text-slate-300">Button Text Color</Label>
+            <Label className="text-gray-700">Button Text Color</Label>
             <div className="flex gap-2">
               <Input
                 type="color"
@@ -168,36 +168,36 @@ export default function EmailTemplateEditor({ template, onSave }: EmailTemplateE
               <Input
                 value={customization.button_text_color}
                 onChange={(e) => setCustomization({ ...customization, button_text_color: e.target.value })}
-                className="bg-slate-900 border-slate-700 text-white flex-1"
+                className="bg-white border-gray-200 text-gray-900 flex-1"
               />
             </div>
           </div>
         </div>
 
         <div>
-          <Label className="text-slate-300">Custom Header Text</Label>
+          <Label className="text-gray-700">Custom Header Text</Label>
           <Textarea
             value={customization.custom_header_text}
             onChange={(e) => setCustomization({ ...customization, custom_header_text: e.target.value })}
-            className="bg-slate-900 border-slate-700 text-white"
+            className="bg-white border-gray-200 text-gray-900"
             rows={2}
             placeholder="Optional custom header text..."
           />
         </div>
 
         <div>
-          <Label className="text-slate-300">Custom Footer Text</Label>
+          <Label className="text-gray-700">Custom Footer Text</Label>
           <Textarea
             value={customization.custom_footer_text}
             onChange={(e) => setCustomization({ ...customization, custom_footer_text: e.target.value })}
-            className="bg-slate-900 border-slate-700 text-white"
+            className="bg-white border-gray-200 text-gray-900"
             rows={2}
             placeholder="Optional custom footer text..."
           />
         </div>
       </div>
 
-      <div className="flex gap-2 pt-4 border-t border-slate-700">
+      <div className="flex gap-2 pt-4 border-t border-gray-100">
         <Button
           onClick={handleSave}
           disabled={saving}
@@ -210,21 +210,21 @@ export default function EmailTemplateEditor({ template, onSave }: EmailTemplateE
           <AlertDialogTrigger asChild>
             <Button
               variant="outline"
-              className="border-slate-600 text-slate-300 hover:bg-slate-800"
+              className="border-gray-200 bg-white text-gray-900 hover:bg-gray-50"
             >
               <RotateCcw className="h-4 w-4 mr-2" />
               Restore Defaults
             </Button>
           </AlertDialogTrigger>
-          <AlertDialogContent className="bg-slate-900 border-slate-700">
+          <AlertDialogContent className="bg-white border-gray-200">
             <AlertDialogHeader>
-              <AlertDialogTitle className="text-white">Restore to Defaults</AlertDialogTitle>
-              <AlertDialogDescription className="text-slate-400">
+              <AlertDialogTitle className="text-gray-900">Restore to Defaults</AlertDialogTitle>
+              <AlertDialogDescription className="text-gray-600">
                 Are you sure you want to restore this template to its default settings? All customizations will be lost.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel className="bg-slate-800 text-white border-slate-700">Cancel</AlertDialogCancel>
+              <AlertDialogCancel className="bg-white text-gray-900 border-gray-200">Cancel</AlertDialogCancel>
               <AlertDialogAction onClick={confirmRestore} className="bg-blue-600 hover:bg-blue-700">
                 Restore
               </AlertDialogAction>

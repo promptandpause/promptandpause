@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { isAdminUser, getAdminRole } from '@/lib/services/adminUserService'
+import { isAdminUser, getAdminRole, updateLastLogin } from '@/lib/services/adminUserService'
 import { logger } from '@/lib/utils/logger'
 
 export interface AdminAuthResult {
@@ -109,6 +109,13 @@ export async function verifyAdminAccess(
       role,
       ip: getClientIp(request)
     })
+
+    // Track last login time for admin users
+    try {
+      await updateLastLogin(user.email)
+    } catch (error) {
+      logger.warn('admin_last_login_update_failed', { error, email: user.email })
+    }
 
     return {
       success: true,

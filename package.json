@@ -5,7 +5,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings 0",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings 0 --ignore-pattern \"app/auth__current_backup/**\"",
     "start": "next start",
     "security:headers": "node -e \"console.log('security:headers skipped (script not present in repo)')\"",
     "security:rl-smoke": "node -e \"console.log('security:rl-smoke skipped (script not present in repo)')\"",

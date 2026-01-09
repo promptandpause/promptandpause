@@ -64,7 +64,8 @@ export async function POST(request: NextRequest) {
         // Send welcome email
         const emailResult = await sendWelcomeEmail(
           emailJob.recipient_email,
-          emailJob.recipient_name
+          emailJob.recipient_name,
+          emailJob.user_id
         )
 
         if (emailResult.success) {

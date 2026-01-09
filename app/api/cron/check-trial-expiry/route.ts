@@ -29,17 +29,20 @@ export async function POST(request: NextRequest) {
     }
     const supabase = createServiceRoleClient()
 
+    const nowIso = new Date().toISOString()
+    const sevenDaysAgoIso = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+
     // Find all users with expired trials (premium status but trial/subscription end is past)
     const { data: expiredUsers, error: fetchError } = await supabase
       .from('profiles')
-      .select('id, email, full_name, subscription_end_date, subscription_status, subscription_id, trial_end_date, is_trial')
+      .select('id, email, full_name, subscription_end_date, subscription_status, subscription_id, trial_start_date, trial_end_date, is_trial')
       .eq('subscription_status', 'premium')
+      .eq('is_trial', true)
       .or(
         [
-          `subscription_end_date.lt.${new Date().toISOString()}`,
-          `trial_end_date.lt.${new Date().toISOString()}`,
-          // If we somehow have a premium trial with no end date, treat as expired to be safe
-          'subscription_end_date.is.null,trial_end_date.is.null,is_trial.eq.true',
+          `trial_end_date.lt.${nowIso}`,
+          // Backstop: if trial_end_date is missing, only expire if trial_start_date is > 7 days ago
+          `and(trial_end_date.is.null,trial_start_date.lt.${sevenDaysAgoIso})`,
         ].join(',')
       )
       .is('subscription_id', null) // Only users without Stripe subscription (trial users)
@@ -116,7 +119,7 @@ export async function POST(request: NextRequest) {
             new_status: 'free',
             metadata: {
               reason: 'trial_expired',
-              trial_end_date: user.subscription_end_date,
+              trial_end_date: user.trial_end_date,
               processed_at: new Date().toISOString(),
             },
           })

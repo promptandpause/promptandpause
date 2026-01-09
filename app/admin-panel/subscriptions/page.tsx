@@ -34,14 +34,15 @@ interface SubscriptionStats {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  freemium: 'bg-blue-500/10 text-blue-400 border-blue-400/30',
-  premium: 'bg-green-500/10 text-green-400 border-green-400/30',
-  cancelled: 'bg-red-500/10 text-red-400 border-red-400/30',
+  free: 'bg-blue-50 text-blue-700 border-blue-200',
+  freemium: 'bg-blue-50 text-blue-700 border-blue-200',
+  premium: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  cancelled: 'bg-red-50 text-red-700 border-red-200',
 }
 
 const CYCLE_COLORS: Record<string, string> = {
-  monthly: 'bg-purple-500/10 text-purple-400 border-purple-400/30',
-  yearly: 'bg-yellow-500/10 text-yellow-400 border-yellow-400/30',
+  monthly: 'bg-purple-50 text-purple-700 border-purple-200',
+  yearly: 'bg-amber-50 text-amber-700 border-amber-200',
 }
 
 export default function SubscriptionsPage() {
@@ -51,6 +52,7 @@ export default function SubscriptionsPage() {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
   const [stats, setStats] = useState<SubscriptionStats | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [cycleFilter, setCycleFilter] = useState('all')
@@ -63,6 +65,7 @@ export default function SubscriptionsPage() {
   const loadSubscriptions = useCallback(async () => {
     try {
       setLoading(true)
+      setError(null)
       const params = new URLSearchParams({
         limit: limit.toString(),
         offset: ((currentPage - 1) * limit).toString(),
@@ -82,7 +85,10 @@ export default function SubscriptionsPage() {
       const data = await response.json()
       setSubscriptions(data.subscriptions)
       setTotalPages(Math.ceil(data.total / limit))
-    } catch (error) {
+    } catch (error: any) {
+      setSubscriptions([])
+      setTotalPages(1)
+      setError(error?.message || 'Failed to fetch subscriptions')
     } finally {
       setLoading(false)
     }
@@ -111,7 +117,9 @@ export default function SubscriptionsPage() {
       if (!response.ok) throw new Error('Failed to fetch stats')
       const data = await response.json()
       setStats(data.stats)
-    } catch (error) {
+    } catch (error: any) {
+      setStats(null)
+      setError(error?.message || 'Failed to fetch subscription stats')
     }
   }
 
@@ -144,7 +152,8 @@ export default function SubscriptionsPage() {
       setSubscriptions(data.subscriptions)
       setTotalPages(Math.ceil(data.total / limit))
       setCurrentPage(1)
-    } catch (error) {
+    } catch (error: any) {
+      setError(error?.message || 'Failed to search subscriptions')
     } finally {
       setLoading(false)
     }
@@ -203,36 +212,37 @@ export default function SubscriptionsPage() {
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
-    } catch (error) {
+    } catch (error: any) {
+      setError(error?.message || 'Failed to export subscriptions')
     }
   }
 
   function getStatusColor(status: string): string {
-    return STATUS_COLORS[status] || 'bg-slate-500/10 text-slate-400 border-slate-400/30'
+    return STATUS_COLORS[status] || 'bg-neutral-50 text-neutral-700 border-neutral-200'
   }
 
   function getCycleColor(cycle: string): string {
-    return CYCLE_COLORS[cycle] || 'bg-slate-500/10 text-slate-400 border-slate-400/30'
+    return CYCLE_COLORS[cycle] || 'bg-neutral-50 text-neutral-700 border-neutral-200'
   }
 
   if (loading && !subscriptions.length && !stats) {
     return (
-      <div className="space-y-6">
-        <Skeleton className="h-8 w-64 bg-slate-800" />
+      <div className="p-6 space-y-6">
+        <Skeleton className="h-8 w-64" />
         <div className="grid gap-4 md:grid-cols-4">
           {[1, 2, 3, 4].map(i => (
-            <Skeleton key={i} className="h-32 bg-slate-800" />
+            <Skeleton key={i} className="h-32" />
           ))}
         </div>
-        <Skeleton className="h-96 bg-slate-800" />
+        <Skeleton className="h-96" />
       </div>
     )
   }
 
   return (
-    <div className="space-y-4">
+    <div className="h-full flex flex-col p-6 gap-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold text-neutral-900">Subscriptions</h1>
           <p className="text-sm text-neutral-500">Manage subscriptions and billing.</p>
@@ -250,9 +260,15 @@ export default function SubscriptionsPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-6">
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+          <p className="text-sm text-red-700">{error}</p>
+        </div>
+      )}
+
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-6 min-h-0">
         {/* Left pane: list */}
-        <div className="bg-white border border-neutral-200 rounded-xl overflow-hidden">
+        <div className="bg-white border border-neutral-200 rounded-xl overflow-hidden flex flex-col min-h-0">
           {/* Filters */}
           <div className="p-4 border-b border-neutral-200 space-y-3">
             <div className="relative">
@@ -277,7 +293,7 @@ export default function SubscriptionsPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All statuses</SelectItem>
-                  <SelectItem value="freemium">Freemium</SelectItem>
+                  <SelectItem value="free">Free</SelectItem>
                   <SelectItem value="premium">Premium</SelectItem>
                   <SelectItem value="cancelled">Cancelled</SelectItem>
                 </SelectContent>
@@ -299,7 +315,7 @@ export default function SubscriptionsPage() {
           </div>
 
           {/* Subscriptions Table */}
-          <div className="overflow-x-auto">
+          <div className="flex-1 overflow-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-neutral-200">
@@ -417,19 +433,19 @@ export default function SubscriptionsPage() {
         </div>
 
         {/* Right pane: detail */}
-        <div className="bg-white border border-neutral-200 rounded-xl overflow-hidden">
+        <div className="bg-white border border-neutral-200 rounded-xl overflow-hidden flex flex-col min-h-0">
           {!selectedSubscriptionId ? (
-            <div className="p-10 text-sm text-neutral-500">Select a subscription to view details.</div>
+            <div className="flex-1 p-10 text-sm text-neutral-500">Select a subscription to view details.</div>
           ) : loading ? (
-            <div className="p-6 space-y-4">
+            <div className="flex-1 p-6 space-y-4">
               <Skeleton className="h-6 w-56" />
               <Skeleton className="h-4 w-72" />
               <Skeleton className="h-40 w-full" />
             </div>
           ) : !selectedRow ? (
-            <div className="p-6 text-sm text-neutral-500">Subscription not found.</div>
+            <div className="flex-1 p-6 text-sm text-neutral-500">Subscription not found.</div>
           ) : (
-            <div>
+            <>
               <div className="px-6 py-5 border-b border-neutral-200">
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
@@ -448,7 +464,7 @@ export default function SubscriptionsPage() {
                 </div>
               </div>
 
-              <div className="px-6 py-6">
+              <div className="px-6 py-6 flex-1 overflow-y-auto">
                 <div className="grid grid-cols-1 gap-5">
                   <div className="space-y-1">
                     <div className="text-xs text-neutral-500">Status</div>
@@ -493,7 +509,7 @@ export default function SubscriptionsPage() {
                   </div>
                 </div>
               </div>
-            </div>
+            </>
           )}
         </div>
       </div>

@@ -64,6 +64,7 @@ export default function UsersPage() {
 
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [search, setSearch] = useState('')
   const [subscriptionFilter, setSubscriptionFilter] = useState('all')
   const [activityFilter, setActivityFilter] = useState('all')
@@ -85,6 +86,7 @@ export default function UsersPage() {
   const loadUsers = useCallback(async () => {
     try {
       setLoading(true)
+      setError(null)
       const params = new URLSearchParams({
         limit: limit.toString(),
         offset: (page * limit).toString(),
@@ -100,7 +102,10 @@ export default function UsersPage() {
       const data = await response.json()
       setUsers(data.data)
       setTotal(data.total)
-    } catch (error) {
+    } catch (error: any) {
+      setUsers([])
+      setTotal(0)
+      setError(error?.message || 'Failed to fetch users')
     } finally {
       setLoading(false)
     }
@@ -193,13 +198,15 @@ export default function UsersPage() {
   async function handleExport() {
     try {
       const response = await fetch('/api/admin/users/export')
+      if (!response.ok) throw new Error('Failed to export users')
       const blob = await response.blob()
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
       a.download = `users-export-${new Date().toISOString().split('T')[0]}.csv`
       a.click()
-    } catch (error) {
+    } catch (error: any) {
+      setError(error?.message || 'Failed to export users')
     }
   }
 
@@ -228,8 +235,8 @@ export default function UsersPage() {
   const totalPages = Math.ceil(total / limit)
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
+    <div className="h-full flex flex-col p-6 gap-6">
+      <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold text-neutral-900">Users</h1>
           <p className="text-sm text-neutral-500">Search and manage users.</p>
@@ -241,9 +248,15 @@ export default function UsersPage() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-6">
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+          <p className="text-sm text-red-700">{error}</p>
+        </div>
+      )}
+
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-6 min-h-0">
         {/* Left pane: user list */}
-        <div className="bg-white border border-neutral-200 rounded-xl overflow-hidden">
+        <div className="bg-white border border-neutral-200 rounded-xl overflow-hidden flex flex-col min-h-0">
           <div className="p-4 border-b border-neutral-200 space-y-3">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
@@ -272,7 +285,7 @@ export default function UsersPage() {
                 <SelectContent>
                   <SelectItem value="all">All plans</SelectItem>
                   <SelectItem value="premium">Premium</SelectItem>
-                  <SelectItem value="freemium">Free</SelectItem>
+                  <SelectItem value="free">Free</SelectItem>
                   <SelectItem value="cancelled">Cancelled</SelectItem>
                 </SelectContent>
               </Select>
@@ -300,7 +313,7 @@ export default function UsersPage() {
             <div className="text-xs text-neutral-500">Showing {users.length} of {total}</div>
           </div>
 
-          <div className="divide-y divide-neutral-200">
+          <div className="divide-y divide-neutral-200 flex-1 overflow-y-auto">
             {loading ? (
               <div className="p-4 space-y-3">
                 {Array.from({ length: 10 }).map((_, i) => (
@@ -391,23 +404,21 @@ export default function UsersPage() {
         </div>
 
         {/* Right pane: detail */}
-        <div className="bg-white border border-neutral-200 rounded-xl overflow-hidden">
+        <div className="bg-white border border-neutral-200 rounded-xl overflow-hidden flex flex-col min-h-0">
           {!selectedUserId ? (
-            <div className="p-10 text-sm text-neutral-500">
-              Select a user to view details.
-            </div>
+            <div className="flex-1 p-10 text-sm text-neutral-500">Select a user to view details.</div>
           ) : detailLoading ? (
-            <div className="p-6 space-y-4">
+            <div className="flex-1 p-6 space-y-4">
               <Skeleton className="h-6 w-56" />
               <Skeleton className="h-4 w-72" />
               <Skeleton className="h-40 w-full" />
             </div>
           ) : detailError ? (
-            <div className="p-6 text-sm text-red-600">{detailError}</div>
+            <div className="flex-1 p-6 text-sm text-red-600">{detailError}</div>
           ) : !selectedUserDetail ? (
-            <div className="p-6 text-sm text-neutral-500">User not found.</div>
+            <div className="flex-1 p-6 text-sm text-neutral-500">User not found.</div>
           ) : (
-            <div>
+            <>
               <div className="px-6 py-5 border-b border-neutral-200">
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
@@ -426,8 +437,8 @@ export default function UsersPage() {
                 </div>
               </div>
 
-              <div className="px-6 py-4">
-                <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
+              <div className="px-6 py-4 flex-1 min-h-0 overflow-y-auto">
+                <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="min-h-0">
                   <TabsList className="bg-neutral-100 border border-neutral-200">
                     <TabsTrigger value="overview" className="data-[state=active]:bg-white">Overview</TabsTrigger>
                     <TabsTrigger value="subscription" className="data-[state=active]:bg-white">Subscription</TabsTrigger>
@@ -563,7 +574,7 @@ export default function UsersPage() {
                   </TabsContent>
                 </Tabs>
               </div>
-            </div>
+            </>
           )}
         </div>
       </div>

@@ -1,6 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
-import { sendWelcomeEmail } from '@/lib/services/emailService'
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
@@ -31,18 +30,6 @@ export async function GET(request: Request) {
         .single()
 
       if (!preferences) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('full_name, email')
-          .eq('id', user.id)
-          .single()
-
-        if (profile?.email) {
-          sendWelcomeEmail(profile.email, profile.full_name).catch((error) => {
-            console.error('Failed to send welcome email:', error)
-          })
-        }
-
         return NextResponse.redirect(`${origin}/onboarding`)
       }
 

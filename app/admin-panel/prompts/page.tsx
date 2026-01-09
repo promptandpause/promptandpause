@@ -37,6 +37,7 @@ const CATEGORIES = ['reflection', 'mindfulness', 'gratitude', 'goal-setting', 's
 export default function PromptLibraryPage() {
   const [prompts, setPrompts] = useState<Prompt[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [search, setSearch] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('')
   const [page, setPage] = useState(1)
@@ -57,6 +58,7 @@ export default function PromptLibraryPage() {
   const fetchPrompts = useCallback(async () => {
     setLoading(true)
     try {
+      setError(null)
       const params = new URLSearchParams({
         page: page.toString(),
         ...(categoryFilter && { category: categoryFilter }),
@@ -64,12 +66,18 @@ export default function PromptLibraryPage() {
       })
 
       const res = await fetch(`/api/admin/prompts?${params}`)
-      if (res.ok) {
-        const data = await res.json()
-        setPrompts(data.prompts)
-        setTotalPages(data.totalPages)
+      if (!res.ok) {
+        const data = await res.json().catch(() => null)
+        throw new Error(data?.error || 'Failed to fetch prompts')
       }
-    } catch (error) {
+
+      const data = await res.json()
+      setPrompts(data.prompts)
+      setTotalPages(data.totalPages)
+    } catch (error: any) {
+      setPrompts([])
+      setTotalPages(1)
+      setError(error?.message || 'Failed to fetch prompts')
     } finally {
       setLoading(false)
     }
@@ -110,6 +118,7 @@ export default function PromptLibraryPage() {
 
   const handleSubmit = async () => {
     try {
+      setError(null)
       const payload = {
         ...formData,
         tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean),
@@ -124,11 +133,15 @@ export default function PromptLibraryPage() {
         body: JSON.stringify(payload),
       })
 
-      if (res.ok) {
-        setDialogOpen(false)
-        fetchPrompts()
+      if (!res.ok) {
+        const data = await res.json().catch(() => null)
+        throw new Error(data?.error || 'Failed to save prompt')
       }
-    } catch (error) {
+
+      setDialogOpen(false)
+      fetchPrompts()
+    } catch (error: any) {
+      setError(error?.message || 'Failed to save prompt')
     }
   }
 
@@ -144,11 +157,16 @@ export default function PromptLibraryPage() {
     if (!promptToDelete) return
 
     try {
+      setError(null)
       const res = await fetch(`/api/admin/prompts/${promptToDelete}`, { method: 'DELETE' })
-      if (res.ok) {
-        fetchPrompts()
+      if (!res.ok) {
+        const data = await res.json().catch(() => null)
+        throw new Error(data?.error || 'Failed to delete prompt')
       }
-    } catch (error) {
+
+      fetchPrompts()
+    } catch (error: any) {
+      setError(error?.message || 'Failed to delete prompt')
     } finally {
       setDeleteConfirmOpen(false)
       setPromptToDelete(null)
@@ -158,17 +176,17 @@ export default function PromptLibraryPage() {
   if (loading && prompts.length === 0) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-slate-400">Loading prompt library...</div>
+        <div className="text-neutral-500">Loading prompt library...</div>
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="h-full flex flex-col p-6 gap-6">
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Prompt Library</h1>
-          <p className="text-slate-400">Manage reusable prompts and templates</p>
+          <h1 className="text-2xl font-semibold text-neutral-900">Prompt Library</h1>
+          <p className="text-sm text-neutral-500">Manage reusable prompts and templates</p>
         </div>
         <Button onClick={handleCreate} className="bg-blue-600 hover:bg-blue-700">
           <Plus className="h-4 w-4 mr-2" />
@@ -176,10 +194,16 @@ export default function PromptLibraryPage() {
         </Button>
       </div>
 
-      <Card className="bg-slate-900 border-slate-800">
+      {error && (
+        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
+      <Card className="bg-white border-neutral-200">
         <CardHeader>
-          <CardTitle className="text-white">Prompts</CardTitle>
-          <CardDescription className="text-slate-400">
+          <CardTitle className="text-neutral-900">Prompts</CardTitle>
+          <CardDescription className="text-neutral-500">
             Browse and manage prompt templates
           </CardDescription>
         </CardHeader>
@@ -191,7 +215,7 @@ export default function PromptLibraryPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                className="bg-slate-800 border-slate-700 text-white"
+                className="bg-white border-neutral-200 text-neutral-900"
               />
               <Button onClick={handleSearch} className="bg-blue-600 hover:bg-blue-700">
                 <Search className="h-4 w-4" />
@@ -204,7 +228,7 @@ export default function PromptLibraryPage() {
                 setCategoryFilter(e.target.value)
                 setPage(1)
               }}
-              className="px-3 py-2 bg-slate-800 border border-slate-700 rounded-md text-white text-sm"
+              className="px-3 py-2 bg-white border border-neutral-200 rounded-md text-neutral-900 text-sm"
             >
               <option value="">All Categories</option>
               {CATEGORIES.map(cat => (
@@ -215,39 +239,39 @@ export default function PromptLibraryPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {prompts.length === 0 ? (
-              <div className="col-span-full text-center py-8 text-slate-400">
+              <div className="col-span-full text-center py-8 text-neutral-500">
                 No prompts found
               </div>
             ) : (
               prompts.map((prompt) => (
-                <Card key={prompt.id} className="bg-slate-800 border-slate-700">
+                <Card key={prompt.id} className="bg-white border-neutral-200">
                   <CardHeader>
                     <div className="flex items-start justify-between">
-                      <CardTitle className="text-white text-lg">{prompt.title}</CardTitle>
+                      <CardTitle className="text-neutral-900 text-lg">{prompt.title}</CardTitle>
                       {prompt.is_active ? (
                         <CheckCircle className="h-5 w-5 text-green-500" />
                       ) : (
-                        <XCircle className="h-5 w-5 text-slate-500" />
+                        <XCircle className="h-5 w-5 text-neutral-400" />
                       )}
                     </div>
-                    <CardDescription className="text-slate-400">
+                    <CardDescription className="text-neutral-500">
                       {prompt.category}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    <p className="text-sm text-slate-300 line-clamp-3">{prompt.content}</p>
+                    <p className="text-sm text-neutral-700 line-clamp-3">{prompt.content}</p>
                     
                     {prompt.tags.length > 0 && (
                       <div className="flex flex-wrap gap-1">
                         {prompt.tags.slice(0, 3).map((tag, i) => (
-                          <Badge key={i} variant="outline" className="text-xs bg-slate-700 border-slate-600">
+                          <Badge key={i} variant="outline" className="text-xs bg-neutral-50 border-neutral-200 text-neutral-700">
                             {tag}
                           </Badge>
                         ))}
                       </div>
                     )}
 
-                    <div className="text-xs text-slate-500">
+                    <div className="text-xs text-neutral-500">
                       Created {format(new Date(prompt.created_at), 'MMM dd, yyyy')}
                     </div>
 
@@ -256,7 +280,7 @@ export default function PromptLibraryPage() {
                         size="sm"
                         variant="outline"
                         onClick={() => handleEdit(prompt)}
-                        className="flex-1 bg-slate-700 border-slate-600 hover:bg-slate-600"
+                        className="flex-1 bg-white border-neutral-200 hover:bg-neutral-50 text-neutral-900"
                       >
                         <Edit className="h-3 w-3 mr-1" />
                         Edit
@@ -267,20 +291,20 @@ export default function PromptLibraryPage() {
                             size="sm"
                             variant="outline"
                             onClick={() => handleDelete(prompt.id)}
-                            className="bg-red-900/20 border-red-800 hover:bg-red-900/40 text-red-400"
+                            className="bg-red-50 border-red-200 hover:bg-red-100 text-red-700"
                           >
                             <Trash2 className="h-3 w-3" />
                           </Button>
                         </AlertDialogTrigger>
-                        <AlertDialogContent className="bg-slate-900 border-slate-700">
+                        <AlertDialogContent className="bg-white border-neutral-200">
                           <AlertDialogHeader>
-                            <AlertDialogTitle className="text-white">Delete Prompt</AlertDialogTitle>
-                            <AlertDialogDescription className="text-slate-400">
+                            <AlertDialogTitle className="text-neutral-900">Delete Prompt</AlertDialogTitle>
+                            <AlertDialogDescription className="text-neutral-500">
                               Are you sure you want to delete "{prompt.title}"? This action cannot be undone.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel className="bg-slate-800 text-white border-slate-700">Cancel</AlertDialogCancel>
+                            <AlertDialogCancel className="bg-white text-neutral-900 border-neutral-200">Cancel</AlertDialogCancel>
                             <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
                               Delete
                             </AlertDialogAction>
@@ -301,11 +325,11 @@ export default function PromptLibraryPage() {
                 size="sm"
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="bg-slate-800 border-slate-700 text-white hover:bg-slate-700"
+                className="bg-white border-neutral-200 text-neutral-900 hover:bg-neutral-50"
               >
                 Previous
               </Button>
-              <span className="flex items-center px-4 text-sm text-slate-400">
+              <span className="flex items-center px-4 text-sm text-neutral-500">
                 Page {page} of {totalPages}
               </span>
               <Button
@@ -313,7 +337,7 @@ export default function PromptLibraryPage() {
                 size="sm"
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="bg-slate-800 border-slate-700 text-white hover:bg-slate-700"
+                className="bg-white border-neutral-200 text-neutral-900 hover:bg-neutral-50"
               >
                 Next
               </Button>
@@ -323,42 +347,42 @@ export default function PromptLibraryPage() {
       </Card>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="bg-slate-900 border-slate-800 text-white max-w-2xl">
+        <DialogContent className="bg-white border-neutral-200 text-neutral-900 max-w-2xl">
           <DialogHeader>
             <DialogTitle>{editingPrompt ? 'Edit Prompt' : 'Create New Prompt'}</DialogTitle>
-            <DialogDescription className="text-slate-400">
+            <DialogDescription className="text-neutral-500">
               {editingPrompt ? 'Update the prompt details below' : 'Add a new prompt to the library'}
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium text-slate-300">Title</label>
+              <label className="text-sm font-medium text-neutral-700">Title</label>
               <Input
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className="bg-slate-800 border-slate-700 text-white"
+                className="bg-white border-neutral-200 text-neutral-900"
                 placeholder="Prompt title..."
               />
             </div>
 
             <div>
-              <label className="text-sm font-medium text-slate-300">Content</label>
+              <label className="text-sm font-medium text-neutral-700">Content</label>
               <Textarea
                 value={formData.content}
                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                className="bg-slate-800 border-slate-700 text-white min-h-[120px]"
+                className="bg-white border-neutral-200 text-neutral-900 min-h-[120px]"
                 placeholder="Prompt content..."
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-sm font-medium text-slate-300">Category</label>
+                <label className="text-sm font-medium text-neutral-700">Category</label>
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-md text-white text-sm"
+                  className="w-full px-3 py-2 bg-white border border-neutral-200 rounded-md text-neutral-900 text-sm"
                 >
                   {CATEGORIES.map(cat => (
                     <option key={cat} value={cat}>{cat}</option>
@@ -367,11 +391,11 @@ export default function PromptLibraryPage() {
               </div>
 
               <div>
-                <label className="text-sm font-medium text-slate-300">Status</label>
+                <label className="text-sm font-medium text-neutral-700">Status</label>
                 <select
                   value={formData.is_active ? 'active' : 'inactive'}
                   onChange={(e) => setFormData({ ...formData, is_active: e.target.value === 'active' })}
-                  className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-md text-white text-sm"
+                  className="w-full px-3 py-2 bg-white border border-neutral-200 rounded-md text-neutral-900 text-sm"
                 >
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
@@ -380,18 +404,18 @@ export default function PromptLibraryPage() {
             </div>
 
             <div>
-              <label className="text-sm font-medium text-slate-300">Tags (comma-separated)</label>
+              <label className="text-sm font-medium text-neutral-700">Tags (comma-separated)</label>
               <Input
                 value={formData.tags}
                 onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-                className="bg-slate-800 border-slate-700 text-white"
+                className="bg-white border-neutral-200 text-neutral-900"
                 placeholder="mindfulness, wellness, daily"
               />
             </div>
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)} className="bg-slate-800 border-slate-700">
+            <Button variant="outline" onClick={() => setDialogOpen(false)} className="bg-white border-neutral-200">
               Cancel
             </Button>
             <Button onClick={handleSubmit} className="bg-blue-600 hover:bg-blue-700">

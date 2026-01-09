@@ -17,17 +17,14 @@ export default function SendTestEmail({ template }: SendTestEmailProps) {
   const { toast } = useToast()
   const [email, setEmail] = useState('')
   const [sending, setSending] = useState(false)
-  const [sampleData, setSampleData] = useState<Record<string, string>>({})
-
-  // Initialize sample data based on template variables
-  useState(() => {
+  const [sampleData, setSampleData] = useState<Record<string, string>>(() => {
     const initialData: Record<string, string> = {}
     template.variables.forEach((variable) => {
       initialData[variable] = `Sample ${variable}`
     })
     initialData.userName = 'John Doe'
     initialData.email = 'john@example.com'
-    setSampleData(initialData)
+    return initialData
   })
 
   async function handleSendTest() {
@@ -75,30 +72,30 @@ export default function SendTestEmail({ template }: SendTestEmailProps) {
   }
 
   return (
-    <Card className="bg-slate-800/50 border-slate-700 p-6 space-y-6">
+    <Card className="bg-white border border-gray-100 p-6 space-y-6">
       <div>
-        <h3 className="text-lg font-semibold text-white mb-1">Send Test Email</h3>
-        <p className="text-sm text-slate-400">Send a test email to preview how it looks</p>
+        <h3 className="text-lg font-semibold text-gray-900 mb-1">Send Test Email</h3>
+        <p className="text-sm text-gray-500">Send a test email to preview how it looks</p>
       </div>
 
       {/* Recipient Email */}
       <div>
-        <Label className="text-slate-300">Recipient Email</Label>
+        <Label className="text-gray-700">Recipient Email</Label>
         <Input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="your@email.com"
-          className="bg-slate-900 border-slate-700 text-white"
+          className="bg-white border-gray-200 text-gray-900"
         />
       </div>
 
       {/* Sample Data Fields */}
       <div className="space-y-4">
-        <Label className="text-slate-300">Sample Data</Label>
+        <Label className="text-gray-700">Sample Data</Label>
         {template.variables.map((variable) => (
           <div key={variable}>
-            <Label className="text-xs text-slate-400 capitalize">
+            <Label className="text-xs text-gray-500 capitalize">
               {variable.replace(/_/g, ' ')}
             </Label>
             <Input
@@ -106,7 +103,7 @@ export default function SendTestEmail({ template }: SendTestEmailProps) {
               onChange={(e) =>
                 setSampleData({ ...sampleData, [variable]: e.target.value })
               }
-              className="bg-slate-900 border-slate-700 text-white text-sm"
+              className="bg-white border-gray-200 text-gray-900 text-sm"
               placeholder={`Sample ${variable}`}
             />
           </div>
@@ -117,7 +114,7 @@ export default function SendTestEmail({ template }: SendTestEmailProps) {
       <Button
         onClick={handleSendTest}
         disabled={sending || !email}
-        className="w-full bg-green-600 hover:bg-green-700 text-white"
+        className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
       >
         {sending ? (
           <>
@@ -133,10 +130,10 @@ export default function SendTestEmail({ template }: SendTestEmailProps) {
       </Button>
 
       {/* Info */}
-      <div className="text-xs text-slate-500 space-y-1 border-t border-slate-700 pt-4">
-        <p>• Rate limit: 5 test emails per hour</p>
-        <p>• Uses current template customization</p>
-        <p>• Check spam folder if not received</p>
+      <div className="text-xs text-gray-500 space-y-1 border-t border-gray-100 pt-4">
+        <p>Rate limit: 5 test emails per hour</p>
+        <p>Uses current template customization</p>
+        <p>Check spam folder if not received</p>
       </div>
     </Card>
   )

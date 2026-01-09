@@ -1,18 +1,6 @@
 name: Scheduled Cron Jobs
 
 on:
-  schedule:
-    # Send daily prompts - runs every hour
-    - cron: '0 * * * *'
-    # Welcome emails - runs every 15 minutes
-    - cron: '*/15 * * * *'
-    # Check trial expiry - runs daily at midnight UTC
-    - cron: '0 0 * * *'
-    # Expire trials - runs daily at 1am UTC
-    - cron: '0 1 * * *'
-    # Regenerate weekly insights - Mon and Fri at 6am UTC
-    - cron: '0 6 * * 1,5'
-  
   # Allow manual trigger for testing
   workflow_dispatch:
     inputs:

@@ -48,9 +48,9 @@ interface CronJobStats {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  success: 'bg-green-500/10 text-green-400 border-green-400/30',
-  failed: 'bg-red-500/10 text-red-400 border-red-400/30',
-  running: 'bg-blue-500/10 text-blue-400 border-blue-400/30',
+  success: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  failed: 'bg-red-50 text-red-700 border-red-200',
+  running: 'bg-blue-50 text-blue-700 border-blue-200',
 }
 
 const AVAILABLE_JOBS = [
@@ -72,6 +72,7 @@ export default function CronJobsPage() {
   const [runs, setRuns] = useState<CronJobRun[]>([])
   const [stats, setStats] = useState<CronJobStats | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [triggering, setTriggering] = useState<string | null>(null)
   const [refreshing, setRefreshing] = useState(false)
   const [jobFilter, setJobFilter] = useState('all')
@@ -83,6 +84,7 @@ export default function CronJobsPage() {
   const loadRuns = useCallback(async () => {
     try {
       setLoading(true)
+      setError(null)
       const params = new URLSearchParams({
         limit: limit.toString(),
         offset: ((currentPage - 1) * limit).toString(),
@@ -102,7 +104,8 @@ export default function CronJobsPage() {
       const data = await response.json()
       setRuns(data.runs)
       setTotalPages(Math.ceil(data.total / limit))
-    } catch (error) {
+    } catch (error: any) {
+      setError(error?.message || 'Failed to load cron job runs')
     } finally {
       setLoading(false)
     }
@@ -118,19 +121,28 @@ export default function CronJobsPage() {
 
   async function loadStats() {
     try {
+      setError(null)
       const response = await fetch('/api/admin/cron-jobs/stats')
       if (!response.ok) throw new Error('Failed to fetch stats')
       const data = await response.json()
       setStats(data.stats)
-    } catch (error) {
+    } catch (error: any) {
+      setError(error?.message || 'Failed to load cron job stats')
     }
   }
 
   async function refreshData() {
-    setRefreshing(true)
-    await Promise.all([loadStats(), loadRuns()])
-    setRefreshing(false)
-    toast.success('Data refreshed')
+    try {
+      setRefreshing(true)
+      setError(null)
+      await Promise.all([loadStats(), loadRuns()])
+      toast.success('Data refreshed')
+    } catch (error: any) {
+      setError(error?.message || 'Failed to refresh data')
+      toast.error('Failed to refresh data')
+    } finally {
+      setRefreshing(false)
+    }
   }
 
   const [triggerConfirmOpen, setTriggerConfirmOpen] = useState(false)
@@ -147,23 +159,25 @@ export default function CronJobsPage() {
     try {
       setTriggering(jobToTrigger)
 
-      const response = await fetch(`/api/cron/${jobToTrigger}`, {
+      const response = await fetch('/api/admin/cron-jobs/trigger', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-        }
+        },
+        body: JSON.stringify({ job_name: jobToTrigger }),
       })
 
       const data = await response.json()
 
       if (response.ok) {
-        toast.success(`Job triggered successfully! Processed ${data.stats?.totalProcessed || 0} users.`)
+        const processed = data?.data?.stats?.totalProcessed || 0
+        toast.success(`Job triggered successfully! Processed ${processed} users.`)
         setTimeout(() => {
           loadStats()
           loadRuns()
         }, 2000)
       } else {
-        toast.error(data.error || 'Failed to trigger cron job')
+        toast.error(data?.error || 'Failed to trigger cron job')
       }
     } catch (error) {
       toast.error('Failed to trigger cron job')
@@ -175,32 +189,32 @@ export default function CronJobsPage() {
   }
 
   function getStatusColor(status: string): string {
-    return STATUS_COLORS[status] || 'bg-slate-500/10 text-slate-400 border-slate-400/30'
+    return STATUS_COLORS[status] || 'bg-gray-50 text-gray-700 border-gray-200'
   }
 
   function getStatusIcon(status: string) {
     switch (status) {
       case 'success':
-        return <CheckCircle className="h-4 w-4" />
+        return <CheckCircle className="h-4 w-4 text-emerald-600" />
       case 'failed':
-        return <XCircle className="h-4 w-4" />
+        return <XCircle className="h-4 w-4 text-red-600" />
       case 'running':
-        return <Activity className="h-4 w-4 animate-spin" />
+        return <Activity className="h-4 w-4 text-blue-600 animate-spin" />
       default:
-        return <Clock className="h-4 w-4" />
+        return <Clock className="h-4 w-4 text-gray-500" />
     }
   }
 
   if (loading && !runs.length && !stats) {
     return (
       <div className="space-y-6">
-        <Skeleton className="h-8 w-64 bg-slate-800" />
+        <Skeleton className="h-8 w-64 bg-gray-200" />
         <div className="grid gap-4 md:grid-cols-4">
           {[1, 2, 3, 4].map(i => (
-            <Skeleton key={i} className="h-32 bg-slate-800" />
+            <Skeleton key={i} className="h-32 bg-gray-200" />
           ))}
         </div>
-        <Skeleton className="h-96 bg-slate-800" />
+        <Skeleton className="h-96 bg-gray-200" />
       </div>
     )
   }
@@ -210,29 +224,29 @@ export default function CronJobsPage() {
       title: 'Total Runs',
       value: stats.total_runs.toLocaleString(),
       icon: Activity,
-      color: 'text-blue-400',
-      bgColor: 'bg-blue-500/10',
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-50',
     },
     {
       title: 'Successful',
       value: stats.successful_runs.toLocaleString(),
       icon: CheckCircle,
-      color: 'text-green-400',
-      bgColor: 'bg-green-500/10',
+      color: 'text-emerald-600',
+      bgColor: 'bg-emerald-50',
     },
     {
       title: 'Failed',
       value: stats.failed_runs.toLocaleString(),
       icon: XCircle,
-      color: 'text-red-400',
-      bgColor: 'bg-red-500/10',
+      color: 'text-red-600',
+      bgColor: 'bg-red-50',
     },
     {
       title: 'Success Rate',
       value: `${stats.success_rate.toFixed(1)}%`,
       icon: TrendingUp,
-      color: 'text-purple-400',
-      bgColor: 'bg-purple-500/10',
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-50',
     },
   ] : []
 
@@ -240,38 +254,45 @@ export default function CronJobsPage() {
   const uniqueJobs = Array.from(new Set(runs.map(r => r.job_name)))
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white">Cron Job Monitoring</h1>
-          <p className="text-slate-400 mt-1">Track scheduled job executions</p>
+          <h1 className="text-2xl font-semibold text-gray-900">Cron Job Monitoring</h1>
+          <p className="text-sm text-gray-500 mt-1">Track scheduled job executions</p>
         </div>
         <Button
           onClick={refreshData}
           disabled={refreshing}
           variant="outline"
-          className="border-slate-700 text-white hover:bg-slate-800"
+          className="border-gray-200 bg-white text-gray-900 hover:bg-gray-50"
         >
           <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
           Refresh
         </Button>
       </div>
 
+      {error && (
+        <Card className="p-4 bg-red-50 border-red-200">
+          <p className="text-sm text-red-700">{error}</p>
+        </Card>
+      )}
+
       {/* Available Jobs - Manual Trigger */}
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-white">Available Jobs</h2>
+        <h2 className="text-xl font-semibold text-gray-900">Available Jobs</h2>
         <div className="grid gap-4">
           {AVAILABLE_JOBS.map((job) => (
-            <Card key={job.name} className="bg-slate-800/50 border-slate-700">
+            <Card key={job.name} className="bg-white border border-gray-100">
               <div className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className="text-4xl">{job.icon}</div>
                     <div>
-                      <h3 className="text-lg font-semibold text-white">{job.displayName}</h3>
-                      <p className="text-sm text-slate-400 mt-1">{job.description}</p>
-                      <p className="text-xs text-slate-500 mt-2">
-                        Job Name: <code className="bg-slate-900 px-2 py-0.5 rounded">{job.name}</code>
+                      <h3 className="text-lg font-semibold text-gray-900">{job.displayName}</h3>
+                      <p className="text-sm text-gray-500 mt-1">{job.description}</p>
+                      <p className="text-xs text-gray-500 mt-2">
+                        Job Name:{' '}
+                        <code className="bg-gray-100 text-gray-800 px-2 py-0.5 rounded">{job.name}</code>
                       </p>
                     </div>
                   </div>
@@ -294,15 +315,15 @@ export default function CronJobsPage() {
                         )}
                       </Button>
                     </AlertDialogTrigger>
-                    <AlertDialogContent className="bg-slate-900 border-slate-700">
+                    <AlertDialogContent className="bg-white border-gray-200">
                       <AlertDialogHeader>
-                        <AlertDialogTitle className="text-white">Trigger Cron Job</AlertDialogTitle>
-                        <AlertDialogDescription className="text-slate-400">
+                        <AlertDialogTitle className="text-gray-900">Trigger Cron Job</AlertDialogTitle>
+                        <AlertDialogDescription className="text-gray-600">
                           Are you sure you want to manually trigger "{job.displayName}"? This will send emails to eligible users.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel className="bg-slate-800 text-white border-slate-700">Cancel</AlertDialogCancel>
+                        <AlertDialogCancel className="bg-white text-gray-900 border-gray-200">Cancel</AlertDialogCancel>
                         <AlertDialogAction onClick={confirmTrigger} className="bg-blue-600 hover:bg-blue-700">
                           Confirm
                         </AlertDialogAction>
@@ -321,7 +342,7 @@ export default function CronJobsPage() {
           {statCards.map((card) => {
             const Icon = card.icon
             return (
-              <Card key={card.title} className="bg-slate-800/50 border-slate-700">
+              <Card key={card.title} className="bg-white border border-gray-100">
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <div className={`p-2 rounded-lg ${card.bgColor}`}>
@@ -329,8 +350,8 @@ export default function CronJobsPage() {
                     </div>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-sm text-slate-400">{card.title}</p>
-                    <p className="text-2xl font-bold text-white">{card.value}</p>
+                    <p className="text-sm text-gray-500">{card.title}</p>
+                    <p className="text-2xl font-semibold text-gray-900">{card.value}</p>
                   </div>
                 </div>
               </Card>
@@ -339,10 +360,10 @@ export default function CronJobsPage() {
         </div>
       )}
 
-      <Card className="bg-slate-800/50 border-slate-700 p-4">
+      <Card className="bg-white border border-gray-100 p-4">
         <div className="flex gap-4">
           <Select value={jobFilter} onValueChange={setJobFilter}>
-            <SelectTrigger className="w-[200px] bg-slate-900 border-slate-700 text-white">
+            <SelectTrigger className="w-[200px] bg-white border-gray-200 text-gray-900">
               <SelectValue placeholder="All Jobs" />
             </SelectTrigger>
             <SelectContent>
@@ -354,7 +375,7 @@ export default function CronJobsPage() {
           </Select>
 
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[180px] bg-slate-900 border-slate-700 text-white">
+            <SelectTrigger className="w-[180px] bg-white border-gray-200 text-gray-900">
               <SelectValue placeholder="All Statuses" />
             </SelectTrigger>
             <SelectContent>
@@ -367,16 +388,16 @@ export default function CronJobsPage() {
         </div>
       </Card>
 
-      <Card className="bg-slate-800/50 border-slate-700">
+      <Card className="bg-white border border-gray-100">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-slate-700">
-                <th className="text-left p-4 text-slate-400 font-medium">Job Name</th>
-                <th className="text-left p-4 text-slate-400 font-medium">Status</th>
-                <th className="text-left p-4 text-slate-400 font-medium">Started</th>
-                <th className="text-left p-4 text-slate-400 font-medium">Duration</th>
-                <th className="text-left p-4 text-slate-400 font-medium">Error</th>
+              <tr className="border-b border-gray-100">
+                <th className="text-left p-4 text-gray-500 font-medium">Job Name</th>
+                <th className="text-left p-4 text-gray-500 font-medium">Status</th>
+                <th className="text-left p-4 text-gray-500 font-medium">Started</th>
+                <th className="text-left p-4 text-gray-500 font-medium">Duration</th>
+                <th className="text-left p-4 text-gray-500 font-medium">Error</th>
               </tr>
             </thead>
             <tbody>
@@ -391,8 +412,8 @@ export default function CronJobsPage() {
               ) : runs.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="p-8 text-center">
-                    <div className="flex flex-col items-center gap-3 text-slate-400">
-                      <AlertCircle className="h-12 w-12 text-slate-600" />
+                    <div className="flex flex-col items-center gap-3 text-gray-500">
+                      <AlertCircle className="h-12 w-12 text-gray-300" />
                       <div>
                         <p className="font-medium">No cron job runs found</p>
                         <p className="text-sm mt-1">Trigger a job manually or wait for the scheduled run</p>
@@ -402,8 +423,8 @@ export default function CronJobsPage() {
                 </tr>
               ) : (
                 runs.map((run) => (
-                  <tr key={run.id} className="border-b border-slate-700/50 hover:bg-slate-900/50">
-                    <td className="p-4 text-sm font-medium text-white">{run.job_name}</td>
+                  <tr key={run.id} className="border-b border-gray-100 hover:bg-gray-50">
+                    <td className="p-4 text-sm font-medium text-gray-900">{run.job_name}</td>
                     <td className="p-4">
                       <div className="flex items-center gap-2">
                         {getStatusIcon(run.status)}
@@ -412,19 +433,19 @@ export default function CronJobsPage() {
                         </Badge>
                       </div>
                     </td>
-                    <td className="p-4 text-sm text-slate-300">
+                    <td className="p-4 text-sm text-gray-700">
                       {format(new Date(run.started_at), 'MMM dd, HH:mm:ss')}
                     </td>
-                    <td className="p-4 text-sm text-slate-300">
+                    <td className="p-4 text-sm text-gray-700">
                       {run.execution_time_ms ? `${run.execution_time_ms}ms` : '-'}
                     </td>
-                    <td className="p-4 text-sm text-slate-400">
+                    <td className="p-4 text-sm text-gray-500">
                       {run.error_message ? (
                         <details className="cursor-pointer">
-                          <summary className="text-red-400 hover:text-red-300">
+                          <summary className="text-red-700 hover:text-red-800">
                             View error
                           </summary>
-                          <pre className="mt-2 text-xs bg-slate-950 p-2 rounded border border-slate-700 overflow-x-auto max-w-md">
+                          <pre className="mt-2 text-xs bg-red-50 p-3 rounded-lg border border-red-200 overflow-x-auto max-w-md text-red-800">
                             {run.error_message}
                           </pre>
                         </details>
@@ -440,8 +461,8 @@ export default function CronJobsPage() {
         </div>
 
         {totalPages > 1 && (
-          <div className="flex items-center justify-between p-4 border-t border-slate-700">
-            <p className="text-sm text-slate-400">
+          <div className="flex items-center justify-between p-4 border-t border-gray-100">
+            <p className="text-sm text-gray-500">
               Page {currentPage} of {totalPages}
             </p>
             <div className="flex gap-2">
@@ -450,7 +471,7 @@ export default function CronJobsPage() {
                 disabled={currentPage === 1}
                 variant="outline"
                 size="sm"
-                className="border-slate-700 text-white hover:bg-slate-800 disabled:opacity-50"
+                className="border-gray-200 bg-white text-gray-900 hover:bg-gray-50 disabled:opacity-50"
               >
                 Previous
               </Button>
@@ -459,7 +480,7 @@ export default function CronJobsPage() {
                 disabled={currentPage === totalPages}
                 variant="outline"
                 size="sm"
-                className="border-slate-700 text-white hover:bg-slate-800 disabled:opacity-50"
+                className="border-gray-200 bg-white text-gray-900 hover:bg-gray-50 disabled:opacity-50"
               >
                 Next
               </Button>

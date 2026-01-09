@@ -57,6 +57,14 @@ function applySecurityHeaders(response: NextResponse): NextResponse {
   return response
 }
 
+ function redirectNoStore(url: URL, request: NextRequest): NextResponse {
+   const response = NextResponse.redirect(url)
+   response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate')
+   response.headers.set('Pragma', 'no-cache')
+   response.headers.set('Expires', '0')
+   return applySecurityHeaders(response)
+ }
+
 /**
  * Check if pathname is a static asset
  */
@@ -148,15 +156,24 @@ export default async function middleware(request: NextRequest) {
   }
 
   // RESTRICTION: Admin subdomain should only serve admin panel routes
-  if (isAdminSubdomain && !pathname.startsWith('/admin-panel') && pathname !== '/admin-login') {
+  if (
+    isAdminSubdomain &&
+    !pathname.startsWith('/admin-panel') &&
+    !pathname.startsWith('/api') &&
+    pathname !== '/admin-login'
+  ) {
     // Redirect to admin panel root on admin subdomain
-    return NextResponse.redirect(new URL('/admin-panel', request.url))
+    return redirectNoStore(new URL('/admin-panel', request.url), request)
   }
 
   if (isAdminSubdomain && pathname === '/admin-panel/login') {
     const rewriteUrl = request.nextUrl.clone()
     rewriteUrl.pathname = '/admin-login'
-    return applySecurityHeaders(NextResponse.rewrite(rewriteUrl))
+    const rewriteResponse = NextResponse.rewrite(rewriteUrl)
+    rewriteResponse.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate')
+    rewriteResponse.headers.set('Pragma', 'no-cache')
+    rewriteResponse.headers.set('Expires', '0')
+    return applySecurityHeaders(rewriteResponse)
   }
 
   // RESTRICTION: Admin panel routes should only be accessible on admin subdomain
@@ -164,13 +181,13 @@ export default async function middleware(request: NextRequest) {
     // Redirect to admin subdomain
     const adminUrl = new URL(request.url)
     adminUrl.hostname = `admin.${adminUrl.hostname}`
-    return NextResponse.redirect(adminUrl)
+    return redirectNoStore(adminUrl, request)
   }
 
   if (!isAdminSubdomain && pathname === '/admin-login') {
     const adminUrl = new URL(request.url)
     adminUrl.hostname = `admin.${adminUrl.hostname}`
-    return NextResponse.redirect(adminUrl)
+    return redirectNoStore(adminUrl, request)
   }
 
   const supabase = createServerClient(
@@ -249,11 +266,11 @@ export default async function middleware(request: NextRequest) {
         } else if (!isAdmin && !pathname.startsWith('/admin-panel')) {
           // Redirect non-admins to maintenance page
           const maintenanceUrl = new URL('/maintenance', request.url)
-          return NextResponse.redirect(maintenanceUrl)
+          return redirectNoStore(maintenanceUrl, request)
         } else if (!isAdmin && pathname.startsWith('/admin-panel') && pathname !== '/admin-panel/login') {
           // Non-admin trying to access admin panel - redirect to maintenance
           const maintenanceUrl = new URL('/maintenance', request.url)
-          return NextResponse.redirect(maintenanceUrl)
+          return redirectNoStore(maintenanceUrl, request)
         }
       }
     } catch (error) {
@@ -304,7 +321,7 @@ export default async function middleware(request: NextRequest) {
     const isEmailVerified = user.email_confirmed_at !== null
     
     if (!isOAuthUser && !isEmailVerified) {
-      return NextResponse.redirect(new URL('/verify', request.url))
+      return redirectNoStore(new URL('/verify', request.url), request)
     }
     
     // Check if user has completed onboarding
@@ -315,7 +332,7 @@ export default async function middleware(request: NextRequest) {
       .single()
 
     if (!preferences || prefsError) {
-      return NextResponse.redirect(new URL('/onboarding', request.url))
+      return redirectNoStore(new URL('/onboarding', request.url), request)
     }
   }
 
@@ -329,16 +346,16 @@ export default async function middleware(request: NextRequest) {
     }
 
     if (!user) {
-      const redirectUrl = new URL('/admin-panel/login', request.url)
+      const redirectUrl = new URL('/admin-login', request.url)
       redirectUrl.searchParams.set('redirect', request.nextUrl.pathname)
-      return NextResponse.redirect(redirectUrl)
+      return redirectNoStore(redirectUrl, request)
     }
 
     // Check if user has admin access
     const hasAdminAccess = user.email ? await isAdminUser(user.email) : false
     if (!hasAdminAccess) {
       // Not an admin - redirect to dashboard
-      return NextResponse.redirect(new URL('/dashboard', request.url))
+      return redirectNoStore(new URL('/dashboard', request.url), request)
     }
 
     // Check for super admin only routes
@@ -346,7 +363,7 @@ export default async function middleware(request: NextRequest) {
       const isSuperAdminUser = user.email ? await isSuperAdmin(user.email) : false
       if (!isSuperAdminUser) {
         // Not a super admin - redirect to admin panel home
-        return NextResponse.redirect(new URL('/admin-panel', request.url))
+        return redirectNoStore(new URL('/admin-panel', request.url), request)
       }
     }
 
@@ -358,7 +375,7 @@ export default async function middleware(request: NextRequest) {
     if (!user) {
       const redirectUrl = new URL('/login', request.url)
       redirectUrl.searchParams.set('redirect', request.nextUrl.pathname)
-      return NextResponse.redirect(redirectUrl)
+      return redirectNoStore(redirectUrl, request)
     }
 
     // CRITICAL: Check if user has completed onboarding
@@ -370,7 +387,7 @@ export default async function middleware(request: NextRequest) {
       .single()
     if (!preferences || prefsError) {
       // Redirect to onboarding if not completed
-      return NextResponse.redirect(new URL('/onboarding', request.url))
+      return redirectNoStore(new URL('/onboarding', request.url), request)
     }
 
     return response
@@ -379,7 +396,7 @@ export default async function middleware(request: NextRequest) {
   // Protect onboarding route - require authentication and email verification
   if (request.nextUrl.pathname === '/onboarding') {
     if (!user) {
-      return NextResponse.redirect(new URL('/login', request.url))
+      return redirectNoStore(new URL('/login', request.url), request)
     }
 
     // Check if email is verified (only for email/password users)
@@ -387,7 +404,7 @@ export default async function middleware(request: NextRequest) {
     const isEmailVerified = user.email_confirmed_at !== null
     
     if (!isOAuthUser && !isEmailVerified) {
-      return NextResponse.redirect(new URL('/verify', request.url))
+      return redirectNoStore(new URL('/verify', request.url), request)
     }
 
     // If user has already completed onboarding, redirect to dashboard
@@ -398,7 +415,7 @@ export default async function middleware(request: NextRequest) {
       .single()
 
     if (preferences) {
-      return NextResponse.redirect(new URL('/dashboard', request.url))
+      return redirectNoStore(new URL('/dashboard', request.url), request)
     }
 
     return response
@@ -414,10 +431,10 @@ export default async function middleware(request: NextRequest) {
       .single()
 
     if (!preferences) {
-      return NextResponse.redirect(new URL('/onboarding', request.url))
+      return redirectNoStore(new URL('/onboarding', request.url), request)
     }
 
-    return NextResponse.redirect(new URL('/dashboard', request.url))
+    return redirectNoStore(new URL('/dashboard', request.url), request)
   }
 
   return response

@@ -1,41 +1,12 @@
-import axios, { AxiosInstance } from 'axios'
+import type { AxiosInstance } from 'axios'
 import { createServiceRoleClient } from '@/lib/supabase/server'
-
-// Freshdesk API client singleton
-let freshdeskClient: AxiosInstance | null = null
 
 /**
  * Initialize Freshdesk API client with Basic Auth
  * @see https://developers.freshdesk.com/api/#authentication
  */
 function initFreshdeskClient(): AxiosInstance | null {
-  const domain = process.env.FRESHDESK_DOMAIN
-  const apiKey = process.env.FRESHDESK_API_KEY
-  const enabled = process.env.NEXT_PUBLIC_FRESHDESK_ENABLED === 'true'
-
-  if (!enabled) {
-    return null
-  }
-
-  if (!domain || !apiKey) {
-    return null
-  }
-
-  if (!freshdeskClient) {
-    freshdeskClient = axios.create({
-      baseURL: `https://${domain}/api/v2`,
-      auth: {
-        username: apiKey,
-        password: 'X' // Freshdesk uses API key as username, password can be anything
-      },
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      timeout: 10000
-    })
-  }
-
-  return freshdeskClient
+  throw new Error('Freshdesk integration has been retired')
 }
 
 /**

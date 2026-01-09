@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
 import { 
   updateAdminUser,
   deactivateAdminUser,
   UpdateAdminUserDTO 
 } from '@/lib/services/adminUserService'
+import { verifyAdminAccess } from '@/lib/middleware/verifyAdminAccess'
 
 /**
  * PATCH /api/admin/admin-users/[id]
@@ -15,13 +15,11 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-
-    if (authError || !user) {
+    const auth = await verifyAdminAccess(request, 'admin')
+    if (!auth.success) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
+        { error: auth.error },
+        { status: auth.statusCode || 403 }
       )
     }
 
@@ -33,7 +31,7 @@ export async function PATCH(
       role,
       department,
       is_active,
-      updated_by_email: user.email!
+      updated_by_email: auth.adminEmail!
     }
 
     const result = await updateAdminUser(params.id, dto)
@@ -67,17 +65,15 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-
-    if (authError || !user) {
+    const auth = await verifyAdminAccess(request, 'admin')
+    if (!auth.success) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
+        { error: auth.error },
+        { status: auth.statusCode || 403 }
       )
     }
 
-    const result = await deactivateAdminUser(params.id, user.email!)
+    const result = await deactivateAdminUser(params.id, auth.adminEmail!)
 
     if (!result.success) {
       return NextResponse.json(

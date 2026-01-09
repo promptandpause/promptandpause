@@ -40,7 +40,7 @@ interface Subscription {
   subscription_status: string
   subscription_id: string | null
   stripe_customer_id: string | null
-  billing_cycle: string
+  billing_cycle: string | null
   subscription_end_date: string | null
   created_at: string
   updated_at: string
@@ -56,20 +56,20 @@ interface SubscriptionEvent {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  freemium: 'bg-blue-500/10 text-blue-400 border-blue-400/30',
-  premium: 'bg-green-500/10 text-green-400 border-green-400/30',
-  cancelled: 'bg-red-500/10 text-red-400 border-red-400/30',
+  free: 'bg-blue-50 text-blue-700 border-blue-200',
+  premium: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  cancelled: 'bg-red-50 text-red-700 border-red-200',
 }
 
 const EVENT_COLORS: Record<string, string> = {
-  created: 'text-green-400',
-  upgraded: 'text-green-400',
-  downgraded: 'text-yellow-400',
-  cancelled: 'text-red-400',
-  renewed: 'text-blue-400',
-  payment_failed: 'text-red-400',
-  reactivated: 'text-green-400',
-  admin_update: 'text-purple-400',
+  created: 'text-emerald-700',
+  upgraded: 'text-emerald-700',
+  downgraded: 'text-amber-700',
+  cancelled: 'text-red-700',
+  renewed: 'text-blue-700',
+  payment_failed: 'text-red-700',
+  reactivated: 'text-emerald-700',
+  admin_update: 'text-purple-700',
 }
 
 export default function SubscriptionDetailPage() {
@@ -81,6 +81,7 @@ export default function SubscriptionDetailPage() {
   const [subscription, setSubscription] = useState<Subscription | null>(null)
   const [events, setEvents] = useState<SubscriptionEvent[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [updating, setUpdating] = useState(false)
   const [newStatus, setNewStatus] = useState('')
   const [newCycle, setNewCycle] = useState('')
@@ -89,6 +90,7 @@ export default function SubscriptionDetailPage() {
   const loadSubscription = useCallback(async () => {
     try {
       setLoading(true)
+      setError(null)
       const response = await fetch(`/api/admin/subscriptions/${userId}`)
       if (!response.ok) throw new Error('Failed to fetch subscription')
 
@@ -98,7 +100,10 @@ export default function SubscriptionDetailPage() {
       setNewStatus(data.subscription.subscription_status)
       // ✅ FIX: Default to 'monthly' if billing_cycle is null
       setNewCycle(data.subscription.billing_cycle || 'monthly')
-    } catch (error) {
+    } catch (error: any) {
+      setSubscription(null)
+      setEvents([])
+      setError(error?.message || 'Failed to fetch subscription')
     } finally {
       setLoading(false)
     }
@@ -249,11 +254,11 @@ export default function SubscriptionDetailPage() {
   }
 
   function getStatusColor(status: string): string {
-    return STATUS_COLORS[status] || 'bg-slate-500/10 text-slate-400 border-slate-400/30'
+    return STATUS_COLORS[status] || 'bg-neutral-50 text-neutral-700 border-neutral-200'
   }
 
   function getEventColor(eventType: string): string {
-    return EVENT_COLORS[eventType] || 'text-slate-400'
+    return EVENT_COLORS[eventType] || 'text-neutral-600'
   }
 
   function getEventIcon(eventType: string) {
@@ -274,50 +279,50 @@ export default function SubscriptionDetailPage() {
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <Skeleton className="h-8 w-64 bg-slate-800" />
-        <Skeleton className="h-96 bg-slate-800" />
+      <div className="p-6 space-y-6">
+        <Skeleton className="h-8 w-64" />
+        <Skeleton className="h-96" />
       </div>
     )
   }
 
   if (!subscription) {
     return (
-      <div className="space-y-6">
+      <div className="p-6 space-y-6">
         <Link href="/admin-panel/subscriptions">
-          <Button variant="ghost" className="text-slate-400 hover:text-white">
+          <Button variant="ghost" className="text-neutral-600 hover:text-neutral-900">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Subscriptions
           </Button>
         </Link>
-        <Card className="p-6 bg-red-500/10 border-red-500/20">
-          <p className="text-red-400">Subscription not found</p>
+        <Card className="p-6 bg-red-50 border border-red-200">
+          <p className="text-red-700">{error || 'Subscription not found'}</p>
         </Card>
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
+    <div className="h-full flex flex-col p-6 gap-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between gap-4">
         <div className="space-y-1">
           <Link href={`/admin-panel/subscriptions?id=${userId}`}>
-            <Button variant="ghost" className="text-slate-400 hover:text-white -ml-4 mb-2">
+            <Button variant="ghost" className="text-neutral-600 hover:text-neutral-900 -ml-4 mb-2">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Subscriptions
             </Button>
           </Link>
-          <h1 className="text-3xl font-bold text-white">Subscription Details</h1>
-          <p className="text-slate-400">{subscription.email}</p>
+          <h1 className="text-2xl font-semibold text-neutral-900">Subscription Details</h1>
+          <p className="text-sm text-neutral-500">{subscription.email}</p>
         </div>
         <Badge className={`${getStatusColor(subscription.subscription_status)} border text-lg px-4 py-2 capitalize`}>
           {subscription.subscription_status}
         </Badge>
       </div>
 
-      <Tabs defaultValue="details" className="space-y-6">
-        <TabsList className="bg-slate-800 border-slate-700">
+      <Tabs defaultValue="details" className="flex-1 min-h-0 space-y-6">
+        <TabsList className="bg-neutral-100 border border-neutral-200">
           <TabsTrigger value="details">Details</TabsTrigger>
           <TabsTrigger value="history">History</TabsTrigger>
           <TabsTrigger value="manage">Manage</TabsTrigger>
@@ -325,20 +330,20 @@ export default function SubscriptionDetailPage() {
 
         {/* Details Tab */}
         <TabsContent value="details" className="space-y-6">
-          <Card className="bg-slate-800/50 border-slate-700 p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">Subscription Information</h3>
+          <Card className="bg-white border border-neutral-200 p-6">
+            <h3 className="text-lg font-semibold text-neutral-900 mb-4">Subscription Information</h3>
             <div className="grid gap-4 md:grid-cols-2">
               {/* ✅ ADDED: Show UUID */}
               <div className="md:col-span-2">
-                <p className="text-sm text-slate-400">Supabase UUID</p>
+                <p className="text-sm text-neutral-600">Supabase UUID</p>
                 <div className="flex items-center gap-2">
-                  <p className="text-white font-mono text-xs bg-slate-900 px-3 py-2 rounded border border-slate-700">
+                  <p className="text-neutral-900 font-mono text-xs bg-neutral-50 px-3 py-2 rounded border border-neutral-200">
                     {subscription.id}
                   </p>
                   <Button
                     size="sm"
                     variant="outline"
-                    className="border-slate-700 text-slate-300 hover:bg-slate-800"
+                    className="border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50"
                     onClick={() => {
                       navigator.clipboard.writeText(subscription.id)
                       toast({
@@ -352,40 +357,40 @@ export default function SubscriptionDetailPage() {
                 </div>
               </div>
               <div>
-                <p className="text-sm text-slate-400">User Name</p>
-                <p className="text-white font-medium">{subscription.full_name || 'No name'}</p>
+                <p className="text-sm text-neutral-600">User Name</p>
+                <p className="text-neutral-900 font-medium">{subscription.full_name || 'No name'}</p>
               </div>
               <div>
-                <p className="text-sm text-slate-400">Email</p>
-                <p className="text-white font-medium">{subscription.email}</p>
+                <p className="text-sm text-neutral-600">Email</p>
+                <p className="text-neutral-900 font-medium">{subscription.email}</p>
               </div>
               <div>
-                <p className="text-sm text-slate-400">Status</p>
+                <p className="text-sm text-neutral-600">Status</p>
                 <Badge className={`${getStatusColor(subscription.subscription_status)} border mt-1 capitalize`}>
                   {subscription.subscription_status}
                 </Badge>
               </div>
               <div>
-                <p className="text-sm text-slate-400">Billing Cycle</p>
-                <p className="text-white font-medium capitalize">{subscription.billing_cycle}</p>
+                <p className="text-sm text-neutral-600">Billing Cycle</p>
+                <p className="text-neutral-900 font-medium capitalize">{subscription.billing_cycle || '—'}</p>
               </div>
               <div>
-                <p className="text-sm text-slate-400">Stripe Customer ID</p>
-                <p className="text-white font-mono text-sm">{subscription.stripe_customer_id || '-'}</p>
+                <p className="text-sm text-neutral-600">Stripe Customer ID</p>
+                <p className="text-neutral-900 font-mono text-sm">{subscription.stripe_customer_id || '-'}</p>
               </div>
               <div>
-                <p className="text-sm text-slate-400">Stripe Subscription ID</p>
-                <p className="text-white font-mono text-sm">{subscription.subscription_id || '-'}</p>
+                <p className="text-sm text-neutral-600">Stripe Subscription ID</p>
+                <p className="text-neutral-900 font-mono text-sm">{subscription.subscription_id || '-'}</p>
               </div>
               <div>
-                <p className="text-sm text-slate-400">Subscribed Since</p>
-                <p className="text-white font-medium">
+                <p className="text-sm text-neutral-600">Subscribed Since</p>
+                <p className="text-neutral-900 font-medium">
                   {format(new Date(subscription.created_at), 'MMM dd, yyyy HH:mm')}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-slate-400">Subscription End Date</p>
-                <p className="text-white font-medium">
+                <p className="text-sm text-neutral-600">Subscription End Date</p>
+                <p className="text-neutral-900 font-medium">
                   {subscription.subscription_end_date 
                     ? format(new Date(subscription.subscription_end_date), 'MMM dd, yyyy HH:mm')
                     : 'No end date'
@@ -393,8 +398,8 @@ export default function SubscriptionDetailPage() {
                 </p>
               </div>
               <div>
-                <p className="text-sm text-slate-400">Last Updated</p>
-                <p className="text-white font-medium">
+                <p className="text-sm text-neutral-600">Last Updated</p>
+                <p className="text-neutral-900 font-medium">
                   {format(new Date(subscription.updated_at), 'MMM dd, yyyy HH:mm')}
                 </p>
               </div>
@@ -404,16 +409,16 @@ export default function SubscriptionDetailPage() {
 
         {/* History Tab */}
         <TabsContent value="history" className="space-y-6">
-          <Card className="bg-slate-800/50 border-slate-700 p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">Subscription History</h3>
+          <Card className="bg-white border border-neutral-200 p-6">
+            <h3 className="text-lg font-semibold text-neutral-900 mb-4">Subscription History</h3>
             {events.length === 0 ? (
-              <p className="text-slate-400 text-center py-8">No subscription events found</p>
+              <p className="text-neutral-500 text-center py-8">No subscription events found</p>
             ) : (
               <div className="space-y-4">
                 {events.map((event) => (
                   <div
                     key={event.id}
-                    className="flex items-start gap-4 p-4 rounded-lg bg-slate-900/50 border border-slate-700"
+                    className="flex items-start gap-4 p-4 rounded-lg bg-white border border-neutral-200"
                   >
                     <div className={`mt-1 ${getEventColor(event.event_type)}`}>
                       {getEventIcon(event.event_type)}
@@ -423,24 +428,24 @@ export default function SubscriptionDetailPage() {
                         <p className={`font-medium ${getEventColor(event.event_type)} capitalize`}>
                           {event.event_type.replace(/_/g, ' ')}
                         </p>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-neutral-500">
                           {format(new Date(event.created_at), 'MMM dd, yyyy HH:mm')}
                         </p>
                       </div>
-                      <p className="text-sm text-slate-400">
+                      <p className="text-sm text-neutral-600">
                         {event.old_status && (
                           <span>
-                            From <span className="text-slate-300 capitalize">{event.old_status}</span> to{' '}
+                            From <span className="text-neutral-900 capitalize">{event.old_status}</span> to{' '}
                           </span>
                         )}
-                        <span className="text-slate-300 capitalize">{event.new_status}</span>
+                        <span className="text-neutral-900 capitalize">{event.new_status}</span>
                       </p>
                       {event.metadata && Object.keys(event.metadata).length > 0 && (
                         <details className="mt-2">
-                          <summary className="text-xs text-blue-400 cursor-pointer hover:text-blue-300">
+                          <summary className="text-xs text-blue-600 cursor-pointer hover:text-blue-700">
                             View metadata
                           </summary>
-                          <pre className="mt-2 text-xs bg-slate-950 p-2 rounded border border-slate-700 overflow-x-auto">
+                          <pre className="mt-2 text-xs bg-neutral-50 p-2 rounded border border-neutral-200 overflow-x-auto">
                             {JSON.stringify(event.metadata, null, 2)}
                           </pre>
                         </details>
@@ -455,17 +460,17 @@ export default function SubscriptionDetailPage() {
 
         {/* Manage Tab */}
         <TabsContent value="manage" className="space-y-6">
-          <Card className="bg-slate-800/50 border-slate-700 p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">Update Subscription</h3>
+          <Card className="bg-white border border-neutral-200 p-6">
+            <h3 className="text-lg font-semibold text-neutral-900 mb-4">Update Subscription</h3>
             <div className="space-y-4">
               <div>
-                <label className="text-sm text-slate-400 mb-2 block">Subscription Status</label>
+                <label className="text-sm text-neutral-600 mb-2 block">Subscription Status</label>
                 <Select value={newStatus} onValueChange={setNewStatus}>
-                  <SelectTrigger className="bg-slate-900 border-slate-700 text-white">
+                  <SelectTrigger className="bg-white border-neutral-200 text-neutral-900">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="freemium">Freemium</SelectItem>
+                    <SelectItem value="free">Free</SelectItem>
                     <SelectItem value="premium">Premium</SelectItem>
                     <SelectItem value="cancelled">Cancelled</SelectItem>
                   </SelectContent>
@@ -473,9 +478,9 @@ export default function SubscriptionDetailPage() {
               </div>
 
               <div>
-                <label className="text-sm text-slate-400 mb-2 block">Billing Cycle</label>
+                <label className="text-sm text-neutral-600 mb-2 block">Billing Cycle</label>
                 <Select value={newCycle} onValueChange={setNewCycle}>
-                  <SelectTrigger className="bg-slate-900 border-slate-700 text-white">
+                  <SelectTrigger className="bg-white border-neutral-200 text-neutral-900">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -496,19 +501,19 @@ export default function SubscriptionDetailPage() {
           </Card>
 
           {/* ✅ NEW: Gift Trial Feature */}
-          <Card className="bg-slate-800/50 border-yellow-500/20 p-6">
-            <h3 className="text-lg font-semibold text-yellow-400 mb-2 flex items-center gap-2">
+          <Card className="bg-white border border-amber-200 p-6">
+            <h3 className="text-lg font-semibold text-amber-700 mb-2 flex items-center gap-2">
               <Crown className="h-5 w-5" />
               Gift Premium Trial
             </h3>
-            <p className="text-sm text-slate-400 mb-4">
+            <p className="text-sm text-neutral-600 mb-4">
               Give this user free Premium access for a specific period. No Stripe subscription required.
             </p>
             <div className="space-y-4">
               <div>
-                <label className="text-sm text-slate-400 mb-2 block">Trial Duration</label>
+                <label className="text-sm text-neutral-600 mb-2 block">Trial Duration</label>
                 <Select value={giftTrialMonths.toString()} onValueChange={(val) => setGiftTrialMonths(parseInt(val))}>
-                  <SelectTrigger className="bg-slate-900 border-slate-700 text-white">
+                  <SelectTrigger className="bg-white border-neutral-200 text-neutral-900">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -523,21 +528,21 @@ export default function SubscriptionDetailPage() {
                 <AlertDialogTrigger asChild>
                   <Button
                     disabled={updating}
-                    className="w-full bg-yellow-600 hover:bg-yellow-700 text-white"
+                    className="w-full bg-amber-600 hover:bg-amber-700 text-white"
                   >
                     Gift {giftTrialMonths} Month{giftTrialMonths > 1 ? 's' : ''} Premium
                   </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent className="bg-slate-900 border-slate-700">
+                <AlertDialogContent className="bg-white border-neutral-200">
                   <AlertDialogHeader>
-                    <AlertDialogTitle className="text-white">Gift Premium Trial</AlertDialogTitle>
-                    <AlertDialogDescription className="text-slate-400">
+                    <AlertDialogTitle className="text-neutral-900">Gift Premium Trial</AlertDialogTitle>
+                    <AlertDialogDescription className="text-neutral-600">
                       Are you sure you want to gift {giftTrialMonths} month{giftTrialMonths > 1 ? 's' : ''} of Premium access to this user?
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel className="bg-slate-800 text-white border-slate-700">Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleGiftTrial} className="bg-yellow-600 hover:bg-yellow-700">
+                    <AlertDialogCancel className="bg-white text-neutral-900 border-neutral-200">Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleGiftTrial} className="bg-amber-600 hover:bg-amber-700">
                       Confirm Gift
                     </AlertDialogAction>
                   </AlertDialogFooter>
@@ -546,12 +551,12 @@ export default function SubscriptionDetailPage() {
             </div>
           </Card>
 
-          <Card className="bg-slate-800/50 border-red-500/20 p-6">
-            <h3 className="text-lg font-semibold text-red-400 mb-2 flex items-center gap-2">
+          <Card className="bg-white border border-red-200 p-6">
+            <h3 className="text-lg font-semibold text-red-700 mb-2 flex items-center gap-2">
               <AlertCircle className="h-5 w-5" />
               Danger Zone
             </h3>
-            <p className="text-sm text-slate-400 mb-4">
+            <p className="text-sm text-neutral-600 mb-4">
               Cancelling a subscription will immediately revoke premium access. This action cannot be undone.
             </p>
             <AlertDialog open={cancelConfirmOpen} onOpenChange={setCancelConfirmOpen}>
@@ -564,25 +569,25 @@ export default function SubscriptionDetailPage() {
                   Cancel Subscription
                 </Button>
               </AlertDialogTrigger>
-              <AlertDialogContent className="bg-slate-900 border-slate-700">
+              <AlertDialogContent className="bg-white border-neutral-200">
                 <AlertDialogHeader>
-                  <AlertDialogTitle className="text-white">Cancel Subscription</AlertDialogTitle>
-                  <AlertDialogDescription className="text-slate-400">
+                  <AlertDialogTitle className="text-neutral-900">Cancel Subscription</AlertDialogTitle>
+                  <AlertDialogDescription className="text-neutral-600">
                     Are you sure you want to cancel this subscription? This will immediately revoke premium access.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <div className="py-4">
-                  <label className="text-sm text-slate-400 mb-2 block">Cancellation Reason (optional)</label>
+                  <label className="text-sm text-neutral-600 mb-2 block">Cancellation Reason (optional)</label>
                   <input
                     type="text"
                     value={cancelReason}
                     onChange={(e) => setCancelReason(e.target.value)}
                     placeholder="e.g., User requested, Refund, etc."
-                    className="w-full bg-slate-800 border-slate-700 text-white px-3 py-2 rounded"
+                    className="w-full bg-white border border-neutral-200 text-neutral-900 px-3 py-2 rounded"
                   />
                 </div>
                 <AlertDialogFooter>
-                  <AlertDialogCancel className="bg-slate-800 text-white border-slate-700">Cancel</AlertDialogCancel>
+                  <AlertDialogCancel className="bg-white text-neutral-900 border-neutral-200">Cancel</AlertDialogCancel>
                   <AlertDialogAction onClick={handleCancel} className="bg-red-600 hover:bg-red-700">
                     Confirm Cancellation
                   </AlertDialogAction>

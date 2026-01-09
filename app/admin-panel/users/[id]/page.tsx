@@ -133,44 +133,46 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <Skeleton className="h-8 w-64 bg-slate-800" />
-        <Skeleton className="h-96 bg-slate-800" />
+      <div className="p-6 space-y-6">
+        <Skeleton className="h-8 w-64" />
+        <Skeleton className="h-96" />
       </div>
     )
   }
 
   if (!user) {
     return (
-      <Card className="p-6 bg-red-500/10 border-red-500/20">
-        <p className="text-red-400">User not found</p>
-      </Card>
+      <div className="p-6">
+        <Card className="p-6 bg-red-50 border border-red-200">
+          <p className="text-red-700">User not found</p>
+        </Card>
+      </div>
     )
   }
 
   const getStatusBadge = (status: string) => {
     const styles = {
-      premium: 'bg-yellow-500/10 text-yellow-400 border-yellow-400/30',
-      freemium: 'bg-blue-500/10 text-blue-400 border-blue-400/30',
-      cancelled: 'bg-red-500/10 text-red-400 border-red-400/30',
+      premium: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      freemium: 'bg-blue-50 text-blue-700 border-blue-200',
+      cancelled: 'bg-red-50 text-red-700 border-red-200',
     }
     return styles[status as keyof typeof styles] || styles.freemium
   }
 
   return (
-    <div className="space-y-6">
+    <div className="h-full flex flex-col p-6 gap-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex items-start gap-4">
           <Link href={`/admin-panel/users?id=${id}`}>
-            <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white">
+            <Button variant="ghost" size="sm" className="text-neutral-600 hover:text-neutral-900">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Users
             </Button>
           </Link>
           <div>
-            <h1 className="text-3xl font-bold text-white">{user.full_name || 'User'}</h1>
-            <p className="text-slate-400 text-sm">{user.email}</p>
+            <h1 className="text-2xl font-semibold text-neutral-900">{user.full_name || 'User'}</h1>
+            <p className="text-neutral-500 text-sm">{user.email}</p>
           </div>
         </div>
         <div className="flex gap-2">
@@ -185,20 +187,20 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
               </Button>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="outline" className="border-red-500 text-red-400 hover:bg-red-500/10">
+                  <Button variant="outline" className="border-red-200 bg-white text-red-700 hover:bg-red-50">
                     <Trash2 className="h-4 w-4 mr-2" />
                     Delete
                   </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent className="bg-slate-900 border-slate-700">
+                <AlertDialogContent className="bg-white border-neutral-200">
                   <AlertDialogHeader>
-                    <AlertDialogTitle className="text-white">Delete User</AlertDialogTitle>
-                    <AlertDialogDescription className="text-slate-400">
+                    <AlertDialogTitle className="text-neutral-900">Delete User</AlertDialogTitle>
+                    <AlertDialogDescription className="text-neutral-600">
                       Are you sure? This will permanently delete {user.full_name || user.email} and all their data. This action cannot be undone.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel className="bg-slate-800 text-white border-slate-700">Cancel</AlertDialogCancel>
+                    <AlertDialogCancel className="bg-white text-neutral-900 border-neutral-200">Cancel</AlertDialogCancel>
                     <AlertDialogAction onClick={handleDelete} className="bg-red-500 hover:bg-red-600">
                       Delete
                     </AlertDialogAction>
@@ -211,7 +213,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
               <Button
                 onClick={handleSave}
                 disabled={saving}
-                className="bg-green-500 hover:bg-green-600 text-white"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white"
               >
                 <Save className="h-4 w-4 mr-2" />
                 {saving ? 'Saving...' : 'Save'}
@@ -219,7 +221,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
               <Button
                 onClick={handleCancel}
                 variant="outline"
-                className="border-slate-700 text-white"
+                className="border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50"
               >
                 <X className="h-4 w-4 mr-2" />
                 Cancel
@@ -229,92 +231,92 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
         </div>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="bg-slate-800 border-slate-700">
-          <TabsTrigger value="overview" className="data-[state=active]:bg-slate-700">Overview</TabsTrigger>
-          <TabsTrigger value="stats" className="data-[state=active]:bg-slate-700">Statistics</TabsTrigger>
-          <TabsTrigger value="preferences" className="data-[state=active]:bg-slate-700">Preferences</TabsTrigger>
+      <Tabs defaultValue="overview" className="flex-1 min-h-0 space-y-6">
+        <TabsList className="bg-neutral-100 border border-neutral-200">
+          <TabsTrigger value="overview" className="data-[state=active]:bg-white">Overview</TabsTrigger>
+          <TabsTrigger value="stats" className="data-[state=active]:bg-white">Statistics</TabsTrigger>
+          <TabsTrigger value="preferences" className="data-[state=active]:bg-white">Preferences</TabsTrigger>
         </TabsList>
 
         {/* Overview Tab */}
         <TabsContent value="overview" className="space-y-6">
-          <Card className="bg-slate-800/50 border-slate-700 p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">Basic Information</h3>
+          <Card className="bg-white border border-neutral-200 p-6">
+            <h3 className="text-lg font-semibold text-neutral-900 mb-4">Basic Information</h3>
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <Label className="text-slate-400">Full Name</Label>
+                <Label className="text-neutral-600">Full Name</Label>
                 {editing ? (
                   <Input
                     value={formData.full_name}
                     onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                    className="mt-1 bg-slate-900 border-slate-700 text-white"
+                    className="mt-1 bg-white border-neutral-200 text-neutral-900"
                   />
                 ) : (
-                  <p className="text-white mt-1">{user.full_name || 'Not set'}</p>
+                  <p className="text-neutral-900 mt-1">{user.full_name || 'Not set'}</p>
                 )}
               </div>
               <div>
-                <Label className="text-slate-400">Email</Label>
+                <Label className="text-neutral-600">Email</Label>
                 {editing ? (
                   <Input
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="mt-1 bg-slate-900 border-slate-700 text-white"
+                    className="mt-1 bg-white border-neutral-200 text-neutral-900"
                     type="email"
                   />
                 ) : (
-                  <p className="text-white mt-1">{user.email}</p>
+                  <p className="text-neutral-900 mt-1">{user.email}</p>
                 )}
               </div>
               <div>
-                <Label className="text-slate-400">Timezone</Label>
+                <Label className="text-neutral-600">Timezone</Label>
                 {editing ? (
                   <Input
                     value={formData.timezone}
                     onChange={(e) => setFormData({ ...formData, timezone: e.target.value })}
-                    className="mt-1 bg-slate-900 border-slate-700 text-white"
+                    className="mt-1 bg-white border-neutral-200 text-neutral-900"
                   />
                 ) : (
-                  <p className="text-white mt-1">{user.timezone || 'Not set'}</p>
+                  <p className="text-neutral-900 mt-1">{user.timezone || 'Not set'}</p>
                 )}
               </div>
               <div>
-                <Label className="text-slate-400">Language</Label>
+                <Label className="text-neutral-600">Language</Label>
                 {editing ? (
                   <Input
                     value={formData.language}
                     onChange={(e) => setFormData({ ...formData, language: e.target.value })}
-                    className="mt-1 bg-slate-900 border-slate-700 text-white"
+                    className="mt-1 bg-white border-neutral-200 text-neutral-900"
                   />
                 ) : (
-                  <p className="text-white mt-1">{user.language || 'Not set'}</p>
+                  <p className="text-neutral-900 mt-1">{user.language || 'Not set'}</p>
                 )}
               </div>
             </div>
           </Card>
 
-          <Card className="bg-slate-800/50 border-slate-700 p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">Subscription</h3>
+          <Card className="bg-white border border-neutral-200 p-6">
+            <h3 className="text-lg font-semibold text-neutral-900 mb-4">Subscription</h3>
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <Label className="text-slate-400">Status</Label>
+                <Label className="text-neutral-600">Status</Label>
                 <div className="mt-1">
-                  <Badge className={getStatusBadge(user.subscription_status)}>
+                  <Badge className={`${getStatusBadge(user.subscription_status)} border`}>
                     {user.subscription_status}
                   </Badge>
                 </div>
               </div>
               <div>
-                <Label className="text-slate-400">Billing Cycle</Label>
-                <p className="text-white mt-1">{user.billing_cycle || 'N/A'}</p>
+                <Label className="text-neutral-600">Billing Cycle</Label>
+                <p className="text-neutral-900 mt-1">{user.billing_cycle || 'N/A'}</p>
               </div>
               <div>
-                <Label className="text-slate-400">Stripe Customer ID</Label>
-                <p className="text-white mt-1 font-mono text-sm">{user.stripe_customer_id || 'N/A'}</p>
+                <Label className="text-neutral-600">Stripe Customer ID</Label>
+                <p className="text-neutral-900 mt-1 font-mono text-sm">{user.stripe_customer_id || 'N/A'}</p>
               </div>
               <div>
-                <Label className="text-slate-400">Joined</Label>
-                <p className="text-white mt-1">{format(new Date(user.created_at), 'PPP')}</p>
+                <Label className="text-neutral-600">Joined</Label>
+                <p className="text-neutral-900 mt-1">{format(new Date(user.created_at), 'PPP')}</p>
               </div>
             </div>
           </Card>
@@ -323,17 +325,17 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
         {/* Stats Tab */}
         <TabsContent value="stats" className="space-y-6">
           <div className="grid gap-4 md:grid-cols-3">
-            <Card className="bg-slate-800/50 border-slate-700 p-6">
-              <Label className="text-slate-400">Total Prompts</Label>
-              <p className="text-3xl font-bold text-white mt-2">{user.stats.total_prompts}</p>
+            <Card className="bg-white border border-neutral-200 p-6">
+              <Label className="text-neutral-600">Total Prompts</Label>
+              <p className="text-3xl font-semibold text-neutral-900 mt-2">{user.stats.total_prompts}</p>
             </Card>
-            <Card className="bg-slate-800/50 border-slate-700 p-6">
-              <Label className="text-slate-400">Total Reflections</Label>
-              <p className="text-3xl font-bold text-white mt-2">{user.stats.total_reflections}</p>
+            <Card className="bg-white border border-neutral-200 p-6">
+              <Label className="text-neutral-600">Total Reflections</Label>
+              <p className="text-3xl font-semibold text-neutral-900 mt-2">{user.stats.total_reflections}</p>
             </Card>
-            <Card className="bg-slate-800/50 border-slate-700 p-6">
-              <Label className="text-slate-400">Engagement Rate</Label>
-              <p className="text-3xl font-bold text-white mt-2">
+            <Card className="bg-white border border-neutral-200 p-6">
+              <Label className="text-neutral-600">Engagement Rate</Label>
+              <p className="text-3xl font-semibold text-neutral-900 mt-2">
                 {user.stats.total_prompts > 0 
                   ? ((user.stats.total_reflections / user.stats.total_prompts) * 100).toFixed(0)
                   : 0}%
@@ -344,33 +346,33 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
 
         {/* Preferences Tab */}
         <TabsContent value="preferences" className="space-y-6">
-          <Card className="bg-slate-800/50 border-slate-700 p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">User Preferences</h3>
+          <Card className="bg-white border border-neutral-200 p-6">
+            <h3 className="text-lg font-semibold text-neutral-900 mb-4">User Preferences</h3>
             {user.preferences ? (
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <Label className="text-slate-400">Notifications Enabled</Label>
-                  <p className="text-white mt-1">{user.preferences.notifications_enabled ? 'Yes' : 'No'}</p>
+                  <Label className="text-neutral-600">Notifications Enabled</Label>
+                  <p className="text-neutral-900 mt-1">{user.preferences.notifications_enabled ? 'Yes' : 'No'}</p>
                 </div>
                 <div>
-                  <Label className="text-slate-400">Daily Reminders</Label>
-                  <p className="text-white mt-1">{user.preferences.daily_reminders ? 'Yes' : 'No'}</p>
+                  <Label className="text-neutral-600">Daily Reminders</Label>
+                  <p className="text-neutral-900 mt-1">{user.preferences.daily_reminders ? 'Yes' : 'No'}</p>
                 </div>
                 <div>
-                  <Label className="text-slate-400">Weekly Digest</Label>
-                  <p className="text-white mt-1">{user.preferences.weekly_digest ? 'Yes' : 'No'}</p>
+                  <Label className="text-neutral-600">Weekly Digest</Label>
+                  <p className="text-neutral-900 mt-1">{user.preferences.weekly_digest ? 'Yes' : 'No'}</p>
                 </div>
                 <div>
-                  <Label className="text-slate-400">Reminder Time</Label>
-                  <p className="text-white mt-1">{user.preferences.reminder_time || 'Not set'}</p>
+                  <Label className="text-neutral-600">Reminder Time</Label>
+                  <p className="text-neutral-900 mt-1">{user.preferences.reminder_time || 'Not set'}</p>
                 </div>
                 <div>
-                  <Label className="text-slate-400">Prompt Frequency</Label>
-                  <p className="text-white mt-1">{user.preferences.prompt_frequency || 'Not set'}</p>
+                  <Label className="text-neutral-600">Prompt Frequency</Label>
+                  <p className="text-neutral-900 mt-1">{user.preferences.prompt_frequency || 'Not set'}</p>
                 </div>
               </div>
             ) : (
-              <p className="text-slate-400">No preferences set</p>
+              <p className="text-neutral-500">No preferences set</p>
             )}
           </Card>
         </TabsContent>

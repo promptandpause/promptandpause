@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
       limit,
       offset,
       recipient_email: searchParams.get('recipient_email') || undefined,
-      template_id: searchParams.get('template_id') || undefined,
+      template_name: searchParams.get('template_name') || undefined,
       status: searchParams.get('status') || undefined,
       start_date: searchParams.get('start_date') || undefined,
       end_date: searchParams.get('end_date') || undefined,

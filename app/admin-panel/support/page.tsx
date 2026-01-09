@@ -44,6 +44,7 @@ export default function SupportTicketsPage() {
   const [tickets, setTickets] = useState<SupportTicket[]>([])
   const [stats, setStats] = useState<SupportStats | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [priorityFilter, setPriorityFilter] = useState('')
@@ -56,11 +57,15 @@ export default function SupportTicketsPage() {
   const fetchData = useCallback(async () => {
     setLoading(true)
     try {
+      setError(null)
       const statsRes = await fetch('/api/admin/support/stats')
-      if (statsRes.ok) {
-        const statsData = await statsRes.json()
-        setStats(statsData.stats)
+      if (!statsRes.ok) {
+        const data = await statsRes.json().catch(() => null)
+        throw new Error(data?.error || 'Failed to fetch support stats')
       }
+
+      const statsData = await statsRes.json()
+      setStats(statsData.stats)
 
       const params = new URLSearchParams({
         page: page.toString(),
@@ -70,12 +75,18 @@ export default function SupportTicketsPage() {
       })
 
       const ticketsRes = await fetch(`/api/admin/support?${params}`)
-      if (ticketsRes.ok) {
-        const ticketsData = await ticketsRes.json()
-        setTickets(ticketsData.tickets)
-        setTotalPages(ticketsData.totalPages)
+      if (!ticketsRes.ok) {
+        const data = await ticketsRes.json().catch(() => null)
+        throw new Error(data?.error || 'Failed to fetch support tickets')
       }
-    } catch (error) {
+
+      const ticketsData = await ticketsRes.json()
+      setTickets(ticketsData.tickets)
+      setTotalPages(ticketsData.totalPages)
+    } catch (error: any) {
+      setTickets([])
+      setTotalPages(1)
+      setError(error?.message || 'Failed to fetch support data')
     } finally {
       setLoading(false)
     }
@@ -92,10 +103,10 @@ export default function SupportTicketsPage() {
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, { color: string; icon: any }> = {
-      open: { color: 'bg-blue-500/10 text-blue-400 border-blue-400/30', icon: AlertCircle },
-      in_progress: { color: 'bg-yellow-500/10 text-yellow-400 border-yellow-400/30', icon: Clock },
-      resolved: { color: 'bg-green-500/10 text-green-400 border-green-400/30', icon: CheckCircle2 },
-      closed: { color: 'bg-slate-500/10 text-slate-400 border-slate-400/30', icon: CheckCircle2 },
+      open: { color: 'bg-blue-50 text-blue-700 border-blue-200', icon: AlertCircle },
+      in_progress: { color: 'bg-amber-50 text-amber-700 border-amber-200', icon: Clock },
+      resolved: { color: 'bg-emerald-50 text-emerald-700 border-emerald-200', icon: CheckCircle2 },
+      closed: { color: 'bg-neutral-50 text-neutral-700 border-neutral-200', icon: CheckCircle2 },
     }
     const variant = variants[status] || variants.open
     const Icon = variant.icon
@@ -110,10 +121,10 @@ export default function SupportTicketsPage() {
 
   const getPriorityBadge = (priority: string) => {
     const colors: Record<string, string> = {
-      low: 'bg-slate-500/10 text-slate-400 border-slate-400/30',
-      medium: 'bg-blue-500/10 text-blue-400 border-blue-400/30',
-      high: 'bg-orange-500/10 text-orange-400 border-orange-400/30',
-      urgent: 'bg-red-500/10 text-red-400 border-red-400/30',
+      low: 'bg-neutral-50 text-neutral-700 border-neutral-200',
+      medium: 'bg-blue-50 text-blue-700 border-blue-200',
+      high: 'bg-amber-50 text-amber-700 border-amber-200',
+      urgent: 'bg-red-50 text-red-700 border-red-200',
     }
     
     return (
@@ -126,72 +137,78 @@ export default function SupportTicketsPage() {
   if (loading && !stats) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-slate-400">Loading support tickets...</div>
+        <div className="text-neutral-500">Loading support tickets...</div>
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
+    <div className="h-full flex flex-col p-6 gap-6">
       <div>
-        <h1 className="text-3xl font-bold text-white mb-2">Support Tickets</h1>
-        <p className="text-slate-400">Manage customer support requests</p>
+        <h1 className="text-2xl font-semibold text-neutral-900">Support Tickets</h1>
+        <p className="text-sm text-neutral-500">Manage customer support requests</p>
       </div>
 
+      {error && (
+        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="bg-slate-900 border-slate-800">
+        <Card className="bg-white border-neutral-200">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-slate-400">Total Tickets</CardTitle>
+            <CardTitle className="text-sm font-medium text-neutral-500">Total Tickets</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
-              <div className="text-2xl font-bold text-white">{stats?.total_tickets || 0}</div>
+              <div className="text-2xl font-semibold text-neutral-900">{stats?.total_tickets || 0}</div>
               <MessageSquare className="h-8 w-8 text-blue-500" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-slate-900 border-slate-800">
+        <Card className="bg-white border-neutral-200">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-slate-400">Open</CardTitle>
+            <CardTitle className="text-sm font-medium text-neutral-500">Open</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
-              <div className="text-2xl font-bold text-blue-400">{stats?.open_tickets || 0}</div>
+              <div className="text-2xl font-semibold text-blue-700">{stats?.open_tickets || 0}</div>
               <AlertCircle className="h-8 w-8 text-blue-500" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-slate-900 border-slate-800">
+        <Card className="bg-white border-neutral-200">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-slate-400">In Progress</CardTitle>
+            <CardTitle className="text-sm font-medium text-neutral-500">In Progress</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
-              <div className="text-2xl font-bold text-yellow-400">{stats?.in_progress_tickets || 0}</div>
+              <div className="text-2xl font-semibold text-amber-700">{stats?.in_progress_tickets || 0}</div>
               <Clock className="h-8 w-8 text-yellow-500" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-slate-900 border-slate-800">
+        <Card className="bg-white border-neutral-200">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-slate-400">Resolved</CardTitle>
+            <CardTitle className="text-sm font-medium text-neutral-500">Resolved</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
-              <div className="text-2xl font-bold text-green-400">{stats?.resolved_tickets || 0}</div>
+              <div className="text-2xl font-semibold text-emerald-700">{stats?.resolved_tickets || 0}</div>
               <CheckCircle2 className="h-8 w-8 text-green-500" />
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <Card className="bg-slate-900 border-slate-800">
+      <Card className="bg-white border-neutral-200">
         <CardHeader>
-          <CardTitle className="text-white">Tickets</CardTitle>
-          <CardDescription className="text-slate-400">
+          <CardTitle className="text-neutral-900">Tickets</CardTitle>
+          <CardDescription className="text-neutral-500">
             View and manage support tickets
           </CardDescription>
         </CardHeader>
@@ -203,7 +220,7 @@ export default function SupportTicketsPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                className="bg-slate-800 border-slate-700 text-white"
+                className="bg-white border-neutral-200 text-neutral-900"
               />
               <Button onClick={handleSearch} className="bg-blue-600 hover:bg-blue-700">
                 <Search className="h-4 w-4" />
@@ -216,7 +233,7 @@ export default function SupportTicketsPage() {
                 setStatusFilter(e.target.value)
                 setPage(1)
               }}
-              className="px-3 py-2 bg-slate-800 border border-slate-700 rounded-md text-white text-sm"
+              className="px-3 py-2 bg-white border border-neutral-200 rounded-md text-neutral-900 text-sm"
             >
               <option value="">All Statuses</option>
               <option value="open">Open</option>
@@ -231,7 +248,7 @@ export default function SupportTicketsPage() {
                 setPriorityFilter(e.target.value)
                 setPage(1)
               }}
-              className="px-3 py-2 bg-slate-800 border border-slate-700 rounded-md text-white text-sm"
+              className="px-3 py-2 bg-white border border-neutral-200 rounded-md text-neutral-900 text-sm"
             >
               <option value="">All Priorities</option>
               <option value="low">Low</option>
@@ -244,38 +261,38 @@ export default function SupportTicketsPage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-800">
-                  <th className="text-left py-3 px-4 text-sm font-medium text-slate-400">Subject</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-slate-400">User</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-slate-400">Status</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-slate-400">Priority</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-slate-400">Created</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-slate-400">Actions</th>
+                <tr className="border-b border-neutral-200">
+                  <th className="text-left py-3 px-4 text-sm font-medium text-neutral-500">Subject</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-neutral-500">User</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-neutral-500">Status</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-neutral-500">Priority</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-neutral-500">Created</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-neutral-500">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {tickets.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="text-center py-8 text-slate-400">
+                    <td colSpan={6} className="text-center py-8 text-neutral-500">
                       No tickets found
                     </td>
                   </tr>
                 ) : (
                   tickets.map((ticket) => (
-                    <tr key={ticket.id} className="border-b border-slate-800 hover:bg-slate-800/50">
+                    <tr key={ticket.id} className="border-b border-neutral-200 hover:bg-neutral-50">
                       <td className="py-3 px-4">
-                        <div className="text-sm text-white font-medium">{ticket.subject}</div>
-                        <div className="text-xs text-slate-400 line-clamp-1 mt-1">
+                        <div className="text-sm text-neutral-900 font-medium">{ticket.subject}</div>
+                        <div className="text-xs text-neutral-500 line-clamp-1 mt-1">
                           {ticket.description}
                         </div>
                       </td>
                       <td className="py-3 px-4">
-                        <div className="text-sm text-white">{ticket.profiles?.full_name || 'Unknown'}</div>
-                        <div className="text-xs text-slate-400">{ticket.profiles?.email}</div>
+                        <div className="text-sm text-neutral-900">{ticket.profiles?.full_name || 'Unknown'}</div>
+                        <div className="text-xs text-neutral-500">{ticket.profiles?.email}</div>
                       </td>
                       <td className="py-3 px-4">{getStatusBadge(ticket.status)}</td>
                       <td className="py-3 px-4">{getPriorityBadge(ticket.priority)}</td>
-                      <td className="py-3 px-4 text-sm text-slate-400">
+                      <td className="py-3 px-4 text-sm text-neutral-500">
                         {format(new Date(ticket.created_at), 'MMM dd, yyyy')}
                       </td>
                       <td className="py-3 px-4">
@@ -283,7 +300,7 @@ export default function SupportTicketsPage() {
                           size="sm"
                           variant="outline"
                           onClick={() => router.push(`/admin-panel/support/${ticket.id}`)}
-                          className="bg-slate-800 border-slate-700 text-white hover:bg-slate-700"
+                          className="bg-white border-neutral-200 text-neutral-900 hover:bg-neutral-50"
                         >
                           View
                         </Button>
@@ -302,11 +319,11 @@ export default function SupportTicketsPage() {
                 size="sm"
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="bg-slate-800 border-slate-700 text-white hover:bg-slate-700"
+                className="bg-white border-neutral-200 text-neutral-900 hover:bg-neutral-50"
               >
                 Previous
               </Button>
-              <span className="flex items-center px-4 text-sm text-slate-400">
+              <span className="flex items-center px-4 text-sm text-neutral-500">
                 Page {page} of {totalPages}
               </span>
               <Button
@@ -314,7 +331,7 @@ export default function SupportTicketsPage() {
                 size="sm"
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="bg-slate-800 border-slate-700 text-white hover:bg-slate-700"
+                className="bg-white border-neutral-200 text-neutral-900 hover:bg-neutral-50"
               >
                 Next
               </Button>

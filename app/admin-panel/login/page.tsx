@@ -109,8 +109,8 @@ function AdminLoginContent() {
 
   if (checkingAuth) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="flex items-center gap-2 text-slate-400">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="flex items-center gap-2 text-neutral-600">
           <Loader2 className="h-5 w-5 animate-spin" />
           <span>Checking authentication...</span>
         </div>
@@ -119,50 +119,50 @@ function AdminLoginContent() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-500/10 border border-blue-500/20 mb-4">
-            <Shield className="h-8 w-8 text-blue-400" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-50 border border-blue-200 mb-4">
+            <Shield className="h-8 w-8 text-blue-600" />
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Admin Panel</h1>
-          <p className="text-slate-400">Sign in to access the admin dashboard</p>
+          <h1 className="text-2xl font-semibold text-neutral-900 mb-2">Admin Panel</h1>
+          <p className="text-sm text-neutral-500">Sign in to access the admin dashboard</p>
         </div>
 
         {/* Login Card */}
-        <Card className="bg-slate-900 border-slate-800">
+        <Card className="bg-white border-neutral-200">
           <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
+            <CardTitle className="text-neutral-900 flex items-center gap-2">
               <Lock className="h-5 w-5" />
               Admin Authentication
             </CardTitle>
-            <CardDescription className="text-slate-400">
+            <CardDescription className="text-neutral-500">
               Restricted to @promptandpause.com accounts
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-4">
               {error && (
-                <Alert variant="destructive" className="bg-red-500/10 border-red-500/30 text-red-400">
+                <Alert variant="destructive" className="bg-red-50 border-red-200 text-red-700">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-white">
+                <Label htmlFor="email" className="text-neutral-900">
                   Email Address
                 </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-500" />
                   <Input
                     id="email"
                     type="email"
                     placeholder="admin@promptandpause.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10 bg-slate-800 border-slate-700 text-white placeholder:text-slate-500"
+                    className="pl-10 bg-white border-neutral-200 text-neutral-900 placeholder:text-neutral-400"
                     required
                     disabled={loading}
                   />
@@ -170,18 +170,18 @@ function AdminLoginContent() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-white">
+                <Label htmlFor="password" className="text-neutral-900">
                   Password
                 </Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-500" />
                   <Input
                     id="password"
                     type="password"
                     placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 bg-slate-800 border-slate-700 text-white placeholder:text-slate-500"
+                    className="pl-10 bg-white border-neutral-200 text-neutral-900 placeholder:text-neutral-400"
                     required
                     disabled={loading}
                   />
@@ -207,13 +207,13 @@ function AdminLoginContent() {
               </Button>
             </form>
 
-            <div className="mt-6 pt-6 border-t border-slate-800">
-              <div className="text-sm text-slate-400 space-y-2">
+            <div className="mt-6 pt-6 border-t border-neutral-200">
+              <div className="text-sm text-neutral-600 space-y-2">
                 <p className="flex items-center gap-2">
                   <AlertCircle className="h-4 w-4 flex-shrink-0" />
                   <span>Admin access is restricted to authorized personnel only</span>
                 </p>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-neutral-500">
                   If you need admin access, contact your system administrator
                 </p>
               </div>
@@ -223,7 +223,7 @@ function AdminLoginContent() {
 
         {/* Footer */}
         <div className="mt-6 text-center">
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-neutral-500">
             Prompt & Pause Admin Panel
           </p>
         </div>
@@ -235,8 +235,8 @@ function AdminLoginContent() {
 export default function AdminLoginPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="flex items-center gap-2 text-slate-400">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="flex items-center gap-2 text-neutral-600">
           <Loader2 className="h-5 w-5 animate-spin" />
           <span>Loading...</span>
         </div>

@@ -3,7 +3,8 @@ import { createClient } from '@/lib/supabase/server'
 import { 
   checkAdminAuth, 
   getSubscriptionById,
-  updateSubscription
+  updateSubscription,
+  logAdminActivity
 } from '@/lib/services/adminService'
 
 export async function GET(
@@ -42,6 +43,17 @@ export async function GET(
         { status: 404 }
       )
     }
+
+    // Record view event (best-effort)
+    await logAdminActivity({
+      admin_email: user.email || '',
+      action_type: 'subscription_viewed',
+      target_user_id: userId,
+      target_user_email: (result.subscription as any)?.email,
+      ip_address: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined,
+      user_agent: request.headers.get('user-agent') || undefined,
+      details: { route: '/api/admin/subscriptions/[id]' },
+    })
 
     return NextResponse.json({
       success: true,

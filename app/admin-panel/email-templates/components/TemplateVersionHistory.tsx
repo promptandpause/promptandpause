@@ -36,19 +36,26 @@ export default function TemplateVersionHistory({ templateId }: TemplateVersionHi
   const { toast } = useToast()
   const [versions, setVersions] = useState<VersionHistoryItem[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [rollbackConfirmOpen, setRollbackConfirmOpen] = useState(false)
   const [versionToRollback, setVersionToRollback] = useState<string | null>(null)
 
   const loadVersionHistory = useCallback(async () => {
     try {
       setLoading(true)
+      setError(null)
       const response = await fetch(`/api/admin/email-templates/${templateId}/versions`)
-      
-      if (response.ok) {
-        const data = await response.json()
-        setVersions(data.versions || [])
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => null)
+        throw new Error(data?.error || 'Failed to load version history')
       }
-    } catch (error) {
+
+      const data = await response.json()
+      setVersions(data.versions || [])
+    } catch (error: any) {
+      setVersions([])
+      setError(error?.message || 'Failed to load version history')
     } finally {
       setLoading(false)
     }
@@ -67,7 +74,7 @@ export default function TemplateVersionHistory({ templateId }: TemplateVersionHi
     if (!versionToRollback) return
 
     try {
-      const response = await fetch(`/api/admin/email-templates/${templateId}/rollback`, {
+      const response = await fetch(`/api/admin/email-templates/${templateId}/versions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ versionId: versionToRollback }),
@@ -113,24 +120,30 @@ export default function TemplateVersionHistory({ templateId }: TemplateVersionHi
 
   if (loading) {
     return (
-      <Card className="bg-slate-800/50 border-slate-700 p-6">
-        <p className="text-slate-400 text-center">Loading version history...</p>
+      <Card className="bg-white border border-gray-100 p-6">
+        <p className="text-gray-500 text-center">Loading version history...</p>
       </Card>
     )
   }
 
   return (
-    <Card className="bg-slate-800/50 border-slate-700 p-6">
+    <Card className="bg-white border border-gray-100 p-6">
       <div className="mb-4">
-        <h3 className="text-lg font-semibold text-white mb-1">Version History</h3>
-        <p className="text-sm text-slate-400">
+        <h3 className="text-lg font-semibold text-gray-900 mb-1">Version History</h3>
+        <p className="text-sm text-gray-500">
           {versions.length} version{versions.length !== 1 ? 's' : ''} recorded
         </p>
       </div>
 
+      {error && (
+        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 mb-4">
+          {error}
+        </div>
+      )}
+
       {versions.length === 0 ? (
-        <div className="text-center py-8 text-slate-400">
-          <Clock className="h-12 w-12 mx-auto mb-2 text-slate-600" />
+        <div className="text-center py-8 text-gray-500">
+          <Clock className="h-12 w-12 mx-auto mb-2 text-gray-300" />
           <p>No version history available</p>
         </div>
       ) : (
@@ -138,7 +151,7 @@ export default function TemplateVersionHistory({ templateId }: TemplateVersionHi
           {versions.map((version, index) => (
             <div
               key={version.id}
-              className="border border-slate-700 rounded-lg p-4 hover:bg-slate-800/30 transition-colors"
+              className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
@@ -151,26 +164,26 @@ export default function TemplateVersionHistory({ templateId }: TemplateVersionHi
                       {version.change_type}
                     </Badge>
                     {index === 0 && (
-                      <Badge variant="outline" className="text-xs bg-blue-500/10 text-blue-400 border-blue-500/30">
+                      <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
                         Current
                       </Badge>
                     )}
                   </div>
 
                   {/* Changes Summary */}
-                  <p className="text-sm text-slate-300 mb-2">
+                  <p className="text-sm text-gray-700 mb-2">
                     {getChangesSummary(version.changes_json, version.change_type)}
                   </p>
 
                   {/* Notes */}
                   {version.notes && (
-                    <p className="text-xs text-slate-500 italic mb-2">
+                    <p className="text-xs text-gray-500 italic mb-2">
                       &quot;{version.notes}&quot;
                     </p>
                   )}
 
                   {/* Metadata */}
-                  <div className="flex items-center gap-3 text-xs text-slate-500">
+                  <div className="flex items-center gap-3 text-xs text-gray-500">
                     <div className="flex items-center gap-1">
                       <User className="h-3 w-3" />
                       <span>{version.changed_by}</span>
@@ -190,21 +203,21 @@ export default function TemplateVersionHistory({ templateId }: TemplateVersionHi
                         size="sm"
                         variant="outline"
                         onClick={() => handleRollback(version.id)}
-                        className="border-slate-600 text-slate-300 hover:bg-slate-800 flex-shrink-0"
+                        className="border-gray-200 bg-white text-gray-900 hover:bg-gray-50 flex-shrink-0"
                       >
                         <RotateCcw className="h-3 w-3 mr-1" />
                         Rollback
                       </Button>
                     </AlertDialogTrigger>
-                    <AlertDialogContent className="bg-slate-900 border-slate-700">
+                    <AlertDialogContent className="bg-white border-gray-200">
                       <AlertDialogHeader>
-                        <AlertDialogTitle className="text-white">Rollback Template</AlertDialogTitle>
-                        <AlertDialogDescription className="text-slate-400">
+                        <AlertDialogTitle className="text-gray-900">Rollback Template</AlertDialogTitle>
+                        <AlertDialogDescription className="text-gray-600">
                           Are you sure you want to rollback to this version? Current changes will be saved in history.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel className="bg-slate-800 text-white border-slate-700">Cancel</AlertDialogCancel>
+                        <AlertDialogCancel className="bg-white text-gray-900 border-gray-200">Cancel</AlertDialogCancel>
                         <AlertDialogAction onClick={confirmRollback} className="bg-blue-600 hover:bg-blue-700">
                           Rollback
                         </AlertDialogAction>

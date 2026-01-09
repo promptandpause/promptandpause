@@ -7,11 +7,11 @@ export async function GET(request: NextRequest) {
     const authSupabase = await createClient()
     const { data: { user }, error: authError } = await authSupabase.auth.getUser()
 
-    if (authError || !user) {
+    if (authError || !user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const adminAuth = await checkAdminAuth(user.email || undefined)
+    const adminAuth = await checkAdminAuth(user.email)
     if (!adminAuth.isAdmin) {
       return NextResponse.json({ error: 'Unauthorized - Admin access required' }, { status: 403 })
     }
@@ -49,16 +49,25 @@ export async function GET(request: NextRequest) {
     }
 
     if (search) {
-      // Basic operational search (email/token). Note: or() requires PostgREST filter syntax.
-      query = query.or(
-        `purchaser_email.ilike.%${search}%,recipient_email.ilike.%${search}%,redemption_token.ilike.%${search}%`
-      )
+      // Basic operational search (email/token). Note: or() uses PostgREST filter syntax.
+      // Sanitize to prevent breaking the filter expression.
+      const safeSearch = String(search)
+        .replace(/[,%()]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, 200)
+
+      if (safeSearch) {
+        query = query.or(
+          `purchaser_email.ilike.%${safeSearch}%,recipient_email.ilike.%${safeSearch}%,redemption_token.ilike.%${safeSearch}%`
+        )
+      }
     }
 
     const { data, error } = await query
 
     if (error) {
-      return NextResponse.json({ error: 'Failed to fetch gifts' }, { status: 500 })
+      return NextResponse.json({ error: error.message || 'Failed to fetch gifts' }, { status: 500 })
     }
 
     return NextResponse.json({ success: true, gifts: data })
