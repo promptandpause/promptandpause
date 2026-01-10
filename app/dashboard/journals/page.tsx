@@ -62,13 +62,12 @@ export default function JournalsPage() {
           router.push("/login")
           return
         }
-        const { data, error } = await supabase
-          .from("self_journals")
-          .select("*")
-          .eq("user_id", user.id)
-          .order("created_at", { ascending: false })
-
-        if (error) throw error
+        const res = await fetch('/api/self-journals', { cache: 'no-store' })
+        const json = await res.json().catch(() => null)
+        if (!res.ok) {
+          throw new Error(json?.error || 'Failed to load journals')
+        }
+        const data = json?.data
         if (active) {
           const list = (data || []) as JournalEntry[]
           setJournals(list)
@@ -135,32 +134,26 @@ export default function JournalsPage() {
       if (!user) throw new Error("Not signed in")
 
       if (editingId) {
-        const { error } = await supabase
-          .from("self_journals")
-          .update({
-            journal_text: text.trim(),
-            mood,
-            tags,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("id", editingId)
-          .eq("user_id", user.id)
-        if (error) throw error
-        setJournals((prev) => prev.map(j => j.id === editingId ? { ...j, journal_text: text.trim(), mood, tags, updated_at: new Date().toISOString() } : j))
+        const res = await fetch(`/api/self-journals/${editingId}`, {
+          method: 'PATCH',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ journal_text: text.trim(), mood, tags }),
+        })
+        const json = await res.json().catch(() => null)
+        if (!res.ok) throw new Error(json?.error || 'Failed to update journal')
+        const updated = json?.data as JournalEntry
+        setJournals((prev) => prev.map(j => j.id === editingId ? updated : j))
         toast({ title: "Journal updated", description: "Your entry has been updated." })
       } else {
-        const { data, error } = await supabase
-          .from("self_journals")
-          .insert({
-            user_id: user.id,
-            journal_text: text.trim(),
-            mood,
-            tags,
-          })
-          .select()
-          .single()
-        if (error) throw error
-        if (data) setJournals((prev) => [data as JournalEntry, ...prev])
+        const res = await fetch('/api/self-journals', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ journal_text: text.trim(), mood, tags }),
+        })
+        const json = await res.json().catch(() => null)
+        if (!res.ok) throw new Error(json?.error || 'Failed to create journal')
+        const created = json?.data as JournalEntry
+        if (created) setJournals((prev) => [created, ...prev])
         toast({ title: "Journal saved", description: "Your entry has been saved privately." })
       }
       setText("")
@@ -176,11 +169,9 @@ export default function JournalsPage() {
 
   async function handleDelete(id: string) {
     try {
-      const { error } = await supabase
-        .from("self_journals")
-        .delete()
-        .eq("id", id)
-      if (error) throw error
+      const res = await fetch(`/api/self-journals/${id}`, { method: 'DELETE' })
+      const json = await res.json().catch(() => null)
+      if (!res.ok) throw new Error(json?.error || 'Failed to delete')
       setJournals((prev) => prev.filter(j => j.id !== id))
       toast({ title: "Deleted", description: "Journal entry removed." })
     } catch (err: any) {

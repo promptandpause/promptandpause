@@ -1,5 +1,6 @@
 import { createServiceRoleClient } from '@/lib/supabase/server'
 import { WeeklyDigest, MoodType } from '@/lib/types/reflection'
+import { decryptIfEncrypted } from '@/lib/utils/crypto'
 
 /**
  * Server-Side Analytics Service for Prompt & Pause
@@ -307,7 +308,8 @@ export async function generateWeeklyDigestServer(
         is_self_journal: false,
       })),
       ...selfJournals.map(j => {
-        const text = j.journal_text || ''
+        const raw = j.journal_text || ''
+        const text = decryptIfEncrypted(raw) || raw
         const wc = text.trim().split(/\s+/).filter(Boolean).length
         return {
           date: (j.created_at || '').slice(0, 10),
@@ -431,7 +433,8 @@ export async function generateWeeklyDigestServer(
           reflection_text: r.reflection_text || '',
         })),
         ...baselineSelfJournals.map((j: any) => {
-          const text = j.journal_text || ''
+          const raw = j.journal_text || ''
+          const text = decryptIfEncrypted(raw) || raw
           const wc = text.trim().split(/\s+/).filter(Boolean).length
           return {
             date: (j.created_at || '').slice(0, 10),

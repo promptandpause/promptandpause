@@ -5,6 +5,7 @@ import { checkAdminAuth } from '@/lib/services/adminService'
 const ALLOWED_CRON_JOBS = new Set([
   'send-daily-prompts',
   'regenerate-weekly-insights',
+  'encrypt-self-journals',
 ])
 
 export async function POST(request: NextRequest) {

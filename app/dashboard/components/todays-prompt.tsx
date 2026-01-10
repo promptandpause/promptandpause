@@ -184,16 +184,13 @@ export default function TodaysPrompt() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error("Not signed in")
 
-      const { error } = await supabase
-        .from('self_journals')
-        .insert({
-          user_id: user.id,
-          journal_text: journalText.trim(),
-          mood: journalMood,
-          tags: journalTags,
-        })
-
-      if (error) throw error
+      const res = await fetch('/api/self-journals', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ journal_text: journalText.trim(), mood: journalMood, tags: journalTags }),
+      })
+      const json = await res.json().catch(() => null)
+      if (!res.ok) throw new Error(json?.error || 'Failed to save journal')
 
       toast({ title: "Journal saved", description: "Your self-journal has been saved privately." })
       setShowSelfJournal(false)
