@@ -11,7 +11,19 @@ const HomepageContactSchema = z.object({
   isPremium: z.boolean().optional()
 })
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+let resendClient: Resend | null = null
+
+function getResendClient(): Resend {
+  if (resendClient) return resendClient
+
+  const apiKey = process.env.RESEND_API_KEY
+  if (!apiKey) {
+    throw new Error('Missing API key. Pass it to the constructor `new Resend("re_123")`')
+  }
+
+  resendClient = new Resend(apiKey)
+  return resendClient
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -32,6 +44,7 @@ export async function POST(request: NextRequest) {
 
     // Send email directly to contact inbox
     try {
+      const resend = getResendClient()
       const { data, error } = await resend.emails.send({
         from: `Prompt & Pause <noreply@promptandpause.com>`,
         to: contactEmail,
