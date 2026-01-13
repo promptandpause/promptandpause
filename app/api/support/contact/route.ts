@@ -5,6 +5,13 @@ import { sendSupportEmail, sendSupportConfirmationEmail } from '@/lib/services/e
 import { z } from 'zod'
 import { rateLimit } from '@/lib/utils/rateLimit'
 
+function makeErrorId() {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID()
+  }
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`
+}
+
 const SupportRequestSchema = z.object({
   category: z.enum(['general', 'bug', 'billing', 'feature', 'account', 'other']),
   subject: z.string().min(3, 'Subject must be at least 3 characters').max(120, 'Subject too long'),
@@ -88,7 +95,7 @@ export async function POST(request: NextRequest) {
         localTicketMetadata = ticket.metadata as Record<string, unknown>
       }
     } catch (dbError) {
-      const errorId = crypto.randomUUID()
+      const errorId = makeErrorId()
       console.error('support_ticket_create_failed', {
         errorId,
         userId: user.id,
@@ -246,7 +253,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    const errorId = crypto.randomUUID()
+    const errorId = makeErrorId()
     console.error('support_contact_handler_failed', {
       errorId,
       error,
