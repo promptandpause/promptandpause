@@ -153,10 +153,37 @@ function ContactSupportPageContent() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     
+    if (!userProfile?.email || !userProfile?.full_name) {
+      toast({
+        title: "Missing Information",
+        description: "Please wait for your profile to load before submitting.",
+        variant: "destructive"
+      })
+      return
+    }
+
     if (!selectedCategory || !subject.trim() || !message.trim()) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields",
+        variant: "destructive"
+      })
+      return
+    }
+
+    if (subject.trim().length < 3) {
+      toast({
+        title: "Invalid Subject",
+        description: "Subject must be at least 3 characters.",
+        variant: "destructive"
+      })
+      return
+    }
+
+    if (message.trim().length < 10) {
+      toast({
+        title: "Invalid Message",
+        description: "Message must be at least 10 characters.",
         variant: "destructive"
       })
       return
@@ -173,8 +200,8 @@ function ContactSupportPageContent() {
           subject,
           message,
           priority,
-          userEmail: userProfile?.email,
-          userName: userProfile?.full_name,
+          userEmail: userProfile.email,
+          userName: userProfile.full_name,
           tier
         })
       })
@@ -487,7 +514,7 @@ function ContactSupportPageContent() {
                 {/* Submit Button */}
                 <Button
                   type="submit"
-                  disabled={submitting || !selectedCategory || !subject.trim() || !message.trim()}
+                  disabled={submitting || !userProfile?.email || !userProfile?.full_name || !selectedCategory || !subject.trim() || !message.trim()}
                   className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold transition-all duration-300 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                 >
                   {submitting ? (

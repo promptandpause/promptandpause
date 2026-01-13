@@ -42,7 +42,7 @@ const SupportRequestSchema = z.object({
   priority: z.enum(['low', 'medium', 'high']),
   userEmail: z.string().email(),
   userName: z.string().min(1),
-  tier: z.string().optional()
+  tier: z.string().optional().nullable()
 })
 
 export async function POST(request: NextRequest) {
@@ -73,7 +73,24 @@ export async function POST(request: NextRequest) {
 
     // Parse and validate request body
     const body = await request.json()
-    const validation = SupportRequestSchema.safeParse(body)
+
+    const enrichedBody: Record<string, unknown> = {
+      ...(body ?? {}),
+    }
+
+    const rawUserEmail = typeof enrichedBody.userEmail === 'string' ? enrichedBody.userEmail.trim() : ''
+    if (!rawUserEmail && user.email) {
+      enrichedBody.userEmail = user.email
+    }
+
+    const rawUserName = typeof enrichedBody.userName === 'string' ? enrichedBody.userName.trim() : ''
+    if (!rawUserName) {
+      const emailForName =
+        (typeof enrichedBody.userEmail === 'string' ? enrichedBody.userEmail : '') || user.email || ''
+      enrichedBody.userName = emailForName.includes('@') ? emailForName.split('@')[0] : 'User'
+    }
+
+    const validation = SupportRequestSchema.safeParse(enrichedBody)
 
     if (!validation.success) {
       return NextResponse.json(
