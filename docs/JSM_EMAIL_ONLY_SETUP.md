@@ -1,4 +1,4 @@
-# Jira Service Management (JSM) Email-Only Setup (2026)
+# External Ticketing Email-Only Setup (Retired)
 
 This guide has been retired.
 

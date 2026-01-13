@@ -4,7 +4,7 @@ export async function GET() {
   return NextResponse.json(
     {
       ok: false,
-      error: 'Jira Service Management integration is disabled',
+      error: 'External ticketing integration is disabled',
     },
     { status: 410 }
   )

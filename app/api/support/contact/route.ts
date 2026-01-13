@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { sendSupportEmail, sendSupportConfirmationEmail } from '@/lib/services/emailService'
 import { z } from 'zod'
 import { rateLimit } from '@/lib/utils/rateLimit'
@@ -53,8 +54,16 @@ export async function POST(request: NextRequest) {
 
     const { category, subject, message, priority, userEmail, userName, tier } = validation.data
 
+    const PDSDESK_URL = process.env.PDSDESK_SUPABASE_URL
+    const PDSDESK_SERVICE_ROLE_KEY = process.env.PDSDESK_SUPABASE_SERVICE_ROLE_KEY
+    const PDSDESK_SUPPORT_SYSTEM_USER_ID = process.env.PDSDESK_SUPPORT_SYSTEM_USER_ID
+
     // Create ticket in local database first
     let localTicketId: string
+    let localTicketMetadata: Record<string, unknown> = {
+      tier: tier || 'freemium',
+      source: 'dashboard'
+    }
     try {
       const { data: ticket, error: dbError } = await supabase
         .from('support_tickets')
@@ -75,6 +84,9 @@ export async function POST(request: NextRequest) {
 
       if (dbError) throw dbError
       localTicketId = ticket.id
+      if (ticket?.metadata && typeof ticket.metadata === 'object') {
+        localTicketMetadata = ticket.metadata as Record<string, unknown>
+      }
     } catch (dbError) {
       return NextResponse.json(
         { 
@@ -85,13 +97,66 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Create a new PDSdesk ticket (always new) when configured
+    let externalTicketRef: string = localTicketId
+    try {
+      if (PDSDESK_URL && PDSDESK_SERVICE_ROLE_KEY && PDSDESK_SUPPORT_SYSTEM_USER_ID) {
+        const pdsdesk = createSupabaseClient(PDSDESK_URL, PDSDESK_SERVICE_ROLE_KEY, {
+          auth: { autoRefreshToken: false, persistSession: false },
+        })
+
+        const description = [
+          `Dashboard support form submission`,
+          `User: ${userName} <${userEmail}>`,
+          `Category: ${category}`,
+          `Priority: ${priority}`,
+          tier ? `Tier: ${tier}` : null,
+          '',
+          message,
+        ].filter(Boolean).join('\n')
+
+        const { data: pdsTicket, error: pdsError } = await pdsdesk
+          .from('tickets')
+          .insert({
+            title: subject,
+            description,
+            status: 'new',
+            priority,
+            category: 'Customer Support',
+            requester_id: PDSDESK_SUPPORT_SYSTEM_USER_ID,
+            created_by: PDSDESK_SUPPORT_SYSTEM_USER_ID,
+            ticket_type: 'customer_service',
+            channel: 'dashboard',
+          })
+          .select('id,ticket_number')
+          .maybeSingle()
+
+        if (!pdsError && pdsTicket?.id) {
+          const pdsdeskTicketNumber = (pdsTicket as any).ticket_number as string | undefined
+          externalTicketRef = pdsdeskTicketNumber || pdsTicket.id
+
+          const mergedMetadata = {
+            ...localTicketMetadata,
+            pdsdesk_ticket_id: pdsTicket.id,
+            ...(pdsdeskTicketNumber ? { pdsdesk_ticket_number: pdsdeskTicketNumber } : null),
+          }
+
+          await supabase
+            .from('support_tickets')
+            .update({ metadata: mergedMetadata })
+            .eq('id', localTicketId)
+        }
+      }
+    } catch {
+    }
+
     // Send confirmation email to user
     try {
       await sendSupportConfirmationEmail(
         userEmail,
         userName,
         subject,
-        localTicketId
+        externalTicketRef
       )
     } catch (emailError) {
       // Don't fail the request if email notification fails
@@ -107,7 +172,7 @@ export async function POST(request: NextRequest) {
         userEmail,
         userName,
         tier: tier || 'freemium',
-        requestId: localTicketId
+        requestId: externalTicketRef
       })
     } catch (emailError) {
       // Don't fail the request if email notification fails
@@ -116,7 +181,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: 'Support ticket created successfully',
-      ticketId: localTicketId
+      ticketId: externalTicketRef
     })
 
   } catch (error) {

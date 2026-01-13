@@ -1,5 +1,5 @@
 function jsmDisabledError(): Error {
-  return new Error('Jira Service Management integration is disabled')
+  return new Error('External ticketing integration is disabled')
 }
 
 export type JsmCreateRequestParams = {
