@@ -51,8 +51,8 @@ function renderTemplateString(template: string, variables: Record<string, string
 }
 
 const SUBJECT_TEMPLATE_OVERRIDES: Record<string, string> = {
-  support_confirmation: 'Support request received (#{{requestId}})',
-  support_response: 'Response to your support request (#{{requestId}})',
+  support_confirmation: 'Support ticket #{{requestId}} received',
+  support_response: 'Support ticket #{{requestId}} update',
 }
 
 async function getSubjectForTemplate(
@@ -1334,7 +1334,7 @@ export async function sendSupportEmail(params: {
       from: `${APP_NAME} Support <${FROM_EMAIL}>`,
       to: supportAdminEmail,
       replyTo: userEmail,
-      subject: `[Support - ${priority.toUpperCase()}] ${subject}`,
+      subject: `[Support - ${priority.toUpperCase()}] #${requestId} ${subject}`,
       html: generateSupportEmailHTML(params),
     })
 
