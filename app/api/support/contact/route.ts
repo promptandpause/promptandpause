@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { sendSupportEmail, sendSupportConfirmationEmail } from '@/lib/services/emailService'
 import { z } from 'zod'
@@ -88,10 +88,60 @@ export async function POST(request: NextRequest) {
         localTicketMetadata = ticket.metadata as Record<string, unknown>
       }
     } catch (dbError) {
+      const errorId = crypto.randomUUID()
+      console.error('support_ticket_create_failed', {
+        errorId,
+        userId: user.id,
+        error: dbError,
+      })
+
+      try {
+        const supabaseAdmin = createServiceRoleClient()
+        const { data: ticket, error: adminError } = await supabaseAdmin
+          .from('support_tickets')
+          .insert({
+            user_id: user.id,
+            subject,
+            description: message,
+            status: 'open',
+            priority,
+            category,
+            metadata: {
+              tier: tier || 'freemium',
+              source: 'dashboard'
+            }
+          })
+          .select()
+          .single()
+
+        if (adminError) throw adminError
+        localTicketId = ticket.id
+        if (ticket?.metadata && typeof ticket.metadata === 'object') {
+          localTicketMetadata = ticket.metadata as Record<string, unknown>
+        }
+      } catch (adminError) {
+        console.error('support_ticket_create_failed_service_role', {
+          errorId,
+          userId: user.id,
+          error: adminError,
+        })
+
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Failed to create support ticket. Please try again.',
+            errorId,
+          },
+          { status: 500 }
+        )
+      }
+    }
+
+    if (!localTicketId) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Failed to create support ticket. Please try again.' 
+        {
+          success: false,
+          error: 'Failed to create support ticket. Please try again.'
         },
         { status: 500 }
       )
