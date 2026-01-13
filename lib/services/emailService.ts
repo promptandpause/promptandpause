@@ -50,11 +50,21 @@ function renderTemplateString(template: string, variables: Record<string, string
   })
 }
 
+const SUBJECT_TEMPLATE_OVERRIDES: Record<string, string> = {
+  support_confirmation: 'Support request received (#{{requestId}})',
+  support_response: 'Response to your support request (#{{requestId}})',
+}
+
 async function getSubjectForTemplate(
   templateKey: string,
   variables: Record<string, string | number | null | undefined> = {}
 ): Promise<string> {
   try {
+    const override = SUBJECT_TEMPLATE_OVERRIDES[templateKey]
+    if (override) {
+      return renderTemplateString(override, variables)
+    }
+
     const result = await getTemplateByKey(templateKey)
     if (result.success && result.data?.subject_template) {
       return renderTemplateString(result.data.subject_template, variables)
