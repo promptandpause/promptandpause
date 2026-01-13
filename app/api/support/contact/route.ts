@@ -181,6 +181,13 @@ export async function POST(request: NextRequest) {
           .select('id,ticket_number')
           .maybeSingle()
 
+        if (pdsError) {
+          console.error('pdsdesk_ticket_create_failed', {
+            localTicketId,
+            error: pdsError,
+          })
+        }
+
         if (!pdsError && pdsTicket?.id) {
           const pdsdeskTicketNumber = (pdsTicket as any).ticket_number as string | undefined
           externalTicketRef = pdsdeskTicketNumber || pdsTicket.id
@@ -197,7 +204,11 @@ export async function POST(request: NextRequest) {
             .eq('id', localTicketId)
         }
       }
-    } catch {
+    } catch (error) {
+      console.error('pdsdesk_ticket_create_threw', {
+        localTicketId,
+        error,
+      })
     }
 
     // Send confirmation email to user
@@ -235,10 +246,16 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
+    const errorId = crypto.randomUUID()
+    console.error('support_contact_handler_failed', {
+      errorId,
+      error,
+    })
     return NextResponse.json(
       { 
         success: false, 
-        error: error instanceof Error ? error.message : 'Internal server error' 
+        error: 'Internal server error',
+        errorId,
       },
       { status: 500 }
     )
