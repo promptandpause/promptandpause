@@ -67,33 +67,25 @@ export async function POST(request: NextRequest) {
 
     // Create ticket in local database first
     let localTicketId: string
-    let localTicketMetadata: Record<string, unknown> = {
-      tier: tier || 'freemium',
-      source: 'dashboard'
-    }
+    const localTags: string[] = [`tier:${tier || 'freemium'}`, 'source:dashboard']
     try {
       const { data: ticket, error: dbError } = await supabase
         .from('support_tickets')
         .insert({
           user_id: user.id,
+          user_email: userEmail,
           subject,
           description: message,
           status: 'open',
           priority,
           category,
-          metadata: {
-            tier: tier || 'freemium',
-            source: 'dashboard'
-          }
+          tags: localTags,
         })
         .select()
         .single()
 
       if (dbError) throw dbError
       localTicketId = ticket.id
-      if (ticket?.metadata && typeof ticket.metadata === 'object') {
-        localTicketMetadata = ticket.metadata as Record<string, unknown>
-      }
     } catch (dbError) {
       const errorId = makeErrorId()
       console.error('support_ticket_create_failed', {
@@ -108,24 +100,19 @@ export async function POST(request: NextRequest) {
           .from('support_tickets')
           .insert({
             user_id: user.id,
+            user_email: userEmail,
             subject,
             description: message,
             status: 'open',
             priority,
             category,
-            metadata: {
-              tier: tier || 'freemium',
-              source: 'dashboard'
-            }
+            tags: localTags,
           })
           .select()
           .single()
 
         if (adminError) throw adminError
         localTicketId = ticket.id
-        if (ticket?.metadata && typeof ticket.metadata === 'object') {
-          localTicketMetadata = ticket.metadata as Record<string, unknown>
-        }
       } catch (adminError) {
         console.error('support_ticket_create_failed_service_role', {
           errorId,
@@ -199,15 +186,14 @@ export async function POST(request: NextRequest) {
           const pdsdeskTicketNumber = (pdsTicket as any).ticket_number as string | undefined
           externalTicketRef = pdsdeskTicketNumber || pdsTicket.id
 
-          const mergedMetadata = {
-            ...localTicketMetadata,
-            pdsdesk_ticket_id: pdsTicket.id,
-            ...(pdsdeskTicketNumber ? { pdsdesk_ticket_number: pdsdeskTicketNumber } : null),
-          }
+          const pdsdeskTags = [
+            `pdsdesk_ticket_id:${pdsTicket.id}`,
+            ...(pdsdeskTicketNumber ? [`pdsdesk_ticket_number:${pdsdeskTicketNumber}`] : []),
+          ]
 
           await supabase
             .from('support_tickets')
-            .update({ metadata: mergedMetadata })
+            .update({ tags: [...localTags, ...pdsdeskTags] })
             .eq('id', localTicketId)
         }
       }
