@@ -1327,7 +1327,7 @@ export async function sendSupportEmail(params: {
       return { success: false, error: 'Email service not configured' }
     }
 
-    const supportAdminEmail = process.env.SUPPORT_ADMIN_EMAIL || 'support@promptandpause.com'
+    const supportAdminEmail = 'support@promptandpause.com'
     const { category, subject, message, priority, userEmail, userName, tier, requestId } = params
 
     const { data, error } = await resend.emails.send({

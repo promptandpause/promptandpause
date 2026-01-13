@@ -12,8 +12,31 @@ function makeErrorId() {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`
 }
 
+const PDSDESK_SUPPORT_SYSTEM_USER_ID_FALLBACK = '99ceb56a-c574-4a6e-ac5a-f81cc7c61d93'
+
+function normalizeSupportCategory(input: string): 'general' | 'bug' | 'billing' | 'feature' | 'account' | 'other' {
+  const raw = (input ?? '').toString().trim().toLowerCase()
+  if (!raw) return 'general'
+
+  const allowed = new Set(['general', 'bug', 'billing', 'feature', 'account', 'other'])
+  if (allowed.has(raw)) return raw as any
+
+  if (raw.includes('bill')) return 'billing'
+  if (raw.includes('subscr')) return 'billing'
+  if (raw.includes('payment')) return 'billing'
+  if (raw.includes('bug')) return 'bug'
+  if (raw.includes('error')) return 'bug'
+  if (raw.includes('feature')) return 'feature'
+  if (raw.includes('request')) return 'feature'
+  if (raw.includes('account')) return 'account'
+  if (raw.includes('privacy')) return 'account'
+  if (raw.includes('general')) return 'general'
+
+  return 'other'
+}
+
 const SupportRequestSchema = z.object({
-  category: z.enum(['general', 'bug', 'billing', 'feature', 'account', 'other']),
+  category: z.string().min(1),
   subject: z.string().min(3, 'Subject must be at least 3 characters').max(120, 'Subject too long'),
   message: z.string().min(10, 'Message must be at least 10 characters').max(2000, 'Message too long'),
   priority: z.enum(['low', 'medium', 'high']),
@@ -59,11 +82,13 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { category, subject, message, priority, userEmail, userName, tier } = validation.data
+    const { category: rawCategory, subject, message, priority, userEmail, userName, tier } = validation.data
+    const category = normalizeSupportCategory(rawCategory)
 
     const PDSDESK_URL = process.env.PDSDESK_SUPABASE_URL
     const PDSDESK_SERVICE_ROLE_KEY = process.env.PDSDESK_SUPABASE_SERVICE_ROLE_KEY
-    const PDSDESK_SUPPORT_SYSTEM_USER_ID = process.env.PDSDESK_SUPPORT_SYSTEM_USER_ID
+    const PDSDESK_SUPPORT_SYSTEM_USER_ID =
+      process.env.PDSDESK_SUPPORT_SYSTEM_USER_ID || PDSDESK_SUPPORT_SYSTEM_USER_ID_FALLBACK
 
     // Create ticket in local database first
     let localTicketId: string
@@ -168,9 +193,12 @@ export async function POST(request: NextRequest) {
             priority,
             category: 'Customer Support',
             requester_id: PDSDESK_SUPPORT_SYSTEM_USER_ID,
+            requester_email: userEmail,
+            requester_name: userName,
             created_by: PDSDESK_SUPPORT_SYSTEM_USER_ID,
             ticket_type: 'customer_service',
             channel: 'dashboard',
+            mailbox: 'support@promptandpause.com',
           })
           .select('id,ticket_number')
           .maybeSingle()
