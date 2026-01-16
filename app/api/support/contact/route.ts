@@ -240,6 +240,29 @@ export async function POST(request: NextRequest) {
             .from('support_tickets')
             .update({ tags: [...localTags, ...pdsdeskTags] })
             .eq('id', localTicketId)
+
+          try {
+            await pdsdesk.from('ticket_events').insert({
+              ticket_id: pdsTicket.id,
+              actor_id: PDSDESK_SUPPORT_SYSTEM_USER_ID,
+              event_type: 'dashboard_support_ingested',
+              payload: {
+                key: `dashboard:${localTicketId}`,
+                localTicketId,
+                userEmail,
+                userName,
+                category,
+                priority,
+                tier: tier || null,
+              },
+            })
+          } catch (eventError) {
+            console.error('pdsdesk_ticket_event_insert_failed', {
+              localTicketId,
+              pdsdeskTicketId: pdsTicket.id,
+              error: eventError,
+            })
+          }
         }
       }
     } catch (error) {
