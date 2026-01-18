@@ -201,6 +201,14 @@ export async function POST(request: NextRequest) {
           message,
         ].filter(Boolean).join('\n')
 
+        // Find the operator group that handles support@promptandpause.com
+        const { data: queueData } = await pdsdesk
+          .from('operator_groups')
+          .select('id')
+          .eq('email_address', 'support@promptandpause.com')
+          .eq('is_active', true)
+          .maybeSingle()
+
         const { data: pdsTicket, error: pdsError } = await pdsdesk
           .from('tickets')
           .insert({
@@ -216,6 +224,7 @@ export async function POST(request: NextRequest) {
             ticket_type: 'customer_service',
             channel: 'dashboard',
             mailbox: 'support@promptandpause.com',
+            assignment_group_id: queueData?.id || null, // Assign to the correct queue
           })
           .select('id,ticket_number')
           .maybeSingle()
@@ -236,9 +245,18 @@ export async function POST(request: NextRequest) {
             ...(pdsdeskTicketNumber ? [`pdsdesk_ticket_number:${pdsdeskTicketNumber}`] : []),
           ]
 
+          // Update local ticket with PDSdesk reference (if support_tickets has these columns)
+          const updateData: any = { 
+            tags: [...localTags, ...pdsdeskTags]
+          }
+          if (pdsdeskTicketNumber) {
+            updateData.pdsdesk_ticket_number = pdsdeskTicketNumber
+          }
+          updateData.pdsdesk_ticket_id = pdsTicket.id
+          
           await supabase
             .from('support_tickets')
-            .update({ tags: [...localTags, ...pdsdeskTags] })
+            .update(updateData)
             .eq('id', localTicketId)
 
           try {
