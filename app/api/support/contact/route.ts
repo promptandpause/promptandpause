@@ -187,9 +187,43 @@ export async function POST(request: NextRequest) {
     let externalTicketRef: string = localTicketId
     try {
       if (PDSDESK_URL && PDSDESK_SERVICE_ROLE_KEY && PDSDESK_SUPPORT_SYSTEM_USER_ID) {
+        console.log('Creating PDSdesk ticket with config', {
+          hasUrl: !!PDSDESK_URL,
+          hasKey: !!PDSDESK_SERVICE_ROLE_KEY,
+          hasUserId: !!PDSDESK_SUPPORT_SYSTEM_USER_ID,
+        })
+
         const pdsdesk = createSupabaseClient(PDSDESK_URL, PDSDESK_SERVICE_ROLE_KEY, {
           auth: { autoRefreshToken: false, persistSession: false },
         })
+
+        // First, verify the system user exists
+        const { data: systemUser, error: userError } = await pdsdesk
+          .from('profiles')
+          .select('id')
+          .eq('id', PDSDESK_SUPPORT_SYSTEM_USER_ID)
+          .maybeSingle()
+
+        if (userError || !systemUser) {
+          console.error('pdsdesk_system_user_not_found', {
+            userId: PDSDESK_SUPPORT_SYSTEM_USER_ID,
+            error: userError,
+          })
+        }
+
+        // Find the operator group that handles support@promptandpause.com
+        const { data: queueData, error: queueError } = await pdsdesk
+          .from('operator_groups')
+          .select('id')
+          .eq('email_address', 'support@promptandpause.com')
+          .eq('is_active', true)
+          .maybeSingle()
+
+        if (queueError) {
+          console.error('pdsdesk_queue_lookup_failed', { error: queueError })
+        } else if (!queueData) {
+          console.warn('pdsdesk_no_queue_found', { email: 'support@promptandpause.com' })
+        }
 
         const description = [
           `Dashboard support form submission`,
@@ -201,31 +235,27 @@ export async function POST(request: NextRequest) {
           message,
         ].filter(Boolean).join('\n')
 
-        // Find the operator group that handles support@promptandpause.com
-        const { data: queueData } = await pdsdesk
-          .from('operator_groups')
-          .select('id')
-          .eq('email_address', 'support@promptandpause.com')
-          .eq('is_active', true)
-          .maybeSingle()
+        const ticketData = {
+          title: subject,
+          description,
+          status: 'new',
+          priority,
+          category: 'Customer Support',
+          requester_id: PDSDESK_SUPPORT_SYSTEM_USER_ID,
+          requester_email: userEmail,
+          requester_name: userName,
+          created_by: PDSDESK_SUPPORT_SYSTEM_USER_ID,
+          ticket_type: 'customer_service',
+          channel: 'dashboard',
+          mailbox: 'support@promptandpause.com',
+          assignment_group_id: queueData?.id || null,
+        }
+
+        console.log('Inserting PDSdesk ticket', { ticketData })
 
         const { data: pdsTicket, error: pdsError } = await pdsdesk
           .from('tickets')
-          .insert({
-            title: subject,
-            description,
-            status: 'new',
-            priority,
-            category: 'Customer Support',
-            requester_id: PDSDESK_SUPPORT_SYSTEM_USER_ID,
-            requester_email: userEmail,
-            requester_name: userName,
-            created_by: PDSDESK_SUPPORT_SYSTEM_USER_ID,
-            ticket_type: 'customer_service',
-            channel: 'dashboard',
-            mailbox: 'support@promptandpause.com',
-            assignment_group_id: queueData?.id || null, // Assign to the correct queue
-          })
+          .insert(ticketData)
           .select('id,ticket_number')
           .maybeSingle()
 
@@ -233,6 +263,9 @@ export async function POST(request: NextRequest) {
           console.error('pdsdesk_ticket_create_failed', {
             localTicketId,
             error: pdsError,
+            queueData,
+            userEmail,
+            subject,
           })
         }
 
@@ -281,6 +314,14 @@ export async function POST(request: NextRequest) {
               error: eventError,
             })
           }
+        } else {
+          // PDSdesk ticket creation failed, but we still have a local ticket
+          // Keep the local ticket ID as the reference
+          console.warn('pdsdesk_ticket_not_created', {
+            localTicketId,
+            pdsError,
+            queueData,
+          })
         }
       }
     } catch (error) {
