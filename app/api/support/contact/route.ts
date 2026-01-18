@@ -12,7 +12,7 @@ function makeErrorId() {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`
 }
 
-const PDSDESK_SUPPORT_SYSTEM_USER_ID_FALLBACK = '99ceb56a-c574-4a6e-ac5a-f81cc7c61d93'
+const PDSDESK_SUPPORT_SYSTEM_USER_ID_FALLBACK = 'fb8b71c1-b3eb-4099-b4eb-7596e0941d80' // dishuan@promptandpause.com
 
 function normalizeSupportCategory(input: string): 'general' | 'bug' | 'billing' | 'feature' | 'account' | 'other' {
   const raw = (input ?? '').toString().trim().toLowerCase()
