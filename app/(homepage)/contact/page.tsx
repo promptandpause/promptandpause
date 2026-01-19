@@ -27,7 +27,6 @@ export default function ContactPage() {
       gestureOrientation: "vertical",
       smoothWheel: true,
       wheelMultiplier: 1,
-      smoothTouch: false,
       touchMultiplier: 2,
       infinite: false,
     })
@@ -155,7 +154,7 @@ function ContactFormSection() {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-6 py-4 border-2 border-neutral-300 focus:border-black outline-none transition-colors text-lg"
+                  className="w-full px-4 sm:px-6 py-4 border-2 border-neutral-300 focus:border-black outline-none transition-colors text-base sm:text-lg rounded-lg touch-manipulation"
                   suppressHydrationWarning
                 />
               </div>
@@ -166,7 +165,7 @@ function ContactFormSection() {
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-6 py-4 border-2 border-neutral-300 focus:border-black outline-none transition-colors text-lg"
+                  className="w-full px-4 sm:px-6 py-4 border-2 border-neutral-300 focus:border-black outline-none transition-colors text-base sm:text-lg rounded-lg touch-manipulation"
                   suppressHydrationWarning
                 />
               </div>
@@ -178,7 +177,7 @@ function ContactFormSection() {
                 required
                 value={formData.subject}
                 onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                className="w-full px-6 py-4 border-2 border-neutral-300 focus:border-black outline-none transition-colors text-lg bg-white"
+                className="w-full px-4 sm:px-6 py-4 border-2 border-neutral-300 focus:border-black outline-none transition-colors text-base sm:text-lg bg-white rounded-lg touch-manipulation"
                 suppressHydrationWarning
               >
                 <option value="">Select a subject</option>
@@ -196,10 +195,10 @@ function ContactFormSection() {
               <label className="block text-sm font-bold mb-3 tracking-wide">MESSAGE *</label>
               <textarea
                 required
-                rows={8}
+                rows={6}
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                className="w-full px-6 py-4 border-2 border-neutral-300 focus:border-black outline-none transition-colors text-lg resize-none"
+                className="w-full px-4 sm:px-6 py-4 border-2 border-neutral-300 focus:border-black outline-none transition-colors text-base sm:text-lg resize-none rounded-lg touch-manipulation"
                 suppressHydrationWarning
               />
             </div>
@@ -208,7 +207,7 @@ function ContactFormSection() {
               <input 
                 type="checkbox" 
                 id="premium" 
-                className="w-5 h-5"
+                className="w-6 h-6 rounded touch-manipulation"
                 checked={formData.isPremium}
                 onChange={(e) => setFormData({ ...formData, isPremium: e.target.checked })}
               />
@@ -220,7 +219,7 @@ function ContactFormSection() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full px-10 py-5 bg-black text-white text-base font-medium tracking-wide transition-all duration-300 hover:bg-neutral-800 cursor-pointer disabled:bg-neutral-400 disabled:cursor-not-allowed"
+              className="w-full px-10 py-5 bg-black text-white text-base font-medium tracking-wide transition-all duration-300 hover:bg-neutral-800 cursor-pointer disabled:bg-neutral-400 disabled:cursor-not-allowed min-h-[56px] rounded-lg touch-manipulation"
             >
               {loading ? 'SENDING...' : 'SEND MESSAGE'}
             </button>

@@ -93,7 +93,7 @@ export default function Navigation() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="lg:hidden relative p-2 text-white hover:bg-white/10 rounded-lg transition-colors duration-300 flex items-center"
+            className="lg:hidden relative p-3 min-w-[44px] min-h-[44px] text-white hover:bg-white/10 rounded-lg transition-colors duration-300 flex items-center justify-center touch-manipulation"
             aria-label={isOpen ? "Close menu" : "Open menu"}
             aria-expanded={isOpen}
           >
@@ -109,11 +109,11 @@ export default function Navigation() {
         }`}
         style={{ top: 0, zIndex: 9999 }}
       >
-        <div className="flex flex-col items-center justify-center min-h-screen gap-8 px-6 pt-20">
+        <div className="flex flex-col items-center justify-center min-h-screen gap-6 px-6 pt-20 pb-safe">
           <Link
             href="/our-mission"
             onClick={closeMenu}
-            className="text-white text-2xl font-light hover:text-white/70 transition-colors duration-300 animate-fade-in"
+            className="text-white text-2xl font-light hover:text-white/70 transition-colors duration-300 animate-fade-in py-2 px-4 min-h-[44px] flex items-center touch-manipulation"
             style={{ animationDelay: "0.1s" }}
           >
             Our Mission
@@ -121,7 +121,7 @@ export default function Navigation() {
           <Link
             href="/features"
             onClick={closeMenu}
-            className="text-white text-2xl font-light hover:text-white/70 transition-colors duration-300 animate-fade-in"
+            className="text-white text-2xl font-light hover:text-white/70 transition-colors duration-300 animate-fade-in py-2 px-4 min-h-[44px] flex items-center touch-manipulation"
             style={{ animationDelay: "0.2s" }}
           >
             Features
@@ -129,7 +129,7 @@ export default function Navigation() {
           <Link
             href="/pricing"
             onClick={closeMenu}
-            className="text-white text-2xl font-light hover:text-white/70 transition-colors duration-300 animate-fade-in"
+            className="text-white text-2xl font-light hover:text-white/70 transition-colors duration-300 animate-fade-in py-2 px-4 min-h-[44px] flex items-center touch-manipulation"
             style={{ animationDelay: "0.3s" }}
           >
             Pricing
@@ -137,7 +137,7 @@ export default function Navigation() {
           <Link
             href="/research#need-urgent-help"
             onClick={closeMenu}
-            className="text-red-400 text-2xl font-light hover:text-red-300 transition-colors duration-300 animate-fade-in border border-red-400/30 px-6 py-2 rounded-lg"
+            className="text-red-400 text-2xl font-light hover:text-red-300 transition-colors duration-300 animate-fade-in border border-red-400/30 px-6 py-3 rounded-lg min-h-[48px] flex items-center touch-manipulation"
             style={{ animationDelay: "0.35s" }}
           >
             Crisis Resources
@@ -145,7 +145,7 @@ export default function Navigation() {
           <Link
             href="/contact"
             onClick={closeMenu}
-            className="text-white text-2xl font-light hover:text-white/70 transition-colors duration-300 animate-fade-in"
+            className="text-white text-2xl font-light hover:text-white/70 transition-colors duration-300 animate-fade-in py-2 px-4 min-h-[44px] flex items-center touch-manipulation"
             style={{ animationDelay: "0.4s" }}
           >
             Contact
@@ -153,7 +153,7 @@ export default function Navigation() {
           <Link
             href="/login"
             onClick={closeMenu}
-            className="mt-4 px-8 py-3 bg-white text-black text-xl font-medium rounded-lg hover:bg-white/90 transition-all duration-300 animate-fade-in"
+            className="mt-4 px-8 py-4 bg-white text-black text-xl font-medium rounded-lg hover:bg-white/90 transition-all duration-300 animate-fade-in min-h-[52px] flex items-center touch-manipulation"
             style={{ animationDelay: "0.5s" }}
           >
             Login

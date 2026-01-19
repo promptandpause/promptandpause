@@ -216,7 +216,7 @@ function PricingCardsSection() {
 
             <a
               href="/auth"
-              className="block w-full px-10 py-5 border-2 border-black bg-transparent text-black text-base font-medium tracking-wide transition-all duration-300 hover:bg-black hover:text-white cursor-pointer text-center"
+              className="block w-full px-10 py-5 border-2 border-black bg-transparent text-black text-base font-medium tracking-wide transition-all duration-300 hover:bg-black hover:text-white cursor-pointer text-center min-h-[56px] flex items-center justify-center touch-manipulation"
             >
               START FREE
             </a>
@@ -310,7 +310,7 @@ function PricingCardsSection() {
 
             <a
               href="/pricing"
-              className="block w-full px-10 py-5 bg-black text-white border-2 border-black text-base font-medium tracking-wide transition-all duration-300 hover:bg-neutral-800 cursor-pointer text-center"
+              className="block w-full px-10 py-5 bg-black text-white border-2 border-black text-base font-medium tracking-wide transition-all duration-300 hover:bg-neutral-800 cursor-pointer text-center min-h-[56px] flex items-center justify-center touch-manipulation"
             >
               START 7-DAY FREE TRIAL
             </a>
@@ -697,7 +697,7 @@ function EnterpriseSection() {
 
           <a
             href="/contact"
-            className="inline-block px-10 py-5 bg-white text-black border-2 border-white text-base font-medium tracking-wide transition-all duration-300 hover:bg-transparent hover:text-white cursor-pointer"
+            className="inline-flex items-center justify-center px-10 py-5 bg-white text-black border-2 border-white text-base font-medium tracking-wide transition-all duration-300 hover:bg-transparent hover:text-white cursor-pointer min-h-[56px] touch-manipulation"
           >
             CONTACT SALES
           </a>
@@ -722,7 +722,7 @@ function FinalCTASection() {
         <div className="flex flex-col sm:flex-row gap-6 justify-center">
           <a
             href="/signup"
-            className="px-10 py-5 border-2 border-black bg-transparent text-black text-base font-medium tracking-wide transition-all duration-300 hover:bg-black hover:text-white cursor-pointer text-center"
+            className="px-10 py-5 border-2 border-black bg-transparent text-black text-base font-medium tracking-wide transition-all duration-300 hover:bg-black hover:text-white cursor-pointer text-center min-h-[56px] flex items-center justify-center touch-manipulation"
           >
             TRY PREMIUM FREE FOR 7 DAYS
           </a>

@@ -25,7 +25,6 @@ export default function SupportUsPage() {
       gestureOrientation: "vertical",
       smoothWheel: true,
       wheelMultiplier: 1,
-      smoothTouch: false,
       touchMultiplier: 2,
       infinite: false,
     })
@@ -176,8 +175,8 @@ function WaysToSupportSection() {
               Know someone navigating a tough time? Gift them 1, 3, or 6 months of Premium.
             </p>
             <a
-              href="/pricing"
-              className="block px-8 py-4 bg-black text-white text-sm font-medium tracking-wide transition-all duration-300 hover:bg-neutral-800 cursor-pointer w-full text-center"
+              href="/gifts"
+              className="block px-8 py-4 bg-black text-white text-sm font-medium tracking-wide transition-all duration-300 hover:bg-neutral-800 cursor-pointer w-full text-center min-h-[52px] flex items-center justify-center touch-manipulation"
             >
               GIFT PREMIUM
             </a>

@@ -13,11 +13,6 @@ interface PushSubscriptionState {
 // VAPID public key - set this in your environment
 const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || ''
 
-// Debug: Log VAPID key status (without revealing the actual key)
-if (typeof window !== 'undefined') {
-  console.log('VAPID key configured:', !!VAPID_PUBLIC_KEY)
-  console.log('VAPID key length:', VAPID_PUBLIC_KEY.length)
-}
 
 function urlBase64ToUint8Array(base64String: string): ArrayBuffer {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
@@ -43,12 +38,9 @@ export function usePushNotifications() {
   // Check if push is supported and if user is already subscribed
   useEffect(() => {
     const checkSupport = async () => {
-      console.log('Checking push notification support...')
-      
-      // Check browser support
+// Check browser support
       if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-        console.log('Push notifications not supported in this browser')
-        setState((prev) => ({
+setState((prev) => ({
           ...prev,
           isSupported: false,
           isLoading: false,
@@ -59,8 +51,7 @@ export function usePushNotifications() {
 
       // Check if VAPID key is configured
       if (!VAPID_PUBLIC_KEY) {
-        console.log('VAPID key not configured:', VAPID_PUBLIC_KEY)
-        setState((prev) => ({
+setState((prev) => ({
           ...prev,
           isSupported: false,
           isLoading: false,
@@ -70,11 +61,8 @@ export function usePushNotifications() {
       }
 
       try {
-        console.log('Getting service worker registration...')
-        const registration = await navigator.serviceWorker.ready
-        console.log('Service worker ready, checking subscription...')
+const registration = await navigator.serviceWorker.ready
         const subscription = await registration.pushManager.getSubscription()
-        console.log('Subscription found:', !!subscription)
 
         setState({
           isSupported: true,
@@ -95,7 +83,7 @@ export function usePushNotifications() {
 
     // Add timeout to prevent infinite loading
     const timeoutId = setTimeout(() => {
-      console.error('Push notification check timeout')
+// Push notification check timeout
       setState(prev => ({
         ...prev,
         isLoading: false,
