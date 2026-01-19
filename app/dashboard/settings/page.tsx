@@ -908,6 +908,7 @@ function SettingsPageContent() {
   if (isLoading) {
     return (
       <div 
+        data-dashboard
         className="min-h-screen relative" 
         style={theme === 'light' ? { background: 'linear-gradient(135deg, #f4f0eb 0%, #a1a79e 45%, #384c37 100%)' } : { background: 'linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a)' }}
       >
@@ -927,6 +928,7 @@ function SettingsPageContent() {
 
   return (
     <div 
+      data-dashboard
       className="min-h-screen relative" 
       style={theme === 'light' ? { background: 'linear-gradient(135deg, #f4f0eb 0%, #a1a79e 45%, #384c37 100%)' } : { background: 'linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a)' }}
     >

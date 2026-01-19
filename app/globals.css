@@ -263,7 +263,8 @@
     overscroll-behavior: contain;
   }
 
-  .lenis.lenis-stopped {
+  /* Only apply overflow hidden on homepage where Lenis is used */
+  .lenis.lenis-stopped:not(:has([data-dashboard])) {
     overflow: hidden;
   }
 

@@ -178,6 +178,7 @@ function ArchivePageContent() {
 
   return (
     <div 
+      data-dashboard
       className="min-h-screen relative" 
       style={theme === 'light' 
         ? { background: 'linear-gradient(135deg, #f4f0eb 0%, #a1a79e 45%, #384c37 100%)' } 

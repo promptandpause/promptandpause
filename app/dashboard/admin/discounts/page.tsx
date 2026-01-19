@@ -162,7 +162,7 @@ export default function DiscountsAdminPage() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div data-dashboard className="min-h-screen">
       <div className="max-w-6xl mx-auto p-6">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Discount Management</h1>
