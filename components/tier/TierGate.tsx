@@ -285,7 +285,7 @@ export function PromptLimitBanner() {
   }
 
   return (
-    <Card className="backdrop-blur-xl bg-gradient-to-r from-orange-500/10 to-red-500/10 border border-orange-400/30 p-4">
+    <Card className="backdrop-blur-xl bg-gradient-to-r from-orange-500/10 to-red-500/10 border border-orange-400/30 p-4 mb-4 md:mb-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-full bg-orange-500/20 flex items-center justify-center">
