@@ -39,6 +39,37 @@ export const BRAND_COLORS = {
   borderAccent: '#384c37',   // Forest accent border
 }
 
+// Dark Mode Colors - Auto-detected based on user device settings
+export const DARK_MODE_COLORS = {
+  // Primary accent - Lighter forest for dark backgrounds
+  primary: '#5a8a58',        // Lighter forest green
+  primaryLight: '#6b9b69',   // Even lighter forest
+  primaryDark: '#4a7a48',    // Mid forest
+  
+  // Secondary accent - Brighter gold for visibility
+  accent: '#d4b44a',         // Brighter gold
+  accentLight: '#e0c56b',    // Light gold
+  
+  // Background colors - Dark, calming tones
+  backgroundDark: '#0f172a', // Deep slate (footer)
+  backgroundAccent: '#1e293b', // Slate accent
+  backgroundLight: '#1a202c', // Dark charcoal (main bg)
+  backgroundPure: '#1e293b',  // Slate dark (cards)
+  backgroundSection: '#2d3748', // Dark gray (sections)
+  backgroundMuted: '#4a5568', // Gray muted
+  
+  // Text colors - Light for dark backgrounds
+  textDark: '#f7fafc',       // Near white
+  textGray: '#e2e8f0',       // Light gray
+  textLight: '#ffffff',      // White
+  textMuted: '#a0aec0',      // Muted gray
+  
+  // Borders - Subtle on dark
+  border: '#4a5568',         // Gray border
+  borderLight: '#2d3748',    // Dark border
+  borderAccent: '#5a8a58',   // Forest accent border
+}
+
 // Brand CDN Logo URL - Links to homepage
 export const LOGO_URL = 'https://res.cloudinary.com/dh1rrfpmq/image/upload/v1766460430/prompt_pause-JRsbZR3dxCXndC8YMcyX6XU3XeT2Vw_vdvqfj.svg'
 
@@ -50,12 +81,12 @@ export function emailHeader(): string {
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
       <tr>
-        <td align="center" style="padding: 32px 20px 24px 20px; background: linear-gradient(180deg, ${BRAND_COLORS.backgroundPure} 0%, ${BRAND_COLORS.backgroundLight} 100%);">
+        <td class="email-header-bg" align="center" style="padding: 32px 20px 24px 20px; background: linear-gradient(180deg, ${BRAND_COLORS.backgroundPure} 0%, ${BRAND_COLORS.backgroundLight} 100%);">
           <a href="${APP_URL}" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
-            <img src="${LOGO_URL}" alt="${APP_NAME}" style="height: 48px; width: auto; display: block;" />
+            <img class="email-logo" src="${LOGO_URL}" alt="${APP_NAME}" style="height: 48px; width: auto; display: block;" />
           </a>
           <!-- Subtle reflection line -->
-          <div style="width: 80px; height: 2px; background: linear-gradient(90deg, transparent, ${BRAND_COLORS.primary}, transparent); margin: 16px auto 0; opacity: 0.6;"></div>
+          <div class="email-text-primary" style="width: 80px; height: 2px; background: linear-gradient(90deg, transparent, ${BRAND_COLORS.primary}, transparent); margin: 16px auto 0; opacity: 0.6;"></div>
         </td>
       </tr>
     </table>
@@ -74,29 +105,29 @@ export function emailFooter(): string {
         <td style="height: 4px; background: linear-gradient(180deg, ${BRAND_COLORS.backgroundLight} 0%, ${BRAND_COLORS.backgroundDark} 100%);"></td>
       </tr>
       <tr>
-        <td align="center" style="background: ${BRAND_COLORS.backgroundDark}; padding: 40px 20px;">
+        <td class="email-footer-bg" align="center" style="background: ${BRAND_COLORS.backgroundDark}; padding: 40px 20px;">
           <!-- Logo in footer -->
           <a href="${APP_URL}" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
-            <img src="${LOGO_URL}" alt="${APP_NAME}" style="height: 32px; width: auto; display: block; margin: 0 auto 20px; filter: brightness(0) invert(1); opacity: 0.9;" />
+            <img class="email-logo" src="${LOGO_URL}" alt="${APP_NAME}" style="height: 32px; width: auto; display: block; margin: 0 auto 20px; filter: brightness(0) invert(1); opacity: 0.9;" />
           </a>
           
           <!-- Navigation Links -->
           <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto 24px;">
             <tr>
               <td style="padding: 0 12px;">
-                <a href="${APP_URL}/dashboard" target="_blank" rel="noopener noreferrer" style="color: ${BRAND_COLORS.textMuted}; text-decoration: none; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Dashboard</a>
+                <a href="${APP_URL}/dashboard" target="_blank" rel="noopener noreferrer" class="email-text-muted" style="color: ${BRAND_COLORS.textMuted}; text-decoration: none; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Dashboard</a>
               </td>
-              <td style="color: ${BRAND_COLORS.textMuted}; opacity: 0.4;">•</td>
+              <td class="email-text-muted" style="color: ${BRAND_COLORS.textMuted}; opacity: 0.4;">•</td>
               <td style="padding: 0 12px;">
-                <a href="${APP_URL}/pricing" target="_blank" rel="noopener noreferrer" style="color: ${BRAND_COLORS.textMuted}; text-decoration: none; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Pricing</a>
+                <a href="${APP_URL}/pricing" target="_blank" rel="noopener noreferrer" class="email-text-muted" style="color: ${BRAND_COLORS.textMuted}; text-decoration: none; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Pricing</a>
               </td>
-              <td style="color: ${BRAND_COLORS.textMuted}; opacity: 0.4;">•</td>
+              <td class="email-text-muted" style="color: ${BRAND_COLORS.textMuted}; opacity: 0.4;">•</td>
               <td style="padding: 0 12px;">
-                <a href="${APP_URL}/privacy" target="_blank" rel="noopener noreferrer" style="color: ${BRAND_COLORS.textMuted}; text-decoration: none; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Privacy</a>
+                <a href="${APP_URL}/privacy" target="_blank" rel="noopener noreferrer" class="email-text-muted" style="color: ${BRAND_COLORS.textMuted}; text-decoration: none; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Privacy</a>
               </td>
-              <td style="color: ${BRAND_COLORS.textMuted}; opacity: 0.4;">•</td>
+              <td class="email-text-muted" style="color: ${BRAND_COLORS.textMuted}; opacity: 0.4;">•</td>
               <td style="padding: 0 12px;">
-                <a href="${APP_URL}/contact" target="_blank" rel="noopener noreferrer" style="color: ${BRAND_COLORS.textMuted}; text-decoration: none; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Contact</a>
+                <a href="${APP_URL}/contact" target="_blank" rel="noopener noreferrer" class="email-text-muted" style="color: ${BRAND_COLORS.textMuted}; text-decoration: none; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Contact</a>
               </td>
             </tr>
           </table>
@@ -107,13 +138,13 @@ export function emailFooter(): string {
           </p>
           
           <!-- Copyright -->
-          <p style="color: ${BRAND_COLORS.textMuted}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; margin: 0; opacity: 0.7;">
+          <p class="email-text-muted" style="color: ${BRAND_COLORS.textMuted}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; margin: 0; opacity: 0.7;">
             © 2026 ${APP_NAME}. All rights reserved.
           </p>
           
           <!-- Unsubscribe hint -->
-          <p style="color: ${BRAND_COLORS.textMuted}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; margin: 16px 0 0 0; opacity: 0.5;">
-            Manage your email preferences in your <a href="${APP_URL}/dashboard/settings" target="_blank" rel="noopener noreferrer" style="color: ${BRAND_COLORS.textMuted}; text-decoration: underline;">account settings</a>
+          <p class="email-text-muted" style="color: ${BRAND_COLORS.textMuted}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; margin: 16px 0 0 0; opacity: 0.5;">
+            Manage your email preferences in your <a href="${APP_URL}/dashboard/settings" target="_blank" rel="noopener noreferrer" class="email-text-muted" style="color: ${BRAND_COLORS.textMuted}; text-decoration: underline;">account settings</a>
           </p>
         </td>
       </tr>
@@ -129,7 +160,7 @@ export function ctaButton(text: string, url: string): string {
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 32px auto;">
       <tr>
-        <td style="border-radius: 10px; background: linear-gradient(135deg, ${BRAND_COLORS.primary} 0%, ${BRAND_COLORS.primaryLight} 100%); box-shadow: 0 4px 14px rgba(56, 76, 55, 0.25);">
+        <td class="email-btn-primary" style="border-radius: 10px; background: linear-gradient(135deg, ${BRAND_COLORS.primary} 0%, ${BRAND_COLORS.primaryLight} 100%); box-shadow: 0 4px 14px rgba(56, 76, 55, 0.25);">
           <a href="${url}" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 16px 44px; color: ${BRAND_COLORS.textLight}; text-decoration: none; font-weight: 600; font-size: 15px; letter-spacing: 0.02em; border-radius: 10px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
             ${text}
           </a>
@@ -147,7 +178,7 @@ export function infoBox(content: string, bgColor: string = BRAND_COLORS.backgrou
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 24px 0;">
       <tr>
-        <td style="background: linear-gradient(135deg, ${bgColor} 0%, ${BRAND_COLORS.backgroundPure} 100%); padding: 24px 28px; border-left: 3px solid ${BRAND_COLORS.primary}; border-radius: 0 12px 12px 0; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);">
+        <td class="email-info-box email-section-bg" style="background: linear-gradient(135deg, ${bgColor} 0%, ${BRAND_COLORS.backgroundPure} 100%); padding: 24px 28px; border-left: 3px solid ${BRAND_COLORS.primary}; border-radius: 0 12px 12px 0; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);">
           ${content}
         </td>
       </tr>
@@ -191,6 +222,20 @@ export function emailWrapper(content: string, options: {
         a[x-apple-data-detectors=true] { color: inherit !important; text-decoration: none !important; }
         table, td { color: ${BRAND_COLORS.textDark}; }
         
+        /* CSS Variables for theming */
+        :root {
+          --color-primary: ${BRAND_COLORS.primary};
+          --color-primary-light: ${BRAND_COLORS.primaryLight};
+          --color-bg-light: ${BRAND_COLORS.backgroundLight};
+          --color-bg-pure: ${BRAND_COLORS.backgroundPure};
+          --color-bg-section: ${BRAND_COLORS.backgroundSection};
+          --color-bg-dark: ${BRAND_COLORS.backgroundDark};
+          --color-text-dark: ${BRAND_COLORS.textDark};
+          --color-text-gray: ${BRAND_COLORS.textGray};
+          --color-text-muted: ${BRAND_COLORS.textMuted};
+          --color-border: ${BRAND_COLORS.border};
+        }
+        
         /* Responsive styles */
         @media only screen and (min-width: 620px) {
           .u-row { width: 600px !important; }
@@ -209,10 +254,76 @@ export function emailWrapper(content: string, options: {
           .mobile-center { text-align: center !important; }
           .mobile-padding { padding-left: 16px !important; padding-right: 16px !important; }
         }
+        
+        /* Dark Mode - Auto-detects user device preference */
+        @media (prefers-color-scheme: dark) {
+          :root {
+            --color-primary: ${DARK_MODE_COLORS.primary};
+            --color-primary-light: ${DARK_MODE_COLORS.primaryLight};
+            --color-bg-light: ${DARK_MODE_COLORS.backgroundLight};
+            --color-bg-pure: ${DARK_MODE_COLORS.backgroundPure};
+            --color-bg-section: ${DARK_MODE_COLORS.backgroundSection};
+            --color-bg-dark: ${DARK_MODE_COLORS.backgroundDark};
+            --color-text-dark: ${DARK_MODE_COLORS.textDark};
+            --color-text-gray: ${DARK_MODE_COLORS.textGray};
+            --color-text-muted: ${DARK_MODE_COLORS.textMuted};
+            --color-border: ${DARK_MODE_COLORS.border};
+          }
+          
+          /* Dark mode background overrides */
+          .email-body-bg { background-color: ${DARK_MODE_COLORS.backgroundLight} !important; }
+          .email-card-bg { background-color: ${DARK_MODE_COLORS.backgroundPure} !important; }
+          .email-section-bg { background-color: ${DARK_MODE_COLORS.backgroundSection} !important; }
+          .email-footer-bg { background-color: ${DARK_MODE_COLORS.backgroundDark} !important; }
+          
+          /* Dark mode text overrides */
+          .email-text-dark { color: ${DARK_MODE_COLORS.textDark} !important; }
+          .email-text-gray { color: ${DARK_MODE_COLORS.textGray} !important; }
+          .email-text-muted { color: ${DARK_MODE_COLORS.textMuted} !important; }
+          .email-text-primary { color: ${DARK_MODE_COLORS.primary} !important; }
+          
+          /* Dark mode button overrides */
+          .email-btn-primary { 
+            background: linear-gradient(135deg, ${DARK_MODE_COLORS.primary} 0%, ${DARK_MODE_COLORS.primaryLight} 100%) !important;
+          }
+          
+          /* Dark mode info box */
+          .email-info-box {
+            background: linear-gradient(135deg, ${DARK_MODE_COLORS.backgroundSection} 0%, ${DARK_MODE_COLORS.backgroundPure} 100%) !important;
+            border-left-color: ${DARK_MODE_COLORS.primary} !important;
+          }
+          
+          /* Dark mode header gradient */
+          .email-header-bg {
+            background: linear-gradient(180deg, ${DARK_MODE_COLORS.backgroundPure} 0%, ${DARK_MODE_COLORS.backgroundLight} 100%) !important;
+          }
+          
+          /* Fix logo visibility in dark mode */
+          .email-logo { filter: brightness(1.2) !important; }
+          
+          /* Dark mode alert boxes */
+          .email-alert-info { background: #1e3a5f !important; }
+          .email-alert-info p { color: #e2e8f0 !important; }
+          .email-alert-warning { background: #4a3728 !important; }
+          .email-alert-warning p { color: #fcd34d !important; }
+          .email-alert-success { background: #1a3a2a !important; }
+          .email-alert-success p { color: #86efac !important; }
+        }
+        
+        /* Gmail Dark Mode Support */
+        [data-ogsc] .email-body-bg { background-color: ${DARK_MODE_COLORS.backgroundLight} !important; }
+        [data-ogsc] .email-card-bg { background-color: ${DARK_MODE_COLORS.backgroundPure} !important; }
+        [data-ogsc] .email-text-dark { color: ${DARK_MODE_COLORS.textDark} !important; }
+        [data-ogsc] .email-text-gray { color: ${DARK_MODE_COLORS.textGray} !important; }
+        
+        /* Outlook Dark Mode Support */
+        [data-ogsb] .email-body-bg { background-color: ${DARK_MODE_COLORS.backgroundLight} !important; }
+        [data-ogsb] .email-card-bg { background-color: ${DARK_MODE_COLORS.backgroundPure} !important; }
+        [data-ogsb] .email-text-dark { color: ${DARK_MODE_COLORS.textDark} !important; }
       </style>
     </head>
     
-    <body style="margin: 0; padding: 0; -webkit-text-size-adjust: 100%; background-color: ${BRAND_COLORS.backgroundLight}; color: ${BRAND_COLORS.textDark}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+    <body class="email-body-bg" style="margin: 0; padding: 0; -webkit-text-size-adjust: 100%; background-color: ${BRAND_COLORS.backgroundLight}; color: ${BRAND_COLORS.textDark}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
       ${preheader ? `
         <!-- Preheader text (hidden) -->
         <div style="display: none; max-height: 0; overflow: hidden; mso-hide: all;">${preheader}</div>
@@ -223,14 +334,14 @@ export function emailWrapper(content: string, options: {
       <!--[if mso]><div class="mso-container"><![endif]-->
       
       <!-- Outer wrapper with soft cream background -->
-      <table role="presentation" style="border-collapse: collapse; table-layout: fixed; border-spacing: 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; vertical-align: top; min-width: 320px; margin: 0 auto; background-color: ${BRAND_COLORS.backgroundLight}; width: 100%;" cellpadding="0" cellspacing="0">
+      <table role="presentation" class="email-body-bg" style="border-collapse: collapse; table-layout: fixed; border-spacing: 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; vertical-align: top; min-width: 320px; margin: 0 auto; background-color: ${BRAND_COLORS.backgroundLight}; width: 100%;" cellpadding="0" cellspacing="0">
         <tbody>
           <tr style="vertical-align: top">
-            <td style="word-break: break-word; border-collapse: collapse !important; vertical-align: top; padding: 20px 0;">
+            <td class="email-body-bg" style="word-break: break-word; border-collapse: collapse !important; vertical-align: top; padding: 20px 0; background-color: ${BRAND_COLORS.backgroundLight};">
               <!--[if (mso)|(IE)]><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" style="background-color: ${BRAND_COLORS.backgroundLight};"><![endif]-->
               
               <!-- Email container with max-width -->
-              <table role="presentation" align="center" style="max-width: 600px; margin: 0 auto; background-color: ${BRAND_COLORS.backgroundPure}; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);" cellpadding="0" cellspacing="0" width="100%">
+              <table role="presentation" class="email-card-bg" align="center" style="max-width: 600px; margin: 0 auto; background-color: ${BRAND_COLORS.backgroundPure}; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);" cellpadding="0" cellspacing="0" width="100%">
                 <tbody>
                   <tr>
                     <td>
@@ -265,11 +376,12 @@ export function emailWrapper(content: string, options: {
  */
 export function h1(text: string, options: { color?: string; align?: string } = {}): string {
   const { color = BRAND_COLORS.primary, align = 'center' } = options
+  const colorClass = color === BRAND_COLORS.primary ? 'email-text-primary' : 'email-text-dark'
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
       <tr>
         <td align="${align}" style="padding: 12px 0;">
-          <h1 style="color: ${color}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 26px; line-height: 1.3; margin: 0; font-weight: 700; letter-spacing: -0.02em;">${text}</h1>
+          <h1 class="${colorClass}" style="color: ${color}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 26px; line-height: 1.3; margin: 0; font-weight: 700; letter-spacing: -0.02em;">${text}</h1>
         </td>
       </tr>
     </table>
@@ -282,7 +394,7 @@ export function h2(text: string, options: { color?: string; align?: string } = {
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
       <tr>
         <td align="${align}" style="padding: 10px 0;">
-          <h2 style="color: ${color}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 22px; line-height: 1.35; margin: 0; font-weight: 600;">${text}</h2>
+          <h2 class="email-text-dark" style="color: ${color}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 22px; line-height: 1.35; margin: 0; font-weight: 600;">${text}</h2>
         </td>
       </tr>
     </table>
@@ -295,7 +407,7 @@ export function h3(text: string, options: { color?: string; align?: string } = {
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
       <tr>
         <td align="${align}" style="padding: 8px 0;">
-          <h3 style="color: ${color}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 17px; line-height: 1.4; margin: 0; font-weight: 600;">${text}</h3>
+          <h3 class="email-text-primary" style="color: ${color}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 17px; line-height: 1.4; margin: 0; font-weight: 600;">${text}</h3>
         </td>
       </tr>
     </table>
@@ -307,11 +419,12 @@ export function h3(text: string, options: { color?: string; align?: string } = {
  */
 export function paragraph(text: string, options: { color?: string; align?: string; fontSize?: string } = {}): string {
   const { color = BRAND_COLORS.textGray, align = 'left', fontSize = '15px' } = options
+  const colorClass = color === BRAND_COLORS.textMuted ? 'email-text-muted' : 'email-text-gray'
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
       <tr>
         <td align="${align}" style="padding: 6px 0;">
-          <p style="color: ${color}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: ${fontSize}; line-height: 1.65; margin: 0;">${text}</p>
+          <p class="${colorClass}" style="color: ${color}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: ${fontSize}; line-height: 1.65; margin: 0;">${text}</p>
         </td>
       </tr>
     </table>
@@ -325,7 +438,7 @@ export function contentSection(content: string, backgroundColor: string = BRAND_
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
       <tr>
-        <td style="background-color: ${backgroundColor}; padding: 32px 28px;" class="mobile-padding">
+        <td class="email-card-bg mobile-padding" style="background-color: ${backgroundColor}; padding: 32px 28px;">
           ${content}
         </td>
       </tr>
@@ -337,8 +450,8 @@ export function contentSection(content: string, backgroundColor: string = BRAND_
  * Professional List - Clean, readable bullet points
  */
 export function list(items: string[]): string {
-  const listItems = items.map(item => `<li style="color: ${BRAND_COLORS.textGray}; margin-bottom: 10px; font-size: 15px; line-height: 1.5;">${item}</li>`).join('')
-  return `<ul style="color: ${BRAND_COLORS.textGray}; line-height: 1.6; padding-left: 20px; margin: 16px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">${listItems}</ul>`
+  const listItems = items.map(item => `<li class="email-text-gray" style="color: ${BRAND_COLORS.textGray}; margin-bottom: 10px; font-size: 15px; line-height: 1.5;">${item}</li>`).join('')
+  return `<ul class="email-text-gray" style="color: ${BRAND_COLORS.textGray}; line-height: 1.6; padding-left: 20px; margin: 16px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">${listItems}</ul>`
 }
 
 /**
@@ -346,17 +459,17 @@ export function list(items: string[]): string {
  */
 export function alertBox(content: string, type: 'info' | 'warning' | 'success' = 'info'): string {
   const colors = {
-    info: { bg: '#f0f9ff', border: BRAND_COLORS.primary, text: BRAND_COLORS.textDark },
-    warning: { bg: '#fffbeb', border: '#f59e0b', text: '#92400e' },
-    success: { bg: '#f0fdf4', border: '#22c55e', text: '#166534' }
+    info: { bg: '#f0f9ff', border: BRAND_COLORS.primary, text: BRAND_COLORS.textDark, darkBg: '#1e3a5f', darkText: '#e2e8f0' },
+    warning: { bg: '#fffbeb', border: '#f59e0b', text: '#92400e', darkBg: '#4a3728', darkText: '#fcd34d' },
+    success: { bg: '#f0fdf4', border: '#22c55e', text: '#166534', darkBg: '#1a3a2a', darkText: '#86efac' }
   }
   const color = colors[type]
   
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 20px 0;">
       <tr>
-        <td style="background: ${color.bg}; border-left: 3px solid ${color.border}; padding: 16px 20px; border-radius: 0 8px 8px 0;">
-          <p style="margin: 0; color: ${color.text}; font-size: 14px; line-height: 1.5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">${content}</p>
+        <td class="email-alert-${type}" style="background: ${color.bg}; border-left: 3px solid ${color.border}; padding: 16px 20px; border-radius: 0 8px 8px 0;">
+          <p class="email-text-dark" style="margin: 0; color: ${color.text}; font-size: 14px; line-height: 1.5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">${content}</p>
         </td>
       </tr>
     </table>

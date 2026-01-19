@@ -90,11 +90,11 @@ export interface EmailTemplateServiceResponse<T> {
   error?: string
 }
 
-// Default customization values (updated with new professional colors)
+// Default customization values - Forest Green theme matching dashboard
 export const DEFAULT_EMAIL_CUSTOMIZATION = {
-  logo_url: 'https://yhrnbdl0wz3eilae.public.blob.vercel-storage.com/prompt%26pause-JRsbZR3dxCXndC8YMcyX6XU3XeT2Vw.svg',
-  primary_color: '#d39d35', // Professional gold accent
-  secondary_color: '#e6b84d', // Light gold
-  background_color: '#fffaf6', // Light cream background
+  logo_url: 'https://res.cloudinary.com/dh1rrfpmq/image/upload/v1766460430/prompt_pause-JRsbZR3dxCXndC8YMcyX6XU3XeT2Vw_vdvqfj.svg',
+  primary_color: '#384c37', // Forest green (main accent)
+  secondary_color: '#4a6349', // Lighter forest
+  background_color: '#f4f0eb', // Warm cream background
   button_text_color: '#ffffff', // White text on buttons
 } as const
