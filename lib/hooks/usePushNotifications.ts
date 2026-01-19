@@ -37,32 +37,69 @@ export function usePushNotifications() {
 
   // Check if push is supported and if user is already subscribed
   useEffect(() => {
+    let isMounted = true
+    let timeoutId: NodeJS.Timeout | null = null
+
     const checkSupport = async () => {
-// Check browser support
+      // Check browser support
       if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-setState((prev) => ({
-          ...prev,
-          isSupported: false,
-          isLoading: false,
-          error: 'Push notifications not supported in this browser',
-        }))
+        if (isMounted) {
+          setState((prev) => ({
+            ...prev,
+            isSupported: false,
+            isLoading: false,
+            error: 'Push notifications not supported in this browser',
+          }))
+        }
+        return
+      }
+
+      // Check if Notification API is available
+      if (!('Notification' in window)) {
+        if (isMounted) {
+          setState((prev) => ({
+            ...prev,
+            isSupported: false,
+            isLoading: false,
+            error: 'Notifications not supported',
+          }))
+        }
         return
       }
 
       // Check if VAPID key is configured
       if (!VAPID_PUBLIC_KEY) {
-setState((prev) => ({
-          ...prev,
-          isSupported: false,
-          isLoading: false,
-          error: 'Push notifications not configured',
-        }))
+        if (isMounted) {
+          setState((prev) => ({
+            ...prev,
+            isSupported: false,
+            isLoading: false,
+            error: 'Push notifications not configured',
+          }))
+        }
         return
       }
 
       try {
-const registration = await navigator.serviceWorker.ready
-        const subscription = await registration.pushManager.getSubscription()
+        // First ensure service worker is registered
+        let registration = await navigator.serviceWorker.getRegistration()
+        
+        if (!registration) {
+          // Register service worker if not already registered
+          registration = await navigator.serviceWorker.register('/sw.js')
+        }
+
+        // Wait for service worker to be ready with a timeout
+        const readyPromise = navigator.serviceWorker.ready
+        const timeoutPromise = new Promise<never>((_, reject) => {
+          setTimeout(() => reject(new Error('Service worker ready timeout')), 10000)
+        })
+
+        const activeRegistration = await Promise.race([readyPromise, timeoutPromise])
+        
+        if (!isMounted) return
+
+        const subscription = await activeRegistration.pushManager.getSubscription()
 
         setState({
           isSupported: true,
@@ -72,28 +109,43 @@ const registration = await navigator.serviceWorker.ready
         })
       } catch (err) {
         console.error('Error checking push support:', err)
-        setState((prev) => ({
-          ...prev,
-          isSupported: true,
-          isLoading: false,
-          error: 'Failed to check subscription status',
-        }))
+        if (isMounted) {
+          setState((prev) => ({
+            ...prev,
+            isSupported: true, // Still supported, just failed to check
+            isLoading: false,
+            error: err instanceof Error ? err.message : 'Failed to check subscription status',
+          }))
+        }
       }
     }
 
-    // Add timeout to prevent infinite loading
-    const timeoutId = setTimeout(() => {
-// Push notification check timeout
-      setState(prev => ({
-        ...prev,
-        isLoading: false,
-        error: 'Timeout checking push notification support'
-      }))
-    }, 5000) // 5 second timeout for mobile
+    // Add overall timeout to prevent infinite loading
+    timeoutId = setTimeout(() => {
+      if (isMounted) {
+        setState(prev => {
+          // Only update if still loading
+          if (prev.isLoading) {
+            return {
+              ...prev,
+              isLoading: false,
+              isSupported: true,
+              error: 'Push setup timed out. Try toggling the switch.',
+            }
+          }
+          return prev
+        })
+      }
+    }, 15000) // 15 second overall timeout
 
     checkSupport().finally(() => {
-      clearTimeout(timeoutId)
+      if (timeoutId) clearTimeout(timeoutId)
     })
+
+    return () => {
+      isMounted = false
+      if (timeoutId) clearTimeout(timeoutId)
+    }
   }, [])
 
   // Subscribe to push notifications

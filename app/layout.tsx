@@ -7,6 +7,7 @@ import { Toaster } from '@/components/ui/toaster'
 import { LanguageProvider } from '@/contexts/LanguageContext'
 import { ThemeProvider } from '@/contexts/ThemeContext'
 import { GlobalSyncProvider } from '@/lib/context/GlobalSyncContext'
+import { PWARegistration } from '@/components/PWARegistration'
 import './globals.css'
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://promptandpause.com'
@@ -112,6 +113,7 @@ export default function RootLayout({
             </GlobalSyncProvider>
           </LanguageProvider>
         </ThemeProvider>
+        <PWARegistration />
         <Analytics />
         <SpeedInsights />
       </body>
