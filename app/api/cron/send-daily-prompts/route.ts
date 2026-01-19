@@ -3,6 +3,7 @@ import { createServiceRoleClient } from '@/lib/supabase/server'
 import { sendDailyPromptEmail } from '@/lib/services/emailService'
 import { sendDailyPromptToSlack } from '@/lib/services/slackService'
 import { generatePrompt } from '@/lib/services/aiService'
+import { selectDailyFocusArea } from '@/lib/services/focusAreaRotationService'
 import { sendPushNotifications, isPushConfigured } from '@/lib/services/pushService'
 import { GeneratePromptContext, PromptType } from '@/lib/types/reflection'
 import crypto from 'crypto'
@@ -270,8 +271,20 @@ export async function POST(request: NextRequest) {
             .map((p: any) => p?.personalization_context?.prompt_type)
             .filter(isPromptType)
 
+          // Select focus area using deterministic rotation
+          const userFocusAreas = userPrefs.focus_areas || []
+          let selectedFocusArea: string | null = null
+          let rotationReason = ''
+          
+          if (userFocusAreas.length > 0) {
+            const rotationResult = await selectDailyFocusArea(profile.id, userFocusAreas)
+            selectedFocusArea = rotationResult.selectedFocus
+            rotationReason = rotationResult.reason
+          }
+
           const context: GeneratePromptContext = {
-            focus_areas: userPrefs.focus_areas || [],
+            focus_areas: userFocusAreas,
+            focus_area_name: selectedFocusArea || undefined,
             recent_moods: recentReflections?.slice(0, 7).map(r => r.mood) || [],
             recent_topics: recentReflections
               ?.flatMap(r => r.tags)
@@ -286,7 +299,7 @@ export async function POST(request: NextRequest) {
             const { prompt, provider, model, prompt_type } = await generatePrompt(context)
             promptText = prompt
 
-            // Save the generated prompt
+            // Save the generated prompt with focus area tracking
             await supabase
               .from('prompts_history')
               .insert({
@@ -294,7 +307,8 @@ export async function POST(request: NextRequest) {
                 prompt_text: promptText,
                 ai_provider: provider,
                 ai_model: model,
-                personalization_context: { ...context, prompt_type },
+                focus_area_used: selectedFocusArea,
+                personalization_context: { ...context, prompt_type, rotation_reason: rotationReason },
                 date_generated: today,
                 used: false,
               })

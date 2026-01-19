@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { generatePrompt, selectFocusArea } from '@/lib/services/aiService'
+import { generatePrompt } from '@/lib/services/aiService'
 import { getUserPreferences, getUserTier, listFocusAreas } from '@/lib/services/userService'
 import { reflectionServiceServer } from '@/lib/services/reflectionServiceServer'
 import { calculateReflectionStreakServer } from '@/lib/services/analyticsServiceServer'
+import { selectDailyFocusArea } from '@/lib/services/focusAreaRotationService'
 import { GeneratePromptContext, PromptType } from '@/lib/types/reflection'
 import { rateLimit } from '@/lib/utils/rateLimit'
 
@@ -113,9 +114,33 @@ export async function POST(request: NextRequest) {
     // Get list of all focus areas for context
     const focusAreaNames = allFocusAreas.map((a) => a.name)
     
-    // Select a focus area for this session (random or weighted)
-    const selectedFocusArea = selectFocusArea(allFocusAreas, tier === 'premium')
-    if (selectedFocusArea) {
+    // Select focus area using deterministic rotation (respects onboarding choices)
+    // Premium users with custom focus areas use their custom areas
+    // Free users use onboarding focus areas with weekly cadence / LRU rotation
+    let selectedFocusArea: string | null = null
+    let rotationReason = ''
+    
+    if (tier === 'premium' && allFocusAreas.some(a => a.isPremium)) {
+      // Premium with custom focus areas - use weighted random (existing behavior)
+      const premiumAreas = allFocusAreas.filter(a => a.isPremium)
+      const totalWeight = premiumAreas.reduce((sum, a) => sum + (a.priority || 0), 0)
+      if (totalWeight > 0) {
+        let random = Math.random() * totalWeight
+        for (const area of premiumAreas) {
+          random -= area.priority || 0
+          if (random <= 0) {
+            selectedFocusArea = area.name
+            break
+          }
+        }
+        selectedFocusArea = selectedFocusArea || premiumAreas[premiumAreas.length - 1]?.name || null
+        rotationReason = 'premium_weighted'
+      }
+    } else {
+      // Use deterministic rotation for onboarding focus areas
+      const rotationResult = await selectDailyFocusArea(user.id, focusAreaNames)
+      selectedFocusArea = rotationResult.selectedFocus
+      rotationReason = rotationResult.reason
     }
 
     // Build context for AI generation
@@ -144,7 +169,7 @@ export async function POST(request: NextRequest) {
         ai_provider: provider,
         ai_model: model,
         focus_area_used: selectedFocusArea,
-        personalization_context: { ...context, prompt_type },
+        personalization_context: { ...context, prompt_type, rotation_reason: rotationReason },
         date_generated: today,
         used: false,
       })

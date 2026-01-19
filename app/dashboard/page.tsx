@@ -68,7 +68,7 @@ export default function DashboardPage() {
           }
         `}</style>
 
-        <div className="relative z-10 px-3 md:px-6 pt-3 md:pt-6 pb-24 md:pb-6 w-full max-w-[1920px] mx-auto">
+        <div className="relative z-10 px-3 md:px-6 pt-4 md:pt-8 pb-24 md:pb-6 w-full max-w-[1920px] mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 items-start">
             {/* Universal Sidebar - Desktop & Mobile */}
             <DashboardSidebar />
