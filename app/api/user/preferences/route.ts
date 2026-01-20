@@ -3,29 +3,33 @@ import { createClient } from '@/lib/supabase/server'
 import { getUserPreferences, upsertUserPreferences } from '@/lib/services/userService'
 import { z } from 'zod'
 
-// Zod schema for user preferences
+// Zod schema for user preferences - must match all fields sent from settings page
 const UserPreferencesSchema = z.object({
+  // Profile/locale settings
   timezone: z.string().optional(),
   language: z.string().optional(),
+  theme: z.enum(['light', 'dark', 'auto']).optional(),
+  privacy_mode: z.boolean().optional(),
+  
+  // Notification settings (these are the actual field names used)
+  push_notifications: z.boolean().optional(),
+  daily_reminders: z.boolean().optional(),
+  weekly_digest: z.boolean().optional(),
+  include_self_journal_in_insights: z.boolean().optional(),
+  reminder_time: z.string().optional(),
+  
+  // Prompt settings
+  prompt_frequency: z.enum(['daily', 'weekdays', 'every-other-day', 'twice-weekly', 'weekly', 'custom']).optional(),
+  custom_days: z.array(z.string()).optional(),
+  
+  // Billing
+  billing_cycle: z.string().optional(),
+  
+  // Legacy field names (for backwards compatibility)
   daily_prompt_time: z.string().optional(),
   email_notifications: z.boolean().optional(),
-  push_notifications: z.boolean().optional(),
   reminder_enabled: z.boolean().optional(),
-  reminder_time: z.string().optional(),
-  theme: z.enum(['light', 'dark', 'auto']).optional()
-}).refine(
-  (data) => {
-    // If reminder_enabled is true, reminder_time must be provided
-    if (data.reminder_enabled === true && !data.reminder_time) {
-      return false
-    }
-    return true
-  },
-  {
-    message: 'reminder_time is required when reminder_enabled is true',
-    path: ['reminder_time']
-  }
-)
+}).passthrough()
 
 /**
  * GET /api/user/preferences

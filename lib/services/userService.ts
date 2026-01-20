@@ -239,6 +239,11 @@ export async function upsertUserPreferences(
     push_notifications?: boolean
     daily_reminders?: boolean
     weekly_digest?: boolean
+    include_self_journal_in_insights?: boolean
+    reminder_time?: string
+    privacy_mode?: boolean
+    language?: string
+    billing_cycle?: string
   }
 ): Promise<{ preferences?: UserPreferences; error?: string }> {
   try {

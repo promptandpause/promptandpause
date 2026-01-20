@@ -11,7 +11,7 @@ import { Card } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
 import { useTheme } from "@/contexts/ThemeContext"
 import { motion, AnimatePresence } from "framer-motion"
-import { Filter, Search, Trash2, Pencil, Flame, ChevronLeft, ChevronRight, X, Eye } from "lucide-react"
+import { Search, Trash2, Pencil, Flame, ChevronLeft, ChevronRight, X, Eye } from "lucide-react"
 import { DashboardSidebar } from "../components/DashboardSidebar"
 import { BubbleBackground } from "@/components/ui/bubble-background"
 
@@ -257,7 +257,6 @@ export default function JournalsPage() {
               
               {/* Mood Filter Row */}
               <div className="flex items-center gap-2">
-                <Filter className="h-4 w-4 text-gray-400 flex-shrink-0" />
                 <div className="flex gap-1.5 flex-wrap">
                   {moods.map(m => (
                     <button
