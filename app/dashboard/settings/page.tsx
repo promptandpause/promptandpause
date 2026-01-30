@@ -945,309 +945,205 @@ function SettingsPageContent() {
 
         {/* Main Content Area */}
         <div className="col-span-1 md:col-span-10 space-y-4 md:space-y-6">
-          {/* Mobile: iPhone-style Settings List */}
+          {/* Mobile: Apple iOS-style Settings List */}
           <div className="md:hidden">
             {currentView === 'main' ? (
-              <div>
-                {/* Header */}
-                <Card className={`backdrop-blur-xl rounded-3xl p-3 shadow-lg mb-3 ${
-                  theme === 'dark'
-                    ? 'bg-white/5 border border-white/10'
-                    : 'bg-white/80 border-2 border-gray-300'
-                }`}>
-                  <h2 className={`text-2xl font-bold leading-tight ${
+              <div className="space-y-6">
+                {/* Header - Large title like iOS */}
+                <div className="px-1 pt-2">
+                  <h1 className={`text-[34px] font-bold leading-tight ${
                     theme === 'dark' ? 'text-white' : 'text-gray-900'
-                  }`}>Settings</h2>
-                  <p className={`text-sm ${
-                    theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-                  }`}>Manage your account</p>
-                </Card>
+                  }`}>Settings</h1>
+                </div>
 
-                {/* Settings Categories - iPhone style */}
-                <div className="space-y-3">
-                  {/* Profile */}
-                  <Card
-                    key="profile-card"
-                    onClick={() => navigateToView('profile')}
-                    className={`backdrop-blur-xl rounded-2xl p-4 active:scale-98 transition-transform cursor-pointer hover:shadow-lg shadow-md ${
+                {/* Profile Card - Apple style prominent user card */}
+                <div 
+                  onClick={() => navigateToView('profile')}
+                  className={`rounded-xl p-4 active:opacity-70 transition-opacity cursor-pointer ${
+                    theme === 'dark'
+                      ? 'bg-white/10 backdrop-blur-xl'
+                      : 'bg-white shadow-sm'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-14 h-14 rounded-full flex items-center justify-center ${
                       theme === 'dark'
-                        ? 'bg-white/5 border border-white/10'
-                        : 'bg-white/80 border-2 border-gray-300'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
-                          theme === 'dark'
-                            ? 'bg-blue-500/20 border-blue-400/30'
-                            : 'bg-blue-100 border-blue-300'
-                        }`}>
-                          <User className="h-5 w-5 text-blue-600" />
-                        </div>
-                        <div>
-                          <p className={`font-medium ${
-                            theme === 'dark' ? 'text-white' : 'text-gray-900'
-                          }`}>Profile</p>
-                          <p className={`text-xs ${
-                            theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-                          }`}>Name, email, timezone</p>
-                        </div>
-                      </div>
-                      <ChevronRight className={`h-5 w-5 ${
-                        theme === 'dark' ? 'text-white/40' : 'text-gray-400'
-                      }`} />
+                        ? 'bg-gradient-to-br from-blue-400 to-blue-600'
+                        : 'bg-gradient-to-br from-blue-400 to-blue-600'
+                    }`}>
+                      <User className="h-7 w-7 text-white" />
                     </div>
-                  </Card>
+                    <div className="flex-1 min-w-0">
+                      <p className={`font-semibold text-lg ${
+                        theme === 'dark' ? 'text-white' : 'text-gray-900'
+                      }`}>{fullName || 'Your Profile'}</p>
+                      <p className={`text-sm ${
+                        theme === 'dark' ? 'text-white/60' : 'text-gray-500'
+                      }`}>Name, email, timezone</p>
+                    </div>
+                    <ChevronRight className={`h-5 w-5 flex-shrink-0 ${
+                      theme === 'dark' ? 'text-white/30' : 'text-gray-300'
+                    }`} />
+                  </div>
+                </div>
 
+                {/* Group 1: Core Settings */}
+                <div className={`rounded-xl overflow-hidden ${
+                  theme === 'dark' ? 'bg-white/10 backdrop-blur-xl' : 'bg-white shadow-sm'
+                }`}>
                   {/* Notifications */}
-                  <Card
-                    key="notifications-card"
+                  <div 
                     onClick={() => navigateToView('notifications')}
-                    className={`backdrop-blur-xl rounded-2xl p-4 active:scale-98 transition-transform cursor-pointer hover:shadow-lg shadow-md ${
-                      theme === 'dark'
-                        ? 'bg-white/5 border border-white/10'
-                        : 'bg-white/80 border-2 border-gray-300'
+                    className={`flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity cursor-pointer ${
+                      theme === 'dark' ? 'active:bg-white/5' : 'active:bg-gray-50'
                     }`}
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
-                          theme === 'dark'
-                            ? 'bg-yellow-500/20 border-yellow-400/30'
-                            : 'bg-yellow-100 border-yellow-300'
-                        }`}>
-                          <Bell className="h-5 w-5 text-yellow-600" />
-                        </div>
-                        <div>
-                          <p className={`font-medium ${
-                            theme === 'dark' ? 'text-white' : 'text-gray-900'
-                          }`}>Notifications</p>
-                          <p className={`text-xs ${
-                            theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-                          }`}>Alerts & reminders</p>
-                        </div>
-                      </div>
-                      <ChevronRight className={`h-5 w-5 ${
-                        theme === 'dark' ? 'text-white/40' : 'text-gray-400'
-                      }`} />
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-red-400 to-red-600">
+                      <Bell className="h-4.5 w-4.5 text-white" />
                     </div>
-                  </Card>
-
+                    <span className={`flex-1 text-[17px] ${
+                      theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    }`}>Notifications</span>
+                    <ChevronRight className={`h-5 w-5 ${
+                      theme === 'dark' ? 'text-white/30' : 'text-gray-300'
+                    }`} />
+                  </div>
+                  
+                  {/* Divider */}
+                  <div className={`ml-[60px] h-px ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-200'}`} />
+                  
                   {/* Security */}
-                  <Card
-                    key="security-card"
+                  <div 
                     onClick={() => navigateToView('security')}
-                    className={`backdrop-blur-xl rounded-2xl p-4 active:scale-98 transition-transform cursor-pointer hover:shadow-lg shadow-md ${
-                      theme === 'dark'
-                        ? 'bg-white/5 border border-white/10'
-                        : 'bg-white/80 border-2 border-gray-300'
+                    className={`flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity cursor-pointer ${
+                      theme === 'dark' ? 'active:bg-white/5' : 'active:bg-gray-50'
                     }`}
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
-                          theme === 'dark'
-                            ? 'bg-red-500/20 border-red-400/30'
-                            : 'bg-red-100 border-red-300'
-                        }`}>
-                          <Lock className="h-5 w-5 text-red-600" />
-                        </div>
-                        <div>
-                          <p className={`font-medium ${
-                            theme === 'dark' ? 'text-white' : 'text-gray-900'
-                          }`}>Security</p>
-                          <p className={`text-xs ${
-                            theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-                          }`}>Password & authentication</p>
-                        </div>
-                      </div>
-                      <ChevronRight className={`h-5 w-5 ${
-                        theme === 'dark' ? 'text-white/40' : 'text-gray-400'
-                      }`} />
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-gray-500 to-gray-700">
+                      <Lock className="h-4.5 w-4.5 text-white" />
                     </div>
-                  </Card>
-
+                    <span className={`flex-1 text-[17px] ${
+                      theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    }`}>Security</span>
+                    <ChevronRight className={`h-5 w-5 ${
+                      theme === 'dark' ? 'text-white/30' : 'text-gray-300'
+                    }`} />
+                  </div>
+                  
+                  {/* Divider */}
+                  <div className={`ml-[60px] h-px ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-200'}`} />
+                  
                   {/* Preferences */}
-                  <Card
-                    key="preferences-card"
+                  <div 
                     onClick={() => navigateToView('preferences')}
-                    className={`backdrop-blur-xl rounded-2xl p-4 active:scale-98 transition-transform cursor-pointer hover:shadow-lg shadow-md ${
-                      theme === 'dark'
-                        ? 'bg-white/5 border border-white/10'
-                        : 'bg-white/80 border-2 border-gray-300'
+                    className={`flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity cursor-pointer ${
+                      theme === 'dark' ? 'active:bg-white/5' : 'active:bg-gray-50'
                     }`}
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
-                          theme === 'dark'
-                            ? 'bg-purple-500/20 border-purple-400/30'
-                            : 'bg-purple-100 border-purple-300'
-                        }`}>
-                          <Palette className="h-5 w-5 text-purple-600" />
-                        </div>
-                        <div>
-                          <p className={`font-medium ${
-                            theme === 'dark' ? 'text-white' : 'text-gray-900'
-                          }`}>Preferences</p>
-                          <p className={`text-xs ${
-                            theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-                          }`}>Language, theme, prompts</p>
-                        </div>
-                      </div>
-                      <ChevronRight className={`h-5 w-5 ${
-                        theme === 'dark' ? 'text-white/40' : 'text-gray-400'
-                      }`} />
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-purple-400 to-purple-600">
+                      <Palette className="h-4.5 w-4.5 text-white" />
                     </div>
-                  </Card>
+                    <span className={`flex-1 text-[17px] ${
+                      theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    }`}>Preferences</span>
+                    <ChevronRight className={`h-5 w-5 ${
+                      theme === 'dark' ? 'text-white/30' : 'text-gray-300'
+                    }`} />
+                  </div>
+                </div>
 
+                {/* Group 2: Subscription & Integrations */}
+                <div className={`rounded-xl overflow-hidden ${
+                  theme === 'dark' ? 'bg-white/10 backdrop-blur-xl' : 'bg-white shadow-sm'
+                }`}>
                   {/* Subscription */}
-                  <Card
-                    key="subscription-card"
+                  <div 
                     onClick={() => navigateToView('subscription')}
-                    className={`backdrop-blur-xl rounded-2xl p-4 active:scale-98 transition-transform cursor-pointer hover:shadow-lg shadow-md ${
-                      theme === 'dark'
-                        ? 'bg-white/5 border border-white/10'
-                        : 'bg-white/80 border-2 border-gray-300'
+                    className={`flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity cursor-pointer ${
+                      theme === 'dark' ? 'active:bg-white/5' : 'active:bg-gray-50'
                     }`}
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
-                          theme === 'dark'
-                            ? 'bg-green-500/20 border-green-400/30'
-                            : 'bg-green-100 border-green-300'
-                        }`}>
-                          <CreditCard className="h-5 w-5 text-green-600" />
-                        </div>
-                        <div>
-                          <p className={`font-medium ${
-                            theme === 'dark' ? 'text-white' : 'text-gray-900'
-                          }`}>Subscription</p>
-                          {tier === 'premium' && isTrial && trialEndDate ? (
-                            <TrialCountdown 
-                              trialEndDate={trialEndDate}
-                              compact={true}
-                              showIcon={false}
-                              className={`text-xs ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}
-                            />
-                          ) : (
-                            <p className={`text-xs ${
-                              theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-                            }`}>
-                              {tier === 'premium' ? 'Premium Plan' : 'Free Plan'}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                      <ChevronRight className={`h-5 w-5 ${
-                        theme === 'dark' ? 'text-white/40' : 'text-gray-400'
-                      }`} />
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-green-400 to-green-600">
+                      <CreditCard className="h-4.5 w-4.5 text-white" />
                     </div>
-                  </Card>
-
+                    <span className={`flex-1 text-[17px] ${
+                      theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    }`}>Subscription</span>
+                    <span className={`text-[15px] mr-1 ${
+                      theme === 'dark' ? 'text-white/50' : 'text-gray-400'
+                    }`}>
+                      {tier === 'premium' && isTrial ? 'Trial' : tier === 'premium' ? 'Premium' : 'Free'}
+                    </span>
+                    <ChevronRight className={`h-5 w-5 ${
+                      theme === 'dark' ? 'text-white/30' : 'text-gray-300'
+                    }`} />
+                  </div>
+                  
+                  {/* Divider */}
+                  <div className={`ml-[60px] h-px ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-200'}`} />
+                  
                   {/* Integrations */}
-                  <Card
-                    key="integrations-card"
+                  <div 
                     onClick={() => navigateToView('integrations')}
-                    className={`backdrop-blur-xl rounded-2xl p-4 active:scale-98 transition-transform cursor-pointer hover:shadow-lg shadow-md ${
-                      theme === 'dark'
-                        ? 'bg-white/5 border border-white/10'
-                        : 'bg-white/80 border-2 border-gray-300'
+                    className={`flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity cursor-pointer ${
+                      theme === 'dark' ? 'active:bg-white/5' : 'active:bg-gray-50'
                     }`}
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
-                          theme === 'dark'
-                            ? 'bg-purple-500/20 border-purple-400/30'
-                            : 'bg-purple-100 border-purple-300'
-                        }`}>
-                          <Zap className="h-5 w-5 text-purple-600" />
-                        </div>
-                        <div>
-                          <p className={`font-medium ${
-                            theme === 'dark' ? 'text-white' : 'text-gray-900'
-                          }`}>Integrations</p>
-                          <p className={`text-xs ${
-                            theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-                          }`}>Slack, WhatsApp, Teams</p>
-                        </div>
-                      </div>
-                      <ChevronRight className={`h-5 w-5 ${
-                        theme === 'dark' ? 'text-white/40' : 'text-gray-400'
-                      }`} />
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-indigo-400 to-indigo-600">
+                      <Zap className="h-4.5 w-4.5 text-white" />
                     </div>
-                  </Card>
+                    <span className={`flex-1 text-[17px] ${
+                      theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    }`}>Integrations</span>
+                    <ChevronRight className={`h-5 w-5 ${
+                      theme === 'dark' ? 'text-white/30' : 'text-gray-300'
+                    }`} />
+                  </div>
+                </div>
 
-                  {/* Contact Support */}
-                  <Link href="/dashboard/support" className="block" key="support-link">
-                    <Card
-                      key="support-card"
-                      className={`backdrop-blur-xl rounded-2xl p-4 active:scale-98 transition-transform cursor-pointer hover:shadow-lg shadow-md ${
-                        theme === 'dark'
-                          ? 'bg-white/5 border border-white/10'
-                          : 'bg-white/80 border-2 border-gray-300'
+                {/* Group 3: Support */}
+                <div className={`rounded-xl overflow-hidden ${
+                  theme === 'dark' ? 'bg-white/10 backdrop-blur-xl' : 'bg-white shadow-sm'
+                }`}>
+                  <Link href="/dashboard/support" className="block">
+                    <div 
+                      className={`flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity cursor-pointer ${
+                        theme === 'dark' ? 'active:bg-white/5' : 'active:bg-gray-50'
                       }`}
                     >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
-                            theme === 'dark'
-                              ? 'bg-blue-500/20 border-blue-400/30'
-                              : 'bg-blue-100 border-blue-300'
-                          }`}>
-                            <HelpCircle className="h-5 w-5 text-blue-600" />
-                          </div>
-                          <div>
-                            <p className={`font-medium ${
-                              theme === 'dark' ? 'text-white' : 'text-gray-900'
-                            }`}>Contact Support</p>
-                            <p className={`text-xs ${
-                              theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-                            }`}>Get help & report issues</p>
-                          </div>
-                        </div>
-                        <ChevronRight className={`h-5 w-5 ${
-                          theme === 'dark' ? 'text-white/40' : 'text-gray-400'
-                        }`} />
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-blue-400 to-blue-600">
+                        <HelpCircle className="h-4.5 w-4.5 text-white" />
                       </div>
-                    </Card>
-                  </Link>
-
-                  {/* Danger Zone */}
-                  <Card
-                    key="danger-card"
-                    onClick={() => navigateToView('danger')}
-                    className={`backdrop-blur-xl rounded-2xl p-4 active:scale-98 transition-transform cursor-pointer hover:shadow-lg shadow-md ${
-                      theme === 'dark'
-                        ? 'bg-red-500/10 border border-red-400/20'
-                        : 'bg-red-50 border-2 border-red-300'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
-                          theme === 'dark'
-                            ? 'bg-red-500/20 border-red-400/30'
-                            : 'bg-red-100 border-red-300'
-                        }`}>
-                          <Shield className="h-5 w-5 text-red-600" />
-                        </div>
-                        <div>
-                          <p className={`font-medium ${
-                            theme === 'dark' ? 'text-white' : 'text-gray-900'
-                          }`}>Danger Zone</p>
-                          <p className={`text-xs ${
-                            theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-                          }`}>Export & delete account</p>
-                        </div>
-                      </div>
+                      <span className={`flex-1 text-[17px] ${
+                        theme === 'dark' ? 'text-white' : 'text-gray-900'
+                      }`}>Contact Support</span>
                       <ChevronRight className={`h-5 w-5 ${
-                        theme === 'dark' ? 'text-white/40' : 'text-gray-400'
+                        theme === 'dark' ? 'text-white/30' : 'text-gray-300'
                       }`} />
                     </div>
-                  </Card>
+                  </Link>
+                </div>
+
+                {/* Group 4: Danger Zone */}
+                <div className={`rounded-xl overflow-hidden ${
+                  theme === 'dark' ? 'bg-white/10 backdrop-blur-xl' : 'bg-white shadow-sm'
+                }`}>
+                  <div 
+                    onClick={() => navigateToView('danger')}
+                    className={`flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity cursor-pointer ${
+                      theme === 'dark' ? 'active:bg-white/5' : 'active:bg-gray-50'
+                    }`}
+                  >
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-red-500 to-red-700">
+                      <Shield className="h-4.5 w-4.5 text-white" />
+                    </div>
+                    <span className={`flex-1 text-[17px] ${
+                      theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    }`}>Danger Zone</span>
+                    <ChevronRight className={`h-5 w-5 ${
+                      theme === 'dark' ? 'text-white/30' : 'text-gray-300'
+                    }`} />
+                  </div>
                 </div>
               </div>
             ) : (

@@ -5,21 +5,21 @@ import { Button } from "@/components/ui/button"
 import { Phone, Globe, MessageCircle, Heart, AlertCircle, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { useTheme } from "@/contexts/ThemeContext"
-import { BubbleBackground } from "@/components/ui/bubble-background"
 
 export default function CrisisResourcesPage() {
   const { theme } = useTheme()
   
   return (
-    <div className="min-h-screen relative" style={theme === 'light' ? { backgroundColor: '#F5F5DC' } : { background: 'linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a)' }}>
-      {/* Animated Bubble Background */}
-      <BubbleBackground 
-        interactive
-        className="fixed inset-0 -z-10"
-      />
-      {/* Themed background overlay */}
+    <div 
+      className="min-h-screen relative" 
+      style={theme === 'light' 
+        ? { background: 'linear-gradient(135deg, #f4f0eb 0%, #e8e4df 50%, #d4d0cb 100%)' } 
+        : { background: 'linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a)' }
+      }
+    >
+      {/* Static background overlay - no animation for better scroll performance */}
       <div className={`fixed inset-0 -z-10 ${
-        theme === 'light' ? 'bg-[#F5F5DC]/60' : 'bg-black/20'
+        theme === 'light' ? 'bg-white/20' : 'bg-black/20'
       }`} />
 
       <div className="relative z-10 p-3 sm:p-4 md:p-8 max-w-7xl mx-auto pb-24 md:pb-8">
