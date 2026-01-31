@@ -40,34 +40,62 @@ export default function VoicePromptPlayer({ promptText, userName }: VoicePromptP
   const [rate, setRate] = useState(1.0) // Speech rate (0.5 - 2.0)
   const [pitch, setPitch] = useState(1.0) // Speech pitch (0 - 2)
   const [volume, setVolume] = useState(1.0) // Volume (0 - 1)
-  const [selectedVoice, setSelectedVoice] = useState<number>(0)
-  const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([])
+  const [bestVoice, setBestVoice] = useState<SpeechSynthesisVoice | null>(null)
   
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null)
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
-  // Load available voices
+  // Load and select the best human-like voice automatically
   useEffect(() => {
-    const loadVoices = () => {
+    const selectBestVoice = () => {
       const voices = window.speechSynthesis.getVoices()
-      // Filter for English voices, prefer Google/Microsoft voices
-      const englishVoices = voices.filter(voice => voice.lang.startsWith('en'))
-      setAvailableVoices(englishVoices.length > 0 ? englishVoices : voices)
+      if (voices.length === 0) return
       
-      // Try to find a nice default voice
-      const preferredVoice = englishVoices.findIndex(v => 
-        v.name.includes('Google') || v.name.includes('Microsoft') || v.name.includes('Samantha')
-      )
-      if (preferredVoice !== -1) {
-        setSelectedVoice(preferredVoice)
+      // Priority list of natural-sounding voices (most human-like first)
+      const voicePreferences = [
+        // Premium natural voices (Google, Microsoft Neural)
+        'Google UK English Female',
+        'Google US English',
+        'Microsoft Zira',
+        'Microsoft Aria Online (Natural)',
+        'Microsoft Jenny Online (Natural)',
+        'Samantha', // macOS
+        'Karen', // macOS Australian
+        'Daniel', // macOS British
+        'Moira', // macOS Irish
+        // Fallback to any English female voice (typically more natural)
+        'Female',
+        'Fiona',
+        'Victoria',
+        'Allison',
+      ]
+      
+      // Find the best available voice
+      let selectedVoice: SpeechSynthesisVoice | null = null
+      
+      for (const pref of voicePreferences) {
+        const match = voices.find(v => 
+          v.name.includes(pref) && v.lang.startsWith('en')
+        )
+        if (match) {
+          selectedVoice = match
+          break
+        }
       }
+      
+      // If no preferred voice found, use any English voice
+      if (!selectedVoice) {
+        selectedVoice = voices.find(v => v.lang.startsWith('en')) || voices[0]
+      }
+      
+      setBestVoice(selectedVoice)
     }
 
-    loadVoices()
+    selectBestVoice()
     
     // Chrome loads voices asynchronously
     if (window.speechSynthesis.onvoiceschanged !== undefined) {
-      window.speechSynthesis.onvoiceschanged = loadVoices
+      window.speechSynthesis.onvoiceschanged = selectBestVoice
     }
 
     return () => {
@@ -113,9 +141,9 @@ export default function VoicePromptPlayer({ promptText, userName }: VoicePromptP
     const fullText = getIntroText()
     const utterance = new SpeechSynthesisUtterance(fullText)
     
-    // Apply voice settings
-    if (availableVoices[selectedVoice]) {
-      utterance.voice = availableVoices[selectedVoice]
+    // Apply the best human-like voice
+    if (bestVoice) {
+      utterance.voice = bestVoice
     }
     utterance.rate = rate
     utterance.pitch = pitch
@@ -294,21 +322,6 @@ export default function VoicePromptPlayer({ promptText, userName }: VoicePromptP
             </PopoverTrigger>
             <PopoverContent className="w-80 bg-white backdrop-blur-xl border-2 border-gray-300 p-5 shadow-2xl" align="end">
               <div className="space-y-4">
-                <div>
-                  <Label className="text-gray-900 text-sm font-semibold mb-2 block">Voice</Label>
-                  <select
-                    value={selectedVoice}
-                    onChange={(e) => setSelectedVoice(Number(e.target.value))}
-                    className="w-full bg-white border-2 border-gray-300 rounded-lg px-3 py-2 text-gray-900 text-sm shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  >
-                    {availableVoices.map((voice, index) => (
-                      <option key={index} value={index} className="bg-white">
-                        {voice.name} ({voice.lang})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
                 <div>
                   <Label className="text-gray-900 text-sm font-semibold mb-2 block">
                     Speed: {rate.toFixed(1)}x
