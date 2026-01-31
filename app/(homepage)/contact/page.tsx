@@ -71,7 +71,7 @@ function HeroSection() {
   const opacity = useTransform(scrollYProgress, [0, 0.6], [1, 0])
 
   return (
-    <div ref={container} className="h-screen overflow-hidden relative">
+    <div ref={container} className="h-[80vh] sm:h-screen overflow-hidden relative">
       <motion.div style={{ y }} className="relative h-full">
         <Image
           src="https://res.cloudinary.com/dh1rrfpmq/image/upload/v1766469858/ivan-sitting-glear_t7agby.jpg"
@@ -79,11 +79,12 @@ function HeroSection() {
           alt="Contact background"
           style={{ objectFit: "cover" }}
           className="brightness-[0.4]"
+          priority
         />
-        <motion.div style={{ opacity }} className="absolute inset-0 flex items-center justify-center z-10 px-6">
+        <motion.div style={{ opacity }} className="absolute inset-0 flex items-center justify-center z-10 px-4 sm:px-6">
           <div className="text-center text-white max-w-5xl">
-            <h1 className="text-4xl md:text-6xl lg:text-8xl font-bold mb-8 leading-tight text-balance">Get in Touch</h1>
-            <p className="text-lg md:text-2xl lg:text-3xl leading-relaxed text-balance max-w-3xl mx-auto">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-bold mb-6 sm:mb-8 leading-tight text-balance">Get in Touch</h1>
+            <p className="text-base sm:text-lg md:text-2xl lg:text-3xl leading-relaxed text-balance max-w-3xl mx-auto">
               Questions, feedback, or just want to say hello? We read every message.
             </p>
           </div>
@@ -136,7 +137,7 @@ function ContactFormSection() {
   }
 
   return (
-    <div className="min-h-screen flex items-center px-6 py-32 bg-white">
+    <div className="min-h-screen flex items-center px-4 sm:px-6 py-16 sm:py-24 lg:py-32 bg-white">
       <div className="max-w-3xl mx-auto w-full">
         {!submitted ? (
           <form onSubmit={handleSubmit} className="space-y-8" suppressHydrationWarning>
@@ -242,23 +243,23 @@ function ContactFormSection() {
 
 function AlternativeContactSection() {
   return (
-    <div className="px-6 py-32 bg-neutral-50">
-      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 lg:gap-16">
-        <div className="backdrop-blur-md bg-white/80 border border-neutral-200 p-10 lg:p-12 rounded-3xl">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-black mb-6">
-            <Mail className="w-8 h-8 text-white" />
+    <div className="px-4 sm:px-6 py-16 sm:py-24 lg:py-32 bg-neutral-50">
+      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-6 sm:gap-12 lg:gap-16">
+        <div className="backdrop-blur-md bg-white/80 border border-neutral-200 p-6 sm:p-10 lg:p-12 rounded-2xl sm:rounded-3xl">
+          <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-black mb-4 sm:mb-6">
+            <Mail className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
           </div>
-          <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">Email Us Directly</h3>
-          <p className="text-2xl font-bold text-black mb-4">contact@promptandpause.com</p>
-          <p className="text-neutral-600 leading-relaxed text-lg">For urgent account issues, email us directly.</p>
+          <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 leading-tight">Email Us Directly</h3>
+          <a href="mailto:contact@promptandpause.com" className="block text-xl sm:text-2xl font-bold text-black mb-3 sm:mb-4 hover:underline break-all">contact@promptandpause.com</a>
+          <p className="text-neutral-600 leading-relaxed text-base sm:text-lg">For urgent account issues, email us directly.</p>
         </div>
 
-        <div className="backdrop-blur-md bg-white/80 border border-neutral-200 p-10 lg:p-12 rounded-3xl">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-black mb-6">
-            <Clock className="w-8 h-8 text-white" />
+        <div className="backdrop-blur-md bg-white/80 border border-neutral-200 p-6 sm:p-10 lg:p-12 rounded-2xl sm:rounded-3xl">
+          <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-black mb-4 sm:mb-6">
+            <Clock className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
           </div>
-          <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">Premium Support</h3>
-          <p className="text-neutral-600 leading-relaxed text-lg">
+          <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 leading-tight">Premium Support</h3>
+          <p className="text-neutral-600 leading-relaxed text-base sm:text-lg">
             Premium users get priority responses within 24 hours. Include your account email in your message.
           </p>
         </div>
@@ -270,7 +271,7 @@ function AlternativeContactSection() {
 function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
 
-  const faqs = [
+  const faqs: { question: string; answer: string }[] = [
     {
       question: "How do I cancel my subscription?",
       answer:
@@ -299,19 +300,19 @@ function FAQSection() {
   ]
 
   return (
-    <div className="min-h-screen flex items-center px-6 py-32 bg-white">
+    <div className="min-h-screen flex items-center px-4 sm:px-6 py-16 sm:py-24 lg:py-32 bg-white">
       <div className="max-w-5xl mx-auto w-full">
-        <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-12 leading-tight">
+        <h2 className="text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-8 sm:mb-12 leading-tight">
           Before You Email, Check If Your Question Is Answered
         </h2>
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {faqs.map((faq, index) => (
-            <div key={index} className="border-2 border-neutral-200 overflow-hidden">
+            <div key={index} className="border-2 border-neutral-200 overflow-hidden rounded-lg sm:rounded-none">
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full p-8 text-left hover:bg-neutral-50 transition-colors duration-200 flex items-center justify-between gap-4"
+                className="w-full p-5 sm:p-8 text-left hover:bg-neutral-50 transition-colors duration-200 flex items-center justify-between gap-3 sm:gap-4 touch-manipulation"
               >
-                <h3 className="text-xl md:text-2xl font-bold">{faq.question}</h3>
+                <h3 className="text-lg sm:text-xl md:text-2xl font-bold">{faq.question}</h3>
                 <motion.div
                   animate={{ rotate: openIndex === index ? 180 : 0 }}
                   transition={{ duration: 0.3 }}
@@ -340,17 +341,17 @@ function FAQSection() {
                 transition={{ duration: 0.3, ease: "easeInOut" }}
                 className="overflow-hidden"
               >
-                <div className="px-8 pb-8 text-lg md:text-xl text-neutral-600 leading-relaxed border-t-2 border-neutral-200 pt-6">
+                <div className="px-5 sm:px-8 pb-5 sm:pb-8 text-base sm:text-lg md:text-xl text-neutral-600 leading-relaxed border-t-2 border-neutral-200 pt-4 sm:pt-6">
                   {faq.answer}
                 </div>
               </motion.div>
             </div>
           ))}
         </div>
-        <div className="mt-12 text-center">
+        <div className="mt-8 sm:mt-12 text-center">
           <a
             href="/research"
-            className="inline-block px-10 py-5 border-2 border-black text-black text-base font-medium tracking-wide transition-all duration-300 hover:bg-black hover:text-white"
+            className="inline-block px-8 sm:px-10 py-4 sm:py-5 border-2 border-black text-black text-sm sm:text-base font-medium tracking-wide transition-all duration-300 hover:bg-black hover:text-white rounded-lg touch-manipulation"
           >
             VIEW ALL FAQS
           </a>
@@ -362,22 +363,26 @@ function FAQSection() {
 
 function PressSection() {
   return (
-    <div id="press" className="px-6 py-32 bg-neutral-50">
-      <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-        <div className="text-center lg:text-left">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-black mb-8">
-            <FileText className="w-10 h-10 text-white" />
+    <div id="press" className="px-4 sm:px-6 py-16 sm:py-24 lg:py-32 bg-neutral-50">
+      <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 sm:gap-16 lg:gap-24 items-center">
+        <div className="text-center lg:text-left order-2 lg:order-1">
+          <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-black mb-6 sm:mb-8">
+            <FileText className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
           </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-8 leading-tight">For Press/Media</h2>
-          <p className="text-xl md:text-2xl text-neutral-600 leading-relaxed mb-12 max-w-3xl">
-            Journalists, bloggers, or researchers? Download our press kit (logo, screenshots, founder bio) or email
-            press@promptandpause.com
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 sm:mb-8 leading-tight">For Press/Media</h2>
+          <p className="text-lg sm:text-xl md:text-2xl text-neutral-600 leading-relaxed mb-8 sm:mb-12 max-w-3xl mx-auto lg:mx-0">
+            Journalists, bloggers, or researchers? Download our press kit (logo, screenshots, founder bio) or email{" "}
+            <a href="mailto:press@promptandpause.com" className="underline hover:text-black transition-colors">press@promptandpause.com</a>
           </p>
-          <button className="px-10 py-5 bg-black text-white border-2 border-black text-base font-medium tracking-wide transition-all duration-300 hover:bg-transparent hover:text-black cursor-pointer">
+          <a 
+            href="/press-kit/promptandpause-press-kit.zip" 
+            download="promptandpause-press-kit.zip"
+            className="inline-block px-8 sm:px-10 py-4 sm:py-5 bg-black text-white border-2 border-black text-sm sm:text-base font-medium tracking-wide transition-all duration-300 hover:bg-transparent hover:text-black rounded-lg touch-manipulation"
+          >
             DOWNLOAD PRESS KIT
-          </button>
+          </a>
         </div>
-        <div className="h-[400px] lg:h-[600px] relative">
+        <div className="h-[280px] sm:h-[400px] lg:h-[600px] relative order-1 lg:order-2">
           <Image
             src="https://res.cloudinary.com/dh1rrfpmq/image/upload/v1766471149/Wellbeing-Washing-Exposed_-The-Sneaky-Side-of-Employee-Wellbeing-Tips-to-Fix-it-1024x697_ecgehe.png"
             fill
@@ -393,34 +398,34 @@ function PressSection() {
 
 function CrisisSection() {
   return (
-    <div className="px-6 py-32 bg-white">
+    <div className="px-4 sm:px-6 py-16 sm:py-24 lg:py-32 bg-white">
       <div className="max-w-5xl mx-auto">
-        <div className="backdrop-blur-md bg-red-50 border-2 border-red-200 p-10 lg:p-16 rounded-3xl">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-600 mb-8">
-            <AlertCircle className="w-8 h-8 text-white" />
+        <div className="backdrop-blur-md bg-red-50 border-2 border-red-200 p-6 sm:p-10 lg:p-16 rounded-2xl sm:rounded-3xl">
+          <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-red-600 mb-6 sm:mb-8">
+            <AlertCircle className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
           </div>
-          <h2 className="text-3xl md:text-5xl font-bold mb-8 leading-tight text-red-900">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-6 sm:mb-8 leading-tight text-red-900">
             If you're in crisis or need immediate help, please contact:
           </h2>
-          <div className="space-y-6 text-lg md:text-xl text-red-900 mb-8">
-            <div className="flex items-start gap-4">
-              <span className="font-bold min-w-[200px]">Samaritans:</span>
-              <span>116 123 (UK, free, 24/7)</span>
+          <div className="space-y-4 sm:space-y-6 text-base sm:text-lg md:text-xl text-red-900 mb-6 sm:mb-8">
+            <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+              <span className="font-bold sm:min-w-[200px]">Samaritans:</span>
+              <a href="tel:116123" className="underline hover:no-underline">116 123 (UK, free, 24/7)</a>
             </div>
-            <div className="flex items-start gap-4">
-              <span className="font-bold min-w-[200px]">NHS 111 Mental Health Crisis:</span>
-              <span>111</span>
+            <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+              <span className="font-bold sm:min-w-[200px]">NHS 111 Mental Health Crisis:</span>
+              <a href="tel:111" className="underline hover:no-underline">111</a>
             </div>
-            <div className="flex items-start gap-4">
-              <span className="font-bold min-w-[200px]">Mind UK:</span>
-              <span>Text SHOUT to 85258</span>
+            <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+              <span className="font-bold sm:min-w-[200px]">Mind UK:</span>
+              <a href="sms:85258?body=SHOUT" className="underline hover:no-underline">Text SHOUT to 85258</a>
             </div>
-            <div className="flex items-start gap-4">
-              <span className="font-bold min-w-[200px]">Crisis Text Line:</span>
-              <span>Text HOME to 741741 (US)</span>
+            <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+              <span className="font-bold sm:min-w-[200px]">Crisis Text Line:</span>
+              <a href="sms:741741?body=HOME" className="underline hover:no-underline">Text HOME to 741741 (US)</a>
             </div>
           </div>
-          <p className="text-xl text-red-800 font-bold">
+          <p className="text-base sm:text-xl text-red-800 font-bold">
             Prompt & Pause is not a crisis service. Please reach out to professionals if you're in urgent distress.
           </p>
         </div>
@@ -431,12 +436,12 @@ function CrisisSection() {
 
 function ResponseTimeSection() {
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 py-32 bg-neutral-900 text-white">
+    <div className="min-h-[60vh] sm:min-h-screen flex items-center justify-center px-4 sm:px-6 py-16 sm:py-24 lg:py-32 bg-neutral-900 text-white">
       <div className="max-w-4xl text-center">
-        <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-12 leading-tight text-balance">
+        <h2 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-8 sm:mb-12 leading-tight text-balance">
           Response Time Notice
         </h2>
-        <p className="text-xl md:text-2xl leading-relaxed text-neutral-300">
+        <p className="text-lg sm:text-xl md:text-2xl leading-relaxed text-neutral-300">
           We're a small team (currently just me!), so please allow 24-48 hours for responses. Premium users get priority
           support within 24 hours.
         </p>
