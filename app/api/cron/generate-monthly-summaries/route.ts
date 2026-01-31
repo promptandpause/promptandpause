@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
       .from('profiles')
       .select('id, full_name, subscription_tier, subscription_status')
       .eq('subscription_tier', 'premium')
-      .eq('subscription_status', 'active')
+      .eq('subscription_status', 'premium')
 
     if (usersError) {
       return NextResponse.json({ success: false, error: usersError.message }, { status: 500 })

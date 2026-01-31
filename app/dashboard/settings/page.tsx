@@ -454,6 +454,7 @@ function SettingsPageContent() {
           weekly_digest: weeklyDigest,
           include_self_journal_in_insights: includeSelfJournalInInsights,
           reminder_time: reminderTime,
+          custom_days: customDays.length > 0 ? customDays : ['monday', 'wednesday', 'friday'],
         }),
       })
 
@@ -1342,6 +1343,70 @@ function SettingsPageContent() {
                           }`}
                         />
                       </div>
+                      
+                      {/* Notification Days Selection */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <Label className={`text-sm font-medium ${
+                            theme === 'dark' ? 'text-white/90' : 'text-gray-700'
+                          }`}>Notification Days</Label>
+                          {tier !== 'premium' && (
+                            <span className={`text-xs px-2 py-0.5 rounded-full ${
+                              theme === 'dark' ? 'bg-amber-500/20 text-amber-300' : 'bg-amber-100 text-amber-700'
+                            }`}>
+                              Max 3 days (Free)
+                            </span>
+                          )}
+                        </div>
+                        <p className={`text-xs ${
+                          theme === 'dark' ? 'text-white/60' : 'text-gray-600'
+                        }`}>
+                          {tier === 'premium' 
+                            ? 'Choose which days to receive prompt notifications'
+                            : 'Free users receive prompts on up to 3 days per week'}
+                        </p>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => {
+                            const isSelected = customDays.includes(day)
+                            const canSelect = tier === 'premium' || customDays.length < 3 || isSelected
+                            return (
+                              <Button
+                                key={day}
+                                type="button"
+                                variant={isSelected ? "default" : "outline"}
+                                size="sm"
+                                disabled={!canSelect && !isSelected}
+                                onClick={() => {
+                                  if (isSelected) {
+                                    setCustomDays(prev => prev.filter(d => d !== day))
+                                  } else if (canSelect) {
+                                    setCustomDays(prev => [...prev, day])
+                                  }
+                                }}
+                                className={`text-xs h-8 px-3 ${
+                                  isSelected
+                                    ? 'bg-yellow-500 hover:bg-yellow-600 text-white'
+                                    : !canSelect
+                                    ? 'opacity-50 cursor-not-allowed'
+                                    : theme === 'dark'
+                                    ? 'bg-white/10 border border-white/20 text-white/80 hover:bg-white/20'
+                                    : 'bg-white border-2 border-gray-300 text-gray-700 hover:bg-gray-50'
+                                }`}
+                              >
+                                {day.charAt(0).toUpperCase() + day.slice(1, 3)}
+                              </Button>
+                            )
+                          })}
+                        </div>
+                        <p className={`text-xs mt-1 ${
+                          theme === 'dark' ? 'text-white/50' : 'text-gray-500'
+                        }`}>
+                          Selected: {customDays.length > 0 
+                            ? customDays.map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(', ') 
+                            : 'Mon, Wed, Fri (default)'}
+                        </p>
+                      </div>
+                      
                       <Button onClick={handleSaveNotifications} className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white h-10">
                         Save Settings
                       </Button>
@@ -2169,6 +2234,70 @@ function SettingsPageContent() {
                     }`}
                   />
                 </div>
+                
+                {/* Notification Days Selection - Desktop */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label className={`text-sm ${
+                      theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    }`}>Notification Days</Label>
+                    {tier !== 'premium' && (
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${
+                        theme === 'dark' ? 'bg-amber-500/20 text-amber-300' : 'bg-amber-100 text-amber-700'
+                      }`}>
+                        Max 3 days (Free)
+                      </span>
+                    )}
+                  </div>
+                  <p className={`text-xs ${
+                    theme === 'dark' ? 'text-white/60' : 'text-gray-600'
+                  }`}>
+                    {tier === 'premium' 
+                      ? 'Choose which days to receive prompt notifications'
+                      : 'Free users receive prompts on up to 3 days per week'}
+                  </p>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => {
+                      const isSelected = customDays.includes(day)
+                      const canSelect = tier === 'premium' || customDays.length < 3 || isSelected
+                      return (
+                        <Button
+                          key={day}
+                          type="button"
+                          variant={isSelected ? "default" : "outline"}
+                          size="sm"
+                          disabled={!canSelect && !isSelected}
+                          onClick={() => {
+                            if (isSelected) {
+                              setCustomDays(prev => prev.filter(d => d !== day))
+                            } else if (canSelect) {
+                              setCustomDays(prev => [...prev, day])
+                            }
+                          }}
+                          className={`text-xs h-8 px-3 ${
+                            isSelected
+                              ? 'bg-yellow-500 hover:bg-yellow-600 text-white'
+                              : !canSelect
+                              ? 'opacity-50 cursor-not-allowed'
+                              : theme === 'dark'
+                              ? 'bg-white/10 border border-white/20 text-white/80 hover:bg-white/20'
+                              : 'bg-white border-2 border-gray-300 text-gray-700 hover:bg-gray-50'
+                          }`}
+                        >
+                          {day.charAt(0).toUpperCase() + day.slice(1, 3)}
+                        </Button>
+                      )
+                    })}
+                  </div>
+                  <p className={`text-xs mt-1 ${
+                    theme === 'dark' ? 'text-white/50' : 'text-gray-500'
+                  }`}>
+                    Selected: {customDays.length > 0 
+                      ? customDays.map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(', ') 
+                      : 'Mon, Wed, Fri (default)'}
+                  </p>
+                </div>
+                
                 <Button 
                   onClick={handleSaveNotifications}
                   className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white text-sm h-9 md:h-10 transition-all duration-700 ease-out hover:scale-[1.02]"

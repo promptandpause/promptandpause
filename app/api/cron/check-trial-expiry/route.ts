@@ -72,14 +72,16 @@ export async function POST(request: NextRequest) {
     // Process each expired trial user
     for (const user of expiredUsers) {
       try {
-        // 1. Downgrade user to freemium
+        // 1. Downgrade user to free tier
         const { error: updateError } = await supabase
           .from('profiles')
           .update({
             subscription_status: 'free',
+            subscription_tier: 'free', // Keep tier in sync with status
             subscription_end_date: null,
             is_trial: false,
             trial_end_date: null,
+            billing_cycle: null, // Clear billing cycle when trial expires
             updated_at: new Date().toISOString(),
           })
           .eq('id', user.id)

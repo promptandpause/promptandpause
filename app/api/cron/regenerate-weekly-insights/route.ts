@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
       .from('profiles')
       .select('id, email, full_name, subscription_tier, subscription_status')
       .eq('subscription_tier', 'premium')
-      .eq('subscription_status', 'active')
+      .eq('subscription_status', 'premium')
 
     if (usersError) {
       return NextResponse.json(

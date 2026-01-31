@@ -4,7 +4,7 @@ import { createClient as createServiceClient } from '@supabase/supabase-js'
 import Stripe from 'stripe'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-12-18.acacia',
+  apiVersion: '2025-10-29.clover',
 })
 
 /**
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
       )
 
       // Format the period end date
-      const periodEnd = new Date(subscription.current_period_end * 1000)
+      const periodEnd = new Date((subscription as any).current_period_end * 1000)
       const formattedDate = periodEnd.toLocaleDateString('en-GB', {
         day: 'numeric',
         month: 'long',
@@ -87,7 +87,11 @@ export async function POST(request: NextRequest) {
         .from('profiles')
         .update({ 
           subscription_status: 'free',
-          subscription_end_date: null 
+          subscription_tier: 'free', // Keep tier in sync with status
+          subscription_end_date: null,
+          is_gift_subscription: false,
+          is_trial: false,
+          billing_cycle: null,
         })
         .eq('id', user.id)
 

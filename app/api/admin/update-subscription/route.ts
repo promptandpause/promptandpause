@@ -40,9 +40,11 @@ export async function POST(req: NextRequest) {
     const { data, error } = await supabaseAdmin
       .from('profiles')
       .update({
-        subscription_status: tier === 'premium' ? 'premium' : 'freemium',
+        subscription_status: tier === 'premium' ? 'premium' : 'free',
+        subscription_tier: tier === 'premium' ? 'premium' : 'free', // Keep tier in sync
         billing_cycle: tier === 'premium' ? 'monthly' : null,
         subscription_end_date: tier === 'premium' ? endDate.toISOString() : null,
+        is_trial: false, // Admin-granted subscriptions are not trials
         updated_at: new Date().toISOString(),
       })
       .eq('email', userEmail)

@@ -1049,11 +1049,17 @@ export async function updateSubscription(
     if (fetchError) {
       throw fetchError
     }
+    // Derive subscription_tier from subscription_status if status is being updated
+    const updatesWithTier: Record<string, any> = { ...updates }
+    if (updates.subscription_status) {
+      updatesWithTier.subscription_tier = updates.subscription_status === 'premium' ? 'premium' : 'free'
+    }
+
     // Update subscription
     const { data: updatedData, error: updateError } = await supabase
       .from('profiles')
       .update({
-        ...updates,
+        ...updatesWithTier,
         updated_at: new Date().toISOString(),
       })
       .eq('id', userId)
@@ -1119,7 +1125,9 @@ export async function cancelSubscription(userId: string, adminEmail: string, rea
       .from('profiles')
       .update({
         subscription_status: 'cancelled',
+        subscription_tier: 'free', // Keep tier in sync with status
         subscription_end_date: new Date().toISOString(),
+        billing_cycle: null,
         updated_at: new Date().toISOString(),
       })
       .eq('id', userId)

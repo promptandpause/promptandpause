@@ -62,8 +62,9 @@ export async function POST(request: NextRequest) {
           .from('profiles')
           .update({
             subscription_status: 'free',
-            subscription_tier: 'freemium',
+            subscription_tier: 'free', // Keep consistent with subscription_status
             is_trial: false,
+            billing_cycle: null, // Clear billing cycle when trial expires
             updated_at: new Date().toISOString()
           })
           .eq('id', trial.id)

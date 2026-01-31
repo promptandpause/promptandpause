@@ -47,6 +47,101 @@ export async function POST(request: NextRequest) {
 
     const FALLBACK_PROMPT_TEXT = 'Name the emotion that feels most present right now?'
 
+    // Default days for free users (Mon, Wed, Fri = 3x per week)
+    const FREE_TIER_DEFAULT_DAYS = ['monday', 'wednesday', 'friday']
+
+    /**
+     * Check if today is a valid notification day for the user
+     * Free users: Limited to 3x per week (Mon, Wed, Fri or custom_days if set, max 3)
+     * Premium users: Based on their prompt_frequency and custom_days settings
+     */
+    const shouldSendToday = (
+      isFreeUser: boolean,
+      promptFrequency: string | null,
+      customDays: string[] | null,
+      userTimezone: string
+    ): { shouldSend: boolean; reason: string } => {
+      // Get current day of week in user's timezone
+      const nowInUserTZ = new Date().toLocaleDateString('en-US', {
+        timeZone: userTimezone,
+        weekday: 'long'
+      }).toLowerCase()
+
+      // For free users, enforce 3x per week limit
+      if (isFreeUser) {
+        // If user has custom_days set, use up to 3 of them
+        const allowedDays = customDays && customDays.length > 0 
+          ? customDays.slice(0, 3).map(d => d.toLowerCase())
+          : FREE_TIER_DEFAULT_DAYS
+
+        if (allowedDays.includes(nowInUserTZ)) {
+          return { shouldSend: true, reason: `free_tier_allowed_day:${nowInUserTZ}` }
+        }
+        return { shouldSend: false, reason: `free_tier_not_allowed_day:${nowInUserTZ}` }
+      }
+
+      // Premium users: check their frequency setting
+      const frequency = promptFrequency || 'daily'
+
+      switch (frequency) {
+        case 'daily':
+          return { shouldSend: true, reason: 'premium_daily' }
+
+        case 'weekdays':
+          const weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
+          if (weekdays.includes(nowInUserTZ)) {
+            return { shouldSend: true, reason: 'premium_weekday' }
+          }
+          return { shouldSend: false, reason: `premium_weekend_skip:${nowInUserTZ}` }
+
+        case 'every-other-day':
+          // Use day of year to determine odd/even days
+          const startOfYear = new Date(new Date().getFullYear(), 0, 0)
+          const diff = new Date().getTime() - startOfYear.getTime()
+          const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24))
+          if (dayOfYear % 2 === 0) {
+            return { shouldSend: true, reason: 'premium_every_other_day' }
+          }
+          return { shouldSend: false, reason: 'premium_every_other_day_skip' }
+
+        case 'twice-weekly':
+          // Default to Tuesday and Friday
+          const twiceWeeklyDays = customDays && customDays.length >= 2 
+            ? customDays.slice(0, 2).map(d => d.toLowerCase())
+            : ['tuesday', 'friday']
+          if (twiceWeeklyDays.includes(nowInUserTZ)) {
+            return { shouldSend: true, reason: 'premium_twice_weekly' }
+          }
+          return { shouldSend: false, reason: `premium_twice_weekly_skip:${nowInUserTZ}` }
+
+        case 'weekly':
+          // Default to Monday, or first custom day
+          const weeklyDay = customDays && customDays.length > 0 
+            ? customDays[0].toLowerCase()
+            : 'monday'
+          if (nowInUserTZ === weeklyDay) {
+            return { shouldSend: true, reason: 'premium_weekly' }
+          }
+          return { shouldSend: false, reason: `premium_weekly_skip:${nowInUserTZ}` }
+
+        case 'custom':
+          // Use custom_days array
+          if (!customDays || customDays.length === 0) {
+            // No custom days set, default to daily
+            return { shouldSend: true, reason: 'premium_custom_no_days_default_daily' }
+          }
+          const customDaysLower = customDays.map(d => d.toLowerCase())
+          if (customDaysLower.includes(nowInUserTZ)) {
+            return { shouldSend: true, reason: `premium_custom_day:${nowInUserTZ}` }
+          }
+          return { shouldSend: false, reason: `premium_custom_skip:${nowInUserTZ}` }
+
+        default:
+          // Unknown frequency, default to sending
+          return { shouldSend: true, reason: 'unknown_frequency_default' }
+      }
+    }
+
     const validPromptTypes = new Set<PromptType>([
       'noticing',
       'naming',
@@ -189,6 +284,27 @@ export async function POST(request: NextRequest) {
           continue
         }
 
+        // Determine if user is free tier
+        const isFreeUser = profile.subscription_status !== 'premium' && profile.billing_cycle !== 'gift_trial'
+        
+        // Check if today is a valid notification day based on frequency settings
+        const { shouldSend, reason: frequencyReason } = shouldSendToday(
+          isFreeUser,
+          userPrefs.prompt_frequency,
+          userPrefs.custom_days,
+          userTimezone
+        )
+        
+        if (!shouldSend) {
+          skippedCount++
+          results.push({
+            user_id: profile.id,
+            status: 'skipped',
+            reason: frequencyReason,
+          })
+          continue
+        }
+
         // Check if user already has a prompt for today
         const { data: existingPrompt } = await supabase
           .from('prompts_history')
@@ -207,9 +323,7 @@ export async function POST(request: NextRequest) {
           }
         }
 
-        // Check free tier limits (assume 7 prompts per month for free users)
-        const isFreeUser = profile.subscription_status !== 'premium' && profile.billing_cycle !== 'gift_trial'
-        
+        // Check free tier limits (7 prompts per month for free users)
         if (isFreeUser) {
           // Count prompts used this month
           const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0]

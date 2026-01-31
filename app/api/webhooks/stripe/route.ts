@@ -200,10 +200,14 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription, sessi
 
   const billingCycle = isYearly ? 'yearly' : 'monthly'
 
+  // Determine subscription_tier based on status (keep in sync with subscription_status)
+  const subscriptionTier = subscriptionStatus === 'premium' ? 'premium' : 'free'
+
   const { error: updateError } = await supabaseAdmin
     .from('profiles')
     .update({
       subscription_status: subscriptionStatus,
+      subscription_tier: subscriptionTier, // Keep tier in sync with status
       subscription_id: subscription.id,
       stripe_customer_id: customerId,
       billing_cycle: billingCycle,
@@ -282,6 +286,7 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
     .from('profiles')
     .update({
       subscription_status: 'cancelled',
+      subscription_tier: 'free', // Keep tier in sync - cancelled = free
       billing_cycle: null,
       subscription_end_date: new Date().toISOString(),
       updated_at: new Date().toISOString(),

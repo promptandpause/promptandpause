@@ -461,8 +461,9 @@ export async function handleSubscriptionCancellation(
     const { error: userError } = await supabase
       .from('users')
       .update({
-        subscription_tier: 'freemium',
+        subscription_tier: 'free',
         subscription_status: 'cancelled',
+        billing_cycle: null,
         updated_at: new Date().toISOString(),
       })
       .eq('id', userId)
