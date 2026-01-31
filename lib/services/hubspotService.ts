@@ -464,7 +464,7 @@ export async function syncTicketFromHubSpot(hubspotId: string): Promise<SyncResu
       subject: props.hs_ticket_subject || 'Untitled',
       category: props.pnp_category || 'general',
       priority: props.pnp_priority || 'medium',
-      user_tier: props.pnp_user_tier || 'freemium',
+      user_tier: props.pnp_user_tier || 'free',
       status: STAGE_TO_STATUS[props.hs_pipeline_stage] || 'open',
       hubspot_ticket_id: hubspotId,
       hubspot_synced_at: new Date().toISOString(),

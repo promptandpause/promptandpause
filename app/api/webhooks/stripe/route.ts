@@ -196,7 +196,7 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription, sessi
     ? 'premium'
     : stripeStatus === 'canceled'
     ? 'cancelled'
-    : 'freemium'
+    : 'free'
 
   const billingCycle = isYearly ? 'yearly' : 'monthly'
 

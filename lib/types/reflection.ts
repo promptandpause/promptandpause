@@ -4,8 +4,8 @@
 
 export type MoodType = "😔" | "😐" | "😊" | "😄" | "🤔" | "😌" | "🙏" | "💪"
 
-export type SubscriptionTier = "freemium" | "premium"
-export type SubscriptionStatus = "active" | "cancelled" | "expired"
+export type SubscriptionTier = "free" | "freemium" | "premium"
+export type SubscriptionStatus = "free" | "premium" | "active" | "cancelled" | "expired"
 export type DeliveryMethod = "email" | "slack" | "both"
 export type PromptFrequency = "daily" | "weekdays" | "every-other-day" | "twice-weekly" | "weekly" | "custom"
 export type AIProvider = "gemini" | "openai" | "groq"

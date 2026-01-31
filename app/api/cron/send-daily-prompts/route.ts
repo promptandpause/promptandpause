@@ -191,99 +191,157 @@ export async function POST(request: NextRequest) {
 
     const cronLogId = cronLog?.id
 
-    // Get all users who should receive prompts this hour
-    // We'll match users whose prompt_time is within the current hour window
-    const { data: profiles, error: profilesError } = await supabase
-      .from('profiles')
+    // OPTIMIZATION: Join profiles with preferences in a single query
+    // Only fetch users who have daily_reminders enabled to reduce data transfer
+    const { data: usersWithPrefs, error: usersError } = await supabase
+      .from('user_preferences')
       .select(`
-        id,
-        email,
-        full_name,
-        subscription_status,
-        billing_cycle,
-        timezone_iana,
-        timezone
+        user_id,
+        daily_reminders,
+        reminder_time,
+        prompt_frequency,
+        custom_days,
+        focus_areas,
+        reason,
+        delivery_method,
+        slack_webhook_url,
+        profiles!inner (
+          id,
+          email,
+          full_name,
+          subscription_status,
+          billing_cycle,
+          timezone_iana,
+          timezone
+        )
       `)
-      // Get all users - we'll filter by preferences later
-      .not('email', 'is', null)
+      .eq('daily_reminders', true)
 
-    if (profilesError) {
+    if (usersError) {
       return NextResponse.json(
         { error: 'Failed to fetch users' },
         { status: 500 }
       )
     }
 
-    if (!profiles || profiles.length === 0) {
+    if (!usersWithPrefs || usersWithPrefs.length === 0) {
       return NextResponse.json({
         success: true,
-        message: 'No active users to send prompts to',
+        message: 'No users with daily reminders enabled',
         sent: 0,
       })
     }
-    // Get user preferences for all users
-    const { data: preferences, error: prefsError } = await supabase
-      .from('user_preferences')
-      .select('*')
-      .in('user_id', profiles.map(p => p.id))
 
-    if (prefsError) {
+    // OPTIMIZATION: Pre-filter users by timezone/hour match BEFORE processing
+    // This dramatically reduces the number of users we need to process
+    const eligibleUsers = usersWithPrefs.filter(user => {
+      const profile = user.profiles as any
+      if (!profile?.email) return false
+      
+      const reminderTime = user.reminder_time || '09:00'
+      const userTimezone = profile.timezone_iana || profile.timezone || 'Europe/London'
+      const reminderHourLocal = parseInt(reminderTime.split(':')[0], 10)
+      
+      try {
+        const nowInUserTZ = new Date().toLocaleString('en-US', {
+          timeZone: userTimezone,
+          hour12: false,
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+        
+        const [hourStr] = nowInUserTZ.split(':')
+        const currentHourInUserTimezone = parseInt(hourStr, 10)
+        
+        return currentHourInUserTimezone === reminderHourLocal
+      } catch {
+        return false
+      }
+    })
+
+    if (eligibleUsers.length === 0) {
+      // Update cron log and return early
+      if (cronLogId) {
+        await supabase
+          .from('cron_job_runs')
+          .update({
+            completed_at: new Date().toISOString(),
+            status: 'success',
+            total_users: 0,
+            successful_sends: 0,
+            failed_sends: 0,
+            execution_time_ms: Date.now() - startTime,
+            metadata: { message: 'No users matched current hour' },
+          })
+          .eq('id', cronLogId)
+      }
+      return NextResponse.json({
+        success: true,
+        message: 'No users scheduled for this hour',
+        sent: 0,
+      })
     }
 
-    const prefsMap = new Map(
-      (preferences || []).map(p => [p.user_id, p])
+    // OPTIMIZATION: Batch fetch existing prompts for all eligible users
+    const eligibleUserIds = eligibleUsers.map(u => u.user_id)
+    const { data: existingPrompts } = await supabase
+      .from('prompts_history')
+      .select('id, user_id, used, prompt_text')
+      .in('user_id', eligibleUserIds)
+      .eq('date_generated', today)
+    
+    const existingPromptsMap = new Map(
+      (existingPrompts || []).map(p => [p.user_id, p])
     )
+
+    // OPTIMIZATION: Batch fetch monthly prompt counts for free users
+    const freeUserIds = eligibleUsers
+      .filter(u => {
+        const profile = u.profiles as any
+        return profile.subscription_status !== 'premium' && profile.billing_cycle !== 'gift_trial'
+      })
+      .map(u => u.user_id)
+    
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0]
+    const { data: monthlyPrompts } = await supabase
+      .from('prompts_history')
+      .select('user_id')
+      .in('user_id', freeUserIds)
+      .gte('date_generated', monthStart)
+    
+    const monthlyCountMap = new Map<string, number>()
+    for (const p of monthlyPrompts || []) {
+      monthlyCountMap.set(p.user_id, (monthlyCountMap.get(p.user_id) || 0) + 1)
+    }
+
+    // OPTIMIZATION: Batch fetch push subscriptions
+    const { data: allPushSubs } = await supabase
+      .from('push_subscriptions')
+      .select('user_id, endpoint, p256dh, auth')
+      .in('user_id', eligibleUserIds)
+    
+    const pushSubsMap = new Map<string, any[]>()
+    for (const sub of allPushSubs || []) {
+      if (!pushSubsMap.has(sub.user_id)) {
+        pushSubsMap.set(sub.user_id, [])
+      }
+      pushSubsMap.get(sub.user_id)!.push(sub)
+    }
 
     let sentCount = 0
     let skippedCount = 0
-    const results = []
+    const results: any[] = []
 
-    // Process each user
-    for (const profile of profiles) {
+    // OPTIMIZATION: Process users in parallel batches of 10
+    const BATCH_SIZE = 10
+    
+    const processUser = async (user: typeof eligibleUsers[0]) => {
+      const profile = user.profiles as any
+      const userPrefs = user
+      
       try {
-        const userPrefs = prefsMap.get(profile.id)
-
-        // Skip if no preferences or daily reminders disabled
-        if (!userPrefs) {
-          skippedCount++
-          continue
-        }
-
-        if (!userPrefs.daily_reminders) {
-          skippedCount++
-          continue
-        }
-
-        // Get user's reminder time and timezone (with DST support)
-        const reminderTime = userPrefs.reminder_time || '09:00'
         const userTimezone = profile.timezone_iana || profile.timezone || 'Europe/London'
         
-        // Parse user's reminder hour (this is in their LOCAL time)
-        const reminderHourLocal = parseInt(reminderTime.split(':')[0], 10)
-        const reminderMinuteLocal = parseInt(reminderTime.split(':')[1] || '0', 10)
-        
-        try {
-          // Use JavaScript's Intl API to get current time in user's timezone
-          // This automatically handles DST transitions!
-          const nowInUserTZ = new Date().toLocaleString('en-US', {
-            timeZone: userTimezone,
-            hour12: false,
-            hour: '2-digit',
-            minute: '2-digit'
-          })
-          
-          const [hourStr, minuteStr] = nowInUserTZ.split(':')
-          const currentHourInUserTimezone = parseInt(hourStr, 10)
-          const currentMinuteInUserTimezone = parseInt(minuteStr, 10)
-          // Check if current hour in user's timezone matches their reminder hour
-          if (currentHourInUserTimezone !== reminderHourLocal) {
-            continue
-          }
-        } catch (tzError) {
-          // Fall back to skipping this user
-          continue
-        }
-
         // Determine if user is free tier
         const isFreeUser = profile.subscription_status !== 'premium' && profile.billing_cycle !== 'gift_trial'
         
@@ -296,52 +354,25 @@ export async function POST(request: NextRequest) {
         )
         
         if (!shouldSend) {
-          skippedCount++
-          results.push({
-            user_id: profile.id,
-            status: 'skipped',
-            reason: frequencyReason,
-          })
-          continue
+          return { user_id: profile.id, status: 'skipped', reason: frequencyReason }
         }
 
-        // Check if user already has a prompt for today
-        const { data: existingPrompt } = await supabase
-          .from('prompts_history')
-          .select('id, used')
-          .eq('user_id', profile.id)
-          .eq('date_generated', today)
-          .single()
+        // Check if user already has a prompt for today (from pre-fetched data)
+        const existingPrompt = existingPromptsMap.get(profile.id)
 
         if (existingPrompt) {
           // Check if they've used (completed) the prompt
           if (existingPrompt.used) {
-            skippedCount++
-            continue
-          } else {
-            // They have a prompt but haven't completed it - still send reminder
+            return { user_id: profile.id, status: 'skipped', reason: 'already_completed' }
           }
+          // They have a prompt but haven't completed it - still send reminder
         }
 
-        // Check free tier limits (7 prompts per month for free users)
+        // Check free tier limits (7 prompts per month for free users) - from pre-fetched data
         if (isFreeUser) {
-          // Count prompts used this month
-          const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0]
-          const { data: monthPrompts, error: countError } = await supabase
-            .from('prompts_history')
-            .select('id')
-            .eq('user_id', profile.id)
-            .gte('date_generated', monthStart)
-
-          if (countError) {
-            continue
-          }
-
-          const promptsThisMonth = monthPrompts?.length || 0
-          
+          const promptsThisMonth = monthlyCountMap.get(profile.id) || 0
           if (promptsThisMonth >= 7) {
-            skippedCount++
-            continue
+            return { user_id: profile.id, status: 'skipped', reason: 'free_tier_limit_reached' }
           }
         }
 
@@ -349,14 +380,8 @@ export async function POST(request: NextRequest) {
         let promptText = ''
         
         if (existingPrompt) {
-          // Fetch the existing prompt text
-          const { data: existingPromptData } = await supabase
-            .from('prompts_history')
-            .select('prompt_text')
-            .eq('id', existingPrompt.id)
-            .single()
-          
-          promptText = existingPromptData?.prompt_text || FALLBACK_PROMPT_TEXT
+          // Use the pre-fetched prompt text
+          promptText = existingPrompt.prompt_text || FALLBACK_PROMPT_TEXT
         } else {
           // Generate new prompt
           // Fetch recent reflections for context
@@ -469,13 +494,10 @@ export async function POST(request: NextRequest) {
           }
         }
 
-        // Send push notification if user has subscriptions
+        // Send push notification if user has subscriptions (from pre-fetched data)
         let pushSent = false
         if (isPushConfigured()) {
-          const { data: pushSubs } = await supabase
-            .from('push_subscriptions')
-            .select('endpoint, p256dh, auth')
-            .eq('user_id', profile.id)
+          const pushSubs = pushSubsMap.get(profile.id)
 
           if (pushSubs && pushSubs.length > 0) {
             const failedEndpoints = await sendPushNotifications(
@@ -488,47 +510,55 @@ export async function POST(request: NextRequest) {
               }
             )
 
-            // Clean up failed subscriptions
+            // Clean up failed subscriptions asynchronously (don't wait)
             if (failedEndpoints.length > 0) {
-              await supabase
+              supabase
                 .from('push_subscriptions')
                 .delete()
                 .eq('user_id', profile.id)
                 .in('endpoint', failedEndpoints)
+                .then(() => {})
             }
 
             pushSent = pushSubs.length > failedEndpoints.length
           }
         }
 
-        // Track results
+        // Return result
         if (emailSent || slackSent || pushSent) {
-          sentCount++
-          results.push({
+          return {
             user_id: profile.id,
             email: profile.email,
             status: 'sent',
-            channels: {
-              email: emailSent,
-              slack: slackSent,
-              push: pushSent,
-            },
-          })
+            channels: { email: emailSent, slack: slackSent, push: pushSent },
+          }
         } else {
-          results.push({
+          return {
             user_id: profile.id,
             email: profile.email,
             status: 'failed',
             error: errors.join(', '),
-          })
+          }
         }
 
       } catch (userError) {
-        results.push({
+        return {
           user_id: profile.id,
           status: 'error',
           error: userError instanceof Error ? userError.message : 'Unknown error',
-        })
+        }
+      }
+    }
+
+    // Process users in parallel batches
+    for (let i = 0; i < eligibleUsers.length; i += BATCH_SIZE) {
+      const batch = eligibleUsers.slice(i, i + BATCH_SIZE)
+      const batchResults = await Promise.all(batch.map(processUser))
+      
+      for (const result of batchResults) {
+        results.push(result)
+        if (result.status === 'sent') sentCount++
+        else if (result.status === 'skipped') skippedCount++
       }
     }
     const executionTime = Date.now() - startTime
@@ -541,13 +571,14 @@ export async function POST(request: NextRequest) {
         .update({
           completed_at: new Date().toISOString(),
           status: 'success',
-          total_users: profiles.length,
+          total_users: eligibleUsers.length,
           successful_sends: sentCount,
           failed_sends: failedCount,
           execution_time_ms: executionTime,
           metadata: {
             skipped: skippedCount,
             current_hour: currentHour,
+            eligible_users: eligibleUsers.length,
             results_summary: results.slice(0, 10), // Store first 10 results for debugging
           },
         })
@@ -558,7 +589,7 @@ export async function POST(request: NextRequest) {
       success: true,
       message: 'Daily prompts sent successfully',
       stats: {
-        totalProcessed: profiles.length,
+        totalProcessed: eligibleUsers.length,
         sent: sentCount,
         skipped: skippedCount,
         failed: failedCount,

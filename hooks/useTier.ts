@@ -124,7 +124,7 @@ export function useTier(): UseTierResult {
               id: user.id,
               email: user.email,
               subscription_status: 'free',
-              subscription_tier: 'freemium',
+              subscription_tier: 'free',
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString()
             })

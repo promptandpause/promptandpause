@@ -168,25 +168,70 @@ function selectPromptType(context: GeneratePromptContext): PromptType {
 
 function sanitizeGeneratedPrompt(text: string): string | null {
   if (!text) return null
+  
+  // Get the first non-empty line (ignore preamble/explanations)
   const firstNonEmptyLine = text
     .split('\n')
     .map(l => l.trim())
     .find(l => l.length > 0)
 
   let cleaned = (firstNonEmptyLine || '').trim()
+  
+  // Remove common prefixes/labels
   cleaned = cleaned.replace(/^prompt\s*:\s*/i, '')
-  cleaned = cleaned.replace(/^[-*]\s+/, '')
-  cleaned = cleaned.replace(/^["'“”]+/, '').replace(/["'“”]+$/, '')
-  cleaned = cleaned.trim()
-
+  cleaned = cleaned.replace(/^question\s*:\s*/i, '')
+  cleaned = cleaned.replace(/^reflection\s*:\s*/i, '')
+  cleaned = cleaned.replace(/^here'?s?\s*(your|the|a)?\s*(daily)?\s*(reflection)?\s*(prompt|question)?\s*:?\s*/i, '')
+  cleaned = cleaned.replace(/^[-*•]\s+/, '')
+  
+  // Remove quotes (straight and curly)
+  cleaned = cleaned.replace(/^["'""''`]+/, '').replace(/["'""''`]+$/, '')
+  
+  // Remove markdown formatting
+  cleaned = cleaned.replace(/^\*\*/, '').replace(/\*\*$/, '')
+  cleaned = cleaned.replace(/^__/, '').replace(/__$/, '')
+  cleaned = cleaned.replace(/^_/, '').replace(/_$/, '')
+  cleaned = cleaned.replace(/^\*/, '').replace(/\*$/, '')
+  
+  // Remove emojis and special unicode characters
+  cleaned = cleaned.replace(/[\u{1F300}-\u{1F9FF}]/gu, '') // Emojis
+  cleaned = cleaned.replace(/[\u{2600}-\u{26FF}]/gu, '') // Misc symbols
+  cleaned = cleaned.replace(/[\u{2700}-\u{27BF}]/gu, '') // Dingbats
+  cleaned = cleaned.replace(/[\u{FE00}-\u{FE0F}]/gu, '') // Variation selectors
+  cleaned = cleaned.replace(/[\u{200B}-\u{200D}]/gu, '') // Zero-width chars
+  cleaned = cleaned.replace(/[\u{FEFF}]/gu, '') // BOM
+  
+  // Remove weird punctuation artifacts
+  cleaned = cleaned.replace(/^[:\-–—]+\s*/, '') // Leading colons/dashes
+  cleaned = cleaned.replace(/\s*[:\-–—]+$/, '') // Trailing colons/dashes (before ?)
+  
+  // Normalize whitespace
+  cleaned = cleaned.replace(/\s+/g, ' ').trim()
+  
+  // Ensure it ends with exactly one question mark
   const firstQuestionMark = cleaned.indexOf('?')
   if (firstQuestionMark >= 0) {
+    // Take everything up to and including the first question mark
     cleaned = cleaned.slice(0, firstQuestionMark + 1).trim()
   } else if (cleaned.length > 0) {
-    cleaned = cleaned.replace(/[.!]+$/, '') + '?' 
+    // No question mark - add one
+    cleaned = cleaned.replace(/[.!,;:]+$/, '') + '?'
     cleaned = cleaned.trim()
   }
-
+  
+  // Remove any duplicate question marks
+  cleaned = cleaned.replace(/\?+$/, '?')
+  
+  // Final validation: must be a reasonable length and start with a capital letter
+  if (cleaned.length < 10 || cleaned.length > 500) {
+    return null
+  }
+  
+  // Capitalize first letter if needed
+  if (cleaned.length > 0 && /[a-z]/.test(cleaned[0])) {
+    cleaned = cleaned[0].toUpperCase() + cleaned.slice(1)
+  }
+  
   return cleaned || null
 }
 

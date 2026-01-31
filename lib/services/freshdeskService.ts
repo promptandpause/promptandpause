@@ -126,7 +126,7 @@ function mapLocalToFreshdesk(local: any): any {
   const tags = [
     CATEGORY_TAGS[local.category as keyof typeof CATEGORY_TAGS] || 'general',
     local.source || 'dashboard',
-    local.user_tier || 'freemium'
+    local.user_tier || 'free'
   ]
 
   // Minimal ticket payload - only required/supported fields
@@ -182,7 +182,7 @@ export async function updateFreshdeskTicket(
       tags: [
         CATEGORY_TAGS[local.category as keyof typeof CATEGORY_TAGS] || 'general',
         local.source || 'dashboard',
-        local.user_tier || 'freemium'
+        local.user_tier || 'free'
       ]
     }
 
@@ -385,7 +385,7 @@ export async function syncTicketFromFreshdesk(ticketId: number): Promise<{ id: s
           ...updates,
           user_id: null,
           category: 'general',
-          user_tier: 'freemium',
+          user_tier: 'free',
           source: 'email'
         })
         .select()

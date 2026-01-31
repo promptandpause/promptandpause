@@ -390,8 +390,8 @@ export async function syncSubscriptionToDatabase(
     const supabase = createServiceRoleClient()
 
     // Determine subscription tier based on status
-    const subscriptionTier = subscriptionData.status === 'active' ? 'premium' : 'freemium'
-    const subscriptionStatus = subscriptionData.status === 'active' ? 'active' : 
+    const subscriptionTier = subscriptionData.status === 'active' ? 'premium' : 'free'
+    const subscriptionStatus = subscriptionData.status === 'active' ? 'premium' : 
                                 subscriptionData.status === 'canceled' ? 'cancelled' : 
                                 'expired'
 

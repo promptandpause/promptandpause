@@ -722,14 +722,14 @@ export async function getUserTier(
       .single()
 
     if (error || !data) {
-      return { tier: 'freemium' }
+      return { tier: 'free' }
     }
 
     const tier =
-      data.subscription_status === 'active' ? data.subscription_tier : 'freemium'
+      data.subscription_status === 'premium' ? data.subscription_tier : 'free'
     return { tier }
   } catch (error) {
-    return { tier: 'freemium' }
+    return { tier: 'free' }
   }
 }
 

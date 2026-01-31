@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
 
     // Create ticket in local database first
     let localTicketId: string
-    const localTags: string[] = [`tier:${tier || 'freemium'}`, 'source:dashboard']
+    const localTags: string[] = [`tier:${tier || 'free'}`, 'source:dashboard']
     try {
       const { data: ticket, error: dbError } = await supabase
         .from('support_tickets')
@@ -352,7 +352,7 @@ export async function POST(request: NextRequest) {
         priority,
         userEmail,
         userName,
-        tier: tier || 'freemium',
+        tier: tier || 'free',
         requestId: externalTicketRef
       })
     } catch (emailError) {

@@ -47,7 +47,12 @@ export async function POST(request: NextRequest) {
       .from('profiles')
       .update({
         subscription_status: 'premium',
+        subscription_tier: 'premium', // Keep tier in sync with status
         subscription_end_date: endDate.toISOString(),
+        is_gift_subscription: true,
+        gift_subscription_end_date: endDate.toISOString(),
+        is_trial: false,
+        updated_at: new Date().toISOString(),
         // Don't set stripe_subscription_id - this indicates it's gifted
       })
       .eq('id', userId)

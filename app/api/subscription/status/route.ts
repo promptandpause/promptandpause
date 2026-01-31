@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
       success: true,
       data: {
         tier,
-        status: profile?.subscription_status || 'freemium',
+        status: profile?.subscription_status || 'free',
         endDate: profile?.subscription_end_date,
         billingCycle: profile?.billing_cycle,
         hasStripeCustomer: !!profile?.stripe_customer_id,
