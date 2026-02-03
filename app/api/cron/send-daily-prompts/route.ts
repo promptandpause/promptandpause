@@ -28,22 +28,33 @@ import crypto from 'crypto'
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('[CRON] POST handler started')
+    
     // Security: Require Bearer token with CRON_SECRET (no admin fallback for automation)
     const authHeader = request.headers.get('authorization')
     const cronSecret = process.env.CRON_SECRET
+    
+    console.log('[CRON] Auth check', { hasAuth: !!authHeader, hasSecret: !!cronSecret })
 
     if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+      console.log('[CRON] Auth failed')
       return NextResponse.json(
         { error: 'Unauthorized - Valid Bearer token required' },
         { status: 401 }
       )
     }
+    
+    console.log('[CRON] Auth passed')
     const supabase = createServiceRoleClient()
+    console.log('[CRON] Supabase client created')
+    
     const startTime = Date.now()
     const now = new Date()
     const currentHour = now.getUTCHours()
     const currentMinute = now.getUTCMinutes()
     const today = now.toISOString().split('T')[0]
+    
+    console.log('[CRON] Time vars set', { currentHour, today })
 
     const FALLBACK_PROMPT_TEXT = 'Name the emotion that feels most present right now?'
 
