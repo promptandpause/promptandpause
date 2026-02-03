@@ -16,6 +16,7 @@ import {
 import { getSupabaseClient } from '@/lib/supabase/client'
 import { useTier } from '@/hooks/useTier'
 import { useToast } from '@/hooks/use-toast'
+import { useTheme } from '@/contexts/ThemeContext'
 
 interface GratitudeEntryProps {
   userId: string
@@ -26,6 +27,7 @@ interface GratitudeEntryProps {
 
 export default function GratitudeEntry({ userId, reflectionId, onSave, compact = false }: GratitudeEntryProps) {
   const { tier } = useTier()
+  const { theme } = useTheme()
   const isPremium = tier === 'premium'
   const maxItems = isPremium ? 10 : 3
   
@@ -131,11 +133,11 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
 
   if (isLoading) {
     return (
-      <Card className={compact ? 'border-0 shadow-none' : ''}>
+      <Card className={`${compact ? 'border-0 shadow-none' : ''} ${theme === 'dark' ? 'bg-white/5 border-white/10' : ''}`}>
         <CardContent className={compact ? 'p-0' : 'p-6'}>
           <div className="animate-pulse space-y-3">
-            <div className="h-5 bg-gray-200 rounded w-1/3"></div>
-            <div className="h-10 bg-gray-200 rounded"></div>
+            <div className={`h-5 rounded w-1/3 ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-200'}`}></div>
+            <div className={`h-10 rounded ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-200'}`}></div>
           </div>
         </CardContent>
       </Card>
@@ -148,10 +150,10 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Heart className="w-4 h-4 text-rose-500" />
-            <span className="text-sm font-medium text-gray-700">Gratitude</span>
+            <span className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>Gratitude</span>
           </div>
           {streak > 0 && (
-            <span className="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
+            <span className={`text-xs px-2 py-0.5 rounded-full ${theme === 'dark' ? 'text-amber-400 bg-amber-500/20' : 'text-amber-600 bg-amber-50'}`}>
               🔥 {streak} day streak
             </span>
           )}
@@ -165,15 +167,15 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, x: -10 }}
-                className="flex items-center gap-2 p-2 bg-rose-50 rounded-lg group"
+                className={`flex items-center gap-2 p-2 rounded-lg group ${theme === 'dark' ? 'bg-rose-500/20' : 'bg-rose-50'}`}
               >
                 <Heart className="w-3 h-3 text-rose-400 flex-shrink-0" />
-                <span className="text-sm text-gray-700 flex-1">{item.text}</span>
+                <span className={`text-sm flex-1 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>{item.text}</span>
                 <button
                   onClick={() => removeItem(index)}
                   className="opacity-0 group-hover:opacity-100 transition-opacity"
                 >
-                  <X className="w-4 h-4 text-gray-400 hover:text-gray-600" />
+                  <X className={`w-4 h-4 ${theme === 'dark' ? 'text-white/50 hover:text-white' : 'text-gray-400 hover:text-gray-600'}`} />
                 </button>
               </motion.div>
             ))}
@@ -187,7 +189,7 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
               onChange={(e) => setNewItem(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="I'm grateful for..."
-              className="text-sm h-9"
+              className={`text-sm h-9 ${theme === 'dark' ? 'bg-white/10 border-white/20 text-white placeholder:text-white/50' : ''}`}
             />
             <Button
               size="sm"
@@ -202,7 +204,7 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
 
         {!isPremium && items.length >= maxItems && (
           <Link href="/dashboard/settings#subscription" className="block">
-            <p className="text-xs text-amber-600 text-center hover:text-amber-700 cursor-pointer">
+            <p className={`text-xs text-center cursor-pointer ${theme === 'dark' ? 'text-amber-400 hover:text-amber-300' : 'text-amber-600 hover:text-amber-700'}`}>
               <Crown className="w-3 h-3 inline mr-1" />
               Upgrade to Premium for unlimited entries
             </p>
@@ -224,21 +226,21 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
   }
 
   return (
-    <Card>
+    <Card className={theme === 'dark' ? 'bg-white/5 border-white/10' : ''}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2">
+          <CardTitle className={`text-lg flex items-center gap-2 ${theme === 'dark' ? 'text-white' : ''}`}>
             <Heart className="w-5 h-5 text-rose-500" />
             Daily Gratitude
           </CardTitle>
           {streak > 0 && (
-            <span className="text-sm text-amber-600 bg-amber-50 px-3 py-1 rounded-full flex items-center gap-1">
+            <span className={`text-sm px-3 py-1 rounded-full flex items-center gap-1 ${theme === 'dark' ? 'text-amber-400 bg-amber-500/20' : 'text-amber-600 bg-amber-50'}`}>
               <Sparkles className="w-3 h-3" />
               {streak} day streak
             </span>
           )}
         </div>
-        <p className="text-sm text-gray-500">
+        <p className={`text-sm ${theme === 'dark' ? 'text-white/60' : 'text-gray-500'}`}>
           What are you grateful for today?
         </p>
       </CardHeader>
@@ -252,17 +254,17 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, x: -10 }}
-                className="flex items-center gap-3 p-3 bg-gradient-to-r from-rose-50 to-pink-50 rounded-lg group"
+                className={`flex items-center gap-3 p-3 rounded-lg group ${theme === 'dark' ? 'bg-rose-500/20' : 'bg-gradient-to-r from-rose-50 to-pink-50'}`}
               >
-                <div className="w-6 h-6 rounded-full bg-rose-100 flex items-center justify-center flex-shrink-0">
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${theme === 'dark' ? 'bg-rose-500/30' : 'bg-rose-100'}`}>
                   <Heart className="w-3 h-3 text-rose-500" />
                 </div>
-                <span className="text-gray-700 flex-1">{item.text}</span>
+                <span className={`flex-1 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>{item.text}</span>
                 <button
                   onClick={() => removeItem(index)}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-rose-100 rounded"
+                  className={`opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded ${theme === 'dark' ? 'hover:bg-white/10' : 'hover:bg-rose-100'}`}
                 >
-                  <X className="w-4 h-4 text-gray-400 hover:text-gray-600" />
+                  <X className={`w-4 h-4 ${theme === 'dark' ? 'text-white/50 hover:text-white' : 'text-gray-400 hover:text-gray-600'}`} />
                 </button>
               </motion.div>
             ))}
@@ -276,12 +278,13 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
               onChange={(e) => setNewItem(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="I'm grateful for..."
-              className="flex-1"
+              className={`flex-1 ${theme === 'dark' ? 'bg-white/10 border-white/20 text-white placeholder:text-white/50' : ''}`}
             />
             <Button
               onClick={addItem}
               disabled={!newItem.trim()}
               variant="outline"
+              className={theme === 'dark' ? 'border-white/20 text-white hover:bg-white/10' : ''}
             >
               <Plus className="w-4 h-4 mr-1" />
               Add
@@ -291,12 +294,12 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
 
         {!isPremium && (
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-500">
+            <span className={theme === 'dark' ? 'text-white/60' : 'text-gray-500'}>
               {items.length}/{maxItems} entries
             </span>
             {items.length >= maxItems && (
               <Link href="/dashboard/settings#subscription">
-                <Button variant="link" size="sm" className="text-amber-600 p-0 h-auto">
+                <Button variant="link" size="sm" className={`p-0 h-auto ${theme === 'dark' ? 'text-amber-400' : 'text-amber-600'}`}>
                   <Crown className="w-3 h-3 mr-1" />
                   Upgrade for more
                 </Button>
@@ -323,8 +326,8 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
         )}
 
         {items.length === 0 && !hasChanges && (
-          <div className="text-center py-4 text-gray-500">
-            <Heart className="w-8 h-8 mx-auto mb-2 text-gray-300" />
+          <div className={`text-center py-4 ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>
+            <Heart className={`w-8 h-8 mx-auto mb-2 ${theme === 'dark' ? 'text-white/20' : 'text-gray-300'}`} />
             <p className="text-sm">Start your gratitude practice today</p>
           </div>
         )}

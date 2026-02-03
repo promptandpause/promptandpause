@@ -13,6 +13,7 @@ import GlobalDataSync from "./components/global-data-sync"
 import { DashboardSidebar } from "./components/DashboardSidebar"
 import { useTheme } from "@/contexts/ThemeContext"
 import HistorySearchCard from "./components/history-search-card"
+import { PushNotificationPrompt } from "@/components/notifications/PushNotificationPrompt"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { getSupabaseClient } from "@/lib/supabase/client"
@@ -95,6 +96,9 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
+
+        {/* Push Notification Prompt - Shows for PWA users who haven't enabled notifications */}
+        <PushNotificationPrompt />
       </div>
     </AuthGuard>
   )

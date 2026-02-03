@@ -25,6 +25,7 @@ import {
 } from '@/lib/services/moodInsightsService'
 import { getSupabaseClient } from '@/lib/supabase/client'
 import { useTier } from '@/hooks/useTier'
+import { useTheme } from '@/contexts/ThemeContext'
 
 interface WeeklyMoodInsightsProps {
   userId: string
@@ -32,6 +33,7 @@ interface WeeklyMoodInsightsProps {
 
 export default function WeeklyMoodInsights({ userId }: WeeklyMoodInsightsProps) {
   const { tier } = useTier()
+  const { theme } = useTheme()
   const isPremium = tier === 'premium'
   
   const [period, setPeriod] = useState<'week' | 'month'>('week')
@@ -111,7 +113,7 @@ export default function WeeklyMoodInsights({ userId }: WeeklyMoodInsightsProps) 
   }
 
   const getMoodColor = (mood: number | null) => {
-    if (mood === null) return 'bg-gray-200'
+    if (mood === null) return theme === 'dark' ? 'bg-white/20' : 'bg-gray-200'
     if (mood >= 7) return 'bg-emerald-400'
     if (mood >= 5) return 'bg-amber-400'
     return 'bg-rose-400'
@@ -126,11 +128,11 @@ export default function WeeklyMoodInsights({ userId }: WeeklyMoodInsightsProps) 
 
   if (isLoading) {
     return (
-      <Card>
+      <Card className={theme === 'dark' ? 'bg-white/5 border-white/10' : ''}>
         <CardContent className="p-6">
           <div className="animate-pulse space-y-4">
-            <div className="h-6 bg-gray-200 rounded w-1/3"></div>
-            <div className="h-32 bg-gray-200 rounded"></div>
+            <div className={`h-6 rounded w-1/3 ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-200'}`}></div>
+            <div className={`h-32 rounded ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-200'}`}></div>
           </div>
         </CardContent>
       </Card>
@@ -138,19 +140,19 @@ export default function WeeklyMoodInsights({ userId }: WeeklyMoodInsightsProps) 
   }
 
   return (
-    <Card className="overflow-hidden">
+    <Card className={`overflow-hidden ${theme === 'dark' ? 'bg-white/5 border-white/10' : ''}`}>
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2">
+          <CardTitle className={`text-lg flex items-center gap-2 ${theme === 'dark' ? 'text-white' : ''}`}>
             <BarChart3 className="w-5 h-5 text-blue-500" />
             Mood Insights
           </CardTitle>
-          <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
+          <div className={`flex gap-1 rounded-lg p-1 ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-100'}`}>
             <button
               className={`h-7 px-3 text-xs font-medium rounded-md transition-all ${
                 period === 'week' 
-                  ? 'bg-white shadow-sm text-gray-900' 
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? theme === 'dark' ? 'bg-white/20 shadow-sm text-white' : 'bg-white shadow-sm text-gray-900'
+                  : theme === 'dark' ? 'text-white/60 hover:text-white' : 'text-gray-600 hover:text-gray-900'
               }`}
               onClick={() => setPeriod('week')}
             >
@@ -159,8 +161,8 @@ export default function WeeklyMoodInsights({ userId }: WeeklyMoodInsightsProps) 
             <button
               className={`h-7 px-3 text-xs font-medium rounded-md transition-all flex items-center ${
                 period === 'month' 
-                  ? 'bg-white shadow-sm text-gray-900' 
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? theme === 'dark' ? 'bg-white/20 shadow-sm text-white' : 'bg-white shadow-sm text-gray-900'
+                  : theme === 'dark' ? 'text-white/60 hover:text-white' : 'text-gray-600 hover:text-gray-900'
               } ${!isPremium ? 'opacity-60 cursor-not-allowed' : ''}`}
               onClick={() => {
                 if (isPremium) {
@@ -197,7 +199,7 @@ export default function WeeklyMoodInsights({ userId }: WeeklyMoodInsightsProps) 
           <div className="flex justify-between mt-1">
             {moodData.map((day) => (
               <div key={day.date} className="flex-1 text-center">
-                <span className="text-[10px] text-gray-400">{formatDate(day.date)}</span>
+                <span className={`text-[10px] ${theme === 'dark' ? 'text-white/50' : 'text-gray-400'}`}>{formatDate(day.date)}</span>
               </div>
             ))}
           </div>
@@ -206,21 +208,21 @@ export default function WeeklyMoodInsights({ userId }: WeeklyMoodInsightsProps) 
         {/* Stats Row */}
         {stats && (
           <div className="grid grid-cols-3 gap-3 pt-2">
-            <div className="text-center p-2 bg-gray-50 rounded-lg">
-              <div className="text-2xl font-bold text-gray-900">
+            <div className={`text-center p-2 rounded-lg ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-50'}`}>
+              <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 {stats.averageMood !== null ? stats.averageMood : '—'}
               </div>
-              <div className="text-xs text-gray-500">Avg Mood</div>
+              <div className={`text-xs ${theme === 'dark' ? 'text-white/60' : 'text-gray-500'}`}>Avg Mood</div>
             </div>
-            <div className="text-center p-2 bg-gray-50 rounded-lg">
-              <div className="text-2xl font-bold text-gray-900 flex items-center justify-center gap-1">
+            <div className={`text-center p-2 rounded-lg ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-50'}`}>
+              <div className={`text-2xl font-bold flex items-center justify-center gap-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 {getTrendIcon()}
               </div>
-              <div className="text-xs text-gray-500 capitalize">{stats.trend}</div>
+              <div className={`text-xs capitalize ${theme === 'dark' ? 'text-white/60' : 'text-gray-500'}`}>{stats.trend}</div>
             </div>
-            <div className="text-center p-2 bg-gray-50 rounded-lg">
-              <div className="text-2xl font-bold text-gray-900">{stats.totalReflections}</div>
-              <div className="text-xs text-gray-500">Reflections</div>
+            <div className={`text-center p-2 rounded-lg ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-50'}`}>
+              <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{stats.totalReflections}</div>
+              <div className={`text-xs ${theme === 'dark' ? 'text-white/60' : 'text-gray-500'}`}>Reflections</div>
             </div>
           </div>
         )}
@@ -228,7 +230,7 @@ export default function WeeklyMoodInsights({ userId }: WeeklyMoodInsightsProps) 
         {/* Insights */}
         {insights.length > 0 && (
           <div className="space-y-2 pt-2">
-            <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
+            <div className={`flex items-center gap-2 text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>
               <Sparkles className="w-4 h-4 text-amber-500" />
               Insights
             </div>
@@ -239,7 +241,7 @@ export default function WeeklyMoodInsights({ userId }: WeeklyMoodInsightsProps) 
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="text-sm text-gray-600 pl-6 relative before:content-['•'] before:absolute before:left-2 before:text-gray-400"
+                  className={`text-sm pl-6 relative before:content-['•'] before:absolute before:left-2 ${theme === 'dark' ? 'text-white/70 before:text-white/40' : 'text-gray-600 before:text-gray-400'}`}
                 >
                   {insight}
                 </motion.div>
@@ -251,12 +253,12 @@ export default function WeeklyMoodInsights({ userId }: WeeklyMoodInsightsProps) 
         {/* Top Emotions */}
         {stats?.topEmotions && stats.topEmotions.length > 0 && (
           <div className="pt-2">
-            <div className="text-sm font-medium text-gray-700 mb-2">Top Feelings</div>
+            <div className={`text-sm font-medium mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>Top Feelings</div>
             <div className="flex flex-wrap gap-2">
               {stats.topEmotions.map((emotion, index) => (
                 <span
                   key={emotion}
-                  className="px-2 py-1 bg-blue-50 text-blue-700 rounded-full text-xs"
+                  className={`px-2 py-1 rounded-full text-xs ${theme === 'dark' ? 'bg-blue-500/20 text-blue-300' : 'bg-blue-50 text-blue-700'}`}
                 >
                   {emotion}
                 </span>
@@ -268,24 +270,24 @@ export default function WeeklyMoodInsights({ userId }: WeeklyMoodInsightsProps) 
         {/* Best/Worst Days (Premium) */}
         {isPremium && stats?.bestDay && stats?.worstDay && (
           <div className="grid grid-cols-2 gap-3 pt-2">
-            <div className="p-3 bg-emerald-50 rounded-lg">
-              <div className="text-xs text-emerald-600 font-medium">Best Day</div>
-              <div className="text-sm font-semibold text-emerald-700">{stats.bestDay}s</div>
+            <div className={`p-3 rounded-lg ${theme === 'dark' ? 'bg-emerald-500/20' : 'bg-emerald-50'}`}>
+              <div className={`text-xs font-medium ${theme === 'dark' ? 'text-emerald-400' : 'text-emerald-600'}`}>Best Day</div>
+              <div className={`text-sm font-semibold ${theme === 'dark' ? 'text-emerald-300' : 'text-emerald-700'}`}>{stats.bestDay}s</div>
             </div>
-            <div className="p-3 bg-rose-50 rounded-lg">
-              <div className="text-xs text-rose-600 font-medium">Challenging Day</div>
-              <div className="text-sm font-semibold text-rose-700">{stats.worstDay}s</div>
+            <div className={`p-3 rounded-lg ${theme === 'dark' ? 'bg-rose-500/20' : 'bg-rose-50'}`}>
+              <div className={`text-xs font-medium ${theme === 'dark' ? 'text-rose-400' : 'text-rose-600'}`}>Challenging Day</div>
+              <div className={`text-sm font-semibold ${theme === 'dark' ? 'text-rose-300' : 'text-rose-700'}`}>{stats.worstDay}s</div>
             </div>
           </div>
         )}
 
         {/* Upgrade prompt for free users */}
         {!isPremium && (
-          <div className="pt-2 border-t">
-            <div className="flex items-center justify-between p-3 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-yellow-200">
+          <div className={`pt-2 ${theme === 'dark' ? 'border-t border-white/10' : 'border-t'}`}>
+            <div className={`flex items-center justify-between p-3 rounded-lg ${theme === 'dark' ? 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30' : 'bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200'}`}>
               <div>
-                <div className="text-sm font-medium text-gray-900">Unlock Full Insights</div>
-                <div className="text-xs text-gray-500">Monthly trends, AI analysis & more</div>
+                <div className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Unlock Full Insights</div>
+                <div className={`text-xs ${theme === 'dark' ? 'text-white/60' : 'text-gray-500'}`}>Monthly trends, AI analysis & more</div>
               </div>
               <Link href="/dashboard/settings#subscription">
                 <Button size="sm" className="text-xs bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white border-0">

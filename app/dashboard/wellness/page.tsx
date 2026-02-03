@@ -219,9 +219,9 @@ export default function WellnessPage() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3 }}
                     >
-                      <Card className="rounded-2xl h-full">
+                      <Card className={`rounded-2xl h-full ${theme === 'dark' ? 'bg-white/5 border-white/10' : ''}`}>
                         <CardHeader className="pb-3">
-                          <CardTitle className="text-lg flex items-center gap-2">
+                          <CardTitle className={`text-lg flex items-center gap-2 ${theme === 'dark' ? 'text-white' : ''}`}>
                             <Wind className="w-5 h-5 text-blue-500" />
                             Quick Tools
                           </CardTitle>
@@ -229,55 +229,55 @@ export default function WellnessPage() {
                         <CardContent className="space-y-2">
                           <Button
                             variant="outline"
-                            className="w-full justify-between h-auto py-2.5 rounded-lg"
+                            className={`w-full justify-between h-auto py-2.5 rounded-lg ${theme === 'dark' ? 'border-white/20 hover:bg-white/10' : ''}`}
                             onClick={() => setShowBreathingDialog(true)}
                           >
                             <div className="flex items-center gap-2">
-                              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-blue-100">
-                                <Wind className="w-4 h-4 text-blue-600" />
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${theme === 'dark' ? 'bg-blue-500/20' : 'bg-blue-100'}`}>
+                                <Wind className={`w-4 h-4 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`} />
                               </div>
                               <div className="text-left">
-                                <div className="font-medium text-sm">Breathing Exercises</div>
-                                <div className="text-xs text-gray-500">Calm your mind</div>
+                                <div className={`font-medium text-sm ${theme === 'dark' ? 'text-white' : ''}`}>Breathing Exercises</div>
+                                <div className={`text-xs ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>Calm your mind</div>
                               </div>
                             </div>
-                            <ChevronRight className="w-4 h-4 text-gray-400" />
+                            <ChevronRight className={`w-4 h-4 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />
                           </Button>
 
                           <Button
                             variant="outline"
-                            className="w-full justify-between h-auto py-2.5 rounded-lg border-rose-200 hover:bg-rose-50"
+                            className={`w-full justify-between h-auto py-2.5 rounded-lg ${theme === 'dark' ? 'border-rose-500/30 hover:bg-rose-500/10' : 'border-rose-200 hover:bg-rose-50'}`}
                             onClick={() => setShowCrisisDialog(true)}
                           >
                             <div className="flex items-center gap-2">
-                              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-rose-100">
-                                <Heart className="w-4 h-4 text-rose-600" />
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${theme === 'dark' ? 'bg-rose-500/20' : 'bg-rose-100'}`}>
+                                <Heart className={`w-4 h-4 ${theme === 'dark' ? 'text-rose-400' : 'text-rose-600'}`} />
                               </div>
                               <div className="text-left">
-                                <div className="font-medium text-sm">Crisis Support</div>
-                                <div className="text-xs text-gray-500">Grounding & hotlines</div>
+                                <div className={`font-medium text-sm ${theme === 'dark' ? 'text-white' : ''}`}>Crisis Support</div>
+                                <div className={`text-xs ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>Grounding & hotlines</div>
                               </div>
                             </div>
-                            <ChevronRight className="w-4 h-4 text-gray-400" />
+                            <ChevronRight className={`w-4 h-4 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />
                           </Button>
 
                           <Button
                             variant="outline"
-                            className="w-full justify-between h-auto py-2.5 rounded-lg"
+                            className={`w-full justify-between h-auto py-2.5 rounded-lg ${theme === 'dark' ? 'border-white/20 hover:bg-white/10' : ''}`}
                             onClick={() => setActiveTab('goals')}
                           >
                             <div className="flex items-center gap-2">
-                              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-purple-100">
-                                <Target className="w-4 h-4 text-purple-600" />
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${theme === 'dark' ? 'bg-purple-500/20' : 'bg-purple-100'}`}>
+                                <Target className={`w-4 h-4 ${theme === 'dark' ? 'text-purple-400' : 'text-purple-600'}`} />
                               </div>
                               <div className="text-left">
-                                <div className="font-medium text-sm">Goals & Intentions</div>
-                                <div className="text-xs text-gray-500">Track your progress</div>
+                                <div className={`font-medium text-sm ${theme === 'dark' ? 'text-white' : ''}`}>Goals & Intentions</div>
+                                <div className={`text-xs ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>Track your progress</div>
                               </div>
                             </div>
                             <div className="flex items-center gap-1">
-                              {!isPremium && <Lock className="w-3 h-3 text-gray-400" />}
-                              <ChevronRight className="w-4 h-4 text-gray-400" />
+                              {!isPremium && <Lock className={`w-3 h-3 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />}
+                              <ChevronRight className={`w-4 h-4 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />
                             </div>
                           </Button>
                         </CardContent>
@@ -292,10 +292,10 @@ export default function WellnessPage() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4 }}
                     >
-                      <Card className="rounded-2xl">
+                      <Card className={`rounded-2xl ${theme === 'dark' ? 'bg-white/5 border-white/10' : ''}`}>
                         <CardHeader className="pb-3">
                           <div className="flex items-center justify-between">
-                            <CardTitle className="text-lg flex items-center gap-2">
+                            <CardTitle className={`text-lg flex items-center gap-2 ${theme === 'dark' ? 'text-white' : ''}`}>
                               <CheckCircle2 className="w-5 h-5 text-emerald-500" />
                               Today's Habits
                             </CardTitle>
@@ -303,7 +303,7 @@ export default function WellnessPage() {
                               variant="link"
                               size="sm"
                               onClick={() => setActiveTab('habits')}
-                              className="text-purple-600"
+                              className={theme === 'dark' ? 'text-purple-400' : 'text-purple-600'}
                             >
                               View All
                             </Button>
@@ -323,18 +323,18 @@ export default function WellnessPage() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4 }}
                     >
-                      <Card className="rounded-2xl bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-200">
+                      <Card className={`rounded-2xl ${theme === 'dark' ? 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border-yellow-500/30' : 'bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-200'}`}>
                         <CardContent className="p-6">
                           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                             <div className="flex items-center gap-4">
-                              <div className="p-2.5 rounded-full bg-yellow-100">
-                                <Crown className="h-5 w-5 text-yellow-600" />
+                              <div className={`p-2.5 rounded-full ${theme === 'dark' ? 'bg-yellow-500/30' : 'bg-yellow-100'}`}>
+                                <Crown className={`h-5 w-5 ${theme === 'dark' ? 'text-yellow-400' : 'text-yellow-600'}`} />
                               </div>
                               <div>
-                                <h3 className="font-semibold text-gray-900">
+                                <h3 className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                                   Unlock Full Wellness Suite
                                 </h3>
-                                <p className="text-sm mt-1 text-gray-600">
+                                <p className={`text-sm mt-1 ${theme === 'dark' ? 'text-white/70' : 'text-gray-600'}`}>
                                   Get goals tracking, habit correlations, advanced insights & more
                                 </p>
                               </div>
@@ -357,14 +357,14 @@ export default function WellnessPage() {
                   <div className="grid gap-4 md:grid-cols-2">
                     <WeeklyMoodInsights userId={userId} />
                     
-                    <Card className="rounded-2xl">
+                    <Card className={`rounded-2xl ${theme === 'dark' ? 'bg-white/5 border-white/10' : ''}`}>
                       <CardHeader>
-                        <CardTitle className="text-lg">
+                        <CardTitle className={`text-lg ${theme === 'dark' ? 'text-white' : ''}`}>
                           Reflection Summary
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <p className="text-sm text-gray-500">
+                        <p className={`text-sm ${theme === 'dark' ? 'text-white/60' : 'text-gray-500'}`}>
                           Your mood insights and patterns will appear here as you continue reflecting.
                           The more you reflect, the better insights you'll receive.
                         </p>
@@ -378,12 +378,12 @@ export default function WellnessPage() {
                   {isPremium ? (
                     <GoalsDashboard userId={userId} />
                   ) : (
-                    <Card className="rounded-2xl p-8 text-center">
-                      <Lock className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                      <h3 className="text-lg font-semibold mb-2 text-gray-900">
+                    <Card className={`rounded-2xl p-8 text-center ${theme === 'dark' ? 'bg-white/5 border-white/10' : ''}`}>
+                      <Lock className={`w-12 h-12 mx-auto mb-4 ${theme === 'dark' ? 'text-white/30' : 'text-gray-300'}`} />
+                      <h3 className={`text-lg font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                         Premium Feature
                       </h3>
-                      <p className="mb-4 text-gray-600">
+                      <p className={`mb-4 ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
                         Goal tracking helps you set intentions and track progress toward what matters most.
                       </p>
                       <Link href="/dashboard/settings#subscription">
@@ -401,12 +401,12 @@ export default function WellnessPage() {
                   {isPremium ? (
                     <HabitsTracker userId={userId} />
                   ) : (
-                    <Card className="rounded-2xl p-8 text-center">
-                      <Lock className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                      <h3 className="text-lg font-semibold mb-2 text-gray-900">
+                    <Card className={`rounded-2xl p-8 text-center ${theme === 'dark' ? 'bg-white/5 border-white/10' : ''}`}>
+                      <Lock className={`w-12 h-12 mx-auto mb-4 ${theme === 'dark' ? 'text-white/30' : 'text-gray-300'}`} />
+                      <h3 className={`text-lg font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                         Premium Feature
                       </h3>
-                      <p className="mb-4 text-gray-600">
+                      <p className={`mb-4 ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
                         Track daily habits and see how they correlate with your mood over time.
                       </p>
                       <Link href="/dashboard/settings#subscription">
