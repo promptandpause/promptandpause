@@ -146,18 +146,22 @@ export default function WeeklyMoodInsights({ userId }: WeeklyMoodInsightsProps) 
             Mood Insights
           </CardTitle>
           <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
-            <Button
-              size="sm"
-              variant={period === 'week' ? 'default' : 'ghost'}
-              className={`h-7 px-3 text-xs ${period === 'week' ? 'bg-white shadow-sm' : ''}`}
+            <button
+              className={`h-7 px-3 text-xs font-medium rounded-md transition-all ${
+                period === 'week' 
+                  ? 'bg-white shadow-sm text-gray-900' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
               onClick={() => setPeriod('week')}
             >
               Week
-            </Button>
-            <Button
-              size="sm"
-              variant={period === 'month' ? 'default' : 'ghost'}
-              className={`h-7 px-3 text-xs ${period === 'month' ? 'bg-white shadow-sm' : ''}`}
+            </button>
+            <button
+              className={`h-7 px-3 text-xs font-medium rounded-md transition-all flex items-center ${
+                period === 'month' 
+                  ? 'bg-white shadow-sm text-gray-900' 
+                  : 'text-gray-600 hover:text-gray-900'
+              } ${!isPremium ? 'opacity-60 cursor-not-allowed' : ''}`}
               onClick={() => {
                 if (isPremium) {
                   setPeriod('month')
@@ -167,7 +171,7 @@ export default function WeeklyMoodInsights({ userId }: WeeklyMoodInsightsProps) 
             >
               {!isPremium && <Lock className="w-3 h-3 mr-1" />}
               Month
-            </Button>
+            </button>
           </div>
         </div>
       </CardHeader>

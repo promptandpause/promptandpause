@@ -435,11 +435,13 @@ export default function WellnessPage() {
 
         {/* Crisis Support Dialog */}
         <Dialog open={showCrisisDialog} onOpenChange={setShowCrisisDialog}>
-          <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <Heart className="w-5 h-5 text-rose-500" />
-                Crisis Support
+          <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto border-rose-200 bg-gradient-to-b from-white to-rose-50/30">
+            <DialogHeader className="pb-2 border-b border-rose-100">
+              <DialogTitle className="flex items-center gap-3 text-lg">
+                <div className="p-2 rounded-full bg-rose-100">
+                  <Heart className="w-5 h-5 text-rose-500" />
+                </div>
+                <span>Crisis Support</span>
               </DialogTitle>
             </DialogHeader>
             <CrisisSupport 
@@ -452,11 +454,13 @@ export default function WellnessPage() {
 
         {/* Breathing Exercise Dialog */}
         <Dialog open={showBreathingDialog} onOpenChange={setShowBreathingDialog}>
-          <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <Wind className="w-5 h-5 text-blue-500" />
-                Breathing Exercise
+          <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto border-blue-200 bg-gradient-to-b from-white to-blue-50/30">
+            <DialogHeader className="pb-2 border-b border-blue-100">
+              <DialogTitle className="flex items-center gap-3 text-lg">
+                <div className="p-2 rounded-full bg-blue-100">
+                  <Wind className="w-5 h-5 text-blue-500" />
+                </div>
+                <span>Breathing Exercise</span>
               </DialogTitle>
             </DialogHeader>
             <BreathingExercise 
