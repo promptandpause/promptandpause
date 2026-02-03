@@ -8,6 +8,7 @@ import { Mail, Slack, ChevronLeft, ChevronRight, Sparkles, Heart, Brain, Target,
 import { useToast } from "@/hooks/use-toast"
 import { getSupabaseClient } from "@/lib/supabase/client"
 import { detectUserTimezone } from "@/lib/utils/timezoneDetection"
+import AgeVerification from "@/components/auth/AgeVerification"
 
 const steps = [
   {
@@ -66,10 +67,12 @@ export default function Onboarding() {
   const { toast } = useToast()
   const supabase = getSupabaseClient()
   
-  const [step, setStep] = useState(-1)
+  const [step, setStep] = useState(-2) // Start at -2 for age verification
   const [acceptedTerms, setAcceptedTerms] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [previewPrompt, setPreviewPrompt] = useState("")
+  const [ageVerified, setAgeVerified] = useState(false)
+  const [ageData, setAgeData] = useState<{ dateOfBirth: string; country: string; isCompliant: boolean } | null>(null)
   const [answers, setAnswers] = useState({
     reason: "",
     mood: 5,
@@ -77,6 +80,13 @@ export default function Onboarding() {
     delivery: "",
     focus: [] as string[]
   })
+
+  // --- Age Verification Handler ---
+  function handleAgeVerified(data: { dateOfBirth: string; country: string; isCompliant: boolean }) {
+    setAgeData(data)
+    setAgeVerified(true)
+    setStep(-1) // Move to welcome screen
+  }
 
   // --- UI Handlers ---
   function selectOption(opt: string) {
@@ -226,7 +236,9 @@ export default function Onboarding() {
         transition={{ duration: 0.5 }}
       >
         <div className="backdrop-blur-xl bg-white/70 border border-white/40 rounded-3xl shadow-2xl shadow-black/10 px-6 sm:px-8 py-8 sm:py-10">
-          {step === -1 ? (
+          {step === -2 ? (
+            <AgeVerification onVerified={handleAgeVerified} />
+          ) : step === -1 ? (
             <div className="flex flex-col gap-6 items-center justify-center text-center">
               {/* Welcome Icon */}
               <motion.div

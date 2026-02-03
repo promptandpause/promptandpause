@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
+import { getIPFromRequest, getGeoDataFromIP, logUserIP } from '@/lib/services/ipLoggingService'
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
@@ -23,6 +24,26 @@ export async function GET(request: Request) {
     } = await supabase.auth.getUser()
 
     if (user) {
+      // Log IP address and location on auth callback
+      try {
+        const ip = getIPFromRequest(request)
+        const geoData = await getGeoDataFromIP(ip)
+        const userAgent = request.headers.get('user-agent') || undefined
+        
+        await logUserIP({
+          user_id: user.id,
+          ip_address: ip,
+          country: geoData?.country,
+          city: geoData?.city,
+          timezone: geoData?.timezone,
+          user_agent: userAgent,
+          event_type: 'login', // Could be signup or login
+        })
+      } catch (ipError) {
+        console.error('IP logging failed:', ipError)
+        // Don't block auth flow if IP logging fails
+      }
+
       const { data: preferences } = await supabase
         .from('user_preferences')
         .select('id')
