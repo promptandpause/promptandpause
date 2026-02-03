@@ -250,7 +250,7 @@ export async function POST(request: NextRequest) {
         reason,
         delivery_method,
         slack_webhook_url,
-        profiles!inner (
+        profiles:user_id (
           id,
           email,
           full_name,
@@ -261,6 +261,7 @@ export async function POST(request: NextRequest) {
         )
       `)
       .eq('daily_reminders', true)
+      .not('profiles', 'is', null)
 
     if (usersError) {
       console.error('[CRON] Failed to fetch users:', usersError)
