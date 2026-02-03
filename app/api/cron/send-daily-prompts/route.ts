@@ -62,10 +62,32 @@ export async function POST(request: NextRequest) {
       userTimezone: string
     ): { shouldSend: boolean; reason: string } => {
       // Get current day of week in user's timezone
-      const nowInUserTZ = new Date().toLocaleDateString('en-US', {
-        timeZone: userTimezone,
-        weekday: 'long'
-      }).toLowerCase()
+      let nowInUserTZ: string
+      
+      try {
+        // Check if timezone is a UTC offset format (e.g., "UTC-05:00")
+        const utcOffsetMatch = userTimezone.match(/^UTC([+-])(\d{1,2}):(\d{2})$/)
+        
+        if (utcOffsetMatch) {
+          // For UTC offsets, manually calculate the local date
+          const sign = utcOffsetMatch[1] === '+' ? 1 : -1
+          const offsetHours = parseInt(utcOffsetMatch[2], 10)
+          const offsetMinutes = parseInt(utcOffsetMatch[3], 10)
+          const totalOffsetMs = sign * (offsetHours * 60 + offsetMinutes) * 60 * 1000
+          
+          const localDate = new Date(now.getTime() + totalOffsetMs)
+          nowInUserTZ = localDate.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase()
+        } else {
+          // Use IANA timezone
+          nowInUserTZ = new Date().toLocaleDateString('en-US', {
+            timeZone: userTimezone,
+            weekday: 'long'
+          }).toLowerCase()
+        }
+      } catch (error) {
+        // Fallback to UTC if timezone is invalid
+        nowInUserTZ = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase()
+      }
 
       // For free users, enforce 3x per week limit
       if (isFreeUser) {
@@ -198,6 +220,7 @@ export async function POST(request: NextRequest) {
       .select(`
         user_id,
         daily_reminders,
+        prompt_time,
         reminder_time,
         prompt_frequency,
         custom_days,
@@ -225,11 +248,76 @@ export async function POST(request: NextRequest) {
     }
 
     if (!usersWithPrefs || usersWithPrefs.length === 0) {
+      // Log this for debugging
+      if (cronLogId) {
+        await supabase
+          .from('cron_job_runs')
+          .update({
+            completed_at: new Date().toISOString(),
+            status: 'success',
+            total_users: 0,
+            successful_sends: 0,
+            failed_sends: 0,
+            execution_time_ms: Date.now() - startTime,
+            metadata: { 
+              message: 'No users with daily_reminders enabled found',
+              debug: 'Check user_preferences table - daily_reminders column may be NULL or false for all users'
+            },
+          })
+          .eq('id', cronLogId)
+      }
       return NextResponse.json({
         success: true,
         message: 'No users with daily reminders enabled',
         sent: 0,
+        debug: {
+          hint: 'Check if user_preferences.daily_reminders is true for any users',
+          query: 'SELECT COUNT(*) FROM user_preferences WHERE daily_reminders = true'
+        }
       })
+    }
+
+    /**
+     * Helper function to get current hour in user's timezone
+     * Handles both IANA timezones (e.g., "Europe/London") and UTC offsets (e.g., "UTC-05:00")
+     */
+    const getCurrentHourInTimezone = (timezone: string): number | null => {
+      try {
+        // Check if timezone is a UTC offset format (e.g., "UTC-05:00", "UTC+02:00")
+        const utcOffsetMatch = timezone.match(/^UTC([+-])(\d{1,2}):(\d{2})$/)
+        
+        if (utcOffsetMatch) {
+          // Handle UTC offset format
+          const sign = utcOffsetMatch[1] === '+' ? 1 : -1
+          const offsetHours = parseInt(utcOffsetMatch[2], 10)
+          const offsetMinutes = parseInt(utcOffsetMatch[3], 10)
+          const totalOffsetHours = sign * (offsetHours + offsetMinutes / 60)
+          
+          // Calculate current hour in that timezone
+          const utcHour = now.getUTCHours()
+          const utcMinutes = now.getUTCMinutes()
+          const localHour = utcHour + totalOffsetHours
+          
+          // Handle day wraparound
+          if (localHour < 0) return Math.floor(localHour + 24)
+          if (localHour >= 24) return Math.floor(localHour - 24)
+          return Math.floor(localHour)
+        }
+        
+        // Handle IANA timezone format (e.g., "Europe/London", "America/New_York")
+        const nowInUserTZ = new Date().toLocaleString('en-US', {
+          timeZone: timezone,
+          hour12: false,
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+        
+        const [hourStr] = nowInUserTZ.split(':')
+        return parseInt(hourStr, 10)
+      } catch (error) {
+        // If timezone is invalid, return null to skip this user
+        return null
+      }
     }
 
     // OPTIMIZATION: Pre-filter users by timezone/hour match BEFORE processing
@@ -238,28 +326,32 @@ export async function POST(request: NextRequest) {
       const profile = user.profiles as any
       if (!profile?.email) return false
       
-      const reminderTime = user.reminder_time || '09:00'
+      // Use prompt_time (from onboarding) or reminder_time (from settings) - handle both "09:00" and "09:00:00" formats
+      const reminderTime = user.prompt_time || user.reminder_time || '09:00'
       const userTimezone = profile.timezone_iana || profile.timezone || 'Europe/London'
       const reminderHourLocal = parseInt(reminderTime.split(':')[0], 10)
       
-      try {
-        const nowInUserTZ = new Date().toLocaleString('en-US', {
-          timeZone: userTimezone,
-          hour12: false,
-          hour: '2-digit',
-          minute: '2-digit'
-        })
-        
-        const [hourStr] = nowInUserTZ.split(':')
-        const currentHourInUserTimezone = parseInt(hourStr, 10)
-        
-        return currentHourInUserTimezone === reminderHourLocal
-      } catch {
-        return false
-      }
+      const currentHourInUserTimezone = getCurrentHourInTimezone(userTimezone)
+      
+      // If timezone parsing failed, skip this user
+      if (currentHourInUserTimezone === null) return false
+      
+      return currentHourInUserTimezone === reminderHourLocal
     })
 
     if (eligibleUsers.length === 0) {
+      // Collect debug info about why no users matched
+      const sampleUsers = usersWithPrefs.slice(0, 5).map(u => {
+        const profile = u.profiles as any
+        return {
+          user_id: u.user_id,
+          prompt_time: u.prompt_time,
+          reminder_time: u.reminder_time,
+          timezone: profile?.timezone_iana || profile?.timezone || 'Europe/London',
+          daily_reminders: u.daily_reminders,
+        }
+      })
+      
       // Update cron log and return early
       if (cronLogId) {
         await supabase
@@ -271,7 +363,12 @@ export async function POST(request: NextRequest) {
             successful_sends: 0,
             failed_sends: 0,
             execution_time_ms: Date.now() - startTime,
-            metadata: { message: 'No users matched current hour' },
+            metadata: { 
+              message: 'No users matched current hour',
+              total_with_reminders_enabled: usersWithPrefs.length,
+              current_hour_utc: currentHour,
+              sample_users: sampleUsers,
+            },
           })
           .eq('id', cronLogId)
       }
@@ -279,6 +376,12 @@ export async function POST(request: NextRequest) {
         success: true,
         message: 'No users scheduled for this hour',
         sent: 0,
+        debug: {
+          total_users_with_daily_reminders: usersWithPrefs.length,
+          current_hour_utc: currentHour,
+          sample_user_times: sampleUsers,
+          hint: 'Users have daily_reminders enabled but their prompt_time does not match current hour in their timezone'
+        }
       })
     }
 

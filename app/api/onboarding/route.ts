@@ -63,6 +63,9 @@ export async function POST(request: Request) {
       updated_at: new Date().toISOString()
     }
     
+    // Set timezone in profile if provided (auto-detected from browser)
+    const userTimezone = body.timezone // Should be IANA timezone like 'America/New_York'
+    
     // Check if preferences already exist
     const { data: existing } = await supabase
       .from('user_preferences')
@@ -131,6 +134,8 @@ export async function POST(request: Request) {
           trial_start_date: new Date().toISOString(),
           trial_end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
           is_trial: true,
+          timezone_iana: userTimezone || 'Europe/London',
+          timezone: userTimezone || 'Europe/London',
           updated_at: new Date().toISOString(),
         }, { onConflict: 'id' })
 

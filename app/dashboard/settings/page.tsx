@@ -68,42 +68,9 @@ const sidebarNav = [
   { icon: Settings, label: "settings", href: "/dashboard/settings", active: true },
 ]
 
-// Common timezones list
-const timezones = [
-  { value: "UTC-12:00", label: "(UTC-12:00) International Date Line West" },
-  { value: "UTC-11:00", label: "(UTC-11:00) Coordinated Universal Time-11" },
-  { value: "UTC-10:00", label: "(UTC-10:00) Hawaii" },
-  { value: "UTC-09:00", label: "(UTC-09:00) Alaska" },
-  { value: "UTC-08:00", label: "(UTC-08:00) Pacific Time (US & Canada)" },
-  { value: "UTC-07:00", label: "(UTC-07:00) Mountain Time (US & Canada)" },
-  { value: "UTC-06:00", label: "(UTC-06:00) Central Time (US & Canada)" },
-  { value: "UTC-05:00", label: "(UTC-05:00) Eastern Time (US & Canada)" },
-  { value: "UTC-04:00", label: "(UTC-04:00) Atlantic Time (Canada)" },
-  { value: "UTC-03:30", label: "(UTC-03:30) Newfoundland" },
-  { value: "UTC-03:00", label: "(UTC-03:00) Buenos Aires, Georgetown" },
-  { value: "UTC-02:00", label: "(UTC-02:00) Mid-Atlantic" },
-  { value: "UTC-01:00", label: "(UTC-01:00) Azores" },
-  { value: "UTC+00:00", label: "(UTC+00:00) London, Dublin, Lisbon" },
-  { value: "UTC+01:00", label: "(UTC+01:00) Paris, Berlin, Rome" },
-  { value: "UTC+02:00", label: "(UTC+02:00) Athens, Cairo, Jerusalem" },
-  { value: "UTC+03:00", label: "(UTC+03:00) Moscow, Kuwait, Riyadh" },
-  { value: "UTC+03:30", label: "(UTC+03:30) Tehran" },
-  { value: "UTC+04:00", label: "(UTC+04:00) Abu Dhabi, Muscat" },
-  { value: "UTC+04:30", label: "(UTC+04:30) Kabul" },
-  { value: "UTC+05:00", label: "(UTC+05:00) Islamabad, Karachi" },
-  { value: "UTC+05:30", label: "(UTC+05:30) Mumbai, Kolkata, New Delhi" },
-  { value: "UTC+05:45", label: "(UTC+05:45) Kathmandu" },
-  { value: "UTC+06:00", label: "(UTC+06:00) Dhaka, Astana" },
-  { value: "UTC+06:30", label: "(UTC+06:30) Yangon (Rangoon)" },
-  { value: "UTC+07:00", label: "(UTC+07:00) Bangkok, Jakarta, Hanoi" },
-  { value: "UTC+08:00", label: "(UTC+08:00) Beijing, Singapore, Hong Kong" },
-  { value: "UTC+09:00", label: "(UTC+09:00) Tokyo, Seoul, Osaka" },
-  { value: "UTC+09:30", label: "(UTC+09:30) Adelaide, Darwin" },
-  { value: "UTC+10:00", label: "(UTC+10:00) Sydney, Melbourne, Brisbane" },
-  { value: "UTC+11:00", label: "(UTC+11:00) Solomon Is., New Caledonia" },
-  { value: "UTC+12:00", label: "(UTC+12:00) Auckland, Wellington, Fiji" },
-  { value: "UTC+13:00", label: "(UTC+13:00) Nuku'alofa" },
-]
+// Use IANA timezones from the timezone utility (imported at top)
+// This ensures compatibility with JavaScript's Intl.DateTimeFormat and handles DST automatically
+const timezones = commonTimezones
 
 // Supported languages - Add more upon request
 const languages = [
@@ -1251,14 +1218,20 @@ function SettingsPageContent() {
                               ? 'bg-black/90 border border-white/20'
                               : 'bg-white border-2 border-gray-300'
                           }`}>
-                            {commonTimezones.map((tz) => (
-                              <SelectItem key={tz.value} value={tz.value} className={theme === 'dark'
-                                ? 'text-white hover:bg-white/10'
-                                : 'text-gray-900 hover:bg-gray-100'
-                              }>
-                                {tz.label}
-                              </SelectItem>
-                            ))}
+                            {commonTimezones.map((tz) => {
+                              const tzInfo = getTimezoneInfo(tz.value)
+                              const offsetSign = tzInfo.offset >= 0 ? '+' : ''
+                              const offsetDisplay = `UTC${offsetSign}${tzInfo.offset}`
+                              
+                              return (
+                                <SelectItem key={tz.value} value={tz.value} className={theme === 'dark'
+                                  ? 'text-white hover:bg-white/10'
+                                  : 'text-gray-900 hover:bg-gray-100'
+                                }>
+                                  {tz.label} ({offsetDisplay})
+                                </SelectItem>
+                              )
+                            })}
                           </SelectContent>
                         </Select>
                         {timezoneInfo && (
@@ -2124,18 +2097,25 @@ function SettingsPageContent() {
                         ? 'bg-black/90 border border-white/20'
                         : 'bg-white border-2 border-gray-300'
                     }`}>
-                      {commonTimezones.map((tz) => (
-                        <SelectItem 
-                          key={tz.value} 
-                          value={tz.value}
-                          className={theme === 'dark'
-                            ? 'text-white hover:bg-white/10 focus:bg-white/10 cursor-pointer'
-                            : 'text-gray-900 hover:bg-gray-100 focus:bg-gray-100 cursor-pointer'
-                          }
-                        >
-                          {tz.label}
-                        </SelectItem>
-                      ))}
+                      {commonTimezones.map((tz) => {
+                        // Calculate current offset for this timezone
+                        const tzInfo = getTimezoneInfo(tz.value)
+                        const offsetSign = tzInfo.offset >= 0 ? '+' : ''
+                        const offsetDisplay = `UTC${offsetSign}${tzInfo.offset}`
+                        
+                        return (
+                          <SelectItem 
+                            key={tz.value} 
+                            value={tz.value}
+                            className={theme === 'dark'
+                              ? 'text-white hover:bg-white/10 focus:bg-white/10 cursor-pointer'
+                              : 'text-gray-900 hover:bg-gray-100 focus:bg-gray-100 cursor-pointer'
+                            }
+                          >
+                            {tz.label} ({offsetDisplay})
+                          </SelectItem>
+                        )
+                      })}
                     </SelectContent>
                   </Select>
                   {timezoneInfo && (

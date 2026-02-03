@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Mail, Slack, ChevronLeft, ChevronRight, Sparkles, Heart, Brain, Target, Clock, Check } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { getSupabaseClient } from "@/lib/supabase/client"
+import { detectUserTimezone } from "@/lib/utils/timezoneDetection"
 
 const steps = [
   {
@@ -135,6 +136,9 @@ export default function Onboarding() {
     setIsSubmitting(true)
     
     try {
+      // Auto-detect user's timezone from browser
+      const userTimezone = detectUserTimezone()
+      
       // Call the API endpoint to save onboarding data
       // This ensures both user_preferences AND profiles tables are populated
       const response = await fetch('/api/onboarding', {
@@ -149,7 +153,8 @@ export default function Onboarding() {
           promptFrequency: "daily",
           pushNotifications: true,
           dailyReminders: true,
-          weeklyDigest: false
+          weeklyDigest: false,
+          timezone: userTimezone // Auto-detected IANA timezone
         })
       })
       
