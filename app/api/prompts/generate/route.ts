@@ -69,6 +69,47 @@ export async function POST(request: NextRequest) {
       })
     }
 
+    // Check user's subscription tier
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('subscription_status, billing_cycle')
+      .eq('id', user.id)
+      .single()
+
+    const isFreeUser = profile?.subscription_status !== 'premium' && profile?.billing_cycle !== 'gift_trial'
+
+    // For free users, enforce 3 prompts per week limit
+    if (isFreeUser) {
+      // Calculate start of current week (Monday)
+      const now = new Date()
+      const dayOfWeek = now.getDay() // 0 = Sunday, 1 = Monday, etc.
+      const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1 // If Sunday, go back 6 days
+      const weekStart = new Date(now)
+      weekStart.setDate(now.getDate() - daysToMonday)
+      weekStart.setHours(0, 0, 0, 0)
+      const weekStartStr = weekStart.toISOString().split('T')[0]
+
+      // Count prompts generated this week
+      const { data: weeklyPrompts, error: weeklyError } = await supabase
+        .from('prompts_history')
+        .select('id')
+        .eq('user_id', user.id)
+        .gte('date_generated', weekStartStr)
+
+      if (weeklyError) {
+        console.error('Failed to check weekly prompts:', weeklyError)
+      } else if (weeklyPrompts && weeklyPrompts.length >= 3) {
+        return NextResponse.json({
+          success: false,
+          error: 'Weekly limit reached',
+          message: 'Free tier users can generate up to 3 prompts per week. Upgrade to Premium for unlimited daily prompts.',
+          limit: 3,
+          used: weeklyPrompts.length,
+          resetDate: new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        }, { status: 403 })
+      }
+    }
+
     // Fetch user context for personalization
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
     
