@@ -88,6 +88,12 @@ const navigationItems = [
     description: 'Maintenance windows'
   },
   {
+    title: 'Tools',
+    href: '/admin-panel/tools',
+    icon: Settings,
+    description: 'Admin utilities'
+  },
+  {
     title: 'Support Tickets',
     href: '/admin-panel/support',
     icon: MessageSquare,
