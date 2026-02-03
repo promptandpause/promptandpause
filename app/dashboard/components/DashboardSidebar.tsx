@@ -5,7 +5,7 @@ import { useRouter, usePathname } from "next/navigation"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { ChevronRight, HelpCircle, LogOut, Crown, Archive, Settings, LayoutDashboard, User, LifeBuoy, NotebookPen } from "lucide-react"
+import { ChevronRight, HelpCircle, LogOut, Crown, Archive, Settings, LayoutDashboard, User, LifeBuoy, NotebookPen, Heart } from "lucide-react"
 import Link from "next/link"
 import { getSupabaseClient } from "@/lib/supabase/client"
 import { useTier } from "@/hooks/useTier"
@@ -30,6 +30,7 @@ export function DashboardSidebar() {
   // Navigation items with active state based on current pathname
   const sidebarNav = [
     { icon: LayoutDashboard, label: "dashboard", href: "/dashboard", active: pathname === "/dashboard" },
+    { icon: Heart, label: "wellness", href: "/dashboard/wellness", active: pathname === "/dashboard/wellness" },
     { icon: Archive, label: "archive", href: "/dashboard/archive", active: pathname === "/dashboard/archive" },
     { icon: NotebookPen, label: "my_journals", href: "/dashboard/journals", active: pathname === "/dashboard/journals" },
     { icon: Settings, label: "settings", href: "/dashboard/settings", active: pathname?.startsWith("/dashboard/settings") || false },
