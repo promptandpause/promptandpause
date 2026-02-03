@@ -29,16 +29,47 @@ export function detectUserTimezone(): string {
 }
 
 /**
- * Get current UTC offset in hours (for display purposes only)
+ * Get current UTC offset in hours for a specific timezone (for display purposes only)
  * Example: -5 for EST, 0 for GMT, +1 for CET
  * 
  * Note: This offset changes with DST, so it's only for display.
  * Always use IANA timezone for actual time calculations.
+ * 
+ * @param ianaTimezone - Optional IANA timezone (e.g., 'America/New_York'). If not provided, uses user's local timezone.
  */
-export function getCurrentUTCOffset(): number {
-  const now = new Date()
-  const offsetMinutes = now.getTimezoneOffset()
-  return -offsetMinutes / 60 // Negative because getTimezoneOffset is inverted
+export function getCurrentUTCOffset(ianaTimezone?: string): number {
+  try {
+    if (!ianaTimezone) {
+      // Use user's local timezone offset
+      const now = new Date()
+      const offsetMinutes = now.getTimezoneOffset()
+      return -offsetMinutes / 60 // Negative because getTimezoneOffset is inverted
+    }
+    
+    // Calculate offset for specific timezone
+    const now = new Date()
+    
+    // Get UTC time
+    const utcTime = now.toLocaleString('en-US', { timeZone: 'UTC', hour12: false })
+    
+    // Get time in target timezone
+    const tzTime = now.toLocaleString('en-US', { timeZone: ianaTimezone, hour12: false })
+    
+    // Parse both times
+    const utcDate = new Date(utcTime)
+    const tzDate = new Date(tzTime)
+    
+    // Calculate difference in hours
+    const diffMs = tzDate.getTime() - utcDate.getTime()
+    const diffHours = diffMs / (1000 * 60 * 60)
+    
+    return Math.round(diffHours) // Round to nearest hour
+  } catch (error) {
+    // Fallback to local offset if timezone is invalid
+    const now = new Date()
+    const offsetMinutes = now.getTimezoneOffset()
+    return -offsetMinutes / 60
+  }
 }
 
 /**
@@ -50,7 +81,7 @@ export function getCurrentUTCOffset(): number {
  * - "America/New_York (UTC-4)" in summer (EDT)
  */
 export function formatTimezoneDisplay(ianaTimezone: string): string {
-  const offset = getCurrentUTCOffset()
+  const offset = getCurrentUTCOffset(ianaTimezone)
   const sign = offset >= 0 ? '+' : ''
   return `${ianaTimezone} (UTC${sign}${offset})`
 }
@@ -167,7 +198,7 @@ export function isValidIANATimezone(timezone: string): boolean {
  */
 export function getTimezoneInfo(ianaTimezone?: string) {
   const timezone = ianaTimezone || detectUserTimezone()
-  const offset = getCurrentUTCOffset()
+  const offset = getCurrentUTCOffset(timezone) // Pass timezone to get correct offset
   const abbreviation = getTimezoneAbbreviation()
   const inDST = isInDST()
   
