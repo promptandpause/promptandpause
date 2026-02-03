@@ -255,7 +255,6 @@ export async function POST(request: NextRequest) {
           email,
           full_name,
           subscription_status,
-          billing_cycle,
           timezone_iana,
           timezone
         )
