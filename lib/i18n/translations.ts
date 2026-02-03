@@ -28,6 +28,7 @@ export const en = {
   'nav.my_journals': 'My Journals',
   'nav.settings': 'Settings',
   'nav.crisis_resources': 'Crisis Resources',
+  'nav.wellness': 'Wellness',
   'nav.logout': 'Logout',
   'nav.help': 'Contact Support',
   
@@ -150,6 +151,7 @@ export const es: Record<TranslationKey, string> = {
   'nav.my_journals': 'Mis Diarios',
   'nav.settings': 'Configuración',
   'nav.crisis_resources': 'Recursos de Crisis',
+  'nav.wellness': 'Bienestar',
   'nav.logout': 'Cerrar sesión',
   'nav.help': 'Contactar Soporte',
   
@@ -272,6 +274,7 @@ export const fr: Record<TranslationKey, string> = {
   'nav.my_journals': 'Mes Journaux',
   'nav.settings': 'Paramètres',
   'nav.crisis_resources': 'Ressources de Crise',
+  'nav.wellness': 'Bien-être',
   'nav.logout': 'Déconnexion',
   'nav.help': 'Contacter le Support',
   
@@ -394,6 +397,7 @@ export const nl: Record<TranslationKey, string> = {
   'nav.my_journals': 'Mijn Dagboeken',
   'nav.settings': 'Instellingen',
   'nav.crisis_resources': 'Crisisbronnen',
+  'nav.wellness': 'Welzijn',
   'nav.logout': 'Uitloggen',
   'nav.help': 'Contact Ondersteuning',
   

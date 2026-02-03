@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -10,7 +11,8 @@ import {
   BarChart3, 
   Sparkles,
   Lock,
-  ChevronRight
+  ChevronRight,
+  Crown
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -276,15 +278,17 @@ export default function WeeklyMoodInsights({ userId }: WeeklyMoodInsightsProps) 
         {/* Upgrade prompt for free users */}
         {!isPremium && (
           <div className="pt-2 border-t">
-            <div className="flex items-center justify-between p-3 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-yellow-200">
               <div>
                 <div className="text-sm font-medium text-gray-900">Unlock Full Insights</div>
                 <div className="text-xs text-gray-500">Monthly trends, AI analysis & more</div>
               </div>
-              <Button size="sm" variant="outline" className="text-xs">
-                Upgrade
-                <ChevronRight className="w-3 h-3 ml-1" />
-              </Button>
+              <Link href="/dashboard/settings#subscription">
+                <Button size="sm" className="text-xs bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white border-0">
+                  <Crown className="w-3 h-3 mr-1" />
+                  Upgrade
+                </Button>
+              </Link>
             </div>
           </div>
         )}

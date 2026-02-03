@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Heart, Plus, X, Check, Sparkles } from 'lucide-react'
+import Link from 'next/link'
+import { Heart, Plus, X, Check, Sparkles, Crown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -200,9 +201,12 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
         )}
 
         {!isPremium && items.length >= maxItems && (
-          <p className="text-xs text-gray-500 text-center">
-            Upgrade to Premium for unlimited entries
-          </p>
+          <Link href="/dashboard/settings#subscription" className="block">
+            <p className="text-xs text-amber-600 text-center hover:text-amber-700 cursor-pointer">
+              <Crown className="w-3 h-3 inline mr-1" />
+              Upgrade to Premium for unlimited entries
+            </p>
+          </Link>
         )}
 
         {hasChanges && items.length > 0 && (
@@ -291,9 +295,12 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
               {items.length}/{maxItems} entries
             </span>
             {items.length >= maxItems && (
-              <Button variant="link" size="sm" className="text-purple-600 p-0 h-auto">
-                Upgrade for more
-              </Button>
+              <Link href="/dashboard/settings#subscription">
+                <Button variant="link" size="sm" className="text-amber-600 p-0 h-auto">
+                  <Crown className="w-3 h-3 mr-1" />
+                  Upgrade for more
+                </Button>
+              </Link>
             )}
           </div>
         )}
