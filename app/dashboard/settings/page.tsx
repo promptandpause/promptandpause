@@ -1561,6 +1561,13 @@ function SettingsPageContent() {
                             ))}
                           </SelectContent>
                         </Select>
+                        {currentPlan === 'free' && (
+                          <p className={`text-xs ${
+                            theme === 'dark' ? 'text-white/50' : 'text-gray-500'
+                          }`}>
+                            Free tier: Limited to 3 prompts per week (Mon/Wed/Fri). Upgrade to Premium for custom scheduling.
+                          </p>
+                        )}
                       </div>
                       {promptFrequency === "custom" && (
                         <div className={`space-y-3 p-4 rounded-xl ${
@@ -2519,9 +2526,17 @@ function SettingsPageContent() {
                       })}
                     </SelectContent>
                   </Select>
-                  <p className={`text-xs ${
-                    theme === 'dark' ? 'text-white/50' : 'text-gray-500'
-                  }`}>How often you'd like to receive new reflection prompts</p>
+                  {currentPlan === 'free' ? (
+                    <p className={`text-xs ${
+                      theme === 'dark' ? 'text-white/50' : 'text-gray-500'
+                    }`}>
+                      Free tier: Limited to 3 prompts per week (Mon/Wed/Fri). Upgrade to Premium for custom scheduling.
+                    </p>
+                  ) : (
+                    <p className={`text-xs ${
+                      theme === 'dark' ? 'text-white/50' : 'text-gray-500'
+                    }`}>How often you'd like to receive new reflection prompts</p>
+                  )}
                 </div>
                 
                 {/* Custom Schedule Days Selector */}
