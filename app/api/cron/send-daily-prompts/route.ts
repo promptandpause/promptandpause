@@ -235,42 +235,68 @@ export async function POST(request: NextRequest) {
 
     console.log('[CRON] About to fetch users with preferences')
     
-    // OPTIMIZATION: Join profiles with preferences in a single query
-    // Only fetch users who have daily_reminders enabled to reduce data transfer
-    const { data: usersWithPrefs, error: usersError } = await supabase
+    // Fetch user preferences first
+    const { data: userPrefs, error: prefsError } = await supabase
       .from('user_preferences')
-      .select(`
-        user_id,
-        daily_reminders,
-        prompt_time,
-        reminder_time,
-        prompt_frequency,
-        custom_days,
-        focus_areas,
-        reason,
-        delivery_method,
-        slack_webhook_url,
-        profiles:user_id (
-          id,
-          email,
-          full_name,
-          subscription_status,
-          timezone_iana,
-          timezone
-        )
-      `)
+      .select('user_id, daily_reminders, prompt_time, reminder_time, prompt_frequency, custom_days, focus_areas, reason, delivery_method, slack_webhook_url')
       .eq('daily_reminders', true)
-      .not('profiles', 'is', null)
 
-    if (usersError) {
-      console.error('[CRON] Failed to fetch users:', usersError)
+    if (prefsError) {
+      console.error('[CRON] Failed to fetch preferences:', prefsError)
       return NextResponse.json(
-        { error: 'Failed to fetch users', details: usersError.message },
+        { error: 'Failed to fetch preferences', details: prefsError.message },
         { status: 500 }
       )
     }
+
+    console.log('[CRON] Fetched preferences:', userPrefs?.length || 0)
+
+    if (!userPrefs || userPrefs.length === 0) {
+      if (cronLogId) {
+        await supabase.from('cron_job_runs').update({
+          completed_at: new Date().toISOString(),
+          status: 'success',
+          total_users: 0,
+          successful_sends: 0,
+          failed_sends: 0,
+          execution_time_ms: Date.now() - startTime,
+          metadata: { message: 'No users with daily_reminders enabled' },
+        }).eq('id', cronLogId)
+      }
+      return NextResponse.json({
+        success: true,
+        message: 'No users with daily reminders enabled',
+        sent: 0,
+      })
+    }
+
+    // Fetch corresponding profiles
+    const userIds = userPrefs.map(p => p.user_id)
+    const { data: profiles, error: profilesError } = await supabase
+      .from('profiles')
+      .select('id, email, full_name, subscription_status, billing_cycle, timezone_iana, timezone')
+      .in('id', userIds)
+
+    if (profilesError) {
+      console.error('[CRON] Failed to fetch profiles:', profilesError)
+      return NextResponse.json(
+        { error: 'Failed to fetch profiles', details: profilesError.message },
+        { status: 500 }
+      )
+    }
+
+    console.log('[CRON] Fetched profiles:', profiles?.length || 0)
+
+    // Join them in code
+    const usersWithPrefs = userPrefs.map(pref => {
+      const profile = profiles?.find(p => p.id === pref.user_id)
+      return {
+        ...pref,
+        profiles: profile || null
+      }
+    }).filter(u => u.profiles !== null)
     
-    console.log('[CRON] Fetched users:', usersWithPrefs?.length || 0)
+    console.log('[CRON] Combined users with profiles:', usersWithPrefs.length)
 
     if (!usersWithPrefs || usersWithPrefs.length === 0) {
       // Log this for debugging
