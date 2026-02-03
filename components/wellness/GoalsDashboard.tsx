@@ -1,0 +1,447 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { 
+  Target, 
+  Plus, 
+  Check, 
+  Pause, 
+  Trash2, 
+  ChevronRight,
+  Calendar,
+  Sparkles,
+  Edit2,
+  X
+} from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { 
+  getGoals, 
+  getActiveGoals,
+  createGoal, 
+  updateGoalProgress,
+  updateGoalStatus,
+  deleteGoal,
+  getGoalStats,
+  type Goal,
+  type GoalCategory,
+  type GoalStatus
+} from '@/lib/services/goalsService'
+import { getSupabaseClient } from '@/lib/supabase/client'
+import { useToast } from '@/hooks/use-toast'
+
+interface GoalsDashboardProps {
+  userId: string
+}
+
+const categoryColors: Record<GoalCategory, string> = {
+  personal: 'bg-purple-100 text-purple-700',
+  professional: 'bg-blue-100 text-blue-700',
+  wellness: 'bg-emerald-100 text-emerald-700',
+  relationships: 'bg-rose-100 text-rose-700',
+  financial: 'bg-amber-100 text-amber-700',
+  other: 'bg-gray-100 text-gray-700'
+}
+
+const categoryIcons: Record<GoalCategory, string> = {
+  personal: '🌟',
+  professional: '💼',
+  wellness: '🧘',
+  relationships: '❤️',
+  financial: '💰',
+  other: '📌'
+}
+
+export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
+  const [goals, setGoals] = useState<Goal[]>([])
+  const [stats, setStats] = useState<{
+    totalGoals: number
+    activeGoals: number
+    completedGoals: number
+    completionRate: number
+  } | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [showCreateDialog, setShowCreateDialog] = useState(false)
+  const [newGoal, setNewGoal] = useState({
+    title: '',
+    description: '',
+    category: 'personal' as GoalCategory,
+    target_date: '',
+    why_important: ''
+  })
+  const [isCreating, setIsCreating] = useState(false)
+  const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('active')
+
+  const supabase = getSupabaseClient()
+  const { toast } = useToast()
+
+  useEffect(() => {
+    loadGoals()
+  }, [userId, filter])
+
+  const loadGoals = async () => {
+    setIsLoading(true)
+    try {
+      const status = filter === 'all' ? undefined : filter === 'active' ? 'active' : 'completed'
+      const [goalsData, statsData] = await Promise.all([
+        getGoals(supabase, userId, status as GoalStatus | undefined),
+        getGoalStats(supabase, userId)
+      ])
+      setGoals(goalsData)
+      setStats(statsData)
+    } catch (error) {
+      console.error('Error loading goals:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleCreateGoal = async () => {
+    if (!newGoal.title.trim()) {
+      toast({
+        title: 'Title required',
+        description: 'Please enter a goal title',
+        variant: 'destructive'
+      })
+      return
+    }
+
+    setIsCreating(true)
+    try {
+      const result = await createGoal(supabase, userId, {
+        title: newGoal.title.trim(),
+        description: newGoal.description.trim() || undefined,
+        category: newGoal.category,
+        target_date: newGoal.target_date || undefined,
+        why_important: newGoal.why_important.trim() || undefined
+      })
+
+      if (result.success) {
+        toast({
+          title: 'Goal created',
+          description: 'Your new goal has been added'
+        })
+        setShowCreateDialog(false)
+        setNewGoal({
+          title: '',
+          description: '',
+          category: 'personal',
+          target_date: '',
+          why_important: ''
+        })
+        loadGoals()
+      } else {
+        toast({
+          title: 'Error',
+          description: result.error || 'Failed to create goal',
+          variant: 'destructive'
+        })
+      }
+    } catch (error) {
+      console.error('Error creating goal:', error)
+      toast({
+        title: 'Error',
+        description: 'Failed to create goal',
+        variant: 'destructive'
+      })
+    } finally {
+      setIsCreating(false)
+    }
+  }
+
+  const handleUpdateProgress = async (goalId: string, progress: number) => {
+    const result = await updateGoalProgress(supabase, goalId, progress)
+    if (result.success) {
+      loadGoals()
+      if (progress >= 100) {
+        toast({
+          title: '🎉 Goal completed!',
+          description: 'Congratulations on achieving your goal!'
+        })
+      }
+    }
+  }
+
+  const handleUpdateStatus = async (goalId: string, status: GoalStatus) => {
+    const result = await updateGoalStatus(supabase, goalId, status)
+    if (result.success) {
+      loadGoals()
+      toast({
+        title: 'Goal updated',
+        description: `Goal marked as ${status}`
+      })
+    }
+  }
+
+  const handleDeleteGoal = async (goalId: string) => {
+    const result = await deleteGoal(supabase, goalId)
+    if (result.success) {
+      loadGoals()
+      toast({
+        title: 'Goal deleted',
+        description: 'Goal has been removed'
+      })
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <div className="animate-pulse space-y-4">
+            <div className="h-6 bg-gray-200 rounded w-1/3"></div>
+            <div className="h-24 bg-gray-200 rounded"></div>
+            <div className="h-24 bg-gray-200 rounded"></div>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return (
+    <Card>
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Target className="w-5 h-5 text-blue-500" />
+            Goals
+          </CardTitle>
+          <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+            <DialogTrigger asChild>
+              <Button size="sm" className="gap-1">
+                <Plus className="w-4 h-4" />
+                New Goal
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Create New Goal</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 pt-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-700">What do you want to achieve?</label>
+                  <Input
+                    value={newGoal.title}
+                    onChange={(e) => setNewGoal({ ...newGoal, title: e.target.value })}
+                    placeholder="e.g., Run a 5K marathon"
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Category</label>
+                  <Select
+                    value={newGoal.category}
+                    onValueChange={(value) => setNewGoal({ ...newGoal, category: value as GoalCategory })}
+                  >
+                    <SelectTrigger className="mt-1">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="personal">🌟 Personal</SelectItem>
+                      <SelectItem value="professional">💼 Professional</SelectItem>
+                      <SelectItem value="wellness">🧘 Wellness</SelectItem>
+                      <SelectItem value="relationships">❤️ Relationships</SelectItem>
+                      <SelectItem value="financial">💰 Financial</SelectItem>
+                      <SelectItem value="other">📌 Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Why is this important to you?</label>
+                  <Textarea
+                    value={newGoal.why_important}
+                    onChange={(e) => setNewGoal({ ...newGoal, why_important: e.target.value })}
+                    placeholder="Your motivation and purpose..."
+                    className="mt-1"
+                    rows={2}
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Target Date (optional)</label>
+                  <Input
+                    type="date"
+                    value={newGoal.target_date}
+                    onChange={(e) => setNewGoal({ ...newGoal, target_date: e.target.value })}
+                    className="mt-1"
+                  />
+                </div>
+                <Button
+                  onClick={handleCreateGoal}
+                  disabled={isCreating || !newGoal.title.trim()}
+                  className="w-full"
+                >
+                  {isCreating ? 'Creating...' : 'Create Goal'}
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        {/* Stats */}
+        {stats && (
+          <div className="grid grid-cols-3 gap-2 mt-3">
+            <div className="text-center p-2 bg-blue-50 rounded-lg">
+              <div className="text-lg font-bold text-blue-700">{stats.activeGoals}</div>
+              <div className="text-xs text-blue-600">Active</div>
+            </div>
+            <div className="text-center p-2 bg-emerald-50 rounded-lg">
+              <div className="text-lg font-bold text-emerald-700">{stats.completedGoals}</div>
+              <div className="text-xs text-emerald-600">Completed</div>
+            </div>
+            <div className="text-center p-2 bg-purple-50 rounded-lg">
+              <div className="text-lg font-bold text-purple-700">{stats.completionRate}%</div>
+              <div className="text-xs text-purple-600">Success Rate</div>
+            </div>
+          </div>
+        )}
+
+        {/* Filter */}
+        <div className="flex gap-1 mt-3 bg-gray-100 rounded-lg p-1">
+          {(['active', 'completed', 'all'] as const).map((f) => (
+            <Button
+              key={f}
+              size="sm"
+              variant={filter === f ? 'default' : 'ghost'}
+              className={`flex-1 h-7 text-xs capitalize ${filter === f ? 'bg-white shadow-sm' : ''}`}
+              onClick={() => setFilter(f)}
+            >
+              {f}
+            </Button>
+          ))}
+        </div>
+      </CardHeader>
+
+      <CardContent className="space-y-3">
+        <AnimatePresence>
+          {goals.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              <Target className="w-10 h-10 mx-auto mb-2 text-gray-300" />
+              <p className="text-sm">No {filter !== 'all' ? filter : ''} goals yet</p>
+              <Button
+                variant="link"
+                size="sm"
+                onClick={() => setShowCreateDialog(true)}
+                className="mt-2"
+              >
+                Create your first goal
+              </Button>
+            </div>
+          ) : (
+            goals.map((goal) => (
+              <motion.div
+                key={goal.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                className="p-4 border rounded-lg hover:border-blue-200 transition-colors"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${categoryColors[goal.category]}`}>
+                        {categoryIcons[goal.category]} {goal.category}
+                      </span>
+                      {goal.status === 'completed' && (
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">
+                          ✓ Completed
+                        </span>
+                      )}
+                    </div>
+                    <h4 className="font-medium text-gray-900 truncate">{goal.title}</h4>
+                    {goal.why_important && (
+                      <p className="text-xs text-gray-500 mt-1 line-clamp-2">{goal.why_important}</p>
+                    )}
+                    
+                    {/* Progress bar */}
+                    {goal.status === 'active' && (
+                      <div className="mt-3">
+                        <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+                          <span>Progress</span>
+                          <span>{goal.progress}%</span>
+                        </div>
+                        <Progress value={goal.progress} className="h-2" />
+                        <div className="flex gap-1 mt-2">
+                          {[25, 50, 75, 100].map((p) => (
+                            <Button
+                              key={p}
+                              size="sm"
+                              variant={goal.progress >= p ? 'default' : 'outline'}
+                              className="flex-1 h-6 text-xs"
+                              onClick={() => handleUpdateProgress(goal.id, p)}
+                            >
+                              {p}%
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {goal.target_date && (
+                      <div className="flex items-center gap-1 mt-2 text-xs text-gray-500">
+                        <Calendar className="w-3 h-3" />
+                        Target: {new Date(goal.target_date).toLocaleDateString()}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex flex-col gap-1">
+                    {goal.status === 'active' && (
+                      <>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-7 w-7 p-0"
+                          onClick={() => handleUpdateStatus(goal.id, 'completed')}
+                          title="Mark complete"
+                        >
+                          <Check className="w-4 h-4 text-emerald-500" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-7 w-7 p-0"
+                          onClick={() => handleUpdateStatus(goal.id, 'paused')}
+                          title="Pause goal"
+                        >
+                          <Pause className="w-4 h-4 text-amber-500" />
+                        </Button>
+                      </>
+                    )}
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-7 w-7 p-0"
+                      onClick={() => handleDeleteGoal(goal.id)}
+                      title="Delete goal"
+                    >
+                      <Trash2 className="w-4 h-4 text-gray-400 hover:text-rose-500" />
+                    </Button>
+                  </div>
+                </div>
+              </motion.div>
+            ))
+          )}
+        </AnimatePresence>
+      </CardContent>
+    </Card>
+  )
+}
