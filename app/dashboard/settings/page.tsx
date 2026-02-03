@@ -1752,6 +1752,9 @@ function SettingsPageContent() {
                                 "Daily prompts (7 days/week)",
                                 "Unlimited archive access",
                                 "Weekly & monthly reflections",
+                                "Goals & habit tracking",
+                                "Advanced mood insights",
+                                "Unlimited gratitude entries",
                                 "Slack integration",
                                 "Export reflections",
                               ].map((feature, index) => (
@@ -1799,8 +1802,9 @@ function SettingsPageContent() {
                                 "Daily prompts",
                                 "Unlimited archive",
                                 "Weekly & monthly reflections",
+                                "Goals & habits",
+                                "Advanced insights",
                                 "Slack integration",
-                                "Export",
                               ].map((feature, index) => (
                                 <div key={index} className="flex items-center gap-1.5">
                                   <Check className="h-3 w-3 text-green-600 flex-shrink-0" />
@@ -1835,7 +1839,9 @@ function SettingsPageContent() {
                               {[
                                 "3 prompts per week",
                                 "Last 50 reflections",
-                                "Optional check-in",
+                                "Daily gratitude (3 entries)",
+                                "Breathing exercises",
+                                "Weekly mood insights",
                                 "Email delivery only",
                               ].map((feature, index) => (
                                 <div key={index} className={`flex items-start gap-2 text-xs ${

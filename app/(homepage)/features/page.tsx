@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react"
 import Image from "next/image"
 import Lenis from "lenis"
 import { useScroll, useTransform, motion } from "framer-motion"
-import { Sparkles, Clock, Brain, Lock, Archive, Flame, Mail, MessageSquare, Check, X } from "lucide-react"
+import { Sparkles, Clock, Brain, Lock, Archive, Flame, Mail, MessageSquare, Check, X, Heart, Wind, Target, BarChart3 } from "lucide-react"
 import Navigation from "../Navigation"
 import Footer from "../footer"
 
@@ -131,6 +131,21 @@ function CoreFeaturesSection() {
       title: "A steady rhythm",
       description: "A quiet sense of continuity without streak pressure or performance language.",
     },
+    {
+      icon: Heart,
+      title: "Daily Gratitude",
+      description: "Record up to 3 things you're grateful for each day. Build a gratitude practice with streak tracking.",
+    },
+    {
+      icon: Wind,
+      title: "Breathing Exercises",
+      description: "Guided breathing techniques including Box Breathing, 4-7-8, and more to help calm your mind.",
+    },
+    {
+      icon: BarChart3,
+      title: "Weekly Mood Insights",
+      description: "See your mood patterns over the past week with simple visualizations and basic insights.",
+    },
   ]
 
   return (
@@ -183,6 +198,56 @@ function PremiumFeaturesSection() {
             <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">From Your Past</h3>
             <p className="text-white/80 leading-relaxed text-lg">
               A rare, optional resurfacing of a past reflection—dismissible, with a long cooldown.
+            </p>
+          </div>
+
+          <div className="backdrop-blur-xl bg-white/5 border border-white/10 p-10 lg:p-12 rounded-3xl hover:bg-white/10 hover:scale-[1.02] transition-all duration-500">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/10 mb-6">
+              <Target className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">Goals & Intentions</h3>
+            <p className="text-white/80 leading-relaxed text-lg">
+              Set personal goals and weekly intentions. Track your progress toward what matters most to you.
+            </p>
+          </div>
+
+          <div className="backdrop-blur-xl bg-white/5 border border-white/10 p-10 lg:p-12 rounded-3xl hover:bg-white/10 hover:scale-[1.02] transition-all duration-500">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/10 mb-6">
+              <Check className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">Habit Tracking</h3>
+            <p className="text-white/80 leading-relaxed text-lg">
+              Track daily habits and see how they correlate with your mood over time. Discover what helps you thrive.
+            </p>
+          </div>
+
+          <div className="backdrop-blur-xl bg-white/5 border border-white/10 p-10 lg:p-12 rounded-3xl hover:bg-white/10 hover:scale-[1.02] transition-all duration-500">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/10 mb-6">
+              <BarChart3 className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">Advanced Mood Insights</h3>
+            <p className="text-white/80 leading-relaxed text-lg">
+              Monthly trends, AI-powered analysis, best/worst day patterns, and deeper insights into your emotional wellbeing.
+            </p>
+          </div>
+
+          <div className="backdrop-blur-xl bg-white/5 border border-white/10 p-10 lg:p-12 rounded-3xl hover:bg-white/10 hover:scale-[1.02] transition-all duration-500">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/10 mb-6">
+              <Heart className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">Unlimited Gratitude</h3>
+            <p className="text-white/80 leading-relaxed text-lg">
+              Record up to 10 gratitude entries per day instead of 3. Build a richer gratitude practice.
+            </p>
+          </div>
+
+          <div className="backdrop-blur-xl bg-white/5 border border-white/10 p-10 lg:p-12 rounded-3xl hover:bg-white/10 hover:scale-[1.02] transition-all duration-500">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/10 mb-6">
+              <Sparkles className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">Unlimited Prompts</h3>
+            <p className="text-white/80 leading-relaxed text-lg">
+              Daily prompts instead of 3x per week. Reflect as often as you like with no limits.
             </p>
           </div>
         </div>
