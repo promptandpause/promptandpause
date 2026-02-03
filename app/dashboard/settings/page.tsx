@@ -412,6 +412,10 @@ function SettingsPageContent() {
     if (!userId) return
 
     try {
+      // Determine the effective prompt frequency based on custom days selection
+      // If user has selected specific days, use 'custom' frequency
+      const effectiveFrequency = customDays.length > 0 ? 'custom' : promptFrequency
+      
       const response = await fetch('/api/user/preferences', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -421,6 +425,7 @@ function SettingsPageContent() {
           weekly_digest: weeklyDigest,
           include_self_journal_in_insights: includeSelfJournalInInsights,
           reminder_time: reminderTime,
+          prompt_frequency: effectiveFrequency,
           custom_days: customDays.length > 0 ? customDays : ['monday', 'wednesday', 'friday'],
         }),
       })
