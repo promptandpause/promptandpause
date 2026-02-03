@@ -224,8 +224,17 @@ export async function POST(request: NextRequest) {
       .select()
       .single()
 
+    if (cronLogError) {
+      console.error('[CRON] Failed to create cron job log:', cronLogError)
+      // Continue anyway - logging shouldn't block the cron job
+    } else {
+      console.log('[CRON] Cron log created:', cronLog?.id)
+    }
+
     const cronLogId = cronLog?.id
 
+    console.log('[CRON] About to fetch users with preferences')
+    
     // OPTIMIZATION: Join profiles with preferences in a single query
     // Only fetch users who have daily_reminders enabled to reduce data transfer
     const { data: usersWithPrefs, error: usersError } = await supabase
@@ -254,11 +263,14 @@ export async function POST(request: NextRequest) {
       .eq('daily_reminders', true)
 
     if (usersError) {
+      console.error('[CRON] Failed to fetch users:', usersError)
       return NextResponse.json(
-        { error: 'Failed to fetch users' },
+        { error: 'Failed to fetch users', details: usersError.message },
         { status: 500 }
       )
     }
+    
+    console.log('[CRON] Fetched users:', usersWithPrefs?.length || 0)
 
     if (!usersWithPrefs || usersWithPrefs.length === 0) {
       // Log this for debugging
