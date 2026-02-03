@@ -208,6 +208,8 @@ export async function POST(request: NextRequest) {
       return streak
     }
 
+    console.log('[CRON] About to create cron job log entry')
+    
     // Create initial cron job log entry
     const { data: cronLog, error: cronLogError } = await supabase
       .from('cron_job_runs')
