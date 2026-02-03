@@ -27,8 +27,17 @@ export default function AgeVerification({ onVerified, initialCountry = "US" }: A
   useEffect(() => {
     const detectCountry = async () => {
       try {
-        // Use a simple IP geolocation service
-        const response = await fetch("https://ipapi.co/json/")
+        // First try timezone-based detection
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+        if (timezone.includes('Europe/London') || timezone.includes('Europe/Dublin')) {
+          setCountry("UK")
+          return
+        }
+        
+        // Then try IP geolocation as fallback
+        const response = await fetch("https://ipapi.co/json/", { 
+          signal: AbortSignal.timeout(3000) // 3 second timeout
+        })
         const data = await response.json()
         
         if (data.country_code) {
@@ -36,11 +45,16 @@ export default function AgeVerification({ onVerified, initialCountry = "US" }: A
           const mappedCountry = data.country_code === "GB" ? "UK" : data.country_code
           if (mappedCountry === "US" || mappedCountry === "UK") {
             setCountry(mappedCountry)
+          } else {
+            // Default to UK for European countries, US for others
+            setCountry(data.continent_code === "EU" ? "UK" : "US")
           }
         }
       } catch (error) {
         console.error("Failed to detect country:", error)
-        // Keep default country
+        // Use timezone as final fallback
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+        setCountry(timezone.includes('Europe') ? "UK" : "US")
       }
     }
     
@@ -196,13 +210,20 @@ export default function AgeVerification({ onVerified, initialCountry = "US" }: A
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="country">Detected Country</Label>
-            <Input
+            <Label htmlFor="country">Country/Region</Label>
+            <select
               id="country"
-              value={country === "UK" ? "United Kingdom" : "United States"}
-              disabled
-              className="bg-gray-50"
-            />
+              value={country}
+              onChange={(e) => setCountry(e.target.value)}
+              className="w-full h-10 px-3 rounded-md border border-gray-300 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              required
+            >
+              <option value="US">United States</option>
+              <option value="UK">United Kingdom</option>
+            </select>
+            <p className="text-xs text-gray-500 mt-1">
+              {country === "UK" ? "Age 16+ required" : "Age 13+ required"}
+            </p>
           </div>
 
           <div>
