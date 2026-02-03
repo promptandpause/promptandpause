@@ -107,10 +107,12 @@ export async function POST(request: NextRequest) {
           ? customDays.slice(0, 3).map(d => d.toLowerCase())
           : FREE_TIER_DEFAULT_DAYS
 
+        console.log(`[CRON] Free user check: today=${nowInUserTZ}, allowedDays=${JSON.stringify(allowedDays)}, customDays=${JSON.stringify(customDays)}`)
+
         if (allowedDays.includes(nowInUserTZ)) {
           return { shouldSend: true, reason: `free_tier_allowed_day:${nowInUserTZ}` }
         }
-        return { shouldSend: false, reason: `free_tier_not_allowed_day:${nowInUserTZ}` }
+        return { shouldSend: false, reason: `free_tier_not_allowed_day:${nowInUserTZ}_allowed:${allowedDays.join(',')}` }
       }
 
       // Premium users: check their frequency setting

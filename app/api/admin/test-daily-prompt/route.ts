@@ -173,7 +173,7 @@ export async function GET(request: NextRequest) {
     // Get user preference stats
     const { data: prefStats } = await serviceSupabase
       .from('user_preferences')
-      .select('daily_reminders, prompt_time, delivery_method')
+      .select('daily_reminders, prompt_time, delivery_method, prompt_frequency, custom_days')
 
     const stats = {
       total_users_with_preferences: prefStats?.length || 0,
@@ -186,6 +186,17 @@ export async function GET(request: NextRequest) {
         both: prefStats?.filter(p => p.delivery_method === 'both').length || 0,
         null: prefStats?.filter(p => p.delivery_method === null).length || 0,
       },
+      prompt_frequencies: {
+        daily: prefStats?.filter(p => p.prompt_frequency === 'daily').length || 0,
+        weekdays: prefStats?.filter(p => p.prompt_frequency === 'weekdays').length || 0,
+        custom: prefStats?.filter(p => p.prompt_frequency === 'custom').length || 0,
+        null: prefStats?.filter(p => p.prompt_frequency === null).length || 0,
+        other: prefStats?.filter(p => p.prompt_frequency && !['daily', 'weekdays', 'custom'].includes(p.prompt_frequency)).length || 0,
+      },
+      custom_days_stats: {
+        has_custom_days: prefStats?.filter(p => p.custom_days && p.custom_days.length > 0).length || 0,
+        no_custom_days: prefStats?.filter(p => !p.custom_days || p.custom_days.length === 0).length || 0,
+      },
       prompt_times: {} as Record<string, number>,
     }
 
@@ -194,6 +205,12 @@ export async function GET(request: NextRequest) {
       const time = p.prompt_time || 'null'
       stats.prompt_times[time] = (stats.prompt_times[time] || 0) + 1
     })
+    
+    // Get users with Tuesday in their custom_days (for debugging today's issue)
+    const today = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase()
+    const usersWithTodayInCustomDays = prefStats?.filter(p => 
+      p.custom_days && Array.isArray(p.custom_days) && p.custom_days.map((d: string) => d.toLowerCase()).includes(today)
+    ).length || 0
 
     // Get recent cron runs
     const { data: recentRuns } = await serviceSupabase
@@ -221,6 +238,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       stats,
+      todayDebug: {
+        today,
+        usersWithTodayInCustomDays,
+      },
       recentCronRuns: recentRuns,
       recentEmailLogs: recentEmails,
       environment: envCheck,
