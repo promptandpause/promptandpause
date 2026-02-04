@@ -1137,23 +1137,6 @@ function SettingsPageContent() {
                     <span className="font-medium">Settings</span>
                   </button>
                 </div>
-                {/* Mobile Logout */}
-                <div className="mb-4 md:hidden">
-                  <Button
-                    variant="ghost"
-                    className={`w-full justify-center ${
-                      theme === 'dark'
-                        ? 'text-red-300 hover:text-red-200 hover:bg-red-500/10'
-                        : 'text-red-600 hover:text-red-700 hover:bg-red-50'
-                    }`}
-                    onClick={async () => {
-                      await supabase.auth.signOut()
-                      router.push('/auth')
-                    }}
-                  >
-                    Logout
-                  </Button>
-                </div>
 
                 {/* Detail Views */}
                 {currentView === 'profile' && (
@@ -1256,140 +1239,200 @@ function SettingsPageContent() {
                 )}
 
                 {currentView === 'notifications' && (
-                  <Card className={`backdrop-blur-xl rounded-3xl p-4 shadow-lg ${
-                    theme === 'dark'
-                      ? 'bg-white/5 border border-white/10'
-                      : 'bg-white/80 border-2 border-gray-300'
-                  }`}>
-                    <div className="flex items-center gap-2 mb-4">
-                      <Bell className="h-5 w-5 text-yellow-600" />
-                      <h3 className={`text-xl font-semibold ${
-                        theme === 'dark' ? 'text-white' : 'text-gray-900'
-                      }`}>Notifications</h3>
-                    </div>
-                    <div className="space-y-4">
+                  <div className="space-y-4">
+                    {/* Push & Device Notifications Section */}
+                    <Card className={`backdrop-blur-xl rounded-2xl p-4 shadow-lg ${
+                      theme === 'dark'
+                        ? 'bg-white/5 border border-white/10'
+                        : 'bg-white/80 border-2 border-gray-200'
+                    }`}>
+                      <div className="flex items-center gap-2 mb-3">
+                        <Smartphone className="h-4 w-4 text-blue-500" />
+                        <h4 className={`text-sm font-semibold uppercase tracking-wide ${
+                          theme === 'dark' ? 'text-white/70' : 'text-gray-500'
+                        }`}>Device</h4>
+                      </div>
                       <PushNotificationRow theme={theme} />
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <Label className={`text-sm ${
-                            theme === 'dark' ? 'text-white' : 'text-gray-900'
-                          }`}>Daily Reminders</Label>
-                          <p className={`text-xs ${
-                            theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-                          }`}>Receive daily email reminders</p>
+                    </Card>
+
+                    {/* Email Notifications Section */}
+                    <Card className={`backdrop-blur-xl rounded-2xl p-4 shadow-lg ${
+                      theme === 'dark'
+                        ? 'bg-white/5 border border-white/10'
+                        : 'bg-white/80 border-2 border-gray-200'
+                    }`}>
+                      <div className="flex items-center gap-2 mb-3">
+                        <Mail className="h-4 w-4 text-green-500" />
+                        <h4 className={`text-sm font-semibold uppercase tracking-wide ${
+                          theme === 'dark' ? 'text-white/70' : 'text-gray-500'
+                        }`}>Email</h4>
+                      </div>
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between min-h-[44px]">
+                          <div className="flex-1 pr-3">
+                            <Label className={`text-sm font-medium ${
+                              theme === 'dark' ? 'text-white' : 'text-gray-900'
+                            }`}>Daily Reminders</Label>
+                            <p className={`text-xs ${
+                              theme === 'dark' ? 'text-white/60' : 'text-gray-600'
+                            }`}>Get your daily prompt via email</p>
+                          </div>
+                          <Switch checked={dailyReminders} onCheckedChange={setDailyReminders} className="shrink-0" />
                         </div>
-                        <Switch checked={dailyReminders} onCheckedChange={setDailyReminders} />
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <Label className={`text-sm ${
-                            theme === 'dark' ? 'text-white' : 'text-gray-900'
-                          }`}>Weekly Digest</Label>
-                          <p className={`text-xs ${
-                            theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-                          }`}>Summary of your week every Sunday</p>
+                        <div className={`h-px ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-200'}`} />
+                        <div className="flex items-center justify-between min-h-[44px]">
+                          <div className="flex-1 pr-3">
+                            <Label className={`text-sm font-medium ${
+                              theme === 'dark' ? 'text-white' : 'text-gray-900'
+                            }`}>Weekly Digest</Label>
+                            <p className={`text-xs ${
+                              theme === 'dark' ? 'text-white/60' : 'text-gray-600'
+                            }`}>Summary every Sunday</p>
+                          </div>
+                          <Switch checked={weeklyDigest} onCheckedChange={setWeeklyDigest} className="shrink-0" />
                         </div>
-                        <Switch checked={weeklyDigest} onCheckedChange={setWeeklyDigest} />
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <Label className={`text-sm ${
-                            theme === 'dark' ? 'text-white' : 'text-gray-900'
-                          }`}>Include Self-Journal in Weekly Insights</Label>
-                          <p className={`text-xs ${
-                            theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-                          }`}>Opt-in to include private self-journals in insights</p>
+                        <div className={`h-px ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-200'}`} />
+                        <div className="flex items-center justify-between min-h-[44px]">
+                          <div className="flex-1 pr-3">
+                            <Label className={`text-sm font-medium ${
+                              theme === 'dark' ? 'text-white' : 'text-gray-900'
+                            }`}>Include Self-Journals</Label>
+                            <p className={`text-xs ${
+                              theme === 'dark' ? 'text-white/60' : 'text-gray-600'
+                            }`}>Add private journals to insights</p>
+                          </div>
+                          <Switch
+                            checked={includeSelfJournalInInsights}
+                            onCheckedChange={setIncludeSelfJournalInInsights}
+                            className="shrink-0"
+                          />
                         </div>
-                        <Switch
-                          checked={includeSelfJournalInInsights}
-                          onCheckedChange={setIncludeSelfJournalInInsights}
-                        />
                       </div>
-                      <div className="space-y-1.5">
-                        <Label htmlFor="reminder-time-mobile" className={`text-sm font-medium ${
-                          theme === 'dark' ? 'text-white/90' : 'text-gray-700'
-                        }`}>Reminder Time</Label>
-                        <Input
-                          id="reminder-time-mobile"
-                          type="time"
-                          value={reminderTime}
-                          onChange={(e) => setReminderTime(e.target.value)}
-                          className={`text-sm h-10 ${
-                            theme === 'dark'
-                              ? 'bg-white/10 border border-white/20 text-white'
-                              : 'bg-white border-2 border-gray-300 text-gray-900'
-                          }`}
-                        />
+                    </Card>
+
+                    {/* Schedule Section */}
+                    <Card className={`backdrop-blur-xl rounded-2xl p-4 shadow-lg ${
+                      theme === 'dark'
+                        ? 'bg-white/5 border border-white/10'
+                        : 'bg-white/80 border-2 border-gray-200'
+                    }`}>
+                      <div className="flex items-center gap-2 mb-3">
+                        <Calendar className="h-4 w-4 text-purple-500" />
+                        <h4 className={`text-sm font-semibold uppercase tracking-wide ${
+                          theme === 'dark' ? 'text-white/70' : 'text-gray-500'
+                        }`}>Schedule</h4>
                       </div>
-                      
-                      {/* Notification Days Selection */}
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <Label className={`text-sm font-medium ${
+                      <div className="space-y-4">
+                        {/* Time Picker with Clock Icon */}
+                        <div className="space-y-1.5">
+                          <Label htmlFor="reminder-time-mobile" className={`text-sm font-medium ${
                             theme === 'dark' ? 'text-white/90' : 'text-gray-700'
-                          }`}>Notification Days</Label>
-                          {tier !== 'premium' && (
-                            <span className={`text-xs px-2 py-0.5 rounded-full ${
-                              theme === 'dark' ? 'bg-amber-500/20 text-amber-300' : 'bg-amber-100 text-amber-700'
+                          }`}>Reminder Time</Label>
+                          <div className="relative">
+                            <Input
+                              id="reminder-time-mobile"
+                              type="time"
+                              value={reminderTime}
+                              onChange={(e) => setReminderTime(e.target.value)}
+                              className={`text-sm h-12 pl-10 ${
+                                theme === 'dark'
+                                  ? 'bg-white/10 border border-white/20 text-white'
+                                  : 'bg-white border-2 border-gray-300 text-gray-900'
+                              }`}
+                            />
+                            <div className={`absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none ${
+                              theme === 'dark' ? 'text-white/50' : 'text-gray-400'
                             }`}>
-                              Max 3 days (Free)
-                            </span>
-                          )}
+                              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12 6 12 12 16 14"/>
+                              </svg>
+                            </div>
+                          </div>
                         </div>
-                        <p className={`text-xs ${
-                          theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-                        }`}>
-                          {tier === 'premium' 
-                            ? 'Choose which days to receive prompt notifications'
-                            : 'Free users receive prompts on up to 3 days per week'}
-                        </p>
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => {
-                            const isSelected = customDays.includes(day)
-                            const canSelect = tier === 'premium' || customDays.length < 3 || isSelected
-                            return (
-                              <Button
-                                key={day}
-                                type="button"
-                                variant={isSelected ? "default" : "outline"}
-                                size="sm"
-                                disabled={!canSelect && !isSelected}
-                                onClick={() => {
-                                  if (isSelected) {
-                                    setCustomDays(prev => prev.filter(d => d !== day))
-                                  } else if (canSelect) {
-                                    setCustomDays(prev => [...prev, day])
-                                  }
-                                }}
-                                className={`text-xs h-8 px-3 ${
-                                  isSelected
-                                    ? 'bg-yellow-500 hover:bg-yellow-600 text-white'
-                                    : !canSelect
-                                    ? 'opacity-50 cursor-not-allowed'
-                                    : theme === 'dark'
-                                    ? 'bg-white/10 border border-white/20 text-white/80 hover:bg-white/20'
-                                    : 'bg-white border-2 border-gray-300 text-gray-700 hover:bg-gray-50'
-                                }`}
-                              >
-                                {day.charAt(0).toUpperCase() + day.slice(1, 3)}
-                              </Button>
-                            )
-                          })}
+                        
+                        {/* Day Selector with Improved Touch Targets */}
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <Label className={`text-sm font-medium ${
+                              theme === 'dark' ? 'text-white/90' : 'text-gray-700'
+                            }`}>Notification Days</Label>
+                            {tier !== 'premium' && (
+                              <Link href="/dashboard/settings" onClick={() => navigateToView('subscription')} className={`text-xs px-2 py-1 rounded-full flex items-center gap-1 ${
+                                theme === 'dark' ? 'bg-purple-500/20 text-purple-300 hover:bg-purple-500/30' : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
+                              }`}>
+                                <Crown className="h-3 w-3" />
+                                3 included
+                              </Link>
+                            )}
+                          </div>
+                          {/* Day buttons with larger touch targets */}
+                          <div className="grid grid-cols-7 gap-1.5 mt-2">
+                            {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => {
+                              const isSelected = customDays.includes(day)
+                              const canSelect = tier === 'premium' || customDays.length < 3 || isSelected
+                              const dayOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+                              return (
+                                <button
+                                  key={day}
+                                  type="button"
+                                  disabled={!canSelect && !isSelected}
+                                  onClick={() => {
+                                    if (isSelected) {
+                                      setCustomDays(prev => prev.filter(d => d !== day))
+                                    } else if (canSelect) {
+                                      setCustomDays(prev => {
+                                        const newDays = [...prev, day]
+                                        return newDays.sort((a, b) => dayOrder.indexOf(a) - dayOrder.indexOf(b))
+                                      })
+                                    }
+                                  }}
+                                  className={`aspect-square min-h-[44px] rounded-xl flex items-center justify-center text-sm font-medium transition-all active:scale-95 ${
+                                    isSelected
+                                      ? 'bg-gradient-to-br from-yellow-400 to-orange-500 text-white shadow-md'
+                                      : !canSelect
+                                      ? 'opacity-40 cursor-not-allowed ' + (theme === 'dark' ? 'bg-white/5 text-white/40' : 'bg-gray-100 text-gray-400')
+                                      : theme === 'dark'
+                                      ? 'bg-white/10 text-white/80 hover:bg-white/20 active:bg-white/25'
+                                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 active:bg-gray-300'
+                                  }`}
+                                >
+                                  {day.charAt(0).toUpperCase()}
+                                </button>
+                              )
+                            })}
+                          </div>
+                          {/* Show day labels below for clarity */}
+                          <div className="grid grid-cols-7 gap-1.5">
+                            {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
+                              <span key={day} className={`text-center text-[10px] ${
+                                theme === 'dark' ? 'text-white/40' : 'text-gray-400'
+                              }`}>{day}</span>
+                            ))}
+                          </div>
                         </div>
-                        <p className={`text-xs mt-1 ${
-                          theme === 'dark' ? 'text-white/50' : 'text-gray-500'
-                        }`}>
-                          Selected: {customDays.length > 0 
-                            ? customDays.map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(', ') 
-                            : 'Mon, Wed, Fri (default)'}
-                        </p>
                       </div>
+                    </Card>
                       
-                      <Button onClick={handleSaveNotifications} className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white h-10">
-                        Save Settings
-                      </Button>
-                    </div>
-                  </Card>
+                    <Button onClick={handleSaveNotifications} className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white h-12 text-base font-medium rounded-xl shadow-lg active:scale-[0.98] transition-transform">
+                      Save Settings
+                    </Button>
+
+                    {/* Logout at bottom - less prominent */}
+                    <button
+                      onClick={async () => {
+                        await supabase.auth.signOut()
+                        router.push('/auth')
+                      }}
+                      className={`w-full py-3 text-sm font-medium rounded-xl transition-colors md:hidden ${
+                        theme === 'dark'
+                          ? 'text-white/50 hover:text-white/70 hover:bg-white/5'
+                          : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                      }`}
+                    >
+                      Sign Out
+                    </button>
+                  </div>
                 )}
 
                 {currentView === 'security' && (
