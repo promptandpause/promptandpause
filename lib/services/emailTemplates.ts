@@ -308,6 +308,14 @@ export function emailWrapper(content: string, options: {
           .email-alert-warning p { color: #fcd34d !important; }
           .email-alert-success { background: #1a3a2a !important; }
           .email-alert-success p { color: #86efac !important; }
+          
+          /* Dark mode prompt card - CRITICAL for readability */
+          .email-prompt-card { 
+            background-color: #2d3748 !important; 
+            border-color: #4a5568 !important;
+          }
+          .email-prompt-label { color: #86efac !important; }
+          .email-prompt-text { color: #f7fafc !important; }
         }
         
         /* Gmail Dark Mode Support */
@@ -315,11 +323,16 @@ export function emailWrapper(content: string, options: {
         [data-ogsc] .email-card-bg { background-color: ${DARK_MODE_COLORS.backgroundPure} !important; }
         [data-ogsc] .email-text-dark { color: ${DARK_MODE_COLORS.textDark} !important; }
         [data-ogsc] .email-text-gray { color: ${DARK_MODE_COLORS.textGray} !important; }
+        [data-ogsc] .email-prompt-card { background-color: #2d3748 !important; }
+        [data-ogsc] .email-prompt-label { color: #86efac !important; }
+        [data-ogsc] .email-prompt-text { color: #f7fafc !important; }
         
         /* Outlook Dark Mode Support */
         [data-ogsb] .email-body-bg { background-color: ${DARK_MODE_COLORS.backgroundLight} !important; }
         [data-ogsb] .email-card-bg { background-color: ${DARK_MODE_COLORS.backgroundPure} !important; }
         [data-ogsb] .email-text-dark { color: ${DARK_MODE_COLORS.textDark} !important; }
+        [data-ogsb] .email-prompt-card { background-color: #2d3748 !important; }
+        [data-ogsb] .email-prompt-text { color: #f7fafc !important; }
       </style>
     </head>
     

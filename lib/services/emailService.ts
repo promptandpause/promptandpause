@@ -975,19 +975,19 @@ function generateDailyPromptEmailHTML(name: string, prompt: string): string {
     
     ${paragraph('Take a moment to pause and reflect on today\'s question:', { align: 'center', fontSize: '15px' })}
     
-    <!-- Prompt Card with soft reflection styling -->
+    <!-- Prompt Card with soft reflection styling - Dark mode compatible -->
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 32px 0;">
       <tr>
-        <td class="email-section-bg" style="background: linear-gradient(135deg, ${BG_LIGHT} 0%, ${BG_WHITE} 100%); padding: 32px 28px; border-radius: 16px; border: 1px solid ${BORDER_COLOR}; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);">
+        <td class="email-prompt-card" style="background-color: #ffffff; padding: 32px 28px; border-radius: 16px; border: 1px solid ${BORDER_COLOR}; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);">
           <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
             <tr>
               <td align="center" style="padding-bottom: 16px;">
-                <p class="email-text-primary" style="font-size: 11px; color: ${PRIMARY_ACCENT}; text-transform: uppercase; letter-spacing: 1.5px; margin: 0; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Today's Prompt</p>
+                <p class="email-prompt-label" style="font-size: 11px; color: #384c37; text-transform: uppercase; letter-spacing: 1.5px; margin: 0; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Today's Prompt</p>
               </td>
             </tr>
             <tr>
               <td align="center">
-                <p class="email-text-dark" style="font-size: 19px; color: ${TEXT_DARK}; line-height: 1.6; margin: 0; font-weight: 400; font-style: italic; font-family: Georgia, 'Times New Roman', serif;">
+                <p class="email-prompt-text" style="font-size: 19px; color: #1a1a1a; line-height: 1.6; margin: 0; font-weight: 500; font-style: italic; font-family: Georgia, 'Times New Roman', serif;">
                   "${prompt}"
                 </p>
               </td>
