@@ -1060,6 +1060,8 @@ function generateWeeklyDigestEmailHTML(name: string, digest: WeeklyDigest): stri
 
 /**
  * Generate subscription confirmation email HTML
+ * Supports both purchased and gifted premium subscriptions
+ * Includes proper dark mode CSS classes for email client compatibility
  */
 function generateSubscriptionConfirmationHTML(name: string, planName: string): string {
   const bodyHTML = `
@@ -1067,24 +1069,30 @@ function generateSubscriptionConfirmationHTML(name: string, planName: string): s
     
     ${paragraph(`Hi ${name},`, { align: 'center' })}
     
-    ${paragraph(`Your ${planName} subscription is active.`)}
+    ${paragraph(`Your ${planName} subscription is now active. Thank you for joining us on this journey of mindful reflection.`, { align: 'center' })}
     
-    ${infoBox(`
-      ${h3('Included with Premium', { align: 'left' })}
-      <ul class="email-text-gray" style="color: ${TEXT_GRAY}; line-height: 1.9; margin: 16px 0 0 0; padding-left: 20px; font-size: 15px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-        <li class="email-text-gray" style="margin-bottom: 8px;">Daily prompts</li>
-        <li class="email-text-gray" style="margin-bottom: 8px;">Weekly and monthly reflections</li>
-        <li class="email-text-gray" style="margin-bottom: 8px;">From Your Past resurfacing</li>
-        <li class="email-text-gray" style="margin-bottom: 8px;">Export reflections</li>
-        <li class="email-text-gray">Email + Slack delivery</li>
-      </ul>
-    `)}
+    <!-- Premium Features Card with dark mode support -->
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 32px 0;">
+      <tr>
+        <td class="email-premium-card" style="background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%); padding: 28px; border-radius: 16px; border-left: 4px solid #384c37; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);">
+          <h3 class="email-premium-title" style="color: #384c37; font-size: 17px; margin: 0 0 16px 0; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">What's Included</h3>
+          <ul class="email-premium-list" style="color: #1a1a1a; line-height: 1.9; margin: 0; padding-left: 20px; font-size: 15px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <li class="email-premium-item" style="margin-bottom: 10px; color: #1a1a1a;"><strong>Daily prompts</strong> — 7 days a week</li>
+            <li class="email-premium-item" style="margin-bottom: 10px; color: #1a1a1a;"><strong>Weekly & monthly reflections</strong> — AI-powered insights</li>
+            <li class="email-premium-item" style="margin-bottom: 10px; color: #1a1a1a;"><strong>From Your Past</strong> — Meaningful resurfacing</li>
+            <li class="email-premium-item" style="margin-bottom: 10px; color: #1a1a1a;"><strong>Unlimited archive</strong> — All your reflections, always</li>
+            <li class="email-premium-item" style="margin-bottom: 10px; color: #1a1a1a;"><strong>Export reflections</strong> — PDF & TXT formats</li>
+            <li class="email-premium-item" style="color: #1a1a1a;"><strong>Email + Slack delivery</strong> — Your choice</li>
+          </ul>
+        </td>
+      </tr>
+    </table>
     
     <div style="text-align: center; margin: 40px 0;">
-      ${standardButton({ href: 'https://promptandpause.com/dashboard', label: 'Open your dashboard' })}
+      ${standardButton({ href: 'https://promptandpause.com/dashboard', label: 'Start Reflecting' })}
     </div>
     
-    ${paragraph(`You can manage your subscription anytime from your <a href="https://promptandpause.com/dashboard/settings" target="_blank" rel="noopener noreferrer" class="email-text-primary" style="color: ${PRIMARY_ACCENT}; text-decoration: none; font-weight: 500;">settings page</a>.`, { align: 'center', fontSize: '14px' })}
+    ${paragraph(`Manage your subscription anytime in <a href="https://promptandpause.com/dashboard/settings" target="_blank" rel="noopener noreferrer" class="email-link" style="color: #384c37; text-decoration: underline; font-weight: 500;">Settings</a>.`, { align: 'center', fontSize: '14px' })}
   `
 
   return buildBaseEmail({

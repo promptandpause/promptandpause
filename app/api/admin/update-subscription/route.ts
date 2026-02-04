@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { checkAdminAuth } from '@/lib/services/adminService'
+import { sendSubscriptionEmail } from '@/lib/services/emailService'
 import { z } from 'zod'
 
 const BodySchema = z.object({
@@ -58,10 +59,25 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
+    // Send Welcome to Premium email if upgrading to premium
+    if (tier === 'premium' && data[0]) {
+      const planName = `Admin-granted Premium (${durationMonths ?? 1} month${(durationMonths ?? 1) > 1 ? 's' : ''})`
+      sendSubscriptionEmail(
+        userEmail,
+        data[0].id,
+        'confirmation',
+        planName,
+        data[0].full_name
+      ).catch((err) => {
+        console.error('Failed to send admin upgrade welcome email:', err)
+      })
+    }
+
     return NextResponse.json({
       success: true,
       message: `User ${userEmail} updated to ${tier} tier`,
       data: data[0],
+      emailSent: tier === 'premium',
     })
   } catch (error: any) {
     return NextResponse.json(

@@ -316,6 +316,17 @@ export function emailWrapper(content: string, options: {
           }
           .email-prompt-label { color: #86efac !important; }
           .email-prompt-text { color: #f7fafc !important; }
+          
+          /* Dark mode premium welcome card */
+          .email-premium-card {
+            background: linear-gradient(135deg, #1a3a2a 0%, #2d3748 100%) !important;
+            border-left-color: #86efac !important;
+          }
+          .email-premium-title { color: #86efac !important; }
+          .email-premium-list { color: #f7fafc !important; }
+          .email-premium-item { color: #f7fafc !important; }
+          .email-premium-item strong { color: #ffffff !important; }
+          .email-link { color: #86efac !important; }
         }
         
         /* Gmail Dark Mode Support */
@@ -326,6 +337,11 @@ export function emailWrapper(content: string, options: {
         [data-ogsc] .email-prompt-card { background-color: #2d3748 !important; }
         [data-ogsc] .email-prompt-label { color: #86efac !important; }
         [data-ogsc] .email-prompt-text { color: #f7fafc !important; }
+        [data-ogsc] .email-premium-card { background: #1a3a2a !important; }
+        [data-ogsc] .email-premium-title { color: #86efac !important; }
+        [data-ogsc] .email-premium-list { color: #f7fafc !important; }
+        [data-ogsc] .email-premium-item { color: #f7fafc !important; }
+        [data-ogsc] .email-link { color: #86efac !important; }
         
         /* Outlook Dark Mode Support */
         [data-ogsb] .email-body-bg { background-color: ${DARK_MODE_COLORS.backgroundLight} !important; }
@@ -333,6 +349,9 @@ export function emailWrapper(content: string, options: {
         [data-ogsb] .email-text-dark { color: ${DARK_MODE_COLORS.textDark} !important; }
         [data-ogsb] .email-prompt-card { background-color: #2d3748 !important; }
         [data-ogsb] .email-prompt-text { color: #f7fafc !important; }
+        [data-ogsb] .email-premium-card { background: #1a3a2a !important; }
+        [data-ogsb] .email-premium-title { color: #86efac !important; }
+        [data-ogsb] .email-premium-item { color: #f7fafc !important; }
       </style>
     </head>
     

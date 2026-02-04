@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { checkAdminAuth } from '@/lib/services/adminService'
+import { sendSubscriptionEmail } from '@/lib/services/emailService'
 
 /**
  * POST /api/subscription/gift
@@ -61,6 +62,27 @@ export async function POST(request: NextRequest) {
       throw new Error(updateError.message)
     }
 
+    // Fetch user profile to send welcome email
+    const { data: userProfile } = await supabase
+      .from('profiles')
+      .select('email, full_name')
+      .eq('id', userId)
+      .single()
+
+    // Send Welcome to Premium email
+    if (userProfile?.email) {
+      const planName = `Gifted Premium (${durationDays} days)`
+      sendSubscriptionEmail(
+        userProfile.email,
+        userId,
+        'confirmation',
+        planName,
+        userProfile.full_name
+      ).catch((err) => {
+        console.error('Failed to send gift welcome email:', err)
+      })
+    }
+
     const formattedDate = endDate.toLocaleDateString('en-GB', {
       day: 'numeric',
       month: 'long',
@@ -73,6 +95,7 @@ export async function POST(request: NextRequest) {
       userId,
       endDate: formattedDate,
       endDateISO: endDate.toISOString(),
+      emailSent: !!userProfile?.email,
     })
   } catch (error: any) {
     return NextResponse.json(
