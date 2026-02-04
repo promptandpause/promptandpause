@@ -450,7 +450,7 @@ export async function POST(request: NextRequest) {
       (existingPrompts || []).map(p => [p.user_id, p])
     )
 
-    // OPTIMIZATION: Batch fetch monthly prompt counts for free users
+    // OPTIMIZATION: Batch fetch weekly prompt counts for free users (3 per week limit)
     const freeUserIds = eligibleUsers
       .filter(u => {
         const profile = u.profiles as any
@@ -458,16 +458,23 @@ export async function POST(request: NextRequest) {
       })
       .map(u => u.user_id)
     
-    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0]
-    const { data: monthlyPrompts } = await supabase
+    // Calculate start of current week (Monday)
+    const dayOfWeek = now.getDay() // 0 = Sunday, 1 = Monday, etc.
+    const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1 // If Sunday, go back 6 days
+    const weekStart = new Date(now)
+    weekStart.setDate(now.getDate() - daysToMonday)
+    weekStart.setHours(0, 0, 0, 0)
+    const weekStartStr = weekStart.toISOString().split('T')[0]
+    
+    const { data: weeklyPrompts } = await supabase
       .from('prompts_history')
       .select('user_id')
       .in('user_id', freeUserIds)
-      .gte('date_generated', monthStart)
+      .gte('date_generated', weekStartStr)
     
-    const monthlyCountMap = new Map<string, number>()
-    for (const p of monthlyPrompts || []) {
-      monthlyCountMap.set(p.user_id, (monthlyCountMap.get(p.user_id) || 0) + 1)
+    const weeklyCountMap = new Map<string, number>()
+    for (const p of weeklyPrompts || []) {
+      weeklyCountMap.set(p.user_id, (weeklyCountMap.get(p.user_id) || 0) + 1)
     }
 
     // OPTIMIZATION: Batch fetch push subscriptions
@@ -517,28 +524,23 @@ export async function POST(request: NextRequest) {
         const existingPrompt = existingPromptsMap.get(profile.id)
 
         if (existingPrompt) {
-          // Check if they've used (completed) the prompt
-          if (existingPrompt.used) {
-            return { user_id: profile.id, status: 'skipped', reason: 'already_completed' }
-          }
-          // They have a prompt but haven't completed it - still send reminder
+          // User already has a prompt for today - skip sending notification
+          // This handles both manual generation and previous cron runs
+          return { user_id: profile.id, status: 'skipped', reason: 'prompt_already_generated_today' }
         }
 
-        // Check free tier limits (7 prompts per month for free users) - from pre-fetched data
+        // Check free tier limits (3 prompts per WEEK for free users) - from pre-fetched data
         if (isFreeUser) {
-          const promptsThisMonth = monthlyCountMap.get(profile.id) || 0
-          if (promptsThisMonth >= 7) {
-            return { user_id: profile.id, status: 'skipped', reason: 'free_tier_limit_reached' }
+          const promptsThisWeek = weeklyCountMap.get(profile.id) || 0
+          if (promptsThisWeek >= 3) {
+            return { user_id: profile.id, status: 'skipped', reason: 'free_tier_weekly_limit_reached' }
           }
         }
 
-        // Generate a new prompt if one doesn't exist
+        // Generate a new prompt (we already returned early if one exists)
         let promptText = ''
         
-        if (existingPrompt) {
-          // Use the pre-fetched prompt text
-          promptText = existingPrompt.prompt_text || FALLBACK_PROMPT_TEXT
-        } else {
+        {
           // Generate new prompt
           // Fetch recent reflections for context
           const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
