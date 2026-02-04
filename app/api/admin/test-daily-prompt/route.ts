@@ -5,6 +5,7 @@ import { sendDailyPromptEmail } from '@/lib/services/emailService'
 import { sendDailyPromptToSlack } from '@/lib/services/slackService'
 import { generatePrompt } from '@/lib/services/aiService'
 import { GeneratePromptContext } from '@/lib/types/reflection'
+import crypto from 'crypto'
 
 /**
  * POST /api/admin/test-daily-prompt
@@ -19,17 +20,45 @@ import { GeneratePromptContext } from '@/lib/types/reflection'
  */
 export async function POST(request: NextRequest) {
   try {
-    // Require admin auth
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    // Check for OTP session first
+    const sessionToken = request.cookies.get('admin_session')?.value
+    let userEmail = null
 
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (sessionToken) {
+      const supabase = createServiceRoleClient()
+      const sessionHash = crypto.createHash('sha256').update(sessionToken).digest('hex')
+      const { data: session } = await supabase
+        .from('admin_sessions')
+        .select('*, admin_users!inner(email)')
+        .eq('session_token', sessionHash)
+        .single()
+
+      if (session && new Date(session.expires_at) >= new Date()) {
+        userEmail = session.admin_users.email
+      }
     }
 
-    const adminAuth = await checkAdminAuth(user.email || '')
-    if (!adminAuth.isAdmin) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
+    // If no OTP session, check Supabase auth
+    if (!userEmail) {
+      const supabase = await createClient()
+      const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+      if (authError || !user) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      }
+
+      const adminAuth = await checkAdminAuth(user.email || '')
+      if (!adminAuth.isAdmin) {
+        return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
+      }
+
+      userEmail = user.email
+    } else {
+      // Verify OTP user is admin
+      const adminAuth = await checkAdminAuth(userEmail)
+      if (!adminAuth.isAdmin) {
+        return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
+      }
     }
 
     const body = await request.json().catch(() => ({}))
@@ -37,8 +66,26 @@ export async function POST(request: NextRequest) {
 
     const serviceSupabase = createServiceRoleClient()
 
+    // Get admin user profile for default
+    let adminUserId = null
+    if (userEmail) {
+      const { data: adminProfile } = await serviceSupabase
+        .from('profiles')
+        .select('id')
+        .eq('email', userEmail)
+        .single()
+      adminUserId = adminProfile?.id
+    }
+
     // Get target user (default to admin)
-    const targetUserId = userId || user.id
+    const targetUserId = userId || adminUserId
+    if (!targetUserId) {
+      return NextResponse.json({ 
+        error: 'Could not determine target user',
+        userEmail 
+      }, { status: 400 })
+    }
+    
     const { data: targetProfile, error: profileError } = await serviceSupabase
       .from('profiles')
       .select('id, email, full_name, timezone_iana, timezone')
@@ -155,17 +202,45 @@ export async function POST(request: NextRequest) {
  */
 export async function GET(request: NextRequest) {
   try {
-    // Require admin auth
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    // Check for OTP session first
+    const sessionToken = request.cookies.get('admin_session')?.value
+    let userEmail = null
 
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (sessionToken) {
+      const supabase = createServiceRoleClient()
+      const sessionHash = crypto.createHash('sha256').update(sessionToken).digest('hex')
+      const { data: session } = await supabase
+        .from('admin_sessions')
+        .select('*, admin_users!inner(email)')
+        .eq('session_token', sessionHash)
+        .single()
+
+      if (session && new Date(session.expires_at) >= new Date()) {
+        userEmail = session.admin_users.email
+      }
     }
 
-    const adminAuth = await checkAdminAuth(user.email || '')
-    if (!adminAuth.isAdmin) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
+    // If no OTP session, check Supabase auth
+    if (!userEmail) {
+      const supabase = await createClient()
+      const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+      if (authError || !user) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      }
+
+      const adminAuth = await checkAdminAuth(user.email || '')
+      if (!adminAuth.isAdmin) {
+        return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
+      }
+
+      userEmail = user.email
+    } else {
+      // Verify OTP user is admin
+      const adminAuth = await checkAdminAuth(userEmail)
+      if (!adminAuth.isAdmin) {
+        return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
+      }
     }
 
     const serviceSupabase = createServiceRoleClient()
