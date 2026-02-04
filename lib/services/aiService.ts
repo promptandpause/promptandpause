@@ -242,6 +242,16 @@ function sanitizeGeneratedPrompt(text: string): string | null {
  * @returns Promise<{ prompt: string, provider: AIProvider, model: string }>
  */
 
+// Timeout wrapper for AI calls - prevents hanging
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => 
+      setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms)
+    )
+  ])
+}
+
 export async function generatePrompt(context: GeneratePromptContext): Promise<{
   prompt: string
   provider: AIProvider
@@ -254,67 +264,86 @@ export async function generatePrompt(context: GeneratePromptContext): Promise<{
   const systemPrompt = buildSystemPrompt(promptType, allowDeeper)
   const userContext = buildUserContext(context)
 
-  // Try OpenAI GPT first (primary provider)
+  // FAST PATH: Try OpenAI and Gemini in parallel (both are fast and reliable)
+  // First one to succeed wins - this dramatically reduces wait time
+  const fastProviders: Promise<{ prompt: string; provider: AIProvider; model: string } | null>[] = []
+
   if (process.env.OPENAI_API_KEY) {
-    try {
-      const rawPrompt = await generateWithOpenAI(systemPrompt, userContext)
-      const prompt = rawPrompt ? sanitizeGeneratedPrompt(rawPrompt) : null
-      
-      if (prompt) {
-        return {
-          prompt,
-          provider: 'openai',
-          model: OPENAI_MODEL,
-          prompt_type: promptType,
-        }
-      }
-    } catch (error) {
+    fastProviders.push(
+      withTimeout(
+        (async () => {
+          const rawPrompt = await generateWithOpenAI(systemPrompt, userContext)
+          const prompt = rawPrompt ? sanitizeGeneratedPrompt(rawPrompt) : null
+          if (prompt) {
+            return { prompt, provider: 'openai' as AIProvider, model: OPENAI_MODEL }
+          }
+          return null
+        })(),
+        8000, // 8 second timeout
+        'OpenAI'
+      ).catch(() => null)
+    )
+  }
+
+  if (gemini) {
+    fastProviders.push(
+      withTimeout(
+        (async () => {
+          const rawPrompt = await generateWithGemini(systemPrompt, userContext)
+          const prompt = rawPrompt ? sanitizeGeneratedPrompt(rawPrompt) : null
+          if (prompt) {
+            return { prompt, provider: 'gemini' as AIProvider, model: GEMINI_MODEL }
+          }
+          return null
+        })(),
+        8000, // 8 second timeout
+        'Gemini'
+      ).catch(() => null)
+    )
+  }
+
+  // Race the fast providers - first valid result wins
+  if (fastProviders.length > 0) {
+    const results = await Promise.all(fastProviders)
+    const validResult = results.find(r => r !== null)
+    if (validResult) {
+      return { ...validResult, prompt_type: promptType }
     }
   }
 
-  // Try OpenRouter as fallback (FREE with multi-model fallback chain)
+  // FALLBACK PATH: Try OpenRouter (has multiple free models)
   if (openrouter) {
     try {
-      const result = await generateWithOpenRouter(systemPrompt, userContext)
+      const result = await withTimeout(
+        generateWithOpenRouter(systemPrompt, userContext),
+        12000, // 12 second timeout for multi-model fallback
+        'OpenRouter'
+      )
       
       if (result) {
         const prompt = sanitizeGeneratedPrompt(result.text)
-        if (!prompt) {
-          throw new Error('OpenRouter returned empty prompt')
-        }
-        return {
-          prompt,
-          provider: 'openai', // OpenRouter uses OpenAI-compatible API
-          model: result.model,
-          prompt_type: promptType,
-        }
-      }
-    } catch (error) {
-    }
-  }
-
-  // Try Gemini as fallback
-  if (gemini) {
-    try {
-      const rawPrompt = await generateWithGemini(systemPrompt, userContext)
-      const prompt = rawPrompt ? sanitizeGeneratedPrompt(rawPrompt) : null
-      
-      if (prompt) {
-        return {
-          prompt,
-          provider: 'gemini',
-          model: GEMINI_MODEL,
-          prompt_type: promptType,
+        if (prompt) {
+          return {
+            prompt,
+            provider: 'openai',
+            model: result.model,
+            prompt_type: promptType,
+          }
         }
       }
     } catch (error) {
+      // Continue to next fallback
     }
   }
 
-  // Final fallback to Hugging Face (100% FREE, no credit card)
+  // FINAL FALLBACK: Hugging Face (100% FREE, no credit card)
   if (huggingface) {
     try {
-      const rawPrompt = await generateWithHuggingFace(systemPrompt, userContext)
+      const rawPrompt = await withTimeout(
+        generateWithHuggingFace(systemPrompt, userContext),
+        15000, // 15 second timeout
+        'HuggingFace'
+      )
       const prompt = rawPrompt ? sanitizeGeneratedPrompt(rawPrompt) : null
       
       if (prompt) {
@@ -326,6 +355,7 @@ export async function generatePrompt(context: GeneratePromptContext): Promise<{
         }
       }
     } catch (error) {
+      // All providers failed
     }
   }
 

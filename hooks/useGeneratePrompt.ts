@@ -44,40 +44,71 @@ export function useGeneratePrompt() {
   
   const invalidateStats = useInvalidateReflectionStats()
 
-  const generatePrompt = useCallback(async (): Promise<GeneratedPrompt | null> => {
+  const generatePrompt = useCallback(async (retryCount = 0): Promise<GeneratedPrompt | null> => {
+    const MAX_RETRIES = 1 // Allow one automatic retry
+    
     try {
       setIsLoading(true)
       setError(null)
+
+      // Add timeout to prevent hanging
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 30000) // 30 second timeout
 
       const response = await fetch('/api/prompts/generate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        signal: controller.signal,
       })
+
+      clearTimeout(timeoutId)
 
       if (!response.ok) {
         if (response.status === 401) {
-          setError('Unauthorized')
+          setError('Please sign in to generate prompts')
           setPrompt(null)
           return null
         }
         
         if (response.status === 429) {
-          setError('Too many requests. Please wait a bit.')
+          setError('Too many requests. Please wait a moment.')
           return null
         }
 
-        throw new Error(`HTTP ${response.status}`)
+        if (response.status === 403) {
+          const data = await response.json().catch(() => ({}))
+          setError(data.message || 'Weekly limit reached. Upgrade for unlimited prompts.')
+          return null
+        }
+
+        if (response.status === 503) {
+          // AI service unavailable - retry once
+          if (retryCount < MAX_RETRIES) {
+            setError('AI service busy, retrying...')
+            await new Promise(r => setTimeout(r, 2000)) // Wait 2 seconds
+            return generatePrompt(retryCount + 1)
+          }
+          setError('AI service temporarily unavailable. Please try again.')
+          return null
+        }
+
+        throw new Error(`Server error (${response.status})`)
       }
 
       const text = await response.text()
       if (!text || !text.trim()) {
-        throw new Error('Empty response body')
+        throw new Error('Empty response from server')
       }
       const data = JSON.parse(text)
 
       if (!data.success || !data.data) {
+        // Check if it's a specific error message
+        if (data.error) {
+          setError(data.message || data.error)
+          return null
+        }
         throw new Error('Invalid response format')
       }
 
@@ -99,8 +130,12 @@ export function useGeneratePrompt() {
 
       return generatedPrompt
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error'
-      setError(errorMessage)
+      if (err instanceof Error && err.name === 'AbortError') {
+        setError('Request timed out. Please try again.')
+      } else {
+        const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+        setError(errorMessage)
+      }
       setPrompt(null)
       return null
     } finally {
