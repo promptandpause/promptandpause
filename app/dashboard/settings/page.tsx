@@ -952,7 +952,7 @@ function SettingsPageContent() {
                       }`}>{fullName || 'Your Profile'}</p>
                       <p className={`text-sm ${
                         theme === 'dark' ? 'text-white/60' : 'text-gray-500'
-                      }`}>Name, email, timezone</p>
+                      }`}>Manage your profile</p>
                     </div>
                     <ChevronRight className={`h-5 w-5 flex-shrink-0 ${
                       theme === 'dark' ? 'text-white/30' : 'text-gray-300'
@@ -1097,10 +1097,32 @@ function SettingsPageContent() {
                   </Link>
                 </div>
 
-                {/* Group 4: Danger Zone */}
+                {/* Group 4: Account Management */}
                 <div className={`rounded-xl overflow-hidden ${
                   theme === 'dark' ? 'bg-white/10 backdrop-blur-xl' : 'bg-white shadow-sm'
                 }`}>
+                  {/* Sign Out */}
+                  <button 
+                    onClick={async () => {
+                      await supabase.auth.signOut()
+                      router.push('/auth')
+                    }}
+                    className={`w-full flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity cursor-pointer ${
+                      theme === 'dark' ? 'active:bg-white/5' : 'active:bg-gray-50'
+                    }`}
+                  >
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-gray-400 to-gray-600">
+                      <ArrowRight className="h-4.5 w-4.5 text-white rotate-180" />
+                    </div>
+                    <span className={`flex-1 text-left text-[17px] ${
+                      theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    }`}>Sign Out</span>
+                  </button>
+                  
+                  {/* Divider */}
+                  <div className={`ml-[60px] h-px ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-200'}`} />
+                  
+                  {/* Account Management */}
                   <div 
                     onClick={() => navigateToView('danger')}
                     className={`flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity cursor-pointer ${
@@ -1112,7 +1134,7 @@ function SettingsPageContent() {
                     </div>
                     <span className={`flex-1 text-[17px] ${
                       theme === 'dark' ? 'text-white' : 'text-gray-900'
-                    }`}>Danger Zone</span>
+                    }`}>Account Management</span>
                     <ChevronRight className={`h-5 w-5 ${
                       theme === 'dark' ? 'text-white/30' : 'text-gray-300'
                     }`} />
@@ -1222,16 +1244,13 @@ function SettingsPageContent() {
                             })}
                           </SelectContent>
                         </Select>
-                        {timezoneInfo && (
-                          <div className={`text-xs space-y-1 ${
-                            theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-                          }`}>
-                            <p>🌍 {timezoneInfo.display}</p>
-                            <p className={theme === 'dark' ? 'text-white/50' : 'text-gray-500'}>{timezoneInfo.dstNote}</p>
-                          </div>
+                        {timezoneInfo && timezoneInfo.dstNote && (
+                          <p className={`text-xs ${
+                            theme === 'dark' ? 'text-white/50' : 'text-gray-500'
+                          }`}>{timezoneInfo.dstNote}</p>
                         )}
                       </div>
-                      <Button onClick={handleSaveProfile} className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white h-10">
+                      <Button onClick={handleSaveProfile} className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white h-12 text-base font-medium rounded-xl shadow-lg active:scale-[0.98] transition-transform">
                         Save Changes
                       </Button>
                     </div>
@@ -1323,7 +1342,7 @@ function SettingsPageContent() {
                         }`}>Schedule</h4>
                       </div>
                       <div className="space-y-4">
-                        {/* Time Picker with Clock Icon */}
+                        {/* Time Picker with Clock Icon and Chevron */}
                         <div className="space-y-1.5">
                           <Label htmlFor="reminder-time-mobile" className={`text-sm font-medium ${
                             theme === 'dark' ? 'text-white/90' : 'text-gray-700'
@@ -1334,21 +1353,29 @@ function SettingsPageContent() {
                               type="time"
                               value={reminderTime}
                               onChange={(e) => setReminderTime(e.target.value)}
-                              className={`text-sm h-12 pl-10 ${
+                              className={`text-base h-14 pl-12 pr-10 rounded-xl cursor-pointer ${
                                 theme === 'dark'
-                                  ? 'bg-white/10 border border-white/20 text-white'
-                                  : 'bg-white border-2 border-gray-300 text-gray-900'
+                                  ? 'bg-white/10 border border-white/20 text-white hover:bg-white/15'
+                                  : 'bg-white border-2 border-gray-300 text-gray-900 hover:border-gray-400 shadow-sm'
                               }`}
                             />
-                            <div className={`absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none ${
+                            <div className={`absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none ${
                               theme === 'dark' ? 'text-white/50' : 'text-gray-400'
                             }`}>
-                              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <circle cx="12" cy="12" r="10"/>
                                 <polyline points="12 6 12 12 16 14"/>
                               </svg>
                             </div>
+                            <div className={`absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none ${
+                              theme === 'dark' ? 'text-white/40' : 'text-gray-400'
+                            }`}>
+                              <ChevronRight className="h-5 w-5 rotate-90" />
+                            </div>
                           </div>
+                          <p className={`text-xs ${
+                            theme === 'dark' ? 'text-white/50' : 'text-gray-500'
+                          }`}>Daily reminders will be sent at this time</p>
                         </div>
                         
                         {/* Day Selector with Improved Touch Targets */}
@@ -1417,21 +1444,6 @@ function SettingsPageContent() {
                     <Button onClick={handleSaveNotifications} className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white h-12 text-base font-medium rounded-xl shadow-lg active:scale-[0.98] transition-transform">
                       Save Settings
                     </Button>
-
-                    {/* Logout at bottom - less prominent */}
-                    <button
-                      onClick={async () => {
-                        await supabase.auth.signOut()
-                        router.push('/auth')
-                      }}
-                      className={`w-full py-3 text-sm font-medium rounded-xl transition-colors md:hidden ${
-                        theme === 'dark'
-                          ? 'text-white/50 hover:text-white/70 hover:bg-white/5'
-                          : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
-                      }`}
-                    >
-                      Sign Out
-                    </button>
                   </div>
                 )}
 
@@ -1442,7 +1454,7 @@ function SettingsPageContent() {
                       : 'bg-white/80 border-2 border-gray-300'
                   }`}>
                     <div className="flex items-center gap-2 mb-4">
-                      <Lock className="h-5 w-5 text-red-600" />
+                      <Lock className="h-5 w-5 text-gray-600" />
                       <h3 className={`text-xl font-semibold ${
                         theme === 'dark' ? 'text-white' : 'text-gray-900'
                       }`}>Security</h3>
@@ -1450,15 +1462,22 @@ function SettingsPageContent() {
                     {authProvider && authProvider !== 'email' && (
                       <div className={`mb-4 p-3 rounded-xl ${
                         theme === 'dark'
-                          ? 'bg-blue-500/10 border border-blue-400/30'
-                          : 'bg-blue-50 border-2 border-blue-300'
+                          ? 'bg-green-500/10'
+                          : 'bg-green-50'
                       }`}>
-                        <p className={`text-sm ${
-                          theme === 'dark' ? 'text-blue-200' : 'text-gray-900'
-                        }`}>
-                          <span className="font-medium">Signed in with Google</span>
-                          {!hasPassword && <span className={theme === 'dark' ? 'text-blue-200/80' : 'text-gray-700'}> • Set backup password</span>}
-                        </p>
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 className={`h-4 w-4 ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`} />
+                          <p className={`text-sm font-medium ${
+                            theme === 'dark' ? 'text-green-300' : 'text-green-700'
+                          }`}>Signed in with Google</p>
+                        </div>
+                        {!hasPassword && (
+                          <p className={`text-xs mt-1.5 ml-6 ${
+                            theme === 'dark' ? 'text-white/60' : 'text-gray-600'
+                          }`}>
+                            Want extra security? Set a backup password below (optional)
+                          </p>
+                        )}
                       </div>
                     )}
                     <div className="space-y-3">
@@ -1467,52 +1486,91 @@ function SettingsPageContent() {
                           <Label className={`text-sm font-medium ${
                             theme === 'dark' ? 'text-white/90' : 'text-gray-700'
                           }`}>Current Password</Label>
-                          <Input
-                            type="password"
-                            placeholder="Current password"
-                            value={currentPassword}
-                            onChange={(e) => setCurrentPassword(e.target.value)}
-                            className={`text-sm h-10 ${
-                              theme === 'dark'
-                                ? 'bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:border-blue-400'
-                                : 'bg-white border-2 border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200'
-                            }`}
-                          />
+                          <div className="relative">
+                            <Input
+                              type={showPasswordFields ? "text" : "password"}
+                              placeholder="Current password"
+                              value={currentPassword}
+                              onChange={(e) => setCurrentPassword(e.target.value)}
+                              className={`text-sm h-12 pr-10 ${
+                                theme === 'dark'
+                                  ? 'bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:border-blue-400'
+                                  : 'bg-white border-2 border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200'
+                              }`}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setShowPasswordFields(!showPasswordFields)}
+                              className={`absolute right-3 top-1/2 -translate-y-1/2 ${
+                                theme === 'dark' ? 'text-white/50 hover:text-white/70' : 'text-gray-400 hover:text-gray-600'
+                              }`}
+                            >
+                              {showPasswordFields ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                            </button>
+                          </div>
                         </div>
                       )}
                       <div className="space-y-1.5">
                         <Label className={`text-sm font-medium ${
                           theme === 'dark' ? 'text-white/90' : 'text-gray-700'
                         }`}>{hasPassword ? 'New Password' : 'Set Password'}</Label>
-                        <Input
-                          type="password"
-                          placeholder={hasPassword ? "New password" : "Create password"}
-                          value={newPassword}
-                          onChange={(e) => setNewPassword(e.target.value)}
-                          className={`text-sm h-10 ${
-                            theme === 'dark'
-                              ? 'bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:border-blue-400'
-                              : 'bg-white border-2 border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200'
-                          }`}
-                        />
+                        <div className="relative">
+                          <Input
+                            type={showPasswordFields ? "text" : "password"}
+                            placeholder={hasPassword ? "New password" : "Create password"}
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            className={`text-sm h-12 pr-10 ${
+                              theme === 'dark'
+                                ? 'bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:border-blue-400'
+                                : 'bg-white border-2 border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200'
+                            }`}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPasswordFields(!showPasswordFields)}
+                            className={`absolute right-3 top-1/2 -translate-y-1/2 ${
+                              theme === 'dark' ? 'text-white/50 hover:text-white/70' : 'text-gray-400 hover:text-gray-600'
+                            }`}
+                          >
+                            {showPasswordFields ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                          </button>
+                        </div>
                       </div>
                       <div className="space-y-1.5">
                         <Label className={`text-sm font-medium ${
                           theme === 'dark' ? 'text-white/90' : 'text-gray-700'
                         }`}>Confirm Password</Label>
-                        <Input
-                          type="password"
-                          placeholder="Confirm password"
-                          value={confirmPassword}
-                          onChange={(e) => setConfirmPassword(e.target.value)}
-                          className={`text-sm h-10 ${
-                            theme === 'dark'
-                              ? 'bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:border-blue-400'
-                              : 'bg-white border-2 border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200'
-                          }`}
-                        />
+                        <div className="relative">
+                          <Input
+                            type={showPasswordFields ? "text" : "password"}
+                            placeholder="Confirm password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            className={`text-sm h-12 pr-10 ${
+                              theme === 'dark'
+                                ? 'bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:border-blue-400'
+                                : 'bg-white border-2 border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200'
+                            }`}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPasswordFields(!showPasswordFields)}
+                            className={`absolute right-3 top-1/2 -translate-y-1/2 ${
+                              theme === 'dark' ? 'text-white/50 hover:text-white/70' : 'text-gray-400 hover:text-gray-600'
+                            }`}
+                          >
+                            {showPasswordFields ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                          </button>
+                        </div>
                       </div>
-                      <Button onClick={handleUpdatePassword} className="w-full bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white h-10">
+                      {/* Password requirements */}
+                      <p className={`text-xs ${
+                        theme === 'dark' ? 'text-white/50' : 'text-gray-500'
+                      }`}>
+                        Password must be at least 8 characters
+                      </p>
+                      <Button onClick={handleUpdatePassword} className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white h-12 text-base font-medium rounded-xl shadow-lg active:scale-[0.98] transition-transform">
                         {hasPassword ? 'Update Password' : 'Set Password'}
                       </Button>
                     </div>
@@ -2016,14 +2074,14 @@ function SettingsPageContent() {
                 {currentView === 'danger' && (
                   <Card className={`backdrop-blur-xl rounded-3xl p-4 shadow-lg ${
                     theme === 'dark'
-                      ? 'bg-red-500/10 border border-red-400/30'
-                      : 'bg-red-50 border-2 border-red-300'
+                      ? 'bg-white/5 border border-white/10'
+                      : 'bg-white/80 border-2 border-gray-300'
                   }`}>
                     <div className="flex items-center gap-2 mb-4">
-                      <Shield className="h-5 w-5 text-red-600" />
+                      <Settings2 className="h-5 w-5 text-gray-600" />
                       <h3 className={`text-xl font-semibold ${
-                        theme === 'dark' ? 'text-red-200' : 'text-gray-900'
-                      }`}>Danger Zone</h3>
+                        theme === 'dark' ? 'text-white' : 'text-gray-900'
+                      }`}>Account Management</h3>
                     </div>
                     <div className="space-y-3">
                       <div className={`p-4 rounded-xl ${
