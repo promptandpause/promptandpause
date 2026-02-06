@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceRoleClient } from '@/lib/supabase/server'
-import { sendDailyPromptEmail } from '@/lib/services/emailService'
+import { sendDailyPromptEmail, sendBatchDailyPromptEmails } from '@/lib/services/emailService'
 import { sendDailyPromptToSlack } from '@/lib/services/slackService'
 import { generatePrompt } from '@/lib/services/aiService'
 import { selectDailyFocusArea } from '@/lib/services/focusAreaRotationService'
@@ -495,12 +495,25 @@ export async function POST(request: NextRequest) {
     let skippedCount = 0
     const results: any[] = []
 
-    // Rate limit helper: Resend allows max 2 requests/second
-    // We use 600ms delay between sends to stay safely under the limit
-    const RATE_LIMIT_DELAY_MS = 600
-    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+    // =========================================================================
+    // PHASE 1: Generate prompts and determine delivery for each user
+    // This phase handles eligibility checks, AI prompt generation, and
+    // collecting payloads for batch sending. Prompt generation is sequential
+    // because each user gets a personalized AI-generated prompt.
+    // =========================================================================
     
-    const processUser = async (user: typeof eligibleUsers[0]) => {
+    interface PreparedUser {
+      userId: string
+      email: string
+      fullName: string | null
+      promptText: string
+      deliveryMethod: string
+      slackWebhookUrl: string | null
+    }
+    
+    const preparedUsers: PreparedUser[] = []
+    
+    for (const user of eligibleUsers) {
       const profile = user.profiles as any
       const userPrefs = user
       
@@ -519,208 +532,234 @@ export async function POST(request: NextRequest) {
         )
         
         if (!shouldSend) {
-          return { user_id: profile.id, status: 'skipped', reason: frequencyReason }
+          results.push({ user_id: profile.id, status: 'skipped', reason: frequencyReason })
+          skippedCount++
+          continue
         }
 
         // Check if user already has a prompt for today (from pre-fetched data)
         const existingPrompt = existingPromptsMap.get(profile.id)
 
         if (existingPrompt) {
-          // User already has a prompt for today - skip sending notification
-          // This handles both manual generation and previous cron runs
-          return { user_id: profile.id, status: 'skipped', reason: 'prompt_already_generated_today' }
+          results.push({ user_id: profile.id, status: 'skipped', reason: 'prompt_already_generated_today' })
+          skippedCount++
+          continue
         }
 
         // Check free tier limits (3 prompts per WEEK for free users) - from pre-fetched data
         if (isFreeUser) {
           const promptsThisWeek = weeklyCountMap.get(profile.id) || 0
           if (promptsThisWeek >= 3) {
-            return { user_id: profile.id, status: 'skipped', reason: 'free_tier_weekly_limit_reached' }
+            results.push({ user_id: profile.id, status: 'skipped', reason: 'free_tier_weekly_limit_reached' })
+            skippedCount++
+            continue
           }
         }
 
-        // Generate a new prompt (we already returned early if one exists)
+        // Generate a new prompt
         let promptText = ''
+
+        // Fetch recent reflections for context
+        const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+        const { data: recentReflections } = await supabase
+          .from('reflections')
+          .select('date, mood, tags')
+          .eq('user_id', profile.id)
+          .gte('date', thirtyDaysAgo)
+          .order('date', { ascending: false })
+          .limit(30)
+
+        const reflectionDates: string[] = (recentReflections || [])
+          .map((r: any) => r?.date)
+          .filter((d: any) => typeof d === 'string' && d.length > 0)
+        const currentStreak = calculateStreakFromDates(reflectionDates)
+
+        const { data: recentPrompts } = await supabase
+          .from('prompts_history')
+          .select('personalization_context')
+          .eq('user_id', profile.id)
+          .order('date_generated', { ascending: false })
+          .limit(12)
+
+        const recentPromptTypes: PromptType[] = (recentPrompts || [])
+          .map((p: any) => p?.personalization_context?.prompt_type)
+          .filter(isPromptType)
+
+        // Select focus area using deterministic rotation
+        const userFocusAreas = userPrefs.focus_areas || []
+        let selectedFocusArea: string | null = null
+        let rotationReason = ''
         
-        {
-          // Generate new prompt
-          // Fetch recent reflections for context
-          const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-          const { data: recentReflections } = await supabase
-            .from('reflections')
-            .select('date, mood, tags')
-            .eq('user_id', profile.id)
-            .gte('date', thirtyDaysAgo)
-            .order('date', { ascending: false })
-            .limit(30)
+        if (userFocusAreas.length > 0) {
+          const rotationResult = await selectDailyFocusArea(profile.id, userFocusAreas)
+          selectedFocusArea = rotationResult.selectedFocus
+          rotationReason = rotationResult.reason
+        }
 
-          const reflectionDates: string[] = (recentReflections || [])
-            .map((r: any) => r?.date)
-            .filter((d: any) => typeof d === 'string' && d.length > 0)
-          const currentStreak = calculateStreakFromDates(reflectionDates)
+        const context: GeneratePromptContext = {
+          focus_areas: userFocusAreas,
+          focus_area_name: selectedFocusArea || undefined,
+          recent_moods: recentReflections?.slice(0, 7).map(r => r.mood) || [],
+          recent_topics: recentReflections
+            ?.flatMap(r => r.tags)
+            .filter((tag, index, self) => self.indexOf(tag) === index)
+            .slice(0, 5) || [],
+          user_reason: userPrefs.reason || undefined,
+          current_streak: currentStreak,
+          recent_prompt_types: recentPromptTypes,
+        }
 
-          const { data: recentPrompts } = await supabase
+        try {
+          const { prompt, provider, model, prompt_type } = await generatePrompt(context)
+          promptText = prompt
+
+          // Save the generated prompt with focus area tracking
+          await supabase
             .from('prompts_history')
-            .select('personalization_context')
-            .eq('user_id', profile.id)
-            .order('date_generated', { ascending: false })
-            .limit(12)
-
-          const recentPromptTypes: PromptType[] = (recentPrompts || [])
-            .map((p: any) => p?.personalization_context?.prompt_type)
-            .filter(isPromptType)
-
-          // Select focus area using deterministic rotation
-          const userFocusAreas = userPrefs.focus_areas || []
-          let selectedFocusArea: string | null = null
-          let rotationReason = ''
-          
-          if (userFocusAreas.length > 0) {
-            const rotationResult = await selectDailyFocusArea(profile.id, userFocusAreas)
-            selectedFocusArea = rotationResult.selectedFocus
-            rotationReason = rotationResult.reason
-          }
-
-          const context: GeneratePromptContext = {
-            focus_areas: userFocusAreas,
-            focus_area_name: selectedFocusArea || undefined,
-            recent_moods: recentReflections?.slice(0, 7).map(r => r.mood) || [],
-            recent_topics: recentReflections
-              ?.flatMap(r => r.tags)
-              .filter((tag, index, self) => self.indexOf(tag) === index)
-              .slice(0, 5) || [],
-            user_reason: userPrefs.reason || undefined,
-            current_streak: currentStreak,
-            recent_prompt_types: recentPromptTypes,
-          }
-
-          try {
-            const { prompt, provider, model, prompt_type } = await generatePrompt(context)
-            promptText = prompt
-
-            // Save the generated prompt with focus area tracking
-            await supabase
-              .from('prompts_history')
-              .insert({
-                user_id: profile.id,
-                prompt_text: promptText,
-                ai_provider: provider,
-                ai_model: model,
-                focus_area_used: selectedFocusArea,
-                personalization_context: { ...context, prompt_type, rotation_reason: rotationReason },
-                date_generated: today,
-                used: false,
-              })
-          } catch (genError) {
-            // Use fallback prompt
-            promptText = FALLBACK_PROMPT_TEXT
-          }
+            .insert({
+              user_id: profile.id,
+              prompt_text: promptText,
+              ai_provider: provider,
+              ai_model: model,
+              focus_area_used: selectedFocusArea,
+              personalization_context: { ...context, prompt_type, rotation_reason: rotationReason },
+              date_generated: today,
+              used: false,
+            })
+        } catch (genError) {
+          // Use fallback prompt
+          promptText = FALLBACK_PROMPT_TEXT
         }
 
-        // Send via email and/or Slack based on delivery_method preference
-        const deliveryMethod = userPrefs.delivery_method || 'email'
-        let emailSent = false
-        let slackSent = false
-        const errors = []
-
-        // Send email if configured
-        if (deliveryMethod === 'email' || deliveryMethod === 'both') {
-          const emailResult = await sendDailyPromptEmail(
-            profile.email,
-            promptText,
-            profile.id,
-            profile.full_name
-          )
-
-          if (emailResult.success) {
-            emailSent = true
-          } else {
-            errors.push(`Email: ${emailResult.error}`)
-          }
-        }
-
-        // Send Slack message if configured
-        if ((deliveryMethod === 'slack' || deliveryMethod === 'both') && userPrefs.slack_webhook_url) {
-          const slackResult = await sendDailyPromptToSlack(
-            userPrefs.slack_webhook_url,
-            promptText,
-            profile.full_name
-          )
-
-          if (slackResult.success) {
-            slackSent = true
-          } else {
-            errors.push(`Slack: ${slackResult.error}`)
-          }
-        }
-
-        // Send push notification if user has subscriptions (from pre-fetched data)
-        let pushSent = false
-        if (isPushConfigured()) {
-          const pushSubs = pushSubsMap.get(profile.id)
-
-          if (pushSubs && pushSubs.length > 0) {
-            const failedEndpoints = await sendPushNotifications(
-              pushSubs,
-              {
-                title: 'Your Daily Prompt is Ready',
-                body: promptText.length > 100 ? promptText.substring(0, 97) + '...' : promptText,
-                url: '/dashboard',
-                tag: `prompt-${today}`,
-              }
-            )
-
-            // Clean up failed subscriptions asynchronously (don't wait)
-            if (failedEndpoints.length > 0) {
-              supabase
-                .from('push_subscriptions')
-                .delete()
-                .eq('user_id', profile.id)
-                .in('endpoint', failedEndpoints)
-                .then(() => {})
-            }
-
-            pushSent = pushSubs.length > failedEndpoints.length
-          }
-        }
-
-        // Return result
-        if (emailSent || slackSent || pushSent) {
-          return {
-            user_id: profile.id,
-            email: profile.email,
-            status: 'sent',
-            channels: { email: emailSent, slack: slackSent, push: pushSent },
-          }
-        } else {
-          return {
-            user_id: profile.id,
-            email: profile.email,
-            status: 'failed',
-            error: errors.join(', '),
-          }
-        }
+        // Add to prepared users for batch delivery
+        preparedUsers.push({
+          userId: profile.id,
+          email: profile.email,
+          fullName: profile.full_name,
+          promptText,
+          deliveryMethod: userPrefs.delivery_method || 'email',
+          slackWebhookUrl: userPrefs.slack_webhook_url || null,
+        })
 
       } catch (userError) {
-        return {
+        results.push({
           user_id: profile.id,
           status: 'error',
           error: userError instanceof Error ? userError.message : 'Unknown error',
-        }
+        })
       }
     }
 
-    // Process users sequentially with rate limiting to respect Resend's 2 req/sec limit
-    for (let i = 0; i < eligibleUsers.length; i++) {
-      const result = await processUser(eligibleUsers[i])
-      results.push(result)
-      if (result.status === 'sent') sentCount++
-      else if (result.status === 'skipped') skippedCount++
+    console.log(`[CRON] Phase 1 complete: ${preparedUsers.length} users ready for delivery, ${skippedCount} skipped`)
+
+    // =========================================================================
+    // PHASE 2: Batch send emails via Resend batch API (100 per request)
+    // This avoids the 2 req/sec rate limit by sending 100 emails per API call.
+    // 5000 users = 50 batch calls with 600ms delay = ~30 seconds total.
+    // =========================================================================
+    
+    const emailPayloads = preparedUsers
+      .filter(u => u.deliveryMethod === 'email' || u.deliveryMethod === 'both')
+      .map(u => ({
+        email: u.email,
+        prompt: u.promptText,
+        userId: u.userId,
+        userName: u.fullName,
+      }))
+
+    let batchEmailResults: Map<string, { status: 'sent' | 'failed'; emailId?: string; error?: string }> = new Map()
+
+    if (emailPayloads.length > 0) {
+      console.log(`[CRON] Phase 2: Batch sending ${emailPayloads.length} emails`)
+      const batchResult = await sendBatchDailyPromptEmails(emailPayloads)
       
-      // Add delay between sends to stay under Resend rate limit (2 req/sec)
-      // Only delay after actual sends, not skips
-      if (result.status === 'sent' && i < eligibleUsers.length - 1) {
-        await delay(RATE_LIMIT_DELAY_MS)
+      for (const r of batchResult.results) {
+        batchEmailResults.set(r.userId, r)
+      }
+      console.log(`[CRON] Phase 2 complete: ${batchResult.sent} sent, ${batchResult.failed} failed`)
+    }
+
+    // =========================================================================
+    // PHASE 3: Send Slack and push notifications (not rate-limited by Resend)
+    // These can be sent in parallel since they use different services.
+    // =========================================================================
+    
+    for (const user of preparedUsers) {
+      let emailSent = false
+      let slackSent = false
+      let pushSent = false
+      const errors: string[] = []
+
+      // Check email result from batch send
+      if (user.deliveryMethod === 'email' || user.deliveryMethod === 'both') {
+        const emailResult = batchEmailResults.get(user.userId)
+        if (emailResult?.status === 'sent') {
+          emailSent = true
+        } else {
+          errors.push(`Email: ${emailResult?.error || 'Not sent'}`)
+        }
+      }
+
+      // Send Slack message if configured
+      if ((user.deliveryMethod === 'slack' || user.deliveryMethod === 'both') && user.slackWebhookUrl) {
+        const slackResult = await sendDailyPromptToSlack(
+          user.slackWebhookUrl,
+          user.promptText,
+          user.fullName
+        )
+
+        if (slackResult.success) {
+          slackSent = true
+        } else {
+          errors.push(`Slack: ${slackResult.error}`)
+        }
+      }
+
+      // Send push notification if user has subscriptions (from pre-fetched data)
+      if (isPushConfigured()) {
+        const pushSubs = pushSubsMap.get(user.userId)
+
+        if (pushSubs && pushSubs.length > 0) {
+          const failedEndpoints = await sendPushNotifications(
+            pushSubs,
+            {
+              title: 'Your Daily Prompt is Ready',
+              body: user.promptText.length > 100 ? user.promptText.substring(0, 97) + '...' : user.promptText,
+              url: '/dashboard',
+              tag: `prompt-${today}`,
+            }
+          )
+
+          // Clean up failed subscriptions asynchronously (don't wait)
+          if (failedEndpoints.length > 0) {
+            supabase
+              .from('push_subscriptions')
+              .delete()
+              .eq('user_id', user.userId)
+              .in('endpoint', failedEndpoints)
+              .then(() => {})
+          }
+
+          pushSent = pushSubs.length > failedEndpoints.length
+        }
+      }
+
+      // Record result
+      if (emailSent || slackSent || pushSent) {
+        results.push({
+          user_id: user.userId,
+          email: user.email,
+          status: 'sent',
+          channels: { email: emailSent, slack: slackSent, push: pushSent },
+        })
+        sentCount++
+      } else {
+        results.push({
+          user_id: user.userId,
+          email: user.email,
+          status: 'failed',
+          error: errors.join(', '),
+        })
       }
     }
     const executionTime = Date.now() - startTime

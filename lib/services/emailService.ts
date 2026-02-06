@@ -525,6 +525,151 @@ export async function sendDailyPromptEmail(
 }
 
 /**
+ * Batch send daily prompt emails using Resend's batch API
+ * Sends up to 100 emails per API call (counts as 1 request against rate limit)
+ * With 600ms delay between batch calls, handles 5000+ users in ~30 seconds
+ * 
+ * @param emailPayloads - Array of { email, prompt, userId, userName } objects
+ * @returns Promise with batch results
+ */
+export async function sendBatchDailyPromptEmails(
+  emailPayloads: Array<{ email: string; prompt: string; userId: string; userName: string | null }>
+): Promise<{ sent: number; failed: number; results: Array<{ userId: string; status: 'sent' | 'failed'; emailId?: string; error?: string }> }> {
+  if (!process.env.RESEND_API_KEY) {
+    return {
+      sent: 0,
+      failed: emailPayloads.length,
+      results: emailPayloads.map(p => ({ userId: p.userId, status: 'failed' as const, error: 'Email service not configured' })),
+    }
+  }
+
+  const BATCH_SIZE = 100 // Resend max per batch call
+  const RATE_LIMIT_DELAY_MS = 600 // Stay under 2 req/sec
+  const MAX_RETRIES = 3
+
+  // Pre-generate all HTML content (this is CPU-bound, not API-bound)
+  const subject = await getSubjectForTemplate('daily_prompt', {})
+  const preparedEmails: Array<{
+    userId: string
+    email: string
+    resendPayload: { from: string; to: string; subject: string; html: string }
+  }> = []
+
+  for (const payload of emailPayloads) {
+    const displayName = payload.userName || payload.email.split('@')[0]
+    const html = await generateWithCustomization('daily_prompt', () =>
+      generateDailyPromptEmailHTML(displayName, payload.prompt)
+    )
+    const userSubject = await getSubjectForTemplate('daily_prompt', { userName: displayName })
+
+    preparedEmails.push({
+      userId: payload.userId,
+      email: payload.email,
+      resendPayload: {
+        from: `${APP_NAME} <${FROM_EMAIL}>`,
+        to: payload.email,
+        subject: userSubject || subject,
+        html,
+      },
+    })
+  }
+
+  // Send in batches of 100 using Resend batch API
+  const allResults: Array<{ userId: string; status: 'sent' | 'failed'; emailId?: string; error?: string }> = []
+  let totalSent = 0
+  let totalFailed = 0
+
+  for (let i = 0; i < preparedEmails.length; i += BATCH_SIZE) {
+    const batch = preparedEmails.slice(i, i + BATCH_SIZE)
+    const batchPayloads = batch.map(b => b.resendPayload)
+
+    let success = false
+    let lastError: any = null
+    let responseData: any = null
+
+    // Retry with exponential backoff for rate limit errors
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        const { data, error } = await resend.batch.send(batchPayloads)
+
+        if (!error && data) {
+          responseData = data
+          success = true
+          break
+        }
+
+        lastError = error
+
+        if (error?.message?.includes('rate_limit') && attempt < MAX_RETRIES) {
+          const backoffMs = Math.pow(2, attempt + 1) * 500
+          logger.warn('email_batch_rate_limited', { batchIndex: i / BATCH_SIZE, attempt: attempt + 1, backoffMs })
+          await new Promise(resolve => setTimeout(resolve, backoffMs))
+          continue
+        }
+
+        break
+      } catch (err) {
+        lastError = err
+        if (attempt < MAX_RETRIES) {
+          const backoffMs = Math.pow(2, attempt + 1) * 500
+          await new Promise(resolve => setTimeout(resolve, backoffMs))
+          continue
+        }
+        break
+      }
+    }
+
+    if (success && responseData) {
+      // Map results back to users
+      const dataArray = Array.isArray(responseData) ? responseData : (responseData.data || [])
+      for (let j = 0; j < batch.length; j++) {
+        const emailId = dataArray[j]?.id || null
+        allResults.push({ userId: batch[j].userId, status: 'sent', emailId })
+        totalSent++
+
+        // Log each successful send
+        logEmailDelivery(batch[j].userId, 'daily_prompt', batch[j].email, 'sent', emailId).catch(() => {})
+        logEmailSend({
+          userId: batch[j].userId,
+          recipientEmail: batch[j].email,
+          subject: batch[j].resendPayload.subject,
+          templateName: 'daily_prompt',
+          provider: 'resend',
+          status: 'sent',
+          providerMessageId: emailId,
+        }).catch(() => {})
+      }
+    } else {
+      // Entire batch failed
+      const errorMsg = lastError instanceof Error ? lastError.message : (lastError?.message || 'Batch send failed')
+      for (const item of batch) {
+        allResults.push({ userId: item.userId, status: 'failed', error: errorMsg })
+        totalFailed++
+
+        logEmailDelivery(item.userId, 'daily_prompt', item.email, 'failed', null, errorMsg).catch(() => {})
+        logEmailSend({
+          userId: item.userId,
+          recipientEmail: item.email,
+          subject: item.resendPayload.subject,
+          templateName: 'daily_prompt',
+          provider: 'resend',
+          status: 'failed',
+          providerMessageId: null,
+          errorMessage: errorMsg,
+        }).catch(() => {})
+      }
+    }
+
+    // Rate limit delay between batch API calls (not after the last one)
+    if (i + BATCH_SIZE < preparedEmails.length) {
+      await new Promise(resolve => setTimeout(resolve, RATE_LIMIT_DELAY_MS))
+    }
+  }
+
+  return { sent: totalSent, failed: totalFailed, results: allResults }
+}
+
+/**
  * Send weekly digest email with reflection summary
  * 
  * @param email - Recipient email address
