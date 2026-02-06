@@ -453,41 +453,59 @@ export async function sendDailyPromptEmail(
 
     const subject = await getSubjectForTemplate('daily_prompt', { userName: displayName })
 
-    const { data, error } = await resend.emails.send({
-      from: `${APP_NAME} <${FROM_EMAIL}>`,
-      to: email,
-      subject,
-      html,
-    })
+    // Retry logic for rate limit errors (429) with exponential backoff
+    const MAX_RETRIES = 3
+    let lastError: any = null
 
-    if (error) {
-      logger.error('email_prompt_send_error', { error, email, userId })
-      await logEmailDelivery(userId, 'daily_prompt', email, 'failed', null, error.message)
-      await logEmailSend({
-        userId,
-        recipientEmail: email,
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+      const { data, error } = await resend.emails.send({
+        from: `${APP_NAME} <${FROM_EMAIL}>`,
+        to: email,
         subject,
-        templateName: 'daily_prompt',
-        provider: 'resend',
-        status: 'failed',
-        providerMessageId: null,
-        errorMessage: error.message,
+        html,
       })
-      return { success: false, error: error.message }
-    }
-    await logEmailDelivery(userId, 'daily_prompt', email, 'sent', data?.id || null)
 
+      if (!error) {
+        await logEmailDelivery(userId, 'daily_prompt', email, 'sent', data?.id || null)
+        await logEmailSend({
+          userId,
+          recipientEmail: email,
+          subject,
+          templateName: 'daily_prompt',
+          provider: 'resend',
+          status: 'sent',
+          providerMessageId: data?.id || null,
+        })
+        return { success: true, emailId: data?.id }
+      }
+
+      lastError = error
+
+      // If rate limited and we have retries left, wait with exponential backoff
+      if (error.message?.includes('rate_limit') && attempt < MAX_RETRIES) {
+        const backoffMs = Math.pow(2, attempt + 1) * 500 // 1s, 2s, 4s
+        logger.warn('email_prompt_rate_limited', { email, userId, attempt: attempt + 1, backoffMs })
+        await new Promise(resolve => setTimeout(resolve, backoffMs))
+        continue
+      }
+
+      // Non-rate-limit error or exhausted retries
+      break
+    }
+
+    logger.error('email_prompt_send_error', { error: lastError, email, userId })
+    await logEmailDelivery(userId, 'daily_prompt', email, 'failed', null, lastError?.message)
     await logEmailSend({
       userId,
       recipientEmail: email,
       subject,
       templateName: 'daily_prompt',
       provider: 'resend',
-      status: 'sent',
-      providerMessageId: data?.id || null,
+      status: 'failed',
+      providerMessageId: null,
+      errorMessage: lastError?.message,
     })
-    
-    return { success: true, emailId: data?.id }
+    return { success: false, error: lastError?.message }
   } catch (error) {
     logger.error('email_prompt_unexpected_error', { error, email, userId })
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'

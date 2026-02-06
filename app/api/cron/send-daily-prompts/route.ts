@@ -495,8 +495,10 @@ export async function POST(request: NextRequest) {
     let skippedCount = 0
     const results: any[] = []
 
-    // OPTIMIZATION: Process users in parallel batches of 10
-    const BATCH_SIZE = 10
+    // Rate limit helper: Resend allows max 2 requests/second
+    // We use 600ms delay between sends to stay safely under the limit
+    const RATE_LIMIT_DELAY_MS = 600
+    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
     
     const processUser = async (user: typeof eligibleUsers[0]) => {
       const profile = user.profiles as any
@@ -708,15 +710,17 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Process users in parallel batches
-    for (let i = 0; i < eligibleUsers.length; i += BATCH_SIZE) {
-      const batch = eligibleUsers.slice(i, i + BATCH_SIZE)
-      const batchResults = await Promise.all(batch.map(processUser))
+    // Process users sequentially with rate limiting to respect Resend's 2 req/sec limit
+    for (let i = 0; i < eligibleUsers.length; i++) {
+      const result = await processUser(eligibleUsers[i])
+      results.push(result)
+      if (result.status === 'sent') sentCount++
+      else if (result.status === 'skipped') skippedCount++
       
-      for (const result of batchResults) {
-        results.push(result)
-        if (result.status === 'sent') sentCount++
-        else if (result.status === 'skipped') skippedCount++
+      // Add delay between sends to stay under Resend rate limit (2 req/sec)
+      // Only delay after actual sends, not skips
+      if (result.status === 'sent' && i < eligibleUsers.length - 1) {
+        await delay(RATE_LIMIT_DELAY_MS)
       }
     }
     const executionTime = Date.now() - startTime
