@@ -216,6 +216,11 @@ function SettingsPageContent() {
   
   // Downgrade dialog state
   const [showDowngradeDialog, setShowDowngradeDialog] = useState(false)
+  
+  // Delete account state
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [deleteConfirmText, setDeleteConfirmText] = useState('')
+  const [isDeleting, setIsDeleting] = useState(false)
 
   const loadUserData = useCallback(async () => {
     try {
@@ -666,12 +671,52 @@ function SettingsPageContent() {
   }
 
   const handleDeleteAccount = () => {
-    // TODO: Show confirmation dialog then connect to backend API
-    toast({
-      title: "Account Deletion",
-      description: "Please contact support to proceed with account deletion.",
-      variant: "destructive",
-    })
+    // Block deletion if user has an active premium subscription
+    if (currentPlan === 'premium') {
+      toast({
+        title: "Active Subscription",
+        description: "Please cancel your subscription first before deleting your account. Go to the Subscription section to cancel.",
+        variant: "destructive",
+      })
+      return
+    }
+    setShowDeleteDialog(true)
+  }
+
+  const confirmDeleteAccount = async () => {
+    if (deleteConfirmText !== 'DELETE') return
+
+    setIsDeleting(true)
+    try {
+      const response = await fetch('/api/user/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      })
+
+      const data = await response.json()
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Failed to delete account')
+      }
+
+      // Clear local caches
+      if (userId) {
+        invalidateCacheOnLogout()
+      }
+
+      // Sign out locally
+      await supabase.auth.signOut()
+
+      // Redirect to goodbye page
+      router.push('/good-bye')
+    } catch (error: any) {
+      toast({
+        title: "Deletion Failed",
+        description: error.message || "Failed to delete account. Please try again or contact support.",
+        variant: "destructive",
+      })
+      setIsDeleting(false)
+    }
   }
 
   const handleUpgradeToPremium = async () => {
@@ -3281,6 +3326,92 @@ function SettingsPageContent() {
               >
                 Yes, downgrade
               </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Delete Account Confirmation Dialog */}
+        <AlertDialog open={showDeleteDialog} onOpenChange={(open) => {
+          setShowDeleteDialog(open)
+          if (!open) {
+            setDeleteConfirmText('')
+            setIsDeleting(false)
+          }
+        }}>
+          <AlertDialogContent className={`max-w-md mx-4 sm:mx-auto rounded-2xl ${
+            theme === 'dark'
+              ? 'bg-[#1C1C1E] border-white/10'
+              : 'bg-white border-[#E8E5DE]'
+          }`}>
+            <AlertDialogHeader>
+              <AlertDialogTitle className={`text-lg sm:text-xl font-semibold leading-tight ${
+                theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+              }`}>
+                Delete Your Account?
+              </AlertDialogTitle>
+              <AlertDialogDescription className={`text-sm sm:text-base leading-relaxed ${
+                theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+              }`}>
+                This action is <strong className="text-red-500">permanent and irreversible</strong>. All of the following will be deleted:
+              </AlertDialogDescription>
+              <ul className={`mt-2 sm:mt-3 space-y-1.5 sm:space-y-2 text-xs sm:text-sm list-disc list-inside ${
+                theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+              }`}>
+                <li>Your profile and account credentials</li>
+                <li>All reflections and journal entries</li>
+                <li>Prompt history and preferences</li>
+                <li>Subscription and billing data</li>
+                <li>Any connected integrations (Slack, etc.)</li>
+              </ul>
+              <div className="mt-4 space-y-2">
+                <label className={`text-sm font-medium ${
+                  theme === 'dark' ? 'text-white/60' : 'text-[#5A5A4E]'
+                }`}>
+                  Type <strong className="text-red-500">DELETE</strong> to confirm:
+                </label>
+                <Input
+                  value={deleteConfirmText}
+                  onChange={(e) => setDeleteConfirmText(e.target.value)}
+                  placeholder="DELETE"
+                  className={`h-11 rounded-xl ${
+                    theme === 'dark'
+                      ? 'bg-white/5 border-white/10 text-white placeholder:text-white/20'
+                      : 'bg-[#F0EDE6] border-[#E8E5DE] text-[#3D3D3D] placeholder:text-[#8A8A7A]/40'
+                  }`}
+                  disabled={isDeleting}
+                  autoComplete="off"
+                />
+              </div>
+            </AlertDialogHeader>
+            <AlertDialogFooter className="flex-col-reverse sm:flex-row sm:justify-center gap-2 sm:gap-3 mt-4">
+              <AlertDialogCancel 
+                disabled={isDeleting}
+                className={`w-full sm:w-auto h-11 sm:h-10 text-sm sm:text-base font-semibold rounded-xl sm:rounded-lg touch-manipulation active:scale-95 transition-transform ${
+                  theme === 'dark'
+                    ? 'bg-white/5 border-white/8 text-white hover:bg-white/8'
+                    : 'bg-white border border-[#E8E5DE] text-[#3D3D3D] hover:bg-[#F0EDE6]'
+                }`}
+              >
+                Cancel
+              </AlertDialogCancel>
+              <Button
+                onClick={confirmDeleteAccount}
+                disabled={deleteConfirmText !== 'DELETE' || isDeleting}
+                className={`w-full sm:w-auto h-11 sm:h-10 text-sm sm:text-base font-semibold rounded-xl sm:rounded-lg touch-manipulation active:scale-95 transition-transform ${
+                  theme === 'dark'
+                    ? 'bg-red-600 text-white border border-red-500 hover:bg-red-700 disabled:opacity-30'
+                    : 'bg-red-600 text-white border border-red-700 hover:bg-red-700 disabled:opacity-30'
+                }`}
+              >
+                {isDeleting ? (
+                  <span className="flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Deleting...
+                  </span>
+                ) : (
+                  'Permanently Delete Account'
+                )}
+              </Button>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>

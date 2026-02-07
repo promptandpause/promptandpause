@@ -200,10 +200,10 @@ export default function Onboarding() {
   return (
     <div 
       className="min-h-screen flex items-center justify-center relative overflow-hidden py-4 sm:py-8"
-      style={{ background: 'linear-gradient(135deg, #F8F7FF 0%, #C4B5FD 45%, #7C3AED 100%)' }}
+      style={{ background: 'linear-gradient(160deg, #F5F3EE 0%, #EBE9E3 30%, #E2E6DE 60%, #DCE6D9 100%)' }}
     >
       {/* Subtle overlay for readability */}
-      <div className="fixed inset-0 -z-10 bg-white/35" />
+      <div className="fixed inset-0 -z-10 bg-white/20" />
 
       {/* Calming ambient animation (matching dashboard) */}
       <div className="fixed inset-0 -z-20 pointer-events-none overflow-hidden">
@@ -212,9 +212,9 @@ export default function Onboarding() {
 
       <style jsx global>{`
         .calm-ambient-blobs {
-          background: radial-gradient(600px circle at 20% 20%, rgba(167, 139, 250, 0.25), transparent 45%),
-                      radial-gradient(700px circle at 80% 30%, rgba(139, 92, 246, 0.25), transparent 50%),
-                      radial-gradient(800px circle at 30% 80%, rgba(124, 58, 237, 0.25), transparent 55%);
+          background: radial-gradient(600px circle at 20% 20%, rgba(111, 169, 132, 0.18), transparent 45%),
+                      radial-gradient(700px circle at 80% 30%, rgba(213, 230, 217, 0.25), transparent 50%),
+                      radial-gradient(800px circle at 30% 80%, rgba(111, 169, 132, 0.15), transparent 55%);
           animation: calm-shift 28s ease-in-out infinite alternate;
           filter: blur(12px);
         }
@@ -245,7 +245,7 @@ export default function Onboarding() {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: "spring", bounce: 0.5, delay: 0.2 }}
-                className="w-20 h-20 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#A78BFA] flex items-center justify-center shadow-lg"
+                className="w-20 h-20 rounded-full bg-gradient-to-br from-[#6FA984] to-[#8FBF9A] flex items-center justify-center shadow-lg"
               >
                 <Sparkles className="w-10 h-10 text-white" />
               </motion.div>
@@ -260,10 +260,10 @@ export default function Onboarding() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="w-full bg-gradient-to-r from-[#7C3AED]/10 to-[#A78BFA]/10 border border-[#7C3AED]/20 rounded-2xl p-5"
+                className="w-full bg-gradient-to-r from-[#6FA984]/10 to-[#8FBF9A]/10 border border-[#6FA984]/20 rounded-2xl p-5"
               >
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="w-8 h-8 rounded-full bg-[#7C3AED] flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-[#6FA984] flex items-center justify-center">
                     <Sparkles className="w-4 h-4 text-white" />
                   </div>
                   <p className="text-base font-semibold text-gray-900">
@@ -282,7 +282,7 @@ export default function Onboarding() {
 
               {/* Terms Checkbox */}
               <label className="flex items-start gap-3 w-full cursor-pointer group">
-                <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${acceptedTerms ? 'bg-[#7C3AED] border-[#7C3AED]' : 'border-gray-300 group-hover:border-[#7C3AED]/50'}`}>
+                <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${acceptedTerms ? 'bg-[#6FA984] border-[#6FA984]' : 'border-gray-300 group-hover:border-[#6FA984]/50'}`}>
                   {acceptedTerms && <Check className="w-4 h-4 text-white" />}
                 </div>
                 <input
@@ -297,7 +297,7 @@ export default function Onboarding() {
               {/* Start Button */}
               <Button
                 disabled={!acceptedTerms}
-                className="w-full bg-gradient-to-r from-[#7C3AED] to-[#8B5CF6] hover:from-[#6D28D9] hover:to-[#7C3AED] text-white rounded-2xl px-8 py-4 text-lg font-semibold disabled:opacity-30 shadow-lg hover:shadow-xl transition-all duration-300 touch-manipulation"
+                className="w-full bg-gradient-to-r from-[#6FA984] to-[#5A8F6E] hover:from-[#4A7A5E] hover:to-[#6FA984] text-white rounded-2xl px-8 py-4 text-lg font-semibold disabled:opacity-30 shadow-lg hover:shadow-xl transition-all duration-300 touch-manipulation"
                 onClick={() => setStep(0)}
               >
                 <span className="flex items-center justify-center gap-2">
@@ -320,7 +320,7 @@ export default function Onboarding() {
                 </div>
                 <div className="w-full h-2 bg-gray-200/50 rounded-full overflow-hidden">
                   <motion.div
-                    className="h-full bg-gradient-to-r from-[#7C3AED] to-[#A78BFA] rounded-full"
+                    className="h-full bg-gradient-to-r from-[#6FA984] to-[#8FBF9A] rounded-full"
                     initial={{ width: 0 }}
                     animate={{ width: `${((Math.min(step + 1, steps.length)) / steps.length) * 100}%` }}
                     transition={{ duration: 0.5, ease: "easeOut" }}
@@ -362,8 +362,8 @@ export default function Onboarding() {
                             whileTap={{ scale: 0.99 }}
                             className={`w-full p-4 rounded-2xl text-left font-medium transition-all duration-200 ${
                               answers[steps[step].key as keyof typeof answers] === opt 
-                                ? "bg-gradient-to-r from-[#7C3AED] to-[#8B5CF6] text-white shadow-lg" 
-                                : "bg-white/60 text-gray-700 border border-gray-200/50 hover:bg-white/80 hover:border-[#7C3AED]/30"
+                                ? "bg-gradient-to-r from-[#6FA984] to-[#5A8F6E] text-white shadow-lg" 
+                                : "bg-white/60 text-gray-700 border border-gray-200/50 hover:bg-white/80 hover:border-[#6FA984]/30"
                             }`}
                             onClick={() => selectOption(opt)}
                           >
@@ -387,9 +387,9 @@ export default function Onboarding() {
                             min={steps[step].min}
                             max={steps[step].max}
                             value={answers.mood}
-                            className="w-full h-3 bg-gray-200 rounded-full appearance-none cursor-pointer accent-[#7C3AED]"
+                            className="w-full h-3 bg-gray-200 rounded-full appearance-none cursor-pointer accent-[#6FA984]"
                             style={{ 
-                              background: `linear-gradient(to right, #7C3AED 0%, #7C3AED ${(answers.mood - 1) * 11.1}%, #e5e7eb ${(answers.mood - 1) * 11.1}%, #e5e7eb 100%)` 
+                              background: `linear-gradient(to right, #6FA984 0%, #6FA984 ${(answers.mood - 1) * 11.1}%, #e5e7eb ${(answers.mood - 1) * 11.1}%, #e5e7eb 100%)` 
                             }}
                             onChange={e => setAnswers(a => ({ ...a, mood: +e.target.value }))}
                           />
@@ -400,7 +400,7 @@ export default function Onboarding() {
                             <p className="text-xs text-gray-500 mt-1">{steps[step].minLabel}</p>
                           </div>
                           <div className="text-center">
-                            <span className="text-4xl font-bold text-[#7C3AED]">{answers.mood}</span>
+                            <span className="text-4xl font-bold text-[#6FA984]">{answers.mood}</span>
                             <p className="text-xs text-gray-500 mt-1">out of 10</p>
                           </div>
                           <div className="text-center">
@@ -421,7 +421,7 @@ export default function Onboarding() {
                             whileTap={{ scale: 0.98 }}
                             className={`p-6 rounded-2xl flex flex-col items-center gap-3 transition-all duration-200 ${
                               answers.delivery === o.label 
-                                ? "bg-gradient-to-br from-[#7C3AED] to-[#8B5CF6] text-white shadow-lg" 
+                                ? "bg-gradient-to-br from-[#6FA984] to-[#5A8F6E] text-white shadow-lg" 
                                 : "bg-white/60 text-gray-700 border border-gray-200/50 hover:bg-white/80"
                             }`}
                             onClick={() => selectOption(o.label)}
@@ -448,8 +448,8 @@ export default function Onboarding() {
                             whileTap={{ scale: 0.99 }}
                             className={`w-full p-4 rounded-2xl text-left font-medium transition-all duration-200 ${
                               answers.focus.includes(opt) 
-                                ? "bg-gradient-to-r from-[#7C3AED] to-[#8B5CF6] text-white shadow-lg" 
-                                : "bg-white/60 text-gray-700 border border-gray-200/50 hover:bg-white/80 hover:border-[#7C3AED]/30"
+                                ? "bg-gradient-to-r from-[#6FA984] to-[#5A8F6E] text-white shadow-lg" 
+                                : "bg-white/60 text-gray-700 border border-gray-200/50 hover:bg-white/80 hover:border-[#6FA984]/30"
                             }`}
                             onClick={() => toggleOption(opt)}
                           >
@@ -461,7 +461,7 @@ export default function Onboarding() {
                                   : "border-gray-300"
                               }`}>
                                 {answers.focus.includes(opt) && (
-                                  <Check className="w-4 h-4 text-[#7C3AED]" />
+                                  <Check className="w-4 h-4 text-[#6FA984]" />
                                 )}
                               </div>
                             </div>
@@ -491,7 +491,7 @@ export default function Onboarding() {
                           (step === 3 && !answers.delivery) ||
                           (step === 4 && (!answers.focus || answers.focus.length === 0))
                         }
-                        className="bg-gradient-to-r from-[#7C3AED] to-[#8B5CF6] hover:from-[#6D28D9] hover:to-[#7C3AED] text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+                        className="bg-gradient-to-r from-[#6FA984] to-[#5A8F6E] hover:from-[#4A7A5E] hover:to-[#6FA984] text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
                       >
                         {step === steps.length - 1 ? "See Preview" : "Continue"}
                         <ChevronRight className="w-4 h-4" />
@@ -511,7 +511,7 @@ export default function Onboarding() {
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         transition={{ type: "spring", bounce: 0.5, delay: 0.2 }}
-                        className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-[#7C3AED] to-[#A78BFA] flex items-center justify-center shadow-lg"
+                        className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-[#6FA984] to-[#8FBF9A] flex items-center justify-center shadow-lg"
                       >
                         <Sparkles className="w-8 h-8 text-white" />
                       </motion.div>
@@ -531,8 +531,8 @@ export default function Onboarding() {
                       className="bg-white/50 backdrop-blur-sm border border-white/60 rounded-2xl p-6 shadow-lg"
                     >
                       <div className="flex items-start gap-4">
-                        <div className="w-10 h-10 rounded-full bg-[#7C3AED]/10 flex items-center justify-center flex-shrink-0">
-                          <Brain className="w-5 h-5 text-[#7C3AED]" />
+                        <div className="w-10 h-10 rounded-full bg-[#6FA984]/10 flex items-center justify-center flex-shrink-0">
+                          <Brain className="w-5 h-5 text-[#6FA984]" />
                         </div>
                         <div className="flex-1">
                           <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">
@@ -543,7 +543,7 @@ export default function Onboarding() {
                               `"${previewPrompt}"`
                             ) : (
                               <span className="flex items-center gap-2 text-gray-500 not-italic">
-                                <div className="animate-spin h-4 w-4 border-2 border-[#7C3AED] border-t-transparent rounded-full"></div>
+                                <div className="animate-spin h-4 w-4 border-2 border-[#6FA984] border-t-transparent rounded-full"></div>
                                 Crafting your personalized prompt...
                               </span>
                             )}
@@ -553,7 +553,7 @@ export default function Onboarding() {
                       
                       <div className="mt-6 pt-4 border-t border-gray-200/50">
                         <p className="text-sm text-gray-600 text-center">
-                          Personalized for: <span className="font-semibold text-[#7C3AED]">{answers.focus.join(", ")}</span>
+                          Personalized for: <span className="font-semibold text-[#6FA984]">{answers.focus.join(", ")}</span>
                         </p>
                       </div>
                     </motion.div>
@@ -563,7 +563,7 @@ export default function Onboarding() {
                       <Button
                         onClick={handleSubmit}
                         disabled={isSubmitting}
-                        className="w-full bg-gradient-to-r from-[#7C3AED] to-[#8B5CF6] hover:from-[#6D28D9] hover:to-[#7C3AED] text-white py-4 rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl disabled:opacity-30 transition-all duration-300"
+                        className="w-full bg-gradient-to-r from-[#6FA984] to-[#5A8F6E] hover:from-[#4A7A5E] hover:to-[#6FA984] text-white py-4 rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl disabled:opacity-30 transition-all duration-300"
                       >
                         {isSubmitting ? (
                           <span className="flex items-center justify-center gap-2">
@@ -597,14 +597,14 @@ export default function Onboarding() {
                   >
                     {/* Success Animation */}
                     <div className="motion-reduce:hidden">
-                      <div className="w-[100px] h-[100px] mx-auto rounded-full bg-[#7C3AED]/20 border border-[#7C3AED]/30 flex items-center justify-center">
-                        <Check className="w-10 h-10 text-[#7C3AED]" />
+                      <div className="w-[100px] h-[100px] mx-auto rounded-full bg-[#6FA984]/20 border border-[#6FA984]/30 flex items-center justify-center">
+                        <Check className="w-10 h-10 text-[#6FA984]" />
                       </div>
                     </div>
                     
                     {/* Static fallback */}
-                    <div className="hidden motion-reduce:flex w-20 h-20 mx-auto bg-[#7C3AED]/20 rounded-full items-center justify-center">
-                      <Check className="w-10 h-10 text-[#7C3AED]" />
+                    <div className="hidden motion-reduce:flex w-20 h-20 mx-auto bg-[#6FA984]/20 rounded-full items-center justify-center">
+                      <Check className="w-10 h-10 text-[#6FA984]" />
                     </div>
                     
                     <div className="space-y-2">
@@ -614,27 +614,27 @@ export default function Onboarding() {
                     
                     <div className="bg-white/50 rounded-2xl p-5 space-y-3 text-left">
                       <div className="flex items-center gap-3">
-                        <Clock className="w-5 h-5 text-[#7C3AED]" />
+                        <Clock className="w-5 h-5 text-[#6FA984]" />
                         <span className="text-gray-700">
-                          Daily prompts at <span className="font-semibold text-[#7C3AED]">{answers.promptTime}</span>
+                          Daily prompts at <span className="font-semibold text-[#6FA984]">{answers.promptTime}</span>
                         </span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <Target className="w-5 h-5 text-[#7C3AED]" />
+                        <Target className="w-5 h-5 text-[#6FA984]" />
                         <span className="text-gray-700">
-                          Focus: <span className="font-semibold text-[#7C3AED]">{answers.focus.join(", ")}</span>
+                          Focus: <span className="font-semibold text-[#6FA984]">{answers.focus.join(", ")}</span>
                         </span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <Mail className="w-5 h-5 text-[#7C3AED]" />
+                        <Mail className="w-5 h-5 text-[#6FA984]" />
                         <span className="text-gray-700">
-                          Delivery via <span className="font-semibold text-[#7C3AED]">{answers.delivery}</span>
+                          Delivery via <span className="font-semibold text-[#6FA984]">{answers.delivery}</span>
                         </span>
                       </div>
                     </div>
                     
                     <div className="flex items-center justify-center gap-2 text-gray-500 pt-4">
-                      <div className="animate-spin h-5 w-5 border-2 border-[#7C3AED] border-t-transparent rounded-full"></div>
+                      <div className="animate-spin h-5 w-5 border-2 border-[#6FA984] border-t-transparent rounded-full"></div>
                       <span>Redirecting to your dashboard...</span>
                     </div>
                   </motion.div>

@@ -39,10 +39,10 @@ export function DashboardSidebar() {
 
   // Mobile bottom tab items
   const mobileNav = [
-    { id: "home", label: "Home", href: "/dashboard", active: pathname === "/dashboard", crisis: false },
-    { id: "wellness", label: "Wellness", href: "/dashboard/wellness", active: pathname === "/dashboard/wellness", crisis: false },
-    { id: "journal", label: "Journal", href: "/dashboard/journals", active: pathname === "/dashboard/journals", crisis: false },
-    { id: "crisis", label: "Crisis", href: "/crisis-resources", active: pathname === "/crisis-resources", crisis: true },
+    { id: "home", label: t('nav.dashboard'), href: "/dashboard", active: pathname === "/dashboard", crisis: false },
+    { id: "wellness", label: t('nav.wellness'), href: "/dashboard/wellness", active: pathname === "/dashboard/wellness", crisis: false },
+    { id: "journal", label: t('nav.my_journals'), href: "/dashboard/journals", active: pathname === "/dashboard/journals", crisis: false },
+    { id: "crisis", label: t('nav.crisis_resources'), href: "/crisis-resources", active: pathname === "/crisis-resources", crisis: true },
   ]
 
   // Fetch user profile on mount
@@ -158,7 +158,7 @@ export function DashboardSidebar() {
                         <Crown className="h-3 w-3" /> Premium
                       </span>
                     ) : (
-                      <span className={`text-xs font-medium ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>Free Tier</span>
+                      <span className={`text-xs font-medium ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>{t('settings.freeTier')}</span>
                     )}
                   </div>
                 </div>
@@ -169,7 +169,7 @@ export function DashboardSidebar() {
           {/* Navigation */}
           <nav className="flex-1">
             <h4 className={`text-xs font-bold uppercase tracking-wider mb-4 px-1 ${isDark ? 'text-white/30' : 'text-[#8A8A7A]'}`}>
-              Navigation
+              {t('nav.dashboard')}
             </h4>
             <div className="space-y-1.5">
               {sidebarNav.map((item) => (
@@ -207,9 +207,9 @@ export function DashboardSidebar() {
                   </div>
                 </div>
                 <div>
-                  <h4 className={`font-bold text-base mb-1 ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>Upgrade to Premium</h4>
+                  <h4 className={`font-bold text-base mb-1 ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>{t('dashboard.upgrade')}</h4>
                   <p className={`text-xs leading-relaxed ${isDark ? 'text-white/50' : 'text-[#8A8A7A]'}`}>
-                    Unlock unlimited prompts & advanced insights
+                    {t('dashboard.upgradeDesc')}
                   </p>
                 </div>
                 <Link href="/dashboard/settings">
@@ -218,7 +218,7 @@ export function DashboardSidebar() {
                       ? 'bg-gradient-to-r from-[#7E6BA5] to-[#5B7FA5] text-white'
                       : 'bg-gradient-to-r from-[#7E6BA5] to-[#5B7FA5] text-white'
                   }`}>
-                    Upgrade Now
+                    {t('dashboard.upgrade')}
                     <ChevronRight className="h-4 w-4" />
                   </button>
                 </Link>
@@ -229,7 +229,7 @@ export function DashboardSidebar() {
           {/* Support Section */}
           <div className={`pt-5 border-t ${isDark ? 'border-white/8' : 'border-[#E0DDD6]'}`}>
             <h4 className={`text-xs font-bold uppercase tracking-wider mb-4 px-1 ${isDark ? 'text-white/30' : 'text-[#8A8A7A]'}`}>
-              Support
+              {t('nav.help')}
             </h4>
             <div className="space-y-1.5">
               <Link href="/crisis-resources">
@@ -239,7 +239,7 @@ export function DashboardSidebar() {
                     : 'text-rose-600 border-rose-200 hover:bg-rose-50'
                 }`}>
                   <LifeBuoy className="mr-1 h-5 w-5" />
-                  Crisis Resources
+                  {t('nav.crisis_resources')}
                 </button>
               </Link>
               <Link href="/dashboard/support">
@@ -249,7 +249,7 @@ export function DashboardSidebar() {
                     : 'text-[#6B6B5E] hover:bg-[#F0EDE6] hover:text-[#3D3D3D]'
                 }`}>
                   <HelpCircle className="mr-1 h-5 w-5" />
-                  Contact Support
+                  {t('nav.help')}
                 </button>
               </Link>
               <button
@@ -265,7 +265,7 @@ export function DashboardSidebar() {
                 }`}
               >
                 <LogOut className="mr-1 h-5 w-5" />
-                Logout
+                {t('nav.logout')}
               </button>
             </div>
           </div>

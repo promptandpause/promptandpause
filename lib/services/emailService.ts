@@ -1019,6 +1019,58 @@ export async function sendDataExportEmail(
   }
 }
 
+/**
+ * Send account deletion confirmation email
+ * 
+ * Sent AFTER the account has been deleted. Since the user no longer exists,
+ * we skip delivery logging (user_id is gone) but still log to email_logs table
+ * using a placeholder ID.
+ * 
+ * @param email - Recipient email address
+ * @param userId - Former user ID (for logging only)
+ * @param userName - User's name for personalization
+ * @returns Promise with email send result
+ */
+export async function sendAccountDeletionEmail(
+  email: string,
+  userId: string,
+  userName: string | null
+): Promise<{ success: boolean; emailId?: string; error?: string }> {
+  try {
+    if (!process.env.RESEND_API_KEY) {
+      return { success: false, error: 'Email service not configured' }
+    }
+
+    const displayName = userName || email.split('@')[0]
+    const html = await generateWithCustomization('account_deletion', () => 
+      generateAccountDeletionEmailHTML(displayName)
+    )
+
+    const subject = 'Your Prompt & Pause account has been deleted'
+
+    const { data, error } = await resend.emails.send({
+      from: `${APP_NAME} <${FROM_EMAIL}>`,
+      to: email,
+      subject,
+      html,
+    })
+
+    if (error) {
+      logger.error('email_account_deletion_send_error', { error, email })
+      return { success: false, error: error.message }
+    }
+
+    logger.info('email_account_deletion_sent', { email, emailId: data?.id })
+    return { success: true, emailId: data?.id }
+  } catch (error) {
+    logger.error('email_account_deletion_unexpected_error', { error, email })
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    }
+  }
+}
+
 // =============================================================================
 // EMAIL LOGGING
 // =============================================================================
@@ -1404,6 +1456,45 @@ function generateDataExportEmailHTML(name: string): string {
   return buildBaseEmail({
     preheader: 'Your data export PDF is attached to this email',
     title: 'Your Data Export',
+    bodyHTML
+  })
+}
+
+/**
+ * Generate account deletion confirmation email HTML
+ */
+function generateAccountDeletionEmailHTML(name: string): string {
+  const bodyHTML = contentSection(`
+    ${h1('Account Deleted')}
+    
+    ${paragraph(`Hi ${name},`)}
+    
+    ${paragraph(`This email confirms that your ${APP_NAME} account and all associated data have been permanently deleted.`)}
+    
+    ${infoBox(`
+      ${h3('What was removed:', { align: 'left' })}
+      <ul style="margin: 16px 0; padding-left: 20px; color: ${TEXT_GRAY};">
+        <li style="margin-bottom: 8px;">Your profile and account credentials</li>
+        <li style="margin-bottom: 8px;">All reflections and journal entries</li>
+        <li style="margin-bottom: 8px;">Prompt history and preferences</li>
+        <li style="margin-bottom: 8px;">Any connected integrations</li>
+      </ul>
+    `)}
+    
+    ${paragraph('This action is irreversible. If you ever wish to use Prompt & Pause again, you\'re welcome to create a new account at any time.')}
+    
+    ${paragraph('We appreciate the time you spent reflecting with us. We hope it brought you some moments of calm and clarity.')}
+    
+    ${paragraph(`Wishing you well on your journey,<br/>The ${APP_NAME} Team`)}
+    
+    <div style="text-align: center; margin: 40px 0;">
+      ${standardButton({ href: 'https://promptandpause.com', label: 'Visit Prompt & Pause' })}
+    </div>
+  `)
+
+  return buildBaseEmail({
+    preheader: 'Your account and all data have been permanently deleted',
+    title: 'Account Deleted',
     bodyHTML
   })
 }

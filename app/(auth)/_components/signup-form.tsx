@@ -119,18 +119,18 @@ export function SignupForm() {
     <div className="w-full">
       <div className="w-full max-w-sm space-y-6">
         <div className="text-center space-y-2">
-          <h1 className="text-2xl font-semibold tracking-tight text-white">Create your account</h1>
-          <p className="text-xs text-white/70">Start when you’re ready.</p>
+          <h1 className="text-2xl font-semibold tracking-tight text-[#2F3B34]">Create your account</h1>
+          <p className="text-xs text-[#6B7F6E]">Start when you're ready.</p>
         </div>
 
         <div className="space-y-4">
           <Button 
             onClick={handleGoogleSignUp}
             disabled={isLoading}
-            className="h-11 w-full rounded-xl shadow-none bg-white/20 text-white border border-white/30 hover:bg-white/30 hover:border-white/40 transition-colors duration-200 ease flex items-center justify-center gap-2 disabled:opacity-50"
+            className="h-11 w-full rounded-xl shadow-none bg-[#F5F3EE] text-[#2F3B34] border border-[#DCE6D9] hover:bg-white hover:border-[#6B7F6E] transition-colors duration-200 ease flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {isLoading ? (
-              <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
+              <div className="animate-spin h-5 w-5 border-2 border-[#6FA984] border-t-transparent rounded-full"></div>
             ) : (
               <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -143,11 +143,11 @@ export function SignupForm() {
           </Button>
 
           <div className="relative flex items-center justify-center">
-            <span className="text-xs text-white/60">or</span>
+            <span className="text-xs text-[#6B7F6E]/60">or</span>
           </div>
 
           <Button
-            className="h-11 w-full rounded-xl shadow-none bg-transparent text-white/80 hover:text-white hover:bg-white/10 transition-colors duration-200 ease flex items-center justify-center border border-white/20"
+            className="h-11 w-full rounded-xl shadow-none bg-transparent text-[#6B7F6E]/80 hover:text-[#6B7F6E] hover:bg-white/10 transition-colors duration-200 ease flex items-center justify-center border border-[#4A5A49]/30"
             type="button"
             aria-expanded={showOptions}
             onClick={() => setShowOptions((o) => !o)}
@@ -162,7 +162,7 @@ export function SignupForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={isLoading}
-              className="h-11 w-full bg-white/10 border border-white/20 outline-none px-3 rounded-xl shadow-sm focus:ring-2 focus:ring-white/20 text-white placeholder:text-white/50 mb-2 disabled:opacity-50" 
+              className="h-11 w-full bg-white border border-[#DCE6D9] outline-none px-3 rounded-xl shadow-sm focus:ring-2 focus:ring-[#6FA984]/20 text-[#2F3B34] placeholder:text-[#6B7F6E] mb-2 disabled:opacity-50" 
             />
             <input 
               type="password" 
@@ -170,7 +170,7 @@ export function SignupForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={isLoading}
-              className="h-11 w-full bg-white/10 border border-white/20 outline-none px-3 rounded-xl shadow-sm focus:ring-2 focus:ring-white/20 text-white placeholder:text-white/50 mb-2 disabled:opacity-50" 
+              className="h-11 w-full bg-white border border-[#DCE6D9] outline-none px-3 rounded-xl shadow-sm focus:ring-2 focus:ring-[#6FA984]/20 text-[#2F3B34] placeholder:text-[#6B7F6E] mb-2 disabled:opacity-50" 
             />
             <input 
               type="password" 
@@ -178,20 +178,20 @@ export function SignupForm() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               disabled={isLoading}
-              className="h-11 w-full bg-white/10 border border-white/20 outline-none px-3 rounded-xl shadow-sm focus:ring-2 focus:ring-white/20 text-white placeholder:text-white/50 mb-2 disabled:opacity-50" 
+              className="h-11 w-full bg-white border border-[#DCE6D9] outline-none px-3 rounded-xl shadow-sm focus:ring-2 focus:ring-[#6FA984]/20 text-[#2F3B34] placeholder:text-[#6B7F6E] mb-2 disabled:opacity-50" 
             />
             <Button 
               type="submit"
               disabled={isLoading}
-              className="h-11 w-full rounded-xl bg-white text-black hover:bg-white/90 transition-colors duration-200 ease mb-2 disabled:opacity-50"
+              className="h-11 w-full rounded-xl bg-[#6FA984] text-white hover:bg-[#5A8F6E] transition-colors duration-200 ease mb-2 disabled:opacity-50"
             >
               {isLoading ? "Creating account..." : "Sign Up"}
             </Button>
           </form>
 
-          <p className="text-center text-xs text-white/70">
+          <p className="text-center text-xs text-[#6B7F6E]">
             Already have an account?{' '}
-            <a href="/login" className="underline hover:text-white transition-colors duration-200 ease">Sign in</a>
+            <a href="/login" className="underline hover:text-[#6FA984] transition-colors duration-200 ease">Sign in</a>
           </p>
         </div>
       </div>

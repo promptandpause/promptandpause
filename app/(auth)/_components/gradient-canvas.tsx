@@ -25,7 +25,7 @@ export function GradientCanvas() {
     // ... (omitted for brevity, but to be pasted from your prototype directly)
   }, [])
 
-  return <canvas ref={canvasRef} className="w-full h-full bg-black" />
+  return <canvas ref={canvasRef} className="w-full h-full bg-[#F0EDE6]" />
 }
 
 export default GradientCanvas;

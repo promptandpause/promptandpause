@@ -19,19 +19,21 @@ import { getSupabaseClient } from "@/lib/supabase/client"
 import QuickStats from "./components/quick-stats"
 import MoodTracker from "./components/mood-tracker"
 import { Wind, Heart, NotebookPen, Moon, Crown } from "lucide-react"
+import { useTranslation } from "@/hooks/useTranslation"
 
 export default function DashboardPage() {
   const { tier, features = {} } = useTier()
   const { theme } = useTheme()
+  const { t } = useTranslation()
   const supabase = getSupabaseClient()
   const [userName, setUserName] = useState("")
-  const [greeting, setGreeting] = useState("")
+  const [greetingKey, setGreetingKey] = useState<'dashboard.goodMorning' | 'dashboard.goodAfternoon' | 'dashboard.goodEvening'>('dashboard.goodMorning')
 
   useEffect(() => {
     const hour = new Date().getHours()
-    if (hour < 12) setGreeting("Good morning")
-    else if (hour < 18) setGreeting("Good afternoon")
-    else setGreeting("Good evening")
+    if (hour < 12) setGreetingKey('dashboard.goodMorning')
+    else if (hour < 18) setGreetingKey('dashboard.goodAfternoon')
+    else setGreetingKey('dashboard.goodEvening')
 
     async function loadName() {
       try {
@@ -76,10 +78,10 @@ export default function DashboardPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>
-                        {greeting}{userName ? `, ${userName}` : ''}
+                        {t(greetingKey)}{userName ? `, ${userName}` : ''}
                       </h1>
                       <p className={`text-sm mt-1.5 ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
-                        Take a moment to breathe.
+                        {t('dashboard.breatheMoment')}
                       </p>
                     </div>
                   </div>
@@ -89,12 +91,12 @@ export default function DashboardPage() {
 
                   {/* Quick Actions Grid — 2×2 on mobile, 4-col on desktop */}
                   <div>
-                    <h2 className={`text-base font-semibold mb-3 ${isDark ? 'text-white/70' : 'text-[#5A5A4E]'}`}>Quick Actions</h2>
+                    <h2 className={`text-base font-semibold mb-3 ${isDark ? 'text-white/70' : 'text-[#5A5A4E]'}`}>{t('dashboard.quickActions')}</h2>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                       <QuickActionCard
                         icon={<Wind className="h-6 w-6" />}
-                        label="Breathe"
-                        sublabel="2 min exercise"
+                        label={t('dashboard.breathe')}
+                        sublabel={t('dashboard.breatheSublabel')}
                         href="/dashboard/wellness"
                         isDark={isDark}
                         iconBg={isDark ? 'bg-[#A8D5BA]/15' : 'bg-[#E8F5E9]'}
@@ -102,8 +104,8 @@ export default function DashboardPage() {
                       />
                       <QuickActionCard
                         icon={<Heart className="h-6 w-6" />}
-                        label="Check In"
-                        sublabel="How are you?"
+                        label={t('dashboard.checkIn')}
+                        sublabel={t('dashboard.checkInSublabel')}
                         href="#mood-section"
                         isDark={isDark}
                         iconBg={isDark ? 'bg-[#C4B5E0]/15' : 'bg-[#EDE7F6]'}
@@ -111,8 +113,8 @@ export default function DashboardPage() {
                       />
                       <QuickActionCard
                         icon={<NotebookPen className="h-6 w-6" />}
-                        label="Reflect"
-                        sublabel="Daily prompt"
+                        label={t('dashboard.reflect')}
+                        sublabel={t('dashboard.reflectSublabel')}
                         href="#prompt-section"
                         isDark={isDark}
                         iconBg={isDark ? 'bg-[#B8C9E0]/15' : 'bg-[#D4E4F7]'}
@@ -120,8 +122,8 @@ export default function DashboardPage() {
                       />
                       <QuickActionCard
                         icon={<Moon className="h-6 w-6" />}
-                        label="Sleep"
-                        sublabel="Wind down"
+                        label={t('dashboard.sleep')}
+                        sublabel={t('dashboard.sleepSublabel')}
                         href="/dashboard/wellness"
                         isDark={isDark}
                         iconBg={isDark ? 'bg-[#B8C9E0]/10' : 'bg-[#E8EDF2]'}
@@ -132,7 +134,7 @@ export default function DashboardPage() {
 
                   {/* Today's Activity */}
                   <div>
-                    <h2 className={`text-base font-semibold mb-3 ${isDark ? 'text-white/70' : 'text-[#5A5A4E]'}`}>Today&apos;s Activity</h2>
+                    <h2 className={`text-base font-semibold mb-3 ${isDark ? 'text-white/70' : 'text-[#5A5A4E]'}`}>{t('dashboard.todaysActivity')}</h2>
                     <QuickStats />
                   </div>
 
@@ -161,8 +163,8 @@ export default function DashboardPage() {
                           <Crown className={`h-5 w-5 ${isDark ? 'text-[#C4B5E0]' : 'text-[#7E6BA5]'}`} />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className={`font-semibold text-sm ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>Upgrade to Premium</p>
-                          <p className={`text-xs ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>Unlock unlimited prompts & insights</p>
+                          <p className={`font-semibold text-sm ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>{t('dashboard.upgrade')}</p>
+                          <p className={`text-xs ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>{t('dashboard.upgradeDesc')}</p>
                         </div>
                         <span className={`text-xs font-medium px-3 py-1.5 rounded-full flex-shrink-0 ${isDark ? 'bg-[#C4B5E0]/15 text-[#C4B5E0]' : 'bg-[#D1C4E9] text-[#5E4B8B]'}`}>Go</span>
                       </div>
@@ -193,6 +195,7 @@ export default function DashboardPage() {
 
 /* ─── Daily Quote Card ─── */
 function DailyQuoteCard({ isDark }: { isDark: boolean }) {
+  const { t } = useTranslation()
   const quotes = [
     "You're doing great—one step at a time.",
     "Be gentle with yourself today.",
@@ -254,7 +257,7 @@ function DailyQuoteCard({ isDark }: { isDark: boolean }) {
         <p className={`text-base md:text-lg font-medium leading-relaxed ${isDark ? 'text-white/85' : 'text-[#3D4D3D]'}`}>
           &ldquo;{quote}&rdquo;
         </p>
-        <p className={`text-xs mt-2.5 ${isDark ? 'text-white/30' : 'text-[#8A9A8A]'}`}>Daily reminder</p>
+        <p className={`text-xs mt-2.5 ${isDark ? 'text-white/30' : 'text-[#8A9A8A]'}`}>{t('dashboard.dailyReminder')}</p>
       </div>
     </div>
   )
@@ -328,16 +331,17 @@ function InfoCard({ children, isDark }: { children: React.ReactNode; isDark: boo
 
 /* ─── How This Space Works ─── */
 function HowItWorksCard({ isDark }: { isDark: boolean }) {
+  const { t } = useTranslation()
   return (
     <InfoCard isDark={isDark}>
       <div className="space-y-2.5">
         <p className={`text-xs uppercase tracking-[0.14em] font-medium ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
-          How this space works
+          {t('dashboard.howItWorks')}
         </p>
         <div className={`text-sm space-y-2 leading-relaxed ${isDark ? 'text-white/70' : 'text-[#5A5A4E]'}`}>
-          <p>One daily question, at your pace.</p>
-          <p>Insights appear occasionally, not every day.</p>
-          <p>Your reflections are private and yours alone.</p>
+          <p>{t('dashboard.howItWorks1')}</p>
+          <p>{t('dashboard.howItWorks2')}</p>
+          <p>{t('dashboard.howItWorks3')}</p>
         </div>
       </div>
     </InfoCard>
@@ -346,6 +350,7 @@ function HowItWorksCard({ isDark }: { isDark: boolean }) {
 
 /* ─── Your Focus Areas ─── */
 function FocusAreasCard({ isDark }: { isDark: boolean }) {
+  const { t } = useTranslation()
   const supabase = getSupabaseClient()
   const [focusAreas, setFocusAreas] = useState<string[] | null>(null)
 
@@ -373,17 +378,17 @@ function FocusAreasCard({ isDark }: { isDark: boolean }) {
       <div className="space-y-3">
         <div className="flex items-start justify-between gap-2">
           <p className={`text-xs uppercase tracking-[0.14em] font-medium ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
-            Your focus areas
+            {t('dashboard.yourFocusAreas')}
           </p>
           <Link
             href="/dashboard/settings"
             className={`text-xs hover:underline underline-offset-4 ${isDark ? 'text-white/40 hover:text-white' : 'text-[#5B7FA5] hover:text-[#3D6B8E]'}`}
           >
-            Edit
+            {t('common.edit')}
           </Link>
         </div>
         <div className="flex flex-wrap gap-2">
-          {(focusAreas && focusAreas.length > 0 ? focusAreas : ["Add your focus areas"]).map((area, idx) => (
+          {(focusAreas && focusAreas.length > 0 ? focusAreas : [t('dashboard.addFocusAreas')]).map((area, idx) => (
             <span
               key={idx}
               className={`px-3 py-1.5 rounded-full text-xs ${
@@ -401,21 +406,22 @@ function FocusAreasCard({ isDark }: { isDark: boolean }) {
 
 /* ─── What to Expect ─── */
 function ExpectationsCard({ isDark, tier }: { isDark: boolean; tier: string }) {
+  const { t } = useTranslation()
   return (
     <InfoCard isDark={isDark}>
       <div className="space-y-2.5">
         <p className={`text-xs uppercase tracking-[0.14em] font-medium ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
-          What to expect
+          {t('dashboard.whatToExpect')}
         </p>
         <div className={`text-sm space-y-2 leading-relaxed ${isDark ? 'text-white/70' : 'text-[#5A5A4E]'}`}>
-          <p>Daily prompt: once a day, at your chosen time.</p>
+          <p>{t('dashboard.dailyPromptExpect')}</p>
           {tier === 'premium' ? (
             <>
-              <p>Weekly reflection: appears occasionally.</p>
-              <p>Monthly reflection: appears after month-end.</p>
+              <p>{t('dashboard.weeklyReflectionExpect')}</p>
+              <p>{t('dashboard.monthlyReflectionExpect')}</p>
             </>
           ) : (
-            <p className={`italic ${isDark ? 'text-white/30' : 'text-[#A0A090]'}`}>Weekly & monthly reflections are premium features</p>
+            <p className={`italic ${isDark ? 'text-white/30' : 'text-[#A0A090]'}`}>{t('dashboard.premiumFeaturesNote')}</p>
           )}
         </div>
       </div>
@@ -425,14 +431,15 @@ function ExpectationsCard({ isDark, tier }: { isDark: boolean; tier: string }) {
 
 /* ─── Need Help? ─── */
 function NeedHelpCard({ isDark }: { isDark: boolean }) {
+  const { t } = useTranslation()
   return (
     <InfoCard isDark={isDark}>
       <div className="space-y-2.5">
         <p className={`text-xs uppercase tracking-[0.14em] font-medium ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
-          Need help?
+          {t('dashboard.needHelp')}
         </p>
         <p className={`text-sm leading-relaxed ${isDark ? 'text-white/70' : 'text-[#5A5A4E]'}`}>
-          Questions or feedback? Reply to any email or contact support.
+          {t('dashboard.needHelpDesc')}
         </p>
       </div>
     </InfoCard>

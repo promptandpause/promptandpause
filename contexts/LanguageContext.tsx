@@ -81,7 +81,12 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       // Set HTML lang attribute for accessibility
       document.documentElement.lang = languageCode
       
-      // TODO: When backend is connected, also save to user profile
+      // Sync language preference to server (fire-and-forget)
+      fetch('/api/user/preferences', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ language: languageCode }),
+      }).catch(() => {})
     }
   }
 

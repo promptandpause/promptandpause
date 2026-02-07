@@ -4,34 +4,34 @@ import { Linkedin, Twitter, Instagram } from "lucide-react"
 
 export default function Footer() {
   return (
-    <footer className="relative bg-[#0F0D15] py-8 sm:py-8 lg:py-10 px-4 sm:px-6 lg:px-8">
+    <footer className="relative bg-[#F5F3EE] border-t border-[#D5E8DA] py-8 sm:py-8 lg:py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Desktop & Mobile: All Columns in Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-12 xl:gap-16 text-center lg:text-left">
               {/* Product Column */}
               <div className="flex flex-col gap-1.5 sm:gap-2 items-center lg:items-start">
-                <h3 className="mb-1.5 sm:mb-2 uppercase text-purple-300/60 text-xs sm:text-sm font-semibold">Product</h3>
+                <h3 className="mb-1.5 sm:mb-2 uppercase text-[#6B7F6E] text-xs sm:text-sm font-semibold">Product</h3>
                 <Link
                   href="/features"
-                  className="text-white/90 hover:text-white transition-colors duration-300 text-sm sm:text-base"
+                  className="text-[#2F3B34] hover:text-[#4A5A49] transition-colors duration-300 text-sm sm:text-base"
                 >
                   Features
                 </Link>
                 <Link
                   href="/pricing"
-                  className="text-white/90 hover:text-white transition-colors duration-300 text-sm sm:text-base"
+                  className="text-[#2F3B34] hover:text-[#4A5A49] transition-colors duration-300 text-sm sm:text-base"
                 >
                   Pricing
                 </Link>
                 <Link
                   href="/our-mission"
-                  className="text-white/90 hover:text-white transition-colors duration-300 text-sm sm:text-base"
+                  className="text-[#2F3B34] hover:text-[#4A5A49] transition-colors duration-300 text-sm sm:text-base"
                 >
                   Our Mission
                 </Link>
                 <Link
                   href="/research"
-                  className="text-white/90 hover:text-white transition-colors duration-300 text-sm sm:text-base"
+                  className="text-[#2F3B34] hover:text-[#4A5A49] transition-colors duration-300 text-sm sm:text-base"
                 >
                   Research
                 </Link>
@@ -39,34 +39,34 @@ export default function Footer() {
 
               {/* Resources Column */}
               <div className="flex flex-col gap-1.5 sm:gap-2 items-center lg:items-start">
-                <h3 className="mb-1.5 sm:mb-2 uppercase text-purple-300/60 text-xs sm:text-sm font-semibold">Resources</h3>
+                <h3 className="mb-1.5 sm:mb-2 uppercase text-[#6B7F6E] text-xs sm:text-sm font-semibold">Resources</h3>
                 <Link
-                  href="/research"
-                  className="text-white/90 hover:text-white transition-colors duration-300 text-sm sm:text-base"
+                  href="/support-us"
+                  className="text-[#2F3B34] hover:text-[#4A5A49] transition-colors duration-300 text-sm sm:text-base"
                 >
                   Support
                 </Link>
                 <Link
                   href="/contact"
-                  className="text-white/90 hover:text-white transition-colors duration-300 text-sm sm:text-base"
+                  className="text-[#2F3B34] hover:text-[#4A5A49] transition-colors duration-300 text-sm sm:text-base"
                 >
                   Contact
                 </Link>
                 <Link
                   href="/systems"
-                  className="text-white/90 hover:text-white transition-colors duration-300 text-sm sm:text-base"
+                  className="text-[#2F3B34] hover:text-[#4A5A49] transition-colors duration-300 text-sm sm:text-base"
                 >
                   System Status
                 </Link>
                 <Link
                   href="#"
-                  className="text-white/90 hover:text-white transition-colors duration-300 text-sm sm:text-base"
+                  className="text-[#2F3B34] hover:text-[#4A5A49] transition-colors duration-300 text-sm sm:text-base"
                 >
                   Blog
                 </Link>
                 <Link
                   href="/contact#press"
-                  className="text-white/90 hover:text-white transition-colors duration-300 text-sm sm:text-base"
+                  className="text-[#2F3B34] hover:text-[#4A5A49] transition-colors duration-300 text-sm sm:text-base"
                 >
                   Press Kit
                 </Link>
@@ -74,32 +74,32 @@ export default function Footer() {
 
               {/* Crisis Resources - All Devices */}
               <div className="flex flex-col gap-1.5 sm:gap-2 items-center lg:items-start lg:min-w-[200px]">
-                <h3 className="mb-1.5 sm:mb-2 uppercase text-red-400 text-xs sm:text-sm font-semibold">Crisis Resources</h3>
-                <p className="text-white/90 text-sm sm:text-base">UK: Samaritans 116 123</p>
-                <p className="text-white/90 text-sm sm:text-base">UK: NHS 111</p>
-                <p className="text-white/90 text-sm sm:text-base">US: 988 Lifeline</p>
-                <p className="text-white/90 text-sm sm:text-base">US: Crisis Text 741741</p>
+                <h3 className="mb-1.5 sm:mb-2 uppercase text-red-500 text-xs sm:text-sm font-semibold">Crisis Resources</h3>
+                <p className="text-[#4A5A49] text-sm sm:text-base">UK: Samaritans 116 123</p>
+                <p className="text-[#4A5A49] text-sm sm:text-base">UK: NHS 111</p>
+                <p className="text-[#4A5A49] text-sm sm:text-base">US: 988 Lifeline</p>
+                <p className="text-[#4A5A49] text-sm sm:text-base">US: Crisis Text 741741</p>
                 <p className="text-red-500 text-xs mt-2 font-medium">Not a crisis service</p>
               </div>
 
               {/* Legal & Social Column */}
               <div className="flex flex-col gap-1.5 sm:gap-2 items-center lg:items-start">
-                <h3 className="mb-1.5 sm:mb-2 uppercase text-purple-300/60 text-xs sm:text-sm font-semibold">Legal</h3>
+                <h3 className="mb-1.5 sm:mb-2 uppercase text-[#6B7F6E] text-xs sm:text-sm font-semibold">Legal</h3>
                 <Link
                   href="/privacy-policy"
-                  className="text-white/90 hover:text-white transition-colors duration-300 text-sm sm:text-base"
+                  className="text-[#2F3B34] hover:text-[#4A5A49] transition-colors duration-300 text-sm sm:text-base"
                 >
                   Privacy Policy
                 </Link>
                 <Link
                   href="/terms-of-service"
-                  className="text-white/90 hover:text-white transition-colors duration-300 text-sm sm:text-base"
+                  className="text-[#2F3B34] hover:text-[#4A5A49] transition-colors duration-300 text-sm sm:text-base"
                 >
                   Terms of Service
                 </Link>
                 <Link
                   href="/cookie-policy"
-                  className="text-white/90 hover:text-white transition-colors duration-300 text-sm sm:text-base"
+                  className="text-[#2F3B34] hover:text-[#4A5A49] transition-colors duration-300 text-sm sm:text-base"
                 >
                   Cookie Policy
                 </Link>
@@ -108,7 +108,7 @@ export default function Footer() {
                     href="https://linkedin.com/promptandpause"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-purple-400/50 hover:text-purple-300 transition-colors duration-300"
+                    className="text-[#6B7F6E] hover:text-[#4A5A49] transition-colors duration-300"
                     aria-label="LinkedIn"
                   >
                     <Linkedin className="w-5 h-5" />
@@ -117,7 +117,7 @@ export default function Footer() {
                     href="https://twitter.com/promptandpause"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-purple-400/50 hover:text-purple-300 transition-colors duration-300"
+                    className="text-[#6B7F6E] hover:text-[#4A5A49] transition-colors duration-300"
                     aria-label="Twitter/X"
                   >
                     <Twitter className="w-5 h-5" />
@@ -126,7 +126,7 @@ export default function Footer() {
                     href="https://instagram.com/promptandpause"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-purple-400/50 hover:text-purple-300 transition-colors duration-300"
+                    className="text-[#6B7F6E] hover:text-[#4A5A49] transition-colors duration-300"
                     aria-label="Instagram"
                   >
                     <Instagram className="w-5 h-5" />
@@ -142,14 +142,14 @@ export default function Footer() {
                 src="https://res.cloudinary.com/dh1rrfpmq/image/upload/v1766460430/logo-mIsk3V4EJtLDHE4QyKtcshcClQ8y4E_cmlt8i.svg"
                 alt="Prompt & Pause"
                 fill
-                className="object-contain object-center invert"
+                className="object-contain object-center"
               />
             </div>
             <div className="flex flex-col items-center gap-2">
-              <p className="text-white text-sm sm:text-base text-center">©2026 Prompt & Pause</p>
+              <p className="text-[#2F3B34] text-sm sm:text-base text-center">©2026 Prompt & Pause</p>
               <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
                 <div className="flex flex-wrap items-center gap-4">
-                  <div className="flex items-center gap-2 text-[11px] sm:text-xs text-purple-300/40">
+                  <div className="flex items-center gap-2 text-[11px] sm:text-xs text-[#8A9A8A]">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -167,7 +167,7 @@ export default function Footer() {
                     </svg>
                     <span>FCA Regulated Partners</span>
                   </div>
-                  <div className="flex items-center gap-2 text-[11px] sm:text-xs text-purple-300/40">
+                  <div className="flex items-center gap-2 text-[11px] sm:text-xs text-[#8A9A8A]">
                     <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                       <path
                         fillRule="evenodd"
@@ -177,7 +177,7 @@ export default function Footer() {
                     </svg>
                     <span>SSL Secured</span>
                   </div>
-                  <div className="flex items-center gap-2 text-[11px] sm:text-xs text-purple-300/40">
+                  <div className="flex items-center gap-2 text-[11px] sm:text-xs text-[#8A9A8A]">
                     <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                       <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                       <path

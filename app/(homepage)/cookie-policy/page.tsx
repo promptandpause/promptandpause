@@ -97,10 +97,10 @@ export default function CookiePolicyPage() {
   return (
     <>
       <Navigation />
-      <main className="min-h-screen bg-black text-white">
+      <main className="min-h-screen bg-[#F0EDE6] text-[#2F3B34]">
       {/* Hero Section */}
       <section ref={heroRef} className="relative h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-neutral-900 via-black to-black" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#F0EDE6] via-[#E8EAE6] to-[#DCE6D9]" />
 
         <motion.div style={{ opacity, scale }} className="relative z-10 text-center px-4 max-w-4xl mx-auto">
           <motion.div
@@ -109,7 +109,7 @@ export default function CookiePolicyPage() {
             transition={{ duration: 0.8 }}
             className="mb-6"
           >
-            <Cookie className="w-16 h-16 mx-auto mb-6 text-white" />
+            <Cookie className="w-16 h-16 mx-auto mb-6 text-[#6FA984]" />
           </motion.div>
 
           <motion.h1
@@ -125,7 +125,7 @@ export default function CookiePolicyPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-xl md:text-2xl text-neutral-400 mb-8 text-balance"
+            className="text-xl md:text-2xl text-[#4A5A49] mb-8 text-balance"
           >
             How we use cookies and similar technologies to improve your experience.
           </motion.p>
@@ -134,7 +134,7 @@ export default function CookiePolicyPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-sm text-neutral-500"
+            className="text-sm text-[#6B7F6E]"
           >
             Last Updated: January 2026
           </motion.p>
@@ -154,9 +154,9 @@ export default function CookiePolicyPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.05 }}
                 viewport={{ once: true }}
-                className="p-4 bg-white/5 backdrop-blur-md rounded-lg hover:bg-white/10 transition-all duration-300 hover:scale-105"
+                className="p-4 bg-[#F5F3EE] backdrop-blur-md rounded-lg hover:bg-[#F0EDE6] transition-all duration-300 hover:scale-105"
               >
-                <span className="text-neutral-400 text-sm">0{index + 1}</span>
+                <span className="text-[#6B7F6E] text-sm">0{index + 1}</span>
                 <h3 className="text-lg font-bold">{section.title}</h3>
               </motion.a>
             ))}
@@ -165,12 +165,12 @@ export default function CookiePolicyPage() {
       </section>
 
       {/* Content Sections */}
-      <section className="py-20 px-4 bg-neutral-900/50">
+      <section className="py-20 px-4 bg-white">
         <div className="max-w-4xl mx-auto space-y-20">
           {/* What Are Cookies */}
           <div id="what-are-cookies" className="scroll-mt-20">
             <h2 className="text-4xl font-bold mb-6 uppercase">What Are Cookies?</h2>
-            <div className="space-y-4 text-neutral-300 leading-relaxed">
+            <div className="space-y-4 text-[#4A5A49] leading-relaxed">
               <p>
                 Cookies are small text files that are placed on your device (computer, smartphone, or tablet) when you
                 visit a website. They help websites remember your preferences, improve functionality, and provide
@@ -186,7 +186,7 @@ export default function CookiePolicyPage() {
           {/* How We Use Cookies */}
           <div id="how-we-use" className="scroll-mt-20">
             <h2 className="text-4xl font-bold mb-6 uppercase">How We Use Cookies</h2>
-            <div className="space-y-4 text-neutral-300 leading-relaxed">
+            <div className="space-y-4 text-[#4A5A49] leading-relaxed">
               <p>Prompt & Pause uses cookies to:</p>
               <ul className="space-y-2 list-disc list-inside ml-4">
                 <li>Keep you signed in to your account</li>
@@ -203,15 +203,15 @@ export default function CookiePolicyPage() {
           <div id="types" className="scroll-mt-20">
             <h2 className="text-4xl font-bold mb-6 uppercase">Types of Cookies</h2>
             <div className="space-y-6">
-              <div className="p-6 bg-white/5 backdrop-blur-md rounded-lg">
+              <div className="p-6 bg-[#F5F3EE] border border-[#DCE6D9] rounded-lg">
                 <h3 className="text-2xl font-bold mb-4 flex items-center gap-3">
                   <Settings className="w-6 h-6 text-green-500" />
                   Essential Cookies (Required)
                 </h3>
-                <p className="text-neutral-300 mb-4">
+                <p className="text-[#4A5A49] mb-4">
                   These cookies are necessary for the Service to function. They cannot be disabled.
                 </p>
-                <ul className="space-y-2 text-neutral-300 list-disc list-inside">
+                <ul className="space-y-2 text-[#4A5A49] list-disc list-inside">
                   <li>
                     <strong>Authentication:</strong> Keep you logged in (Supabase session cookies)
                   </li>
@@ -222,18 +222,18 @@ export default function CookiePolicyPage() {
                     <strong>Load Balancing:</strong> Distribute traffic across servers (Vercel)
                   </li>
                 </ul>
-                <p className="text-sm text-neutral-500 mt-4">Duration: Session or up to 1 year</p>
+                <p className="text-sm text-[#6B7F6E] mt-4">Duration: Session or up to 1 year</p>
               </div>
 
-              <div className="p-6 bg-white/5 backdrop-blur-md rounded-lg">
+              <div className="p-6 bg-[#F5F3EE] border border-[#DCE6D9] rounded-lg">
                 <h3 className="text-2xl font-bold mb-4 flex items-center gap-3">
-                  <Eye className="w-6 h-6 text-blue-500" />
+                  <Eye className="w-6 h-6 text-[#6FA984]" />
                   Functional Cookies
                 </h3>
-                <p className="text-neutral-300 mb-4">
+                <p className="text-[#4A5A49] mb-4">
                   These cookies enable enhanced functionality and personalization.
                 </p>
-                <ul className="space-y-2 text-neutral-300 list-disc list-inside">
+                <ul className="space-y-2 text-[#4A5A49] list-disc list-inside">
                   <li>
                     <strong>Preferences:</strong> Remember your settings (theme, language, delivery method)
                   </li>
@@ -244,16 +244,16 @@ export default function CookiePolicyPage() {
                     <strong>Feature Access:</strong> Enable specific features you've requested
                   </li>
                 </ul>
-                <p className="text-sm text-neutral-500 mt-4">Duration: Up to 1 year</p>
+                <p className="text-sm text-[#6B7F6E] mt-4">Duration: Up to 1 year</p>
               </div>
 
-              <div className="p-6 bg-white/5 backdrop-blur-md rounded-lg">
+              <div className="p-6 bg-[#F5F3EE] border border-[#DCE6D9] rounded-lg">
                 <h3 className="text-2xl font-bold mb-4 flex items-center gap-3">
-                  <BarChart className="w-6 h-6 text-purple-500" />
+                  <BarChart className="w-6 h-6 text-[#6FA984]" />
                   Analytics Cookies
                 </h3>
-                <p className="text-neutral-300 mb-4">These cookies help us understand how visitors use our Service.</p>
-                <ul className="space-y-2 text-neutral-300 list-disc list-inside">
+                <p className="text-[#4A5A49] mb-4">These cookies help us understand how visitors use our Service.</p>
+                <ul className="space-y-2 text-[#4A5A49] list-disc list-inside">
                   <li>
                     <strong>Vercel Analytics:</strong> Page views, performance metrics
                   </li>
@@ -264,19 +264,19 @@ export default function CookiePolicyPage() {
                     <strong>Performance:</strong> Load times, errors, crashes
                   </li>
                 </ul>
-                <p className="text-sm text-neutral-500 mt-4">Duration: Up to 2 years</p>
-                <p className="text-sm text-neutral-400 mt-2">Note: Analytics data is anonymized and aggregated.</p>
+                <p className="text-sm text-[#6B7F6E] mt-4">Duration: Up to 2 years</p>
+                <p className="text-sm text-[#6B7F6E] mt-2">Note: Analytics data is anonymized and aggregated.</p>
               </div>
 
-              <div className="p-6 bg-white/5 backdrop-blur-md rounded-lg">
+              <div className="p-6 bg-[#F5F3EE] border border-[#DCE6D9] rounded-lg">
                 <h3 className="text-2xl font-bold mb-4 flex items-center gap-3">
                   <Cookie className="w-6 h-6 text-orange-500" />
                   Marketing Cookies (Optional)
                 </h3>
-                <p className="text-neutral-300 mb-4">
+                <p className="text-[#4A5A49] mb-4">
                   These cookies track your activity for advertising purposes. We currently do not use marketing cookies.
                 </p>
-                <p className="text-sm text-neutral-500 mt-4">Duration: N/A</p>
+                <p className="text-sm text-[#6B7F6E] mt-4">Duration: N/A</p>
               </div>
             </div>
           </div>
@@ -284,61 +284,61 @@ export default function CookiePolicyPage() {
           {/* Third-Party Cookies */}
           <div id="third-party" className="scroll-mt-20">
             <h2 className="text-4xl font-bold mb-6 uppercase">Third-Party Cookies</h2>
-            <div className="space-y-4 text-neutral-300 leading-relaxed">
+            <div className="space-y-4 text-[#4A5A49] leading-relaxed">
               <p>We use the following third-party services that may set cookies:</p>
 
               <div className="grid md:grid-cols-2 gap-4 mt-6">
-                <div className="p-4 bg-white/5 backdrop-blur-md rounded-lg">
+                <div className="p-4 bg-white border border-[#DCE6D9] rounded-lg">
                   <h4 className="font-bold mb-2">Supabase</h4>
-                  <p className="text-sm text-neutral-400">Authentication and session management cookies.</p>
+                  <p className="text-sm text-[#6B7F6E]">Authentication and session management cookies.</p>
                   <a
                     href="https://supabase.com/privacy"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-white underline mt-2 inline-block"
+                    className="text-xs text-[#6FA984] underline mt-2 inline-block"
                   >
                     Privacy Policy
                   </a>
                 </div>
-                <div className="p-4 bg-white/5 backdrop-blur-md rounded-lg">
+                <div className="p-4 bg-white border border-[#DCE6D9] rounded-lg">
                   <h4 className="font-bold mb-2">Stripe</h4>
-                  <p className="text-sm text-neutral-400">Payment processing and fraud prevention cookies.</p>
+                  <p className="text-sm text-[#6B7F6E]">Payment processing and fraud prevention cookies.</p>
                   <a
                     href="https://stripe.com/privacy"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-white underline mt-2 inline-block"
+                    className="text-xs text-[#6FA984] underline mt-2 inline-block"
                   >
                     Privacy Policy
                   </a>
                 </div>
-                <div className="p-4 bg-white/5 backdrop-blur-md rounded-lg">
+                <div className="p-4 bg-white border border-[#DCE6D9] rounded-lg">
                   <h4 className="font-bold mb-2">Vercel</h4>
-                  <p className="text-sm text-neutral-400">Hosting, analytics, and performance cookies.</p>
+                  <p className="text-sm text-[#6B7F6E]">Hosting, analytics, and performance cookies.</p>
                   <a
                     href="https://vercel.com/legal/privacy-policy"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-white underline mt-2 inline-block"
+                    className="text-xs text-[#6FA984] underline mt-2 inline-block"
                   >
                     Privacy Policy
                   </a>
                 </div>
-                <div className="p-4 bg-white/5 backdrop-blur-md rounded-lg">
+                <div className="p-4 bg-white border border-[#DCE6D9] rounded-lg">
                   <h4 className="font-bold mb-2">Slack</h4>
-                  <p className="text-sm text-neutral-400">Integration cookies (only if you connect Slack).</p>
+                  <p className="text-sm text-[#6B7F6E]">Integration cookies (only if you connect Slack).</p>
                   <a
                     href="https://slack.com/privacy-policy"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-white underline mt-2 inline-block"
+                    className="text-xs text-[#6FA984] underline mt-2 inline-block"
                   >
                     Privacy Policy
                   </a>
                 </div>
               </div>
 
-              <p className="mt-6 p-4 bg-neutral-800 rounded-lg">
+              <p className="mt-6 p-4 bg-[#E8EAE6] border border-[#DCE6D9] rounded-lg">
                 <strong>Note:</strong> We do not control third-party cookies. Please review their privacy policies for
                 more information.
               </p>
@@ -348,66 +348,66 @@ export default function CookiePolicyPage() {
           {/* Manage Preferences */}
           <div id="manage" className="scroll-mt-20">
             <h2 className="text-4xl font-bold mb-6 uppercase">Manage Your Preferences</h2>
-            <div className="space-y-4 text-neutral-300 leading-relaxed">
+            <div className="space-y-4 text-[#4A5A49] leading-relaxed">
               <p>
                 You can manage your cookie preferences below. Note that disabling certain cookies may affect
                 functionality.
               </p>
 
-              <div className="p-6 bg-white/5 backdrop-blur-md rounded-lg mt-6 space-y-4">
-                <div className="flex items-center justify-between p-4 bg-neutral-800 rounded-lg">
+              <div className="p-6 bg-[#F5F3EE] border border-[#DCE6D9] rounded-lg mt-6 space-y-4">
+                <div className="flex items-center justify-between p-4 bg-[#E8EAE6] border border-[#DCE6D9] rounded-lg">
                   <div>
                     <h4 className="font-bold">Essential Cookies</h4>
-                    <p className="text-sm text-neutral-400">Required for the Service to function</p>
+                    <p className="text-sm text-[#6B7F6E]">Required for the Service to function</p>
                   </div>
-                  <div className="text-green-500 font-bold">Always On</div>
+                  <div className="text-[#6FA984] font-bold">Always On</div>
                 </div>
 
-                <div className="flex items-center justify-between p-4 bg-neutral-800 rounded-lg">
+                <div className="flex items-center justify-between p-4 bg-[#E8EAE6] border border-[#DCE6D9] rounded-lg">
                   <div>
                     <h4 className="font-bold">Functional Cookies</h4>
-                    <p className="text-sm text-neutral-400">Remember your preferences</p>
+                    <p className="text-sm text-[#6B7F6E]">Remember your preferences</p>
                   </div>
                   <button
                     onClick={() => setCookiePreferences((prev) => ({ ...prev, functional: !prev.functional }))}
                     className={`px-4 py-2 rounded-lg font-bold transition-colors ${
                       cookiePreferences.functional
-                        ? "bg-green-600 hover:bg-green-700"
-                        : "bg-neutral-600 hover:bg-neutral-700"
+                        ? "bg-[#6FA984] hover:bg-[#5A8F6E]"
+                        : "bg-[#6B7F6E] hover:bg-[#4A5A49]"
                     }`}
                   >
                     {cookiePreferences.functional ? "Enabled" : "Disabled"}
                   </button>
                 </div>
 
-                <div className="flex items-center justify-between p-4 bg-neutral-800 rounded-lg">
+                <div className="flex items-center justify-between p-4 bg-[#E8EAE6] border border-[#DCE6D9] rounded-lg">
                   <div>
                     <h4 className="font-bold">Analytics Cookies</h4>
-                    <p className="text-sm text-neutral-400">Help us improve the Service</p>
+                    <p className="text-sm text-[#6B7F6E]">Help us improve the Service</p>
                   </div>
                   <button
                     onClick={() => setCookiePreferences((prev) => ({ ...prev, analytics: !prev.analytics }))}
                     className={`px-4 py-2 rounded-lg font-bold transition-colors ${
                       cookiePreferences.analytics
-                        ? "bg-green-600 hover:bg-green-700"
-                        : "bg-neutral-600 hover:bg-neutral-700"
+                        ? "bg-[#6FA984] hover:bg-[#5A8F6E]"
+                        : "bg-[#6B7F6E] hover:bg-[#4A5A49]"
                     }`}
                   >
                     {cookiePreferences.analytics ? "Enabled" : "Disabled"}
                   </button>
                 </div>
 
-                <div className="flex items-center justify-between p-4 bg-neutral-800 rounded-lg">
+                <div className="flex items-center justify-between p-4 bg-[#E8EAE6] border border-[#DCE6D9] rounded-lg">
                   <div>
                     <h4 className="font-bold">Marketing Cookies</h4>
-                    <p className="text-sm text-neutral-400">Currently not used</p>
+                    <p className="text-sm text-[#6B7F6E]">Currently not used</p>
                   </div>
-                  <div className="text-neutral-500 font-bold">N/A</div>
+                  <div className="text-[#6B7F6E] font-bold">N/A</div>
                 </div>
 
                 <button
                   onClick={handleSavePreferences}
-                  className="w-full mt-4 px-6 py-3 bg-white text-black font-bold uppercase hover:bg-neutral-200 transition-colors relative"
+                  className="w-full mt-4 px-6 py-3 bg-[#6FA984] text-white font-bold uppercase hover:bg-[#5A8F6E] transition-colors relative"
                 >
                   {saveSuccess ? (
                     <span className="flex items-center justify-center gap-2">
@@ -424,7 +424,7 @@ export default function CookiePolicyPage() {
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="p-4 bg-green-600 text-white rounded-lg flex items-center gap-3"
+                    className="p-4 bg-[#6FA984] text-white rounded-lg flex items-center gap-3"
                   >
                     <Check className="w-5 h-5" />
                     <span>Your cookie preferences have been saved to your browser.</span>
@@ -437,61 +437,61 @@ export default function CookiePolicyPage() {
           {/* Browser Settings */}
           <div id="browser-settings" className="scroll-mt-20">
             <h2 className="text-4xl font-bold mb-6 uppercase">Browser Settings</h2>
-            <div className="space-y-4 text-neutral-300 leading-relaxed">
+            <div className="space-y-4 text-[#4A5A49] leading-relaxed">
               <p>You can also control cookies through your browser settings:</p>
 
               <div className="grid md:grid-cols-2 gap-4 mt-6">
-                <div className="p-4 bg-white/5 backdrop-blur-md rounded-lg">
+                <div className="p-4 bg-white border border-[#DCE6D9] rounded-lg">
                   <h4 className="font-bold mb-2">Chrome</h4>
-                  <p className="text-sm text-neutral-400">Settings → Privacy and security → Cookies</p>
+                  <p className="text-sm text-[#6B7F6E]">Settings → Privacy and security → Cookies</p>
                   <a
                     href="https://support.google.com/chrome/answer/95647"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-white underline mt-2 inline-block"
+                    className="text-xs text-[#6FA984] underline mt-2 inline-block"
                   >
                     Learn More
                   </a>
                 </div>
-                <div className="p-4 bg-white/5 backdrop-blur-md rounded-lg">
+                <div className="p-4 bg-white border border-[#DCE6D9] rounded-lg">
                   <h4 className="font-bold mb-2">Firefox</h4>
-                  <p className="text-sm text-neutral-400">Settings → Privacy & Security → Cookies</p>
+                  <p className="text-sm text-[#6B7F6E]">Settings → Privacy & Security → Cookies</p>
                   <a
                     href="https://support.mozilla.org/en-US/kb/cookies-information-websites-store-on-your-computer"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-white underline mt-2 inline-block"
+                    className="text-xs text-[#6FA984] underline mt-2 inline-block"
                   >
                     Learn More
                   </a>
                 </div>
-                <div className="p-4 bg-white/5 backdrop-blur-md rounded-lg">
+                <div className="p-4 bg-white border border-[#DCE6D9] rounded-lg">
                   <h4 className="font-bold mb-2">Safari</h4>
-                  <p className="text-sm text-neutral-400">Preferences → Privacy → Cookies</p>
+                  <p className="text-sm text-[#6B7F6E]">Preferences → Privacy → Cookies</p>
                   <a
                     href="https://support.apple.com/guide/safari/manage-cookies-sfri11471/mac"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-white underline mt-2 inline-block"
+                    className="text-xs text-[#6FA984] underline mt-2 inline-block"
                   >
                     Learn More
                   </a>
                 </div>
-                <div className="p-4 bg-white/5 backdrop-blur-md rounded-lg">
+                <div className="p-4 bg-white border border-[#DCE6D9] rounded-lg">
                   <h4 className="font-bold mb-2">Edge</h4>
-                  <p className="text-sm text-neutral-400">Settings → Cookies and site permissions</p>
+                  <p className="text-sm text-[#6B7F6E]">Settings → Cookies and site permissions</p>
                   <a
                     href="https://support.microsoft.com/en-us/microsoft-edge/delete-cookies-in-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-white underline mt-2 inline-block"
+                    className="text-xs text-[#6FA984] underline mt-2 inline-block"
                   >
                     Learn More
                   </a>
                 </div>
               </div>
 
-              <p className="mt-6 p-4 bg-yellow-900/20 border border-yellow-900/50 rounded-lg">
+              <p className="mt-6 p-4 bg-[#E8EAE6] border border-[#DCE6D9] rounded-lg">
                 <strong>Warning:</strong> Blocking all cookies may prevent you from using essential features of Prompt &
                 Pause, including logging in and saving preferences.
               </p>
@@ -501,18 +501,18 @@ export default function CookiePolicyPage() {
           {/* Contact */}
           <div id="contact" className="scroll-mt-20">
             <h2 className="text-4xl font-bold mb-6 uppercase">Contact Us</h2>
-            <div className="space-y-4 text-neutral-300 leading-relaxed">
+            <div className="space-y-4 text-[#4A5A49] leading-relaxed">
               <p>For questions about our use of cookies:</p>
-              <div className="p-6 bg-white/5 backdrop-blur-md rounded-lg mt-6">
+              <div className="p-6 bg-[#F5F3EE] border border-[#DCE6D9] rounded-lg mt-6">
                 <p>
                   <strong>Email:</strong>{" "}
-                  <a href="mailto:privacy@promptandpause.com" className="text-white underline hover:text-neutral-300">
+                  <a href="mailto:privacy@promptandpause.com" className="text-[#6FA984] underline hover:text-[#2F3B34]">
                     privacy@promptandpause.com
                   </a>
                 </p>
                 <p className="mt-2">
                   <strong>Privacy Policy:</strong>{" "}
-                  <Link href="/privacy-policy" className="text-white underline hover:text-neutral-300">
+                  <Link href="/privacy-policy" className="text-[#6FA984] underline hover:text-[#2F3B34]">
                     View Full Policy
                   </Link>
                 </p>
@@ -523,13 +523,13 @@ export default function CookiePolicyPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-black">
+      <section className="py-20 px-4 bg-[#DCE6D9]">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 uppercase">Questions About Cookies?</h2>
-          <p className="text-xl text-neutral-400 mb-8">We're transparent about how we use your data.</p>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 uppercase text-[#2F3B34]">Questions About Cookies?</h2>
+          <p className="text-xl text-[#4A5A49] mb-8">We're transparent about how we use your data.</p>
           <Link
             href="/contact"
-            className="inline-block px-8 py-4 bg-white text-black font-bold uppercase hover:bg-neutral-200 transition-colors duration-300"
+            className="inline-block px-8 py-4 bg-white text-[#2F3B34] font-bold uppercase hover:bg-[#F0EDE6] transition-colors duration-300"
           >
             Contact Us
           </Link>

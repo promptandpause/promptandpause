@@ -240,7 +240,7 @@ export async function POST(request: NextRequest) {
     // Fetch user preferences first
     const { data: userPrefs, error: prefsError } = await supabase
       .from('user_preferences')
-      .select('user_id, daily_reminders, prompt_time, reminder_time, prompt_frequency, custom_days, focus_areas, reason, delivery_method, slack_webhook_url')
+      .select('user_id, daily_reminders, prompt_time, reminder_time, prompt_frequency, custom_days, focus_areas, reason, delivery_method, slack_webhook_url, language')
       .eq('daily_reminders', true)
 
     if (prefsError) {
@@ -607,6 +607,7 @@ export async function POST(request: NextRequest) {
           user_reason: userPrefs.reason || undefined,
           current_streak: currentStreak,
           recent_prompt_types: recentPromptTypes,
+          language: userPrefs.language || 'en',
         }
 
         try {

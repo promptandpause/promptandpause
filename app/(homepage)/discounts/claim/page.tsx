@@ -120,14 +120,16 @@ function DiscountClaimContent() {
     student: {
       name: "Student",
       icon: GraduationCap,
-      color: "blue",
+      bgClass: "bg-[#DCE6D9]",
+      textClass: "text-[#6FA984]",
       description: "40% off for verified students",
       requirements: "Valid student email or student ID verification",
     },
     nhs: {
       name: "NHS Staff",
       icon: Stethoscope,
-      color: "green",
+      bgClass: "bg-[#DCE6D9]",
+      textClass: "text-[#6FA984]",
       description: "40% off for NHS employees",
       requirements: "NHS email address or staff ID verification",
     },
@@ -137,7 +139,7 @@ function DiscountClaimContent() {
     return (
       <>
         <Navigation />
-        <main className="min-h-screen bg-white text-black flex items-center justify-center">
+        <main className="min-h-screen bg-[#F0EDE6] text-[#2F3B34] flex items-center justify-center">
           <div className="text-center">
             <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" />
             <p>Verifying discount...</p>
@@ -154,16 +156,16 @@ function DiscountClaimContent() {
   return (
     <>
       <Navigation />
-      <main className="min-h-screen bg-white text-black">
-        <div className="pt-24 pb-12 px-4 sm:px-6 bg-gradient-to-b from-neutral-50 to-white">
+      <main className="min-h-screen bg-[#F0EDE6] text-[#2F3B34]">
+        <div className="pt-24 pb-12 px-4 sm:px-6 bg-gradient-to-b from-[#F5F3EE] to-white">
           <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-black mb-6">
+            <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#6FA984] mb-6">
               <Icon className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">
               {info ? `${info.name} Discount` : "Claim Your Discount"}
             </h1>
-            <p className="text-lg sm:text-xl text-neutral-600 max-w-2xl mx-auto">
+            <p className="text-lg sm:text-xl text-[#4A5A49] max-w-2xl mx-auto">
               {info ? info.description : "Enter your discount code to claim your special offer"}
             </p>
           </div>
@@ -174,24 +176,24 @@ function DiscountClaimContent() {
             {/* Authentication Status */}
             <Card className={`p-6 mb-8 ${
               isAuthenticated 
-                ? "bg-green-50 border-green-200" 
-                : "bg-amber-50 border-amber-200"
+                ? "bg-[#6FA984]/10 border-[#6FA984]" 
+                : "bg-[#E8EAE6] border-[#DCE6D9]"
             }`}>
               <div className="flex items-center gap-3">
                 {isAuthenticated ? (
                   <>
-                    <Check className="w-5 h-5 text-green-600" />
+                    <Check className="w-5 h-5 text-[#6FA984]" />
                     <div>
-                      <p className="font-medium text-green-900">Signed in as {userEmail}</p>
-                      <p className="text-sm text-green-700">Ready to claim your discount</p>
+                      <p className="font-medium text-[#2F3B34]">Signed in as {userEmail}</p>
+                      <p className="text-sm text-[#4A5A49]">Ready to claim your discount</p>
                     </div>
                   </>
                 ) : (
                   <>
-                    <AlertCircle className="w-5 h-5 text-amber-600" />
+                    <AlertCircle className="w-5 h-5 text-[#6B7F6E]" />
                     <div>
-                      <p className="font-medium text-amber-900">Sign in required</p>
-                      <p className="text-sm text-amber-700">You must be signed in to claim this discount</p>
+                      <p className="font-medium text-[#2F3B34]">Sign in required</p>
+                      <p className="text-sm text-[#4A5A49]">You must be signed in to claim this discount</p>
                     </div>
                   </>
                 )}
@@ -200,7 +202,7 @@ function DiscountClaimContent() {
                 <div className="mt-4">
                   <Button
                     onClick={() => router.push("/login")}
-                    className="bg-amber-600 hover:bg-amber-700 text-white"
+                    className="bg-[#6FA984] hover:bg-[#5A8F6E] text-white"
                   >
                     Sign In
                   </Button>
@@ -212,15 +214,15 @@ function DiscountClaimContent() {
             {info && (
               <Card className="p-6 mb-8">
                 <div className="flex items-start gap-4">
-                  <div className={`w-12 h-12 rounded-full bg-${info.color}-100 flex items-center justify-center flex-shrink-0`}>
-                    <Icon className={`w-6 h-6 text-${info.color}-600`} />
+                  <div className={`w-12 h-12 rounded-full ${info.bgClass} flex items-center justify-center flex-shrink-0`}>
+                    <Icon className={`w-6 h-6 ${info.textClass}`} />
                   </div>
                   <div className="flex-1">
                     <h3 className="text-xl font-bold mb-2">{info.name} Discount Details</h3>
-                    <p className="text-neutral-600 mb-3">{info.description}</p>
-                    <div className="bg-neutral-50 p-3 rounded-lg">
-                      <p className="text-sm font-medium text-neutral-700 mb-1">Requirements:</p>
-                      <p className="text-sm text-neutral-600">{info.requirements}</p>
+                    <p className="text-[#4A5A49] mb-3">{info.description}</p>
+                    <div className="bg-[#F5F3EE] p-3 rounded-lg">
+                      <p className="text-sm font-medium text-[#4A5A49] mb-1">Requirements:</p>
+                      <p className="text-sm text-[#6B7F6E]">{info.requirements}</p>
                     </div>
                   </div>
                 </div>
@@ -234,7 +236,7 @@ function DiscountClaimContent() {
               <div className="space-y-6">
                 {/* Discount Code */}
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                  <label className="block text-sm font-medium text-[#4A5A49] mb-2">
                     Discount Code
                   </label>
                   <Input
@@ -248,7 +250,7 @@ function DiscountClaimContent() {
 
                 {/* Billing Cycle */}
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-3">
+                  <label className="block text-sm font-medium text-[#4A5A49] mb-3">
                     Choose Billing Cycle
                   </label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -257,12 +259,12 @@ function DiscountClaimContent() {
                       onClick={() => setBillingCycle("monthly")}
                       className={`p-4 rounded-xl border-2 text-left transition-all ${
                         billingCycle === "monthly"
-                          ? "border-black bg-black text-white"
-                          : "border-neutral-200 hover:border-neutral-400"
+                          ? "border-[#6FA984] bg-[#6FA984] text-white"
+                          : "border-[#DCE6D9] hover:border-[#6B7F6E]"
                       }`}
                     >
                       <div className="font-bold">Monthly</div>
-                      <div className={`text-sm ${billingCycle === "monthly" ? "text-white/70" : "text-neutral-500"}`}>
+                      <div className={`text-sm ${billingCycle === "monthly" ? "text-white/70" : "text-[#6B7F6E]"}`}>
                         Pay monthly • 40% off
                       </div>
                     </button>
@@ -271,12 +273,12 @@ function DiscountClaimContent() {
                       onClick={() => setBillingCycle("annual")}
                       className={`p-4 rounded-xl border-2 text-left transition-all ${
                         billingCycle === "annual"
-                          ? "border-black bg-black text-white"
-                          : "border-neutral-200 hover:border-neutral-400"
+                          ? "border-[#6FA984] bg-[#6FA984] text-white"
+                          : "border-[#DCE6D9] hover:border-[#6B7F6E]"
                       }`}
                     >
                       <div className="font-bold">Annual</div>
-                      <div className={`text-sm ${billingCycle === "annual" ? "text-white/70" : "text-neutral-500"}`}>
+                      <div className={`text-sm ${billingCycle === "annual" ? "text-white/70" : "text-[#6B7F6E]"}`}>
                         Pay yearly • 40% off • Best value
                       </div>
                     </button>
@@ -287,7 +289,7 @@ function DiscountClaimContent() {
                 <Button
                   onClick={handleClaimDiscount}
                   disabled={!code.trim() || !isAuthenticated || isLoading}
-                  className="w-full py-4 text-lg font-semibold min-h-[56px]"
+                  className="w-full py-4 text-lg font-semibold min-h-[56px] bg-[#6FA984] hover:bg-[#5A8F6E] text-white"
                 >
                   {isLoading ? (
                     <>
@@ -301,7 +303,7 @@ function DiscountClaimContent() {
                   )}
                 </Button>
 
-                <p className="text-center text-sm text-neutral-500">
+                <p className="text-center text-sm text-[#6B7F6E]">
                   Discount will be applied at checkout. Limited time offer.
                 </p>
               </div>
@@ -312,19 +314,19 @@ function DiscountClaimContent() {
               <h3 className="text-xl font-bold mb-6 text-center">How It Works</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="text-center">
-                  <div className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center mx-auto mb-4 text-xl font-bold">1</div>
+                  <div className="w-12 h-12 rounded-full bg-[#6FA984] text-white flex items-center justify-center mx-auto mb-4 text-xl font-bold">1</div>
                   <h4 className="font-bold mb-2">Enter Code</h4>
-                  <p className="text-neutral-600 text-sm">Input your unique discount code above</p>
+                  <p className="text-[#6B7F6E] text-sm">Input your unique discount code above</p>
                 </div>
                 <div className="text-center">
-                  <div className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center mx-auto mb-4 text-xl font-bold">2</div>
+                  <div className="w-12 h-12 rounded-full bg-[#6FA984] text-white flex items-center justify-center mx-auto mb-4 text-xl font-bold">2</div>
                   <h4 className="font-bold mb-2">Choose Plan</h4>
-                  <p className="text-neutral-600 text-sm">Select monthly or annual billing</p>
+                  <p className="text-[#6B7F6E] text-sm">Select monthly or annual billing</p>
                 </div>
                 <div className="text-center">
-                  <div className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center mx-auto mb-4 text-xl font-bold">3</div>
+                  <div className="w-12 h-12 rounded-full bg-[#6FA984] text-white flex items-center justify-center mx-auto mb-4 text-xl font-bold">3</div>
                   <h4 className="font-bold mb-2">Complete Payment</h4>
-                  <p className="text-neutral-600 text-sm">40% discount applied automatically</p>
+                  <p className="text-[#6B7F6E] text-sm">40% discount applied automatically</p>
                 </div>
               </div>
             </div>
@@ -341,7 +343,7 @@ export default function DiscountClaimPage() {
     <Suspense fallback={
       <>
         <Navigation />
-        <main className="min-h-screen bg-white text-black flex items-center justify-center">
+        <main className="min-h-screen bg-[#F0EDE6] text-[#2F3B34] flex items-center justify-center">
           <div className="text-center">
             <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" />
             <p>Loading discount page...</p>
