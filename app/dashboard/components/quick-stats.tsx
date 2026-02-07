@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { TrendingUp, TrendingDown, Minus } from "lucide-react"
+import { TrendingUp, TrendingDown, Minus, BookOpen, Flame, Activity } from "lucide-react"
 import { calculateReflectionStreak, calculateMoodTrends } from "@/lib/services/analyticsService"
 import { supabaseReflectionService } from "@/lib/services/supabaseReflectionService"
 import { getSupabaseClient } from "@/lib/supabase/client"
@@ -65,43 +65,45 @@ export default function QuickStats() {
     )
   }
 
+  const isDark = theme === 'dark'
+
   return (
-    <section className={`rounded-3xl p-4 md:p-7 flex flex-row gap-3 md:gap-8 justify-between transition-all duration-200 ${theme === 'dark' ? 'glass-light shadow-soft-lg' : 'glass-medium shadow-soft-md'}`}>
+    <div className={`rounded-2xl p-5 space-y-0 ${isDark ? 'bg-white/5 border border-white/8' : 'bg-[#FAFAF7] border border-[#E8E5DE]'}`}>
       {/* Reflections */}
-      <div className="flex flex-col items-center justify-center gap-1.5 md:gap-2 flex-1 min-w-0">
-        <div className="flex items-center gap-1">
-          <span className={`text-2xl md:text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{totalReflections}</span>
+      <div className="flex items-center justify-between py-3">
+        <div className="flex items-center gap-3">
+          <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${isDark ? 'bg-[#B8C9E0]/10' : 'bg-[#D4E4F7]/50'}`}>
+            <BookOpen className={`h-4 w-4 ${isDark ? 'text-[#B8C9E0]' : 'text-[#5B7FA5]'}`} />
+          </div>
+          <span className={`text-sm ${isDark ? 'text-white/50' : 'text-[#5A5A4E]'}`}>Reflections</span>
         </div>
-        <span className={`text-xs md:text-sm font-medium text-center leading-tight ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>Reflections</span>
+        <span className={`text-lg font-bold tabular-nums ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>{totalReflections}</span>
       </div>
-      
-      {/* Vertical Divider */}
-      <div className={`w-px self-stretch my-2 ${theme === 'dark' ? 'bg-white/20' : 'bg-white/80'}`} />
-      
+      <div className={`h-px ${isDark ? 'bg-white/5' : 'bg-[#E8E5DE]'}`} />
       {/* Day Streak */}
-      <div className="flex flex-col items-center justify-center gap-1.5 md:gap-2 flex-1 min-w-0">
-        <div className="flex items-center gap-1">
-          <span className="text-2xl md:text-3xl font-bold text-purple-400">{currentStreak}</span>
+      <div className="flex items-center justify-between py-3">
+        <div className="flex items-center gap-3">
+          <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${isDark ? 'bg-[#A8D5BA]/10' : 'bg-[#E8F5E9]'}`}>
+            <Flame className={`h-4 w-4 ${isDark ? 'text-[#A8D5BA]' : 'text-[#5A8F6E]'}`} />
+          </div>
+          <span className={`text-sm ${isDark ? 'text-white/50' : 'text-[#5A5A4E]'}`}>Day streak</span>
         </div>
-        <span className={`text-xs md:text-sm font-medium text-center leading-tight ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>
-          <span className="hidden md:inline">Days in a row</span>
-          <span className="md:hidden">Days</span>
-        </span>
+        <span className={`text-lg font-bold tabular-nums ${isDark ? 'text-[#A8D5BA]' : 'text-[#5A8F6E]'}`}>{currentStreak}</span>
       </div>
-      
-      {/* Vertical Divider */}
-      <div className={`w-px self-stretch my-2 ${theme === 'dark' ? 'bg-white/20' : 'bg-white/80'}`} />
-      
+      <div className={`h-px ${isDark ? 'bg-white/5' : 'bg-[#E8E5DE]'}`} />
       {/* Mood Trend */}
-      <div className="flex flex-col items-center justify-center gap-1.5 md:gap-2 flex-1 min-w-0">
-        <div className="flex items-center justify-center">
-          {getTrendIcon()}
+      <div className="flex items-center justify-between py-3">
+        <div className="flex items-center gap-3">
+          <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${isDark ? 'bg-[#C4B5E0]/10' : 'bg-[#EDE7F6]'}`}>
+            <Activity className={`h-4 w-4 ${isDark ? 'text-[#C4B5E0]' : 'text-[#7E6BA5]'}`} />
+          </div>
+          <span className={`text-sm ${isDark ? 'text-white/50' : 'text-[#5A5A4E]'}`}>Mood trend</span>
         </div>
-        <div className="flex flex-col items-center gap-0.5">
-          <span className={`text-xs md:text-sm font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{getTrendText()}</span>
-          {getTrendLabel()}
+        <div className="flex items-center gap-2">
+          {getTrendIcon()}
+          <span className={`text-sm font-bold ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>{getTrendText()}</span>
         </div>
       </div>
-    </section>
+    </div>
   )
 }

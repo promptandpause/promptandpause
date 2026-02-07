@@ -10,7 +10,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const getMoodColor = (mood?: MoodType) => {
-  if (!mood) return "bg-gray-100/50";
+  if (!mood) return "bg-[#F0EDE6]";
   const happyMoods: MoodType[] = ["😊", "😄", "🙏"];
   const neutralMoods: MoodType[] = ["😐", "🤔"];
   const sadMoods: MoodType[] = ["😔"];
@@ -83,86 +83,54 @@ export default function MoodTracker() {
 
   const activeData = weekData[activeDay];
 
+  const isDark = theme === 'dark';
+
   return (
-    <section className={`rounded-2xl md:rounded-3xl px-4 md:px-7 pt-5 md:pt-6 pb-5 md:pb-6 flex flex-col transition-all duration-200 ${theme === 'dark' ? 'glass-light shadow-soft-lg' : 'glass-medium shadow-soft-md'}`}>
-      <div className="flex items-center justify-between mb-4">
-        <h4 className={`font-semibold text-base ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Check-in</h4>
+    <section className={`rounded-2xl p-5 ${isDark ? 'bg-white/5 border border-white/8' : 'bg-[#FAFAF7] border border-[#E8E5DE]'}`}>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-5">
+        <h3 className={`font-semibold text-base ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>How are you feeling?</h3>
         {currentStreak > 0 && (
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: "spring", bounce: 0.5 }}
-            className={`
-              relative px-3 py-1.5 rounded-full font-semibold text-xs
-              ${theme === 'dark' 
-                ? 'text-purple-300 bg-purple-500/30 border border-purple-500/40' 
-                : 'text-gray-900 bg-purple-500/20 border border-purple-400/30'
-              }
-              ${currentStreak % 7 === 0 || currentStreak === 30 || currentStreak === 100
-                ? 'animate-pulse shadow-lg shadow-purple-500/50'
-                : ''
-              }
-            `}
-          >
-            <motion.span
-              key={currentStreak}
-              initial={{ scale: 1.5, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ type: "spring", bounce: 0.6 }}
-              className="inline-block"
-            >
-              {currentStreak}
-            </motion.span>
-            {' '}days in a row
-          </motion.div>
+          <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${isDark ? 'bg-[#A8D5BA]/15 text-[#A8D5BA]' : 'bg-[#E8F5E9] text-[#5A8F6E]'}`}>
+            {currentStreak} day streak
+          </span>
         )}
       </div>
       
-      {/* Week Mood Grid */}
-      <div className="flex gap-1 md:gap-2 justify-between mb-4">
-        {weekData.map((day, i) => {
-          const isToday = i === todayIndex;
-          const isActive = activeDay === i;
-          
-          return (
-            <motion.button
-              key={i}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={`flex flex-col items-center gap-1 md:gap-1.5 group relative transition-all duration-300 ${
-                isActive ? "scale-105 md:scale-110" : ""
-              } flex-1 min-w-0`}
-              onClick={() => setActiveDay(i)}
-            >
-              {/* Mood Circle */}
-              <div
-                className={`w-7 h-7 md:w-9 md:h-9 rounded-full flex items-center justify-center text-lg md:text-2xl shadow-lg transition-all duration-300 ${
-                  getMoodColor(day.mood)
-                } ${
-                  isActive ? "ring-2 ring-purple-400 ring-offset-1 md:ring-offset-2 ring-offset-transparent" : ""
-                } ${
-                  !day.mood ? "border-2 border-dashed border-white/30" : ""
-                }`}
+      {/* Week Mood Row */}
+      <div className={`rounded-xl p-4 mb-4 ${isDark ? 'bg-white/5 border border-white/5' : 'bg-[#F0EDE6]/50 border border-[#E8E5DE]'}`}>
+        <div className="flex justify-between">
+          {weekData.map((day, i) => {
+            const isToday = i === todayIndex;
+            const isActive = activeDay === i;
+            
+            return (
+              <button
+                key={i}
+                className={`flex flex-col items-center gap-1.5 transition-all ${isActive ? 'scale-110' : ''}`}
+                onClick={() => setActiveDay(i)}
               >
-                {day.mood || "•"}
-              </div>
-              
-              {/* Day Label */}
-              <span
-                className={`text-[10px] md:text-xs font-medium transition-all duration-300 truncate w-full text-center ${
-                  isToday ? "text-purple-400" : theme === 'dark' ? "text-white/70" : "text-gray-700"
-                }`}
-              >
-                {isToday ? "Today" : day.dayName}
-              </span>
-              
-              {/* Reflection Indicator */}
-              {day.hasReflection && (
-                <div className={`absolute -bottom-1.5 left-1/2 -translate-x-1/2 md:-bottom-2 w-1.5 h-1.5 md:w-2 md:h-2 bg-green-400 rounded-full border ${theme === 'dark' ? 'border-white/20' : 'border-gray-300'}`} />
-              )}
-            </motion.button>
-          );
-        })}
+                <div
+                  className={`w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center text-xl transition-all ${
+                    getMoodColor(day.mood)
+                  } ${
+                    isActive ? 'ring-2 ring-[#B8C9E0] ring-offset-2' : ''
+                  } ${
+                    !day.mood ? `${isDark ? 'border border-white/10' : ''}` : ''
+                  }`}
+                  style={{ ['--tw-ring-offset-color' as string]: isDark ? '#141820' : '#FAFAF7' } as React.CSSProperties}
+                >
+                  {day.mood || <span className={`text-xs ${isDark ? 'text-white/20' : 'text-[#C4C0B8]'}`}>—</span>}
+                </div>
+                <span className={`text-[10px] font-medium ${
+                  isToday ? 'text-[#5B7FA5]' : isDark ? 'text-white/40' : 'text-[#A0A090]'
+                }`}>
+                  {isToday ? 'Today' : day.dayName}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
       
       {/* Active Day Details */}
@@ -170,21 +138,18 @@ export default function MoodTracker() {
         {activeData && (
           <motion.div
             key={activeDay}
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className={`p-3 rounded-lg border min-h-[60px] ${theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200'}`}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.15 }}
+            className={`rounded-xl p-4 ${isDark ? 'bg-white/5 border border-white/5' : 'bg-[#F0EDE6]/50 border border-[#E8E5DE]'}`}
           >
-            <div className="flex items-start justify-between mb-2">
-              <p className={`text-xs ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>
-                {activeDay === 6 ? "Today" : activeData.dayName}
+            <div className="flex items-center justify-between mb-2">
+              <p className={`text-xs font-medium ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
+                {activeDay === todayIndex ? 'Today' : activeData.dayName}
               </p>
-              <p className={`text-xs ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>
-                {new Date(activeData.date).toLocaleDateString('en-GB', {
-                  day: 'numeric',
-                  month: 'short',
-                })}
+              <p className={`text-xs ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
+                {new Date(activeData.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
               </p>
             </div>
             
@@ -193,27 +158,31 @@ export default function MoodTracker() {
                 {activeData.mood && (
                   <div className="flex items-center gap-2">
                     <span className="text-2xl">{activeData.mood}</span>
-                    <span className={`text-sm ${theme === 'dark' ? 'text-white/80' : 'text-gray-700'}`}>Mood recorded</span>
+                    <span className={`text-sm ${isDark ? 'text-white/70' : 'text-[#5A5A4E]'}`}>Mood recorded</span>
                   </div>
                 )}
                 {activeData.reflectionSnippet && (
-                  <p className={`text-xs italic leading-relaxed ${theme === 'dark' ? 'text-white/70' : 'text-gray-600'}`}>
+                  <p className={`text-xs leading-relaxed ${isDark ? 'text-white/50' : 'text-[#8A8A7A]'}`}>
                     {activeData.reflectionSnippet}
                   </p>
                 )}
               </div>
             ) : (
-              <div className="flex items-center justify-center py-2">
-                <p className={`text-xs italic ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`}>
-                  {activeDay === 6
-                    ? "If you want, write a short reflection for today"
-                    : "No reflection for this day"}
-                </p>
-              </div>
+              <p className={`text-xs ${isDark ? 'text-white/30' : 'text-[#A0A090]'}`}>
+                {activeDay === todayIndex ? 'Write a short reflection for today' : 'No reflection for this day'}
+              </p>
             )}
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* This Week Summary */}
+      <div className={`mt-4 rounded-xl p-4 ${isDark ? 'bg-white/5 border border-white/5' : 'bg-[#F0EDE6]/50 border border-[#E8E5DE]'}`}>
+        <p className={`text-xs ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>Your mood trend</p>
+        <p className={`text-base font-semibold mt-0.5 ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>
+          {weekData.filter(d => d.mood).length > 0 ? 'Improving' : 'Start tracking'}
+        </p>
+      </div>
     </section>
   );
 }

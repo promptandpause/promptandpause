@@ -328,6 +328,35 @@
     }
   }
 
+  /* Subtle breathing animation for modal/popover surfaces */
+  @keyframes breathe-shadow {
+    0%, 100% {
+      box-shadow: 0 12px 40px rgba(20, 24, 32, 0.12);
+    }
+    50% {
+      box-shadow: 0 18px 55px rgba(20, 24, 32, 0.18);
+    }
+  }
+
+  @keyframes breathe-shadow-dark {
+    0%, 100% {
+      box-shadow: 0 16px 55px rgba(0, 0, 0, 0.45);
+    }
+    50% {
+      box-shadow: 0 22px 70px rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  .modal-breathe,
+  .popover-breathe {
+    animation: breathe-shadow 7s ease-in-out infinite;
+  }
+
+  .dark .modal-breathe,
+  .dark .popover-breathe {
+    animation: breathe-shadow-dark 7s ease-in-out infinite;
+  }
+
   .animate-fade-in {
     animation: fadeIn 0.5s ease-out forwards;
     opacity: 0;
