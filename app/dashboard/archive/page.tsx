@@ -181,8 +181,8 @@ function ArchivePageContent() {
       data-dashboard
       className="min-h-screen relative" 
       style={theme === 'light' 
-        ? { background: 'linear-gradient(135deg, #f4f0eb 0%, #a1a79e 45%, #384c37 100%)' } 
-        : { background: 'linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a)' }}
+        ? { background: 'linear-gradient(135deg, #F8F7FF 0%, #C4B5FD 45%, #7C3AED 100%)' } 
+        : { background: 'linear-gradient(to bottom right, #0F0D15, #1A1625, #0F0D15)' }}
     >
       {/* Animated Bubble Background */}
       <BubbleBackground 

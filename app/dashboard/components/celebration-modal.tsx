@@ -76,14 +76,14 @@ export default function CelebrationModal({
                 pointer-events-auto
                 ${theme === 'dark' 
                   ? 'bg-gradient-to-br from-slate-800/95 to-slate-900/95 border-2 border-white/10' 
-                  : 'bg-gradient-to-br from-white/95 to-orange-50/95 border-2 border-orange-200/50'
+                  : 'bg-gradient-to-br from-white/95 to-purple-50/95 border-2 border-purple-200/50'
                 }
                 shadow-2xl backdrop-blur-xl
               `}
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex justify-center mb-6">
-                <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-pink-500 rounded-full flex items-center justify-center">
+                <div className="w-20 h-20 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center">
                   <span className="text-4xl">🎉</span>
                 </div>
               </div>
@@ -132,10 +132,10 @@ export default function CelebrationModal({
                         className={`
                           inline-flex items-center gap-2 px-6 py-3 rounded-full
                           ${isMilestone
-                            ? 'bg-gradient-to-r from-orange-500 to-pink-500'
+                            ? 'bg-gradient-to-r from-purple-500 to-pink-500'
                             : theme === 'dark'
-                              ? 'bg-orange-500/30 border-2 border-orange-400/50'
-                              : 'bg-orange-500/20 border-2 border-orange-400/50'
+                              ? 'bg-purple-500/30 border-2 border-purple-400/50'
+                              : 'bg-purple-500/20 border-2 border-purple-400/50'
                           }
                         `}
                       >
@@ -145,13 +145,13 @@ export default function CelebrationModal({
                           animate={{ scale: 1, opacity: 1 }}
                           transition={{ type: "spring", bounce: 0.6 }}
                           className={`text-3xl font-bold ${
-                            isMilestone ? 'text-white' : theme === 'dark' ? 'text-orange-300' : 'text-orange-600'
+                            isMilestone ? 'text-white' : theme === 'dark' ? 'text-purple-300' : 'text-purple-600'
                           }`}
                         >
                           {streakCount}
                         </motion.span>
                         <span className={`text-xl ${
-                          isMilestone ? 'text-white' : theme === 'dark' ? 'text-orange-300' : 'text-orange-600'
+                          isMilestone ? 'text-white' : theme === 'dark' ? 'text-purple-300' : 'text-purple-600'
                         }`}>
                           day streak 🔥
                         </span>
@@ -176,7 +176,7 @@ export default function CelebrationModal({
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.7 }}
-                        className="text-lg font-semibold bg-gradient-to-r from-orange-400 to-pink-500 bg-clip-text text-transparent"
+                        className="text-lg font-semibold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent"
                       >
                         You're building consistency! Amazing! ✨
                       </motion.p>

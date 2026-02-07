@@ -26,7 +26,7 @@ export function TrialExpiryBanner({ daysRemaining, isExpired, userName }: TrialE
   // Trial expired banner (red/urgent)
   if (isExpired) {
     return (
-      <div className="relative bg-gradient-to-r from-red-50 to-orange-50 border-l-4 border-red-500 shadow-sm">
+      <div className="relative bg-gradient-to-r from-red-50 to-purple-50 border-l-4 border-red-500 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between flex-wrap gap-4">
             {/* Content */}

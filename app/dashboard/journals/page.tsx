@@ -29,7 +29,7 @@ const tagColors: Record<string, { bg: string; text: string; border: string; dark
   "Achievement": { bg: "bg-yellow-100", text: "text-yellow-800", border: "border-yellow-300", darkBg: "bg-yellow-500/20", darkText: "text-yellow-300", darkBorder: "border-yellow-400/40" },
   "Nature": { bg: "bg-green-100", text: "text-green-800", border: "border-green-300", darkBg: "bg-green-500/20", darkText: "text-green-300", darkBorder: "border-green-400/40" },
   "Creativity": { bg: "bg-indigo-100", text: "text-indigo-800", border: "border-indigo-300", darkBg: "bg-indigo-500/20", darkText: "text-indigo-300", darkBorder: "border-indigo-400/40" },
-  "Family": { bg: "bg-orange-100", text: "text-orange-800", border: "border-orange-300", darkBg: "bg-orange-500/20", darkText: "text-orange-300", darkBorder: "border-orange-400/40" },
+  "Family": { bg: "bg-purple-100", text: "text-purple-800", border: "border-purple-300", darkBg: "bg-purple-500/20", darkText: "text-purple-300", darkBorder: "border-purple-400/40" },
 }
 
 function getTagColorClasses(tag: string, isDark: boolean): string {
@@ -237,8 +237,8 @@ export default function JournalsPage() {
       data-dashboard
       className="min-h-screen relative" 
       style={theme === 'light' 
-        ? { background: 'linear-gradient(135deg, #f4f0eb 0%, #a1a79e 45%, #384c37 100%)' } 
-        : { background: 'linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a)' }}
+        ? { background: 'linear-gradient(135deg, #F8F7FF 0%, #C4B5FD 45%, #7C3AED 100%)' } 
+        : { background: 'linear-gradient(to bottom right, #0F0D15, #1A1625, #0F0D15)' }}
     >
       <BubbleBackground interactive className="fixed inset-0 -z-10" />
       <div className={`fixed inset-0 -z-10 ${theme === 'light' ? 'bg-white/35' : 'bg-black/25'}`} />

@@ -17,12 +17,12 @@ const getMoodColor = (mood?: MoodType) => {
   const calmMoods: MoodType[] = ["😌"];
   const strongMoods: MoodType[] = ["💪"];
   
-  if (happyMoods.includes(mood)) return "bg-[#B8D8B8]";
-  if (calmMoods.includes(mood)) return "bg-[#B8C8E8]";
-  if (strongMoods.includes(mood)) return "bg-[#C8B8D8]";
-  if (neutralMoods.includes(mood)) return "bg-[#E8D8B8]";
-  if (sadMoods.includes(mood)) return "bg-[#D8B8B8]";
-  return "bg-[#F4C6B8]";
+  if (happyMoods.includes(mood)) return "bg-[#D1FAE5]";
+  if (calmMoods.includes(mood)) return "bg-[#C4B5FD]";
+  if (strongMoods.includes(mood)) return "bg-[#DDD6FE]";
+  if (neutralMoods.includes(mood)) return "bg-[#FDE68A]";
+  if (sadMoods.includes(mood)) return "bg-[#FCA5A5]";
+  return "bg-[#FCE7F3]";
 };
 
 interface WeekDay {
@@ -95,11 +95,11 @@ export default function MoodTracker() {
             className={`
               relative px-3 py-1.5 rounded-full font-semibold text-xs
               ${theme === 'dark' 
-                ? 'text-orange-300 bg-orange-500/30 border border-orange-500/40' 
-                : 'text-gray-900 bg-orange-500/20 border border-orange-400/30'
+                ? 'text-purple-300 bg-purple-500/30 border border-purple-500/40' 
+                : 'text-gray-900 bg-purple-500/20 border border-purple-400/30'
               }
               ${currentStreak % 7 === 0 || currentStreak === 30 || currentStreak === 100
-                ? 'animate-pulse shadow-lg shadow-orange-500/50'
+                ? 'animate-pulse shadow-lg shadow-purple-500/50'
                 : ''
               }
             `}
@@ -139,7 +139,7 @@ export default function MoodTracker() {
                 className={`w-7 h-7 md:w-9 md:h-9 rounded-full flex items-center justify-center text-lg md:text-2xl shadow-lg transition-all duration-300 ${
                   getMoodColor(day.mood)
                 } ${
-                  isActive ? "ring-2 ring-orange-400 ring-offset-1 md:ring-offset-2 ring-offset-transparent" : ""
+                  isActive ? "ring-2 ring-purple-400 ring-offset-1 md:ring-offset-2 ring-offset-transparent" : ""
                 } ${
                   !day.mood ? "border-2 border-dashed border-white/30" : ""
                 }`}
@@ -150,7 +150,7 @@ export default function MoodTracker() {
               {/* Day Label */}
               <span
                 className={`text-[10px] md:text-xs font-medium transition-all duration-300 truncate w-full text-center ${
-                  isToday ? "text-orange-400" : theme === 'dark' ? "text-white/70" : "text-gray-700"
+                  isToday ? "text-purple-400" : theme === 'dark' ? "text-white/70" : "text-gray-700"
                 }`}
               >
                 {isToday ? "Today" : day.dayName}

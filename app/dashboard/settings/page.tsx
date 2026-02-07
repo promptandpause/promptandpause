@@ -883,7 +883,7 @@ function SettingsPageContent() {
       <div 
         data-dashboard
         className="min-h-screen relative" 
-        style={theme === 'light' ? { background: 'linear-gradient(135deg, #f4f0eb 0%, #a1a79e 45%, #384c37 100%)' } : { background: 'linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a)' }}
+        style={theme === 'light' ? { background: 'linear-gradient(135deg, #F8F7FF 0%, #C4B5FD 45%, #7C3AED 100%)' } : { background: 'linear-gradient(to bottom right, #0F0D15, #1A1625, #0F0D15)' }}
       >
         {/* Animated Bubble Background - Shows immediately */}
         <BubbleBackground 
@@ -903,7 +903,7 @@ function SettingsPageContent() {
     <div 
       data-dashboard
       className="min-h-screen relative" 
-      style={theme === 'light' ? { background: 'linear-gradient(135deg, #f4f0eb 0%, #a1a79e 45%, #384c37 100%)' } : { background: 'linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a)' }}
+      style={theme === 'light' ? { background: 'linear-gradient(135deg, #F8F7FF 0%, #C4B5FD 45%, #7C3AED 100%)' } : { background: 'linear-gradient(to bottom right, #0F0D15, #1A1625, #0F0D15)' }}
     >
       {/* Animated Bubble Background */}
       <BubbleBackground 
@@ -1250,7 +1250,7 @@ function SettingsPageContent() {
                           }`}>{timezoneInfo.dstNote}</p>
                         )}
                       </div>
-                      <Button onClick={handleSaveProfile} className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white h-12 text-base font-medium rounded-xl shadow-lg active:scale-[0.98] transition-transform">
+                      <Button onClick={handleSaveProfile} className="w-full bg-gradient-to-r from-yellow-500 to-purple-500 hover:from-yellow-600 hover:to-purple-600 text-white h-12 text-base font-medium rounded-xl shadow-lg active:scale-[0.98] transition-transform">
                         Save Changes
                       </Button>
                     </div>
@@ -1416,7 +1416,7 @@ function SettingsPageContent() {
                                   }}
                                   className={`aspect-square min-h-[44px] rounded-xl flex items-center justify-center text-sm font-medium transition-all active:scale-95 ${
                                     isSelected
-                                      ? 'bg-gradient-to-br from-yellow-400 to-orange-500 text-white shadow-md'
+                                      ? 'bg-gradient-to-br from-yellow-400 to-purple-500 text-white shadow-md'
                                       : !canSelect
                                       ? 'opacity-40 cursor-not-allowed ' + (theme === 'dark' ? 'bg-white/5 text-white/40' : 'bg-gray-100 text-gray-400')
                                       : theme === 'dark'
@@ -1441,7 +1441,7 @@ function SettingsPageContent() {
                       </div>
                     </Card>
                       
-                    <Button onClick={handleSaveNotifications} className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white h-12 text-base font-medium rounded-xl shadow-lg active:scale-[0.98] transition-transform">
+                    <Button onClick={handleSaveNotifications} className="w-full bg-gradient-to-r from-yellow-500 to-purple-500 hover:from-yellow-600 hover:to-purple-600 text-white h-12 text-base font-medium rounded-xl shadow-lg active:scale-[0.98] transition-transform">
                       Save Settings
                     </Button>
                   </div>
@@ -1570,7 +1570,7 @@ function SettingsPageContent() {
                       }`}>
                         Password must be at least 8 characters
                       </p>
-                      <Button onClick={handleUpdatePassword} className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white h-12 text-base font-medium rounded-xl shadow-lg active:scale-[0.98] transition-transform">
+                      <Button onClick={handleUpdatePassword} className="w-full bg-gradient-to-r from-yellow-500 to-purple-500 hover:from-yellow-600 hover:to-purple-600 text-white h-12 text-base font-medium rounded-xl shadow-lg active:scale-[0.98] transition-transform">
                         {hasPassword ? 'Update Password' : 'Set Password'}
                       </Button>
                     </div>
@@ -1797,8 +1797,8 @@ function SettingsPageContent() {
                         <div className="space-y-3">
                           <div className={`p-4 rounded-xl ${
                             theme === 'dark'
-                              ? 'bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border border-yellow-400/30'
-                              : 'bg-gradient-to-br from-yellow-100 to-orange-100 border-2 border-yellow-300'
+                              ? 'bg-gradient-to-br from-yellow-500/20 to-purple-500/20 border border-yellow-400/30'
+                              : 'bg-gradient-to-br from-yellow-100 to-purple-100 border-2 border-yellow-300'
                           }`}>
                             <div className="flex items-center gap-2 mb-3">
                               <Crown className={`h-5 w-5 ${
@@ -1875,7 +1875,7 @@ function SettingsPageContent() {
 
                             <Button 
                               onClick={handleUpgradeToPremium} 
-                              className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-semibold h-10"
+                              className="w-full bg-gradient-to-r from-yellow-500 to-purple-500 hover:from-yellow-600 hover:to-purple-600 text-white font-semibold h-10"
                             >
                               <Crown className="mr-2 h-4 w-4" /> 
                               Upgrade to Premium
@@ -1890,8 +1890,8 @@ function SettingsPageContent() {
                           {/* Premium Benefits Reminder */}
                           <div className={`p-4 rounded-xl ${
                             theme === 'dark'
-                              ? 'bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border border-yellow-400/30'
-                              : 'bg-gradient-to-br from-yellow-100 to-orange-100 border-2 border-yellow-300'
+                              ? 'bg-gradient-to-br from-yellow-500/20 to-purple-500/20 border border-yellow-400/30'
+                              : 'bg-gradient-to-br from-yellow-100 to-purple-100 border-2 border-yellow-300'
                           }`}>
                             <div className="flex items-center gap-2 mb-2">
                               <Crown className={`h-4 w-4 ${
@@ -2399,7 +2399,7 @@ function SettingsPageContent() {
                 
                 <Button 
                   onClick={handleSaveNotifications}
-                  className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white text-sm h-9 md:h-10 transition-all duration-700 ease-out hover:scale-[1.02]"
+                  className="w-full bg-gradient-to-r from-yellow-500 to-purple-500 hover:from-yellow-600 hover:to-purple-600 text-white text-sm h-9 md:h-10 transition-all duration-700 ease-out hover:scale-[1.02]"
                 >
                   Save Notification Settings
                 </Button>
@@ -2798,8 +2798,8 @@ function SettingsPageContent() {
               {currentPlan === "free" && (
                 <div className={`p-6 rounded-xl ${
                   theme === 'dark'
-                    ? 'bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border border-yellow-400/30'
-                    : 'bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-300'
+                    ? 'bg-gradient-to-br from-yellow-500/10 to-purple-500/10 border border-yellow-400/30'
+                    : 'bg-gradient-to-br from-yellow-50 to-purple-50 border-2 border-yellow-300'
                 }`}>
                   <div className="flex items-center gap-3 mb-4">
                     <Crown className="h-8 w-8 text-yellow-600 flex-shrink-0" />
@@ -2878,7 +2878,7 @@ function SettingsPageContent() {
 
                   <Button 
                     onClick={handleUpgradeToPremium}
-                    className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-semibold text-base transition-all duration-700 ease-out hover:scale-[1.02] h-12"
+                    className="w-full bg-gradient-to-r from-yellow-500 to-purple-500 hover:from-yellow-600 hover:to-purple-600 text-white font-semibold text-base transition-all duration-700 ease-out hover:scale-[1.02] h-12"
                   >
                     <Crown className="mr-2 h-5 w-5" />
                     Upgrade to Premium
@@ -3273,7 +3273,7 @@ function SettingsPageContent() {
               <li>Unlimited reflection archive</li>
             </ul>
             <div className={`mt-3 sm:mt-4 font-medium text-xs sm:text-sm ${
-              theme === 'dark' ? 'text-yellow-400' : 'text-orange-600'
+              theme === 'dark' ? 'text-yellow-400' : 'text-purple-600'
             }`}>
               ⚠️ Your Premium access will continue until the end of your current billing period.
             </div>

@@ -25,7 +25,7 @@ export default function DigestModal({ open, onOpenChange, digest }: DigestModalP
       <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto backdrop-blur-xl bg-white/10 border border-white/20 text-white">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-white flex items-center gap-2">
-            <Calendar className="h-6 w-6 text-orange-400" />
+            <Calendar className="h-6 w-6 text-purple-400" />
             Weekly Digest
           </DialogTitle>
           <p className="text-white/60 text-sm">
@@ -84,7 +84,7 @@ export default function DigestModal({ open, onOpenChange, digest }: DigestModalP
                       </div>
                       <div className="w-full bg-white/10 rounded-full h-2">
                         <div
-                          className="bg-gradient-to-r from-orange-500 to-red-500 h-2 rounded-full transition-all duration-500"
+                          className="bg-gradient-to-r from-purple-500 to-red-500 h-2 rounded-full transition-all duration-500"
                           style={{ width: `${percentage}%` }}
                         />
                       </div>

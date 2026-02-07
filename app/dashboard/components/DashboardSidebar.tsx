@@ -105,7 +105,7 @@ export function DashboardSidebar() {
       {/* Desktop Sidebar */}
       <Card className={`hidden md:flex md:col-span-2 rounded-3xl p-6 h-fit sticky top-6 flex-col gap-6 transition-all duration-200 ${theme === 'dark' ? 'glass-light shadow-soft-lg' : 'glass-medium shadow-soft-md'}`}>
         {/* Logo Section */}
-        <div className={`text-center pb-4 border-b ${theme === 'dark' ? 'border-white/10' : 'border-gray-300'}`}>
+        <div className={`text-center pb-4 border-b ${theme === 'dark' ? 'border-purple-400/10' : 'border-purple-200/30'}`}>
           <div className="flex items-center justify-center gap-2 mb-2">
             <img src="https://res.cloudinary.com/dh1rrfpmq/image/upload/v1766460430/prompt_pause-JRsbZR3dxCXndC8YMcyX6XU3XeT2Vw_vdvqfj.svg" className={`h-12 ${theme === 'dark' ? 'invert' : ''}`} alt="Prompt & Pause" />
           </div>
@@ -113,7 +113,7 @@ export function DashboardSidebar() {
         </div>
 
         {/* User Profile Display */}
-        <div className={`pb-4 border-b ${theme === 'dark' ? 'border-white/10' : 'border-gray-300'}`}>
+        <div className={`pb-4 border-b ${theme === 'dark' ? 'border-purple-400/10' : 'border-purple-200/30'}`}>
           {loading ? (
             <div className="flex items-center gap-3">
               <Skeleton className={`h-12 w-12 rounded-full ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-200'}`} />
@@ -155,11 +155,11 @@ export function DashboardSidebar() {
                   className={`w-full justify-start text-sm font-medium transition-all duration-300 h-12 rounded-xl ${
                     item.active 
                       ? theme === 'dark'
-                        ? "bg-white/10 text-white shadow-lg border border-white/20"
+                        ? "bg-purple-500/15 text-white shadow-lg border border-purple-400/20"
                         : "bg-purple-100 text-purple-900 shadow-md border border-purple-300"
                       : theme === 'dark'
-                        ? "text-white/60 hover:bg-white/10 hover:text-white hover:border hover:border-white/20"
-                        : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 hover:border hover:border-gray-300"
+                        ? "text-white/60 hover:bg-purple-500/10 hover:text-white hover:border hover:border-purple-400/15"
+                        : "text-gray-600 hover:bg-purple-50 hover:text-purple-900 hover:border hover:border-purple-200"
                   }`}
                 >
                   <item.icon className="mr-3 h-5 w-5" />
@@ -172,12 +172,12 @@ export function DashboardSidebar() {
 
         {/* Only show premium upsell if user is on free tier */}
         {!loading && tier !== 'premium' && (
-          <div className={`pt-4 border-t ${theme === 'dark' ? 'border-white/10' : 'border-gray-300'}`}>
-            <Card className={`rounded-2xl p-5 ${theme === 'dark' ? 'bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border-2 border-yellow-500/30 shadow-2xl shadow-yellow-500/20' : 'bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-400 shadow-lg'}`}>
+          <div className={`pt-4 border-t ${theme === 'dark' ? 'border-purple-400/10' : 'border-purple-200/30'}`}>
+            <Card className={`rounded-2xl p-5 ${theme === 'dark' ? 'bg-gradient-to-br from-purple-500/20 to-violet-500/20 border-2 border-purple-400/30 shadow-2xl shadow-purple-500/20' : 'bg-gradient-to-br from-purple-50 to-violet-50 border-2 border-purple-300 shadow-lg'}`}>
               <div className="text-center space-y-4">
                 <div className="flex justify-center">
-                  <div className={`p-3 rounded-full ${theme === 'dark' ? 'bg-yellow-500/30' : 'bg-yellow-100'}`}>
-                    <Crown className={`h-7 w-7 ${theme === 'dark' ? 'text-yellow-400' : 'text-yellow-600'}`} />
+                  <div className={`p-3 rounded-full ${theme === 'dark' ? 'bg-purple-500/30' : 'bg-purple-100'}`}>
+                    <Crown className={`h-7 w-7 ${theme === 'dark' ? 'text-purple-300' : 'text-purple-600'}`} />
                   </div>
                 </div>
                 <div>
@@ -187,7 +187,7 @@ export function DashboardSidebar() {
                 <Link href="/dashboard/settings">
                   <Button
                     size="sm"
-                    className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white border-0 transition-all duration-300 hover:scale-105 text-sm font-semibold h-10 shadow-lg"
+                    className="w-full bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white border-0 transition-all duration-300 hover:scale-105 text-sm font-semibold h-10 shadow-lg shadow-purple-500/20"
                   >
                     Upgrade Now
                     <ChevronRight className="ml-1 h-4 w-4" />
@@ -199,13 +199,13 @@ export function DashboardSidebar() {
         )}
 
         {/* Support & Account Section */}
-        <div className={`pt-4 border-t ${theme === 'dark' ? 'border-white/10' : 'border-gray-300'}`}>
+        <div className={`pt-4 border-t ${theme === 'dark' ? 'border-purple-400/10' : 'border-purple-200/30'}`}>
           <h4 className={`text-xs font-bold uppercase tracking-wider mb-4 px-1 ${theme === 'dark' ? 'text-white/40' : 'text-gray-500'}`}>Support</h4>
           <div className="space-y-1.5">
             <Link href="/crisis-resources">
               <Button
                 variant="ghost"
-                className={`w-full justify-start text-sm font-medium transition-all duration-300 h-12 rounded-xl shadow-sm ${theme === 'dark' ? 'text-red-400 hover:bg-red-500/20 hover:text-red-300 border border-red-500/30 hover:border-red-400/50' : 'text-red-600 hover:bg-red-50 hover:text-red-700 border border-red-300 hover:border-red-400'}`}
+                className={`w-full justify-start text-sm font-medium transition-all duration-300 h-12 rounded-xl shadow-sm ${theme === 'dark' ? 'text-red-400 hover:bg-red-500/20 hover:text-red-300 border border-red-500/30 hover:border-red-400/50' : 'text-red-600 hover:bg-red-50 hover:text-red-700 border border-red-200 hover:border-red-400'}`}
               >
                 <LifeBuoy className="mr-3 h-5 w-5" />
                 Crisis Resources
@@ -214,7 +214,7 @@ export function DashboardSidebar() {
             <Link href="/dashboard/support">
               <Button
                 variant="ghost"
-                className={`w-full justify-start text-sm font-medium transition-all duration-300 h-12 rounded-xl ${theme === 'dark' ? 'text-white/60 hover:bg-white/10 hover:text-white hover:border hover:border-white/20' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 hover:border hover:border-gray-300'}`}
+                className={`w-full justify-start text-sm font-medium transition-all duration-300 h-12 rounded-xl ${theme === 'dark' ? 'text-white/60 hover:bg-purple-500/10 hover:text-white hover:border hover:border-purple-400/15' : 'text-gray-600 hover:bg-purple-50 hover:text-purple-900 hover:border hover:border-purple-200'}`}
               >
                 <HelpCircle className="mr-3 h-5 w-5" />
                 Contact Support
@@ -227,7 +227,7 @@ export function DashboardSidebar() {
                 await supabase.auth.signOut()
                 router.push('/auth')
               }}
-              className={`w-full justify-start text-sm font-medium transition-all duration-300 h-12 rounded-xl ${theme === 'dark' ? 'text-white/60 hover:bg-red-500/20 hover:text-red-400 hover:border hover:border-red-500/30' : 'text-gray-600 hover:bg-red-50 hover:text-red-600 hover:border hover:border-red-300'}`}
+              className={`w-full justify-start text-sm font-medium transition-all duration-300 h-12 rounded-xl ${theme === 'dark' ? 'text-white/60 hover:bg-red-500/20 hover:text-red-400 hover:border hover:border-red-500/30' : 'text-gray-600 hover:bg-red-50 hover:text-red-600 hover:border hover:border-red-200'}`}
             >
               <LogOut className="mr-3 h-5 w-5" />
               Logout
@@ -237,18 +237,18 @@ export function DashboardSidebar() {
       </Card>
 
       {/* Mobile Navigation - Bottom fixed bar */}
-      <div className={`md:hidden fixed bottom-0 left-0 right-0 p-3 pb-6 z-50 safe-area-bottom transition-all duration-200 ${theme === 'dark' ? 'glass-light shadow-soft-lg border-t border-white/10' : 'glass-heavy shadow-soft-lg border-t border-gray-200/50'}`}>
+      <div className={`md:hidden fixed bottom-0 left-0 right-0 p-3 pb-6 z-50 safe-area-bottom transition-all duration-200 ${theme === 'dark' ? 'glass-light shadow-soft-lg border-t border-purple-400/10' : 'glass-heavy shadow-soft-lg border-t border-purple-200/30'}`}>
         <div className="flex justify-around items-center">
           {sidebarNav.map((item) => (
             <Link key={item.label} href={item.href} className="flex flex-col items-center gap-1">
               <item.icon className={`h-5 w-5 ${
                 item.active 
-                  ? theme === 'dark' ? "text-white" : "text-gray-900"
+                  ? theme === 'dark' ? "text-purple-300" : "text-purple-700"
                   : theme === 'dark' ? "text-white/50" : "text-gray-500"
               }`} />
               <span className={`text-[10px] ${
                 item.active 
-                  ? theme === 'dark' ? "text-white font-medium" : "text-gray-900 font-medium"
+                  ? theme === 'dark' ? "text-purple-300 font-medium" : "text-purple-700 font-medium"
                   : theme === 'dark' ? "text-white/50" : "text-gray-500"
               }`}>
                 {t(`nav.${item.label}` as any)}

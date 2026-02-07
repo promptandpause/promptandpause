@@ -85,8 +85,8 @@ export default function WellnessPage() {
         data-dashboard
         className="min-h-screen relative" 
         style={theme === 'light' 
-          ? { background: 'linear-gradient(135deg, #f4f0eb 0%, #a1a79e 45%, #384c37 100%)' } 
-          : { background: 'linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a)' }}
+          ? { background: 'linear-gradient(135deg, #F8F7FF 0%, #C4B5FD 45%, #7C3AED 100%)' } 
+          : { background: 'linear-gradient(to bottom right, #0F0D15, #1A1625, #0F0D15)' }}
       >
         {/* Subtle overlay for readability */}
         <div className={`fixed inset-0 -z-10 ${theme === 'light' ? 'bg-white/35' : 'bg-black/25'}`} />
@@ -98,9 +98,9 @@ export default function WellnessPage() {
 
         <style jsx global>{`
           .calm-ambient-blobs {
-            background: radial-gradient(600px circle at 20% 20%, rgba(161, 167, 158, 0.20), transparent 45%),
-                        radial-gradient(700px circle at 80% 30%, rgba(136, 165, 188, 0.20), transparent 50%),
-                        radial-gradient(800px circle at 30% 80%, rgba(56, 76, 55, 0.20), transparent 55%);
+            background: radial-gradient(600px circle at 20% 20%, rgba(167, 139, 250, 0.20), transparent 45%),
+                        radial-gradient(700px circle at 80% 30%, rgba(139, 92, 246, 0.20), transparent 50%),
+                        radial-gradient(800px circle at 30% 80%, rgba(124, 58, 237, 0.20), transparent 55%);
             animation: calm-shift 28s ease-in-out infinite alternate;
             filter: blur(12px);
           }
@@ -323,7 +323,7 @@ export default function WellnessPage() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4 }}
                     >
-                      <Card className={`rounded-2xl ${theme === 'dark' ? 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border-yellow-500/30' : 'bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-200'}`}>
+                      <Card className={`rounded-2xl ${theme === 'dark' ? 'bg-gradient-to-r from-yellow-500/20 to-purple-500/20 border-yellow-500/30' : 'bg-gradient-to-r from-yellow-50 to-purple-50 border-yellow-200'}`}>
                         <CardContent className="p-6">
                           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                             <div className="flex items-center gap-4">
@@ -340,7 +340,7 @@ export default function WellnessPage() {
                               </div>
                             </div>
                             <Link href="/dashboard/settings#subscription">
-                              <Button className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white border-0 shadow-md">
+                              <Button className="bg-gradient-to-r from-yellow-500 to-purple-500 hover:from-yellow-600 hover:to-purple-600 text-white border-0 shadow-md">
                                 <Crown className="w-4 h-4 mr-2" />
                                 Upgrade Now
                               </Button>
@@ -387,7 +387,7 @@ export default function WellnessPage() {
                         Goal tracking helps you set intentions and track progress toward what matters most.
                       </p>
                       <Link href="/dashboard/settings#subscription">
-                        <Button className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white border-0">
+                        <Button className="bg-gradient-to-r from-yellow-500 to-purple-500 hover:from-yellow-600 hover:to-purple-600 text-white border-0">
                           <Crown className="w-4 h-4 mr-2" />
                           Upgrade to Premium
                         </Button>
@@ -410,7 +410,7 @@ export default function WellnessPage() {
                         Track daily habits and see how they correlate with your mood over time.
                       </p>
                       <Link href="/dashboard/settings#subscription">
-                        <Button className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white border-0">
+                        <Button className="bg-gradient-to-r from-yellow-500 to-purple-500 hover:from-yellow-600 hover:to-purple-600 text-white border-0">
                           <Crown className="w-4 h-4 mr-2" />
                           Upgrade to Premium
                         </Button>

@@ -47,7 +47,7 @@ const PRESET_COLORS = [
   'from-blue-500/20 to-cyan-500/20 border-blue-400/30',
   'from-green-500/20 to-emerald-500/20 border-green-400/30',
   'from-purple-500/20 to-pink-500/20 border-purple-400/30',
-  'from-orange-500/20 to-yellow-500/20 border-orange-400/30',
+  'from-purple-500/20 to-yellow-500/20 border-purple-400/30',
   'from-indigo-500/20 to-blue-500/20 border-indigo-400/30',
 ]
 

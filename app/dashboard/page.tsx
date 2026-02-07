@@ -28,8 +28,8 @@ export default function DashboardPage() {
         data-dashboard
         className="min-h-screen relative" 
         style={theme === 'light' 
-          ? { background: 'linear-gradient(135deg, #f4f0eb 0%, #a1a79e 45%, #384c37 100%)' } 
-          : { background: 'linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a)' }}
+          ? { background: 'linear-gradient(135deg, #F8F7FF 0%, #C4B5FD 45%, #7C3AED 100%)' } 
+          : { background: 'linear-gradient(to bottom right, #0F0D15, #1A1625, #0F0D15)' }}
       >
         {/* Global Data Sync - Auto-syncs with Supabase every 5 minutes */}
         <GlobalDataSync />
@@ -44,9 +44,9 @@ export default function DashboardPage() {
 
         <style jsx global>{`
           .calm-ambient-blobs {
-            background: radial-gradient(600px circle at 20% 20%, rgba(161, 167, 158, 0.20), transparent 45%),
-                        radial-gradient(700px circle at 80% 30%, rgba(136, 165, 188, 0.20), transparent 50%),
-                        radial-gradient(800px circle at 30% 80%, rgba(56, 76, 55, 0.20), transparent 55%);
+            background: radial-gradient(600px circle at 20% 20%, rgba(167, 139, 250, 0.20), transparent 45%),
+                        radial-gradient(700px circle at 80% 30%, rgba(139, 92, 246, 0.20), transparent 50%),
+                        radial-gradient(800px circle at 30% 80%, rgba(124, 58, 237, 0.20), transparent 55%);
             animation: calm-shift 28s ease-in-out infinite alternate;
             filter: blur(12px);
           }

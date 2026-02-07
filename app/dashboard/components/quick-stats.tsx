@@ -81,7 +81,7 @@ export default function QuickStats() {
       {/* Day Streak */}
       <div className="flex flex-col items-center justify-center gap-1.5 md:gap-2 flex-1 min-w-0">
         <div className="flex items-center gap-1">
-          <span className="text-2xl md:text-3xl font-bold text-orange-400">{currentStreak}</span>
+          <span className="text-2xl md:text-3xl font-bold text-purple-400">{currentStreak}</span>
         </div>
         <span className={`text-xs md:text-sm font-medium text-center leading-tight ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>
           <span className="hidden md:inline">Days in a row</span>

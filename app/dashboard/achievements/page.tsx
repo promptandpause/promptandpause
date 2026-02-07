@@ -73,8 +73,8 @@ function AchievementsPageContent() {
       data-dashboard
       className="min-h-screen relative" 
       style={theme === 'light' 
-        ? { background: 'linear-gradient(135deg, #f4f0eb 0%, #a1a79e 45%, #384c37 100%)' } 
-        : { background: 'linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a)' }}
+        ? { background: 'linear-gradient(135deg, #F8F7FF 0%, #C4B5FD 45%, #7C3AED 100%)' } 
+        : { background: 'linear-gradient(to bottom right, #0F0D15, #1A1625, #0F0D15)' }}
     >
       {/* Animated Bubble Background */}
       <BubbleBackground 
@@ -133,7 +133,7 @@ function AchievementsPageContent() {
               </div>
             </div>
             <Trophy className={`absolute -top-2 -right-2 w-5 h-5 md:w-6 md:h-6 ${
-              theme === 'dark' ? 'text-orange-400' : 'text-orange-500'
+              theme === 'dark' ? 'text-purple-400' : 'text-purple-500'
             }`} />
           </div>
         </div>
@@ -152,8 +152,8 @@ function AchievementsPageContent() {
             className={`px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-sm md:text-base font-medium transition-all ${
               selectedCategory === null
                 ? theme === 'dark'
-                  ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/30'
-                  : 'bg-orange-400 text-white shadow-lg shadow-orange-400/30'
+                  ? 'bg-purple-500 text-white shadow-lg shadow-purple-500/30'
+                  : 'bg-purple-400 text-white shadow-lg shadow-purple-400/30'
                 : theme === 'dark'
                   ? 'bg-white/5 text-white/70 hover:bg-white/10'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -172,8 +172,8 @@ function AchievementsPageContent() {
                 className={`px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-sm md:text-base font-medium transition-all flex items-center gap-1.5 md:gap-2 ${
                   selectedCategory === category.key
                     ? theme === 'dark'
-                      ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/30'
-                      : 'bg-orange-400 text-white shadow-lg shadow-orange-400/30'
+                      ? 'bg-purple-500 text-white shadow-lg shadow-purple-500/30'
+                      : 'bg-purple-400 text-white shadow-lg shadow-purple-400/30'
                     : theme === 'dark'
                       ? 'bg-white/5 text-white/70 hover:bg-white/10'
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'

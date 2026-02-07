@@ -127,8 +127,8 @@ export default function BadgeUnlockModal({
               }}
               className={`absolute w-full h-full rounded-full pointer-events-none motion-reduce:hidden ${
                 theme === 'dark'
-                  ? 'bg-gradient-to-r from-orange-500/20 to-red-500/20'
-                  : 'bg-gradient-to-r from-orange-400/30 to-red-400/30'
+                  ? 'bg-gradient-to-r from-purple-500/20 to-red-500/20'
+                  : 'bg-gradient-to-r from-purple-400/30 to-red-400/30'
               }`}
               style={{ filter: 'blur(40px)' }}
             />
@@ -139,7 +139,7 @@ export default function BadgeUnlockModal({
                 pointer-events-auto overflow-hidden
                 ${theme === 'dark' 
                   ? 'bg-gradient-to-br from-slate-800/98 via-slate-900/98 to-slate-950/98 border-2 border-white/20' 
-                  : 'bg-gradient-to-br from-white/98 via-orange-50/95 to-pink-50/95 border-2 border-orange-300/60'
+                  : 'bg-gradient-to-br from-white/98 via-purple-50/95 to-pink-50/95 border-2 border-purple-300/60'
                 }
                 shadow-[0_20px_80px_rgba(0,0,0,0.4)] backdrop-blur-2xl
               `}
@@ -241,7 +241,7 @@ export default function BadgeUnlockModal({
                           ease: "easeInOut"
                         }}
                         className={`text-sm font-black uppercase tracking-[0.2em] ${
-                          theme === 'dark' ? 'text-orange-300' : 'text-orange-600'
+                          theme === 'dark' ? 'text-purple-300' : 'text-purple-600'
                         } drop-shadow-[0_0_8px_rgba(251,146,60,0.5)] motion-reduce:!transform-none`}
                       >
                         ✨ Badge Unlocked! ✨
@@ -295,8 +295,8 @@ export default function BadgeUnlockModal({
                           }}
                           className={`absolute inset-0 rounded-full motion-reduce:hidden ${
                             badge.rarity === 'legendary'
-                              ? 'bg-gradient-to-r from-yellow-400/40 via-orange-400/40 to-yellow-400/40'
-                              : 'bg-gradient-to-r from-orange-400/20 via-red-400/20 to-orange-400/20'
+                              ? 'bg-gradient-to-r from-yellow-400/40 via-purple-400/40 to-yellow-400/40'
+                              : 'bg-gradient-to-r from-purple-400/20 via-red-400/20 to-purple-400/20'
                           }`}
                           style={{ filter: 'blur(12px)' }}
                         />
@@ -328,8 +328,8 @@ export default function BadgeUnlockModal({
                       transition={{ delay: 0.7, type: "spring", bounce: 0.5 }}
                       className={`text-3xl font-black bg-gradient-to-r ${
                         theme === 'dark' 
-                          ? 'from-white via-orange-200 to-white' 
-                          : 'from-gray-900 via-orange-600 to-gray-900'
+                          ? 'from-white via-purple-200 to-white' 
+                          : 'from-gray-900 via-purple-600 to-gray-900'
                       } bg-clip-text text-transparent drop-shadow-sm`}
                     >
                       {badge.name}
@@ -436,7 +436,7 @@ export default function BadgeUnlockModal({
                       {/* Continue Button */}
                       <Button
                         onClick={onClose}
-                        className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold shadow-lg"
+                        className="w-full bg-gradient-to-r from-purple-500 to-red-500 hover:from-purple-600 hover:to-red-600 text-white font-bold shadow-lg"
                       >
                         Continue
                       </Button>

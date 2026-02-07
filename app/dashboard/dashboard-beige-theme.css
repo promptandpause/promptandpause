@@ -1,8 +1,8 @@
-/* Beige Theme Dashboard Overrides */
+/* Purple Theme Dashboard Overrides */
 
-/* Glass cards on beige background - make them more visible */
+/* Glass cards on purple background - make them more visible */
 .dashboard-card {
-  @apply backdrop-blur-xl bg-white/80 border border-gray-300 rounded-2xl md:rounded-3xl shadow-lg;
+  @apply backdrop-blur-xl bg-white/80 border border-purple-200/30 rounded-2xl md:rounded-3xl shadow-lg;
 }
 
 /* Text colors for beige background */
@@ -25,11 +25,11 @@
 
 /* Buttons on beige */
 .dashboard-button-primary {
-  @apply bg-purple-600 hover:bg-purple-700 text-white;
+  @apply bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white shadow-lg shadow-purple-500/20;
 }
 
 .dashboard-button-secondary {
-  @apply bg-gray-100 hover:bg-gray-200 text-gray-900 border border-gray-300;
+  @apply bg-purple-50 hover:bg-purple-100 text-purple-900 border border-purple-200;
 }
 
 /* Premium badge colors */
@@ -39,7 +39,7 @@
 
 /* Dividers */
 .dashboard-divider {
-  @apply border-gray-300;
+  @apply border-purple-200/30;
 }
 
 /* Skeletons */
@@ -49,11 +49,11 @@
 
 /* Icons */
 .dashboard-icon-primary {
-  @apply text-gray-700;
+  @apply text-purple-700;
 }
 
 .dashboard-icon-secondary {
-  @apply text-gray-500;
+  @apply text-purple-400;
 }
 
 /* Stats and metrics */
