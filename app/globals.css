@@ -4,166 +4,166 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* ===== WELLNESS DESIGN SYSTEM - LIGHT MODE ===== */
+  /* ===== WELLNESS DESIGN SYSTEM - LIGHT MODE (Purple Theme) ===== */
   
-  /* Backgrounds - Warm Beige Theme */
-  --background: #F5F5DC;
-  --background-secondary: #FDFAF5;
-  --background-tertiary: #EAE8E0;
+  /* Backgrounds - Clean White / Soft Lavender */
+  --background: #F8F7FF;
+  --background-secondary: #FFFFFF;
+  --background-tertiary: #F0EEFF;
   
   /* Text Colors */
-  --foreground: #2C2C2C;
-  --text-secondary: #5A5A5A;
-  --text-tertiary: #8B8B8B;
+  --foreground: #1F2937;
+  --text-secondary: #4B5563;
+  --text-tertiary: #9CA3AF;
   
   /* Glass Effects */
-  --glass-light: rgba(255, 255, 255, 0.75);
-  --glass-medium: rgba(255, 255, 255, 0.85);
-  --glass-heavy: rgba(255, 255, 255, 0.95);
-  --glass-border: rgba(255, 255, 255, 0.4);
+  --glass-light: rgba(255, 255, 255, 0.78);
+  --glass-medium: rgba(255, 255, 255, 0.88);
+  --glass-heavy: rgba(255, 255, 255, 0.96);
+  --glass-border: rgba(139, 92, 246, 0.12);
   
   /* Cards */
-  --card: rgba(255, 255, 255, 0.75);
-  --card-foreground: #2C2C2C;
+  --card: rgba(255, 255, 255, 0.82);
+  --card-foreground: #1F2937;
   
   /* Popovers */
-  --popover: rgba(255, 255, 255, 0.85);
-  --popover-foreground: #2C2C2C;
+  --popover: rgba(255, 255, 255, 0.9);
+  --popover-foreground: #1F2937;
   
-  /* Primary Accent - Muted Sage Green */
-  --primary: #A8B5A0;
+  /* Primary Accent - Vibrant Purple */
+  --primary: #7C3AED;
   --primary-foreground: #FFFFFF;
   
   /* Secondary Accent - Soft Lavender */
-  --secondary: #C8B5D4;
+  --secondary: #A78BFA;
   --secondary-foreground: #FFFFFF;
   
   /* Muted/Disabled */
-  --muted: rgba(0, 0, 0, 0.08);
-  --muted-foreground: #8B8B8B;
+  --muted: rgba(124, 58, 237, 0.06);
+  --muted-foreground: #9CA3AF;
   
-  /* Accent - Soft Peach */
-  --accent: #F4C6B8;
-  --accent-foreground: #2C2C2C;
+  /* Accent - Mint Green (for wellness accents) */
+  --accent: #D1FAE5;
+  --accent-foreground: #1F2937;
   
   /* Destructive */
-  --destructive: #D8B8B8;
+  --destructive: #EF4444;
   --destructive-foreground: #FFFFFF;
   
   /* Borders & Inputs */
-  --border: rgba(0, 0, 0, 0.1);
-  --input: rgba(0, 0, 0, 0.1);
-  --ring: rgba(168, 181, 160, 0.5);
+  --border: rgba(124, 58, 237, 0.12);
+  --input: rgba(124, 58, 237, 0.1);
+  --ring: rgba(124, 58, 237, 0.4);
   
-  /* Chart Colors - Soft Wellness Palette */
-  --chart-1: #B8D8B8;
-  --chart-2: #B8C8E8;
-  --chart-3: #E8D8B8;
-  --chart-4: #D8B8B8;
-  --chart-5: #C8B8D8;
+  /* Chart Colors - Purple Wellness Palette */
+  --chart-1: #C4B5FD;
+  --chart-2: #A5B4FC;
+  --chart-3: #FDE68A;
+  --chart-4: #FCA5A5;
+  --chart-5: #D1FAE5;
   
-  /* Border Radius - Increased for softer look */
+  /* Border Radius - Rounded for modern feel */
   --radius: 1.25rem;
   
   /* Sidebar */
-  --sidebar: rgba(255, 255, 255, 0.75);
-  --sidebar-foreground: #2C2C2C;
-  --sidebar-primary: #A8B5A0;
+  --sidebar: rgba(255, 255, 255, 0.82);
+  --sidebar-foreground: #1F2937;
+  --sidebar-primary: #7C3AED;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #F4C6B8;
-  --sidebar-accent-foreground: #2C2C2C;
-  --sidebar-border: rgba(0, 0, 0, 0.08);
-  --sidebar-ring: rgba(168, 181, 160, 0.5);
+  --sidebar-accent: #D1FAE5;
+  --sidebar-accent-foreground: #1F2937;
+  --sidebar-border: rgba(124, 58, 237, 0.08);
+  --sidebar-ring: rgba(124, 58, 237, 0.4);
   
   /* Typography */
   --font-sans: 'Geist', 'Geist Fallback';
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
   --font-serif: 'Source Serif 4', 'Source Serif 4 Fallback';
   
-  /* Shadows - Softer for wellness aesthetic */
+  /* Shadows - Soft purple-tinted */
   --shadow-x: 0px;
   --shadow-y: 2px;
   --shadow-blur: 8px;
   --shadow-spread: 0px;
-  --shadow-opacity: 0.04;
-  --shadow-color: #000000;
+  --shadow-opacity: 0.06;
+  --shadow-color: #7C3AED;
 }
 
 .dark {
-  /* ===== WELLNESS DESIGN SYSTEM - DARK MODE ===== */
+  /* ===== WELLNESS DESIGN SYSTEM - DARK MODE (Purple Theme) ===== */
   
-  /* Backgrounds - Dark Charcoal Theme (soft, not harsh) */
-  --background: #1A1D1F;
-  --background-secondary: #252829;
-  --background-tertiary: #2F3335;
+  /* Backgrounds - Deep Purple-Tinted Dark */
+  --background: #0F0D15;
+  --background-secondary: #1A1625;
+  --background-tertiary: #241E33;
   
   /* Text Colors */
-  --foreground: #E8E8E8;
-  --text-secondary: #B8B8B8;
-  --text-tertiary: #888888;
+  --foreground: #F1F0F5;
+  --text-secondary: #C4C0D0;
+  --text-tertiary: #8B85A0;
   
   /* Glass Effects */
-  --glass-light: rgba(40, 45, 48, 0.6);
-  --glass-medium: rgba(40, 45, 48, 0.75);
-  --glass-heavy: rgba(40, 45, 48, 0.9);
-  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-light: rgba(26, 22, 37, 0.65);
+  --glass-medium: rgba(26, 22, 37, 0.8);
+  --glass-heavy: rgba(26, 22, 37, 0.92);
+  --glass-border: rgba(139, 92, 246, 0.15);
   
   /* Cards */
-  --card: rgba(40, 45, 48, 0.6);
-  --card-foreground: #E8E8E8;
+  --card: rgba(26, 22, 37, 0.65);
+  --card-foreground: #F1F0F5;
   
   /* Popovers */
-  --popover: rgba(40, 45, 48, 0.75);
-  --popover-foreground: #E8E8E8;
+  --popover: rgba(26, 22, 37, 0.8);
+  --popover-foreground: #F1F0F5;
   
-  /* Primary Accent - Dark Sage */
-  --primary: #7A8A72;
+  /* Primary Accent - Purple */
+  --primary: #A78BFA;
   --primary-foreground: #FFFFFF;
   
-  /* Secondary Accent - Dark Lavender */
-  --secondary: #9A87A6;
+  /* Secondary Accent - Lighter Lavender */
+  --secondary: #8B5CF6;
   --secondary-foreground: #FFFFFF;
   
   /* Muted/Disabled */
-  --muted: rgba(255, 255, 255, 0.1);
-  --muted-foreground: #888888;
+  --muted: rgba(167, 139, 250, 0.1);
+  --muted-foreground: #8B85A0;
   
-  /* Accent - Dark Peach */
-  --accent: #C69888;
+  /* Accent - Dark Mint */
+  --accent: #34D399;
   --accent-foreground: #FFFFFF;
   
   /* Destructive */
-  --destructive: #AA8A8A;
+  --destructive: #F87171;
   --destructive-foreground: #FFFFFF;
   
   /* Borders & Inputs */
-  --border: rgba(255, 255, 255, 0.15);
-  --input: rgba(255, 255, 255, 0.15);
-  --ring: rgba(122, 138, 114, 0.5);
+  --border: rgba(139, 92, 246, 0.18);
+  --input: rgba(139, 92, 246, 0.15);
+  --ring: rgba(167, 139, 250, 0.5);
   
-  /* Chart Colors - Dark Wellness Palette */
-  --chart-1: #8AAA8A;
-  --chart-2: #8A9ABA;
-  --chart-3: #BAA88A;
-  --chart-4: #AA8A8A;
-  --chart-5: #9A8AAA;
+  /* Chart Colors - Dark Purple Palette */
+  --chart-1: #A78BFA;
+  --chart-2: #818CF8;
+  --chart-3: #FCD34D;
+  --chart-4: #F87171;
+  --chart-5: #6EE7B7;
   
   /* Sidebar */
-  --sidebar: rgba(40, 45, 48, 0.6);
-  --sidebar-foreground: #E8E8E8;
-  --sidebar-primary: #7A8A72;
+  --sidebar: rgba(26, 22, 37, 0.65);
+  --sidebar-foreground: #F1F0F5;
+  --sidebar-primary: #A78BFA;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #C69888;
+  --sidebar-accent: #34D399;
   --sidebar-accent-foreground: #FFFFFF;
-  --sidebar-border: rgba(255, 255, 255, 0.1);
-  --sidebar-ring: rgba(122, 138, 114, 0.5);
+  --sidebar-border: rgba(139, 92, 246, 0.12);
+  --sidebar-ring: rgba(167, 139, 250, 0.5);
   
   /* Shadows - Stronger for dark mode depth */
   --shadow-x: 0px;
   --shadow-y: 2px;
   --shadow-blur: 8px;
   --shadow-spread: 0px;
-  --shadow-opacity: 0.3;
+  --shadow-opacity: 0.35;
   --shadow-color: #000000;
 }
 

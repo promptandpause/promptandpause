@@ -48,14 +48,14 @@ const defaultFooter = (
     By continuing, you agree to our{" "}
     <Link
       href="/terms-of-service"
-      className="text-white hover:text-white/80 underline-offset-4 hover:underline"
+      className="text-purple-300 hover:text-purple-200 underline-offset-4 hover:underline"
     >
       Terms
     </Link>{" "}
     and{" "}
     <Link
       href="/privacy-policy"
-      className="text-white hover:text-white/80 underline-offset-4 hover:underline"
+      className="text-purple-300 hover:text-purple-200 underline-offset-4 hover:underline"
     >
       Privacy Policy
     </Link>
@@ -102,7 +102,7 @@ export default function AuthShell({
                 {stats.map((stat) => (
                   <div
                     key={stat.label}
-                    className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition-all hover:bg-white/10 hover:border-white/20"
+                    className="rounded-2xl border border-purple-400/10 bg-white/5 p-6 backdrop-blur-sm transition-all hover:bg-purple-500/10 hover:border-purple-400/20"
                   >
                     <p className="text-xs uppercase tracking-[0.2em] text-white/60">{stat.label}</p>
                     <p className="mt-3 text-2xl font-semibold text-white">{stat.value}</p>
@@ -131,7 +131,7 @@ export default function AuthShell({
 
                 <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
                   {stats.map((stat) => (
-                    <div key={stat.label} className="rounded-xl border border-white/10 bg-white/5 p-3 backdrop-blur-sm">
+                    <div key={stat.label} className="rounded-xl border border-purple-400/10 bg-white/5 p-3 backdrop-blur-sm">
                       <p className="text-[10px] uppercase tracking-[0.18em] text-white/60">{stat.label}</p>
                       <p className="mt-2 text-sm font-semibold text-white">{stat.value}</p>
                     </div>

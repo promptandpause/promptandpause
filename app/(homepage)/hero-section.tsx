@@ -21,22 +21,22 @@ export default function HeroSection() {
         <>
           <MeshGradient
             className="absolute inset-0 w-full h-full"
-            colors={["#000000", "#1a1a1a", "#333333", "#ffffff"]}
+            colors={["#0F0D15", "#1A1625", "#371E5F", "#7C3AED"]}
             speed={1.0}
           />
 
           {/* Lighting overlay effects */}
           <div className="absolute inset-0 pointer-events-none">
             <div
-              className="absolute top-1/4 left-1/3 w-32 h-32 bg-gray-800/5 rounded-full blur-3xl animate-pulse"
+              className="absolute top-1/4 left-1/3 w-32 h-32 bg-purple-600/8 rounded-full blur-3xl animate-pulse"
               style={{ animationDuration: "3s" }}
             />
             <div
-              className="absolute bottom-1/3 right-1/4 w-24 h-24 bg-white/2 rounded-full blur-2xl animate-pulse"
+              className="absolute bottom-1/3 right-1/4 w-24 h-24 bg-purple-400/5 rounded-full blur-2xl animate-pulse"
               style={{ animationDuration: "2s", animationDelay: "1s" }}
             />
             <div
-              className="absolute top-1/2 right-1/3 w-20 h-20 bg-gray-900/3 rounded-full blur-xl animate-pulse"
+              className="absolute top-1/2 right-1/3 w-20 h-20 bg-purple-900/5 rounded-full blur-xl animate-pulse"
               style={{ animationDuration: "4s", animationDelay: "0.5s" }}
             />
           </div>
@@ -44,7 +44,7 @@ export default function HeroSection() {
       )}
 
       {/* Overlay for better text readability */}
-      <div className="absolute inset-0 bg-black/40 z-[1]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-purple-950/30 to-black/50 z-[1]" />
 
       {/* Navigation - Using shared component */}
       <Navigation />
@@ -64,7 +64,7 @@ export default function HeroSection() {
             </p>
 
             {/* Call to Action Button */}
-            <Link href="/login?mode=signup" className="inline-block w-full sm:w-auto text-center bg-white text-gray-900 font-sans font-semibold px-10 py-5 rounded-xl text-lg hover:bg-gray-100 hover:scale-105 hover:shadow-2xl transition-all duration-300 touch-manipulation shadow-xl">
+            <Link href="/login?mode=signup" className="inline-block w-full sm:w-auto text-center bg-gradient-to-r from-purple-600 to-purple-500 text-white font-sans font-semibold px-10 py-5 rounded-2xl text-lg hover:from-purple-700 hover:to-purple-600 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 touch-manipulation shadow-xl shadow-purple-500/20">
               Start today's reflection
             </Link>
             

@@ -4,13 +4,13 @@ import { Linkedin, Twitter, Instagram } from "lucide-react"
 
 export default function Footer() {
   return (
-    <footer className="relative bg-neutral-900 py-8 sm:py-8 lg:py-10 px-4 sm:px-6 lg:px-8">
+    <footer className="relative bg-[#0F0D15] py-8 sm:py-8 lg:py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Desktop & Mobile: All Columns in Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-12 xl:gap-16 text-center lg:text-left">
               {/* Product Column */}
               <div className="flex flex-col gap-1.5 sm:gap-2 items-center lg:items-start">
-                <h3 className="mb-1.5 sm:mb-2 uppercase text-neutral-400 text-xs sm:text-sm font-semibold">Product</h3>
+                <h3 className="mb-1.5 sm:mb-2 uppercase text-purple-300/60 text-xs sm:text-sm font-semibold">Product</h3>
                 <Link
                   href="/features"
                   className="text-white/90 hover:text-white transition-colors duration-300 text-sm sm:text-base"
@@ -39,7 +39,7 @@ export default function Footer() {
 
               {/* Resources Column */}
               <div className="flex flex-col gap-1.5 sm:gap-2 items-center lg:items-start">
-                <h3 className="mb-1.5 sm:mb-2 uppercase text-neutral-400 text-xs sm:text-sm font-semibold">Resources</h3>
+                <h3 className="mb-1.5 sm:mb-2 uppercase text-purple-300/60 text-xs sm:text-sm font-semibold">Resources</h3>
                 <Link
                   href="/research"
                   className="text-white/90 hover:text-white transition-colors duration-300 text-sm sm:text-base"
@@ -84,7 +84,7 @@ export default function Footer() {
 
               {/* Legal & Social Column */}
               <div className="flex flex-col gap-1.5 sm:gap-2 items-center lg:items-start">
-                <h3 className="mb-1.5 sm:mb-2 uppercase text-neutral-400 text-xs sm:text-sm font-semibold">Legal</h3>
+                <h3 className="mb-1.5 sm:mb-2 uppercase text-purple-300/60 text-xs sm:text-sm font-semibold">Legal</h3>
                 <Link
                   href="/privacy-policy"
                   className="text-white/90 hover:text-white transition-colors duration-300 text-sm sm:text-base"
@@ -108,7 +108,7 @@ export default function Footer() {
                     href="https://linkedin.com/promptandpause"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-neutral-400 hover:text-white transition-colors duration-300"
+                    className="text-purple-400/50 hover:text-purple-300 transition-colors duration-300"
                     aria-label="LinkedIn"
                   >
                     <Linkedin className="w-5 h-5" />
@@ -117,7 +117,7 @@ export default function Footer() {
                     href="https://twitter.com/promptandpause"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-neutral-400 hover:text-white transition-colors duration-300"
+                    className="text-purple-400/50 hover:text-purple-300 transition-colors duration-300"
                     aria-label="Twitter/X"
                   >
                     <Twitter className="w-5 h-5" />
@@ -126,7 +126,7 @@ export default function Footer() {
                     href="https://instagram.com/promptandpause"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-neutral-400 hover:text-white transition-colors duration-300"
+                    className="text-purple-400/50 hover:text-purple-300 transition-colors duration-300"
                     aria-label="Instagram"
                   >
                     <Instagram className="w-5 h-5" />
@@ -149,7 +149,7 @@ export default function Footer() {
               <p className="text-white text-sm sm:text-base text-center">©2026 Prompt & Pause</p>
               <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
                 <div className="flex flex-wrap items-center gap-4">
-                  <div className="flex items-center gap-2 text-[11px] sm:text-xs text-neutral-400">
+                  <div className="flex items-center gap-2 text-[11px] sm:text-xs text-purple-300/40">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -167,7 +167,7 @@ export default function Footer() {
                     </svg>
                     <span>FCA Regulated Partners</span>
                   </div>
-                  <div className="flex items-center gap-2 text-[11px] sm:text-xs text-neutral-400">
+                  <div className="flex items-center gap-2 text-[11px] sm:text-xs text-purple-300/40">
                     <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                       <path
                         fillRule="evenodd"
@@ -177,7 +177,7 @@ export default function Footer() {
                     </svg>
                     <span>SSL Secured</span>
                   </div>
-                  <div className="flex items-center gap-2 text-[11px] sm:text-xs text-neutral-400">
+                  <div className="flex items-center gap-2 text-[11px] sm:text-xs text-purple-300/40">
                     <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                       <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                       <path

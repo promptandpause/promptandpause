@@ -299,8 +299,8 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
     <div className="w-full max-w-md sm:max-w-[450px] transition-all duration-300 ease-out">
       <div className="relative overflow-hidden rounded-3xl">
         {/* Glass morphism card */}
-        <div className="absolute inset-0 bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent rounded-3xl" />
+        <div className="absolute inset-0 bg-white/8 backdrop-blur-xl rounded-3xl border border-purple-400/15 shadow-2xl shadow-purple-900/20">
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-white/5 to-transparent rounded-3xl" />
         </div>
 
         {/* Content */}
@@ -316,7 +316,7 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
                 type="button"
                 onClick={handleGoogleSignIn}
                 disabled={isLoading}
-                className="w-full flex items-center justify-center gap-3 bg-white/20 hover:bg-white/30 text-white border border-white/30 hover:border-white/40 h-11 rounded-xl font-medium transition-all duration-200 backdrop-blur-sm disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-3 bg-white/10 hover:bg-white/15 text-white border border-purple-400/20 hover:border-purple-400/30 h-12 rounded-2xl font-medium transition-all duration-200 backdrop-blur-sm disabled:opacity-50"
               >
                 {isLoading ? (
                   <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
@@ -348,9 +348,9 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
 
               <div className="relative">
                 <div className="flex items-center gap-4">
-                  <div className="flex-1 border-t border-white/20"></div>
-                  <span className="text-white/60 text-sm font-medium">or</span>
-                  <div className="flex-1 border-t border-white/20"></div>
+                  <div className="flex-1 border-t border-purple-400/15"></div>
+                  <span className="text-purple-300/60 text-sm font-medium">or</span>
+                  <div className="flex-1 border-t border-purple-400/15"></div>
                 </div>
               </div>
 
@@ -378,7 +378,7 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
                         type="email"
                         value={formData.email}
                         onChange={(e) => handleInputChange("email", e.target.value)}
-                        className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20 text-sm"
+                        className="pl-10 bg-white/8 border-purple-400/20 text-white placeholder:text-white/40 focus:border-purple-400/40 focus:ring-purple-400/20 rounded-xl text-sm"
                         placeholder="your@email.com"
                         required
                         autoComplete="email"
@@ -397,7 +397,7 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
                         type={showPassword ? "text" : "password"}
                         value={formData.password}
                         onChange={(e) => handleInputChange("password", e.target.value)}
-                        className="pl-10 pr-10 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20 text-sm"
+                        className="pl-10 pr-10 bg-white/8 border-purple-400/20 text-white placeholder:text-white/40 focus:border-purple-400/40 focus:ring-purple-400/20 rounded-xl text-sm"
                         placeholder="••••••••"
                         required
                         autoComplete="current-password"
@@ -415,7 +415,7 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
                   <Button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full bg-white/20 hover:bg-white/30 text-white border border-white/30 hover:border-white/40 h-10 sm:h-11 rounded-xl font-medium transition-all duration-200 backdrop-blur-sm text-sm"
+                    className="w-full bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white h-12 rounded-2xl font-semibold transition-all duration-300 shadow-lg shadow-purple-500/20 hover:shadow-purple-500/30 text-sm"
                   >
                     {isLoading ? "Signing in..." : "Sign In"}
                   </Button>
@@ -424,9 +424,9 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
                     <button
                       type="button"
                       onClick={goToForgotPassword}
-                      className="text-white/70 hover:text-white text-xs sm:text-sm transition-colors"
+                      className="text-purple-300/70 hover:text-purple-200 text-xs sm:text-sm transition-colors"
                     >
-                      Forgot your password?
+                      Forgot Password?
                     </button>
                   </div>
                 </form>
@@ -437,7 +437,7 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
                 <button
                   type="button"
                   onClick={() => setStep("signup")}
-                  className="text-white hover:text-white/90 font-medium transition-colors"
+                  className="text-purple-300 hover:text-purple-200 font-medium transition-colors"
                 >
                   Sign up
                 </button>
@@ -463,7 +463,7 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
                       type="text"
                       value={formData.name}
                       onChange={(e) => handleInputChange("name", e.target.value)}
-                      className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
+                      className="pl-10 bg-white/8 border-purple-400/20 text-white placeholder:text-white/40 focus:border-purple-400/40 focus:ring-purple-400/20 rounded-xl"
                       placeholder="Enter your full name"
                       required
                     />
@@ -481,7 +481,7 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
                       type="email"
                       value={formData.email}
                       onChange={(e) => handleInputChange("email", e.target.value)}
-                      className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
+                      className="pl-10 bg-white/8 border-purple-400/20 text-white placeholder:text-white/40 focus:border-purple-400/40 focus:ring-purple-400/20 rounded-xl"
                       placeholder="Enter your email"
                       required
                     />
@@ -499,7 +499,7 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
                       type={showPassword ? "text" : "password"}
                       value={formData.password}
                       onChange={(e) => handleInputChange("password", e.target.value)}
-                      className="pl-10 pr-10 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
+                      className="pl-10 pr-10 bg-white/8 border-purple-400/20 text-white placeholder:text-white/40 focus:border-purple-400/40 focus:ring-purple-400/20 rounded-xl"
                       placeholder="Create a password"
                       required
                     />
@@ -567,7 +567,7 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
                       type={showConfirmPassword ? "text" : "password"}
                       value={formData.confirmPassword}
                       onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
-                      className="pl-10 pr-10 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
+                      className="pl-10 pr-10 bg-white/8 border-purple-400/20 text-white placeholder:text-white/40 focus:border-purple-400/40 focus:ring-purple-400/20 rounded-xl"
                       placeholder="Confirm your password"
                       required
                     />
@@ -587,16 +587,16 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
                 <Button
                   type="submit"
                   disabled={isLoading || !isSignupValid}
-                  className="w-full bg-white/20 hover:bg-white/30 text-white border border-white/30 hover:border-white/40 h-11 rounded-xl font-medium transition-all duration-200 backdrop-blur-sm disabled:opacity-50"
+                  className="w-full bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white h-12 rounded-2xl font-semibold transition-all duration-300 shadow-lg shadow-purple-500/20 hover:shadow-purple-500/30 disabled:opacity-50"
                 >
-                  {isLoading ? "Creating account..." : "Sign Up"}
+                  {isLoading ? "Creating account..." : "Create Account"}
                 </Button>
               </form>
 
               <div className="text-center">
                 <button
                   onClick={() => switchMode("login")}
-                  className="text-white/70 hover:text-white text-sm transition-colors"
+                  className="text-purple-300/70 hover:text-purple-200 text-sm transition-colors"
                 >
                   Already have an account? Sign in
                 </button>
@@ -630,7 +630,7 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
                       type="email"
                       value={formData.email}
                       onChange={(e) => handleInputChange("email", e.target.value)}
-                      className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
+                      className="pl-10 bg-white/8 border-purple-400/20 text-white placeholder:text-white/40 focus:border-purple-400/40 focus:ring-purple-400/20 rounded-xl"
                       placeholder="Enter your email"
                       required
                     />
@@ -640,7 +640,7 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-white/20 hover:bg-white/30 text-white border border-white/30 hover:border-white/40 h-11 rounded-xl font-medium transition-all duration-200 backdrop-blur-sm"
+                  className="w-full bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white h-12 rounded-2xl font-semibold transition-all duration-300 shadow-lg shadow-purple-500/20 hover:shadow-purple-500/30"
                 >
                   {isLoading ? "Sending..." : "Send Reset Link"}
                 </Button>
@@ -658,8 +658,8 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
               </button>
 
               <div className="text-center space-y-2">
-                <div className="w-12 h-12 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full flex items-center justify-center mx-auto">
-                  <Lock className="w-6 h-6 text-white" />
+                <div className="w-12 h-12 bg-purple-500/20 backdrop-blur-sm border border-purple-400/30 rounded-full flex items-center justify-center mx-auto">
+                  <Lock className="w-6 h-6 text-purple-300" />
                 </div>
                 <h1 className="text-2xl font-semibold text-white">Create New Password</h1>
                 <p className="text-white/70">Enter your new password below</p>
@@ -677,7 +677,7 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
                       type={showPassword ? "text" : "password"}
                       value={formData.password}
                       onChange={(e) => handleInputChange("password", e.target.value)}
-                      className="pl-10 pr-10 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
+                      className="pl-10 pr-10 bg-white/8 border-purple-400/20 text-white placeholder:text-white/40 focus:border-purple-400/40 focus:ring-purple-400/20 rounded-xl"
                       placeholder="Enter new password"
                       required
                     />
@@ -702,7 +702,7 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
                       type={showConfirmPassword ? "text" : "password"}
                       value={formData.confirmPassword}
                       onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
-                      className="pl-10 pr-10 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
+                      className="pl-10 pr-10 bg-white/8 border-purple-400/20 text-white placeholder:text-white/40 focus:border-purple-400/40 focus:ring-purple-400/20 rounded-xl"
                       placeholder="Confirm new password"
                       required
                     />
@@ -722,7 +722,7 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
                 <Button
                   type="submit"
                   disabled={isLoading || !formData.password || formData.password !== formData.confirmPassword}
-                  className="w-full bg-white/20 hover:bg-white/30 text-white border border-white/30 hover:border-white/40 h-11 rounded-xl font-medium transition-all duration-200 backdrop-blur-sm disabled:opacity-50"
+                  className="w-full bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white h-12 rounded-2xl font-semibold transition-all duration-300 shadow-lg shadow-purple-500/20 hover:shadow-purple-500/30 disabled:opacity-50"
                 >
                   {isLoading ? "Updating..." : "Update Password"}
                 </Button>
@@ -754,7 +754,7 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
                       maxLength={1}
                       inputMode="numeric"
                       value={formData.otp[index]}
-                      className="w-12 h-12 text-center bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
+                      className="w-12 h-12 text-center bg-white/8 border-purple-400/20 text-white placeholder:text-white/40 focus:border-purple-400/40 focus:ring-purple-400/20 rounded-xl"
                       required
                     />
                   ))}
@@ -763,7 +763,7 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-white/20 hover:bg-white/30 text-white border border-white/30 hover:border-white/40 h-11 rounded-xl font-medium transition-all duration-200 backdrop-blur-sm"
+                  className="w-full bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white h-12 rounded-2xl font-semibold transition-all duration-300 shadow-lg shadow-purple-500/20 hover:shadow-purple-500/30"
                 >
                   {isLoading ? "Verifying..." : "Verify OTP"}
                 </Button>
@@ -773,8 +773,8 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
 
           {step === "success" && (
             <div className="flex flex-col items-center space-y-6">
-              <div className="w-16 h-16 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full flex items-center justify-center">
-                <Check className="w-8 h-8 text-white" />
+              <div className="w-16 h-16 bg-purple-500/20 backdrop-blur-sm border border-purple-400/30 rounded-full flex items-center justify-center">
+                <Check className="w-8 h-8 text-purple-300" />
               </div>
 
               <div className="text-center space-y-2">
@@ -784,7 +784,7 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
 
               <Button
                 onClick={resetToLogin}
-                className="w-full bg-white/20 hover:bg-white/30 text-white border border-white/30 hover:border-white/40 h-11 rounded-xl font-medium transition-all duration-200 backdrop-blur-sm"
+                className="w-full bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white h-12 rounded-2xl font-semibold transition-all duration-300 shadow-lg shadow-purple-500/20 hover:shadow-purple-500/30"
               >
                 Back to Login
               </Button>

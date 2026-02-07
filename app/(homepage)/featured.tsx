@@ -19,7 +19,7 @@ export default function Featured() {
           Prompt &amp; Pause gives you a single prompt at a time—so your attention stays on what matters, not on metrics.
           Write privately, at your own pace, and return when you want a little more perspective.
         </p>
-        <Link href="/our-mission" className="bg-black text-white border border-black px-4 py-2 text-sm transition-all duration-300 hover:bg-white hover:text-black cursor-pointer w-fit inline-block text-center">
+        <Link href="/our-mission" className="bg-gradient-to-r from-purple-600 to-purple-500 text-white px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-300 hover:from-purple-700 hover:to-purple-600 hover:shadow-lg hover:shadow-purple-500/20 cursor-pointer w-fit inline-block text-center">
           LEARN MORE
         </Link>
       </div>

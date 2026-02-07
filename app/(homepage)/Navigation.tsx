@@ -36,7 +36,7 @@ export default function Navigation() {
       {/* Navigation Bar - Always visible with higher z-index */}
       <nav
         className={`fixed top-0 left-0 right-0 transition-all duration-300 ${
-          scrolled ? "bg-black/30 backdrop-blur-md shadow-lg" : "bg-black/10 backdrop-blur-sm"
+          scrolled ? "bg-black/40 backdrop-blur-md shadow-lg shadow-purple-900/10" : "bg-black/10 backdrop-blur-sm"
         } py-3 sm:py-4 px-4 sm:px-6`}
         style={{ zIndex: 10000 }}
       >
@@ -84,7 +84,7 @@ export default function Navigation() {
             </Link>
             <Link
               href="/login"
-              className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg hover:scale-105 transition-all duration-300 border border-white/20"
+              className="px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 rounded-xl hover:scale-105 transition-all duration-300 shadow-md shadow-purple-500/20"
             >
               Login
             </Link>
@@ -153,7 +153,7 @@ export default function Navigation() {
           <Link
             href="/login"
             onClick={closeMenu}
-            className="mt-4 px-8 py-4 bg-white text-black text-xl font-medium rounded-lg hover:bg-white/90 transition-all duration-300 animate-fade-in min-h-[52px] flex items-center touch-manipulation"
+            className="mt-4 px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-xl font-medium rounded-2xl hover:from-purple-700 hover:to-purple-600 transition-all duration-300 animate-fade-in min-h-[52px] flex items-center touch-manipulation shadow-lg shadow-purple-500/25"
             style={{ animationDelay: "0.5s" }}
           >
             Login
