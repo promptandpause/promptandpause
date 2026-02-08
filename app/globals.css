@@ -707,3 +707,16 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* Horizontal scroll fade on both edges using mask-image (works on any background) */
+.scroll-fade-x {
+  -webkit-mask-image: linear-gradient(to right, transparent, black 12px, black calc(100% - 12px), transparent);
+  mask-image: linear-gradient(to right, transparent, black 12px, black calc(100% - 12px), transparent);
+}
+
+@media (min-width: 768px) {
+  .md\:\!mask-image-none {
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
+  }
+}
