@@ -2,24 +2,26 @@
 
 import { AuthGuard } from "@/components/auth/AuthGuard"
 import { useTier } from "@/hooks/useTier"
-import TodaysPrompt from "./components/todays-prompt"
-import WeeklyReflectionCard from "./components/weekly-reflection-card"
-import MonthlyReflectionCard from "./components/monthly-reflection-card"
-import FromYourPastCard from "./components/from-your-past-card"
-import YourRhythm from "./components/your-rhythm"
 import GlobalDataSync from "./components/global-data-sync"
 import { DashboardSidebar } from "./components/DashboardSidebar"
 import { useTheme } from "@/contexts/ThemeContext"
-import { PushNotificationPrompt } from "@/components/notifications/PushNotificationPrompt"
-import SettingsLinkCard from "./components/settings-link-card"
-import HistorySearchCard from "./components/history-search-card"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { getSupabaseClient } from "@/lib/supabase/client"
 import QuickStats from "./components/quick-stats"
-import MoodTracker from "./components/mood-tracker"
 import { Wind, Heart, NotebookPen, Moon, Crown } from "lucide-react"
 import { useTranslation } from "@/hooks/useTranslation"
+import dynamic from "next/dynamic"
+
+const TodaysPrompt = dynamic(() => import("./components/todays-prompt"), { ssr: false })
+const MoodTracker = dynamic(() => import("./components/mood-tracker"), { ssr: false })
+const WeeklyReflectionCard = dynamic(() => import("./components/weekly-reflection-card"), { ssr: false })
+const MonthlyReflectionCard = dynamic(() => import("./components/monthly-reflection-card"), { ssr: false })
+const FromYourPastCard = dynamic(() => import("./components/from-your-past-card"), { ssr: false })
+const YourRhythm = dynamic(() => import("./components/your-rhythm"), { ssr: false })
+const SettingsLinkCard = dynamic(() => import("./components/settings-link-card"), { ssr: false })
+const HistorySearchCard = dynamic(() => import("./components/history-search-card"), { ssr: false })
+const PushNotificationPrompt = dynamic(() => import("@/components/notifications/PushNotificationPrompt").then(mod => ({ default: mod.PushNotificationPrompt })), { ssr: false })
 
 export default function DashboardPage() {
   const { tier, features = {} } = useTier()

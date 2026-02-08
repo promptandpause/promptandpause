@@ -16,7 +16,6 @@ import { achievementService } from "@/lib/services/achievementService"
 import { Trophy, Lock, ChevronLeft } from "lucide-react"
 import Link from "next/link"
 import { BadgeIcon } from "./components/BadgeIcon"
-import { BubbleBackground } from "@/components/ui/bubble-background"
 
 export default function AchievementsPage() {
   return (

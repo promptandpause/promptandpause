@@ -32,8 +32,6 @@ import { useTranslation } from "@/hooks/useTranslation"
 import { useTheme } from "@/contexts/ThemeContext"
 import { getSupabaseClient } from "@/lib/supabase/client"
 import { useTier } from "@/hooks/useTier"
-import { TierGate } from "@/components/tier/TierGate"
-import { BubbleBackground } from "@/components/ui/bubble-background"
 import PageSkeleton from "../components/page-skeleton"
 import { DashboardSidebar } from "../components/DashboardSidebar"
 import { 

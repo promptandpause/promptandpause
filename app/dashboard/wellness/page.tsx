@@ -28,14 +28,15 @@ import { useTier } from '@/hooks/useTier'
 import { useTheme } from '@/contexts/ThemeContext'
 import { AuthGuard } from '@/components/auth/AuthGuard'
 import { DashboardSidebar } from '../components/DashboardSidebar'
+import dynamic from 'next/dynamic'
 
-// Import wellness components
-import CrisisSupport from '@/components/wellness/CrisisSupport'
-import BreathingExercise from '@/components/wellness/BreathingExercise'
-import WeeklyMoodInsights from '@/components/wellness/WeeklyMoodInsights'
-import GratitudeEntry from '@/components/wellness/GratitudeEntry'
-import GoalsDashboard from '@/components/wellness/GoalsDashboard'
-import HabitsTracker from '@/components/wellness/HabitsTracker'
+// Lazy-load wellness components — only rendered inside dialogs
+const CrisisSupport = dynamic(() => import('@/components/wellness/CrisisSupport'), { ssr: false })
+const BreathingExercise = dynamic(() => import('@/components/wellness/BreathingExercise'), { ssr: false })
+const WeeklyMoodInsights = dynamic(() => import('@/components/wellness/WeeklyMoodInsights'), { ssr: false })
+const GratitudeEntry = dynamic(() => import('@/components/wellness/GratitudeEntry'), { ssr: false })
+const GoalsDashboard = dynamic(() => import('@/components/wellness/GoalsDashboard'), { ssr: false })
+const HabitsTracker = dynamic(() => import('@/components/wellness/HabitsTracker'), { ssr: false })
 
 export default function WellnessPage() {
   const [userId, setUserId] = useState<string | null>(null)

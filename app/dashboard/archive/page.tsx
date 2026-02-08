@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
-import { ChevronRight, HelpCircle, LogOut, Crown, Archive, Settings, LayoutDashboard, Search, Calendar, Filter, Download, ChevronDown, ChevronUp, FileText, FileSpreadsheet, LifeBuoy } from "lucide-react"
+import { HelpCircle, LogOut, Crown, Archive, Settings, LayoutDashboard, Search, Calendar, Filter, Download, ChevronDown, ChevronUp, FileText, FileSpreadsheet, LifeBuoy } from "lucide-react"
 import Link from "next/link"
 import {
   DropdownMenu,
@@ -23,7 +23,6 @@ import { Reflection } from "@/lib/types/reflection"
 import { useTier } from "@/hooks/useTier"
 import { TierGate, UpgradePrompt } from "@/components/tier/TierGate"
 import { useTranslation } from "@/hooks/useTranslation"
-import { BubbleBackground } from "@/components/ui/bubble-background"
 import { DashboardSidebar } from "../components/DashboardSidebar"
 import { useTheme } from "@/contexts/ThemeContext"
 

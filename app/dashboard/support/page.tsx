@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { 
-  ChevronRight, 
   LogOut, 
   Crown, 
   Archive, 
@@ -33,9 +32,7 @@ import { useTier } from "@/hooks/useTier"
 import { useToast } from "@/hooks/use-toast"
 import { useTranslation } from "@/hooks/useTranslation"
 import { useTheme } from "@/contexts/ThemeContext"
-import { BubbleBackground } from "@/components/ui/bubble-background"
 import { DashboardSidebar } from "../components/DashboardSidebar"
-import { invalidateCacheOnLogout } from "@/lib/services/cacheService"
 import {
   Select,
   SelectContent,

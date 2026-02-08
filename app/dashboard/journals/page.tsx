@@ -13,7 +13,6 @@ import { useTheme } from "@/contexts/ThemeContext"
 import { motion, AnimatePresence } from "framer-motion"
 import { Search, Trash2, Pencil, Flame, ChevronLeft, ChevronRight, X, Eye, Filter, Plus, ChevronDown, ChevronUp } from "lucide-react"
 import { DashboardSidebar } from "../components/DashboardSidebar"
-import { BubbleBackground } from "@/components/ui/bubble-background"
 
 const moods = ["😔", "😐", "😊", "😄", "🤔", "😌", "🙏", "💪"]
 const availableTags = ["Gratitude", "Relationships", "Career", "Self-care", "Personal Growth", "Health", "Achievement", "Nature", "Creativity", "Family"]
