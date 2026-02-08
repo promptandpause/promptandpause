@@ -45,6 +45,18 @@ next-env.d.ts
 .DS_Store
 Thumbs.db
 
+# Dev docs & archives (not needed in deployment)
+docs/archive/
+docs/implementation/
+docs/integrations/
+docs/email-template-preview.html
+
+# SQL scripts (run manually, not needed in deployment)
+Sql scripts/
+
+# Dev proxy
+proxy.ts
+
 # Misc
 *.log
 *.tmp
