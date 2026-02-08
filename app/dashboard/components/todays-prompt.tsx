@@ -325,8 +325,8 @@ export default function TodaysPrompt() {
           <div className="mb-3 relative z-10">
             <label className={`text-xs md:text-sm font-semibold mb-2 block ${theme === 'dark' ? 'text-white/90' : 'text-gray-800'}`}>How are you feeling?</label>
             <div className="relative">
-              <div className={`absolute left-0 top-0 bottom-0 w-6 z-10 pointer-events-none md:hidden ${theme === 'dark' ? 'bg-gradient-to-r from-[#1a1a2e] to-transparent' : 'bg-gradient-to-r from-[#FAFAF7] to-transparent'}`} />
-              <div className={`absolute right-0 top-0 bottom-0 w-6 z-10 pointer-events-none md:hidden ${theme === 'dark' ? 'bg-gradient-to-l from-[#1a1a2e] to-transparent' : 'bg-gradient-to-l from-[#FAFAF7] to-transparent'}`} />
+              <div className={`absolute left-0 top-0 bottom-0 w-6 z-10 pointer-events-none md:hidden ${theme === 'dark' ? 'bg-gradient-to-r from-[#17151d] to-transparent' : 'bg-gradient-to-r from-[#FAFAF7] to-transparent'}`} />
+              <div className={`absolute right-0 top-0 bottom-0 w-6 z-10 pointer-events-none md:hidden ${theme === 'dark' ? 'bg-gradient-to-l from-[#17151d] to-transparent' : 'bg-gradient-to-l from-[#FAFAF7] to-transparent'}`} />
               <motion.div 
                 className="flex gap-1.5 md:gap-2 overflow-x-auto md:overflow-visible md:flex-wrap scrollbar-hide px-1 md:px-0" 
                 style={{ pointerEvents: 'auto', WebkitOverflowScrolling: 'touch' }}
@@ -383,8 +383,8 @@ export default function TodaysPrompt() {
               <span className="text-base md:text-lg">🏷️</span> Add tags (optional)
             </label>
             <div className="relative">
-              <div className={`absolute left-0 top-0 bottom-0 w-6 z-10 pointer-events-none md:hidden ${theme === 'dark' ? 'bg-gradient-to-r from-[#1a1a2e] to-transparent' : 'bg-gradient-to-r from-[#FAFAF7] to-transparent'}`} />
-              <div className={`absolute right-0 top-0 bottom-0 w-6 z-10 pointer-events-none md:hidden ${theme === 'dark' ? 'bg-gradient-to-l from-[#1a1a2e] to-transparent' : 'bg-gradient-to-l from-[#FAFAF7] to-transparent'}`} />
+              <div className={`absolute left-0 top-0 bottom-0 w-6 z-10 pointer-events-none md:hidden ${theme === 'dark' ? 'bg-gradient-to-r from-[#17151d] to-transparent' : 'bg-gradient-to-r from-[#FAFAF7] to-transparent'}`} />
+              <div className={`absolute right-0 top-0 bottom-0 w-6 z-10 pointer-events-none md:hidden ${theme === 'dark' ? 'bg-gradient-to-l from-[#17151d] to-transparent' : 'bg-gradient-to-l from-[#FAFAF7] to-transparent'}`} />
               <motion.div 
                 className="flex gap-1.5 md:gap-2 overflow-x-auto md:overflow-visible md:flex-wrap scrollbar-hide px-1 md:px-0"
                 style={{ WebkitOverflowScrolling: 'touch' }}
