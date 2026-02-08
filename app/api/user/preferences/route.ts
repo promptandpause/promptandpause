@@ -22,6 +22,9 @@ const UserPreferencesSchema = z.object({
   prompt_frequency: z.enum(['daily', 'weekdays', 'every-other-day', 'twice-weekly', 'weekly', 'custom']).optional(),
   custom_days: z.array(z.string()).optional(),
   
+  // Onboarding focus preferences
+  focus_areas: z.array(z.string()).optional(),
+  
   // Billing
   billing_cycle: z.string().optional(),
   

@@ -95,8 +95,6 @@ export default function FocusAreasManager() {
   const [loading, setLoading] = useState(true)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingArea, setEditingArea] = useState<FocusArea | null>(null)
-  const [maxAreas, setMaxAreas] = useState<number>(3)
-  const [userTier, setUserTier] = useState<string>('free')
   
   // Form state
   const [name, setName] = useState('')
@@ -116,8 +114,8 @@ export default function FocusAreasManager() {
 
       if (result.success) {
         setFocusAreas(result.data)
-        if (result.maxAreas !== undefined) setMaxAreas(result.maxAreas === null ? Infinity : result.maxAreas)
-        if (result.tier) setUserTier(result.tier)
+      } else if (result.requiresPremium) {
+        return // User not premium
       }
     } catch (error) {
       toast.error('Failed to load focus areas')
@@ -271,7 +269,7 @@ export default function FocusAreasManager() {
             <p className={`text-[11px] ${
               theme === 'dark' ? 'text-white/60' : 'text-gray-400'
             }`}>
-              {focusAreas.length}{maxAreas !== Infinity ? `/${maxAreas}` : ''} {focusAreas.length === 1 ? 'area' : 'areas'} active
+              {focusAreas.length} {focusAreas.length === 1 ? 'area' : 'areas'} active
             </p>
           </div>
         </div>

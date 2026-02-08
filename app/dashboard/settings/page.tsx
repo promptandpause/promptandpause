@@ -59,10 +59,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import dynamic from "next/dynamic"
-
-const FocusAreasManager = dynamic(() => import("../components/focus-areas-manager"), { ssr: false })
-
 const sidebarNav = [
   { icon: LayoutDashboard, label: "dashboard", href: "/dashboard", active: false },
   { icon: Archive, label: "archive", href: "/dashboard/archive", active: false },
@@ -265,6 +261,7 @@ function SettingsPageContent() {
         setCustomDays(cachedPreferences.custom_days || [])
         setPrivacyMode(cachedPreferences.privacy_mode ?? false)
         setBillingCycle(cachedPreferences.billing_cycle || 'monthly')
+        setFocusPreferences(cachedPreferences.focus_areas || [])
       }
 
       // 2. FETCH FRESH DATA IN BACKGROUND
@@ -307,6 +304,7 @@ function SettingsPageContent() {
           setCustomDays(preferences.custom_days || [])
           setPrivacyMode(preferences.privacy_mode ?? false)
           setBillingCycle(preferences.billing_cycle || 'monthly')
+          setFocusPreferences(preferences.focus_areas || [])
           cacheUserPreferences(preferences, user.id)
         }
       }
@@ -368,6 +366,7 @@ function SettingsPageContent() {
   const [promptFrequency, setPromptFrequency] = useState("daily")
   const [customDays, setCustomDays] = useState<string[]>(["monday", "wednesday", "friday"])
   const [customScheduleSaved, setCustomScheduleSaved] = useState(false)
+  const [focusPreferences, setFocusPreferences] = useState<string[]>([])
 
   // Sync local language state with global language context
   useEffect(() => {
@@ -603,6 +602,7 @@ function SettingsPageContent() {
           privacy_mode: privacyMode,
           prompt_frequency: promptFrequency,
           custom_days: customDays,
+          focus_areas: focusPreferences,
         }),
       })
 
@@ -1608,7 +1608,6 @@ function SettingsPageContent() {
                 )}
 
                 {currentView === 'preferences' && (
-                  <div className="space-y-4">
                   <Card className={`rounded-2xl p-4 shadow-lg ${
                     theme === 'dark'
                       ? 'bg-white/5 border-white/8'
@@ -1735,15 +1734,42 @@ function SettingsPageContent() {
                           </div>
                         </div>
                       )}
+                      {/* Focus Preferences */}
+                      <div className="space-y-1.5">
+                        <Label className={`text-sm font-medium ${
+                          theme === 'dark' ? 'text-white/90' : 'text-[#5A5A4E]'
+                        }`}>Focus Preferences</Label>
+                        <p className={`text-xs mb-2 ${
+                          theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                        }`}>Choose topics that guide your daily prompts</p>
+                        <div className="flex flex-wrap gap-2">
+                          {["Clarity", "Emotional Balance", "Work & Responsibility", "Relationships", "Change & Uncertainty", "Grounding"].map((topic) => (
+                            <Button
+                              key={topic}
+                              type="button"
+                              size="sm"
+                              onClick={() => setFocusPreferences(prev => 
+                                prev.includes(topic) ? prev.filter(t => t !== topic) : [...prev, topic]
+                              )}
+                              className={`text-xs h-8 px-3 rounded-full ${
+                                focusPreferences.includes(topic)
+                                  ? 'bg-purple-500 text-white hover:bg-purple-600'
+                                  : theme === 'dark'
+                                  ? 'bg-white/10 border border-white/10 text-white/80 hover:bg-white/20'
+                                  : 'bg-white border-2 border-[#E8E5DE] text-[#5A5A4E] hover:bg-[#F0EDE6]'
+                              }`}
+                            >
+                              {topic}
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
                       <Button onClick={handleSavePreferences} className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white h-10">
                         Save Preferences
                       </Button>
                     </div>
                   </Card>
 
-                  {/* Focus Areas */}
-                  <FocusAreasManager />
-                  </div>
                 )}
 
                 {currentView === 'subscription' && (
@@ -2748,6 +2774,37 @@ function SettingsPageContent() {
                   </div>
                 )}
                 
+                {/* Focus Preferences */}
+                <div className="space-y-2">
+                  <Label className={`text-sm font-medium ${
+                    theme === 'dark' ? 'text-white/90' : 'text-[#5A5A4E]'
+                  }`}>Focus Preferences</Label>
+                  <p className={`text-xs ${
+                    theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                  }`}>Choose topics that guide your daily prompts</p>
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    {["Clarity", "Emotional Balance", "Work & Responsibility", "Relationships", "Change & Uncertainty", "Grounding"].map((topic) => (
+                      <Button
+                        key={topic}
+                        type="button"
+                        size="sm"
+                        onClick={() => setFocusPreferences(prev => 
+                          prev.includes(topic) ? prev.filter(t => t !== topic) : [...prev, topic]
+                        )}
+                        className={`text-xs h-8 px-3 rounded-full ${
+                          focusPreferences.includes(topic)
+                            ? 'bg-purple-500 text-white hover:bg-purple-600'
+                            : theme === 'dark'
+                            ? 'bg-white/10 border border-white/10 text-white/80 hover:bg-white/20'
+                            : 'bg-white border-2 border-[#E8E5DE] text-[#5A5A4E] hover:bg-[#F0EDE6]'
+                        }`}
+                      >
+                        {topic}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+
                 <Button
                   onClick={handleSavePreferences}
                   className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white transition-all duration-700 ease-out hover:scale-[1.02]"
