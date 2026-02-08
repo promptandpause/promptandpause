@@ -52,8 +52,7 @@ export default function DashboardPage() {
   const isDark = theme === 'dark'
 
   return (
-    // TEMP: AuthGuard bypassed for local preview - REMOVE AFTER
-    <>
+    <AuthGuard redirectPath="/dashboard">
       <div 
         data-dashboard
         className={`min-h-screen ${isDark ? 'bg-[#141820]' : 'bg-[#F5F3EE]'}`}
@@ -189,7 +188,7 @@ export default function DashboardPage() {
         {/* Push Notification Prompt */}
         <PushNotificationPrompt />
       </div>
-    </>
+    </AuthGuard>
   )
 }
 

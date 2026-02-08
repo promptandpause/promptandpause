@@ -198,7 +198,7 @@ function ArchivePageContent() {
                 {/* Search - Premium Feature */}
                 {tier === 'premium' ? (
                   <div className="relative flex-1 md:flex-initial">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                    <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />
                     <Input
                       placeholder={t('archive.search')}
                       value={searchQuery}
@@ -213,7 +213,7 @@ function ArchivePageContent() {
                 ) : (
                   <div className="relative flex-1 md:flex-initial">
                     <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                      <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />
                       <Input
                         placeholder="🔒 Premium"
                         disabled

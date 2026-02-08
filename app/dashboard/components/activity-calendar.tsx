@@ -54,7 +54,7 @@ export default function ActivityCalendar() {
   }, [supabase])
 
   const getIntensityColor = (count: number) => {
-    if (count === 0) return "bg-gray-100/50"
+    if (count === 0) return theme === 'dark' ? "bg-white/5" : "bg-gray-100/50"
     if (count === 1) return "bg-[#B8D8B8]/40"
     if (count === 2) return "bg-[#B8D8B8]/60"
     if (count >= 3) return "bg-[#B8D8B8]/80"

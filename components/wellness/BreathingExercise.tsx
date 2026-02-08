@@ -14,6 +14,7 @@ import {
 } from '@/lib/services/breathingService'
 import { getSupabaseClient } from '@/lib/supabase/client'
 import { useTier } from '@/hooks/useTier'
+import { useTheme } from '@/contexts/ThemeContext'
 
 interface BreathingExerciseProps {
   userId?: string
@@ -25,6 +26,8 @@ type Phase = 'ready' | 'inhale' | 'hold1' | 'exhale' | 'hold2' | 'complete'
 export default function BreathingExercise({ userId, onComplete }: BreathingExerciseProps) {
   const { tier } = useTier()
   const isPremium = tier === 'premium'
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
   
   const [selectedTechnique, setSelectedTechnique] = useState<BreathingTechnique | null>(null)
   const [phase, setPhase] = useState<Phase>('ready')
@@ -44,7 +47,7 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
       case 'hold1': return 'bg-purple-500'
       case 'exhale': return 'bg-emerald-500'
       case 'hold2': return 'bg-amber-500'
-      default: return 'bg-gray-300'
+      default: return isDark ? 'bg-white/20' : 'bg-gray-300'
     }
   }
 
@@ -161,8 +164,8 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
       <div className="space-y-4">
         <div className="text-center mb-6">
           <Wind className="w-12 h-12 mx-auto text-blue-500 mb-3" />
-          <h2 className="text-xl font-semibold text-gray-900">Breathing Exercises</h2>
-          <p className="text-gray-600 mt-1">Choose a technique to calm your mind</p>
+          <h2 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Breathing Exercises</h2>
+          <p className={`mt-1 ${isDark ? 'text-white/60' : 'text-gray-600'}`}>Choose a technique to calm your mind</p>
         </div>
 
         <div className="grid gap-3">
@@ -174,30 +177,30 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
                 key={technique.id}
                 className={`cursor-pointer transition-all ${
                   isLocked 
-                    ? 'opacity-60 border-gray-200' 
-                    : 'hover:border-blue-300 hover:shadow-md'
-                }`}
+                    ? isDark ? 'opacity-60 border-white/10' : 'opacity-60 border-gray-200'
+                    : isDark ? 'border-white/10 hover:border-blue-400/40 hover:bg-white/5' : 'hover:border-blue-300 hover:shadow-md'
+                } ${isDark ? 'bg-white/5 border-white/10' : ''}`}
                 onClick={() => !isLocked && setSelectedTechnique(technique)}
               >
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-medium text-gray-900">{technique.name}</h3>
+                        <h3 className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{technique.name}</h3>
                         {isLocked && (
-                          <Lock className="w-4 h-4 text-gray-400" />
+                          <Lock className={`w-4 h-4 ${isDark ? 'text-white/40' : 'text-gray-400'}`} />
                         )}
                         <span className={`text-xs px-2 py-0.5 rounded-full ${
-                          technique.category === 'calm' ? 'bg-emerald-100 text-emerald-700' :
-                          technique.category === 'energize' ? 'bg-orange-100 text-orange-700' :
-                          technique.category === 'focus' ? 'bg-blue-100 text-blue-700' :
-                          'bg-purple-100 text-purple-700'
+                          technique.category === 'calm' ? isDark ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-700' :
+                          technique.category === 'energize' ? isDark ? 'bg-orange-500/20 text-orange-400' : 'bg-orange-100 text-orange-700' :
+                          technique.category === 'focus' ? isDark ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700' :
+                          isDark ? 'bg-purple-500/20 text-purple-400' : 'bg-purple-100 text-purple-700'
                         }`}>
                           {technique.category}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-500 mt-1">{technique.description}</p>
-                      <div className="text-xs text-gray-400 mt-2">
+                      <p className={`text-sm mt-1 ${isDark ? 'text-white/50' : 'text-gray-500'}`}>{technique.description}</p>
+                      <div className={`text-xs mt-2 ${isDark ? 'text-white/40' : 'text-gray-400'}`}>
                         {technique.cycles} cycles • ~{Math.round(technique.duration / 60)} min
                       </div>
                     </div>
@@ -209,7 +212,7 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
         </div>
 
         {!isPremium && (
-          <p className="text-center text-sm text-gray-500 mt-4">
+          <p className={`text-center text-sm mt-4 ${isDark ? 'text-white/50' : 'text-gray-500'}`}>
             🔒 Upgrade to Premium for more breathing techniques
           </p>
         )}
@@ -227,14 +230,14 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
           setSelectedTechnique(null)
           resetExercise()
         }}
-        className="mb-2"
+        className={`mb-2 ${isDark ? 'text-white/70 hover:text-white hover:bg-white/10' : ''}`}
       >
         ← Back to Techniques
       </Button>
 
       <div className="text-center">
-        <h2 className="text-xl font-semibold text-gray-900 mb-1">{selectedTechnique.name}</h2>
-        <p className="text-sm text-gray-500">
+        <h2 className={`text-xl font-semibold mb-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>{selectedTechnique.name}</h2>
+        <p className={`text-sm ${isDark ? 'text-white/50' : 'text-gray-500'}`}>
           Cycle {cycle} of {selectedTechnique.cycles}
         </p>
       </div>
@@ -263,7 +266,7 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
             className={`w-3 h-3 rounded-full transition-colors ${
               i < cycle ? 'bg-blue-500' : 
               i === cycle - 1 && phase !== 'ready' ? 'bg-blue-300' : 
-              'bg-gray-200'
+              isDark ? 'bg-white/20' : 'bg-gray-200'
             }`}
           />
         ))}
@@ -281,7 +284,7 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
         {phase !== 'ready' && phase !== 'complete' && (
           <>
             {isRunning ? (
-              <Button onClick={pauseExercise} variant="outline" className="gap-2">
+              <Button onClick={pauseExercise} variant="outline" className={`gap-2 ${isDark ? 'border-white/20 text-white hover:bg-white/10' : ''}`}>
                 <Pause className="w-4 h-4" />
                 Pause
               </Button>
@@ -291,7 +294,7 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
                 Resume
               </Button>
             )}
-            <Button onClick={resetExercise} variant="outline" className="gap-2">
+            <Button onClick={resetExercise} variant="outline" className={`gap-2 ${isDark ? 'border-white/20 text-white hover:bg-white/10' : ''}`}>
               <RotateCcw className="w-4 h-4" />
               Reset
             </Button>
@@ -300,12 +303,12 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
 
         {phase === 'complete' && (
           <div className="text-center space-y-4">
-            <div className="flex items-center justify-center gap-2 text-emerald-600">
+            <div className={`flex items-center justify-center gap-2 ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>
               <Check className="w-6 h-6" />
               <span className="font-medium">Exercise Complete!</span>
             </div>
             <div className="flex gap-2 justify-center">
-              <Button onClick={resetExercise} variant="outline" className="gap-2">
+              <Button onClick={resetExercise} variant="outline" className={`gap-2 ${isDark ? 'border-white/20 text-white hover:bg-white/10' : ''}`}>
                 <RotateCcw className="w-4 h-4" />
                 Do Again
               </Button>
@@ -315,6 +318,7 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
                   resetExercise()
                 }}
                 variant="outline"
+                className={isDark ? 'border-white/20 text-white hover:bg-white/10' : ''}
               >
                 Try Another
               </Button>
@@ -325,7 +329,7 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
 
       {/* Instructions */}
       {phase !== 'complete' && (
-        <div className="text-center text-sm text-gray-500 mt-4">
+        <div className={`text-center text-sm mt-4 ${isDark ? 'text-white/50' : 'text-gray-500'}`}>
           <p>{selectedTechnique.description}</p>
         </div>
       )}

@@ -273,7 +273,7 @@ export default function JournalsPage() {
               
               {/* Search Bar - Always visible */}
               <div className="relative">
-                <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <Search className={`h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />
                 <Input
                   className={`pl-10 h-10 w-full ${theme === 'dark' ? 'bg-white/10 border-white/20 text-white placeholder:text-white/50' : 'bg-white border-gray-300 text-gray-900'}`}
                   placeholder="Search journals..."

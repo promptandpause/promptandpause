@@ -101,14 +101,14 @@ export default function WeeklyMoodInsights({ userId }: WeeklyMoodInsightsProps) 
   }
 
   const getTrendIcon = () => {
-    if (!stats) return <Minus className="w-5 h-5 text-gray-400" />
+    if (!stats) return <Minus className={`w-5 h-5 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />
     switch (stats.trend) {
       case 'improving':
         return <TrendingUp className="w-5 h-5 text-emerald-500" />
       case 'declining':
         return <TrendingDown className="w-5 h-5 text-rose-500" />
       default:
-        return <Minus className="w-5 h-5 text-gray-400" />
+        return <Minus className={`w-5 h-5 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />
     }
   }
 

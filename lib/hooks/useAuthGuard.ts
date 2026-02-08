@@ -11,10 +11,50 @@ import { getSupabaseClient } from '@/lib/supabase/client'
  * @returns Object with isAuthenticated and isLoading states
  */
 export function useAuthGuard(redirectPath?: string, requireAdmin: boolean = false) {
-  // TEMP: Bypassed for local UI preview - REMOVE AFTER
+  const router = useRouter()
+  const supabase = getSupabaseClient()
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
+  const [isAdmin, setIsAdmin] = useState<boolean>(false)
+
+  useEffect(() => {
+    async function checkAuth() {
+      const { data: { user } } = await supabase.auth.getUser()
+
+      if (!user) {
+        // Not authenticated - redirect to sign in
+        const redirect = redirectPath || window.location.pathname
+        router.push(`/login?redirect=${redirect}`)
+        return
+      }
+
+      setIsAuthenticated(true)
+
+      // Check admin status if required
+      if (requireAdmin) {
+        try {
+          const res = await fetch('/api/admin/auth/me')
+          const data = await res.json()
+          setIsAdmin(!!data?.isAdmin)
+
+          if (!data?.isAdmin) {
+            // Not an admin - redirect to dashboard
+            router.push('/dashboard')
+            return
+          }
+        } catch (_error) {
+          setIsAdmin(false)
+          router.push('/dashboard')
+          return
+        }
+      }
+    }
+
+    checkAuth()
+  }, [router, supabase, redirectPath, requireAdmin])
+
   return {
-    isAuthenticated: true,
-    isAdmin: true,
-    isLoading: false
+    isAuthenticated,
+    isAdmin,
+    isLoading: isAuthenticated === null
   }
 }
