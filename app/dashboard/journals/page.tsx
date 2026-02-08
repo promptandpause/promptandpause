@@ -571,7 +571,7 @@ export default function JournalsPage() {
       {!showEditor && !editingId && (
         <button
           onClick={() => { setShowEditor(true); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-          className={`md:hidden fixed bottom-24 right-4 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all active:scale-95 ${
+          className={`md:hidden fixed bottom-28 right-4 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all active:scale-95 ${
             theme === 'dark'
               ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-green-500/30'
               : 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-green-500/40'
