@@ -324,52 +324,56 @@ export default function TodaysPrompt() {
           {/* Mood Selector with Stagger Animation */}
           <div className="mb-3 relative z-10">
             <label className={`text-xs md:text-sm font-semibold mb-2 block ${theme === 'dark' ? 'text-white/90' : 'text-gray-800'}`}>How are you feeling?</label>
-            <motion.div 
-              className="flex gap-1.5 md:gap-2 flex-wrap" 
-              style={{ pointerEvents: 'auto' }}
-              initial="hidden"
-              animate="visible"
-              variants={{
-                hidden: { opacity: 0 },
-                visible: {
-                  opacity: 1,
-                  transition: {
-                    staggerChildren: 0.05,
-                  }
-                }
-              }}
-            >
-              {moods.map((mood, index) => (
-                <motion.button
-                  key={mood}
-                  type="button"
-                  onClick={() => setSelectedMood(mood)}
-                  variants={{
-                    hidden: { opacity: 0, scale: 0.8 },
-                    visible: { 
-                      opacity: 1, 
-                      scale: 1,
-                      transition: {
-                        type: "spring",
-                        bounce: 0.5,
-                        duration: 0.4
-                      }
+            <div className="relative">
+              <div className={`absolute left-0 top-0 bottom-0 w-6 z-10 pointer-events-none md:hidden ${theme === 'dark' ? 'bg-gradient-to-r from-[#1a1a2e] to-transparent' : 'bg-gradient-to-r from-[#FAFAF7] to-transparent'}`} />
+              <div className={`absolute right-0 top-0 bottom-0 w-6 z-10 pointer-events-none md:hidden ${theme === 'dark' ? 'bg-gradient-to-l from-[#1a1a2e] to-transparent' : 'bg-gradient-to-l from-[#FAFAF7] to-transparent'}`} />
+              <motion.div 
+                className="flex gap-1.5 md:gap-2 overflow-x-auto md:overflow-visible md:flex-wrap scrollbar-hide px-1 md:px-0" 
+                style={{ pointerEvents: 'auto', WebkitOverflowScrolling: 'touch' }}
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: {
+                    opacity: 1,
+                    transition: {
+                      staggerChildren: 0.05,
                     }
-                  }}
-                  whileHover={{ scale: 1.1, rotate: selectedMood === mood ? 0 : 5 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={`text-xl md:text-2xl p-2 md:p-3 rounded-lg transition-colors duration-200 cursor-pointer motion-reduce:!transform-none ${
-                    selectedMood === mood
-                      ? "bg-purple-500/30 ring-2 ring-purple-400"
-                      : theme === 'dark' 
-                        ? "bg-white/5 hover:bg-white/10"
-                        : "bg-gray-50 hover:bg-white/80"
-                  }`}
-                >
-                  {mood}
-                </motion.button>
-              ))}
-            </motion.div>
+                  }
+                }}
+              >
+                {moods.map((mood, index) => (
+                  <motion.button
+                    key={mood}
+                    type="button"
+                    onClick={() => setSelectedMood(mood)}
+                    variants={{
+                      hidden: { opacity: 0, scale: 0.8 },
+                      visible: { 
+                        opacity: 1, 
+                        scale: 1,
+                        transition: {
+                          type: "spring",
+                          bounce: 0.5,
+                          duration: 0.4
+                        }
+                      }
+                    }}
+                    whileHover={{ scale: 1.1, rotate: selectedMood === mood ? 0 : 5 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`text-xl md:text-2xl p-2 md:p-3 rounded-lg transition-colors duration-200 cursor-pointer motion-reduce:!transform-none flex-shrink-0 ${
+                      selectedMood === mood
+                        ? "bg-purple-500/30 ring-2 ring-purple-400"
+                        : theme === 'dark' 
+                          ? "bg-white/5 hover:bg-white/10"
+                          : "bg-gray-50 hover:bg-white/80"
+                    }`}
+                  >
+                    {mood}
+                  </motion.button>
+                ))}
+              </motion.div>
+            </div>
             <p className={`text-xs mt-1.5 ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>Selected: {selectedMood || 'None'}</p>
           </div>
           
@@ -378,57 +382,62 @@ export default function TodaysPrompt() {
             <label className={`text-xs md:text-sm font-semibold mb-2 block flex items-center gap-2 ${theme === 'dark' ? 'text-white/90' : 'text-gray-800'}`}>
               <span className="text-base md:text-lg">🏷️</span> Add tags (optional)
             </label>
-            <motion.div 
-              className="flex gap-1.5 md:gap-2 flex-wrap"
-              initial="hidden"
-              animate="visible"
-              variants={{
-                hidden: { opacity: 0 },
-                visible: {
-                  opacity: 1,
-                  transition: {
-                    staggerChildren: 0.04,
-                  }
-                }
-              }}
-            >
-              {availableTags.map((tag, index) => (
-                <motion.button
-                  key={tag}
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    toggleTag(tag)
-                  }}
-                  variants={{
-                    hidden: { opacity: 0, y: 10 },
-                    visible: { 
-                      opacity: 1, 
-                      y: 0,
-                      transition: {
-                        type: "spring",
-                        bounce: 0.4,
-                        duration: 0.3
-                      }
+            <div className="relative">
+              <div className={`absolute left-0 top-0 bottom-0 w-6 z-10 pointer-events-none md:hidden ${theme === 'dark' ? 'bg-gradient-to-r from-[#1a1a2e] to-transparent' : 'bg-gradient-to-r from-[#FAFAF7] to-transparent'}`} />
+              <div className={`absolute right-0 top-0 bottom-0 w-6 z-10 pointer-events-none md:hidden ${theme === 'dark' ? 'bg-gradient-to-l from-[#1a1a2e] to-transparent' : 'bg-gradient-to-l from-[#FAFAF7] to-transparent'}`} />
+              <motion.div 
+                className="flex gap-1.5 md:gap-2 overflow-x-auto md:overflow-visible md:flex-wrap scrollbar-hide px-1 md:px-0"
+                style={{ WebkitOverflowScrolling: 'touch' }}
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: {
+                    opacity: 1,
+                    transition: {
+                      staggerChildren: 0.04,
                     }
-                  }}
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={`px-2.5 md:px-3 py-1 md:py-1.5 rounded-full text-xs font-semibold border-2 cursor-pointer transition-colors duration-200 motion-reduce:!transform-none ${
-                    selectedTags.includes(tag)
-                      ? theme === 'dark'
-                        ? "bg-gradient-to-r from-purple-500/40 to-violet-500/40 text-purple-200 border-purple-500/60 hover:bg-purple-500/50 shadow-lg ring-2 ring-purple-400/50"
-                        : "bg-gradient-to-r from-purple-500/50 to-violet-500/50 text-white border-purple-600 hover:bg-purple-500/60 shadow-lg ring-2 ring-purple-300/50"
-                      : theme === 'dark'
-                        ? "bg-white/5 text-white/80 border-white/20 hover:bg-white/10 hover:border-white/30 shadow-md hover:shadow-lg"
-                        : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-400 shadow-md hover:shadow-lg"
-                  }`}
-                >
-                  {tag}
-                </motion.button>
-              ))}
-            </motion.div>
+                  }
+                }}
+              >
+                {availableTags.map((tag, index) => (
+                  <motion.button
+                    key={tag}
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      toggleTag(tag)
+                    }}
+                    variants={{
+                      hidden: { opacity: 0, y: 10 },
+                      visible: { 
+                        opacity: 1, 
+                        y: 0,
+                        transition: {
+                          type: "spring",
+                          bounce: 0.4,
+                          duration: 0.3
+                        }
+                      }
+                    }}
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`px-2.5 md:px-3 py-1 md:py-1.5 rounded-full text-xs font-semibold border-2 cursor-pointer transition-colors duration-200 motion-reduce:!transform-none flex-shrink-0 whitespace-nowrap ${
+                      selectedTags.includes(tag)
+                        ? theme === 'dark'
+                          ? "bg-gradient-to-r from-purple-500/40 to-violet-500/40 text-purple-200 border-purple-500/60 hover:bg-purple-500/50 shadow-lg ring-2 ring-purple-400/50"
+                          : "bg-gradient-to-r from-purple-500/50 to-violet-500/50 text-white border-purple-600 hover:bg-purple-500/60 shadow-lg ring-2 ring-purple-300/50"
+                        : theme === 'dark'
+                          ? "bg-white/5 text-white/80 border-white/20 hover:bg-white/10 hover:border-white/30 shadow-md hover:shadow-lg"
+                          : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-400 shadow-md hover:shadow-lg"
+                    }`}
+                  >
+                    {tag}
+                  </motion.button>
+                ))}
+              </motion.div>
+            </div>
             <p className={`text-xs mt-1.5 ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>Selected: {selectedTags.length > 0 ? selectedTags.join(', ') : 'None'}</p>
           </div>
           
