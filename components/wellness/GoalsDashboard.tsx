@@ -47,18 +47,28 @@ import {
 } from '@/lib/services/goalsService'
 import { getSupabaseClient } from '@/lib/supabase/client'
 import { useToast } from '@/hooks/use-toast'
+import { useTheme } from '@/contexts/ThemeContext'
 
 interface GoalsDashboardProps {
   userId: string
 }
 
-const categoryColors: Record<GoalCategory, string> = {
+const categoryColorsLight: Record<GoalCategory, string> = {
   personal: 'bg-purple-100 text-purple-700',
   professional: 'bg-blue-100 text-blue-700',
   wellness: 'bg-emerald-100 text-emerald-700',
   relationships: 'bg-rose-100 text-rose-700',
   financial: 'bg-amber-100 text-amber-700',
   other: 'bg-gray-100 text-gray-700'
+}
+
+const categoryColorsDark: Record<GoalCategory, string> = {
+  personal: 'bg-purple-500/20 text-purple-400',
+  professional: 'bg-blue-500/20 text-blue-400',
+  wellness: 'bg-emerald-500/20 text-emerald-400',
+  relationships: 'bg-rose-500/20 text-rose-400',
+  financial: 'bg-amber-500/20 text-amber-400',
+  other: 'bg-white/10 text-white/70'
 }
 
 const categoryIcons: Record<GoalCategory, string> = {
@@ -71,6 +81,9 @@ const categoryIcons: Record<GoalCategory, string> = {
 }
 
 export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
+  const categoryColors = isDark ? categoryColorsDark : categoryColorsLight
   const [goals, setGoals] = useState<Goal[]>([])
   const [stats, setStats] = useState<{
     totalGoals: number
@@ -204,12 +217,12 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
 
   if (isLoading) {
     return (
-      <Card>
+      <Card className={isDark ? 'bg-white/5 border-white/10' : ''}>
         <CardContent className="p-6">
           <div className="animate-pulse space-y-4">
-            <div className="h-6 bg-gray-200 rounded w-1/3"></div>
-            <div className="h-24 bg-gray-200 rounded"></div>
-            <div className="h-24 bg-gray-200 rounded"></div>
+            <div className={`h-6 rounded w-1/3 ${isDark ? 'bg-white/10' : 'bg-gray-200'}`}></div>
+            <div className={`h-24 rounded ${isDark ? 'bg-white/10' : 'bg-gray-200'}`}></div>
+            <div className={`h-24 rounded ${isDark ? 'bg-white/10' : 'bg-gray-200'}`}></div>
           </div>
         </CardContent>
       </Card>
@@ -217,10 +230,10 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
   }
 
   return (
-    <Card>
+    <Card className={isDark ? 'bg-white/5 border-white/10' : ''}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2">
+          <CardTitle className={`text-lg flex items-center gap-2 ${isDark ? 'text-white' : ''}`}>
             <Target className="w-5 h-5 text-blue-500" />
             Goals
           </CardTitle>
@@ -237,7 +250,7 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
               </DialogHeader>
               <div className="space-y-4 pt-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-700">What do you want to achieve?</label>
+                  <label className={`text-sm font-medium ${isDark ? 'text-white/80' : 'text-gray-700'}`}>What do you want to achieve?</label>
                   <Input
                     value={newGoal.title}
                     onChange={(e) => setNewGoal({ ...newGoal, title: e.target.value })}
@@ -246,7 +259,7 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Category</label>
+                  <label className={`text-sm font-medium ${isDark ? 'text-white/80' : 'text-gray-700'}`}>Category</label>
                   <Select
                     value={newGoal.category}
                     onValueChange={(value) => setNewGoal({ ...newGoal, category: value as GoalCategory })}
@@ -265,7 +278,7 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
                   </Select>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Why is this important to you?</label>
+                  <label className={`text-sm font-medium ${isDark ? 'text-white/80' : 'text-gray-700'}`}>Why is this important to you?</label>
                   <Textarea
                     value={newGoal.why_important}
                     onChange={(e) => setNewGoal({ ...newGoal, why_important: e.target.value })}
@@ -275,7 +288,7 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Target Date (optional)</label>
+                  <label className={`text-sm font-medium ${isDark ? 'text-white/80' : 'text-gray-700'}`}>Target Date (optional)</label>
                   <Input
                     type="date"
                     value={newGoal.target_date}
@@ -298,29 +311,29 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
         {/* Stats */}
         {stats && (
           <div className="grid grid-cols-3 gap-2 mt-3">
-            <div className="text-center p-2 bg-blue-50 rounded-lg">
-              <div className="text-lg font-bold text-blue-700">{stats.activeGoals}</div>
-              <div className="text-xs text-blue-600">Active</div>
+            <div className={`text-center p-2 rounded-lg ${isDark ? 'bg-blue-500/20' : 'bg-blue-50'}`}>
+              <div className={`text-lg font-bold ${isDark ? 'text-blue-400' : 'text-blue-700'}`}>{stats.activeGoals}</div>
+              <div className={`text-xs ${isDark ? 'text-blue-300' : 'text-blue-600'}`}>Active</div>
             </div>
-            <div className="text-center p-2 bg-emerald-50 rounded-lg">
-              <div className="text-lg font-bold text-emerald-700">{stats.completedGoals}</div>
-              <div className="text-xs text-emerald-600">Completed</div>
+            <div className={`text-center p-2 rounded-lg ${isDark ? 'bg-emerald-500/20' : 'bg-emerald-50'}`}>
+              <div className={`text-lg font-bold ${isDark ? 'text-emerald-400' : 'text-emerald-700'}`}>{stats.completedGoals}</div>
+              <div className={`text-xs ${isDark ? 'text-emerald-300' : 'text-emerald-600'}`}>Completed</div>
             </div>
-            <div className="text-center p-2 bg-purple-50 rounded-lg">
-              <div className="text-lg font-bold text-purple-700">{stats.completionRate}%</div>
-              <div className="text-xs text-purple-600">Success Rate</div>
+            <div className={`text-center p-2 rounded-lg ${isDark ? 'bg-purple-500/20' : 'bg-purple-50'}`}>
+              <div className={`text-lg font-bold ${isDark ? 'text-purple-400' : 'text-purple-700'}`}>{stats.completionRate}%</div>
+              <div className={`text-xs ${isDark ? 'text-purple-300' : 'text-purple-600'}`}>Success Rate</div>
             </div>
           </div>
         )}
 
         {/* Filter */}
-        <div className="flex gap-1 mt-3 bg-gray-100 rounded-lg p-1">
+        <div className={`flex gap-1 mt-3 rounded-lg p-1 ${isDark ? 'bg-white/10' : 'bg-gray-100'}`}>
           {(['active', 'completed', 'all'] as const).map((f) => (
             <Button
               key={f}
               size="sm"
               variant={filter === f ? 'default' : 'ghost'}
-              className={`flex-1 h-7 text-xs capitalize ${filter === f ? 'bg-white shadow-sm' : ''}`}
+              className={`flex-1 h-7 text-xs capitalize ${filter === f ? isDark ? 'bg-white/20 shadow-sm text-white' : 'bg-white shadow-sm' : isDark ? 'text-white/60 hover:text-white' : ''}`}
               onClick={() => setFilter(f)}
             >
               {f}
@@ -332,8 +345,8 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
       <CardContent className="space-y-3">
         <AnimatePresence>
           {goals.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              <Target className="w-10 h-10 mx-auto mb-2 text-gray-300" />
+            <div className={`text-center py-8 ${isDark ? 'text-white/50' : 'text-gray-500'}`}>
+              <Target className={`w-10 h-10 mx-auto mb-2 ${isDark ? 'text-white/20' : 'text-gray-300'}`} />
               <p className="text-sm">No {filter !== 'all' ? filter : ''} goals yet</p>
               <Button
                 variant="link"
@@ -351,7 +364,7 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, x: -10 }}
-                className="p-4 border rounded-lg hover:border-blue-200 transition-colors"
+                className={`p-4 border rounded-lg transition-colors ${isDark ? 'border-white/10 hover:border-blue-400/30' : 'hover:border-blue-200'}`}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
@@ -365,15 +378,15 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
                         </span>
                       )}
                     </div>
-                    <h4 className="font-medium text-gray-900 truncate">{goal.title}</h4>
+                    <h4 className={`font-medium truncate ${isDark ? 'text-white' : 'text-gray-900'}`}>{goal.title}</h4>
                     {goal.why_important && (
-                      <p className="text-xs text-gray-500 mt-1 line-clamp-2">{goal.why_important}</p>
+                      <p className={`text-xs mt-1 line-clamp-2 ${isDark ? 'text-white/50' : 'text-gray-500'}`}>{goal.why_important}</p>
                     )}
                     
                     {/* Progress bar */}
                     {goal.status === 'active' && (
                       <div className="mt-3">
-                        <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+                        <div className={`flex items-center justify-between text-xs mb-1 ${isDark ? 'text-white/50' : 'text-gray-500'}`}>
                           <span>Progress</span>
                           <span>{goal.progress}%</span>
                         </div>
@@ -395,7 +408,7 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
                     )}
 
                     {goal.target_date && (
-                      <div className="flex items-center gap-1 mt-2 text-xs text-gray-500">
+                      <div className={`flex items-center gap-1 mt-2 text-xs ${isDark ? 'text-white/50' : 'text-gray-500'}`}>
                         <Calendar className="w-3 h-3" />
                         Target: {new Date(goal.target_date).toLocaleDateString()}
                       </div>
@@ -433,7 +446,7 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
                       onClick={() => handleDeleteGoal(goal.id)}
                       title="Delete goal"
                     >
-                      <Trash2 className="w-4 h-4 text-gray-400 hover:text-rose-500" />
+                      <Trash2 className={`w-4 h-4 hover:text-rose-500 ${isDark ? 'text-white/40' : 'text-gray-400'}`} />
                     </Button>
                   </div>
                 </div>

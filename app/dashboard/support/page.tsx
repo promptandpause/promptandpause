@@ -242,35 +242,22 @@ function ContactSupportPageContent() {
   return (
     <div 
       data-dashboard
-      className="min-h-screen relative" 
-      style={theme === 'light' 
-        ? { background: 'linear-gradient(135deg, #f4f0eb 0%, #a1a79e 45%, #384c37 100%)' } 
-        : { background: 'linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a)' }}
+      className={`min-h-screen ${theme === 'dark' ? 'bg-[#141820]' : 'bg-[#F5F3EE]'}`}
     >
-      {/* Animated Bubble Background */}
-      <BubbleBackground 
-        interactive
-        className="fixed inset-0 -z-10"
-      />
-      {/* Themed background overlay */}
-      <div className={`fixed inset-0 -z-10 ${
-        theme === 'light' ? 'bg-white/35' : 'bg-black/25'
-      }`} />
-
-      <div className="relative z-10 p-3 md:p-6 grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 pb-24 md:pb-6">
-        {/* Universal Sidebar - Desktop & Mobile */}
+      <div className="flex items-start min-h-screen">
         <DashboardSidebar />
 
-        {/* Main Content Area */}
-        <div className="col-span-1 md:col-span-10 space-y-4 md:space-y-6">
+        <main className="flex-1 pb-24 md:pb-10 overflow-y-auto min-h-screen">
+          <div className="max-w-[1000px] mx-auto px-4 md:px-6 pt-16 md:pt-10">
+          <div className="space-y-5 md:space-y-6">
           {/* Mobile Back Button */}
           <div className="md:hidden">
             <Button
               variant="ghost"
               onClick={() => router.back()}
               className={theme === 'dark'
-                ? 'text-white/90 hover:text-white bg-white/5 hover:bg-white/10 border border-white/20'
-                : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100 border-2 border-gray-300'
+                ? 'text-white/90 hover:text-white bg-white/5 hover:bg-white/8 border border-white/10'
+                : 'text-[#5A5A4E] hover:text-[#3D3D3D] hover:bg-[#F0EDE6] border border-[#E8E5DE]'
               }
             >
               <ArrowLeft className="h-5 w-5 mr-2" />
@@ -279,27 +266,27 @@ function ContactSupportPageContent() {
           </div>
 
           {/* Header */}
-          <Card className={`backdrop-blur-xl rounded-3xl p-6 md:p-8 shadow-lg ${
+          <Card className={`rounded-2xl p-5 md:p-8 border shadow-none ${
             theme === 'dark'
-              ? 'bg-white/5 border border-white/10'
-              : 'bg-white/80 border-2 border-gray-300'
+              ? 'bg-white/5 border-white/8'
+              : 'bg-[#FAFAF7] border-[#E8E5DE]'
           }`}>
             <div className="flex items-start gap-4">
               <div className={`p-4 rounded-2xl ${
                 theme === 'dark'
-                  ? 'bg-blue-500/10 border border-blue-400/30'
-                  : 'bg-blue-100 border-2 border-blue-300'
+                  ? 'bg-blue-500/10 border border-blue-400/20'
+                  : 'bg-[#D4E4F7] border border-[#B8C9E0]'
               }`}>
                 <HelpCircle className={`h-8 w-8 ${
-                  theme === 'dark' ? 'text-blue-400' : 'text-blue-600'
+                  theme === 'dark' ? 'text-blue-400' : 'text-[#5B7FA5]'
                 }`} />
               </div>
               <div className="flex-1">
-                <h1 className={`text-2xl md:text-3xl font-bold mb-2 ${
-                  theme === 'dark' ? 'text-white' : 'text-gray-900'
+                <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight mb-2 ${
+                  theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
                 }`}>Contact Support</h1>
                 <p className={`text-sm md:text-base ${
-                  theme === 'dark' ? 'text-white/70' : 'text-gray-600'
+                  theme === 'dark' ? 'text-white/50' : 'text-[#8A8A7A]'
                 }`}>
                   Need help? We're here for you. Fill out the form below and we'll get back to you within 24-48 hours.
                 </p>
@@ -308,39 +295,39 @@ function ContactSupportPageContent() {
           </Card>
 
           {/* Support Form */}
-          <Card className={`backdrop-blur-xl rounded-3xl p-6 md:p-8 shadow-lg ${
+          <Card className={`rounded-2xl p-5 md:p-8 border shadow-none ${
             theme === 'dark'
-              ? 'bg-white/5 border border-white/10'
-              : 'bg-white/80 border-2 border-gray-300'
+              ? 'bg-white/5 border-white/8'
+              : 'bg-[#FAFAF7] border-[#E8E5DE]'
           }`}>
             {submitted ? (
               <div className="text-center py-12">
                 <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 ${
                   theme === 'dark'
-                    ? 'bg-green-500/10 border border-green-400/30'
-                    : 'bg-green-100 border-2 border-green-300'
+                    ? 'bg-green-500/10 border border-green-400/20'
+                    : 'bg-[#D4E8D4] border border-[#B8D4B8]'
                 }`}>
                   <CheckCircle2 className={`h-8 w-8 ${
-                    theme === 'dark' ? 'text-green-400' : 'text-green-600'
+                    theme === 'dark' ? 'text-green-400' : 'text-[#5A8A5A]'
                   }`} />
                 </div>
-                <h3 className={`text-xl font-bold mb-2 ${
-                  theme === 'dark' ? 'text-white' : 'text-gray-900'
+                <h3 className={`text-xl font-semibold mb-2 ${
+                  theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
                 }`}>Support Ticket Created!</h3>
                 {ticketId && (
                   <p className={`text-lg font-semibold mb-2 ${
-                    theme === 'dark' ? 'text-blue-400' : 'text-blue-600'
+                    theme === 'dark' ? 'text-blue-400' : 'text-[#5B7FA5]'
                   }`}>
                     Ticket ID: {ticketId}
                   </p>
                 )}
                 <p className={`mb-2 ${
-                  theme === 'dark' ? 'text-white/70' : 'text-gray-600'
+                  theme === 'dark' ? 'text-white/50' : 'text-[#5A5A4E]'
                 }`}>
                   We've received your request and will respond via email within 24-48 hours.
                 </p>
                 <p className={`text-sm ${
-                  theme === 'dark' ? 'text-white/50' : 'text-gray-500'
+                  theme === 'dark' ? 'text-white/30' : 'text-[#8A8A7A]'
                 }`}>
                   Check your email inbox for updates and to continue the conversation.
                 </p>
@@ -350,7 +337,7 @@ function ContactSupportPageContent() {
                 {/* Category Selection */}
                 <div className="space-y-3">
                   <Label className={`font-semibold ${
-                    theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
                   }`}>What can we help you with? *</Label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {supportCategories.map((category) => {
@@ -365,31 +352,31 @@ function ContactSupportPageContent() {
                           className={`p-4 rounded-xl transition-all duration-300 text-left ${
                             isSelected
                               ? theme === 'dark'
-                                ? 'bg-blue-500/20 border-2 border-blue-400 shadow-lg scale-[1.02]'
-                                : 'bg-blue-100 border-2 border-blue-400 shadow-lg scale-[1.02]'
+                                ? 'bg-blue-500/15 border-2 border-blue-400/50 shadow-sm'
+                                : 'bg-[#D4E4F7] border-2 border-[#B8C9E0] shadow-sm'
                               : theme === 'dark'
-                                ? 'border border-white/20 bg-white/5 hover:bg-white/10'
-                                : 'border-2 border-gray-300 bg-white hover:bg-gray-50 hover:border-gray-400 shadow-sm'
+                                ? 'border border-white/10 bg-white/5 hover:bg-white/8'
+                                : 'border border-[#E8E5DE] bg-white hover:bg-[#FAFAF7]'
                           }`}
                         >
                           <div className="flex items-start gap-3">
                             <Icon className={`h-5 w-5 mt-0.5 ${
                               isSelected
-                                ? theme === 'dark' ? 'text-blue-400' : 'text-blue-600'
-                                : theme === 'dark' ? 'text-white/60' : 'text-gray-600'
+                                ? theme === 'dark' ? 'text-blue-400' : 'text-[#5B7FA5]'
+                                : theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
                             }`} />
                             <div className="flex-1 min-w-0">
                               <p className={`font-semibold text-sm ${
                                 isSelected
-                                  ? theme === 'dark' ? 'text-white' : 'text-gray-900'
-                                  : theme === 'dark' ? 'text-white/90' : 'text-gray-900'
+                                  ? theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                                  : theme === 'dark' ? 'text-white/80' : 'text-[#3D3D3D]'
                               }`}>
                                 {category.label}
                               </p>
                               <p className={`text-xs mt-1 ${
                                 isSelected
-                                  ? theme === 'dark' ? 'text-white/70' : 'text-gray-700'
-                                  : theme === 'dark' ? 'text-white/60' : 'text-gray-600'
+                                  ? theme === 'dark' ? 'text-white/60' : 'text-[#5A5A4E]'
+                                  : theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
                               }`}>
                                 {category.description}
                               </p>
@@ -404,38 +391,38 @@ function ContactSupportPageContent() {
                 {/* Priority Level */}
                 <div className="space-y-2">
                   <Label htmlFor="priority" className={`font-semibold ${
-                    theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
                   }`}>Priority</Label>
                   <Select value={priority} onValueChange={(value: "low" | "medium" | "high") => setPriority(value)}>
                     <SelectTrigger 
                       id="priority"
                       className={`h-12 rounded-xl ${
                         theme === 'dark'
-                          ? 'bg-white/10 border border-white/20 text-white focus:border-blue-400'
-                          : 'bg-white border-2 border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+                          ? 'bg-white/8 border border-white/10 text-white focus:border-white/20'
+                          : 'bg-white border border-[#E8E5DE] text-[#3D3D3D] focus:border-[#B8C9E0]'
                       }`}
                     >
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className={theme === 'dark'
-                      ? 'bg-black/90 border border-white/20'
-                      : 'bg-white border-2 border-gray-300'
+                      ? 'bg-[#1A1F2E] border border-white/10'
+                      : 'bg-[#FAFAF7] border border-[#E8E5DE]'
                     }>
                       <SelectItem value="low" className={theme === 'dark'
-                        ? 'text-white hover:bg-white/10'
-                        : 'text-gray-900 hover:bg-gray-100'
+                        ? 'text-white hover:bg-white/8'
+                        : 'text-[#3D3D3D] hover:bg-[#F0EDE6]'
                       }>
                         Low - General inquiry
                       </SelectItem>
                       <SelectItem value="medium" className={theme === 'dark'
-                        ? 'text-white hover:bg-white/10'
-                        : 'text-gray-900 hover:bg-gray-100'
+                        ? 'text-white hover:bg-white/8'
+                        : 'text-[#3D3D3D] hover:bg-[#F0EDE6]'
                       }>
                         Medium - Need assistance
                       </SelectItem>
                       <SelectItem value="high" className={theme === 'dark'
-                        ? 'text-white hover:bg-white/10'
-                        : 'text-gray-900 hover:bg-gray-100'
+                        ? 'text-white hover:bg-white/8'
+                        : 'text-[#3D3D3D] hover:bg-[#F0EDE6]'
                       }>
                         High - Urgent issue
                       </SelectItem>
@@ -446,7 +433,7 @@ function ContactSupportPageContent() {
                 {/* Subject */}
                 <div className="space-y-2">
                   <Label htmlFor="subject" className={`font-semibold ${
-                    theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
                   }`}>Subject *</Label>
                   <Input
                     id="subject"
@@ -456,8 +443,8 @@ function ContactSupportPageContent() {
                     onChange={(e) => setSubject(e.target.value)}
                     className={`h-12 rounded-xl ${
                       theme === 'dark'
-                        ? 'bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:border-blue-400'
-                        : 'bg-white border-2 border-gray-300 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+                        ? 'bg-white/8 border border-white/10 text-white placeholder:text-white/40 focus:border-white/20'
+                        : 'bg-white border border-[#E8E5DE] text-[#3D3D3D] placeholder:text-[#A0A090] focus:border-[#B8C9E0]'
                     }`}
                     required
                   />
@@ -466,7 +453,7 @@ function ContactSupportPageContent() {
                 {/* Message */}
                 <div className="space-y-2">
                   <Label htmlFor="message" className={`font-semibold ${
-                    theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
                   }`}>Message *</Label>
                   <Textarea
                     id="message"
@@ -476,37 +463,37 @@ function ContactSupportPageContent() {
                     rows={8}
                     className={`rounded-xl resize-none ${
                       theme === 'dark'
-                        ? 'bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:border-blue-400'
-                        : 'bg-white border-2 border-gray-300 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+                        ? 'bg-white/8 border border-white/10 text-white placeholder:text-white/40 focus:border-white/20'
+                        : 'bg-white border border-[#E8E5DE] text-[#3D3D3D] placeholder:text-[#A0A090] focus:border-[#B8C9E0]'
                     }`}
                     required
                   />
                   <p className={`text-xs mt-1 ${
-                    theme === 'dark' ? 'text-white/50' : 'text-gray-500'
+                    theme === 'dark' ? 'text-white/30' : 'text-[#A0A090]'
                   }`}>
                     {message.length} / 2000 characters
                   </p>
                 </div>
 
                 {/* User Info Display */}
-                <Card className={`p-4 rounded-xl shadow-sm ${
+                <Card className={`p-4 rounded-xl border shadow-none ${
                   theme === 'dark'
-                    ? 'bg-white/5 border border-white/10'
-                    : 'bg-gray-50 border-2 border-gray-300'
+                    ? 'bg-white/5 border-white/8'
+                    : 'bg-[#F0EDE6] border-[#E8E5DE]'
                 }`}>
                   <p className={`text-xs mb-2 ${
-                    theme === 'dark' ? 'text-white/60' : 'text-gray-600'
+                    theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
                   }`}>Your message will be sent from:</p>
                   <div className="flex items-center gap-3">
                     <User className={`h-5 w-5 ${
-                      theme === 'dark' ? 'text-white/60' : 'text-gray-600'
+                      theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
                     }`} />
                     <div>
                       <p className={`font-medium text-sm ${
-                        theme === 'dark' ? 'text-white' : 'text-gray-900'
+                        theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
                       }`}>{userProfile?.full_name}</p>
                       <p className={`text-xs ${
-                        theme === 'dark' ? 'text-white/60' : 'text-gray-600'
+                        theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
                       }`}>{userProfile?.email}</p>
                     </div>
                   </div>
@@ -516,7 +503,7 @@ function ContactSupportPageContent() {
                 <Button
                   type="submit"
                   disabled={submitting || !userProfile?.email || !userProfile?.full_name || !selectedCategory || !subject.trim() || !message.trim()}
-                  className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold transition-all duration-300 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                  className={`w-full h-12 rounded-xl font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${theme === 'dark' ? 'bg-[#C4B5E0] text-[#1A1A2E] hover:bg-[#B0A0D0]' : 'bg-[#7E6BA5] text-white hover:bg-[#6B5A90]'}`}
                 >
                   {submitting ? (
                     <>
@@ -532,7 +519,7 @@ function ContactSupportPageContent() {
                 </Button>
 
                 <p className={`text-xs text-center ${
-                  theme === 'dark' ? 'text-white/50' : 'text-gray-500'
+                  theme === 'dark' ? 'text-white/30' : 'text-[#A0A090]'
                 }`}>
                   Response time: 24-48 hours during business hours
                 </p>
@@ -541,27 +528,27 @@ function ContactSupportPageContent() {
           </Card>
 
           {/* FAQ Quick Links */}
-          <Card className={`backdrop-blur-xl rounded-3xl p-6 shadow-lg ${
+          <Card className={`rounded-2xl p-5 md:p-6 border shadow-none ${
             theme === 'dark'
-              ? 'bg-white/5 border border-white/10'
-              : 'bg-white/80 border-2 border-gray-300'
+              ? 'bg-white/5 border-white/8'
+              : 'bg-[#FAFAF7] border-[#E8E5DE]'
           }`}>
-            <h3 className={`font-bold mb-4 flex items-center gap-2 ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
+            <h3 className={`font-semibold mb-4 flex items-center gap-2 ${
+              theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
             }`}>
               <AlertCircle className={`h-5 w-5 ${
-                theme === 'dark' ? 'text-blue-400' : 'text-blue-600'
+                theme === 'dark' ? 'text-blue-400' : 'text-[#5B7FA5]'
               }`} />
               Before you reach out...
             </h3>
             <div className="space-y-2">
               <Link href="/research" target="_blank" rel="noopener noreferrer" className={`block transition-colors text-sm hover:underline ${
-                theme === 'dark' ? 'text-white/70 hover:text-white' : 'text-gray-600 hover:text-gray-900'
+                theme === 'dark' ? 'text-white/50 hover:text-white' : 'text-[#8A8A7A] hover:text-[#3D3D3D]'
               }`}>
                 • Check our Help Center for common questions
               </Link>
               <Link href="/dashboard/settings" className={`block transition-colors text-sm hover:underline ${
-                theme === 'dark' ? 'text-white/70 hover:text-white' : 'text-gray-600 hover:text-gray-900'
+                theme === 'dark' ? 'text-white/50 hover:text-white' : 'text-[#8A8A7A] hover:text-[#3D3D3D]'
               }`}>
                 • Review your account settings
               </Link>
@@ -570,8 +557,9 @@ function ContactSupportPageContent() {
               </Link>
             </div>
           </Card>
-        </div>
-
+          </div>
+          </div>
+        </main>
       </div>
     </div>
   )

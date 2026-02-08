@@ -320,10 +320,10 @@ export default function VoicePromptPlayer({ promptText, userName }: VoicePromptP
                 <SettingsIcon className="h-4 w-4" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-80 bg-white backdrop-blur-xl border-2 border-gray-300 p-5 shadow-2xl" align="end">
+            <PopoverContent className={`w-80 backdrop-blur-xl border-2 p-5 shadow-2xl ${theme === 'dark' ? 'bg-[#1A1F2E] border-white/20' : 'bg-white border-gray-300'}`} align="end">
               <div className="space-y-4">
                 <div>
-                  <Label className="text-gray-900 text-sm font-semibold mb-2 block">
+                  <Label className={`text-sm font-semibold mb-2 block ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                     Speed: {rate.toFixed(1)}x
                   </Label>
                   <Slider
@@ -337,7 +337,7 @@ export default function VoicePromptPlayer({ promptText, userName }: VoicePromptP
                 </div>
 
                 <div>
-                  <Label className="text-gray-900 text-sm font-semibold mb-2 block">
+                  <Label className={`text-sm font-semibold mb-2 block ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                     Pitch: {pitch.toFixed(1)}
                   </Label>
                   <Slider
@@ -351,7 +351,7 @@ export default function VoicePromptPlayer({ promptText, userName }: VoicePromptP
                 </div>
 
                 <div>
-                  <Label className="text-gray-900 text-sm font-semibold mb-2 block">
+                  <Label className={`text-sm font-semibold mb-2 block ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                     Volume: {Math.round(volume * 100)}%
                   </Label>
                   <Slider

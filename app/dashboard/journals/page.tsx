@@ -29,7 +29,7 @@ const tagColors: Record<string, { bg: string; text: string; border: string; dark
   "Achievement": { bg: "bg-yellow-100", text: "text-yellow-800", border: "border-yellow-300", darkBg: "bg-yellow-500/20", darkText: "text-yellow-300", darkBorder: "border-yellow-400/40" },
   "Nature": { bg: "bg-green-100", text: "text-green-800", border: "border-green-300", darkBg: "bg-green-500/20", darkText: "text-green-300", darkBorder: "border-green-400/40" },
   "Creativity": { bg: "bg-indigo-100", text: "text-indigo-800", border: "border-indigo-300", darkBg: "bg-indigo-500/20", darkText: "text-indigo-300", darkBorder: "border-indigo-400/40" },
-  "Family": { bg: "bg-orange-100", text: "text-orange-800", border: "border-orange-300", darkBg: "bg-orange-500/20", darkText: "text-orange-300", darkBorder: "border-orange-400/40" },
+  "Family": { bg: "bg-purple-100", text: "text-purple-800", border: "border-purple-300", darkBg: "bg-purple-500/20", darkText: "text-purple-300", darkBorder: "border-purple-400/40" },
 }
 
 function getTagColorClasses(tag: string, isDark: boolean): string {
@@ -235,28 +235,22 @@ export default function JournalsPage() {
   return (
     <div 
       data-dashboard
-      className="min-h-screen relative" 
-      style={theme === 'light' 
-        ? { background: 'linear-gradient(135deg, #f4f0eb 0%, #a1a79e 45%, #384c37 100%)' } 
-        : { background: 'linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a)' }}
+      className={`min-h-screen ${theme === 'dark' ? 'bg-[#141820]' : 'bg-[#F5F3EE]'}`}
     >
-      <BubbleBackground interactive className="fixed inset-0 -z-10" />
-      <div className={`fixed inset-0 -z-10 ${theme === 'light' ? 'bg-white/35' : 'bg-black/25'}`} />
-
-      <div className="relative z-10 p-3 md:p-6 grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 pb-24 md:pb-6">
-        {/* Universal Sidebar - Desktop & Mobile */}
+      <div className="flex items-start min-h-screen">
         <DashboardSidebar />
 
-        {/* Main Content Area */}
-        <div className="col-span-1 md:col-span-10 space-y-4 md:space-y-6">
+        <main className="flex-1 pb-24 md:pb-10 overflow-y-auto min-h-screen">
+          <div className="max-w-[1000px] mx-auto px-4 md:px-6 pt-16 md:pt-10">
+          <div className="space-y-5 md:space-y-6">
           {/* Header Card */}
-          <Card className={`backdrop-blur-xl border-2 rounded-3xl p-3 md:p-6 ${theme === 'dark' ? 'bg-white/5 border-white/10 shadow-2xl shadow-black/50' : 'bg-white/90 border-gray-400 shadow-xl'}`}>
+          <Card className={`rounded-2xl p-4 md:p-6 border shadow-none ${theme === 'dark' ? 'bg-white/5 border-white/8' : 'bg-[#FAFAF7] border-[#E8E5DE]'}`}>
             <div className="space-y-3 md:space-y-4">
               {/* Title Row with Filter Toggle (Mobile) */}
               <div className="flex items-center justify-between gap-3">
                 <div className="flex-1 min-w-0">
-                  <h1 className={`text-xl md:text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>My Journals</h1>
-                  <p className={`text-xs md:text-sm ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'} hidden md:block`}>Private self-journals (no AI, no streaks). Edit or add freely.</p>
+                  <h1 className={`text-xl md:text-3xl font-semibold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>My Journals</h1>
+                  <p className={`text-xs md:text-sm ${theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'} hidden md:block`}>Private self-journals (no AI, no streaks). Edit or add freely.</p>
                 </div>
                 {/* Mobile Filter Toggle Button */}
                 <button
@@ -279,7 +273,7 @@ export default function JournalsPage() {
               
               {/* Search Bar - Always visible */}
               <div className="relative">
-                <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <Search className={`h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />
                 <Input
                   className={`pl-10 h-10 w-full ${theme === 'dark' ? 'bg-white/10 border-white/20 text-white placeholder:text-white/50' : 'bg-white border-gray-300 text-gray-900'}`}
                   placeholder="Search journals..."
@@ -360,11 +354,11 @@ export default function JournalsPage() {
           </Card>
 
           {/* Editor Card - Hidden on mobile by default, shown via FAB or when editing */}
-          <Card className={`backdrop-blur-xl border-2 rounded-3xl p-3 md:p-6 ${theme === 'dark' ? 'bg-white/5 border-white/10 shadow-2xl shadow-black/50' : 'bg-white/90 border-gray-400 shadow-xl'} ${(showEditor || editingId) ? 'block' : 'hidden md:block'}`}>
+          <Card className={`rounded-2xl p-4 md:p-6 border shadow-none ${theme === 'dark' ? 'bg-white/5 border-white/8' : 'bg-[#FAFAF7] border-[#E8E5DE]'} ${(showEditor || editingId) ? 'block' : 'hidden md:block'}`}>
             <div className="flex items-center justify-between mb-3">
               <div>
-                <h2 className={`text-lg md:text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{editingId ? "Edit Journal" : "New Journal"}</h2>
-                <p className={`text-xs md:text-sm ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>No timer. Completely private.</p>
+                <h2 className={`text-lg md:text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>{editingId ? "Edit Journal" : "New Journal"}</h2>
+                <p className={`text-xs md:text-sm ${theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'}`}>No timer. Completely private.</p>
               </div>
               <div className="flex items-center gap-2">
                 {editingId && (
@@ -437,9 +431,9 @@ export default function JournalsPage() {
           </Card>
 
           {/* List Card */}
-          <Card className={`backdrop-blur-xl border-2 rounded-3xl p-3 md:p-6 ${theme === 'dark' ? 'bg-white/5 border-white/10 shadow-2xl shadow-black/50' : 'bg-white/90 border-gray-400 shadow-xl'}`}>
+          <Card className={`rounded-2xl p-4 md:p-6 border shadow-none ${theme === 'dark' ? 'bg-white/5 border-white/8' : 'bg-[#FAFAF7] border-[#E8E5DE]'}`}>
             <div className="flex items-center justify-between mb-4">
-              <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>
                 Your Journals ({filtered.length})
               </h3>
               {!showAllJournals && filtered.length > journalsPerPage && (
@@ -480,7 +474,7 @@ export default function JournalsPage() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
-                        className={`rounded-2xl p-4 ${theme === 'dark' ? 'glass-light' : 'glass-medium'} border ${theme === 'dark' ? 'border-white/10' : 'border-gray-200'}`}
+                        className={`rounded-2xl p-4 border ${theme === 'dark' ? 'bg-white/5 border-white/8' : 'bg-white border-[#E8E5DE]'}`}
                       >
                         <div className="flex items-start justify-between gap-3">
                           <div className="space-y-2 flex-1">
@@ -569,7 +563,9 @@ export default function JournalsPage() {
               )}
             </AnimatePresence>
           </Card>
-        </div>
+          </div>
+          </div>
+        </main>
       </div>
       
       {/* Floating Action Button (FAB) for Mobile - New Journal */}

@@ -169,7 +169,7 @@ export default function AgeVerification({ onVerified, initialCountry = "US" }: A
     <Card className="p-6 max-w-md mx-auto">
       <div className="space-y-4">
         <div className="flex items-center gap-2">
-          <Shield className="h-5 w-5 text-blue-500" />
+          <Shield className="h-5 w-5 text-[#6FA984]" />
           <h3 className="text-lg font-semibold">Age Verification</h3>
         </div>
 
@@ -182,17 +182,17 @@ export default function AgeVerification({ onVerified, initialCountry = "US" }: A
           variant="ghost"
           size="sm"
           onClick={() => setShowInfo(!showInfo)}
-          className="text-blue-600 hover:text-blue-700"
+          className="text-[#6FA984] hover:text-[#5A8F6E]"
         >
           <Info className="h-4 w-4 mr-1" />
           Why we need this
         </Button>
 
         {showInfo && (
-          <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="p-3 bg-[#DCE6D9]/30 border border-[#DCE6D9] rounded-lg">
             <div className="flex items-start gap-2">
-              <AlertCircle className="h-4 w-4 text-blue-600 mt-0.5" />
-              <div className="text-sm text-blue-800">
+              <AlertCircle className="h-4 w-4 text-[#6FA984] mt-0.5" />
+              <div className="text-sm text-[#2F3B34]">
                 <p className="font-medium mb-1">Age Verification Requirements</p>
                 <p className="mb-2">
                   We comply with privacy laws that require age verification:
@@ -215,7 +215,7 @@ export default function AgeVerification({ onVerified, initialCountry = "US" }: A
               id="country"
               value={country}
               onChange={(e) => setCountry(e.target.value)}
-              className="w-full h-10 px-3 rounded-md border border-gray-300 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full h-10 px-3 rounded-md border border-[#DCE6D9] bg-white focus:ring-2 focus:ring-[#6FA984]/30 focus:border-[#6FA984]"
               required
             >
               <option value="US">United States</option>

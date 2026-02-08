@@ -179,59 +179,48 @@ function ArchivePageContent() {
   return (
     <div 
       data-dashboard
-      className="min-h-screen relative" 
-      style={theme === 'light' 
-        ? { background: 'linear-gradient(135deg, #f4f0eb 0%, #a1a79e 45%, #384c37 100%)' } 
-        : { background: 'linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a)' }}
+      className={`min-h-screen ${theme === 'dark' ? 'bg-[#141820]' : 'bg-[#F5F3EE]'}`}
     >
-      {/* Animated Bubble Background */}
-      <BubbleBackground 
-        interactive
-        className="fixed inset-0 -z-10"
-      />
-      {/* Theme overlay */}
-      <div className={`fixed inset-0 -z-10 ${theme === 'light' ? 'bg-white/35' : 'bg-black/25'}`} />
-
-      <div className="relative z-10 p-3 md:p-6 grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 pb-24 md:pb-6">
-        {/* Universal Sidebar - Desktop & Mobile */}
+      <div className="flex items-start min-h-screen">
         <DashboardSidebar />
 
-        {/* Main Content Area */}
-        <div className="col-span-1 md:col-span-10 space-y-4 md:space-y-6">
+        <main className="flex-1 pb-24 md:pb-10 overflow-y-auto min-h-screen">
+          <div className="max-w-[1000px] mx-auto px-4 md:px-6 pt-16 md:pt-10">
+          <div className="space-y-5 md:space-y-6">
           {/* Header Card */}
-          <Card className={`backdrop-blur-xl border-2 rounded-3xl p-3 md:p-6 ${theme === 'dark' ? 'bg-white/5 border-white/10 shadow-2xl shadow-black/50' : 'bg-white/90 border-gray-400 shadow-xl'}`}>
+          <Card className={`rounded-2xl p-4 md:p-6 border shadow-none ${theme === 'dark' ? 'bg-white/5 border-white/8' : 'bg-[#FAFAF7] border-[#E8E5DE]'}`}>
             <div className="flex flex-col md:flex-row md:items-center md:items-center md:justify-between gap-3 md:gap-4">
               <div>
-                <h2 className={`text-xl md:text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Archive</h2>
-                <p className={`text-xs md:text-base ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>Browse your past reflections.</p>
+                <h2 className={`text-xl md:text-3xl font-semibold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>Archive</h2>
+                <p className={`text-xs md:text-sm ${theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'}`}>Browse your past reflections.</p>
               </div>
               <div className="flex items-center gap-2 md:gap-4 overflow-x-auto pb-2 md:pb-0">
                 {/* Search - Premium Feature */}
                 {tier === 'premium' ? (
                   <div className="relative flex-1 md:flex-initial">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                    <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />
                     <Input
                       placeholder={t('archive.search')}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className={`pl-10 h-9 md:h-10 rounded-xl text-sm min-w-[120px] ${
                         theme === 'dark'
-                          ? 'bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:bg-white/15'
-                          : 'bg-white border-2 border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:bg-white'
+                          ? 'bg-white/8 border border-white/10 text-white placeholder:text-white/40 focus:border-white/20'
+                          : 'bg-white border border-[#E8E5DE] text-[#3D3D3D] placeholder:text-[#A0A090] focus:border-[#B8C9E0]'
                       }`}
                     />
                   </div>
                 ) : (
                   <div className="relative flex-1 md:flex-initial">
                     <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                      <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />
                       <Input
                         placeholder="🔒 Premium"
                         disabled
                         className={`pl-10 h-9 md:h-10 rounded-xl text-sm cursor-not-allowed opacity-50 min-w-[120px] ${
                           theme === 'dark'
-                            ? 'bg-white/5 border border-white/10 text-white/50 placeholder:text-white/40'
-                            : 'bg-gray-50 border-2 border-gray-300 text-gray-500 placeholder:text-gray-400'
+                            ? 'bg-white/5 border border-white/8 text-white/40 placeholder:text-white/30'
+                            : 'bg-[#F0EDE6] border border-[#E8E5DE] text-[#A0A090] placeholder:text-[#C4C0B8]'
                         }`}
                       />
                     </div>
@@ -241,26 +230,26 @@ function ArchivePageContent() {
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className={`h-9 md:h-10 text-sm whitespace-nowrap ${
                       theme === 'dark'
-                        ? 'text-white border border-white/20 hover:bg-white/10'
-                        : 'text-gray-900 border-2 border-gray-300 hover:bg-gray-100'
+                        ? 'text-white border border-white/10 hover:bg-white/8'
+                        : 'text-[#5A5A4E] border border-[#E8E5DE] hover:bg-[#F0EDE6]'
                     }`}>
                       <Filter className={`mr-1 md:mr-2 h-4 w-4 ${
-                        theme === 'dark' ? 'text-white' : 'text-gray-900'
+                        theme === 'dark' ? 'text-white' : 'text-[#5A5A4E]'
                       }`} />
                       <span className="hidden md:inline">{selectedFilter}</span>
                       <span className="md:hidden">All</span>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className={`backdrop-blur-xl ${
+                  <DropdownMenuContent className={`${
                     theme === 'dark'
-                      ? 'bg-black/80 border border-white/20'
-                      : 'bg-white border-2 border-gray-300'
+                      ? 'bg-[#1A1F2E] border border-white/10'
+                      : 'bg-[#FAFAF7] border border-[#E8E5DE]'
                   }`}>
                     <DropdownMenuItem 
                       className={`cursor-pointer ${
                         theme === 'dark'
-                          ? 'text-white hover:bg-white/10 focus:bg-white/10'
-                          : 'text-gray-900 hover:bg-gray-100 focus:bg-gray-100'
+                          ? 'text-white hover:bg-white/8 focus:bg-white/8'
+                          : 'text-[#3D3D3D] hover:bg-[#F0EDE6] focus:bg-[#F0EDE6]'
                       }`}
                       onClick={() => setSelectedFilter("All")}
                     >
@@ -269,8 +258,8 @@ function ArchivePageContent() {
                     <DropdownMenuItem 
                       className={`cursor-pointer ${
                         theme === 'dark'
-                          ? 'text-white hover:bg-white/10 focus:bg-white/10'
-                          : 'text-gray-900 hover:bg-gray-100 focus:bg-gray-100'
+                          ? 'text-white hover:bg-white/8 focus:bg-white/8'
+                          : 'text-[#3D3D3D] hover:bg-[#F0EDE6] focus:bg-[#F0EDE6]'
                       }`}
                       onClick={() => setSelectedFilter("This Week")}
                     >
@@ -279,8 +268,8 @@ function ArchivePageContent() {
                     <DropdownMenuItem 
                       className={`cursor-pointer ${
                         theme === 'dark'
-                          ? 'text-white hover:bg-white/10 focus:bg-white/10'
-                          : 'text-gray-900 hover:bg-gray-100 focus:bg-gray-100'
+                          ? 'text-white hover:bg-white/8 focus:bg-white/8'
+                          : 'text-[#3D3D3D] hover:bg-[#F0EDE6] focus:bg-[#F0EDE6]'
                       }`}
                       onClick={() => setSelectedFilter("This Month")}
                     >
@@ -294,23 +283,23 @@ function ArchivePageContent() {
                     <DropdownMenuTrigger asChild>
                       <Button className={`transition-colors h-9 md:h-10 text-sm ${
                         theme === 'dark'
-                          ? 'bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/30 text-white'
-                          : 'bg-white hover:bg-gray-50 border-2 border-gray-300 hover:border-gray-400 text-gray-900'
+                          ? 'bg-white/8 hover:bg-white/12 border border-white/10 text-white'
+                          : 'bg-white hover:bg-[#F0EDE6] border border-[#E8E5DE] text-[#5A5A4E]'
                       }`}>
                         <Download className="mr-1 md:mr-2 h-4 w-4" />
                         <span className="hidden md:inline">Export</span>
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className={`backdrop-blur-xl ${
+                    <DropdownMenuContent className={`${
                       theme === 'dark'
-                        ? 'bg-black/80 border border-white/20'
-                        : 'bg-white border-2 border-gray-300'
+                        ? 'bg-[#1A1F2E] border border-white/10'
+                        : 'bg-[#FAFAF7] border border-[#E8E5DE]'
                     }`}>
                       <DropdownMenuItem 
                         className={`cursor-pointer ${
                           theme === 'dark'
-                            ? 'text-white hover:bg-white/10 focus:bg-white/10'
-                            : 'text-gray-900 hover:bg-gray-100 focus:bg-gray-100'
+                            ? 'text-white hover:bg-white/8 focus:bg-white/8'
+                            : 'text-[#3D3D3D] hover:bg-[#F0EDE6] focus:bg-[#F0EDE6]'
                         }`}
                         onClick={exportToCSV}
                       >
@@ -320,8 +309,8 @@ function ArchivePageContent() {
                       <DropdownMenuItem 
                         className={`cursor-pointer ${
                           theme === 'dark'
-                            ? 'text-white hover:bg-white/10 focus:bg-white/10'
-                            : 'text-gray-900 hover:bg-gray-100 focus:bg-gray-100'
+                            ? 'text-white hover:bg-white/8 focus:bg-white/8'
+                            : 'text-[#3D3D3D] hover:bg-[#F0EDE6] focus:bg-[#F0EDE6]'
                         }`}
                         onClick={exportToText}
                       >
@@ -336,8 +325,8 @@ function ArchivePageContent() {
                       disabled
                       className={`cursor-not-allowed opacity-50 h-9 md:h-10 text-sm ${
                         theme === 'dark'
-                          ? 'bg-white/5 border border-white/10 text-white/40'
-                          : 'bg-gray-50 border-2 border-gray-300 text-gray-400'
+                          ? 'bg-white/5 border border-white/8 text-white/30'
+                          : 'bg-[#F0EDE6] border border-[#E8E5DE] text-[#A0A090]'
                       }`}
                     >
                       <Download className="mr-1 md:mr-2 h-4 w-4" />
@@ -354,182 +343,136 @@ function ArchivePageContent() {
           </Card>
 
           {/* Reflections List */}
-          <Card className={`backdrop-blur-xl rounded-3xl p-4 md:p-6 shadow-xl ${
-            theme === 'dark'
-              ? 'bg-white/5 border border-white/10'
-              : 'bg-white/90 border-2 border-gray-400'
+          <Card className={`rounded-2xl p-4 md:p-6 border shadow-none ${
+            theme === 'dark' ? 'bg-white/5 border-white/8' : 'bg-[#FAFAF7] border-[#E8E5DE]'
           }`}>
             <div className="flex items-center justify-between mb-4 md:mb-6">
               <div>
                 <h3 className={`text-lg md:text-xl font-semibold ${
-                  theme === 'dark' ? 'text-white' : 'text-gray-900'
+                  theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
                 }`}>Past Reflections</h3>
                 {loading ? (
-                  <Skeleton className={`h-4 w-32 mt-1 ${
-                    theme === 'dark' ? 'bg-white/10' : 'bg-gray-200'
-                  }`} />
+                  <Skeleton className={`h-4 w-32 mt-1 ${theme === 'dark' ? 'bg-white/8' : 'bg-[#E8E5DE]'}`} />
                 ) : (
-                  <p className={`text-xs md:text-sm mt-1 ${
-                    theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-                  }`}>{filteredReflections.length} reflection{filteredReflections.length !== 1 ? 's' : ''} found</p>
+                  <p className={`text-xs md:text-sm mt-1 ${theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
+                    {filteredReflections.length} reflection{filteredReflections.length !== 1 ? 's' : ''} found
+                  </p>
                 )}
               </div>
               {!loading && filteredReflections.length > 3 && (
                 <Button
                   variant="ghost"
                   onClick={() => setShowAll(!showAll)}
-                  className={`transition-all duration-300 ${
-                    theme === 'dark'
-                      ? 'text-white hover:text-white hover:bg-white/10'
-                      : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
+                  className={`transition-colors ${
+                    theme === 'dark' ? 'text-white hover:bg-white/8' : 'text-[#5A5A4E] hover:bg-[#F0EDE6]'
                   }`}
                 >
                   {showAll ? (
-                    <>
-                      Show Less
-                      <ChevronUp className="ml-2 h-4 w-4" />
-                    </>
+                    <>Show Less <ChevronUp className="ml-2 h-4 w-4" /></>
                   ) : (
-                    <>
-                      See More ({filteredReflections.length - 3} more)
-                      <ChevronDown className="ml-2 h-4 w-4" />
-                    </>
+                    <>See More ({filteredReflections.length - 3} more) <ChevronDown className="ml-2 h-4 w-4" /></>
                   )}
                 </Button>
               )}
             </div>
             <div className="space-y-4">
               {loading ? (
-                // Loading skeletons for reflections
                 Array(3).fill(0).map((_, index) => (
-                  <Card key={index} className={`backdrop-blur-xl rounded-2xl p-5 shadow-md ${
-                    theme === 'dark'
-                      ? 'bg-white/5 border border-white/10'
-                      : 'bg-white border-2 border-gray-300'
+                  <Card key={index} className={`rounded-2xl p-5 border shadow-none ${
+                    theme === 'dark' ? 'bg-white/5 border-white/8' : 'bg-white border-[#E8E5DE]'
                   }`}>
                     <div className="flex items-start gap-3">
-                      <Skeleton className={`h-10 w-10 rounded-full ${
-                        theme === 'dark' ? 'bg-white/10' : 'bg-gray-200'
-                      }`} />
+                      <Skeleton className={`h-10 w-10 rounded-full ${theme === 'dark' ? 'bg-white/8' : 'bg-[#E8E5DE]'}`} />
                       <div className="flex-1 space-y-2">
-                        <Skeleton className={`h-4 w-24 ${
-                          theme === 'dark' ? 'bg-white/10' : 'bg-gray-200'
-                        }`} />
-                        <Skeleton className={`h-5 w-full ${
-                          theme === 'dark' ? 'bg-white/10' : 'bg-gray-200'
-                        }`} />
-                        <Skeleton className={`h-4 w-3/4 ${
-                          theme === 'dark' ? 'bg-white/10' : 'bg-gray-200'
-                        }`} />
+                        <Skeleton className={`h-4 w-24 ${theme === 'dark' ? 'bg-white/8' : 'bg-[#E8E5DE]'}`} />
+                        <Skeleton className={`h-5 w-full ${theme === 'dark' ? 'bg-white/8' : 'bg-[#E8E5DE]'}`} />
+                        <Skeleton className={`h-4 w-3/4 ${theme === 'dark' ? 'bg-white/8' : 'bg-[#E8E5DE]'}`} />
                       </div>
                     </div>
                   </Card>
                 ))
               ) : filteredReflections.length === 0 ? (
-                // Empty state
                 <div className="text-center py-12">
-                  <p className={`text-lg ${
-                    theme === 'dark' ? 'text-white/70' : 'text-gray-600'
-                  }`}>No reflections found</p>
-                  <p className={`text-sm mt-2 ${
-                    theme === 'dark' ? 'text-white/50' : 'text-gray-500'
-                  }`}>
+                  <p className={`text-lg ${theme === 'dark' ? 'text-white/50' : 'text-[#8A8A7A]'}`}>No reflections found</p>
+                  <p className={`text-sm mt-2 ${theme === 'dark' ? 'text-white/30' : 'text-[#A0A090]'}`}>
                     {searchQuery ? "Try adjusting your search" : "Start writing your first reflection!"}
                   </p>
                 </div>
               ) : (
                 (showAll ? filteredReflections : filteredReflections.slice(0, 3)).map((item, index) => {
-                const isExpanded = expandedReflections.includes(item.id)
-                return (
-                  <motion.div
-                    key={item.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
-                  >
-                    <Card
-                      className={`backdrop-blur-xl rounded-2xl p-4 md:p-5 transition-all duration-300 hover:scale-[1.01] shadow-md ${
-                        theme === 'dark'
-                          ? 'bg-white/5 border border-white/10 hover:bg-white/10'
-                          : 'bg-white border-2 border-gray-300 hover:bg-gray-50'
-                      }`}
+                  const isExpanded = expandedReflections.includes(item.id)
+                  return (
+                    <motion.div
+                      key={item.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }}
                     >
-                      <div className="space-y-3">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="flex items-start gap-2 md:gap-3 flex-1 min-w-0">
-                            <span className="text-2xl md:text-3xl flex-shrink-0">{item.mood}</span>
-                            <div className="flex-1 min-w-0">
-                              <p className={`text-xs md:text-sm ${
-                                theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-                              }`}>{item.date}</p>
-                              <p className={`font-medium italic text-sm md:text-base mt-1 line-clamp-2 ${
-                                theme === 'dark' ? 'text-white' : 'text-gray-900'
-                              }`}>{item.prompt_text}</p>
-                            </div>
-                          </div>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => toggleReflection(item.id)}
-                        className={`transition-all duration-300 ${
-                          theme === 'dark'
-                            ? 'text-white hover:text-white hover:bg-white/10'
-                            : 'text-gray-900 hover:text-gray-900 hover:bg-gray-100'
-                        }`}
-                      >
-                        <motion.div
-                          animate={{ rotate: isExpanded ? 180 : 0 }}
-                          transition={{ duration: 0.3 }}
-                        >
-                          <ChevronDown className={`h-5 w-5 ${
-                            theme === 'dark' ? 'text-white' : 'text-gray-900'
-                          }`} />
-                        </motion.div>
-                      </Button>
-                        </div>
-                        <AnimatePresence>
-                          {isExpanded && (
-                            <motion.div
-                              initial={{ opacity: 0, height: 0 }}
-                              animate={{ opacity: 1, height: "auto" }}
-                              exit={{ opacity: 0, height: 0 }}
-                              transition={{ duration: 0.3, ease: "easeInOut" }}
-                              className="overflow-hidden"
-                            >
-                              <div className="space-y-3 pt-2">
-                                <p className={`text-sm leading-relaxed pl-12 ${
-                                  theme === 'dark' ? 'text-white/80' : 'text-gray-700'
-                                }`}>
-                                  {item.reflection_text}
-                                </p>
-                                <div className="flex gap-2 pl-12 flex-wrap">
-                                  {item.tags.map((tag, idx) => (
-                                    <Badge
-                                      key={idx}
-                                      className={`cursor-pointer ${
-                                        theme === 'dark'
-                                          ? 'bg-white/10 text-white border border-white/20 hover:bg-white/20'
-                                          : 'bg-gray-100 text-gray-700 border-2 border-gray-300 hover:bg-gray-200'
-                                      }`}
-                                    >
-                                      {tag}
-                                    </Badge>
-                                  ))}
-                                </div>
+                      <Card className={`rounded-2xl p-4 md:p-5 transition-all duration-200 border shadow-none ${
+                        theme === 'dark' ? 'bg-white/5 border-white/8 hover:bg-white/8' : 'bg-white border-[#E8E5DE] hover:bg-[#FAFAF7]'
+                      }`}>
+                        <div className="space-y-3">
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="flex items-start gap-2 md:gap-3 flex-1 min-w-0">
+                              <span className="text-2xl md:text-3xl flex-shrink-0">{item.mood}</span>
+                              <div className="flex-1 min-w-0">
+                                <p className={`text-xs md:text-sm ${theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'}`}>{item.date}</p>
+                                <p className={`font-medium italic text-sm md:text-base mt-1 line-clamp-2 ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>{item.prompt_text}</p>
                               </div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
-                    </Card>
-                  </motion.div>
-                )
-              })
-            )}
+                            </div>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => toggleReflection(item.id)}
+                              className={`transition-colors ${theme === 'dark' ? 'text-white hover:bg-white/8' : 'text-[#5A5A4E] hover:bg-[#F0EDE6]'}`}
+                            >
+                              <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.3 }}>
+                                <ChevronDown className={`h-5 w-5 ${theme === 'dark' ? 'text-white' : 'text-[#5A5A4E]'}`} />
+                              </motion.div>
+                            </Button>
+                          </div>
+                          <AnimatePresence>
+                            {isExpanded && (
+                              <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: "auto" }}
+                                exit={{ opacity: 0, height: 0 }}
+                                transition={{ duration: 0.3, ease: "easeInOut" }}
+                                className="overflow-hidden"
+                              >
+                                <div className="space-y-3 pt-2">
+                                  <p className={`text-sm leading-relaxed pl-12 ${theme === 'dark' ? 'text-white/70' : 'text-[#5A5A4E]'}`}>
+                                    {item.reflection_text}
+                                  </p>
+                                  <div className="flex gap-2 pl-12 flex-wrap">
+                                    {item.tags.map((tag, idx) => (
+                                      <Badge
+                                        key={idx}
+                                        className={`cursor-pointer ${
+                                          theme === 'dark'
+                                            ? 'bg-white/8 text-white/70 border border-white/10 hover:bg-white/12'
+                                            : 'bg-[#F0EDE6] text-[#5A5A4E] border border-[#E8E5DE] hover:bg-[#E8E5DE]'
+                                        }`}
+                                      >
+                                        {tag}
+                                      </Badge>
+                                    ))}
+                                  </div>
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      </Card>
+                    </motion.div>
+                  )
+                })
+              )}
             </div>
           </Card>
-        </div>
-        
+          </div>
+          </div>
+        </main>
       </div>
     </div>
   )

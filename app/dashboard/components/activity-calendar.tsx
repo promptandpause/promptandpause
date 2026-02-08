@@ -54,7 +54,7 @@ export default function ActivityCalendar() {
   }, [supabase])
 
   const getIntensityColor = (count: number) => {
-    if (count === 0) return "bg-gray-100/50"
+    if (count === 0) return theme === 'dark' ? "bg-white/5" : "bg-gray-100/50"
     if (count === 1) return "bg-[#B8D8B8]/40"
     if (count === 2) return "bg-[#B8D8B8]/60"
     if (count >= 3) return "bg-[#B8D8B8]/80"
@@ -100,7 +100,7 @@ export default function ActivityCalendar() {
         </div>
         <div className={`rounded-lg p-3 border ${theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200'}`}>
           <div className="flex items-center gap-1">
-            <TrendingUp className="h-4 w-4 text-orange-400" />
+            <TrendingUp className="h-4 w-4 text-purple-400" />
             <p className={`text-xs ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>Streak</p>
           </div>
           <p className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{currentStreak} 🔥</p>
@@ -187,9 +187,9 @@ export default function ActivityCalendar() {
           <motion.div
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
-            className="bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-400/30 rounded-lg p-3"
+            className="bg-gradient-to-r from-purple-500/20 to-red-500/20 border border-purple-400/30 rounded-lg p-3"
           >
-            <p className="text-orange-400 font-semibold text-sm mb-1">
+            <p className="text-purple-400 font-semibold text-sm mb-1">
               🔥 {currentStreak} Day Streak!
             </p>
             <p className={`text-xs ${theme === 'dark' ? 'text-white/70' : 'text-gray-600'}`}>
@@ -232,7 +232,7 @@ export default function ActivityCalendar() {
           </Badge>
         )}
         {currentStreak >= 7 && (
-          <Badge className="bg-gradient-to-r from-orange-500/20 to-red-500/20 text-orange-400 border border-orange-400/30">
+          <Badge className="bg-gradient-to-r from-purple-500/20 to-red-500/20 text-purple-400 border border-purple-400/30">
             🔥 Week Streak
           </Badge>
         )}

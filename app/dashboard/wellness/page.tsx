@@ -83,52 +83,22 @@ export default function WellnessPage() {
     <AuthGuard redirectPath="/dashboard/wellness">
       <div 
         data-dashboard
-        className="min-h-screen relative" 
-        style={theme === 'light' 
-          ? { background: 'linear-gradient(135deg, #f4f0eb 0%, #a1a79e 45%, #384c37 100%)' } 
-          : { background: 'linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a)' }}
+        className={`min-h-screen ${theme === 'dark' ? 'bg-[#141820]' : 'bg-[#F5F3EE]'}`}
       >
-        {/* Subtle overlay for readability */}
-        <div className={`fixed inset-0 -z-10 ${theme === 'light' ? 'bg-white/35' : 'bg-black/25'}`} />
+        <div className="flex items-start min-h-screen">
+          <DashboardSidebar />
 
-        {/* Calming ambient animation */}
-        <div className="fixed inset-0 -z-20 pointer-events-none overflow-hidden">
-          <div className="absolute inset-0 calm-ambient-blobs" />
-        </div>
-
-        <style jsx global>{`
-          .calm-ambient-blobs {
-            background: radial-gradient(600px circle at 20% 20%, rgba(161, 167, 158, 0.20), transparent 45%),
-                        radial-gradient(700px circle at 80% 30%, rgba(136, 165, 188, 0.20), transparent 50%),
-                        radial-gradient(800px circle at 30% 80%, rgba(56, 76, 55, 0.20), transparent 55%);
-            animation: calm-shift 28s ease-in-out infinite alternate;
-            filter: blur(12px);
-          }
-          @keyframes calm-shift {
-            0% { transform: translate3d(0,0,0) scale(1); }
-            50% { transform: translate3d(-1%, 1%, 0) scale(1.03); opacity: 0.9; }
-            100% { transform: translate3d(1%, -1%, 0) scale(1.06); opacity: 0.85; }
-          }
-          @media (prefers-reduced-motion: reduce) {
-            .calm-ambient-blobs { animation: none; }
-          }
-        `}</style>
-
-        <div className="relative z-10 px-3 md:px-6 pt-4 md:pt-8 pb-24 md:pb-6 w-full max-w-[1920px] mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 items-start">
-            {/* Sidebar with navigation */}
-            <DashboardSidebar />
-
-            {/* Main Content Area */}
-            <div className="col-span-1 md:col-span-10 space-y-4 md:space-y-6">
+          <main className="flex-1 pb-24 md:pb-10 overflow-y-auto min-h-screen">
+            <div className="max-w-[1000px] mx-auto px-4 md:px-6 pt-16 md:pt-10">
+            <div className="space-y-5 md:space-y-6">
               {/* Header */}
-              <Card className={`rounded-3xl p-6 ${theme === 'dark' ? 'glass-light' : 'glass-medium'}`}>
+              <Card className={`rounded-2xl p-5 md:p-6 border shadow-none ${theme === 'dark' ? 'bg-white/5 border-white/8' : 'bg-[#FAFAF7] border-[#E8E5DE]'}`}>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div>
-                    <h1 className={`text-2xl md:text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                    <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>
                       Wellness Hub
                     </h1>
-                    <p className={`mt-1 ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
+                    <p className={`mt-1 text-sm ${theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
                       Tools for your mental wellbeing
                     </p>
                   </div>
@@ -139,7 +109,7 @@ export default function WellnessPage() {
                       variant="outline"
                       size="sm"
                       onClick={() => setShowBreathingDialog(true)}
-                      className={`gap-2 ${theme === 'dark' ? 'border-white/20 text-white hover:bg-white/10' : ''}`}
+                      className={`gap-2 ${theme === 'dark' ? 'border-white/10 text-white hover:bg-white/10' : 'border-[#E8E5DE] text-[#5A5A4E] hover:bg-[#F0EDE6]'}`}
                     >
                       <Wind className="w-4 h-4" />
                       <span className="hidden sm:inline">Breathe</span>
@@ -148,7 +118,7 @@ export default function WellnessPage() {
                       variant="outline"
                       size="sm"
                       onClick={() => setShowCrisisDialog(true)}
-                      className={`gap-2 ${theme === 'dark' ? 'border-rose-500/30 text-rose-400 hover:bg-rose-500/20' : 'border-rose-200 text-rose-600 hover:bg-rose-50'}`}
+                      className={`gap-2 ${theme === 'dark' ? 'border-rose-500/30 text-rose-400 hover:bg-rose-500/20' : 'border-rose-200 text-rose-500 hover:bg-rose-50'}`}
                     >
                       <Heart className="w-4 h-4" />
                       <span className="hidden sm:inline">Support</span>
@@ -159,24 +129,24 @@ export default function WellnessPage() {
 
               {/* Tabs Navigation */}
               <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-                <TabsList className={`grid w-full grid-cols-4 h-auto p-1 rounded-2xl ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-100'}`}>
+                <TabsList className={`grid w-full grid-cols-4 h-auto p-1 rounded-2xl ${theme === 'dark' ? 'bg-white/8' : 'bg-[#EAE7E0]'}`}>
                   <TabsTrigger 
                     value="overview" 
-                    className={`gap-2 py-3 rounded-xl data-[state=active]:shadow-md ${theme === 'dark' ? 'data-[state=active]:bg-white/20 data-[state=active]:text-white' : 'data-[state=active]:bg-white'}`}
+                    className={`gap-2 py-3 rounded-xl data-[state=active]:shadow-sm ${theme === 'dark' ? 'data-[state=active]:bg-white/15 data-[state=active]:text-white' : 'data-[state=active]:bg-[#FAFAF7] data-[state=active]:text-[#3D3D3D]'}`}
                   >
                     <Sparkles className="w-4 h-4" />
                     <span className="hidden sm:inline">Overview</span>
                   </TabsTrigger>
                   <TabsTrigger 
                     value="insights" 
-                    className={`gap-2 py-3 rounded-xl data-[state=active]:shadow-md ${theme === 'dark' ? 'data-[state=active]:bg-white/20 data-[state=active]:text-white' : 'data-[state=active]:bg-white'}`}
+                    className={`gap-2 py-3 rounded-xl data-[state=active]:shadow-sm ${theme === 'dark' ? 'data-[state=active]:bg-white/15 data-[state=active]:text-white' : 'data-[state=active]:bg-[#FAFAF7] data-[state=active]:text-[#3D3D3D]'}`}
                   >
                     <BarChart3 className="w-4 h-4" />
                     <span className="hidden sm:inline">Insights</span>
                   </TabsTrigger>
                   <TabsTrigger 
                     value="goals" 
-                    className={`gap-2 py-3 rounded-xl data-[state=active]:shadow-md ${theme === 'dark' ? 'data-[state=active]:bg-white/20 data-[state=active]:text-white' : 'data-[state=active]:bg-white'}`}
+                    className={`gap-2 py-3 rounded-xl data-[state=active]:shadow-sm ${theme === 'dark' ? 'data-[state=active]:bg-white/15 data-[state=active]:text-white' : 'data-[state=active]:bg-[#FAFAF7] data-[state=active]:text-[#3D3D3D]'}`}
                   >
                     <Target className="w-4 h-4" />
                     <span className="hidden sm:inline">Goals</span>
@@ -184,7 +154,7 @@ export default function WellnessPage() {
                   </TabsTrigger>
                   <TabsTrigger 
                     value="habits" 
-                    className={`gap-2 py-3 rounded-xl data-[state=active]:shadow-md ${theme === 'dark' ? 'data-[state=active]:bg-white/20 data-[state=active]:text-white' : 'data-[state=active]:bg-white'}`}
+                    className={`gap-2 py-3 rounded-xl data-[state=active]:shadow-sm ${theme === 'dark' ? 'data-[state=active]:bg-white/15 data-[state=active]:text-white' : 'data-[state=active]:bg-[#FAFAF7] data-[state=active]:text-[#3D3D3D]'}`}
                   >
                     <CheckCircle2 className="w-4 h-4" />
                     <span className="hidden sm:inline">Habits</span>
@@ -219,9 +189,9 @@ export default function WellnessPage() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3 }}
                     >
-                      <Card className={`rounded-2xl h-full ${theme === 'dark' ? 'bg-white/5 border-white/10' : ''}`}>
+                      <Card className={`rounded-2xl h-full border shadow-none ${theme === 'dark' ? 'bg-white/5 border-white/8' : 'bg-[#FAFAF7] border-[#E8E5DE]'}`}>
                         <CardHeader className="pb-3">
-                          <CardTitle className={`text-lg flex items-center gap-2 ${theme === 'dark' ? 'text-white' : ''}`}>
+                          <CardTitle className={`text-lg flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>
                             <Wind className="w-5 h-5 text-blue-500" />
                             Quick Tools
                           </CardTitle>
@@ -229,16 +199,16 @@ export default function WellnessPage() {
                         <CardContent className="space-y-2">
                           <Button
                             variant="outline"
-                            className={`w-full justify-between h-auto py-2.5 rounded-lg ${theme === 'dark' ? 'border-white/20 hover:bg-white/10' : ''}`}
+                            className={`w-full justify-between h-auto py-2.5 rounded-lg ${theme === 'dark' ? 'border-white/10 hover:bg-white/10' : 'border-[#E8E5DE] hover:bg-[#F0EDE6]'}`}
                             onClick={() => setShowBreathingDialog(true)}
                           >
                             <div className="flex items-center gap-2">
-                              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${theme === 'dark' ? 'bg-blue-500/20' : 'bg-blue-100'}`}>
-                                <Wind className={`w-4 h-4 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`} />
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${theme === 'dark' ? 'bg-blue-500/20' : 'bg-[#D4E4F7]'}`}>
+                                <Wind className={`w-4 h-4 ${theme === 'dark' ? 'text-blue-400' : 'text-[#5B7FA5]'}`} />
                               </div>
                               <div className="text-left">
-                                <div className={`font-medium text-sm ${theme === 'dark' ? 'text-white' : ''}`}>Breathing Exercises</div>
-                                <div className={`text-xs ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>Calm your mind</div>
+                                <div className={`font-medium text-sm ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>Breathing Exercises</div>
+                                <div className={`text-xs ${theme === 'dark' ? 'text-white/50' : 'text-[#8A8A7A]'}`}>Calm your mind</div>
                               </div>
                             </div>
                             <ChevronRight className={`w-4 h-4 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />
@@ -246,7 +216,7 @@ export default function WellnessPage() {
 
                           <Button
                             variant="outline"
-                            className={`w-full justify-between h-auto py-2.5 rounded-lg ${theme === 'dark' ? 'border-rose-500/30 hover:bg-rose-500/10' : 'border-rose-200 hover:bg-rose-50'}`}
+                            className={`w-full justify-between h-auto py-2.5 rounded-lg ${theme === 'dark' ? 'border-rose-500/20 hover:bg-rose-500/10' : 'border-rose-200 hover:bg-rose-50'}`}
                             onClick={() => setShowCrisisDialog(true)}
                           >
                             <div className="flex items-center gap-2">
@@ -254,8 +224,8 @@ export default function WellnessPage() {
                                 <Heart className={`w-4 h-4 ${theme === 'dark' ? 'text-rose-400' : 'text-rose-600'}`} />
                               </div>
                               <div className="text-left">
-                                <div className={`font-medium text-sm ${theme === 'dark' ? 'text-white' : ''}`}>Crisis Support</div>
-                                <div className={`text-xs ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>Grounding & hotlines</div>
+                                <div className={`font-medium text-sm ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>Crisis Support</div>
+                                <div className={`text-xs ${theme === 'dark' ? 'text-white/50' : 'text-[#8A8A7A]'}`}>Grounding & hotlines</div>
                               </div>
                             </div>
                             <ChevronRight className={`w-4 h-4 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />
@@ -263,7 +233,7 @@ export default function WellnessPage() {
 
                           <Button
                             variant="outline"
-                            className={`w-full justify-between h-auto py-2.5 rounded-lg ${theme === 'dark' ? 'border-white/20 hover:bg-white/10' : ''}`}
+                            className={`w-full justify-between h-auto py-2.5 rounded-lg ${theme === 'dark' ? 'border-white/10 hover:bg-white/10' : 'border-[#E8E5DE] hover:bg-[#F0EDE6]'}`}
                             onClick={() => setActiveTab('goals')}
                           >
                             <div className="flex items-center gap-2">
@@ -271,13 +241,13 @@ export default function WellnessPage() {
                                 <Target className={`w-4 h-4 ${theme === 'dark' ? 'text-purple-400' : 'text-purple-600'}`} />
                               </div>
                               <div className="text-left">
-                                <div className={`font-medium text-sm ${theme === 'dark' ? 'text-white' : ''}`}>Goals & Intentions</div>
-                                <div className={`text-xs ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>Track your progress</div>
+                                <div className={`font-medium text-sm ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>Goals & Intentions</div>
+                                <div className={`text-xs ${theme === 'dark' ? 'text-white/50' : 'text-[#8A8A7A]'}`}>Track your progress</div>
                               </div>
                             </div>
                             <div className="flex items-center gap-1">
-                              {!isPremium && <Lock className={`w-3 h-3 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />}
-                              <ChevronRight className={`w-4 h-4 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />
+                              {!isPremium && <Lock className={`w-3 h-3 ${theme === 'dark' ? 'text-white/40' : 'text-[#A0A090]'}`} />}
+                              <ChevronRight className={`w-4 h-4 ${theme === 'dark' ? 'text-white/40' : 'text-[#A0A090]'}`} />
                             </div>
                           </Button>
                         </CardContent>
@@ -292,10 +262,10 @@ export default function WellnessPage() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4 }}
                     >
-                      <Card className={`rounded-2xl ${theme === 'dark' ? 'bg-white/5 border-white/10' : ''}`}>
+                      <Card className={`rounded-2xl border shadow-none ${theme === 'dark' ? 'bg-white/5 border-white/8' : 'bg-[#FAFAF7] border-[#E8E5DE]'}`}>
                         <CardHeader className="pb-3">
                           <div className="flex items-center justify-between">
-                            <CardTitle className={`text-lg flex items-center gap-2 ${theme === 'dark' ? 'text-white' : ''}`}>
+                            <CardTitle className={`text-lg flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>
                               <CheckCircle2 className="w-5 h-5 text-emerald-500" />
                               Today's Habits
                             </CardTitle>
@@ -323,24 +293,24 @@ export default function WellnessPage() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4 }}
                     >
-                      <Card className={`rounded-2xl ${theme === 'dark' ? 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border-yellow-500/30' : 'bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-200'}`}>
+                      <Card className={`rounded-2xl border shadow-none ${theme === 'dark' ? 'bg-[#C4B5E0]/10 border-[#C4B5E0]/15' : 'bg-[#EDE7F6] border-[#D1C4E9]'}`}>
                         <CardContent className="p-6">
                           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                             <div className="flex items-center gap-4">
-                              <div className={`p-2.5 rounded-full ${theme === 'dark' ? 'bg-yellow-500/30' : 'bg-yellow-100'}`}>
-                                <Crown className={`h-5 w-5 ${theme === 'dark' ? 'text-yellow-400' : 'text-yellow-600'}`} />
+                              <div className={`p-2.5 rounded-full ${theme === 'dark' ? 'bg-[#C4B5E0]/15' : 'bg-[#D1C4E9]'}`}>
+                                <Crown className={`h-5 w-5 ${theme === 'dark' ? 'text-[#C4B5E0]' : 'text-[#7E6BA5]'}`} />
                               </div>
                               <div>
-                                <h3 className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                                <h3 className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>
                                   Unlock Full Wellness Suite
                                 </h3>
-                                <p className={`text-sm mt-1 ${theme === 'dark' ? 'text-white/70' : 'text-gray-600'}`}>
+                                <p className={`text-sm mt-1 ${theme === 'dark' ? 'text-white/50' : 'text-[#8A8A7A]'}`}>
                                   Get goals tracking, habit correlations, advanced insights & more
                                 </p>
                               </div>
                             </div>
                             <Link href="/dashboard/settings#subscription">
-                              <Button className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white border-0 shadow-md">
+                              <Button className={`border-0 shadow-sm ${theme === 'dark' ? 'bg-[#C4B5E0] text-[#1A1A2E] hover:bg-[#B0A0D0]' : 'bg-[#7E6BA5] text-white hover:bg-[#6B5A90]'}`}>
                                 <Crown className="w-4 h-4 mr-2" />
                                 Upgrade Now
                               </Button>
@@ -357,14 +327,14 @@ export default function WellnessPage() {
                   <div className="grid gap-4 md:grid-cols-2">
                     <WeeklyMoodInsights userId={userId} />
                     
-                    <Card className={`rounded-2xl ${theme === 'dark' ? 'bg-white/5 border-white/10' : ''}`}>
+                    <Card className={`rounded-2xl border shadow-none ${theme === 'dark' ? 'bg-white/5 border-white/8' : 'bg-[#FAFAF7] border-[#E8E5DE]'}`}>
                       <CardHeader>
-                        <CardTitle className={`text-lg ${theme === 'dark' ? 'text-white' : ''}`}>
+                        <CardTitle className={`text-lg ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>
                           Reflection Summary
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <p className={`text-sm ${theme === 'dark' ? 'text-white/60' : 'text-gray-500'}`}>
+                        <p className={`text-sm ${theme === 'dark' ? 'text-white/50' : 'text-[#8A8A7A]'}`}>
                           Your mood insights and patterns will appear here as you continue reflecting.
                           The more you reflect, the better insights you'll receive.
                         </p>
@@ -378,16 +348,16 @@ export default function WellnessPage() {
                   {isPremium ? (
                     <GoalsDashboard userId={userId} />
                   ) : (
-                    <Card className={`rounded-2xl p-8 text-center ${theme === 'dark' ? 'bg-white/5 border-white/10' : ''}`}>
-                      <Lock className={`w-12 h-12 mx-auto mb-4 ${theme === 'dark' ? 'text-white/30' : 'text-gray-300'}`} />
-                      <h3 className={`text-lg font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                    <Card className={`rounded-2xl p-8 text-center border shadow-none ${theme === 'dark' ? 'bg-white/5 border-white/8' : 'bg-[#FAFAF7] border-[#E8E5DE]'}`}>
+                      <Lock className={`w-12 h-12 mx-auto mb-4 ${theme === 'dark' ? 'text-white/20' : 'text-[#C4C0B8]'}`} />
+                      <h3 className={`text-lg font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>
                         Premium Feature
                       </h3>
-                      <p className={`mb-4 ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
+                      <p className={`mb-4 ${theme === 'dark' ? 'text-white/50' : 'text-[#8A8A7A]'}`}>
                         Goal tracking helps you set intentions and track progress toward what matters most.
                       </p>
                       <Link href="/dashboard/settings#subscription">
-                        <Button className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white border-0">
+                        <Button className={`border-0 ${theme === 'dark' ? 'bg-[#C4B5E0] text-[#1A1A2E] hover:bg-[#B0A0D0]' : 'bg-[#7E6BA5] text-white hover:bg-[#6B5A90]'}`}>
                           <Crown className="w-4 h-4 mr-2" />
                           Upgrade to Premium
                         </Button>
@@ -401,16 +371,16 @@ export default function WellnessPage() {
                   {isPremium ? (
                     <HabitsTracker userId={userId} />
                   ) : (
-                    <Card className={`rounded-2xl p-8 text-center ${theme === 'dark' ? 'bg-white/5 border-white/10' : ''}`}>
-                      <Lock className={`w-12 h-12 mx-auto mb-4 ${theme === 'dark' ? 'text-white/30' : 'text-gray-300'}`} />
-                      <h3 className={`text-lg font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                    <Card className={`rounded-2xl p-8 text-center border shadow-none ${theme === 'dark' ? 'bg-white/5 border-white/8' : 'bg-[#FAFAF7] border-[#E8E5DE]'}`}>
+                      <Lock className={`w-12 h-12 mx-auto mb-4 ${theme === 'dark' ? 'text-white/20' : 'text-[#C4C0B8]'}`} />
+                      <h3 className={`text-lg font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>
                         Premium Feature
                       </h3>
-                      <p className={`mb-4 ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
+                      <p className={`mb-4 ${theme === 'dark' ? 'text-white/50' : 'text-[#8A8A7A]'}`}>
                         Track daily habits and see how they correlate with your mood over time.
                       </p>
                       <Link href="/dashboard/settings#subscription">
-                        <Button className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white border-0">
+                        <Button className={`border-0 ${theme === 'dark' ? 'bg-[#C4B5E0] text-[#1A1A2E] hover:bg-[#B0A0D0]' : 'bg-[#7E6BA5] text-white hover:bg-[#6B5A90]'}`}>
                           <Crown className="w-4 h-4 mr-2" />
                           Upgrade to Premium
                         </Button>
@@ -420,7 +390,8 @@ export default function WellnessPage() {
                 </TabsContent>
               </Tabs>
             </div>
-          </div>
+            </div>
+          </main>
         </div>
 
         {/* Crisis Support Dialog */}

@@ -19,14 +19,14 @@ export function useAuthGuard(redirectPath?: string, requireAdmin: boolean = fals
   useEffect(() => {
     async function checkAuth() {
       const { data: { user } } = await supabase.auth.getUser()
-      
+
       if (!user) {
         // Not authenticated - redirect to sign in
         const redirect = redirectPath || window.location.pathname
         router.push(`/login?redirect=${redirect}`)
         return
       }
-      
+
       setIsAuthenticated(true)
 
       // Check admin status if required
@@ -48,7 +48,7 @@ export function useAuthGuard(redirectPath?: string, requireAdmin: boolean = fals
         }
       }
     }
-    
+
     checkAuth()
   }, [router, supabase, redirectPath, requireAdmin])
 

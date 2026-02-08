@@ -48,7 +48,7 @@ export default function WeeklyDigest() {
                   You focused most on:{" "}
                   {digest.topTags.slice(0, 2).map((tag, index) => (
                     <span key={tag.tag}>
-                      <span className={index === 0 ? "font-bold text-orange-400" : "font-bold text-blue-400"}>
+                      <span className={index === 0 ? "font-bold text-purple-400" : "font-bold text-blue-400"}>
                         {tag.tag} ({tag.count}x)
                       </span>
                       {index < Math.min(digest.topTags.length, 2) - 1 && ", "}

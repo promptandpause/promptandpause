@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { 
   Wrench, 
   Bell, 
@@ -13,7 +15,8 @@ import {
   Play,
   Eye,
   Mail,
-  Settings2
+  Settings2,
+  Sparkles
 } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
@@ -21,6 +24,209 @@ interface ToolResult {
   success: boolean
   message?: string
   data?: any
+}
+
+function AIModuleTester() {
+  const [loading, setLoading] = useState(false)
+  const [result, setResult] = useState<ToolResult | null>(null)
+  const [responseData, setResponseData] = useState<any>(null)
+  const [module, setModule] = useState('daily_prompt')
+  const [userId, setUserId] = useState('')
+  const [userEmail, setUserEmail] = useState('')
+  const [weekOffset, setWeekOffset] = useState('0')
+  const [monthOffset, setMonthOffset] = useState('1')
+  const [requestPayload, setRequestPayload] = useState<any>(null)
+
+  const moduleOptions = [
+    {
+      value: 'daily_prompt',
+      label: 'Daily Prompt',
+      description: 'Generate a daily reflection prompt (no save)'
+    },
+    {
+      value: 'daily_affirmation',
+      label: 'Daily Affirmation',
+      description: 'Generate a short affirmation for the user'
+    },
+    {
+      value: 'weekly_insights',
+      label: 'Weekly Insights',
+      description: 'Generate weekly digest + AI insights'
+    },
+    {
+      value: 'monthly_summary',
+      label: 'Monthly Summary',
+      description: 'Generate monthly reflection summary'
+    },
+  ]
+
+  const activeModule = moduleOptions.find((option) => option.value === module)
+  const showWeekOffset = module === 'weekly_insights'
+  const showMonthOffset = module === 'monthly_summary'
+
+  async function runTest() {
+    setLoading(true)
+    setResult(null)
+    setResponseData(null)
+
+    const payload: Record<string, any> = { module }
+    if (userId.trim()) payload.userId = userId.trim()
+    if (userEmail.trim()) payload.userEmail = userEmail.trim()
+    if (showWeekOffset) payload.weekOffset = Number(weekOffset) || 0
+    if (showMonthOffset) payload.monthOffset = Number(monthOffset) || 1
+
+    setRequestPayload(payload)
+
+    try {
+      const response = await fetch('/api/admin/ai-module-test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      const data = await response.json().catch(() => ({}))
+      const success = response.ok && data?.success !== false
+      setResponseData(data)
+      setResult({
+        success,
+        message: data?.message || (success ? 'Test completed' : 'Test failed'),
+        data,
+      })
+    } catch (error: any) {
+      setResult({ success: false, message: error.message })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="space-y-6">
+      <Card className="p-6">
+        <div className="flex items-start justify-between mb-4">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-indigo-600" />
+              AI Module Tester
+            </h3>
+            <p className="text-sm text-gray-500 mt-1">
+              Run test generations for AI modules and inspect the responses
+            </p>
+          </div>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-2">
+            <p className="text-xs font-medium text-gray-600">Module</p>
+            <Select value={module} onValueChange={setModule}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select module" />
+              </SelectTrigger>
+              <SelectContent>
+                {moduleOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {activeModule && (
+              <p className="text-xs text-gray-500">{activeModule.description}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <p className="text-xs font-medium text-gray-600">Target user (optional)</p>
+            <Input
+              value={userEmail}
+              onChange={(event) => setUserEmail(event.target.value)}
+              placeholder="User email (defaults to you)"
+            />
+            <Input
+              value={userId}
+              onChange={(event) => setUserId(event.target.value)}
+              placeholder="User ID (optional)"
+            />
+            <p className="text-xs text-gray-400">Provide email or ID to test a specific user.</p>
+          </div>
+        </div>
+
+        {(showWeekOffset || showMonthOffset) && (
+          <div className="grid gap-4 md:grid-cols-2 mt-4">
+            {showWeekOffset && (
+              <div className="space-y-2">
+                <p className="text-xs font-medium text-gray-600">Week offset</p>
+                <Input
+                  value={weekOffset}
+                  onChange={(event) => setWeekOffset(event.target.value)}
+                  placeholder="0 = current week, 1 = last week"
+                />
+              </div>
+            )}
+            {showMonthOffset && (
+              <div className="space-y-2">
+                <p className="text-xs font-medium text-gray-600">Month offset</p>
+                <Input
+                  value={monthOffset}
+                  onChange={(event) => setMonthOffset(event.target.value)}
+                  placeholder="1 = last month"
+                />
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="flex flex-wrap gap-3 mt-6">
+          <Button
+            onClick={runTest}
+            disabled={loading}
+            className="gap-2 bg-indigo-600 hover:bg-indigo-700"
+          >
+            <Sparkles className={`h-4 w-4 ${loading ? 'animate-pulse' : ''}`} />
+            Run Test
+          </Button>
+        </div>
+
+        {result && (
+          <div className={`mt-6 p-4 rounded-lg border ${
+            result.success
+              ? 'bg-green-50 border-green-200'
+              : 'bg-red-50 border-red-200'
+          }`}>
+            <div className="flex items-center gap-2">
+              {result.success ? (
+                <CheckCircle className="h-5 w-5 text-green-600" />
+              ) : (
+                <AlertCircle className="h-5 w-5 text-red-600" />
+              )}
+              <span className={`font-medium ${
+                result.success ? 'text-green-800' : 'text-red-800'
+              }`}>
+                {result.message}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {responseData && (
+          <div className="mt-4 space-y-3">
+            {requestPayload && (
+              <details className="rounded-lg border bg-gray-50 p-3">
+                <summary className="cursor-pointer text-sm text-gray-700">Request payload</summary>
+                <pre className="mt-2 text-xs text-gray-600 overflow-auto max-h-48">
+                  {JSON.stringify(requestPayload, null, 2)}
+                </pre>
+              </details>
+            )}
+            <details className="rounded-lg border bg-gray-50 p-3" open>
+              <summary className="cursor-pointer text-sm text-gray-700">Response</summary>
+              <pre className="mt-2 text-xs text-gray-600 overflow-auto max-h-72">
+                {JSON.stringify(responseData, null, 2)}
+              </pre>
+            </details>
+          </div>
+        )}
+      </Card>
+    </div>
+  )
 }
 
 export default function ToolsPage() {
@@ -50,6 +256,10 @@ export default function ToolsPage() {
             <Mail className="h-4 w-4" />
             Test Prompts
           </TabsTrigger>
+          <TabsTrigger value="ai-tester" className="gap-2">
+            <Sparkles className="h-4 w-4" />
+            AI Tester
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="notifications" className="mt-6">
@@ -62,6 +272,10 @@ export default function ToolsPage() {
 
         <TabsContent value="prompts" className="mt-6">
           <TestPromptTool />
+        </TabsContent>
+
+        <TabsContent value="ai-tester" className="mt-6">
+          <AIModuleTester />
         </TabsContent>
       </Tabs>
     </div>

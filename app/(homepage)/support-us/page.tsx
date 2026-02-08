@@ -7,9 +7,21 @@ import { useScroll, useTransform, motion } from "framer-motion"
 import { Star, Gift, Megaphone, Handshake } from "lucide-react"
 import Navigation from "../Navigation"
 import Footer from "../footer"
+import { useRouter } from "next/navigation"
+
+interface ImpactStats {
+  freeUsersSupported: number
+  engagementRate: number
+  totalPromptsSent: number
+  totalReflections: number
+  bootstrapped: boolean
+}
 
 export default function SupportUsPage() {
   const [mounted, setMounted] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [impactStats, setImpactStats] = useState<ImpactStats | null>(null)
+  const router = useRouter()
 
   useEffect(() => {
     setMounted(true)
@@ -20,13 +32,11 @@ export default function SupportUsPage() {
 
     const lenis = new Lenis({
       duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: "vertical",
       gestureOrientation: "vertical",
       smoothWheel: true,
-      wheelMultiplier: 1,
       touchMultiplier: 2,
-      infinite: false,
     })
 
     function raf(time: number) {
@@ -41,17 +51,52 @@ export default function SupportUsPage() {
     }
   }, [mounted])
 
+  useEffect(() => {
+    if (!mounted) return
+
+    // Check authentication status
+    const checkAuth = async () => {
+      try {
+        const response = await fetch("/api/auth/status")
+        if (response.ok) {
+          const data = await response.json()
+          setIsAuthenticated(data.authenticated)
+        }
+      } catch (error) {
+        console.error("Auth check failed:", error)
+      }
+    }
+
+    // Fetch real impact stats
+    const fetchStats = async () => {
+      try {
+        const response = await fetch("/api/public/impact-stats")
+        if (response.ok) {
+          const data = await response.json()
+          if (data.success) {
+            setImpactStats(data.data)
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch impact stats:", error)
+      }
+    }
+
+    checkAuth()
+    fetchStats()
+  }, [mounted])
+
   return (
     <>
       <Navigation />
-      <main className="bg-white text-black">
+      <main className="bg-[#F0EDE6] text-[#2F3B34]">
       <HeroSection />
       <WhySupportSection />
-      <WaysToSupportSection />
-      <ImpactStatsSection />
+      <WaysToSupportSection isAuthenticated={isAuthenticated} router={router} />
+      <ImpactStatsSection stats={impactStats} />
       <TransparencySection />
       <OtherWaysSection />
-      <CTASection />
+      <CTASection isAuthenticated={isAuthenticated} router={router} />
     </main>
       <Footer />
     </>
@@ -96,11 +141,11 @@ function HeroSection() {
 
 function WhySupportSection() {
   return (
-    <div className="min-h-screen flex items-center px-6 py-32 bg-neutral-50">
+    <div className="min-h-screen flex items-center px-6 py-32 bg-[#F5F3EE]">
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
         <div className="h-[400px] lg:h-[600px] relative">
           <Image
-            src="/images/hands-together.jpg"
+            src="https://freerangestock.com/sample/120461/black-and-white-of-hands-stacked-together.jpg"
             fill
             alt="Hands together in support"
             style={{ objectFit: "cover" }}
@@ -108,9 +153,9 @@ function WhySupportSection() {
           />
         </div>
         <div>
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-16 leading-tight">Why Support Matters</h2>
-          <div className="space-y-8 text-lg md:text-2xl leading-relaxed text-neutral-700">
-            <p className="text-xl md:text-3xl font-bold text-black mb-12">
+          <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-16 leading-tight text-[#452B1F]">Why Support Matters</h2>
+          <div className="space-y-8 text-lg md:text-2xl leading-relaxed text-[#786C3B]">
+            <p className="text-xl md:text-3xl font-bold text-[#452B1F] mb-12">
               We're a bootstrapped mental health service built by someone who needed it. Every contribution helps us:
             </p>
             <ul className="space-y-6 text-lg md:text-xl">
@@ -142,53 +187,59 @@ function WhySupportSection() {
   )
 }
 
-function WaysToSupportSection() {
+function WaysToSupportSection({ isAuthenticated, router }: { isAuthenticated: boolean; router: any }) {
   return (
     <div className="min-h-screen flex items-center px-6 py-32 bg-white">
       <div className="max-w-7xl mx-auto w-full">
         <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-20 leading-tight">Ways to Support</h2>
         <div className="grid md:grid-cols-2 gap-8 lg:gap-10">
-          <div className="group backdrop-blur-md bg-neutral-50/80 border border-neutral-200 p-10 lg:p-12 rounded-3xl hover:bg-white hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-black mb-6 group-hover:scale-110 transition-transform duration-300">
+          <div className="group backdrop-blur-md bg-[#F5F3EE]/80 border border-[#DCE6D9] p-10 lg:p-12 rounded-3xl hover:bg-white hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#6FA984] mb-6 group-hover:scale-110 transition-transform duration-300">
               <Star className="w-8 h-8 text-white" />
             </div>
             <h3 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">Upgrade to Premium</h3>
-            <p className="text-2xl font-bold text-neutral-900 mb-4">£12/month or £99/year</p>
-            <p className="text-neutral-600 leading-relaxed text-lg mb-8">
+            <p className="text-2xl font-bold text-[#2F3B34] mb-4">£12/month or £99/year</p>
+            <p className="text-[#6B7F6E] leading-relaxed text-lg mb-8">
               Get daily prompts, weekly and monthly reflections, and export—while helping fund free access for others.
             </p>
             <a
-              href="/pricing"
-              className="block px-8 py-4 bg-black text-white text-sm font-medium tracking-wide transition-all duration-300 hover:bg-neutral-800 cursor-pointer w-full text-center"
+              onClick={() => {
+                if (isAuthenticated) {
+                  router.push("/dashboard/settings")
+                } else {
+                  router.push("/login")
+                }
+              }}
+              className="block px-8 py-4 bg-[#6FA984] text-white text-sm font-medium tracking-wide transition-all duration-300 hover:bg-[#5A8F6E] cursor-pointer w-full text-center"
             >
               VIEW PREMIUM FEATURES
             </a>
           </div>
 
-          <div className="group backdrop-blur-md bg-neutral-50/80 border border-neutral-200 p-10 lg:p-12 rounded-3xl hover:bg-white hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-black mb-6 group-hover:scale-110 transition-transform duration-300">
+          <div className="group backdrop-blur-md bg-[#F5F3EE]/80 border border-[#DCE6D9] p-10 lg:p-12 rounded-3xl hover:bg-white hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#6FA984] mb-6 group-hover:scale-110 transition-transform duration-300">
               <Gift className="w-8 h-8 text-white" />
             </div>
             <h3 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">Gift Premium to Someone</h3>
-            <p className="text-2xl font-bold text-neutral-900 mb-4">From £12</p>
-            <p className="text-neutral-600 leading-relaxed text-lg mb-8">
+            <p className="text-2xl font-bold text-[#2F3B34] mb-4">From £12</p>
+            <p className="text-[#6B7F6E] leading-relaxed text-lg mb-8">
               Know someone navigating a tough time? Gift them 1, 3, or 6 months of Premium.
             </p>
             <a
               href="/gifts"
-              className="block px-8 py-4 bg-black text-white text-sm font-medium tracking-wide transition-all duration-300 hover:bg-neutral-800 cursor-pointer w-full text-center min-h-[52px] flex items-center justify-center touch-manipulation"
+              className="block px-8 py-4 bg-[#6FA984] text-white text-sm font-medium tracking-wide transition-all duration-300 hover:bg-[#5A8F6E] cursor-pointer w-full text-center min-h-[52px] flex items-center justify-center touch-manipulation"
             >
               GIFT PREMIUM
             </a>
           </div>
 
-          <div className="group backdrop-blur-md bg-neutral-50/80 border border-neutral-200 p-10 lg:p-12 rounded-3xl hover:bg-white hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-black mb-6 group-hover:scale-110 transition-transform duration-300">
+          <div className="group backdrop-blur-md bg-[#F5F3EE]/80 border border-[#DCE6D9] p-10 lg:p-12 rounded-3xl hover:bg-white hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#6FA984] mb-6 group-hover:scale-110 transition-transform duration-300">
               <Megaphone className="w-8 h-8 text-white" />
             </div>
             <h3 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">Spread the Word</h3>
-            <p className="text-2xl font-bold text-neutral-900 mb-4">Free</p>
-            <p className="text-neutral-600 leading-relaxed text-lg mb-8">
+            <p className="text-2xl font-bold text-[#2F3B34] mb-4">Free</p>
+            <p className="text-[#6B7F6E] leading-relaxed text-lg mb-8">
               If it’s been useful, you can share it with someone who might appreciate a quiet prompt.
             </p>
             <div className="flex gap-4">
@@ -196,7 +247,7 @@ function WaysToSupportSection() {
                 href="https://twitter.com/intent/tweet?text=Check%20out%20@promptandpause%20for%20daily%20mental%20health%20reflection"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 px-6 py-4 border-2 border-black text-black text-sm font-medium tracking-wide transition-all duration-300 hover:bg-black hover:text-white cursor-pointer text-center"
+                className="flex-1 px-6 py-4 border-2 border-[#6FA984] text-[#6FA984] text-sm font-medium tracking-wide transition-all duration-300 hover:bg-[#6FA984] hover:text-white cursor-pointer text-center"
               >
                 TWITTER
               </a>
@@ -204,24 +255,24 @@ function WaysToSupportSection() {
                 href="https://www.linkedin.com/sharing/share-offsite/?url=https://promptandpause.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 px-6 py-4 border-2 border-black text-black text-sm font-medium tracking-wide transition-all duration-300 hover:bg-black hover:text-white cursor-pointer text-center"
+                className="flex-1 px-6 py-4 border-2 border-[#6FA984] text-[#6FA984] text-sm font-medium tracking-wide transition-all duration-300 hover:bg-[#6FA984] hover:text-white cursor-pointer text-center"
               >
                 LINKEDIN
               </a>
             </div>
           </div>
 
-          <div className="group backdrop-blur-md bg-neutral-50/80 border border-neutral-200 p-10 lg:p-12 rounded-3xl hover:bg-white hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-black mb-6 group-hover:scale-110 transition-transform duration-300">
+          <div className="group backdrop-blur-md bg-[#F5F3EE]/80 border border-[#DCE6D9] p-10 lg:p-12 rounded-3xl hover:bg-white hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#6FA984] mb-6 group-hover:scale-110 transition-transform duration-300">
               <Handshake className="w-8 h-8 text-white" />
             </div>
             <h3 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">Partner with Us</h3>
-            <p className="text-neutral-600 leading-relaxed text-lg mb-8 mt-12">
+            <p className="text-[#6B7F6E] leading-relaxed text-lg mb-8 mt-12">
               Are you a therapist, HR leader, or wellness advocate? Let's collaborate to reach more people.
             </p>
             <a
               href="/contact"
-              className="block px-8 py-4 bg-black text-white text-sm font-medium tracking-wide transition-all duration-300 hover:bg-neutral-800 cursor-pointer w-full text-center"
+              className="block px-8 py-4 bg-[#6FA984] text-white text-sm font-medium tracking-wide transition-all duration-300 hover:bg-[#5A8F6E] cursor-pointer w-full text-center"
             >
               CONTACT US
             </a>
@@ -232,13 +283,18 @@ function WaysToSupportSection() {
   )
 }
 
-function ImpactStatsSection() {
+function ImpactStatsSection({ stats }: { stats: ImpactStats | null }) {
   const container = useRef(null)
   const { scrollYProgress } = useScroll({
     target: container,
     offset: ["start end", "end start"],
   })
   const y = useTransform(scrollYProgress, [0, 1], ["-5vh", "5vh"])
+
+  function formatNumber(n: number): string {
+    if (n >= 1000) return `${(n / 1000).toFixed(1).replace(/\.0$/, '')}k`
+    return n.toLocaleString()
+  }
 
   return (
     <div
@@ -262,20 +318,37 @@ function ImpactStatsSection() {
         <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-20 leading-tight text-white text-center">
           Our Impact
         </h2>
-        <div className="grid md:grid-cols-3 gap-12 lg:gap-16">
-          <div className="text-center backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-12">
-            <div className="text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-4">2,847</div>
-            <p className="text-xl md:text-2xl text-white/90">Free users supported</p>
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
+          <div className="text-center backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-10">
+            {stats ? (
+              <div className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4">{formatNumber(stats.freeUsersSupported)}</div>
+            ) : (
+              <div className="h-16 flex items-center justify-center"><div className="animate-pulse bg-white/20 rounded-xl h-12 w-24 mx-auto" /></div>
+            )}
+            <p className="text-lg md:text-xl text-white/90">Free users supported</p>
           </div>
-          <div className="text-center backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-12">
-            <div className="text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-4">68%</div>
-            <p className="text-xl md:text-2xl text-white/90">Engagement rate</p>
+          <div className="text-center backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-10">
+            {stats ? (
+              <div className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4">{formatNumber(stats.totalPromptsSent)}</div>
+            ) : (
+              <div className="h-16 flex items-center justify-center"><div className="animate-pulse bg-white/20 rounded-xl h-12 w-24 mx-auto" /></div>
+            )}
+            <p className="text-lg md:text-xl text-white/90">Prompts delivered</p>
           </div>
-          <div className="text-center backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-12">
-            <div className="text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-4">£0</div>
-            <p className="text-xl md:text-2xl text-white/90">VC funding taken (bootstrapped)</p>
+          <div className="text-center backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-10">
+            {stats ? (
+              <div className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4">{stats.engagementRate}%</div>
+            ) : (
+              <div className="h-16 flex items-center justify-center"><div className="animate-pulse bg-white/20 rounded-xl h-12 w-24 mx-auto" /></div>
+            )}
+            <p className="text-lg md:text-xl text-white/90">Engagement rate</p>
+          </div>
+          <div className="text-center backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-10">
+            <div className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4">£0</div>
+            <p className="text-lg md:text-xl text-white/90">VC funding (bootstrapped)</p>
           </div>
         </div>
+        <p className="text-center text-white/50 text-sm mt-8">Live data · Updated every 5 minutes</p>
       </div>
     </div>
   )
@@ -283,47 +356,47 @@ function ImpactStatsSection() {
 
 function TransparencySection() {
   return (
-    <div className="min-h-screen flex items-center px-6 py-32 bg-white">
+    <div className="min-h-screen flex items-center px-6 py-32 bg-[#E8EAE6]">
       <div className="max-w-5xl mx-auto">
         <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-16 leading-tight">Where Your Money Goes</h2>
         <div className="space-y-8 mb-16">
           <div className="flex items-center gap-6">
-            <div className="flex-shrink-0 w-24 text-3xl font-bold text-neutral-900">40%</div>
-            <div className="flex-1 h-4 bg-neutral-200 rounded-full overflow-hidden">
-              <div className="h-full bg-black rounded-full" style={{ width: "40%" }} />
+            <div className="flex-shrink-0 w-24 text-3xl font-bold text-[#2F3B34]">40%</div>
+            <div className="flex-1 h-4 bg-[#DCE6D9] rounded-full overflow-hidden">
+              <div className="h-full bg-[#6FA984] rounded-full" style={{ width: "40%" }} />
             </div>
-            <div className="flex-shrink-0 w-64 text-lg text-neutral-600">AI infrastructure (Groq/OpenAI APIs)</div>
+            <div className="flex-shrink-0 w-64 text-lg text-[#6B7F6E]">AI infrastructure (Groq/OpenAI APIs)</div>
           </div>
           <div className="flex items-center gap-6">
-            <div className="flex-shrink-0 w-24 text-3xl font-bold text-neutral-900">25%</div>
-            <div className="flex-1 h-4 bg-neutral-200 rounded-full overflow-hidden">
-              <div className="h-full bg-black rounded-full" style={{ width: "25%" }} />
+            <div className="flex-shrink-0 w-24 text-3xl font-bold text-[#2F3B34]">25%</div>
+            <div className="flex-1 h-4 bg-[#DCE6D9] rounded-full overflow-hidden">
+              <div className="h-full bg-[#6FA984] rounded-full" style={{ width: "25%" }} />
             </div>
-            <div className="flex-shrink-0 w-64 text-lg text-neutral-600">Email delivery (Resend)</div>
+            <div className="flex-shrink-0 w-64 text-lg text-[#6B7F6E]">Email delivery (Resend)</div>
           </div>
           <div className="flex items-center gap-6">
-            <div className="flex-shrink-0 w-24 text-3xl font-bold text-neutral-900">20%</div>
-            <div className="flex-1 h-4 bg-neutral-200 rounded-full overflow-hidden">
-              <div className="h-full bg-black rounded-full" style={{ width: "20%" }} />
+            <div className="flex-shrink-0 w-24 text-3xl font-bold text-[#2F3B34]">20%</div>
+            <div className="flex-1 h-4 bg-[#DCE6D9] rounded-full overflow-hidden">
+              <div className="h-full bg-[#6FA984] rounded-full" style={{ width: "20%" }} />
             </div>
-            <div className="flex-shrink-0 w-64 text-lg text-neutral-600">Development & maintenance</div>
+            <div className="flex-shrink-0 w-64 text-lg text-[#6B7F6E]">Development & maintenance</div>
           </div>
           <div className="flex items-center gap-6">
-            <div className="flex-shrink-0 w-24 text-3xl font-bold text-neutral-900">10%</div>
-            <div className="flex-1 h-4 bg-neutral-200 rounded-full overflow-hidden">
-              <div className="h-full bg-black rounded-full" style={{ width: "10%" }} />
+            <div className="flex-shrink-0 w-24 text-3xl font-bold text-[#2F3B34]">10%</div>
+            <div className="flex-1 h-4 bg-[#DCE6D9] rounded-full overflow-hidden">
+              <div className="h-full bg-[#6FA984] rounded-full" style={{ width: "10%" }} />
             </div>
-            <div className="flex-shrink-0 w-64 text-lg text-neutral-600">Payment processing (Stripe)</div>
+            <div className="flex-shrink-0 w-64 text-lg text-[#6B7F6E]">Payment processing (Stripe)</div>
           </div>
           <div className="flex items-center gap-6">
-            <div className="flex-shrink-0 w-24 text-3xl font-bold text-neutral-900">5%</div>
-            <div className="flex-1 h-4 bg-neutral-200 rounded-full overflow-hidden">
-              <div className="h-full bg-black rounded-full" style={{ width: "5%" }} />
+            <div className="flex-shrink-0 w-24 text-3xl font-bold text-[#2F3B34]">5%</div>
+            <div className="flex-1 h-4 bg-[#DCE6D9] rounded-full overflow-hidden">
+              <div className="h-full bg-[#6FA984] rounded-full" style={{ width: "5%" }} />
             </div>
-            <div className="flex-shrink-0 w-64 text-lg text-neutral-600">Domain & hosting</div>
+            <div className="flex-shrink-0 w-64 text-lg text-[#6B7F6E]">Domain & hosting</div>
           </div>
         </div>
-        <p className="text-xl md:text-2xl leading-relaxed text-neutral-600 italic">
+        <p className="text-xl md:text-2xl leading-relaxed text-[#6B7F6E] italic">
           We're not profitable yet, but we're committed to sustainable growth without compromise on quality or privacy.
         </p>
       </div>
@@ -333,25 +406,25 @@ function TransparencySection() {
 
 function OtherWaysSection() {
   return (
-    <div className="min-h-screen flex items-center px-6 py-32 bg-neutral-50">
+    <div className="min-h-screen flex items-center px-6 py-32 bg-[#F5F3EE]">
       <div className="max-w-5xl mx-auto">
         <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-16 leading-tight">Other Ways to Help</h2>
         <div className="grid md:grid-cols-2 gap-8">
-          <div className="group p-8 border-2 border-neutral-200 hover:border-black transition-all duration-300 cursor-pointer">
+          <div className="group p-8 border-2 border-[#DCE6D9] hover:border-[#6FA984] transition-all duration-300 cursor-pointer">
             <h3 className="text-2xl font-bold mb-3">Leave a Review</h3>
-            <p className="text-neutral-600 text-lg">Help others discover us on Trustpilot or ProductHunt</p>
+            <p className="text-[#6B7F6E] text-lg">Help others discover us on Trustpilot or ProductHunt</p>
           </div>
-          <div className="group p-8 border-2 border-neutral-200 hover:border-black transition-all duration-300 cursor-pointer">
+          <div className="group p-8 border-2 border-[#DCE6D9] hover:border-[#6FA984] transition-all duration-300 cursor-pointer">
             <h3 className="text-2xl font-bold mb-3">Suggest Features</h3>
-            <p className="text-neutral-600 text-lg">Tell us what would make Prompt & Pause better for you</p>
+            <p className="text-[#6B7F6E] text-lg">Tell us what would make Prompt & Pause better for you</p>
           </div>
-          <div className="group p-8 border-2 border-neutral-200 hover:border-black transition-all duration-300 cursor-pointer">
+          <div className="group p-8 border-2 border-[#DCE6D9] hover:border-[#6FA984] transition-all duration-300 cursor-pointer">
             <h3 className="text-2xl font-bold mb-3">Report Bugs</h3>
-            <p className="text-neutral-600 text-lg">Help us improve by reporting technical issues</p>
+            <p className="text-[#6B7F6E] text-lg">Help us improve by reporting technical issues</p>
           </div>
-          <div className="group p-8 border-2 border-neutral-200 hover:border-black transition-all duration-300 cursor-pointer">
+          <div className="group p-8 border-2 border-[#DCE6D9] hover:border-[#6FA984] transition-all duration-300 cursor-pointer">
             <h3 className="text-2xl font-bold mb-3">Share Your Story</h3>
-            <p className="text-neutral-600 text-lg">Your reflection journey could inspire others</p>
+            <p className="text-[#6B7F6E] text-lg">Your reflection journey could inspire others</p>
           </div>
         </div>
       </div>
@@ -359,29 +432,35 @@ function OtherWaysSection() {
   )
 }
 
-function CTASection() {
+function CTASection({ isAuthenticated, router }: { isAuthenticated: boolean; router: any }) {
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 py-32 bg-neutral-900 text-white">
+    <div className="min-h-screen flex items-center justify-center px-6 py-32 bg-[#DCE6D9] text-[#2F3B34]">
       <div className="max-w-4xl text-center">
         <h2 className="text-4xl md:text-6xl lg:text-8xl font-bold mb-16 leading-tight text-balance">
           Ready to Support?
         </h2>
         <div className="flex flex-col sm:flex-row gap-6 justify-center">
-          <a
-            href="/pricing"
-            className="px-10 py-5 bg-white text-black border-2 border-white text-base font-medium tracking-wide transition-all duration-300 hover:bg-transparent hover:text-white cursor-pointer text-center"
+          <button
+            onClick={() => {
+              if (isAuthenticated) {
+                router.push("/dashboard/settings")
+              } else {
+                router.push("/login")
+              }
+            }}
+            className="px-10 py-5 bg-white text-[#2F3B34] border-2 border-white text-base font-medium tracking-wide transition-all duration-300 hover:bg-transparent hover:text-[#2F3B34] cursor-pointer text-center"
           >
             UPGRADE TO PREMIUM
-          </a>
+          </button>
           <a
-            href="/pricing"
-            className="px-10 py-5 border-2 border-white bg-transparent text-white text-base font-medium tracking-wide transition-all duration-300 hover:bg-white hover:text-black cursor-pointer text-center"
+            href="/gifts"
+            className="px-10 py-5 border-2 border-white bg-transparent text-[#2F3B34] text-base font-medium tracking-wide transition-all duration-300 hover:bg-white hover:text-[#2F3B34] cursor-pointer text-center"
           >
             GIFT PREMIUM
           </a>
           <a
             href="/contact"
-            className="px-10 py-5 border-2 border-white bg-transparent text-white text-base font-medium tracking-wide transition-all duration-300 hover:bg-white hover:text-black cursor-pointer text-center"
+            className="px-10 py-5 border-2 border-white bg-transparent text-[#2F3B34] text-base font-medium tracking-wide transition-all duration-300 hover:bg-white hover:text-[#2F3B34] cursor-pointer text-center"
           >
             JUST SAY HI
           </a>

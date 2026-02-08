@@ -47,7 +47,7 @@ const PRESET_COLORS = [
   'from-blue-500/20 to-cyan-500/20 border-blue-400/30',
   'from-green-500/20 to-emerald-500/20 border-green-400/30',
   'from-purple-500/20 to-pink-500/20 border-purple-400/30',
-  'from-orange-500/20 to-yellow-500/20 border-orange-400/30',
+  'from-purple-500/20 to-yellow-500/20 border-purple-400/30',
   'from-indigo-500/20 to-blue-500/20 border-indigo-400/30',
 ]
 
@@ -288,16 +288,16 @@ export default function FocusAreasManager() {
               <Plus className="h-4 w-4" />
             </Button>
           </DialogTrigger>
-          <DialogContent className="bg-white backdrop-blur-xl border-3 border-gray-400 text-gray-900 max-h-[90vh] sm:max-h-[85vh] flex flex-col p-0 gap-0 overflow-hidden shadow-2xl">
+          <DialogContent className={`backdrop-blur-xl border-3 max-h-[90vh] sm:max-h-[85vh] flex flex-col p-0 gap-0 overflow-hidden shadow-2xl ${theme === 'dark' ? 'bg-[#1A1F2E] border-white/20 text-white' : 'bg-white border-gray-400 text-gray-900'}`}>
             {/* Header with gradient */}
-            <div className="relative p-6 pb-5 bg-gradient-to-br from-purple-500/15 via-pink-500/10 to-transparent border-b-2 border-gray-300 flex-shrink-0">
+            <div className={`relative p-6 pb-5 bg-gradient-to-br from-purple-500/15 via-pink-500/10 to-transparent border-b-2 flex-shrink-0 ${theme === 'dark' ? 'border-white/10' : 'border-gray-300'}`}>
               <div className="absolute top-0 right-0 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl" />
               <div className="absolute bottom-0 left-0 w-32 h-32 bg-pink-500/15 rounded-full blur-3xl" />
               <div className="relative">
-                <DialogTitle className="text-gray-900 text-2xl md:text-3xl font-extrabold mb-2">
+                <DialogTitle className={`text-2xl md:text-3xl font-extrabold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                   {editingArea ? 'Edit Focus Area' : 'Create Focus Area'}
                 </DialogTitle>
-                <DialogDescription className="text-gray-700 text-sm font-medium">
+                <DialogDescription className={`text-sm font-medium ${theme === 'dark' ? 'text-white/60' : 'text-gray-700'}`}>
                   {editingArea 
                     ? 'Update your focus area details below'
                     : 'Define a personal area to track in your reflections'}
@@ -309,7 +309,7 @@ export default function FocusAreasManager() {
             <div className="overflow-y-auto flex-1 px-6 py-4 space-y-5">
               {/* Name Input */}
               <div className="space-y-2">
-                <Label className="text-gray-900 text-sm font-semibold flex items-center gap-2">
+                <Label className={`text-sm font-semibold flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                   <span className="text-purple-400">●</span>
                   Focus Area Name *
                 </Label>
@@ -317,36 +317,36 @@ export default function FocusAreasManager() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g., Clarity, Grounding, Work & Responsibility"
-                  className="bg-white border-2 border-gray-300 text-gray-900 placeholder:text-gray-400 h-12 text-base rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all shadow-sm"
+                  className={`border-2 h-12 text-base rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all shadow-sm ${theme === 'dark' ? 'bg-white/10 border-white/20 text-white placeholder:text-white/40' : 'bg-white border-gray-300 text-gray-900 placeholder:text-gray-400'}`}
                   maxLength={50}
                 />
-                <p className="text-xs text-gray-400">{name.length}/50 characters</p>
+                <p className={`text-xs ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`}>{name.length}/50 characters</p>
               </div>
 
               {/* Description Input */}
               <div className="space-y-2">
-                <Label className="text-gray-900 text-sm font-semibold flex items-center gap-2">
+                <Label className={`text-sm font-semibold flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                   <span className="text-blue-400">●</span>
                   Description
-                  <span className="text-xs text-gray-400 font-normal">(Optional)</span>
+                  <span className={`text-xs font-normal ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`}>(Optional)</span>
                 </Label>
                 <Input
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Add a brief description of this focus area"
-                  className="bg-white border-2 border-gray-300 text-gray-900 placeholder:text-gray-400 h-12 text-base rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
+                  className={`border-2 h-12 text-base rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm ${theme === 'dark' ? 'bg-white/10 border-white/20 text-white placeholder:text-white/40' : 'bg-white border-gray-300 text-gray-900 placeholder:text-gray-400'}`}
                   maxLength={100}
                 />
-                <p className="text-xs text-gray-400">{description.length}/100 characters</p>
+                <p className={`text-xs ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`}>{description.length}/100 characters</p>
               </div>
 
               {/* Icon Selection */}
               <div className="space-y-3">
-                <Label className="text-gray-900 text-sm font-semibold flex items-center gap-2">
+                <Label className={`text-sm font-semibold flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                   <span className="text-yellow-400">●</span>
                   Choose an Icon
                 </Label>
-                <div className="grid grid-cols-5 gap-3 p-4 bg-gradient-to-br from-gray-50 to-white rounded-xl border-2 border-gray-200 shadow-inner">
+                <div className={`grid grid-cols-5 gap-3 p-4 rounded-xl border-2 shadow-inner ${theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-gradient-to-br from-gray-50 to-white border-gray-200'}`}>
                   {PRESET_ICONS.map(icon => (
                     <button
                       key={icon}
@@ -355,7 +355,7 @@ export default function FocusAreasManager() {
                       className={`aspect-square flex items-center justify-center text-3xl rounded-xl transition-all duration-200 ${
                         selectedIcon === icon
                           ? 'bg-gradient-to-br from-purple-500/30 to-pink-500/30 border-3 border-purple-500 scale-110 shadow-xl shadow-purple-500/40 ring-2 ring-purple-300'
-                          : 'bg-white border-2 border-gray-300 hover:bg-gradient-to-br hover:from-gray-50 hover:to-white hover:border-gray-400 hover:scale-105 active:scale-95 shadow-sm hover:shadow-md'
+                          : theme === 'dark' ? 'bg-white/10 border-2 border-white/20 hover:bg-white/15 hover:border-white/30 hover:scale-105 active:scale-95 shadow-sm hover:shadow-md' : 'bg-white border-2 border-gray-300 hover:bg-gradient-to-br hover:from-gray-50 hover:to-white hover:border-gray-400 hover:scale-105 active:scale-95 shadow-sm hover:shadow-md'
                       }`}
                     >
                       {icon}
@@ -366,11 +366,11 @@ export default function FocusAreasManager() {
 
               {/* Color Theme Selection */}
               <div className="space-y-3">
-                <Label className="text-gray-900 text-sm font-semibold flex items-center gap-2">
+                <Label className={`text-sm font-semibold flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                   <span className="text-pink-400">●</span>
                   Pick a Color Theme
                 </Label>
-                <div className="grid grid-cols-3 gap-3 p-4 bg-gradient-to-br from-gray-50 to-white rounded-xl border-2 border-gray-200 shadow-inner">
+                <div className={`grid grid-cols-3 gap-3 p-4 rounded-xl border-2 shadow-inner ${theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-gradient-to-br from-gray-50 to-white border-gray-200'}`}>
                   {PRESET_COLORS.map((color, index) => (
                     <button
                       key={index}
@@ -379,13 +379,13 @@ export default function FocusAreasManager() {
                       className={`aspect-square rounded-xl bg-gradient-to-br ${color} transition-all duration-200 relative border-2 ${
                         selectedColor === color
                           ? 'ring-4 ring-purple-400 scale-110 shadow-2xl border-white'
-                          : 'ring-2 ring-gray-200 hover:ring-gray-300 hover:scale-105 active:scale-95 shadow-md hover:shadow-lg border-gray-200'
+                          : theme === 'dark' ? 'ring-2 ring-white/20 hover:ring-white/30 hover:scale-105 active:scale-95 shadow-md hover:shadow-lg border-white/20' : 'ring-2 ring-gray-200 hover:ring-gray-300 hover:scale-105 active:scale-95 shadow-md hover:shadow-lg border-gray-200'
                       }`}
                     >
                       {selectedColor === color && (
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-xl border-2 border-gray-200">
-                            <Check className="w-5 h-5 text-gray-900 stroke-[3]" />
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center shadow-xl border-2 ${theme === 'dark' ? 'bg-white/90 border-white/40' : 'bg-white border-gray-200'}`}>
+                            <Check className={`w-5 h-5 stroke-[3] ${theme === 'dark' ? 'text-gray-900' : 'text-gray-900'}`} />
                           </div>
                         </div>
                       )}
@@ -396,21 +396,21 @@ export default function FocusAreasManager() {
 
               {/* Preview Card */}
               <div className="space-y-2 pb-2">
-                <Label className="text-gray-900 text-sm font-semibold flex items-center gap-2">
+                <Label className={`text-sm font-semibold flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                   <Sparkles className="w-4 h-4 text-purple-400" />
                   Preview
                 </Label>
                 <div className={`p-4 rounded-xl bg-gradient-to-br ${selectedColor} border backdrop-blur-sm`}>
                   <div className="text-3xl mb-2">{selectedIcon}</div>
-                  <h5 className="text-gray-900 font-semibold text-base mb-1">
+                  <h5 className={`font-semibold text-base mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                     {name || 'Your Focus Area'}
                   </h5>
                   {description && (
-                    <p className="text-gray-600 text-xs line-clamp-2">
+                    <p className={`text-xs line-clamp-2 ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
                       {description}
                     </p>
                   )}
-                  <div className="flex items-center gap-2 text-xs text-gray-500 mt-3">
+                  <div className={`flex items-center gap-2 text-xs mt-3 ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>
                     <TrendingUp className="h-3 w-3" />
                     <span>0 reflections</span>
                   </div>
@@ -419,12 +419,12 @@ export default function FocusAreasManager() {
             </div>
 
             {/* Sticky Footer Buttons */}
-            <div className="flex-shrink-0 p-6 pt-5 border-t-2 border-gray-300 bg-gradient-to-t from-gray-50 to-white">
+            <div className={`flex-shrink-0 p-6 pt-5 border-t-2 ${theme === 'dark' ? 'border-white/10 bg-gradient-to-t from-[#141820] to-[#1A1F2E]' : 'border-gray-300 bg-gradient-to-t from-gray-50 to-white'}`}>
               <div className="flex flex-col-reverse sm:flex-row gap-3">
                 <Button
                   onClick={() => setIsDialogOpen(false)}
                   variant="outline"
-                  className="flex-1 sm:flex-none sm:w-36 bg-white border-2 border-gray-400 text-gray-900 hover:bg-gray-50 hover:border-gray-500 font-semibold h-12 text-base rounded-xl transition-all shadow-md hover:shadow-lg"
+                  className={`flex-1 sm:flex-none sm:w-36 border-2 font-semibold h-12 text-base rounded-xl transition-all shadow-md hover:shadow-lg ${theme === 'dark' ? 'bg-white/10 border-white/20 text-white hover:bg-white/15 hover:border-white/30' : 'bg-white border-gray-400 text-gray-900 hover:bg-gray-50 hover:border-gray-500'}`}
                 >
                   Cancel
                 </Button>
@@ -461,7 +461,7 @@ export default function FocusAreasManager() {
           <Button
             onClick={openCreateDialog}
             size="sm"
-            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-gray-900 shadow-lg hover:shadow-xl transition-all"
+            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg hover:shadow-xl transition-all"
           >
             <Plus className="h-4 w-4 mr-2" />
             Create Focus Area

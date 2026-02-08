@@ -19,6 +19,7 @@ function normalizeMood(m: any): MoodType | null {
 
 export default function YourRhythm() {
   const { theme } = useTheme()
+  const isDark = theme === 'dark'
   const [streak, setStreak] = useState(0)
   const [days, setDays] = useState<Day[]>([])
 
@@ -53,29 +54,38 @@ export default function YourRhythm() {
 
   return (
     <section
-      className={`rounded-2xl md:rounded-3xl p-5 md:p-7 transition-all duration-200 ${
-        theme === "dark" ? "glass-light shadow-soft-lg" : "glass-medium shadow-soft-md"
+      className={`rounded-2xl p-5 md:p-6 transition-all ${
+        isDark ? 'bg-white/5 border border-white/8' : 'bg-[#FAFAF7] border border-[#E8E5DE]'
       }`}
     >
-      <div className="flex items-start justify-between gap-6">
-        <div>
-          <p className={`text-xs mb-1 ${theme === "dark" ? "text-white/50" : "text-gray-500"}`}>Your rhythm</p>
-          <div className="flex items-baseline gap-2">
-            <span className={theme === "dark" ? "text-white text-2xl font-semibold" : "text-gray-900 text-2xl font-semibold"}>{streak}</span>
-            <span className={theme === "dark" ? "text-white/60 text-xs" : "text-gray-500 text-xs"}>current streak</span>
+      <div className="flex flex-col gap-4">
+        <div className="flex items-start justify-between">
+          <div>
+            <p className={`text-xs uppercase tracking-[0.14em] font-medium mb-2 ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>Your rhythm</p>
+            <div className="flex items-baseline gap-2">
+              <span className={`text-2xl font-bold tabular-nums ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>{streak}</span>
+              <span className={`text-xs ${isDark ? 'text-white/50' : 'text-[#8A8A7A]'}`}>current streak</span>
+            </div>
           </div>
-          <p className={theme === "dark" ? "mt-2 text-white/60 text-xs" : "mt-2 text-gray-500 text-xs"}>Consistency matters more than length.</p>
+          <p className={`text-xs max-w-[140px] text-right leading-relaxed ${isDark ? 'text-white/30' : 'text-[#A0A090]'}`}>Consistency matters more than length.</p>
         </div>
 
-        <div className="flex gap-2 items-center">
+        <div className="flex justify-between gap-1.5">
           {days.map((d) => (
             <div
               key={d.date}
-              className={theme === "dark" ? "w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center" : "w-8 h-8 rounded-full bg-white/70 border border-gray-200 flex items-center justify-center"}
+              className={`w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center ${
+                d.mood
+                  ? isDark ? 'bg-white/8' : 'bg-white border border-[#E8E5DE]'
+                  : isDark ? 'bg-white/5' : 'bg-[#F0EDE6]'
+              }`}
               aria-label={d.date}
               title={d.date}
             >
-              <span className="text-base leading-none">{d.mood || "•"}</span>
+              {d.mood
+                ? <span className="text-base leading-none">{d.mood}</span>
+                : <span className={`text-xs ${isDark ? 'text-white/15' : 'text-[#C4C0B8]'}`}>—</span>
+              }
             </div>
           ))}
         </div>

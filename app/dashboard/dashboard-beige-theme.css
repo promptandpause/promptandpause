@@ -1,66 +1,86 @@
-/* Beige Theme Dashboard Overrides */
+/* Calming Mental Health Dashboard Theme
+   Palette: warm whites, soft grays, sage green, lavender, light blue
+   Goal: serene, grounding, minimal visual clutter */
 
-/* Glass cards on beige background - make them more visible */
+/* Card base: warm white, earth-tone border */
 .dashboard-card {
-  @apply backdrop-blur-xl bg-white/80 border border-gray-300 rounded-2xl md:rounded-3xl shadow-lg;
+  background-color: #FAFAF7;
+  border: 1px solid #E8E5DE;
+  border-radius: 1rem;
 }
 
-/* Text colors for beige background */
+/* Text hierarchy — warm neutrals */
 .dashboard-text-primary {
-  @apply text-gray-900;
+  color: #3D3D3D;
 }
 
 .dashboard-text-secondary {
-  @apply text-gray-600;
+  color: #5A5A4E;
 }
 
 .dashboard-text-muted {
-  @apply text-gray-500;
+  color: #8A8A7A;
 }
 
 /* Headings */
 .dashboard-heading {
-  @apply text-gray-900 font-semibold;
+  color: #3D3D3D;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
-/* Buttons on beige */
+/* Buttons — soft blue/lavender */
 .dashboard-button-primary {
-  @apply bg-purple-600 hover:bg-purple-700 text-white;
+  background-color: #5B7FA5;
+  color: white;
+  border-radius: 0.75rem;
+}
+.dashboard-button-primary:hover {
+  background-color: #4A6E94;
 }
 
 .dashboard-button-secondary {
-  @apply bg-gray-100 hover:bg-gray-200 text-gray-900 border border-gray-300;
+  background-color: #EDE7F6;
+  color: #5E4B8B;
+  border: 1px solid #D1C4E9;
+  border-radius: 0.75rem;
+}
+.dashboard-button-secondary:hover {
+  background-color: #E0D6F0;
 }
 
-/* Premium badge colors */
+/* Premium badge */
 .dashboard-premium-badge {
-  @apply bg-yellow-100 text-yellow-700 border-yellow-300;
+  background-color: #FFF8E1;
+  color: #B8860B;
+  border-color: #FFE082;
 }
 
-/* Dividers */
+/* Dividers — earth tone */
 .dashboard-divider {
-  @apply border-gray-300;
+  border-color: #E8E5DE;
 }
 
 /* Skeletons */
 .dashboard-skeleton {
-  @apply bg-gray-200;
+  background-color: #E8E5DE;
 }
 
-/* Icons */
+/* Icons — soft blue */
 .dashboard-icon-primary {
-  @apply text-gray-700;
+  color: #5B7FA5;
 }
 
 .dashboard-icon-secondary {
-  @apply text-gray-500;
+  color: #B8C9E0;
 }
 
-/* Stats and metrics */
+/* Stats */
 .dashboard-stat-value {
-  @apply text-gray-900 font-bold;
+  color: #3D3D3D;
+  font-weight: 700;
 }
 
 .dashboard-stat-label {
-  @apply text-gray-600;
+  color: #8A8A7A;
 }

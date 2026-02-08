@@ -209,7 +209,7 @@ export default function TodaysPrompt() {
       {/* Prompt limit banner for free users */}
       {tier === 'free' && <PromptLimitBanner />}
       
-      <section className={`rounded-2xl md:rounded-3xl p-5 md:p-8 flex flex-col gap-4 md:gap-6 relative transition-all duration-200 ${theme === 'dark' ? 'glass-light shadow-soft-lg' : 'glass-medium shadow-soft-md'}`} style={{ pointerEvents: 'auto' }}>
+      <section className={`rounded-2xl p-5 md:p-6 flex flex-col gap-4 md:gap-5 relative transition-all duration-200 ${theme === 'dark' ? 'bg-white/5 border border-white/8' : 'bg-[#FAFAF7] border border-[#E8E5DE]'}`} style={{ pointerEvents: 'auto' }}>
         <div className="flex items-center justify-between gap-3 mb-1">
           <h3 className={`text-lg md:text-xl font-extrabold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Today</h3>
         </div>
@@ -247,7 +247,7 @@ export default function TodaysPrompt() {
                 }
               }}
               disabled={isGenerating}
-              className={`w-full sm:w-auto text-sm ${theme === 'dark' ? 'bg-green-500/20 hover:bg-green-500/30 text-green-300 border border-green-500/40' : 'bg-green-100 hover:bg-green-200 text-gray-900 border border-green-300'}`}
+              className={`w-full sm:w-auto text-sm ${theme === 'dark' ? 'bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/40' : 'bg-purple-100 hover:bg-purple-200 text-gray-900 border border-purple-300'}`}
             >
               {isGenerating ? 'Generating...' : "Generate today's prompt"}
             </Button>
@@ -267,7 +267,7 @@ export default function TodaysPrompt() {
           {/* Enhanced Textarea with Focus Animations */}
           <div className="mb-3">
             <textarea
-              className={`w-full min-h-[140px] md:min-h-[120px] max-h-52 rounded-xl border-2 px-3 md:px-4 py-2.5 md:py-3 focus:outline-none resize-none text-sm md:text-base transition-all duration-200 ${theme === 'dark' ? 'border-white/10 bg-white/5 text-white placeholder:text-white/40 focus:border-orange-400 focus:bg-white/10 focus:shadow-[0_0_0_3px_rgba(251,146,60,0.3)]' : 'border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 focus:border-orange-400 focus:bg-orange-50/30 focus:shadow-[0_0_0_3px_rgba(251,146,60,0.2)]'}`}
+              className={`w-full min-h-[140px] md:min-h-[120px] max-h-52 rounded-xl border-2 px-3 md:px-4 py-2.5 md:py-3 focus:outline-none resize-none text-sm md:text-base transition-all duration-200 ${theme === 'dark' ? 'border-white/10 bg-white/5 text-white placeholder:text-white/40 focus:border-purple-400 focus:bg-white/10 focus:shadow-[0_0_0_3px_rgba(139,92,246,0.3)]' : 'border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 focus:border-purple-400 focus:bg-purple-50/30 focus:shadow-[0_0_0_3px_rgba(139,92,246,0.2)]'}`}
               placeholder="Write your reflection..."
               maxLength={1200}
               value={reflection}
@@ -324,7 +324,7 @@ export default function TodaysPrompt() {
                   whileTap={{ scale: 0.95 }}
                   className={`text-xl md:text-2xl p-2 md:p-3 rounded-lg transition-colors duration-200 cursor-pointer motion-reduce:!transform-none ${
                     selectedMood === mood
-                      ? "bg-orange-500/30 ring-2 ring-orange-400"
+                      ? "bg-purple-500/30 ring-2 ring-purple-400"
                       : theme === 'dark' 
                         ? "bg-white/5 hover:bg-white/10"
                         : "bg-gray-50 hover:bg-white/80"
@@ -382,8 +382,8 @@ export default function TodaysPrompt() {
                   className={`px-2.5 md:px-3 py-1 md:py-1.5 rounded-full text-xs font-semibold border-2 cursor-pointer transition-colors duration-200 motion-reduce:!transform-none ${
                     selectedTags.includes(tag)
                       ? theme === 'dark'
-                        ? "bg-gradient-to-r from-orange-500/40 to-red-500/40 text-orange-200 border-orange-500/60 hover:bg-orange-500/50 shadow-lg ring-2 ring-orange-400/50"
-                        : "bg-gradient-to-r from-orange-500/50 to-red-500/50 text-gray-900 border-orange-600 hover:bg-orange-500/60 shadow-lg ring-2 ring-orange-300/50"
+                        ? "bg-gradient-to-r from-purple-500/40 to-violet-500/40 text-purple-200 border-purple-500/60 hover:bg-purple-500/50 shadow-lg ring-2 ring-purple-400/50"
+                        : "bg-gradient-to-r from-purple-500/50 to-violet-500/50 text-white border-purple-600 hover:bg-purple-500/60 shadow-lg ring-2 ring-purple-300/50"
                       : theme === 'dark'
                         ? "bg-white/5 text-white/80 border-white/20 hover:bg-white/10 hover:border-white/30 shadow-md hover:shadow-lg"
                         : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-400 shadow-md hover:shadow-lg"
@@ -405,7 +405,7 @@ export default function TodaysPrompt() {
                   handleSave()
                 }}
                 disabled={reflection.trim().length === 0}
-                className="w-full md:w-auto bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold px-5 md:px-7 py-2.5 md:py-2 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base shadow-lg hover:shadow-xl"
+                className="w-full md:w-auto bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white font-bold px-5 md:px-7 py-2.5 md:py-2 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base shadow-lg shadow-purple-500/20 hover:shadow-xl"
               >
                 Reflect
               </Button>
@@ -421,9 +421,9 @@ export default function TodaysPrompt() {
                   transition={{ type: "spring", bounce: 0.5, duration: 0.3 }}
                   className={`text-sm font-semibold ${
                     wordCount >= 150 
-                      ? theme === 'dark' ? 'text-orange-300' : 'text-orange-600'
+                      ? theme === 'dark' ? 'text-purple-300' : 'text-purple-600'
                       : wordCount >= 100
-                        ? theme === 'dark' ? 'text-blue-300' : 'text-blue-600'
+                        ? theme === 'dark' ? 'text-violet-300' : 'text-violet-600'
                         : theme === 'dark' ? 'text-white/50' : 'text-gray-500'
                   }`}
                 >
@@ -434,7 +434,7 @@ export default function TodaysPrompt() {
                   <motion.span
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className={`text-xs italic ml-1 ${theme === 'dark' ? 'text-green-300' : 'text-green-600'}`}
+                    className={`text-xs italic ml-1 ${theme === 'dark' ? 'text-purple-300' : 'text-purple-600'}`}
                   >
                     {getEncouragingMessage(wordCount)}
                   </motion.span>
@@ -446,8 +446,8 @@ export default function TodaysPrompt() {
         </>
       ) : (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-3 md:space-y-4 mt-1 md:mt-2">
-          <div className={`p-3 md:p-4 rounded-xl ${theme === 'dark' ? 'bg-green-500/20 border border-green-500/30' : 'bg-green-500/20 border border-green-400/30'}`}>
-            <div className={`font-semibold text-base md:text-lg mb-2 ${theme === 'dark' ? 'text-green-300' : 'text-green-700'}`}>Saved.</div>
+          <div className={`p-3 md:p-4 rounded-xl ${theme === 'dark' ? 'bg-purple-500/20 border border-purple-500/30' : 'bg-purple-500/15 border border-purple-400/30'}`}>
+            <div className={`font-semibold text-base md:text-lg mb-2 ${theme === 'dark' ? 'text-purple-300' : 'text-purple-700'}`}>Saved.</div>
             <div className={`text-xs md:text-sm mb-2 leading-relaxed ${theme === 'dark' ? 'text-white/80' : 'text-gray-700'}`}>{reflection}</div>
             <div className="flex items-center gap-2 mt-2 md:mt-3">
               <span className="text-xl md:text-2xl">{selectedMood}</span>
@@ -467,7 +467,7 @@ export default function TodaysPrompt() {
                 size="sm" 
                 variant={feedback === "helped" ? "default" : "ghost"} 
                 onClick={() => handleFeedback("helped")}
-                className={`text-xs md:text-sm ${feedback === "helped" ? "bg-green-500 hover:bg-green-600" : theme === 'dark' ? "text-white/70 hover:bg-white/10" : "text-gray-700 hover:bg-white/80"}`}
+                className={`text-xs md:text-sm ${feedback === "helped" ? "bg-purple-500 hover:bg-purple-600" : theme === 'dark' ? "text-white/70 hover:bg-white/10" : "text-gray-700 hover:bg-white/80"}`}
               >
                 👍 This helped me
               </Button>
@@ -499,7 +499,7 @@ export default function TodaysPrompt() {
 
             <div className="space-y-3">
               <textarea
-                className={`w-full min-h-[180px] rounded-xl border-2 px-3 md:px-4 py-3 focus:outline-none resize-none text-sm md:text-base transition-all duration-200 ${theme === 'dark' ? 'border-white/10 bg-white/5 text-white placeholder:text-white/40 focus:border-green-400 focus:bg-white/10 focus:shadow-[0_0_0_3px_rgba(74,222,128,0.2)]' : 'border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 focus:border-green-500 focus:bg-green-50/30 focus:shadow-[0_0_0_3px_rgba(34,197,94,0.2)]'}`}
+                className={`w-full min-h-[180px] rounded-xl border-2 px-3 md:px-4 py-3 focus:outline-none resize-none text-sm md:text-base transition-all duration-200 ${theme === 'dark' ? 'border-white/10 bg-white/5 text-white placeholder:text-white/40 focus:border-purple-400 focus:bg-white/10 focus:shadow-[0_0_0_3px_rgba(139,92,246,0.2)]' : 'border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 focus:border-purple-500 focus:bg-purple-50/30 focus:shadow-[0_0_0_3px_rgba(139,92,246,0.2)]'}`}
                 placeholder="Write anything on your mind..."
                 value={journalText}
                 onChange={(e) => setJournalText(e.target.value)}
@@ -516,7 +516,7 @@ export default function TodaysPrompt() {
                       onClick={() => setJournalMood(mood)}
                       className={`text-xl md:text-2xl p-2 md:p-3 rounded-lg transition-colors duration-200 cursor-pointer ${
                         journalMood === mood
-                          ? "bg-green-500/30 ring-2 ring-green-400"
+                          ? "bg-purple-500/30 ring-2 ring-purple-400"
                           : theme === 'dark' 
                             ? "bg-white/5 hover:bg-white/10"
                             : "bg-gray-50 hover:bg-white"
@@ -540,8 +540,8 @@ export default function TodaysPrompt() {
                       className={`px-2.5 md:px-3 py-1 md:py-1.5 rounded-full text-xs font-semibold border-2 cursor-pointer transition-colors duration-200 ${
                         journalTags.includes(tag)
                           ? theme === 'dark'
-                            ? "bg-green-500/30 text-white border-green-400 hover:bg-green-500/40"
-                            : "bg-green-100 text-gray-900 border-green-300 hover:bg-green-200"
+                            ? "bg-purple-500/30 text-white border-purple-400 hover:bg-purple-500/40"
+                            : "bg-purple-100 text-gray-900 border-purple-300 hover:bg-purple-200"
                           : theme === 'dark'
                             ? "bg-white/5 text-white/80 border-white/20 hover:bg-white/10"
                             : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
@@ -559,7 +559,7 @@ export default function TodaysPrompt() {
                 <Button 
                   onClick={handleSaveJournal}
                   disabled={journalSaving || journalText.trim().length === 0}
-                  className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white"
+                  className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white shadow-lg shadow-purple-500/20"
                 >
                   {journalSaving ? "Saving..." : "Save Journal"}
                 </Button>

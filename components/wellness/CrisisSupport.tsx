@@ -27,6 +27,7 @@ import {
   type CrisisHotline 
 } from '@/lib/services/crisisToolsService'
 import { getSupabaseClient } from '@/lib/supabase/client'
+import { useTheme } from '@/contexts/ThemeContext'
 
 interface CrisisSupportProps {
   userCountry?: string
@@ -37,6 +38,8 @@ interface CrisisSupportProps {
 type ActiveTool = 'menu' | 'grounding' | 'breathing' | 'coping' | 'hotlines'
 
 export default function CrisisSupport({ userCountry = 'UK', userId, onClose }: CrisisSupportProps) {
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
   const [activeTool, setActiveTool] = useState<ActiveTool>('menu')
   const [groundingStep, setGroundingStep] = useState(0)
   const [breathingPhase, setBreathingPhase] = useState<'inhale' | 'hold' | 'exhale'>('inhale')
@@ -132,76 +135,76 @@ export default function CrisisSupport({ userCountry = 'UK', userId, onClose }: C
           >
             <div className="text-center mb-6">
               <Heart className="w-12 h-12 mx-auto text-rose-500 mb-3" />
-              <h2 className="text-xl font-semibold text-gray-900">You're Not Alone</h2>
-              <p className="text-gray-600 mt-1">Choose a tool to help you feel grounded</p>
+              <h2 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>You&apos;re Not Alone</h2>
+              <p className={`mt-1 ${isDark ? 'text-white/60' : 'text-gray-600'}`}>Choose a tool to help you feel grounded</p>
             </div>
 
             <div className="grid gap-3">
               <Button
                 onClick={startGrounding}
                 variant="outline"
-                className="h-auto p-4 justify-start text-left hover:bg-emerald-50 hover:border-emerald-300"
+                className={`h-auto p-4 justify-start text-left ${isDark ? 'border-white/10 hover:bg-emerald-500/10 hover:border-emerald-400/30' : 'hover:bg-emerald-50 hover:border-emerald-300'}`}
               >
                 <div className="flex items-center gap-3 w-full">
-                  <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center">
-                    <Eye className="w-5 h-5 text-emerald-600" />
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isDark ? 'bg-emerald-500/20' : 'bg-emerald-100'}`}>
+                    <Eye className={`w-5 h-5 ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`} />
                   </div>
                   <div className="flex-1">
-                    <div className="font-medium">5-4-3-2-1 Grounding</div>
-                    <div className="text-sm text-gray-500">Use your senses to feel present</div>
+                    <div className={`font-medium ${isDark ? 'text-white' : ''}`}>5-4-3-2-1 Grounding</div>
+                    <div className={`text-sm ${isDark ? 'text-white/50' : 'text-gray-500'}`}>Use your senses to feel present</div>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                  <ChevronRight className={`w-5 h-5 ${isDark ? 'text-white/40' : 'text-gray-400'}`} />
                 </div>
               </Button>
 
               <Button
                 onClick={startBreathing}
                 variant="outline"
-                className="h-auto p-4 justify-start text-left hover:bg-blue-50 hover:border-blue-300"
+                className={`h-auto p-4 justify-start text-left ${isDark ? 'border-white/10 hover:bg-blue-500/10 hover:border-blue-400/30' : 'hover:bg-blue-50 hover:border-blue-300'}`}
               >
                 <div className="flex items-center gap-3 w-full">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                    <Wind className="w-5 h-5 text-blue-600" />
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isDark ? 'bg-blue-500/20' : 'bg-blue-100'}`}>
+                    <Wind className={`w-5 h-5 ${isDark ? 'text-blue-400' : 'text-blue-600'}`} />
                   </div>
                   <div className="flex-1">
-                    <div className="font-medium">Box Breathing</div>
-                    <div className="text-sm text-gray-500">Calm your nervous system</div>
+                    <div className={`font-medium ${isDark ? 'text-white' : ''}`}>Box Breathing</div>
+                    <div className={`text-sm ${isDark ? 'text-white/50' : 'text-gray-500'}`}>Calm your nervous system</div>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                  <ChevronRight className={`w-5 h-5 ${isDark ? 'text-white/40' : 'text-gray-400'}`} />
                 </div>
               </Button>
 
               <Button
                 onClick={showCoping}
                 variant="outline"
-                className="h-auto p-4 justify-start text-left hover:bg-purple-50 hover:border-purple-300"
+                className={`h-auto p-4 justify-start text-left ${isDark ? 'border-white/10 hover:bg-purple-500/10 hover:border-purple-400/30' : 'hover:bg-purple-50 hover:border-purple-300'}`}
               >
                 <div className="flex items-center gap-3 w-full">
-                  <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
-                    <MessageCircle className="w-5 h-5 text-purple-600" />
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isDark ? 'bg-purple-500/20' : 'bg-purple-100'}`}>
+                    <MessageCircle className={`w-5 h-5 ${isDark ? 'text-purple-400' : 'text-purple-600'}`} />
                   </div>
                   <div className="flex-1">
-                    <div className="font-medium">Coping Statements</div>
-                    <div className="text-sm text-gray-500">Gentle reminders for hard moments</div>
+                    <div className={`font-medium ${isDark ? 'text-white' : ''}`}>Coping Statements</div>
+                    <div className={`text-sm ${isDark ? 'text-white/50' : 'text-gray-500'}`}>Gentle reminders for hard moments</div>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                  <ChevronRight className={`w-5 h-5 ${isDark ? 'text-white/40' : 'text-gray-400'}`} />
                 </div>
               </Button>
 
               <Button
                 onClick={showHotlines}
                 variant="outline"
-                className="h-auto p-4 justify-start text-left hover:bg-rose-50 hover:border-rose-300"
+                className={`h-auto p-4 justify-start text-left ${isDark ? 'border-white/10 hover:bg-rose-500/10 hover:border-rose-400/30' : 'hover:bg-rose-50 hover:border-rose-300'}`}
               >
                 <div className="flex items-center gap-3 w-full">
-                  <div className="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center">
-                    <Phone className="w-5 h-5 text-rose-600" />
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isDark ? 'bg-rose-500/20' : 'bg-rose-100'}`}>
+                    <Phone className={`w-5 h-5 ${isDark ? 'text-rose-400' : 'text-rose-600'}`} />
                   </div>
                   <div className="flex-1">
-                    <div className="font-medium">Talk to Someone</div>
-                    <div className="text-sm text-gray-500">Free, confidential support lines</div>
+                    <div className={`font-medium ${isDark ? 'text-white' : ''}`}>Talk to Someone</div>
+                    <div className={`text-sm ${isDark ? 'text-white/50' : 'text-gray-500'}`}>Free, confidential support lines</div>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                  <ChevronRight className={`w-5 h-5 ${isDark ? 'text-white/40' : 'text-gray-400'}`} />
                 </div>
               </Button>
             </div>
@@ -220,7 +223,7 @@ export default function CrisisSupport({ userCountry = 'UK', userId, onClose }: C
               variant="ghost"
               size="sm"
               onClick={() => setActiveTool('menu')}
-              className="mb-2"
+              className={`mb-2 ${isDark ? 'text-white/70 hover:text-white hover:bg-white/10' : ''}`}
             >
               ← Back
             </Button>
@@ -233,15 +236,15 @@ export default function CrisisSupport({ userCountry = 'UK', userId, onClose }: C
                     const Icon = senseIcons[step.sense as keyof typeof senseIcons]
                     return (
                       <>
-                        <div className="w-20 h-20 mx-auto rounded-full bg-emerald-100 flex items-center justify-center mb-4">
-                          <Icon className="w-10 h-10 text-emerald-600" />
+                        <div className={`w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4 ${isDark ? 'bg-emerald-500/20' : 'bg-emerald-100'}`}>
+                          <Icon className={`w-10 h-10 ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`} />
                         </div>
-                        <div className="text-4xl font-bold text-emerald-600 mb-2">{step.number}</div>
-                        <div className="text-lg font-medium text-gray-900 mb-2">
+                        <div className={`text-4xl font-bold mb-2 ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>{step.number}</div>
+                        <div className={`text-lg font-medium mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
                           Things you can {step.sense}
                         </div>
-                        <p className="text-gray-600 mb-4">{step.instruction}</p>
-                        <div className="text-sm text-gray-500">
+                        <p className={`mb-4 ${isDark ? 'text-white/60' : 'text-gray-600'}`}>{step.instruction}</p>
+                        <div className={`text-sm ${isDark ? 'text-white/50' : 'text-gray-500'}`}>
                           Examples: {step.examples.join(', ')}
                         </div>
                       </>
@@ -255,7 +258,7 @@ export default function CrisisSupport({ userCountry = 'UK', userId, onClose }: C
                       key={i}
                       className={`w-3 h-3 rounded-full ${
                         i === groundingStep ? 'bg-emerald-500' : 
-                        i < groundingStep ? 'bg-emerald-300' : 'bg-gray-200'
+                        i < groundingStep ? 'bg-emerald-300' : isDark ? 'bg-white/20' : 'bg-gray-200'
                       }`}
                     />
                   ))}
@@ -277,14 +280,14 @@ export default function CrisisSupport({ userCountry = 'UK', userId, onClose }: C
               </div>
             ) : (
               <div className="text-center py-8">
-                <div className="w-20 h-20 mx-auto rounded-full bg-emerald-100 flex items-center justify-center mb-4">
-                  <Heart className="w-10 h-10 text-emerald-600" />
+                <div className={`w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4 ${isDark ? 'bg-emerald-500/20' : 'bg-emerald-100'}`}>
+                  <Heart className={`w-10 h-10 ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`} />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Well done</h3>
-                <p className="text-gray-600 mb-6">
-                  You've completed the grounding exercise. Take a moment to notice how you feel.
+                <h3 className={`text-xl font-semibold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>Well done</h3>
+                <p className={`mb-6 ${isDark ? 'text-white/60' : 'text-gray-600'}`}>
+                  You&apos;ve completed the grounding exercise. Take a moment to notice how you feel.
                 </p>
-                <Button onClick={() => setActiveTool('menu')} variant="outline">
+                <Button onClick={() => setActiveTool('menu')} variant="outline" className={isDark ? 'border-white/20 text-white hover:bg-white/10' : ''}>
                   Back to Tools
                 </Button>
               </div>
@@ -304,7 +307,7 @@ export default function CrisisSupport({ userCountry = 'UK', userId, onClose }: C
               variant="ghost"
               size="sm"
               onClick={() => setActiveTool('menu')}
-              className="mb-2"
+              className={`mb-2 ${isDark ? 'text-white/70 hover:text-white hover:bg-white/10' : ''}`}
             >
               ← Back
             </Button>
@@ -316,39 +319,39 @@ export default function CrisisSupport({ userCountry = 'UK', userId, onClose }: C
                     scale: breathingPhase === 'inhale' ? 1.2 : breathingPhase === 'hold' ? 1.2 : 1,
                   }}
                   transition={{ duration: 0.5 }}
-                  className="w-32 h-32 mx-auto rounded-full bg-blue-100 flex items-center justify-center mb-6"
+                  className={`w-32 h-32 mx-auto rounded-full flex items-center justify-center mb-6 ${isDark ? 'bg-blue-500/20' : 'bg-blue-100'}`}
                 >
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-blue-600">{breathingCount}</div>
-                    <div className="text-sm text-blue-500 capitalize">{breathingPhase}</div>
+                    <div className={`text-3xl font-bold ${isDark ? 'text-blue-400' : 'text-blue-600'}`}>{breathingCount}</div>
+                    <div className={`text-sm capitalize ${isDark ? 'text-blue-300' : 'text-blue-500'}`}>{breathingPhase}</div>
                   </div>
                 </motion.div>
 
-                <p className="text-gray-600 mb-4">
+                <p className={`mb-4 ${isDark ? 'text-white/60' : 'text-gray-600'}`}>
                   {breathingPhase === 'inhale' && 'Breathe in slowly through your nose...'}
                   {breathingPhase === 'hold' && 'Hold your breath gently...'}
                   {breathingPhase === 'exhale' && 'Breathe out slowly through your mouth...'}
                 </p>
 
-                <div className="text-sm text-gray-500">
+                <div className={`text-sm ${isDark ? 'text-white/50' : 'text-gray-500'}`}>
                   Cycle {breathingCycles + 1} of 4
                 </div>
               </div>
             ) : (
               <div className="text-center py-8">
-                <div className="w-20 h-20 mx-auto rounded-full bg-blue-100 flex items-center justify-center mb-4">
-                  <Heart className="w-10 h-10 text-blue-600" />
+                <div className={`w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4 ${isDark ? 'bg-blue-500/20' : 'bg-blue-100'}`}>
+                  <Heart className={`w-10 h-10 ${isDark ? 'text-blue-400' : 'text-blue-600'}`} />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Breathing Complete</h3>
-                <p className="text-gray-600 mb-6">
+                <h3 className={`text-xl font-semibold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>Breathing Complete</h3>
+                <p className={`mb-6 ${isDark ? 'text-white/60' : 'text-gray-600'}`}>
                   Notice how your body feels. Your nervous system is calmer now.
                 </p>
                 <div className="flex gap-2 justify-center">
-                  <Button onClick={startBreathing} variant="outline">
+                  <Button onClick={startBreathing} variant="outline" className={isDark ? 'border-white/20 text-white hover:bg-white/10' : ''}>
                     <RefreshCw className="w-4 h-4 mr-2" />
                     Again
                   </Button>
-                  <Button onClick={() => setActiveTool('menu')} variant="outline">
+                  <Button onClick={() => setActiveTool('menu')} variant="outline" className={isDark ? 'border-white/20 text-white hover:bg-white/10' : ''}>
                     Back to Tools
                   </Button>
                 </div>
@@ -369,23 +372,23 @@ export default function CrisisSupport({ userCountry = 'UK', userId, onClose }: C
               variant="ghost"
               size="sm"
               onClick={() => setActiveTool('menu')}
-              className="mb-2"
+              className={`mb-2 ${isDark ? 'text-white/70 hover:text-white hover:bg-white/10' : ''}`}
             >
               ← Back
             </Button>
 
             <div className="text-center py-8">
-              <div className="w-16 h-16 mx-auto rounded-full bg-purple-100 flex items-center justify-center mb-6">
-                <MessageCircle className="w-8 h-8 text-purple-600" />
+              <div className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-6 ${isDark ? 'bg-purple-500/20' : 'bg-purple-100'}`}>
+                <MessageCircle className={`w-8 h-8 ${isDark ? 'text-purple-400' : 'text-purple-600'}`} />
               </div>
 
               <motion.p
                 key={copingIndex}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-xl font-medium text-gray-900 mb-8 px-4"
+                className={`text-xl font-medium mb-8 px-4 ${isDark ? 'text-white' : 'text-gray-900'}`}
               >
-                "{copingStatements[copingIndex]}"
+                &ldquo;{copingStatements[copingIndex]}&rdquo;
               </motion.p>
 
               <Button
@@ -393,7 +396,7 @@ export default function CrisisSupport({ userCountry = 'UK', userId, onClose }: C
                   setCopingIndex((copingIndex + 1) % copingStatements.length)
                 }}
                 variant="outline"
-                className="gap-2"
+                className={`gap-2 ${isDark ? 'border-white/20 text-white hover:bg-white/10' : ''}`}
               >
                 <RefreshCw className="w-4 h-4" />
                 Another Statement
@@ -414,38 +417,38 @@ export default function CrisisSupport({ userCountry = 'UK', userId, onClose }: C
               variant="ghost"
               size="sm"
               onClick={() => setActiveTool('menu')}
-              className="mb-2"
+              className={`mb-2 ${isDark ? 'text-white/70 hover:text-white hover:bg-white/10' : ''}`}
             >
               ← Back
             </Button>
 
             <div className="text-center mb-4">
               <Phone className="w-10 h-10 mx-auto text-rose-500 mb-2" />
-              <h3 className="text-lg font-semibold text-gray-900">Free Support Lines</h3>
-              <p className="text-sm text-gray-600">Confidential help is available 24/7</p>
+              <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Free Support Lines</h3>
+              <p className={`text-sm ${isDark ? 'text-white/60' : 'text-gray-600'}`}>Confidential help is available 24/7</p>
             </div>
 
             <div className="space-y-3">
               {hotlines.map((hotline, index) => (
-                <Card key={index} className="border-rose-100">
+                <Card key={index} className={isDark ? 'border-rose-500/20 bg-white/5' : 'border-rose-100'}>
                   <CardContent className="p-4">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h4 className="font-medium text-gray-900">{hotline.name}</h4>
-                        <p className="text-sm text-gray-500">{hotline.available}</p>
+                        <h4 className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{hotline.name}</h4>
+                        <p className={`text-sm ${isDark ? 'text-white/50' : 'text-gray-500'}`}>{hotline.available}</p>
                       </div>
                       <div className="flex gap-2">
                         {hotline.phone && (
                           <a
                             href={`tel:${hotline.phone.replace(/\s/g, '')}`}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-rose-100 text-rose-700 rounded-full text-sm font-medium hover:bg-rose-200"
+                            className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium ${isDark ? 'bg-rose-500/20 text-rose-400 hover:bg-rose-500/30' : 'bg-rose-100 text-rose-700 hover:bg-rose-200'}`}
                           >
                             <Phone className="w-3 h-3" />
                             {hotline.phone}
                           </a>
                         )}
                         {hotline.text && (
-                          <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+                          <span className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium ${isDark ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700'}`}>
                             <MessageCircle className="w-3 h-3" />
                             {hotline.text}
                           </span>
@@ -457,7 +460,7 @@ export default function CrisisSupport({ userCountry = 'UK', userId, onClose }: C
                         href={hotline.website}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mt-2"
+                        className={`inline-flex items-center gap-1 text-sm mt-2 ${isDark ? 'text-white/50 hover:text-white/70' : 'text-gray-500 hover:text-gray-700'}`}
                       >
                         <ExternalLink className="w-3 h-3" />
                         {hotline.website.replace('https://', '')}
@@ -468,8 +471,8 @@ export default function CrisisSupport({ userCountry = 'UK', userId, onClose }: C
               ))}
             </div>
 
-            <p className="text-xs text-center text-gray-500 mt-4">
-              If you're in immediate danger, please call emergency services (999 UK / 911 US)
+            <p className={`text-xs text-center mt-4 ${isDark ? 'text-white/40' : 'text-gray-500'}`}>
+              If you&apos;re in immediate danger, please call emergency services (999 UK / 911 US)
             </p>
           </motion.div>
         )}

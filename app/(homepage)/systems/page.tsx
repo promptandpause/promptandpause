@@ -107,7 +107,7 @@ export default function SystemsPage() {
   const getStatusIcon = (status: SystemStatus['status']) => {
     switch (status) {
       case 'operational':
-        return <CheckCircle2 className="w-5 h-5 text-green-500" />
+        return <CheckCircle2 className="w-5 h-5 text-[#6FA984]" />
       case 'degraded':
         return <AlertCircle className="w-5 h-5 text-yellow-500" />
       case 'down':
@@ -118,11 +118,11 @@ export default function SystemsPage() {
   const getStatusColor = (status: SystemStatus['status']) => {
     switch (status) {
       case 'operational':
-        return 'bg-green-500'
+        return 'bg-[#6FA984]'
       case 'degraded':
         return 'bg-yellow-500'
       case 'down':
-        return 'bg-red-500'
+        return 'bg-red-50'
     }
   }
 
@@ -143,9 +143,9 @@ export default function SystemsPage() {
     const { overall } = healthData
 
     const colors = {
-      operational: 'bg-green-500/10 text-green-600 border-green-500/20',
+      operational: 'bg-[#6FA984]/10 text-[#2F3B34] border-[#6FA984]/20',
       degraded: 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20',
-      down: 'bg-red-500/10 text-red-600 border-red-500/20',
+      down: 'bg-red-50 text-red-600 border-red-200',
     }
 
     return (
@@ -178,15 +178,15 @@ export default function SystemsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-black relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-[#F0EDE6] via-[#E8EAE6] to-[#DCE6D9] relative overflow-hidden">
       {/* Background overlay to match site theme */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] opacity-90" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#F0EDE6] via-[#E8EAE6] to-[#DCE6D9] opacity-90" />
       {/* Navigation */}
-      <nav className="relative z-10 border-b border-slate-700/50 bg-slate-900/30 backdrop-blur-md">
+      <nav className="relative z-10 border-b border-[#DCE6D9]/50 bg-[#F0EDE6]/30 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <Link 
             href="/" 
-            className="text-slate-300 hover:text-white transition-colors text-sm font-medium"
+            className="text-[#4A5A49] hover:text-[#2F3B34] transition-colors text-sm font-medium"
           >
             ← Back to Home
           </Link>
@@ -197,18 +197,18 @@ export default function SystemsPage() {
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-16">
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <Activity className="w-8 h-8 text-slate-200" />
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+            <Activity className="w-8 h-8 text-[#6FA984]" />
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#2F3B34] to-[#4A5A49] bg-clip-text text-transparent">
               System Status
             </h1>
           </div>
-          <p className="text-lg text-slate-400 max-w-2xl mx-auto mb-4">
+          <p className="text-lg text-[#4A5A49] max-w-2xl mx-auto mb-4">
             Real-time monitoring of Prompt & Pause infrastructure and services
           </p>
           <button
             onClick={() => fetchHealthStatus(true)}
             disabled={refreshing || cooldownRemaining > 0}
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#4A5A49] hover:text-[#2F3B34] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             title={cooldownRemaining > 0 ? `Please wait ${cooldownRemaining}s before refreshing again` : 'Refresh status now'}
           >
             <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
@@ -218,14 +218,14 @@ export default function SystemsPage() {
           {/* Overall Status Badge */}
           <div className="mb-6">
             {loading ? (
-              <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-slate-600 bg-slate-800/60 backdrop-blur-sm">
-                <Clock className="w-5 h-5 text-slate-400 animate-pulse" />
-                <span className="text-slate-300 font-medium">Loading system status...</span>
+              <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-[#DCE6D9] bg-[#F0EDE6]/60 backdrop-blur-sm">
+                <Clock className="w-5 h-5 text-[#6B7F6E] animate-pulse" />
+                <span className="text-[#2F3B34] font-medium">Loading system status...</span>
               </div>
             ) : error ? (
-              <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-red-500/30 bg-red-500/10 text-red-400 backdrop-blur-sm">
+              <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-red-500/30 bg-red-50 text-red-600 backdrop-blur-sm">
                 <XCircle className="w-5 h-5" />
-                <span className="font-medium">Unable to fetch status</span>
+                <span className="font-medium text-red-800">Unable to fetch status</span>
               </div>
             ) : (
               getOverallStatusBadge()
@@ -234,7 +234,7 @@ export default function SystemsPage() {
 
           {/* Last Updated */}
           {healthData && (
-            <p className="text-sm text-slate-500 mt-4">
+            <p className="text-sm text-[#6B7F6E] mt-4">
               Last updated: {new Date(healthData.timestamp).toLocaleString('en-GB', {
                 dateStyle: 'medium',
                 timeStyle: 'medium',
@@ -249,19 +249,19 @@ export default function SystemsPage() {
           <div className="space-y-6">
             {[1, 2, 3, 4].map((i) => (
               <div key={i}>
-                <div className="h-5 bg-slate-700/50 rounded w-48 mb-3 animate-pulse"></div>
+                <div className="h-5 bg-[#DCE6D9]/50 rounded w-48 mb-3 animate-pulse"></div>
                 <ul className="space-y-2">
-                  <li className="h-14 bg-slate-800/40 border border-slate-700/50 rounded-lg animate-pulse"></li>
-                  <li className="h-14 bg-slate-800/40 border border-slate-700/50 rounded-lg animate-pulse"></li>
+                  <li className="h-14 bg-[#F0EDE6]/40 border border-[#DCE6D9]/50 rounded-lg animate-pulse"></li>
+                  <li className="h-14 bg-[#F0EDE6]/40 border border-[#DCE6D9]/50 rounded-lg animate-pulse"></li>
                 </ul>
               </div>
             ))}
           </div>
         ) : error ? (
-          <div className="bg-red-950/20 border border-red-800/30 rounded-xl p-8 text-center backdrop-blur-sm">
-            <XCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-red-300 mb-2">Error Loading Status</h3>
-            <p className="text-slate-400">{error}</p>
+          <div className="bg-red-50 border border-red-200 rounded-xl p-8 text-center backdrop-blur-sm">
+            <XCircle className="w-12 h-12 text-red-600 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-red-800 mb-2">Error Loading Status</h3>
+            <p className="text-[#4A5A49]">{error}</p>
             <button
               onClick={() => fetchHealthStatus()}
               className="mt-4 px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium"
@@ -274,7 +274,7 @@ export default function SystemsPage() {
             <div className="space-y-8 max-w-3xl mx-auto">
               {Object.entries(groupedSystems).map(([category, systems]) => (
                 <section key={category}>
-                  <h2 className="text-lg font-semibold text-slate-200 mb-3">
+                  <h2 className="text-lg font-semibold text-[#2F3B34] mb-3">
                     {categoryLabels[category as keyof typeof categoryLabels]}
                   </h2>
                   <ul className="space-y-2">
@@ -306,7 +306,7 @@ export default function SystemsPage() {
               
               return (
                 <details className="mt-12 max-w-3xl mx-auto group">
-                  <summary className="cursor-pointer flex items-center gap-3 text-slate-200 hover:text-white transition-colors list-none">
+                  <summary className="cursor-pointer flex items-center gap-3 text-[#2F3B34] hover:text-[#4A5A49] transition-colors list-none">
                     <ChevronDown className="w-4 h-4 transition-transform group-open:rotate-180" />
                     <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
                     <span className="font-medium">
@@ -317,13 +317,13 @@ export default function SystemsPage() {
                     {incidents.map((incident) => (
                       <div
                         key={incident.name}
-                        className="rounded-lg border border-slate-700/50 bg-slate-800/40 p-4"
+                        className="rounded-lg border border-[#DCE6D9]/50 bg-[#F0EDE6]/40 p-4"
                       >
                         <div className="flex items-center gap-2 mb-2">
                           {getStatusIcon(incident.status)}
-                          <span className="text-slate-100 font-medium">{incident.name}</span>
+                          <span className="text-[#2F3B34] font-medium">{incident.name}</span>
                         </div>
-                        <p className="text-sm text-slate-400 ml-7">{incident.error}</p>
+                        <p className="text-sm text-[#6B7F6E] ml-7">{incident.error}</p>
                       </div>
                     ))}
                   </div>
@@ -334,9 +334,9 @@ export default function SystemsPage() {
         ) : null}
 
         {/* Information Footer */}
-        <div className="relative z-10 mt-16 p-8 bg-slate-800/40 border border-slate-700/50 rounded-xl backdrop-blur-sm">
-          <h3 className="text-lg font-semibold text-slate-100 mb-3">About System Monitoring</h3>
-          <div className="space-y-2 text-sm text-slate-400">
+        <div className="relative z-10 mt-16 p-8 bg-[#F0EDE6]/40 border border-[#DCE6D9]/50 rounded-xl backdrop-blur-sm">
+          <h3 className="text-lg font-semibold text-[#2F3B34] mb-3">About System Monitoring</h3>
+          <div className="space-y-2 text-sm text-[#6B7F6E]">
             <p>
               This page shows the real-time health status of all critical Prompt & Pause infrastructure components.
             </p>
@@ -344,17 +344,17 @@ export default function SystemsPage() {
               Status checks run automatically every 5 minutes. You can also manually refresh anytime. 
               If a system experiences issues, our infrastructure team is automatically notified for immediate response.
             </p>
-            <p className="flex items-center gap-2 text-slate-400 mt-4">
-              <span className="w-2 h-2 rounded-full bg-green-400"></span>
-              <span className="font-medium text-green-400">Operational</span> - System functioning normally
+            <p className="flex items-center gap-2 text-[#6B7F6E] mt-4">
+              <span className="w-2 h-2 rounded-full bg-[#6FA984]"></span>
+              <span className="font-medium text-[#2F3B34]">Operational</span> - System functioning normally
             </p>
-            <p className="flex items-center gap-2 text-slate-400">
-              <span className="w-2 h-2 rounded-full bg-yellow-400"></span>
-              <span className="font-medium text-yellow-400">Degraded</span> - System responding slowly
+            <p className="flex items-center gap-2 text-[#6B7F6E]">
+              <span className="w-2 h-2 rounded-full bg-yellow-500"></span>
+              <span className="font-medium text-yellow-600">Degraded</span> - System responding slowly
             </p>
-            <p className="flex items-center gap-2 text-slate-400">
+            <p className="flex items-center gap-2 text-[#6B7F6E]">
               <span className="w-2 h-2 rounded-full bg-red-400"></span>
-              <span className="font-medium text-red-400">Down</span> - System unavailable
+              <span className="font-medium text-red-600">Down</span> - System unavailable
             </p>
           </div>
         </div>

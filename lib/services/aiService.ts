@@ -261,7 +261,7 @@ export async function generatePrompt(context: GeneratePromptContext): Promise<{
   const promptType = selectPromptType(context)
   const allowDeeper = (context.current_streak ?? 0) >= 7
 
-  const systemPrompt = buildSystemPrompt(promptType, allowDeeper)
+  const systemPrompt = buildSystemPrompt(promptType, allowDeeper, context.language)
   const userContext = buildUserContext(context)
 
   // FAST PATH: Try OpenAI and Gemini in parallel (both are fast and reliable)
@@ -564,10 +564,15 @@ async function generateWithOpenAI(
  * Build the system prompt for the AI with enhanced personalization
  */
 
-function buildSystemPrompt(promptType: PromptType, allowDeeper: boolean): string {
+function buildSystemPrompt(promptType: PromptType, allowDeeper: boolean, language?: string): string {
   const depthGuidance = allowDeeper
     ? 'Depth: You may gently connect to a broader pattern (last week, repeated theme) while staying concrete and answerable in 3–5 minutes.'
     : 'Depth: Keep it immediate and simple (today / this moment).'
+
+  // Language instruction — only added for non-English languages
+  const languageInstruction = language && language !== 'en'
+    ? `\n\nIMPORTANT — Language: Write the ENTIRE question in ${getLanguageName(language)} (${language}). Do NOT write in English. The question must be fully in ${getLanguageName(language)}.`
+    : ''
 
   return `You write a single daily reflection question for "Prompt & Pause".
 
@@ -582,7 +587,7 @@ Output rules:
 - Make it feel answerable in 3–5 minutes.
 
 Verb constraint:
-- Start the question with exactly ONE of these words: Notice, Name, Recall, Consider, Describe, Acknowledge.
+- Start the question with exactly ONE of these words (translated to the target language if not English): Notice, Name, Recall, Consider, Describe, Acknowledge.
 
 Prompt type:
 - Today's prompt type is "${promptType}".
@@ -595,11 +600,29 @@ Type definitions:
 - perspective: widen the lens (future self, friend viewpoint) without advice.
 - closure: allow a small "good enough" wrap-up; release perfection.
 
-${depthGuidance}
+${depthGuidance}${languageInstruction}
 
 Use the provided user context (focus areas, recent moods, recent topics) to make the question specific.
 
 Return the question now.`
+}
+
+/**
+ * Map ISO language codes to human-readable names for AI instruction
+ */
+function getLanguageName(code: string): string {
+  const names: Record<string, string> = {
+    en: 'English', es: 'Spanish', fr: 'French', de: 'German',
+    it: 'Italian', pt: 'Portuguese', ru: 'Russian', zh: 'Chinese',
+    'zh-TW': 'Traditional Chinese', ja: 'Japanese', ko: 'Korean',
+    ar: 'Arabic', hi: 'Hindi', bn: 'Bengali', pa: 'Punjabi',
+    te: 'Telugu', mr: 'Marathi', ta: 'Tamil', tr: 'Turkish',
+    pl: 'Polish', uk: 'Ukrainian', nl: 'Dutch', sv: 'Swedish',
+    da: 'Danish', no: 'Norwegian', fi: 'Finnish', cs: 'Czech',
+    el: 'Greek', he: 'Hebrew', id: 'Indonesian', ms: 'Malay',
+    th: 'Thai', vi: 'Vietnamese',
+  }
+  return names[code] || code
 }
 
 /**

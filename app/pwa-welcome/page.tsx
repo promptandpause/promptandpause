@@ -90,7 +90,7 @@ export default function PWAWelcomePage() {
 
   if (isChecking) {
     return (
-      <main className="relative w-screen h-screen overflow-hidden bg-black">
+      <main className="relative w-screen h-screen overflow-hidden bg-[#F0EDE6]">
         {/* Video Background */}
         <video 
           key={HERO_VIDEO_SRC}
@@ -116,7 +116,7 @@ export default function PWAWelcomePage() {
             type="video/mp4"
           />
         </video>
-        <div className="absolute inset-0 bg-black/40 z-[1]" />
+        <div className="absolute inset-0 bg-[#2F3B34]/40 z-[1]" />
         <div className="relative z-10 flex items-center justify-center h-full">
           <div className="animate-pulse text-white text-lg">Loading...</div>
         </div>
@@ -125,7 +125,7 @@ export default function PWAWelcomePage() {
   }
 
   return (
-    <main className="relative w-screen h-screen overflow-hidden bg-black">
+    <main className="relative w-screen h-screen overflow-hidden bg-[#F0EDE6]">
       {/* Video Background */}
       {videoError ? (
         <Image
@@ -166,9 +166,9 @@ export default function PWAWelcomePage() {
 
       {/* Dark Overlay for text readability */}
       <div className="absolute inset-0 z-[1] pointer-events-none">
-        <div className="absolute inset-0 bg-black/55" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/35 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-transparent to-black/50" />
+        <div className="absolute inset-0 bg-[#2F3B34]/55" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#2F3B34]/55 via-[#2F3B34]/35 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#2F3B34]/65 via-transparent to-[#2F3B34]/50" />
       </div>
 
       {/* Content */}
@@ -204,7 +204,7 @@ export default function PWAWelcomePage() {
         <div className="w-full max-w-md mx-auto pb-8">
           <Link 
             href="/login"
-            className="block w-full text-center bg-white/25 border border-white/30 backdrop-blur-xl text-white font-sans font-semibold px-8 py-4 rounded-2xl text-lg shadow-2xl hover:bg-white/35 hover:border-white/40 transition-all duration-300 touch-manipulation"
+            className="block w-full text-center bg-[#6FA984]/80 border border-[#6FA984]/60 backdrop-blur-xl text-white font-sans font-semibold px-8 py-4 rounded-2xl text-lg shadow-2xl hover:bg-[#6FA984] hover:border-[#6FA984] transition-all duration-300 touch-manipulation"
           >
             Login
           </Link>

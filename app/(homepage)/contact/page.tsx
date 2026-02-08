@@ -46,7 +46,7 @@ export default function ContactPage() {
   return (
     <>
       <Navigation />
-      <main className="bg-white text-black">
+      <main className="bg-[#F0EDE6] text-[#2F3B34]">
         <HeroSection />
         <ContactFormSection />
         <AlternativeContactSection />
@@ -78,11 +78,12 @@ function HeroSection() {
           fill
           alt="Contact background"
           style={{ objectFit: "cover" }}
-          className="brightness-[0.4]"
+          className="brightness-90"
           priority
         />
         <motion.div style={{ opacity }} className="absolute inset-0 flex items-center justify-center z-10 px-4 sm:px-6">
-          <div className="text-center text-white max-w-5xl">
+          <div className="absolute inset-0 bg-gradient-to-b from-[#F0EDE6]/5 via-[#E8EAE6]/10 to-[#DCE6D9]/15 z-[-1]" />
+          <div className="text-center text-white max-w-5xl relative z-10">
             <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-bold mb-6 sm:mb-8 leading-tight text-balance">Get in Touch</h1>
             <p className="text-base sm:text-lg md:text-2xl lg:text-3xl leading-relaxed text-balance max-w-3xl mx-auto">
               Questions, feedback, or just want to say hello? We read every message.
@@ -137,7 +138,7 @@ function ContactFormSection() {
   }
 
   return (
-    <div className="min-h-screen flex items-center px-4 sm:px-6 py-16 sm:py-24 lg:py-32 bg-white">
+    <div className="min-h-screen flex items-center px-4 sm:px-6 py-16 sm:py-24 lg:py-32 bg-[#F5F3EE]">
       <div className="max-w-3xl mx-auto w-full">
         {!submitted ? (
           <form onSubmit={handleSubmit} className="space-y-8" suppressHydrationWarning>
@@ -155,7 +156,7 @@ function ContactFormSection() {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 sm:px-6 py-4 border-2 border-neutral-300 focus:border-black outline-none transition-colors text-base sm:text-lg rounded-lg touch-manipulation"
+                  className="w-full px-4 sm:px-6 py-4 border-2 border-[#DCE6D9] focus:border-[#6FA984] outline-none transition-colors text-base sm:text-lg rounded-lg touch-manipulation bg-white"
                   suppressHydrationWarning
                 />
               </div>
@@ -166,7 +167,7 @@ function ContactFormSection() {
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 sm:px-6 py-4 border-2 border-neutral-300 focus:border-black outline-none transition-colors text-base sm:text-lg rounded-lg touch-manipulation"
+                  className="w-full px-4 sm:px-6 py-4 border-2 border-[#DCE6D9] focus:border-[#6FA984] outline-none transition-colors text-base sm:text-lg rounded-lg touch-manipulation bg-white"
                   suppressHydrationWarning
                 />
               </div>
@@ -178,7 +179,7 @@ function ContactFormSection() {
                 required
                 value={formData.subject}
                 onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                className="w-full px-4 sm:px-6 py-4 border-2 border-neutral-300 focus:border-black outline-none transition-colors text-base sm:text-lg bg-white rounded-lg touch-manipulation"
+                className="w-full px-4 sm:px-6 py-4 border-2 border-[#DCE6D9] focus:border-[#6FA984] outline-none transition-colors text-base sm:text-lg bg-white rounded-lg touch-manipulation"
                 suppressHydrationWarning
               >
                 <option value="">Select a subject</option>
@@ -199,7 +200,7 @@ function ContactFormSection() {
                 rows={6}
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                className="w-full px-4 sm:px-6 py-4 border-2 border-neutral-300 focus:border-black outline-none transition-colors text-base sm:text-lg resize-none rounded-lg touch-manipulation"
+                className="w-full px-4 sm:px-6 py-4 border-2 border-[#DCE6D9] focus:border-[#6FA984] outline-none transition-colors text-base sm:text-lg resize-none rounded-lg touch-manipulation bg-white"
                 suppressHydrationWarning
               />
             </div>
@@ -212,7 +213,7 @@ function ContactFormSection() {
                 checked={formData.isPremium}
                 onChange={(e) => setFormData({ ...formData, isPremium: e.target.checked })}
               />
-              <label htmlFor="premium" className="text-lg text-neutral-600">
+              <label htmlFor="premium" className="text-lg text-[#4A5A49]">
                 I'm a Premium user
               </label>
             </div>
@@ -220,18 +221,18 @@ function ContactFormSection() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full px-10 py-5 bg-black text-white text-base font-medium tracking-wide transition-all duration-300 hover:bg-neutral-800 cursor-pointer disabled:bg-neutral-400 disabled:cursor-not-allowed min-h-[56px] rounded-lg touch-manipulation"
+              className="w-full px-10 py-5 bg-[#6FA984] text-white text-base font-medium tracking-wide transition-all duration-300 hover:bg-[#5A8F6E] cursor-pointer disabled:bg-[#DCE6D9] disabled:cursor-not-allowed min-h-[56px] rounded-lg touch-manipulation"
             >
               {loading ? 'SENDING...' : 'SEND MESSAGE'}
             </button>
           </form>
         ) : (
           <div className="text-center py-20">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-black mb-8">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-[#6FA984] mb-8">
               <Mail className="w-10 h-10 text-white" />
             </div>
             <h3 className="text-3xl md:text-4xl font-bold mb-6">Thanks for reaching out!</h3>
-            <p className="text-xl text-neutral-600 leading-relaxed max-w-2xl mx-auto">
+            <p className="text-xl text-[#4A5A49] leading-relaxed max-w-2xl mx-auto">
               We'll respond within 24-48 hours (Premium users within 24 hours).
             </p>
           </div>
@@ -243,23 +244,23 @@ function ContactFormSection() {
 
 function AlternativeContactSection() {
   return (
-    <div className="px-4 sm:px-6 py-16 sm:py-24 lg:py-32 bg-neutral-50">
+    <div className="px-4 sm:px-6 py-16 sm:py-24 lg:py-32 bg-[#E8EAE6]">
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-6 sm:gap-12 lg:gap-16">
-        <div className="backdrop-blur-md bg-white/80 border border-neutral-200 p-6 sm:p-10 lg:p-12 rounded-2xl sm:rounded-3xl">
-          <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-black mb-4 sm:mb-6">
+        <div className="backdrop-blur-md bg-[#F0EDE6]/80 border border-[#DCE6D9] p-6 sm:p-10 lg:p-12 rounded-2xl sm:rounded-3xl">
+          <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#6FA984] mb-4 sm:mb-6">
             <Mail className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
           </div>
           <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 leading-tight">Email Us Directly</h3>
-          <a href="mailto:contact@promptandpause.com" className="block text-xl sm:text-2xl font-bold text-black mb-3 sm:mb-4 hover:underline break-all">contact@promptandpause.com</a>
-          <p className="text-neutral-600 leading-relaxed text-base sm:text-lg">For urgent account issues, email us directly.</p>
+          <a href="mailto:contact@promptandpause.com" className="block text-xl sm:text-2xl font-bold text-[#2F3B34] mb-3 sm:mb-4 hover:underline break-all">contact@promptandpause.com</a>
+          <p className="text-[#4A5A49] leading-relaxed text-base sm:text-lg">For urgent account issues, email us directly.</p>
         </div>
 
-        <div className="backdrop-blur-md bg-white/80 border border-neutral-200 p-6 sm:p-10 lg:p-12 rounded-2xl sm:rounded-3xl">
-          <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-black mb-4 sm:mb-6">
+        <div className="backdrop-blur-md bg-[#F0EDE6]/80 border border-[#DCE6D9] p-6 sm:p-10 lg:p-12 rounded-2xl sm:rounded-3xl">
+          <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#6FA984] mb-4 sm:mb-6">
             <Clock className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
           </div>
           <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 leading-tight">Premium Support</h3>
-          <p className="text-neutral-600 leading-relaxed text-base sm:text-lg">
+          <p className="text-[#4A5A49] leading-relaxed text-base sm:text-lg">
             Premium users get priority responses within 24 hours. Include your account email in your message.
           </p>
         </div>
@@ -300,17 +301,17 @@ function FAQSection() {
   ]
 
   return (
-    <div className="min-h-screen flex items-center px-4 sm:px-6 py-16 sm:py-24 lg:py-32 bg-white">
+    <div className="min-h-screen flex items-center px-4 sm:px-6 py-16 sm:py-24 lg:py-32 bg-[#F5F3EE]">
       <div className="max-w-5xl mx-auto w-full">
         <h2 className="text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-8 sm:mb-12 leading-tight">
           Before You Email, Check If Your Question Is Answered
         </h2>
         <div className="space-y-3 sm:space-y-4">
           {faqs.map((faq, index) => (
-            <div key={index} className="border-2 border-neutral-200 overflow-hidden rounded-lg sm:rounded-none">
+            <div key={index} className="border-2 border-[#DCE6D9] overflow-hidden rounded-lg sm:rounded-none">
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full p-5 sm:p-8 text-left hover:bg-neutral-50 transition-colors duration-200 flex items-center justify-between gap-3 sm:gap-4 touch-manipulation"
+                className="w-full p-5 sm:p-8 text-left hover:bg-[#F0EDE6] transition-colors duration-200 flex items-center justify-between gap-3 sm:gap-4 touch-manipulation"
               >
                 <h3 className="text-lg sm:text-xl md:text-2xl font-bold">{faq.question}</h3>
                 <motion.div
@@ -341,7 +342,7 @@ function FAQSection() {
                 transition={{ duration: 0.3, ease: "easeInOut" }}
                 className="overflow-hidden"
               >
-                <div className="px-5 sm:px-8 pb-5 sm:pb-8 text-base sm:text-lg md:text-xl text-neutral-600 leading-relaxed border-t-2 border-neutral-200 pt-4 sm:pt-6">
+                <div className="px-5 sm:px-8 pb-5 sm:pb-8 text-base sm:text-lg md:text-xl text-[#4A5A49] leading-relaxed border-t-2 border-[#DCE6D9] pt-4 sm:pt-6">
                   {faq.answer}
                 </div>
               </motion.div>
@@ -351,7 +352,7 @@ function FAQSection() {
         <div className="mt-8 sm:mt-12 text-center">
           <a
             href="/research"
-            className="inline-block px-8 sm:px-10 py-4 sm:py-5 border-2 border-black text-black text-sm sm:text-base font-medium tracking-wide transition-all duration-300 hover:bg-black hover:text-white rounded-lg touch-manipulation"
+            className="inline-block px-8 sm:px-10 py-4 sm:py-5 border-2 border-[#6FA984] text-[#6FA984] text-sm sm:text-base font-medium tracking-wide transition-all duration-300 hover:bg-[#6FA984] hover:text-white rounded-lg touch-manipulation"
           >
             VIEW ALL FAQS
           </a>
@@ -363,21 +364,21 @@ function FAQSection() {
 
 function PressSection() {
   return (
-    <div id="press" className="px-4 sm:px-6 py-16 sm:py-24 lg:py-32 bg-neutral-50">
+    <div id="press" className="px-4 sm:px-6 py-16 sm:py-24 lg:py-32 bg-[#E8EAE6]">
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 sm:gap-16 lg:gap-24 items-center">
         <div className="text-center lg:text-left order-2 lg:order-1">
-          <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-black mb-6 sm:mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#6FA984] mb-6 sm:mb-8">
             <FileText className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 sm:mb-8 leading-tight">For Press/Media</h2>
-          <p className="text-lg sm:text-xl md:text-2xl text-neutral-600 leading-relaxed mb-8 sm:mb-12 max-w-3xl mx-auto lg:mx-0">
+          <p className="text-lg sm:text-xl md:text-2xl text-[#4A5A49] leading-relaxed mb-8 sm:mb-12 max-w-3xl mx-auto lg:mx-0">
             Journalists, bloggers, or researchers? Download our press kit (logo, screenshots, founder bio) or email{" "}
-            <a href="mailto:press@promptandpause.com" className="underline hover:text-black transition-colors">press@promptandpause.com</a>
+            <a href="mailto:press@promptandpause.com" className="underline hover:text-[#2F3B34] transition-colors">press@promptandpause.com</a>
           </p>
           <a 
             href="/press-kit/promptandpause-press-kit.zip" 
             download="promptandpause-press-kit.zip"
-            className="inline-block px-8 sm:px-10 py-4 sm:py-5 bg-black text-white border-2 border-black text-sm sm:text-base font-medium tracking-wide transition-all duration-300 hover:bg-transparent hover:text-black rounded-lg touch-manipulation"
+            className="inline-block px-8 sm:px-10 py-4 sm:py-5 bg-[#6FA984] text-white border-2 border-[#6FA984] text-sm sm:text-base font-medium tracking-wide transition-all duration-300 hover:bg-[#5A8F6E] rounded-lg touch-manipulation"
           >
             DOWNLOAD PRESS KIT
           </a>
@@ -398,7 +399,7 @@ function PressSection() {
 
 function CrisisSection() {
   return (
-    <div className="px-4 sm:px-6 py-16 sm:py-24 lg:py-32 bg-white">
+    <div className="px-4 sm:px-6 py-16 sm:py-24 lg:py-32 bg-[#F5F3EE]">
       <div className="max-w-5xl mx-auto">
         <div className="backdrop-blur-md bg-red-50 border-2 border-red-200 p-6 sm:p-10 lg:p-16 rounded-2xl sm:rounded-3xl">
           <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-red-600 mb-6 sm:mb-8">
@@ -436,12 +437,12 @@ function CrisisSection() {
 
 function ResponseTimeSection() {
   return (
-    <div className="min-h-[60vh] sm:min-h-screen flex items-center justify-center px-4 sm:px-6 py-16 sm:py-24 lg:py-32 bg-neutral-900 text-white">
+    <div className="min-h-[60vh] sm:min-h-screen flex items-center justify-center px-4 sm:px-6 py-16 sm:py-24 lg:py-32 bg-[#E8EAE6] text-[#2F3B34]">
       <div className="max-w-4xl text-center">
         <h2 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-8 sm:mb-12 leading-tight text-balance">
           Response Time Notice
         </h2>
-        <p className="text-lg sm:text-xl md:text-2xl leading-relaxed text-neutral-300">
+        <p className="text-lg sm:text-xl md:text-2xl leading-relaxed text-[#4A5A49]">
           We're a small team (currently just me!), so please allow 24-48 hours for responses. Premium users get priority
           support within 24 hours.
         </p>

@@ -96,17 +96,17 @@ export default function GiftPurchasePage() {
   return (
     <>
       <Navigation />
-      <main className="min-h-screen bg-white text-black">
+      <main className="min-h-screen bg-[#F0EDE6] text-[#2F3B34]">
         {/* Hero Section */}
-        <div className="pt-24 pb-12 px-4 sm:px-6 bg-gradient-to-b from-neutral-50 to-white">
+        <div className="pt-24 pb-12 px-4 sm:px-6 bg-gradient-to-b from-[#F5F3EE] to-white">
           <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-black mb-6">
+            <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#6FA984] mb-6">
               <Gift className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
               Gift Premium to Someone Special
             </h1>
-            <p className="text-lg sm:text-xl text-neutral-600 max-w-2xl mx-auto">
+            <p className="text-lg sm:text-xl text-[#4A5A49] max-w-2xl mx-auto">
               Know someone navigating a challenging time? Gift them daily reflection prompts and the space to process their thoughts.
             </p>
           </div>
@@ -127,29 +127,29 @@ export default function GiftPurchasePage() {
                       onClick={() => setSelectedMonths(option.months)}
                       className={`relative p-5 sm:p-6 rounded-2xl border-2 text-left transition-all duration-300 touch-manipulation ${
                         selectedMonths === option.months
-                          ? "border-black bg-black text-white shadow-xl scale-[1.02]"
-                          : "border-neutral-200 bg-white hover:border-neutral-400 hover:shadow-lg"
+                          ? "border-[#6FA984] bg-[#6FA984] text-white shadow-xl scale-[1.02]"
+                          : "border-[#DCE6D9] bg-white hover:border-[#6B7F6E] hover:shadow-lg"
                       }`}
                     >
                       {option.popular && (
-                        <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-black text-white text-xs font-medium rounded-full whitespace-nowrap">
+                        <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-[#6FA984] text-white text-xs font-medium rounded-full whitespace-nowrap">
                           Most Popular
                         </span>
                       )}
                       <div className="flex items-start justify-between mb-3">
                         <div>
                           <p className="text-lg sm:text-xl font-bold">{option.label}</p>
-                          <p className={`text-sm ${selectedMonths === option.months ? "text-white/70" : "text-neutral-500"}`}>
+                          <p className={`text-sm ${selectedMonths === option.months ? "text-white/70" : "text-[#6B7F6E]"}`}>
                             {option.description}
                           </p>
                         </div>
                         <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
                           selectedMonths === option.months
                             ? "border-white bg-white"
-                            : "border-neutral-300"
+                            : "border-[#DCE6D9]"
                         }`}>
                           {selectedMonths === option.months && (
-                            <Check className="w-4 h-4 text-black" />
+                            <Check className="w-4 h-4 text-[#2F3B34]" />
                           )}
                         </div>
                       </div>
@@ -157,7 +157,7 @@ export default function GiftPurchasePage() {
                         <span className="text-2xl sm:text-3xl font-bold">{option.price}</span>
                         {option.savings && (
                           <span className={`text-sm font-medium ${
-                            selectedMonths === option.months ? "text-green-300" : "text-green-600"
+                            selectedMonths === option.months ? "text-green-300" : "text-[#6FA984]"
                           }`}>
                             {option.savings}
                           </span>
@@ -173,7 +173,7 @@ export default function GiftPurchasePage() {
                 <h2 className="text-xl sm:text-2xl font-bold mb-6">Your Details</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-neutral-700 mb-2">
+                    <label className="block text-sm font-medium text-[#4A5A49] mb-2">
                       Your Name <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -182,11 +182,11 @@ export default function GiftPurchasePage() {
                       onChange={(e) => setPurchaserName(e.target.value)}
                       placeholder="Your name"
                       required
-                      className="w-full h-12 px-4 rounded-xl border border-neutral-300 outline-none focus:ring-2 focus:ring-black/10 focus:border-black transition-all touch-manipulation"
+                      className="w-full h-12 px-4 rounded-xl border border-[#DCE6D9] outline-none focus:ring-2 focus:ring-[#6FA984]/10 focus:border-[#6FA984] transition-all touch-manipulation bg-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-neutral-700 mb-2">
+                    <label className="block text-sm font-medium text-[#4A5A49] mb-2">
                       Your Email <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -195,7 +195,7 @@ export default function GiftPurchasePage() {
                       onChange={(e) => setPurchaserEmail(e.target.value)}
                       placeholder="you@example.com"
                       required
-                      className="w-full h-12 px-4 rounded-xl border border-neutral-300 outline-none focus:ring-2 focus:ring-black/10 focus:border-black transition-all touch-manipulation"
+                      className="w-full h-12 px-4 rounded-xl border border-[#DCE6D9] outline-none focus:ring-2 focus:ring-[#6FA984]/10 focus:border-[#6FA984] transition-all touch-manipulation bg-white"
                     />
                   </div>
                 </div>
@@ -204,12 +204,12 @@ export default function GiftPurchasePage() {
               {/* Recipient Details (Optional) */}
               <div>
                 <h2 className="text-xl sm:text-2xl font-bold mb-2">Recipient Details</h2>
-                <p className="text-neutral-500 mb-6 text-sm sm:text-base">
+                <p className="text-[#6B7F6E] mb-6 text-sm sm:text-base">
                   Optional: We'll send the gift code directly to them, or leave blank to send it to yourself.
                 </p>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-neutral-700 mb-2">
+                    <label className="block text-sm font-medium text-[#4A5A49] mb-2">
                       Recipient Email (Optional)
                     </label>
                     <input
@@ -217,11 +217,11 @@ export default function GiftPurchasePage() {
                       value={recipientEmail}
                       onChange={(e) => setRecipientEmail(e.target.value)}
                       placeholder="recipient@example.com"
-                      className="w-full h-12 px-4 rounded-xl border border-neutral-300 outline-none focus:ring-2 focus:ring-black/10 focus:border-black transition-all touch-manipulation"
+                      className="w-full h-12 px-4 rounded-xl border border-[#DCE6D9] outline-none focus:ring-2 focus:ring-[#6FA984]/10 focus:border-[#6FA984] transition-all touch-manipulation bg-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-neutral-700 mb-2">
+                    <label className="block text-sm font-medium text-[#4A5A49] mb-2">
                       Personal Message (Optional)
                     </label>
                     <textarea
@@ -230,9 +230,9 @@ export default function GiftPurchasePage() {
                       placeholder="Add a personal note for the recipient..."
                       rows={3}
                       maxLength={500}
-                      className="w-full px-4 py-3 rounded-xl border border-neutral-300 outline-none focus:ring-2 focus:ring-black/10 focus:border-black transition-all resize-none touch-manipulation"
+                      className="w-full px-4 py-3 rounded-xl border border-[#DCE6D9] outline-none focus:ring-2 focus:ring-[#6FA984]/10 focus:border-[#6FA984] transition-all resize-none touch-manipulation bg-white"
                     />
-                    <p className="text-xs text-neutral-400 mt-1 text-right">
+                    <p className="text-xs text-[#6B7F6E] mt-1 text-right">
                       {giftMessage.length}/500 characters
                     </p>
                   </div>
@@ -240,34 +240,34 @@ export default function GiftPurchasePage() {
               </div>
 
               {/* What They'll Get */}
-              <div className="bg-neutral-50 rounded-2xl p-6 sm:p-8">
+              <div className="bg-[#F5F3EE] rounded-2xl p-6 sm:p-8">
                 <div className="flex items-center gap-3 mb-4">
-                  <Sparkles className="w-5 h-5 text-black" />
+                  <Sparkles className="w-5 h-5 text-[#6FA984]" />
                   <h3 className="text-lg font-bold">What They'll Get</h3>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm sm:text-base">
                   <div className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
+                    <Check className="w-5 h-5 text-[#6FA984] flex-shrink-0 mt-0.5" />
                     <span>Daily personalized reflection prompts</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
+                    <Check className="w-5 h-5 text-[#6FA984] flex-shrink-0 mt-0.5" />
                     <span>Unlimited reflection archive</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
+                    <Check className="w-5 h-5 text-[#6FA984] flex-shrink-0 mt-0.5" />
                     <span>Weekly AI-generated insights</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
+                    <Check className="w-5 h-5 text-[#6FA984] flex-shrink-0 mt-0.5" />
                     <span>Voice note prompts</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
+                    <Check className="w-5 h-5 text-[#6FA984] flex-shrink-0 mt-0.5" />
                     <span>Email + Slack delivery</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
+                    <Check className="w-5 h-5 text-[#6FA984] flex-shrink-0 mt-0.5" />
                     <span>Export reflections</span>
                   </div>
                 </div>
@@ -278,7 +278,7 @@ export default function GiftPurchasePage() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full h-14 sm:h-16 bg-black text-white text-lg font-semibold rounded-xl hover:bg-neutral-800 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-3 touch-manipulation"
+                  className="w-full h-14 sm:h-16 bg-[#6FA984] text-white text-lg font-semibold rounded-xl hover:bg-[#5A8F6E] transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-3 touch-manipulation"
                 >
                   {isLoading ? (
                     <>
@@ -292,7 +292,7 @@ export default function GiftPurchasePage() {
                     </>
                   )}
                 </button>
-                <p className="text-center text-sm text-neutral-500 mt-4">
+                <p className="text-center text-sm text-[#6B7F6E] mt-4">
                   Secure payment via Stripe. Gift codes never expire.
                 </p>
               </div>
@@ -301,24 +301,24 @@ export default function GiftPurchasePage() {
         </div>
 
         {/* How It Works */}
-        <div className="px-4 sm:px-6 py-12 sm:py-16 bg-neutral-50">
+        <div className="px-4 sm:px-6 py-12 sm:py-16 bg-[#F5F3EE]">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-2xl sm:text-3xl font-bold mb-8 sm:mb-12 text-center">How Gift Subscriptions Work</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
               <div className="text-center">
-                <div className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center mx-auto mb-4 text-xl font-bold">1</div>
+                <div className="w-12 h-12 rounded-full bg-[#6FA984] text-white flex items-center justify-center mx-auto mb-4 text-xl font-bold">1</div>
                 <h3 className="font-bold mb-2">Purchase</h3>
-                <p className="text-neutral-600 text-sm sm:text-base">Complete checkout securely via Stripe</p>
+                <p className="text-[#6B7F6E] text-sm sm:text-base">Complete checkout securely via Stripe</p>
               </div>
               <div className="text-center">
-                <div className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center mx-auto mb-4 text-xl font-bold">2</div>
+                <div className="w-12 h-12 rounded-full bg-[#6FA984] text-white flex items-center justify-center mx-auto mb-4 text-xl font-bold">2</div>
                 <h3 className="font-bold mb-2">Receive Code</h3>
-                <p className="text-neutral-600 text-sm sm:text-base">Gift code sent to you or directly to recipient</p>
+                <p className="text-[#6B7F6E] text-sm sm:text-base">Gift code sent to you or directly to recipient</p>
               </div>
               <div className="text-center">
-                <div className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center mx-auto mb-4 text-xl font-bold">3</div>
+                <div className="w-12 h-12 rounded-full bg-[#6FA984] text-white flex items-center justify-center mx-auto mb-4 text-xl font-bold">3</div>
                 <h3 className="font-bold mb-2">Redeem</h3>
-                <p className="text-neutral-600 text-sm sm:text-base">Recipient creates account and redeems at /gifts/redeem</p>
+                <p className="text-[#6B7F6E] text-sm sm:text-base">Recipient creates account and redeems at /gifts/redeem</p>
               </div>
             </div>
           </div>

@@ -68,6 +68,10 @@ export interface UserPreferences {
   push_notifications: boolean
   daily_reminders: boolean
   weekly_digest: boolean
+  include_self_journal_in_insights: boolean
+  reminder_time: string | null
+  privacy_mode: boolean
+  language: string
   created_at: string
   updated_at: string
 }
@@ -138,6 +142,7 @@ export interface GeneratePromptContext {
   user_reason?: string
   current_streak?: number
   recent_prompt_types?: PromptType[]
+  language?: string // ISO language code (e.g., 'en', 'es', 'fr') — prompt will be generated in this language
 }
 
 export interface GeneratePromptResult {

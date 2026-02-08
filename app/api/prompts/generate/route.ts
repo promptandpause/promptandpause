@@ -185,6 +185,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Build context for AI generation
+    const userLanguage = preferencesResult.preferences?.language || 'en'
     const context: GeneratePromptContext = {
       focus_areas: focusAreaNames,
       focus_area_name: selectedFocusArea || undefined, // Embed the selected one explicitly
@@ -197,6 +198,7 @@ export async function POST(request: NextRequest) {
       user_reason: preferencesResult.preferences?.reason || undefined,
       current_streak: currentStreak,
       recent_prompt_types: recentPromptTypes,
+      language: userLanguage,
     }
     // Generate prompt using AI service
     const { prompt, provider, model, prompt_type } = await generatePrompt(context)
