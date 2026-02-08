@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { 
@@ -43,16 +44,25 @@ export default function WellnessPage() {
   const [userCountry, setUserCountry] = useState('UK')
   const [showCrisisDialog, setShowCrisisDialog] = useState(false)
   const [showBreathingDialog, setShowBreathingDialog] = useState(false)
+  const [showGratitudeDialog, setShowGratitudeDialog] = useState(false)
   const [activeTab, setActiveTab] = useState('overview')
   
   const { tier, isLoading: tierLoading } = useTier()
   const isPremium = tier === 'premium'
   const { theme } = useTheme()
   const supabase = getSupabaseClient()
+  const searchParams = useSearchParams()
 
   useEffect(() => {
     loadUser()
   }, [])
+
+  // Auto-open dialogs from query params (e.g. ?open=breathing from dashboard quick actions)
+  useEffect(() => {
+    const openParam = searchParams.get('open')
+    if (openParam === 'breathing') setShowBreathingDialog(true)
+    if (openParam === 'gratitude') setShowGratitudeDialog(true)
+  }, [searchParams])
 
   const loadUser = async () => {
     const { data: { user } } = await supabase.auth.getUser()
@@ -425,6 +435,19 @@ export default function WellnessPage() {
               userId={userId} 
               onComplete={() => {}} 
             />
+          </DialogContent>
+        </Dialog>
+
+        {/* Gratitude Dialog */}
+        <Dialog open={showGratitudeDialog} onOpenChange={setShowGratitudeDialog}>
+          <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-amber-500" />
+                Gratitude Entry
+              </DialogTitle>
+            </DialogHeader>
+            <GratitudeEntry userId={userId} />
           </DialogContent>
         </Dialog>
       </div>

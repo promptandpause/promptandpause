@@ -58,17 +58,6 @@ export async function GET(request: NextRequest) {
     }
 
     const tier = getUserTier(profile.subscription_status, profile.subscription_tier)
-    
-    if (tier !== 'premium') {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Custom focus areas is a premium feature',
-          requiresPremium: true 
-        },
-        { status: 403 }
-      )
-    }
 
     // Fetch user's focus areas (only active ones)
     const { data: focusAreas, error } = await supabase
@@ -84,6 +73,9 @@ export async function GET(request: NextRequest) {
         { status: 500 }
       )
     }
+
+    // Include tier info in response for client-side limit display
+    const maxAreas = tier === 'premium' ? Infinity : 3
 
     // Get reflection counts from prompt_focus_area_usage
     const { data: usageCounts } = await supabase
@@ -112,6 +104,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: transformedAreas,
+      tier,
+      maxAreas,
     })
 
   } catch (error) {
@@ -166,13 +160,23 @@ export async function POST(request: NextRequest) {
     }
 
     const tier = getUserTier(profile.subscription_status, profile.subscription_tier)
-    
-    if (tier !== 'premium') {
+    const maxAreas = tier === 'premium' ? Infinity : 3
+
+    // Check limit for free users
+    const { count } = await supabase
+      .from('focus_areas')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .eq('is_active', true)
+
+    if ((count ?? 0) >= maxAreas) {
       return NextResponse.json(
         { 
           success: false, 
-          error: 'Custom focus areas is a premium feature',
-          requiresPremium: true 
+          error: tier === 'premium' 
+            ? 'Maximum focus areas reached' 
+            : `Free users can have up to ${maxAreas} focus areas. Upgrade to Premium for unlimited.`,
+          requiresUpgrade: tier !== 'premium'
         },
         { status: 403 }
       )
@@ -290,19 +294,6 @@ export async function PATCH(request: NextRequest) {
       )
     }
 
-    const tier = getUserTier(profile.subscription_status, profile.subscription_tier)
-    
-    if (tier !== 'premium') {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Custom focus areas is a premium feature',
-          requiresPremium: true 
-        },
-        { status: 403 }
-      )
-    }
-
     // Parse and validate request body
     const body = await request.json()
     const parsed = UpdateFocusAreaSchema.safeParse(body)
@@ -402,19 +393,6 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json(
         { success: false, error: 'User profile not found' },
         { status: 404 }
-      )
-    }
-
-    const tier = getUserTier(profile.subscription_status, profile.subscription_tier)
-    
-    if (tier !== 'premium') {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Custom focus areas is a premium feature',
-          requiresPremium: true 
-        },
-        { status: 403 }
       )
     }
 

@@ -59,6 +59,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import dynamic from "next/dynamic"
+
+const FocusAreasManager = dynamic(() => import("../components/focus-areas-manager"), { ssr: false })
 
 const sidebarNav = [
   { icon: LayoutDashboard, label: "dashboard", href: "/dashboard", active: false },
@@ -1605,6 +1608,7 @@ function SettingsPageContent() {
                 )}
 
                 {currentView === 'preferences' && (
+                  <div className="space-y-4">
                   <Card className={`rounded-2xl p-4 shadow-lg ${
                     theme === 'dark'
                       ? 'bg-white/5 border-white/8'
@@ -1736,6 +1740,10 @@ function SettingsPageContent() {
                       </Button>
                     </div>
                   </Card>
+
+                  {/* Focus Areas */}
+                  <FocusAreasManager />
+                  </div>
                 )}
 
                 {currentView === 'subscription' && (

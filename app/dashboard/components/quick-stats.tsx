@@ -1,8 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { TrendingUp, TrendingDown, Minus, BookOpen, Flame, Activity } from "lucide-react"
-import { calculateReflectionStreak, calculateMoodTrends } from "@/lib/services/analyticsService"
+import { TrendingUp, TrendingDown, Minus, BookOpen, CalendarCheck, Activity } from "lucide-react"
+import { calculateMoodTrends } from "@/lib/services/analyticsService"
 import { supabaseReflectionService } from "@/lib/services/supabaseReflectionService"
 import { getSupabaseClient } from "@/lib/supabase/client"
 import { useTheme } from "@/contexts/ThemeContext"
@@ -10,7 +10,7 @@ import { useTheme } from "@/contexts/ThemeContext"
 export default function QuickStats() {
   const { theme } = useTheme()
   const [totalReflections, setTotalReflections] = useState(0)
-  const [currentStreak, setCurrentStreak] = useState(0)
+  const [thisWeekCount, setThisWeekCount] = useState(0)
   const [moodTrend, setMoodTrend] = useState<'improving' | 'declining' | 'stable'>('stable')
   const supabase = getSupabaseClient()
 
@@ -24,15 +24,22 @@ export default function QuickStats() {
         if (!user || !isMounted) return
 
         // Fetch all stats in parallel
-        const [reflections, streak, moodData] = await Promise.all([
+        const [reflections, moodData] = await Promise.all([
           supabaseReflectionService.getAllReflections(),
-          calculateReflectionStreak(user.id),
           calculateMoodTrends(user.id, 30)
         ])
 
         if (isMounted) {
           setTotalReflections(reflections.length)
-          setCurrentStreak(streak)
+          // Count reflections from this week (Mon–Sun)
+          const now = new Date()
+          const dayOfWeek = now.getDay()
+          const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1
+          const monday = new Date(now)
+          monday.setDate(now.getDate() - mondayOffset)
+          monday.setHours(0, 0, 0, 0)
+          const weekCount = reflections.filter(r => new Date(r.created_at || r.date) >= monday).length
+          setThisWeekCount(weekCount)
           setMoodTrend(moodData.trend)
         }
       } catch (error) {
@@ -80,15 +87,15 @@ export default function QuickStats() {
         <span className={`text-lg font-bold tabular-nums ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>{totalReflections}</span>
       </div>
       <div className={`h-px ${isDark ? 'bg-white/5' : 'bg-[#E8E5DE]'}`} />
-      {/* Day Streak */}
+      {/* This Week */}
       <div className="flex items-center justify-between py-3">
         <div className="flex items-center gap-3">
           <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${isDark ? 'bg-[#A8D5BA]/10' : 'bg-[#E8F5E9]'}`}>
-            <Flame className={`h-4 w-4 ${isDark ? 'text-[#A8D5BA]' : 'text-[#5A8F6E]'}`} />
+            <CalendarCheck className={`h-4 w-4 ${isDark ? 'text-[#A8D5BA]' : 'text-[#5A8F6E]'}`} />
           </div>
-          <span className={`text-sm ${isDark ? 'text-white/50' : 'text-[#5A5A4E]'}`}>Day streak</span>
+          <span className={`text-sm ${isDark ? 'text-white/50' : 'text-[#5A5A4E]'}`}>This week</span>
         </div>
-        <span className={`text-lg font-bold tabular-nums ${isDark ? 'text-[#A8D5BA]' : 'text-[#5A8F6E]'}`}>{currentStreak}</span>
+        <span className={`text-lg font-bold tabular-nums ${isDark ? 'text-[#A8D5BA]' : 'text-[#5A8F6E]'}`}>{thisWeekCount}</span>
       </div>
       <div className={`h-px ${isDark ? 'bg-white/5' : 'bg-[#E8E5DE]'}`} />
       {/* Mood Trend */}

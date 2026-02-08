@@ -9,7 +9,7 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { getSupabaseClient } from "@/lib/supabase/client"
 import QuickStats from "./components/quick-stats"
-import { Wind, Heart, NotebookPen, Moon, Crown } from "lucide-react"
+import { Wind, Heart, NotebookPen, Sparkles, Crown } from "lucide-react"
 import { useTranslation } from "@/hooks/useTranslation"
 import dynamic from "next/dynamic"
 
@@ -98,7 +98,7 @@ export default function DashboardPage() {
                         icon={<Wind className="h-6 w-6" />}
                         label={t('dashboard.breathe')}
                         sublabel={t('dashboard.breatheSublabel')}
-                        href="/dashboard/wellness"
+                        href="/dashboard/wellness?open=breathing"
                         isDark={isDark}
                         iconBg={isDark ? 'bg-[#A8D5BA]/15' : 'bg-[#E8F5E9]'}
                         iconColor={isDark ? 'text-[#A8D5BA]' : 'text-[#5A8F6E]'}
@@ -122,13 +122,13 @@ export default function DashboardPage() {
                         iconColor={isDark ? 'text-[#B8C9E0]' : 'text-[#5B7FA5]'}
                       />
                       <QuickActionCard
-                        icon={<Moon className="h-6 w-6" />}
-                        label={t('dashboard.sleep')}
-                        sublabel={t('dashboard.sleepSublabel')}
-                        href="/dashboard/wellness"
+                        icon={<Sparkles className="h-6 w-6" />}
+                        label={t('dashboard.gratitude')}
+                        sublabel={t('dashboard.gratitudeSublabel')}
+                        href="/dashboard/wellness?open=gratitude"
                         isDark={isDark}
-                        iconBg={isDark ? 'bg-[#B8C9E0]/10' : 'bg-[#E8EDF2]'}
-                        iconColor={isDark ? 'text-[#8A9BB5]' : 'text-[#6B7F99]'}
+                        iconBg={isDark ? 'bg-amber-500/15' : 'bg-amber-50'}
+                        iconColor={isDark ? 'text-amber-400' : 'text-amber-600'}
                       />
                     </div>
                   </div>
