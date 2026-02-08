@@ -28,6 +28,25 @@ const DISCOUNT_PRICES = {
 
 export async function POST(request: NextRequest) {
   try {
+    // Admin authentication: verify admin session cookie
+    const sessionToken = request.cookies.get('admin_session')?.value
+    if (!sessionToken) {
+      return NextResponse.json({ error: 'Unauthorized - Admin login required' }, { status: 401 })
+    }
+
+    const supabase = createServiceRoleClient()
+    const crypto = await import('crypto')
+    const sessionHash = crypto.createHash('sha256').update(sessionToken).digest('hex')
+    const { data: adminSession } = await supabase
+      .from('admin_sessions')
+      .select('*, admin_users!inner(email, role, is_active)')
+      .eq('session_token', sessionHash)
+      .single()
+
+    if (!adminSession || new Date(adminSession.expires_at) < new Date() || !adminSession.admin_users.is_active) {
+      return NextResponse.json({ error: 'Unauthorized - Invalid or expired admin session' }, { status: 401 })
+    }
+
     // Rate limit: 3 discount requests per hour per IP
     const rateLimitResult = await withRateLimit(request, 'auth')
     if (!rateLimitResult.allowed) {
@@ -54,8 +73,6 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       )
     }
-
-    const supabase = createServiceRoleClient()
 
     // Verify user exists and get their email
     const { data: user, error: userError } = await supabase

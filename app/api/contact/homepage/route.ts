@@ -11,6 +11,16 @@ const HomepageContactSchema = z.object({
   isPremium: z.boolean().optional()
 })
 
+/** Escape HTML special characters to prevent XSS in email templates */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+}
+
 let resendClient: Resend | null = null
 
 function getResendClient(): Resend {
@@ -93,7 +103,10 @@ function generateContactEmailHTML(data: {
   const LOGO_URL = 'https://yhrnbdl0wz3eilae.public.blob.vercel-storage.com/prompt%26pause-JRsbZR3dxCXndC8YMcyX6XU3XeT2Vw.svg'
   
   const { name, email, subject, message, isPremium } = data
-  const subjectLabel = subject.charAt(0).toUpperCase() + subject.slice(1)
+  const safeName = escapeHtml(name)
+  const safeEmail = escapeHtml(email)
+  const safeMessage = escapeHtml(message)
+  const subjectLabel = escapeHtml(subject.charAt(0).toUpperCase() + subject.slice(1))
   
   return `
     <!DOCTYPE html>
@@ -127,7 +140,7 @@ function generateContactEmailHTML(data: {
               <!-- Content -->
               <tr>
                 <td style="padding: 40px;">
-                  <h3 style="color: ${TEXT_DARK}; margin: 0 0 24px 0; font-size: 18px;">From: ${name}</h3>
+                  <h3 style="color: ${TEXT_DARK}; margin: 0 0 24px 0; font-size: 18px;">From: ${safeName}</h3>
                   
                   <!-- Sender Info -->
                   <div style="background: ${BG_LIGHT}; padding: 20px; margin: 24px 0; border-left: 4px solid ${PRIMARY_ACCENT}; border-radius: 8px;">
@@ -135,7 +148,7 @@ function generateContactEmailHTML(data: {
                       <tr>
                         <td style="color: ${TEXT_MUTED}; font-size: 13px; padding: 8px 0;"><strong>Email:</strong></td>
                         <td style="color: ${TEXT_DARK}; font-size: 14px; font-weight: 500; padding: 8px 0;">
-                          <a href="mailto:${email}" style="color: ${PRIMARY_ACCENT}; text-decoration: none;">${email}</a>
+                          <a href="mailto:${safeEmail}" style="color: ${PRIMARY_ACCENT}; text-decoration: none;">${safeEmail}</a>
                         </td>
                       </tr>
                       <tr>
@@ -153,12 +166,12 @@ function generateContactEmailHTML(data: {
                   
                   <!-- Message -->
                   <h4 style="color: ${TEXT_DARK}; margin: 32px 0 16px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">Message:</h4>
-                  <div style="background: ${BG_LIGHT}; padding: 20px; border-radius: 8px; color: ${TEXT_GRAY}; font-size: 15px; line-height: 1.8; white-space: pre-wrap; word-break: break-word;">${message}</div>
+                  <div style="background: ${BG_LIGHT}; padding: 20px; border-radius: 8px; color: ${TEXT_GRAY}; font-size: 15px; line-height: 1.8; white-space: pre-wrap; word-break: break-word;">${safeMessage}</div>
                   
                   <!-- Action -->
                   <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid ${BORDER_COLOR};">
                     <p style="margin: 0; color: ${TEXT_GRAY}; font-size: 14px;">
-                      <strong>To reply:</strong> Click the Reply button in your email client to respond directly to <a href="mailto:${email}" style="color: ${PRIMARY_ACCENT}; text-decoration: none;">${email}</a>
+                      <strong>To reply:</strong> Click the Reply button in your email client to respond directly to <a href="mailto:${safeEmail}" style="color: ${PRIMARY_ACCENT}; text-decoration: none;">${safeEmail}</a>
                     </p>
                   </div>
                 </td>

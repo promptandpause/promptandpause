@@ -7,6 +7,16 @@ import { Resend } from 'resend'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
+/** Escape HTML special characters to prevent XSS in email templates */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+}
+
 const SendDiscountLinkSchema = z.object({
   user_id: z.string().uuid(),
   discount_type: z.enum(['student', 'nhs']),
@@ -16,6 +26,25 @@ const SendDiscountLinkSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
+    // Admin authentication: verify admin session cookie
+    const sessionToken = request.cookies.get('admin_session')?.value
+    if (!sessionToken) {
+      return NextResponse.json({ error: 'Unauthorized - Admin login required' }, { status: 401 })
+    }
+
+    const supabase = createServiceRoleClient()
+    const crypto = await import('crypto')
+    const sessionHash = crypto.createHash('sha256').update(sessionToken).digest('hex')
+    const { data: session } = await supabase
+      .from('admin_sessions')
+      .select('*, admin_users!inner(email, role, is_active)')
+      .eq('session_token', sessionHash)
+      .single()
+
+    if (!session || new Date(session.expires_at) < new Date() || !session.admin_users.is_active) {
+      return NextResponse.json({ error: 'Unauthorized - Invalid or expired admin session' }, { status: 401 })
+    }
+
     // Rate limit: 10 discount links per hour per IP (admin only)
     const rateLimitResult = await withRateLimit(request, 'auth')
     if (!rateLimitResult.allowed) {
@@ -33,8 +62,6 @@ export async function POST(request: NextRequest) {
     }
 
     const { user_id, discount_type, admin_email, admin_notes } = parsed.data
-
-    const supabase = createServiceRoleClient()
 
     // Verify user exists and get their details
     const { data: user, error: userError } = await supabase
@@ -125,17 +152,21 @@ export async function POST(request: NextRequest) {
       // Don't fail the request, but log it
     }
 
-    // Send confirmation to admin
+    // Send confirmation to admin (escape all user-supplied values)
+    const safeUserName = escapeHtml(user.full_name || 'N/A')
+    const safeUserEmail = escapeHtml(user.email)
+    const safeCode = escapeHtml(code)
+    const safeDiscountUrl = escapeHtml(discountUrl)
     const adminEmailHtml = `
       <h2>Discount Code Sent</h2>
-      <p>You've sent a ${discount_type} discount code to:</p>
+      <p>You've sent a ${escapeHtml(discount_type)} discount code to:</p>
       <ul>
-        <li><strong>User:</strong> ${user.full_name || 'N/A'} (${user.email})</li>
-        <li><strong>Code:</strong> ${code}</li>
+        <li><strong>User:</strong> ${safeUserName} (${safeUserEmail})</li>
+        <li><strong>Code:</strong> ${safeCode}</li>
         <li><strong>Expires:</strong> ${new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString()}</li>
-        ${admin_notes ? `<li><strong>Notes:</strong> ${admin_notes}</li>` : ''}
+        ${admin_notes ? `<li><strong>Notes:</strong> ${escapeHtml(admin_notes)}</li>` : ''}
       </ul>
-      <p>The user can claim their discount at: ${discountUrl}</p>
+      <p>The user can claim their discount at: ${safeDiscountUrl}</p>
     `
 
     await resend.emails.send({
