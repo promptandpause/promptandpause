@@ -175,7 +175,7 @@ export default function WellnessPage() {
 
                 {/* Overview Tab */}
                 <TabsContent value="overview" className="space-y-4">
-                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  <div className="grid gap-4 md:grid-cols-2">
                     {/* Gratitude Card */}
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
@@ -185,20 +185,11 @@ export default function WellnessPage() {
                       <GratitudeEntry userId={userId} />
                     </motion.div>
 
-                    {/* Mood Insights Card */}
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.2 }}
-                    >
-                      <WeeklyMoodInsights userId={userId} />
-                    </motion.div>
-
                     {/* Quick Tools Card */}
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.3 }}
+                      transition={{ delay: 0.2 }}
                     >
                       <Card className={`rounded-2xl h-full border shadow-none ${theme === 'dark' ? 'bg-white/5 border-white/8' : 'bg-[#FAFAF7] border-[#E8E5DE]'}`}>
                         <CardHeader className="pb-3">
