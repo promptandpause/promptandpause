@@ -99,13 +99,15 @@ export async function POST(request: NextRequest) {
       if (weeklyError) {
         console.error('Failed to check weekly prompts:', weeklyError)
       } else if (weeklyPrompts && weeklyPrompts.length >= 3) {
+        const nextMonday = new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000)
+        const resetLabel = nextMonday.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' })
         return NextResponse.json({
           success: false,
           error: 'Weekly limit reached',
-          message: 'Free tier users can generate up to 3 prompts per week. Upgrade to Premium for unlimited daily prompts.',
+          message: `You've used all 3 prompts this week. Your prompts reset on ${resetLabel}. Upgrade to Premium for unlimited daily prompts.`,
           limit: 3,
           used: weeklyPrompts.length,
-          resetDate: new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          resetDate: nextMonday.toISOString().split('T')[0],
         }, { status: 403 })
       }
     }

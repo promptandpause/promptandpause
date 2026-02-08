@@ -277,41 +277,62 @@ export function PromptLimitBanner() {
   }
 
   const allowance = features.promptsPerWeek
-  const remaining = allowance - used
+  const remaining = Math.max(0, allowance - used)
+  const limitReached = remaining === 0
 
-  // Only show when getting close to limit
-  if (remaining > 1) {
-    return null
+  // Calculate next Monday for reset message
+  const getNextMonday = () => {
+    const now = new Date()
+    const dayOfWeek = now.getDay() // 0=Sun, 1=Mon, ...
+    const daysUntilMonday = dayOfWeek === 0 ? 1 : 8 - dayOfWeek
+    const nextMon = new Date(now)
+    nextMon.setDate(now.getDate() + daysUntilMonday)
+    return nextMon.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' })
   }
 
   return (
-    <Card className="backdrop-blur-xl bg-gradient-to-r from-orange-500/10 to-red-500/10 border border-orange-400/30 p-4 mb-4 md:mb-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-full bg-orange-500/20 flex items-center justify-center">
-            <Sparkles className="h-5 w-5 text-orange-400" />
+    <Card className={`p-4 mb-4 md:mb-6 border ${
+      limitReached
+        ? 'bg-gradient-to-r from-orange-500/10 to-red-500/10 border-orange-400/30'
+        : theme === 'dark'
+          ? 'bg-white/5 border-white/8'
+          : 'bg-[#FAFAF7] border-[#E8E5DE]'
+    }`}>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className={`h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+            limitReached ? 'bg-orange-500/20' : theme === 'dark' ? 'bg-purple-500/20' : 'bg-purple-100'
+          }`}>
+            <Sparkles className={`h-5 w-5 ${limitReached ? 'text-orange-400' : 'text-purple-500'}`} />
           </div>
-          <div>
-            <h4 className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-              {remaining === 0 ? 'Weekly Limit Reached' : `${remaining} Prompt${remaining === 1 ? '' : 's'} Remaining`}
+          <div className="min-w-0">
+            <h4 className={`font-semibold text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              {limitReached
+                ? 'Weekly Limit Reached'
+                : `${used}/${allowance} Prompts Used This Week`
+              }
             </h4>
-            <p className={`text-sm ${theme === 'dark' ? 'text-white/70' : 'text-gray-600'}`}>
-              {remaining === 0 
-                ? 'Upgrade to Premium for daily prompts (7 days/week)'
-                : 'Get unlimited prompts with Premium'
+            <p className={`text-xs ${theme === 'dark' ? 'text-white/60' : 'text-gray-500'}`}>
+              {limitReached
+                ? `Resets on ${getNextMonday()}. Upgrade for unlimited prompts.`
+                : remaining === 1
+                  ? `1 prompt left — resets on ${getNextMonday()}`
+                  : `${remaining} remaining — resets Monday`
               }
             </p>
           </div>
         </div>
 
-        <Link href="/dashboard/settings">
-          <Button
-            size="sm"
-            className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white border-0"
-          >
-            Upgrade
-          </Button>
-        </Link>
+        {limitReached && (
+          <Link href="/dashboard/settings" className="flex-shrink-0">
+            <Button
+              size="sm"
+              className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white border-0"
+            >
+              Upgrade
+            </Button>
+          </Link>
+        )}
       </div>
     </Card>
   )
