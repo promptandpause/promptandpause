@@ -240,55 +240,44 @@ export function PromptLimitBanner() {
   const { features } = useTier()
   const { theme } = useTheme()
   const [used, setUsed] = useState(0)
+  const [limit, setLimit] = useState(3)
+  const [resetLabel, setResetLabel] = useState('')
   const [isLoading, setIsLoading] = useState(true)
 
-  useEffect(() => {
-    async function fetchUsage() {
-      const supabase = getSupabaseClient()
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-
-      // Get start of week
-      const today = new Date()
-      const dayOfWeek = today.getDay()
-      const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek
-      const monday = new Date(today)
-      monday.setDate(today.getDate() + diff)
-      monday.setHours(0, 0, 0, 0)
-
-      const { count } = await supabase
-        .from('reflections')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id)
-        .gte('created_at', monday.toISOString())
-
-      if (count !== null) setUsed(count)
+  const fetchUsage = useCallback(async () => {
+    try {
+      const res = await fetch('/api/prompts/usage', { cache: 'no-store' })
+      if (!res.ok) return
+      const { data } = await res.json()
+      if (data.isPremium) return
+      setUsed(data.used)
+      setLimit(data.limit)
+      setResetLabel(data.resetLabel || '')
+    } catch {} finally {
       setIsLoading(false)
     }
+  }, [])
 
+  useEffect(() => {
     if (!features.isPremium) {
       fetchUsage()
     }
-  }, [features.isPremium])
+  }, [features.isPremium, fetchUsage])
+
+  // Listen for prompt-generated events to refresh usage dynamically
+  useEffect(() => {
+    const handler = () => fetchUsage()
+    window.addEventListener('prompt-generated', handler)
+    return () => window.removeEventListener('prompt-generated', handler)
+  }, [fetchUsage])
 
   // Don't show for premium users
   if (features.isPremium || isLoading) {
     return null
   }
 
-  const allowance = features.promptsPerWeek
-  const remaining = Math.max(0, allowance - used)
+  const remaining = Math.max(0, limit - used)
   const limitReached = remaining === 0
-
-  // Calculate next Monday for reset message
-  const getNextMonday = () => {
-    const now = new Date()
-    const dayOfWeek = now.getDay() // 0=Sun, 1=Mon, ...
-    const daysUntilMonday = dayOfWeek === 0 ? 1 : 8 - dayOfWeek
-    const nextMon = new Date(now)
-    nextMon.setDate(now.getDate() + daysUntilMonday)
-    return nextMon.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' })
-  }
 
   return (
     <Card className={`p-4 mb-4 md:mb-6 border ${
@@ -309,15 +298,15 @@ export function PromptLimitBanner() {
             <h4 className={`font-semibold text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               {limitReached
                 ? 'Weekly Limit Reached'
-                : `${used}/${allowance} Prompts Used This Week`
+                : `${used}/${limit} Prompts Used This Week`
               }
             </h4>
             <p className={`text-xs ${theme === 'dark' ? 'text-white/60' : 'text-gray-500'}`}>
               {limitReached
-                ? `Resets on ${getNextMonday()}. Upgrade for unlimited prompts.`
+                ? `Resets on ${resetLabel}. You cannot generate more prompts until then. Upgrade for unlimited prompts.`
                 : remaining === 1
-                  ? `1 prompt left — resets on ${getNextMonday()}`
-                  : `${remaining} remaining — resets Monday`
+                  ? `1 prompt left — resets on ${resetLabel}`
+                  : `${remaining} remaining — resets ${resetLabel || 'Monday'}`
               }
             </p>
           </div>
@@ -339,5 +328,5 @@ export function PromptLimitBanner() {
 }
 
 // Add missing imports at the top
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { getSupabaseClient } from '@/lib/supabase/client'

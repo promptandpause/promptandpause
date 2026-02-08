@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge as UIBadge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
@@ -25,6 +25,7 @@ export default function TodaysPrompt() {
   const { tier } = useTier()
   const { generatePrompt: generatePromptAsync, isLoading: isGenerating } = useGeneratePrompt()
   const { stats: reflectionStats } = useReflectionStats()
+  const [promptUsage, setPromptUsage] = useState<{ used: number; limit: number; remaining: number; resetLabel: string; isPremium: boolean } | null>(null)
   const [reflection, setReflection] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [feedback, setFeedback] = useState<"helped" | "irrelevant" | null>(null);
@@ -62,6 +63,31 @@ export default function TodaysPrompt() {
     return "Plenty here. Stop when you're ready."
   }
   
+  // Fetch prompt usage for free users
+  const fetchPromptUsage = useCallback(async () => {
+    if (tier === 'premium') return
+    try {
+      const res = await fetch('/api/prompts/usage', { cache: 'no-store' })
+      if (res.ok) {
+        const { data } = await res.json()
+        setPromptUsage(data)
+      }
+    } catch {}
+  }, [tier])
+
+  useEffect(() => {
+    fetchPromptUsage()
+  }, [fetchPromptUsage])
+
+  // Listen for prompt-generated events to refresh usage
+  useEffect(() => {
+    const handler = () => fetchPromptUsage()
+    window.addEventListener('prompt-generated', handler)
+    return () => window.removeEventListener('prompt-generated', handler)
+  }, [fetchPromptUsage])
+
+  const limitReached = promptUsage ? !promptUsage.isPremium && promptUsage.remaining <= 0 : false
+
   // Load today's reflection or prompt from backend
   useEffect(() => {
     let isMounted = true
@@ -229,11 +255,19 @@ export default function TodaysPrompt() {
       )}
       {!todaysPrompt && (
         <div className="flex flex-col md:flex-row items-center justify-between py-3 md:py-4 gap-3 md:gap-4">
-          <div className={`text-sm md:text-base ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>No prompt generated yet.</div>
+          <div className={`text-sm md:text-base ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>
+            {limitReached
+              ? `You've used all ${promptUsage?.limit} prompts this week. Resets on ${promptUsage?.resetLabel || 'Monday'}. Upgrade to Premium for unlimited prompts.`
+              : 'No prompt generated yet.'}
+          </div>
           <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
             <Button 
               type="button"
               onClick={async () => {
+                if (limitReached) {
+                  toast({ title: 'Limit reached', description: `You've used all your prompts this week. Resets on ${promptUsage?.resetLabel || 'Monday'}.`, variant: 'destructive' })
+                  return
+                }
                 try {
                   const result = await generatePromptAsync()
                   if (result) {
@@ -246,10 +280,12 @@ export default function TodaysPrompt() {
                   toast({ title: 'Error', description: 'Failed to generate prompt', variant: 'destructive' })
                 }
               }}
-              disabled={isGenerating}
-              className={`w-full sm:w-auto text-sm ${theme === 'dark' ? 'bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/40' : 'bg-purple-100 hover:bg-purple-200 text-gray-900 border border-purple-300'}`}
+              disabled={isGenerating || limitReached}
+              className={`w-full sm:w-auto text-sm ${limitReached
+                ? theme === 'dark' ? 'bg-orange-500/20 text-orange-300 border border-orange-500/40 cursor-not-allowed' : 'bg-orange-100 text-orange-700 border border-orange-300 cursor-not-allowed'
+                : theme === 'dark' ? 'bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/40' : 'bg-purple-100 hover:bg-purple-200 text-gray-900 border border-purple-300'}`}
             >
-              {isGenerating ? 'Generating...' : "Generate today's prompt"}
+              {isGenerating ? 'Generating...' : limitReached ? 'Limit Reached' : "Generate today's prompt"}
             </Button>
             <Button
               type="button"

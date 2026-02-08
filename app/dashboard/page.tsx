@@ -18,7 +18,6 @@ const MoodTracker = dynamic(() => import("./components/mood-tracker"), { ssr: fa
 const WeeklyReflectionCard = dynamic(() => import("./components/weekly-reflection-card"), { ssr: false })
 const MonthlyReflectionCard = dynamic(() => import("./components/monthly-reflection-card"), { ssr: false })
 const FromYourPastCard = dynamic(() => import("./components/from-your-past-card"), { ssr: false })
-const YourRhythm = dynamic(() => import("./components/your-rhythm"), { ssr: false })
 const SettingsLinkCard = dynamic(() => import("./components/settings-link-card"), { ssr: false })
 const HistorySearchCard = dynamic(() => import("./components/history-search-card"), { ssr: false })
 const PushNotificationPrompt = dynamic(() => import("@/components/notifications/PushNotificationPrompt").then(mod => ({ default: mod.PushNotificationPrompt })), { ssr: false })
@@ -153,7 +152,6 @@ export default function DashboardPage() {
                   {tier === 'premium' && <WeeklyReflectionCard />}
                   {tier === 'premium' && <MonthlyReflectionCard />}
                   {tier === 'premium' && <FromYourPastCard />}
-                  <YourRhythm />
                   <SettingsLinkCard />
 
                   {/* Upgrade Banner (free users) */}

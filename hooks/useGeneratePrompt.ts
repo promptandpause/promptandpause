@@ -128,6 +128,9 @@ export function useGeneratePrompt() {
       // Invalidate stats cache to trigger refresh
       invalidateStats()
 
+      // Dispatch event so PromptLimitBanner updates dynamically
+      window.dispatchEvent(new CustomEvent('prompt-generated'))
+
       return generatedPrompt
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') {

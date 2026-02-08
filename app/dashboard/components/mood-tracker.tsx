@@ -89,7 +89,7 @@ export default function MoodTracker() {
     <section className={`rounded-2xl p-5 ${isDark ? 'bg-white/5 border border-white/8' : 'bg-[#FAFAF7] border border-[#E8E5DE]'}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
-        <h3 className={`font-semibold text-base ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>How are you feeling?</h3>
+        <h3 className={`font-semibold text-base ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>Your Rhythm</h3>
         {currentStreak > 0 && (
           <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${isDark ? 'bg-[#A8D5BA]/15 text-[#A8D5BA]' : 'bg-[#E8F5E9] text-[#5A8F6E]'}`}>
             {currentStreak} day streak
