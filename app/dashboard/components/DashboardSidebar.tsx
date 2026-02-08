@@ -276,8 +276,8 @@ export function DashboardSidebar() {
       <div className="md:hidden fixed top-0 left-0 right-0 z-50">
         <div className={`px-5 h-14 flex items-center justify-between mt-[env(safe-area-inset-top,0px)] ${
           isDark
-            ? 'bg-[#141820]/95 backdrop-blur-lg border-b border-white/5'
-            : 'bg-white/95 backdrop-blur-lg border-b border-[#E8E5DE]'
+            ? 'bg-[#141820]/98 md:backdrop-blur-lg border-b border-white/5'
+            : 'bg-white/98 md:backdrop-blur-lg border-b border-[#E8E5DE]'
         }`}>
           <img
             className={`h-6 ${isDark ? 'invert' : ''}`}
@@ -320,8 +320,8 @@ export function DashboardSidebar() {
       <div className="md:hidden fixed bottom-3 left-3 right-3 z-50">
         <div className={`rounded-2xl shadow-lg ${
           isDark
-            ? 'bg-[#1A1F2E]/95 backdrop-blur-lg border border-white/8'
-            : 'bg-white/95 backdrop-blur-lg border border-[#E0DDD6] shadow-[#D4D0C8]/30'
+            ? 'bg-[#1A1F2E]/98 md:backdrop-blur-lg border border-white/8'
+            : 'bg-white/98 md:backdrop-blur-lg border border-[#E0DDD6] shadow-[#D4D0C8]/30'
         }`}>
           <div className="flex justify-around items-center h-16 px-2">
             {mobileNav.map((item) => {

@@ -383,23 +383,55 @@
 /* ===== GLASS EFFECT UTILITIES (outside @layer to prevent purging) ===== */
 .glass-light {
   background: var(--glass-light);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--glass-border);
 }
 
 .glass-medium {
   background: var(--glass-medium);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
 }
 
 .glass-heavy {
   background: var(--glass-heavy);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
   border: 1px solid var(--glass-border);
+}
+
+/* Enable backdrop-blur only on desktop — blur is extremely expensive on mobile GPUs */
+@media (min-width: 768px) {
+  .glass-light {
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  .glass-medium {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  .glass-heavy {
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
+}
+
+/* On mobile, increase opacity to compensate for no blur */
+@media (max-width: 767px) {
+  .glass-light {
+    background: rgba(255, 255, 255, 0.92);
+  }
+  .glass-medium {
+    background: rgba(255, 255, 255, 0.95);
+  }
+  .glass-heavy {
+    background: rgba(255, 255, 255, 0.98);
+  }
+  .dark .glass-light {
+    background: rgba(26, 22, 37, 0.92);
+  }
+  .dark .glass-medium {
+    background: rgba(26, 22, 37, 0.95);
+  }
+  .dark .glass-heavy {
+    background: rgba(26, 22, 37, 0.98);
+  }
 }
 
 /* Glass fallback for unsupported browsers */
@@ -482,6 +514,14 @@
   .motion-reduce-mobile {
     animation-duration: 0.1s !important;
     transition-duration: 0.1s !important;
+  }
+
+  /* Constrain transition-all on mobile to avoid layout thrashing.
+     transition-all forces the browser to check every CSS property on each
+     interaction, which is the #1 cause of high INP on mobile. */
+  [class*="transition-all"] {
+    transition-property: color, background-color, border-color, opacity, transform, box-shadow !important;
+    transition-duration: 150ms !important;
   }
 }
 
