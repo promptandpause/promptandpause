@@ -68,7 +68,7 @@ export default function DashboardPage() {
           <DashboardSidebar />
 
           {/* Main Content — 2-column on desktop: main + info sidebar */}
-          <main className="flex-1 pb-24 md:pb-10 overflow-y-auto min-h-screen">
+          <main className="flex-1 pb-32 md:pb-10 overflow-y-auto min-h-screen">
             <div className="max-w-[1200px] mx-auto px-4 md:px-6 pt-16 md:pt-10">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-start">
 

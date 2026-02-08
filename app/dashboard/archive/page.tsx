@@ -183,7 +183,7 @@ function ArchivePageContent() {
       <div className="flex items-start min-h-screen">
         <DashboardSidebar />
 
-        <main className="flex-1 pb-24 md:pb-10 overflow-y-auto min-h-screen">
+        <main className="flex-1 pb-32 md:pb-10 overflow-y-auto min-h-screen">
           <div className="max-w-[1000px] mx-auto px-4 md:px-6 pt-16 md:pt-10">
           <div className="space-y-5 md:space-y-6">
           {/* Header Card */}

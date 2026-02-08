@@ -239,7 +239,7 @@ export default function JournalsPage() {
       <div className="flex items-start min-h-screen">
         <DashboardSidebar />
 
-        <main className="flex-1 pb-24 md:pb-10 overflow-y-auto min-h-screen">
+        <main className="flex-1 pb-32 md:pb-10 overflow-y-auto min-h-screen">
           <div className="max-w-[1000px] mx-auto px-4 md:px-6 pt-16 md:pt-10">
           <div className="space-y-5 md:space-y-6">
           {/* Header Card */}
@@ -571,7 +571,7 @@ export default function JournalsPage() {
       {!showEditor && !editingId && (
         <button
           onClick={() => { setShowEditor(true); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-          className={`md:hidden fixed bottom-20 right-4 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all active:scale-95 ${
+          className={`md:hidden fixed bottom-24 right-4 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all active:scale-95 ${
             theme === 'dark'
               ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-green-500/30'
               : 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-green-500/40'

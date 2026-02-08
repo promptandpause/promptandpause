@@ -316,14 +316,14 @@ export function DashboardSidebar() {
         </div>
       </div>
 
-      {/* ─── Mobile Bottom Tab Bar — Floating, rounded ─── */}
-      <div className="md:hidden fixed bottom-3 left-3 right-3 z-50">
-        <div className={`rounded-2xl shadow-lg ${
+      {/* ─── Mobile Bottom Tab Bar — Fixed to bottom edge ─── */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50">
+        <div className={`shadow-lg ${
           isDark
-            ? 'bg-[#1A1F2E]/98 md:backdrop-blur-lg border border-white/8'
-            : 'bg-white/98 md:backdrop-blur-lg border border-[#E0DDD6] shadow-[#D4D0C8]/30'
+            ? 'bg-[#1A1F2E] border-t border-white/8'
+            : 'bg-white border-t border-[#E0DDD6] shadow-[#D4D0C8]/30'
         }`}>
-          <div className="flex justify-around items-center h-16 px-2">
+          <div className="flex justify-around items-center h-14 px-2">
             {mobileNav.map((item) => {
               const iconColor = item.crisis
                 ? isDark ? 'text-rose-400' : 'text-rose-500'
@@ -350,9 +350,9 @@ export function DashboardSidebar() {
               )
             })}
           </div>
+          {/* Safe area spacer for notched phones */}
+          <div className="h-[env(safe-area-inset-bottom,0px)]" />
         </div>
-        {/* Safe area spacer for notched phones */}
-        <div className="h-[env(safe-area-inset-bottom,0px)]" />
       </div>
     </>
   )

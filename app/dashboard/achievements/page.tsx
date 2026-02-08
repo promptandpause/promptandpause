@@ -73,7 +73,7 @@ function AchievementsPageContent() {
       className={`min-h-screen ${theme === 'dark' ? 'bg-[#141820]' : 'bg-[#F5F3EE]'}`}
     >
       
-      <div className="relative z-10 px-3 md:px-6 py-4 md:py-8 pb-24 md:pb-8">
+      <div className="relative z-10 px-3 md:px-6 py-4 md:py-8 pb-32 md:pb-8">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
