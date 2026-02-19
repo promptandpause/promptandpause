@@ -24,6 +24,7 @@ docs/guides/EMAIL_SETUP.md
 docs/archive/SLACK_SETUP_GUIDE.md
 docs/archive/IMPLEMENTATION_SUMMARY.md
 docs/archive/CRITICAL_FIX_PROFILES.md
+Sql scripts/create_admin_user.sql
 
 # local debug files
 npm-debug.log*
