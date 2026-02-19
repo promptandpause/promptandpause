@@ -36,6 +36,32 @@ self.addEventListener('activate', (event) => {
   self.clients.claim()
 })
 
+function buildValidatedUrl(requestUrl) {
+  try {
+    // Minimal path validation
+    if (requestUrl.includes('/../') || /\/%2e%2e\//i.test(requestUrl)) {
+      throw new Error('Invalid path');
+    }
+    
+    const url = new URL(requestUrl);
+    
+    // Protocol check
+    if (!['http:', 'https:'].includes(url.protocol)) {
+      throw new Error('Invalid protocol');
+    }
+    
+    // Ensure same origin
+    const origin = new URL(self.location.origin);
+    if (url.hostname !== origin.hostname) {
+      throw new Error('Invalid host');
+    }
+    
+    return url.href;
+  } catch {
+    throw new Error('Invalid URL');
+  }
+}
+
 // Fetch event - network first, fallback to cache
 self.addEventListener('fetch', (event) => {
   const { request } = event
@@ -55,7 +81,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   event.respondWith(
-    fetch(request)
+    fetch(buildValidatedUrl(request.url))
       .then((response) => {
         // Clone the response before caching
         const responseToCache = response.clone()
