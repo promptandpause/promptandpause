@@ -26,7 +26,7 @@ Prompt & Pause uses Resend for transactional email delivery. The app sends the f
 ### 2. Environment Variables
 Your `.env.local` already has:
 ```env
-RESEND_API_KEY=re_AsF8h3Xv_D33BywX1GDEgRvHQ9n7BjFFT
+RESEND_API_KEY=YOUR_RESEND_API_KEY
 RESEND_FROM_EMAIL=prompts@promptandpause.com
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```

@@ -8,11 +8,17 @@ const __dirname = path.dirname(__filename)
 const nextConfig = {
   output: 'standalone',
   
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   images: {
-    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+      },
+    ],
   },
   experimental: {
     optimizePackageImports: ['lucide-react', 'framer-motion'],
@@ -25,9 +31,9 @@ const nextConfig = {
           { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains; preload' },
           { key: 'X-Frame-Options', value: 'DENY' },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
-          { key: 'Referrer-Policy', value: 'no-referrer' },
-          // Performance and caching headers
-          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          // Performance and caching headers - use stale-while-revalidate for pages
+          { key: 'Cache-Control', value: 'public, s-maxage=60, stale-while-revalidate=300' },
           // Cookie security headers
           { key: 'Set-Cookie', value: 'SameSite=Lax; Secure; HttpOnly; Path=/' },
           // Comprehensive CSP with all required services
@@ -35,7 +41,7 @@ const nextConfig = {
             key: 'Content-Security-Policy', 
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' 'wasm-unsafe-eval' https://js.stripe.com https://m.stripe.network https://va.vercel-scripts.com",
+              "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://js.stripe.com https://m.stripe.network https://va.vercel-scripts.com",
               "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.openai.com https://api.x.ai https://api.stripe.com https://api.resend.com https://hooks.slack.com https://*.upstash.io https://vitals.vercel-insights.com https://lottie.host https://*.lottiefiles.com https://cdn.jsdelivr.net https://unpkg.com",
               "img-src 'self' data: blob: https://*.supabase.co https://*.stripe.com https://lottie.host https://res.cloudinary.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",

@@ -53,10 +53,10 @@ Your `.env.local` should look like this:
 
 ```bash
 # Primary AI provider: Google Gemini (FREE tier!)
-GEMINI_API_KEY=AIzaSyC_abc123def456ghi789...  # Your actual key
+GEMINI_API_KEY=YOUR_GEMINI_API_KEY  # Add your own key
 
 # Backup AI provider: OpenAI
-OPENAI_API_KEY=sk-proj-...  # Keep your existing OpenAI key
+OPENAI_API_KEY=YOUR_OPENAI_API_KEY  # Add your own key
 ```
 
 ---
@@ -121,7 +121,7 @@ You could support ~300 daily users on free tier alone!
 ### Not seeing "Generated with Gemini" in logs?
 ```bash
 # Check your .env.local has:
-GEMINI_API_KEY=AIzaSy...  # Your actual key
+GEMINI_API_KEY=YOUR_GEMINI_API_KEY  # Your actual key
 
 # Restart your server:
 npm run dev
