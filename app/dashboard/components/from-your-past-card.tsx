@@ -72,13 +72,16 @@ export default function FromYourPastCard() {
 
   return (
     <section
-      className={`rounded-2xl md:rounded-3xl p-5 md:p-7 transition-all duration-200 ${
-        theme === "dark" ? "glass-light shadow-soft-lg" : "glass-medium shadow-soft-md"
+      className={`rounded-2xl p-5 md:p-6 transition-all duration-200 relative overflow-hidden ${
+        theme === "dark"
+          ? "bg-gradient-to-br from-[#B8C9E0]/[0.08] to-white/[0.03] border border-[#B8C9E0]/[0.12] hover:border-[#B8C9E0]/20"
+          : "bg-gradient-to-br from-[#EEF4FB] to-white/80 border border-[#C8D8E8]/60 hover:border-[#C8D8E8] hover:shadow-sm"
       }`}
     >
+      <div className={`absolute top-0 left-0 w-full h-[2px] ${theme === 'dark' ? 'bg-gradient-to-r from-[#B8C9E0]/50 to-transparent' : 'bg-gradient-to-r from-[#5B7FA5]/30 to-transparent'}`} />
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <p className={`text-xs mb-2 ${theme === "dark" ? "text-white/50" : "text-gray-500"}`}>{data.label}</p>
+          <p className={`text-[10px] uppercase tracking-[0.16em] font-semibold mb-2 ${theme === "dark" ? "text-[#B8C9E0]/60" : "text-[#5B7FA5]/70"}`}>{data.label}</p>
           <p className={`text-sm leading-relaxed line-clamp-3 ${theme === "dark" ? "text-white/80" : "text-gray-700"}`}>{excerpt}</p>
           <div className="mt-4">
             <Button

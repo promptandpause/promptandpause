@@ -84,8 +84,8 @@ export default function WellnessPage() {
 
   if (!userId) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+      <div className={`min-h-screen flex items-center justify-center ${theme === 'dark' ? 'bg-[#141820]' : 'bg-[#F5F3EE]'}`}>
+        <div className={`animate-spin rounded-full h-8 w-8 border-b-2 ${theme === 'dark' ? 'border-[#C4B5E0]' : 'border-[#7E6BA5]'}`}></div>
       </div>
     )
   }
@@ -96,14 +96,14 @@ export default function WellnessPage() {
         data-dashboard
         className={`min-h-screen ${theme === 'dark' ? 'bg-[#141820]' : 'bg-[#F5F3EE]'}`}
       >
-        <div className="flex items-start min-h-screen">
+        <div className="flex h-screen overflow-hidden">
           <DashboardSidebar />
 
-          <main className="flex-1 pb-32 md:pb-10 overflow-y-auto min-h-screen">
+          <main className="flex-1 pb-32 md:pb-10 overflow-y-auto scrollbar-thin">
             <div className="max-w-[1000px] mx-auto px-4 md:px-6 pt-16 md:pt-10">
             <div className="space-y-5 md:space-y-6">
               {/* Header */}
-              <Card className={`rounded-2xl p-5 md:p-6 border shadow-none ${theme === 'dark' ? 'bg-white/5 border-white/8' : 'bg-[#FAFAF7] border-[#E8E5DE]'}`}>
+              <Card className={`rounded-2xl p-5 md:p-6 border shadow-none ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#E8E5DE]'}`}>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div>
                     <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>
@@ -191,7 +191,7 @@ export default function WellnessPage() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.2 }}
                     >
-                      <Card className={`rounded-2xl h-full border shadow-none ${theme === 'dark' ? 'bg-white/5 border-white/8' : 'bg-[#FAFAF7] border-[#E8E5DE]'}`}>
+                      <Card className={`rounded-2xl h-full border shadow-none ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#E8E5DE]'}`}>
                         <CardHeader className="pb-3">
                           <CardTitle className={`text-lg flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>
                             <Wind className="w-5 h-5 text-blue-500" />
@@ -264,7 +264,7 @@ export default function WellnessPage() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4 }}
                     >
-                      <Card className={`rounded-2xl border shadow-none ${theme === 'dark' ? 'bg-white/5 border-white/8' : 'bg-[#FAFAF7] border-[#E8E5DE]'}`}>
+                      <Card className={`rounded-2xl border shadow-none ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#E8E5DE]'}`}>
                         <CardHeader className="pb-3">
                           <div className="flex items-center justify-between">
                             <CardTitle className={`text-lg flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>
@@ -329,7 +329,7 @@ export default function WellnessPage() {
                   <div className="grid gap-4 md:grid-cols-2">
                     <WeeklyMoodInsights userId={userId} />
                     
-                    <Card className={`rounded-2xl border shadow-none ${theme === 'dark' ? 'bg-white/5 border-white/8' : 'bg-[#FAFAF7] border-[#E8E5DE]'}`}>
+                    <Card className={`rounded-2xl border shadow-none ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#E8E5DE]'}`}>
                       <CardHeader>
                         <CardTitle className={`text-lg ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>
                           Reflection Summary
@@ -350,7 +350,7 @@ export default function WellnessPage() {
                   {isPremium ? (
                     <GoalsDashboard userId={userId} />
                   ) : (
-                    <Card className={`rounded-2xl p-8 text-center border shadow-none ${theme === 'dark' ? 'bg-white/5 border-white/8' : 'bg-[#FAFAF7] border-[#E8E5DE]'}`}>
+                    <Card className={`rounded-2xl p-8 text-center border shadow-none ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#E8E5DE]'}`}>
                       <Lock className={`w-12 h-12 mx-auto mb-4 ${theme === 'dark' ? 'text-white/20' : 'text-[#C4C0B8]'}`} />
                       <h3 className={`text-lg font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>
                         Premium Feature
@@ -373,7 +373,7 @@ export default function WellnessPage() {
                   {isPremium ? (
                     <HabitsTracker userId={userId} />
                   ) : (
-                    <Card className={`rounded-2xl p-8 text-center border shadow-none ${theme === 'dark' ? 'bg-white/5 border-white/8' : 'bg-[#FAFAF7] border-[#E8E5DE]'}`}>
+                    <Card className={`rounded-2xl p-8 text-center border shadow-none ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#E8E5DE]'}`}>
                       <Lock className={`w-12 h-12 mx-auto mb-4 ${theme === 'dark' ? 'text-white/20' : 'text-[#C4C0B8]'}`} />
                       <h3 className={`text-lg font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>
                         Premium Feature

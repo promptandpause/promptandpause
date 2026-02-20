@@ -236,14 +236,14 @@ export default function JournalsPage() {
       data-dashboard
       className={`min-h-screen ${theme === 'dark' ? 'bg-[#141820]' : 'bg-[#F5F3EE]'}`}
     >
-      <div className="flex items-start min-h-screen">
+      <div className="flex h-screen overflow-hidden">
         <DashboardSidebar />
 
-        <main className="flex-1 pb-32 md:pb-10 overflow-y-auto min-h-screen">
+        <main className="flex-1 pb-32 md:pb-10 overflow-y-auto scrollbar-thin">
           <div className="max-w-[1000px] mx-auto px-4 md:px-6 pt-16 md:pt-10">
           <div className="space-y-5 md:space-y-6">
           {/* Header Card */}
-          <Card className={`rounded-2xl p-4 md:p-6 border shadow-none ${theme === 'dark' ? 'bg-white/5 border-white/8' : 'bg-[#FAFAF7] border-[#E8E5DE]'}`}>
+          <Card className={`rounded-2xl p-4 md:p-6 border shadow-none ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#E8E5DE]'}`}>
             <div className="space-y-3 md:space-y-4">
               {/* Title Row with Filter Toggle (Mobile) */}
               <div className="flex items-center justify-between gap-3">
@@ -353,7 +353,7 @@ export default function JournalsPage() {
           </Card>
 
           {/* Editor Card - Hidden on mobile by default, shown via FAB or when editing */}
-          <Card className={`rounded-2xl p-4 md:p-6 border shadow-none ${theme === 'dark' ? 'bg-white/5 border-white/8' : 'bg-[#FAFAF7] border-[#E8E5DE]'} ${(showEditor || editingId) ? 'block' : 'hidden md:block'}`}>
+          <Card className={`rounded-2xl p-4 md:p-6 border shadow-none ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#E8E5DE]'} ${(showEditor || editingId) ? 'block' : 'hidden md:block'}`}>
             <div className="flex items-center justify-between mb-3">
               <div>
                 <h2 className={`text-lg md:text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>{editingId ? "Edit Journal" : "New Journal"}</h2>
@@ -430,7 +430,7 @@ export default function JournalsPage() {
           </Card>
 
           {/* List Card */}
-          <Card className={`rounded-2xl p-4 md:p-6 border shadow-none ${theme === 'dark' ? 'bg-white/5 border-white/8' : 'bg-[#FAFAF7] border-[#E8E5DE]'}`}>
+          <Card className={`rounded-2xl p-4 md:p-6 border shadow-none ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#E8E5DE]'}`}>
             <div className="flex items-center justify-between mb-4">
               <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>
                 Your Journals ({filtered.length})
@@ -473,7 +473,7 @@ export default function JournalsPage() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
-                        className={`rounded-2xl p-4 border ${theme === 'dark' ? 'bg-white/5 border-white/8' : 'bg-white border-[#E8E5DE]'}`}
+                        className={`rounded-2xl p-4 border ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white border-[#E8E5DE]'}`}
                       >
                         <div className="flex items-start justify-between gap-3">
                           <div className="space-y-2 flex-1">

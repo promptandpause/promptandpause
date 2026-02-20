@@ -180,14 +180,14 @@ function ArchivePageContent() {
       data-dashboard
       className={`min-h-screen ${theme === 'dark' ? 'bg-[#141820]' : 'bg-[#F5F3EE]'}`}
     >
-      <div className="flex items-start min-h-screen">
+      <div className="flex h-screen overflow-hidden">
         <DashboardSidebar />
 
-        <main className="flex-1 pb-32 md:pb-10 overflow-y-auto min-h-screen">
+        <main className="flex-1 pb-32 md:pb-10 overflow-y-auto scrollbar-thin">
           <div className="max-w-[1000px] mx-auto px-4 md:px-6 pt-16 md:pt-10">
           <div className="space-y-5 md:space-y-6">
           {/* Header Card */}
-          <Card className={`rounded-2xl p-4 md:p-6 border shadow-none ${theme === 'dark' ? 'bg-white/5 border-white/8' : 'bg-[#FAFAF7] border-[#E8E5DE]'}`}>
+          <Card className={`rounded-2xl p-4 md:p-6 border shadow-none ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#E8E5DE]'}`}>
             <div className="flex flex-col md:flex-row md:items-center md:items-center md:justify-between gap-3 md:gap-4">
               <div>
                 <h2 className={`text-xl md:text-3xl font-semibold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>Archive</h2>
@@ -343,7 +343,7 @@ function ArchivePageContent() {
 
           {/* Reflections List */}
           <Card className={`rounded-2xl p-4 md:p-6 border shadow-none ${
-            theme === 'dark' ? 'bg-white/5 border-white/8' : 'bg-[#FAFAF7] border-[#E8E5DE]'
+            theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#E8E5DE]'
           }`}>
             <div className="flex items-center justify-between mb-4 md:mb-6">
               <div>
@@ -378,7 +378,7 @@ function ArchivePageContent() {
               {loading ? (
                 Array(3).fill(0).map((_, index) => (
                   <Card key={index} className={`rounded-2xl p-5 border shadow-none ${
-                    theme === 'dark' ? 'bg-white/5 border-white/8' : 'bg-white border-[#E8E5DE]'
+                    theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white border-[#E8E5DE]'
                   }`}>
                     <div className="flex items-start gap-3">
                       <Skeleton className={`h-10 w-10 rounded-full ${theme === 'dark' ? 'bg-white/8' : 'bg-[#E8E5DE]'}`} />
@@ -408,7 +408,7 @@ function ArchivePageContent() {
                       transition={{ duration: 0.3, delay: index * 0.1 }}
                     >
                       <Card className={`rounded-2xl p-4 md:p-5 transition-all duration-200 border shadow-none ${
-                        theme === 'dark' ? 'bg-white/5 border-white/8 hover:bg-white/8' : 'bg-white border-[#E8E5DE] hover:bg-[#FAFAF7]'
+                        theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06] hover:bg-white/8' : 'bg-white border-[#E8E5DE] hover:bg-[#FAFAF7]'
                       }`}>
                         <div className="space-y-3">
                           <div className="flex items-start justify-between gap-3">

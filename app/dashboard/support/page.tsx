@@ -241,10 +241,10 @@ function ContactSupportPageContent() {
       data-dashboard
       className={`min-h-screen ${theme === 'dark' ? 'bg-[#141820]' : 'bg-[#F5F3EE]'}`}
     >
-      <div className="flex items-start min-h-screen">
+      <div className="flex h-screen overflow-hidden">
         <DashboardSidebar />
 
-        <main className="flex-1 pb-32 md:pb-10 overflow-y-auto min-h-screen">
+        <main className="flex-1 pb-32 md:pb-10 overflow-y-auto scrollbar-thin">
           <div className="max-w-[1000px] mx-auto px-4 md:px-6 pt-16 md:pt-10">
           <div className="space-y-5 md:space-y-6">
           {/* Mobile Back Button */}
@@ -265,8 +265,8 @@ function ContactSupportPageContent() {
           {/* Header */}
           <Card className={`rounded-2xl p-5 md:p-8 border shadow-none ${
             theme === 'dark'
-              ? 'bg-white/5 border-white/8'
-              : 'bg-[#FAFAF7] border-[#E8E5DE]'
+              ? 'bg-white/[0.04] border-white/[0.06]'
+              : 'bg-white/70 border-[#E8E5DE]'
           }`}>
             <div className="flex items-start gap-4">
               <div className={`p-4 rounded-2xl ${
@@ -294,8 +294,8 @@ function ContactSupportPageContent() {
           {/* Support Form */}
           <Card className={`rounded-2xl p-5 md:p-8 border shadow-none ${
             theme === 'dark'
-              ? 'bg-white/5 border-white/8'
-              : 'bg-[#FAFAF7] border-[#E8E5DE]'
+              ? 'bg-white/[0.04] border-white/[0.06]'
+              : 'bg-white/70 border-[#E8E5DE]'
           }`}>
             {submitted ? (
               <div className="text-center py-12">
@@ -475,7 +475,7 @@ function ContactSupportPageContent() {
                 {/* User Info Display */}
                 <Card className={`p-4 rounded-xl border shadow-none ${
                   theme === 'dark'
-                    ? 'bg-white/5 border-white/8'
+                    ? 'bg-white/[0.04] border-white/[0.06]'
                     : 'bg-[#F0EDE6] border-[#E8E5DE]'
                 }`}>
                   <p className={`text-xs mb-2 ${
@@ -527,8 +527,8 @@ function ContactSupportPageContent() {
           {/* FAQ Quick Links */}
           <Card className={`rounded-2xl p-5 md:p-6 border shadow-none ${
             theme === 'dark'
-              ? 'bg-white/5 border-white/8'
-              : 'bg-[#FAFAF7] border-[#E8E5DE]'
+              ? 'bg-white/[0.04] border-white/[0.06]'
+              : 'bg-white/70 border-[#E8E5DE]'
           }`}>
             <h3 className={`font-semibold mb-4 flex items-center gap-2 ${
               theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
