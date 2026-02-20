@@ -2074,7 +2074,7 @@ function SettingsPageContent() {
                       }`}>Integrations</h3>
                     </div>
                     <div className="space-y-3">
-                      <div className={`p-4 rounded-xl ${
+                      <div className={`p-4 rounded-xl ${currentPlan !== 'premium' ? 'opacity-60' : ''} ${
                         theme === 'dark'
                           ? 'bg-white/5 border-white/8'
                           : 'bg-[#F0EDE6] border-2 border-[#E8E5DE]'
@@ -2085,14 +2085,26 @@ function SettingsPageContent() {
                             <h4 className={`font-medium ${
                               theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
                             }`}>Slack</h4>
-                            {slackConnected && <p className={`text-xs ${
-                              theme === 'dark' ? 'text-green-400' : 'text-green-600'
-                            }`}>Connected</p>}
+                            {currentPlan !== 'premium' ? (
+                              <p className={`text-xs flex items-center gap-1 ${
+                                theme === 'dark' ? 'text-amber-400' : 'text-amber-600'
+                              }`}><Crown className="h-3 w-3" /> Premium Feature</p>
+                            ) : slackConnected ? (
+                              <p className={`text-xs ${
+                                theme === 'dark' ? 'text-green-400' : 'text-green-600'
+                              }`}>Connected</p>
+                            ) : null}
                           </div>
                         </div>
-                        <Button onClick={slackConnected ? handleDisconnectSlack : handleConnectSlack} size="sm" className="w-full h-9" disabled={slackLoading}>
-                          {slackConnected ? 'Disconnect' : 'Connect Slack'}
-                        </Button>
+                        {currentPlan !== 'premium' ? (
+                          <Button onClick={() => navigateToView('subscription')} size="sm" className="w-full h-9" variant="outline">
+                            Upgrade to Premium
+                          </Button>
+                        ) : (
+                          <Button onClick={slackConnected ? handleDisconnectSlack : handleConnectSlack} size="sm" className="w-full h-9" disabled={slackLoading}>
+                            {slackConnected ? 'Disconnect' : 'Connect Slack'}
+                          </Button>
+                        )}
                       </div>
                       <div className={`p-4 rounded-xl opacity-60 ${
                         theme === 'dark'
@@ -3085,7 +3097,7 @@ function SettingsPageContent() {
             
             <div className="space-y-4">
               {/* Slack Integration */}
-              <div className={`p-5 rounded-xl transition-all duration-300 hover:shadow-md ${
+              <div className={`p-5 rounded-xl transition-all duration-300 hover:shadow-md ${currentPlan !== 'premium' ? 'opacity-70' : ''} ${
                 theme === 'dark'
                   ? 'bg-white/5 border-white/8'
                   : 'bg-[#F0EDE6] border-2 border-[#E8E5DE]'
@@ -3106,7 +3118,16 @@ function SettingsPageContent() {
                       <h4 className={`text-lg font-semibold ${
                         theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
                       }`}>Slack</h4>
-                      {slackConnected && (
+                      {currentPlan !== 'premium' ? (
+                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs ${
+                          theme === 'dark'
+                            ? 'bg-amber-500/10 border border-amber-400/30 text-amber-400'
+                            : 'bg-amber-100 border-2 border-amber-300 text-amber-700'
+                        }`}>
+                          <Crown className="h-3 w-3" />
+                          Premium
+                        </span>
+                      ) : slackConnected ? (
                         <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs ${
                           theme === 'dark'
                             ? 'bg-green-500/10 border border-green-400/30 text-green-400'
@@ -3115,17 +3136,29 @@ function SettingsPageContent() {
                           <div className="w-1.5 h-1.5 rounded-full bg-green-600" />
                           Connected
                         </span>
-                      )}
+                      ) : null}
                     </div>
                     <p className={`text-sm mb-3 ${
                       theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
                     }`}>
-                      {slackConnected 
-                        ? `Receiving prompts in ${slackChannel || 'your channel'}`
-                        : "Get daily prompts delivered directly to your Slack workspace"}
+                      {currentPlan !== 'premium'
+                        ? "Upgrade to Premium to receive prompts in your Slack workspace"
+                        : slackConnected 
+                          ? `Receiving prompts in ${slackChannel || 'your channel'}`
+                          : "Get daily prompts delivered directly to your Slack workspace"}
                     </p>
                     
-                    {slackConnected ? (
+                    {currentPlan !== 'premium' ? (
+                      <Link href="/pricing">
+                        <Button
+                          size="sm"
+                          className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white transition-all duration-300"
+                        >
+                          <Crown className="h-4 w-4 mr-2" />
+                          Upgrade to Premium
+                        </Button>
+                      </Link>
+                    ) : slackConnected ? (
                       <div className="flex gap-2">
                         <Button
                           onClick={handleDisconnectSlack}

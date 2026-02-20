@@ -53,7 +53,7 @@ export async function POST(request: Request) {
       current_mood: body.mood || 5,
       prompt_time: timeMap[body.promptTime] || "09:00:00",
       prompt_frequency: body.promptFrequency || "daily",
-      delivery_method: body.delivery.toLowerCase() as "email" | "slack",
+      delivery_method: "email" as "email" | "slack", // All new users start on free tier — Slack is premium only
       focus_areas: Array.isArray(body.focus) ? body.focus : [],
       push_notifications: body.pushNotifications ?? true,
       daily_reminders: body.dailyReminders ?? true,

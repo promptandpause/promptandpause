@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
-import { Mail, Slack, ChevronLeft, ChevronRight, Sparkles, Heart, Brain, Target, Clock, Check } from "lucide-react"
+import { Mail, Slack, ChevronLeft, ChevronRight, Sparkles, Heart, Brain, Target, Clock, Check, Crown } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { getSupabaseClient } from "@/lib/supabase/client"
 import { detectUserTimezone } from "@/lib/utils/timezoneDetection"
@@ -414,27 +414,38 @@ export default function Onboarding() {
                     {/* Delivery Method Icons */}
                     {steps[step].type === "icon-single" && (
                       <div className="grid grid-cols-2 gap-4 mt-6">
-                        {(steps[step].options as { label: string; icon: any }[]).map((o) => (
-                          <motion.button
-                            key={o.label}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            className={`p-6 rounded-2xl flex flex-col items-center gap-3 transition-all duration-200 ${
-                              answers.delivery === o.label 
-                                ? "bg-gradient-to-br from-[#6FA984] to-[#5A8F6E] text-white shadow-lg" 
-                                : "bg-white/60 text-gray-700 border border-gray-200/50 hover:bg-white/80"
-                            }`}
-                            onClick={() => selectOption(o.label)}
-                          >
-                            <o.icon className="w-8 h-8" />
-                            <span className="font-medium">{o.label}</span>
-                            {answers.delivery === o.label && (
-                              <div className="absolute top-2 right-2">
-                                <Check className="w-5 h-5" />
-                              </div>
-                            )}
-                          </motion.button>
-                        ))}
+                        {(steps[step].options as { label: string; icon: any }[]).map((o) => {
+                          const isLocked = o.label === "Slack"
+                          return (
+                            <motion.button
+                              key={o.label}
+                              whileHover={isLocked ? {} : { scale: 1.02 }}
+                              whileTap={isLocked ? {} : { scale: 0.98 }}
+                              className={`p-6 rounded-2xl flex flex-col items-center gap-3 transition-all duration-200 relative ${
+                                isLocked
+                                  ? "bg-white/40 text-gray-400 border border-gray-200/50 cursor-not-allowed opacity-60"
+                                  : answers.delivery === o.label 
+                                    ? "bg-gradient-to-br from-[#6FA984] to-[#5A8F6E] text-white shadow-lg" 
+                                    : "bg-white/60 text-gray-700 border border-gray-200/50 hover:bg-white/80"
+                              }`}
+                              onClick={() => !isLocked && selectOption(o.label)}
+                              disabled={isLocked}
+                            >
+                              <o.icon className="w-8 h-8" />
+                              <span className="font-medium">{o.label}</span>
+                              {isLocked && (
+                                <span className="text-xs text-amber-600 font-medium flex items-center gap-1">
+                                  <Crown className="w-3 h-3" /> Premium
+                                </span>
+                              )}
+                              {!isLocked && answers.delivery === o.label && (
+                                <div className="absolute top-2 right-2">
+                                  <Check className="w-5 h-5" />
+                                </div>
+                              )}
+                            </motion.button>
+                          )
+                        })}
                       </div>
                     )}
 

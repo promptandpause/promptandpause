@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthUser, createClient } from '@/lib/supabase/server'
 import crypto from 'crypto'
+import { createClient as createServiceClient } from '@supabase/supabase-js'
 
 /**
  * GET /api/integrations/slack/auth-url
@@ -15,6 +16,25 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
+      )
+    }
+
+    // Verify user is premium
+    const serviceSupabase = createServiceClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      { auth: { autoRefreshToken: false, persistSession: false } }
+    )
+    const { data: profile } = await serviceSupabase
+      .from('profiles')
+      .select('subscription_tier')
+      .eq('id', user.id)
+      .single()
+
+    if (!profile || profile.subscription_tier !== 'premium') {
+      return NextResponse.json(
+        { error: 'Slack integration is a Premium feature. Please upgrade to connect Slack.' },
+        { status: 403 }
       )
     }
 

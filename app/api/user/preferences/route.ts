@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getAuthUser } from '@/lib/supabase/server'
 import { getUserPreferences, upsertUserPreferences } from '@/lib/services/userService'
 import { z } from 'zod'
+import { createClient as createServiceClient } from '@supabase/supabase-js'
 
 // Zod schema for user preferences - must match all fields sent from settings page
 const UserPreferencesSchema = z.object({
@@ -93,7 +94,27 @@ export async function PATCH(request: NextRequest) {
       )
     }
 
-    const result = await upsertUserPreferences(user.id, parsed.data)
+    const prefsToSave = { ...parsed.data }
+
+    // Enforce: free users cannot use Slack delivery
+    if (prefsToSave.delivery_method === 'slack' || prefsToSave.delivery_method === 'both') {
+      const serviceSupabase = createServiceClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!,
+        { auth: { autoRefreshToken: false, persistSession: false } }
+      )
+      const { data: profile } = await serviceSupabase
+        .from('profiles')
+        .select('subscription_tier')
+        .eq('id', user.id)
+        .single()
+
+      if (!profile || profile.subscription_tier !== 'premium') {
+        prefsToSave.delivery_method = 'email'
+      }
+    }
+
+    const result = await upsertUserPreferences(user.id, prefsToSave)
 
     if (result.error) {
       throw new Error(result.error)

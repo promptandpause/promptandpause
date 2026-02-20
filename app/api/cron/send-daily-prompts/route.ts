@@ -633,13 +633,21 @@ export async function POST(request: NextRequest) {
         }
 
         // Add to prepared users for batch delivery
+        // Enforce: free users can only receive email delivery (Slack is premium)
+        let effectiveDeliveryMethod = userPrefs.delivery_method || 'email'
+        let effectiveSlackWebhook = userPrefs.slack_webhook_url || null
+        if (isFreeUser && (effectiveDeliveryMethod === 'slack' || effectiveDeliveryMethod === 'both')) {
+          effectiveDeliveryMethod = 'email'
+          effectiveSlackWebhook = null
+        }
+
         preparedUsers.push({
           userId: profile.id,
           email: profile.email,
           fullName: profile.full_name,
           promptText,
-          deliveryMethod: userPrefs.delivery_method || 'email',
-          slackWebhookUrl: userPrefs.slack_webhook_url || null,
+          deliveryMethod: effectiveDeliveryMethod,
+          slackWebhookUrl: effectiveSlackWebhook,
         })
 
       } catch (userError) {

@@ -297,6 +297,16 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
     throw updateError
   }
 
+  // Revert delivery method to email — Slack is a premium feature
+  await supabaseAdmin
+    .from('user_preferences')
+    .update({
+      delivery_method: 'email',
+      updated_at: new Date().toISOString(),
+    })
+    .eq('user_id', userId)
+    .in('delivery_method', ['slack', 'both'])
+
   await supabaseAdmin
     .from('subscription_events')
     .insert({

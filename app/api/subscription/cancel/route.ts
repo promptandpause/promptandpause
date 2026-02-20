@@ -98,6 +98,16 @@ export async function POST(request: NextRequest) {
         throw new Error('Failed to cancel gifted subscription')
       }
 
+      // Revert delivery method to email — Slack is a premium feature
+      await serviceSupabase
+        .from('user_preferences')
+        .update({
+          delivery_method: 'email',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('user_id', user.id)
+        .in('delivery_method', ['slack', 'both'])
+
       return NextResponse.json({
         success: true,
         message: 'Gifted subscription cancelled successfully',

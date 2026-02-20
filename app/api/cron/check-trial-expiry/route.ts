@@ -92,6 +92,16 @@ export async function POST(request: NextRequest) {
           continue
         }
 
+        // Revert delivery method to email — Slack is a premium feature
+        await supabase
+          .from('user_preferences')
+          .update({
+            delivery_method: 'email',
+            updated_at: new Date().toISOString(),
+          })
+          .eq('user_id', user.id)
+          .in('delivery_method', ['slack', 'both'])
+
         results.downgraded++
         // 2. Send trial expiration email
         const emailResult = await sendTrialExpiredEmail(

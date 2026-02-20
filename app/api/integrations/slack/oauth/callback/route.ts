@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthUser, createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers'
+import { createClient as createServiceClient } from '@supabase/supabase-js'
 
 /**
  * Slack OAuth Callback
@@ -46,6 +47,24 @@ export async function GET(request: NextRequest) {
     if (!user) {
       return NextResponse.redirect(
         new URL('/auth/signin?redirect=/dashboard/settings', request.url)
+      )
+    }
+
+    // Verify user is premium before completing Slack OAuth
+    const serviceSupabase = createServiceClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      { auth: { autoRefreshToken: false, persistSession: false } }
+    )
+    const { data: profile } = await serviceSupabase
+      .from('profiles')
+      .select('subscription_tier')
+      .eq('id', user.id)
+      .single()
+
+    if (!profile || profile.subscription_tier !== 'premium') {
+      return NextResponse.redirect(
+        new URL('/dashboard/settings?slack_error=premium_required', request.url)
       )
     }
 
