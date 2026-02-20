@@ -86,7 +86,7 @@ export default function MoodTracker() {
   const isDark = theme === 'dark';
 
   return (
-    <section className={`rounded-2xl p-5 ${isDark ? 'bg-white/5 border border-white/8' : 'bg-[#FAFAF7] border border-[#E8E5DE]'}`}>
+    <section className={`rounded-2xl p-5 ${isDark ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-white/70 border border-[#E8E5DE]'}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <h3 className={`font-semibold text-base ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>Your Rhythm</h3>
@@ -98,7 +98,7 @@ export default function MoodTracker() {
       </div>
       
       {/* Week Mood Row */}
-      <div className={`rounded-xl p-4 mb-4 ${isDark ? 'bg-white/5 border border-white/5' : 'bg-[#F0EDE6]/50 border border-[#E8E5DE]'}`}>
+      <div className={`rounded-xl p-4 mb-4 ${isDark ? 'bg-white/[0.03] border border-white/[0.04]' : 'bg-[#F8F6F2]/80 border border-[#E8E5DE]/80'}`}>
         <div className="flex justify-between">
           {weekData.map((day, i) => {
             const isToday = i === todayIndex;
@@ -142,7 +142,7 @@ export default function MoodTracker() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.15 }}
-            className={`rounded-xl p-4 ${isDark ? 'bg-white/5 border border-white/5' : 'bg-[#F0EDE6]/50 border border-[#E8E5DE]'}`}
+            className={`rounded-xl p-4 ${isDark ? 'bg-white/[0.03] border border-white/[0.04]' : 'bg-[#F8F6F2]/80 border border-[#E8E5DE]/80'}`}
           >
             <div className="flex items-center justify-between mb-2">
               <p className={`text-xs font-medium ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
@@ -177,7 +177,7 @@ export default function MoodTracker() {
       </AnimatePresence>
 
       {/* This Week Summary */}
-      <div className={`mt-4 rounded-xl p-4 ${isDark ? 'bg-white/5 border border-white/5' : 'bg-[#F0EDE6]/50 border border-[#E8E5DE]'}`}>
+      <div className={`mt-4 rounded-xl p-4 ${isDark ? 'bg-white/[0.03] border border-white/[0.04]' : 'bg-[#F8F6F2]/80 border border-[#E8E5DE]/80'}`}>
         <p className={`text-xs ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>Your mood trend</p>
         <p className={`text-base font-semibold mt-0.5 ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>
           {weekData.filter(d => d.mood).length > 0 ? 'Improving' : 'Start tracking'}

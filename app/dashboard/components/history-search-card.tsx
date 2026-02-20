@@ -11,16 +11,19 @@ export default function HistorySearchCard() {
 
   return (
     <section
-      className={`rounded-2xl p-5 md:p-6 transition-all ${
-        isDark ? "bg-white/5 border border-white/8" : "bg-[#FAFAF7] border border-[#E8E5DE]"
+      className={`rounded-2xl p-5 transition-all duration-200 relative overflow-hidden ${
+        isDark
+          ? "bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.06] hover:border-white/[0.1]"
+          : "bg-white/70 border border-[#E8E5DE] hover:border-[#D4D0C8] hover:shadow-sm"
       }`}
     >
+      <div className={`absolute top-0 left-0 w-full h-[2px] ${isDark ? 'bg-gradient-to-r from-amber-400/30 to-transparent' : 'bg-gradient-to-r from-amber-500/25 to-transparent'}`} />
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <p className={`text-xs uppercase tracking-[0.14em] font-medium mb-2 ${isDark ? "text-white/40" : "text-[#8A8A7A]"}`}>
+          <p className={`text-[10px] uppercase tracking-[0.16em] font-semibold mb-2 ${isDark ? "text-white/35" : "text-[#8A8A7A]"}`}>
             History & search
           </p>
-          <p className={`text-sm leading-relaxed ${isDark ? "text-white/70" : "text-[#5A5A4E]"}`}>
+          <p className={`text-[13px] leading-relaxed ${isDark ? "text-white/60" : "text-[#5A5A4E]"}`}>
             Find past reflections by text. Filters stay out of the way until you need them.
           </p>
         </div>

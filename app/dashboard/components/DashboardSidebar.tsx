@@ -109,7 +109,7 @@ export function DashboardSidebar() {
       {/* ─── Desktop Sidebar — Floating card, rounded-3xl, matches original structure ─── */}
       <div className="hidden md:block md:col-span-2 flex-shrink-0 p-4 pl-4 pr-0">
         <div
-          className={`rounded-3xl p-6 h-fit sticky top-6 flex flex-col gap-6 transition-all duration-200 ${
+          className={`rounded-3xl p-6 h-fit sticky top-6 flex flex-col gap-6 transition-all duration-200 max-h-[calc(100vh-3rem)] overflow-y-auto scrollbar-hide ${
             isDark
               ? 'bg-[#1A1F2E] border border-white/8 shadow-lg'
               : 'bg-[#FAFAF7] border border-[#E0DDD6] shadow-sm'
@@ -316,40 +316,38 @@ export function DashboardSidebar() {
         </div>
       </div>
 
-      {/* ─── Mobile Bottom Tab Bar — Floating, rounded ─── */}
-      <div className="md:hidden fixed bottom-2 left-3 right-3 z-50">
-        <div className={`rounded-2xl shadow-lg ${
-          isDark
-            ? 'bg-[#1A1F2E] border-t border-white/8'
-            : 'bg-white border-t border-[#E0DDD6] shadow-[#D4D0C8]/30'
-        }`}>
-          <div className="flex justify-around items-center h-16 px-2">
-            {mobileNav.map((item) => {
-              const iconColor = item.crisis
-                ? isDark ? 'text-rose-400' : 'text-rose-500'
-                : item.active
-                  ? isDark ? 'text-[#B8C9E0]' : 'text-[#5B7FA5]'
-                  : isDark ? 'text-white/30' : 'text-[#A0A090]'
-              return (
-                <Link
-                  key={item.id}
-                  href={item.href}
-                  className={`flex flex-col items-center justify-center gap-1 flex-1 py-2 rounded-xl transition-colors ${
-                    item.active && !item.crisis
-                      ? isDark ? 'bg-[#B8C9E0]/10' : 'bg-[#D4E4F7]/30'
-                      : ''
-                  }`}
-                >
-                  <span className={iconColor}>
-                    <MobileNavIcon id={item.id} />
-                  </span>
-                  <span className={`text-[10px] font-semibold ${iconColor}`}>
-                    {item.label}
-                  </span>
-                </Link>
-              )
-            })}
-          </div>
+      {/* ─── Mobile Bottom Tab Bar — Full-width rectangle, anchored to bottom ─── */}
+      <div className={`md:hidden fixed bottom-0 left-0 right-0 z-50 ${
+        isDark
+          ? 'bg-[#1A1F2E] border-t border-white/[0.06]'
+          : 'bg-white border-t border-[#E0DDD6]'
+      }`}>
+        <div className="flex justify-around items-center h-16 px-2">
+          {mobileNav.map((item) => {
+            const iconColor = item.crisis
+              ? isDark ? 'text-rose-400' : 'text-rose-500'
+              : item.active
+                ? isDark ? 'text-[#B8C9E0]' : 'text-[#5B7FA5]'
+                : isDark ? 'text-white/30' : 'text-[#A0A090]'
+            return (
+              <Link
+                key={item.id}
+                href={item.href}
+                className={`flex flex-col items-center justify-center gap-1 flex-1 py-2 rounded-xl transition-colors ${
+                  item.active && !item.crisis
+                    ? isDark ? 'bg-[#B8C9E0]/10' : 'bg-[#D4E4F7]/30'
+                    : ''
+                }`}
+              >
+                <span className={iconColor}>
+                  <MobileNavIcon id={item.id} />
+                </span>
+                <span className={`text-[10px] font-semibold ${iconColor}`}>
+                  {item.label}
+                </span>
+              </Link>
+            )
+          })}
         </div>
         {/* Safe area spacer for notched phones */}
         <div className="h-[env(safe-area-inset-bottom,0px)]" />

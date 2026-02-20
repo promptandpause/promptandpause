@@ -55,13 +55,16 @@ export default function WeeklyReflectionCard() {
 
   return (
     <section
-      className={`rounded-2xl md:rounded-3xl p-5 md:p-7 transition-all duration-200 ${
-        theme === "dark" ? "glass-light shadow-soft-lg" : "glass-medium shadow-soft-md"
+      className={`rounded-2xl p-5 md:p-6 transition-all duration-200 relative overflow-hidden ${
+        theme === "dark"
+          ? "bg-gradient-to-br from-[#C4B5E0]/[0.08] to-white/[0.03] border border-[#C4B5E0]/[0.12] hover:border-[#C4B5E0]/20"
+          : "bg-gradient-to-br from-[#F5F0FF] to-white/80 border border-[#D1C4E9]/60 hover:border-[#D1C4E9] hover:shadow-sm"
       }`}
     >
+      <div className={`absolute top-0 left-0 w-full h-[2px] ${theme === 'dark' ? 'bg-gradient-to-r from-[#C4B5E0]/50 to-transparent' : 'bg-gradient-to-r from-[#7E6BA5]/30 to-transparent'}`} />
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <p className={`text-xs mb-1 ${theme === "dark" ? "text-white/50" : "text-gray-500"}`}>Weekly reflection</p>
+          <p className={`text-[10px] uppercase tracking-[0.16em] font-semibold mb-1.5 ${theme === "dark" ? "text-[#C4B5E0]/60" : "text-[#7E6BA5]/70"}`}>Weekly reflection</p>
           <h3 className={`font-semibold text-base md:text-lg ${theme === "dark" ? "text-white" : "text-gray-900"}`}>{headline}</h3>
           {overview && (
             <p className={`mt-2 text-sm leading-relaxed line-clamp-2 ${theme === "dark" ? "text-white/70" : "text-gray-700"}`}>{overview}</p>

@@ -62,14 +62,14 @@ export default function DashboardPage() {
         <GlobalDataSync />
 
         {/* Layout: sidebar + main */}
-        <div className="flex items-start min-h-screen">
+        <div className="flex h-screen overflow-hidden">
           {/* Desktop Sidebar */}
           <DashboardSidebar />
 
           {/* Main Content — 2-column on desktop: main + info sidebar */}
-          <main className="flex-1 pb-32 md:pb-10 overflow-y-auto min-h-screen">
-            <div className="max-w-[1200px] mx-auto px-4 md:px-6 pt-16 md:pt-10">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-start">
+          <main className="flex-1 pb-32 md:pb-10 overflow-y-auto scrollbar-thin">
+            <div className="max-w-[1280px] mx-auto px-4 md:px-8 pt-16 md:pt-10 pb-6">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-start">
 
                 {/* ─── Left: Main Content ─── */}
                 <div className="lg:col-span-8 space-y-6 md:space-y-8">
@@ -172,7 +172,7 @@ export default function DashboardPage() {
                 </div>
 
                 {/* ─── Right: Info Sidebar (desktop) ─── */}
-                <div className="hidden lg:block lg:col-span-4 space-y-5 lg:sticky lg:top-8">
+                <div className="hidden lg:block lg:col-span-4 space-y-4 lg:sticky lg:top-6">
                   <HowItWorksCard isDark={isDark} />
                   <FocusAreasCard isDark={isDark} />
                   <ExpectationsCard isDark={isDark} tier={tier} />
@@ -250,10 +250,11 @@ function DailyQuoteCard({ isDark }: { isDark: boolean }) {
   }, [])
 
   return (
-    <div className={`rounded-2xl p-5 md:p-6 flex gap-4 ${isDark ? 'bg-[#A8D5BA]/8 border border-[#A8D5BA]/10' : 'bg-[#F0F7F2] border border-[#D5E8DA]'}`}>
-      <div className={`w-1 flex-shrink-0 rounded-full ${isDark ? 'bg-[#A8D5BA]/40' : 'bg-[#8ABF9A]'}`} />
-      <div>
-        <p className={`text-base md:text-lg font-medium leading-relaxed ${isDark ? 'text-white/85' : 'text-[#3D4D3D]'}`}>
+    <div className={`rounded-2xl p-5 md:p-6 flex gap-4 relative overflow-hidden ${isDark ? 'bg-gradient-to-br from-[#A8D5BA]/10 to-[#B8C9E0]/8 border border-[#A8D5BA]/12' : 'bg-gradient-to-br from-[#F0F7F2] to-[#EEF4FB] border border-[#D5E8DA]'}`}>
+      <div className={`absolute top-3 left-4 text-4xl leading-none font-serif opacity-15 select-none ${isDark ? 'text-[#A8D5BA]' : 'text-[#8ABF9A]'}`}>&ldquo;</div>
+      <div className={`w-1 flex-shrink-0 rounded-full ${isDark ? 'bg-gradient-to-b from-[#A8D5BA]/60 to-[#A8D5BA]/10' : 'bg-gradient-to-b from-[#8ABF9A] to-[#8ABF9A]/30'}`} />
+      <div className="relative z-10">
+        <p className={`text-base md:text-lg font-medium leading-relaxed ${isDark ? 'text-white/90' : 'text-[#3D4D3D]'}`}>
           &ldquo;{quote}&rdquo;
         </p>
         <p className={`text-xs mt-2.5 ${isDark ? 'text-white/30' : 'text-[#8A9A8A]'}`}>{t('dashboard.dailyReminder')}</p>
@@ -281,19 +282,19 @@ function QuickActionCard({
   iconColor: string
 }) {
   const isAnchor = href.startsWith('#')
-  const cardClass = `rounded-2xl p-4 md:p-5 flex flex-col gap-3 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] cursor-pointer group text-left ${
+  const cardClass = `rounded-2xl p-4 md:p-5 flex flex-col gap-3 transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.98] cursor-pointer group text-left ${
     isDark
-      ? 'bg-white/5 border border-white/8 hover:bg-white/10 hover:border-white/12'
-      : 'bg-[#FAFAF7] border border-[#E8E5DE] hover:border-[#C8C4BC] hover:shadow-md'
+      ? 'bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.08] hover:border-white/[0.12] hover:shadow-lg hover:shadow-black/20'
+      : 'bg-white/80 border border-[#E8E5DE] hover:border-[#C8C4BC] hover:shadow-lg hover:shadow-[#D4D0C8]/30'
   }`
   const content = (
     <>
-      <div className={`h-12 w-12 rounded-xl flex items-center justify-center transition-transform duration-200 group-hover:scale-110 ${iconBg}`}>
+      <div className={`h-11 w-11 rounded-xl flex items-center justify-center transition-all duration-200 group-hover:scale-110 group-hover:shadow-md ${iconBg}`}>
         <span className={iconColor}>{icon}</span>
       </div>
       <div>
         <p className={`font-semibold text-sm ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>{label}</p>
-        <p className={`text-xs mt-0.5 ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>{sublabel}</p>
+        <p className={`text-xs mt-0.5 ${isDark ? 'text-white/35' : 'text-[#8A8A7A]'}`}>{sublabel}</p>
       </div>
     </>
   )
@@ -320,9 +321,16 @@ function QuickActionCard({
 }
 
 /* ─── Info Card Shell ─── */
-function InfoCard({ children, isDark }: { children: React.ReactNode; isDark: boolean }) {
+function InfoCard({ children, isDark, accent }: { children: React.ReactNode; isDark: boolean; accent?: string }) {
   return (
-    <section className={`rounded-2xl p-5 md:p-6 transition-all ${isDark ? 'bg-white/5 border border-white/8' : 'bg-[#FAFAF7] border border-[#E8E5DE]'}`}>
+    <section className={`rounded-2xl p-5 transition-all duration-200 relative overflow-hidden ${
+      isDark
+        ? 'bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.06] hover:border-white/[0.1]'
+        : 'bg-white/70 border border-[#E8E5DE] hover:border-[#D4D0C8] hover:shadow-sm'
+    }`}>
+      {accent && (
+        <div className={`absolute top-0 left-0 w-full h-[2px] ${accent}`} />
+      )}
       {children}
     </section>
   )
@@ -332,12 +340,12 @@ function InfoCard({ children, isDark }: { children: React.ReactNode; isDark: boo
 function HowItWorksCard({ isDark }: { isDark: boolean }) {
   const { t } = useTranslation()
   return (
-    <InfoCard isDark={isDark}>
+    <InfoCard isDark={isDark} accent={isDark ? 'bg-gradient-to-r from-[#B8C9E0]/40 to-transparent' : 'bg-gradient-to-r from-[#5B7FA5]/30 to-transparent'}>
       <div className="space-y-2.5">
-        <p className={`text-xs uppercase tracking-[0.14em] font-medium ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
+        <p className={`text-[10px] uppercase tracking-[0.16em] font-semibold ${isDark ? 'text-white/35' : 'text-[#8A8A7A]'}`}>
           {t('dashboard.howItWorks')}
         </p>
-        <div className={`text-sm space-y-2 leading-relaxed ${isDark ? 'text-white/70' : 'text-[#5A5A4E]'}`}>
+        <div className={`text-[13px] space-y-2.5 leading-relaxed ${isDark ? 'text-white/60' : 'text-[#5A5A4E]'}`}>
           <p>{t('dashboard.howItWorks1')}</p>
           <p>{t('dashboard.howItWorks2')}</p>
           <p>{t('dashboard.howItWorks3')}</p>
@@ -373,25 +381,25 @@ function FocusAreasCard({ isDark }: { isDark: boolean }) {
   }, [supabase])
 
   return (
-    <InfoCard isDark={isDark}>
+    <InfoCard isDark={isDark} accent={isDark ? 'bg-gradient-to-r from-[#C4B5E0]/40 to-transparent' : 'bg-gradient-to-r from-[#7E6BA5]/30 to-transparent'}>
       <div className="space-y-3">
         <div className="flex items-start justify-between gap-2">
-          <p className={`text-xs uppercase tracking-[0.14em] font-medium ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
+          <p className={`text-[10px] uppercase tracking-[0.16em] font-semibold ${isDark ? 'text-white/35' : 'text-[#8A8A7A]'}`}>
             {t('dashboard.yourFocusAreas')}
           </p>
           <Link
             href="/dashboard/settings"
-            className={`text-xs hover:underline underline-offset-4 ${isDark ? 'text-white/40 hover:text-white' : 'text-[#5B7FA5] hover:text-[#3D6B8E]'}`}
+            className={`text-[11px] font-medium hover:underline underline-offset-4 ${isDark ? 'text-white/40 hover:text-white' : 'text-[#5B7FA5] hover:text-[#3D6B8E]'}`}
           >
             {t('common.edit')}
           </Link>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1.5">
           {(focusAreas && focusAreas.length > 0 ? focusAreas : [t('dashboard.addFocusAreas')]).map((area, idx) => (
             <span
               key={idx}
-              className={`px-3 py-1.5 rounded-full text-xs ${
-                isDark ? 'bg-white/8 text-white/70 border border-white/8' : 'bg-white text-[#5A5A4E] border border-[#E8E5DE]'
+              className={`px-2.5 py-1 rounded-full text-[11px] font-medium ${
+                isDark ? 'bg-white/[0.06] text-white/65 border border-white/[0.08]' : 'bg-white text-[#5A5A4E] border border-[#E8E5DE]'
               }`}
             >
               {area}
@@ -407,20 +415,20 @@ function FocusAreasCard({ isDark }: { isDark: boolean }) {
 function ExpectationsCard({ isDark, tier }: { isDark: boolean; tier: string }) {
   const { t } = useTranslation()
   return (
-    <InfoCard isDark={isDark}>
+    <InfoCard isDark={isDark} accent={isDark ? 'bg-gradient-to-r from-[#A8D5BA]/40 to-transparent' : 'bg-gradient-to-r from-[#5A8F6E]/30 to-transparent'}>
       <div className="space-y-2.5">
-        <p className={`text-xs uppercase tracking-[0.14em] font-medium ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
+        <p className={`text-[10px] uppercase tracking-[0.16em] font-semibold ${isDark ? 'text-white/35' : 'text-[#8A8A7A]'}`}>
           {t('dashboard.whatToExpect')}
         </p>
-        <div className={`text-sm space-y-2 leading-relaxed ${isDark ? 'text-white/70' : 'text-[#5A5A4E]'}`}>
+        <div className={`text-[13px] space-y-2.5 leading-relaxed ${isDark ? 'text-white/60' : 'text-[#5A5A4E]'}`}>
           <p>{t('dashboard.dailyPromptExpect')}</p>
           {tier === 'premium' ? (
             <>
-              <p>{t('dashboard.weeklyReflectionExpect')}</p>
-              <p>{t('dashboard.monthlyReflectionExpect')}</p>
+              <p className={isDark ? 'text-[#A8D5BA]/70' : 'text-[#5A8F6E]'}>{t('dashboard.weeklyReflectionExpect')}</p>
+              <p className={isDark ? 'text-[#C4B5E0]/70' : 'text-[#7E6BA5]'}>{t('dashboard.monthlyReflectionExpect')}</p>
             </>
           ) : (
-            <p className={`italic ${isDark ? 'text-white/30' : 'text-[#A0A090]'}`}>{t('dashboard.premiumFeaturesNote')}</p>
+            <p className={`italic ${isDark ? 'text-white/25' : 'text-[#A0A090]'}`}>{t('dashboard.premiumFeaturesNote')}</p>
           )}
         </div>
       </div>
@@ -434,10 +442,10 @@ function NeedHelpCard({ isDark }: { isDark: boolean }) {
   return (
     <InfoCard isDark={isDark}>
       <div className="space-y-2.5">
-        <p className={`text-xs uppercase tracking-[0.14em] font-medium ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
+        <p className={`text-[10px] uppercase tracking-[0.16em] font-semibold ${isDark ? 'text-white/35' : 'text-[#8A8A7A]'}`}>
           {t('dashboard.needHelp')}
         </p>
-        <p className={`text-sm leading-relaxed ${isDark ? 'text-white/70' : 'text-[#5A5A4E]'}`}>
+        <p className={`text-[13px] leading-relaxed ${isDark ? 'text-white/60' : 'text-[#5A5A4E]'}`}>
           {t('dashboard.needHelpDesc')}
         </p>
       </div>

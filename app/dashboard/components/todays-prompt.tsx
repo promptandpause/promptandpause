@@ -235,7 +235,7 @@ export default function TodaysPrompt() {
       {/* Prompt limit banner for free users */}
       {tier === 'free' && <PromptLimitBanner />}
       
-      <section className={`rounded-2xl p-5 md:p-6 flex flex-col gap-4 md:gap-5 relative transition-all duration-200 ${theme === 'dark' ? 'bg-white/5 border border-white/8' : 'bg-[#FAFAF7] border border-[#E8E5DE]'}`} style={{ pointerEvents: 'auto' }}>
+      <section className={`rounded-2xl p-5 md:p-6 flex flex-col gap-4 md:gap-5 relative transition-all duration-200 ${theme === 'dark' ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-white/70 border border-[#E8E5DE]'}`} style={{ pointerEvents: 'auto' }}>
         <div className="flex items-center justify-between gap-3 mb-1">
           <h3 className={`text-lg md:text-xl font-extrabold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Today</h3>
         </div>

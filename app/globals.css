@@ -666,6 +666,42 @@
   display: none;
 }
 
+/* Thin, unobtrusive scrollbar for dashboard and main content */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.12) transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.12);
+  border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+/* Light mode scrollbar */
+:root .scrollbar-thin {
+  scrollbar-color: rgba(0,0,0,0.12) transparent;
+}
+
+:root .scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.12);
+}
+
+:root .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(0,0,0,0.2);
+}
+
 /* Tap highlight removal for cleaner touch feedback */
 .tap-transparent {
   -webkit-tap-highlight-color: transparent;

@@ -75,33 +75,33 @@ export default function QuickStats() {
   const isDark = theme === 'dark'
 
   return (
-    <div className={`rounded-2xl p-5 space-y-0 ${isDark ? 'bg-white/5 border border-white/8' : 'bg-[#FAFAF7] border border-[#E8E5DE]'}`}>
+    <div className={`rounded-2xl p-5 space-y-0 ${isDark ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-white/70 border border-[#E8E5DE]'}`}>
       {/* Reflections */}
-      <div className="flex items-center justify-between py-3">
+      <div className={`flex items-center justify-between py-3 px-1 rounded-lg transition-colors ${isDark ? 'hover:bg-white/[0.03]' : 'hover:bg-[#F5F3EE]/60'}`}>
         <div className="flex items-center gap-3">
-          <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${isDark ? 'bg-[#B8C9E0]/10' : 'bg-[#D4E4F7]/50'}`}>
+          <div className={`h-9 w-9 rounded-xl flex items-center justify-center ${isDark ? 'bg-[#B8C9E0]/10' : 'bg-[#D4E4F7]/50'}`}>
             <BookOpen className={`h-4 w-4 ${isDark ? 'text-[#B8C9E0]' : 'text-[#5B7FA5]'}`} />
           </div>
           <span className={`text-sm ${isDark ? 'text-white/50' : 'text-[#5A5A4E]'}`}>Reflections</span>
         </div>
-        <span className={`text-lg font-bold tabular-nums ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>{totalReflections}</span>
+        <span className={`text-xl font-bold tabular-nums ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>{totalReflections}</span>
       </div>
-      <div className={`h-px ${isDark ? 'bg-white/5' : 'bg-[#E8E5DE]'}`} />
+      <div className={`h-px mx-1 ${isDark ? 'bg-white/[0.04]' : 'bg-[#E8E5DE]/80'}`} />
       {/* This Week */}
-      <div className="flex items-center justify-between py-3">
+      <div className={`flex items-center justify-between py-3 px-1 rounded-lg transition-colors ${isDark ? 'hover:bg-white/[0.03]' : 'hover:bg-[#F5F3EE]/60'}`}>
         <div className="flex items-center gap-3">
-          <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${isDark ? 'bg-[#A8D5BA]/10' : 'bg-[#E8F5E9]'}`}>
+          <div className={`h-9 w-9 rounded-xl flex items-center justify-center ${isDark ? 'bg-[#A8D5BA]/10' : 'bg-[#E8F5E9]'}`}>
             <CalendarCheck className={`h-4 w-4 ${isDark ? 'text-[#A8D5BA]' : 'text-[#5A8F6E]'}`} />
           </div>
           <span className={`text-sm ${isDark ? 'text-white/50' : 'text-[#5A5A4E]'}`}>This week</span>
         </div>
-        <span className={`text-lg font-bold tabular-nums ${isDark ? 'text-[#A8D5BA]' : 'text-[#5A8F6E]'}`}>{thisWeekCount}</span>
+        <span className={`text-xl font-bold tabular-nums ${isDark ? 'text-[#A8D5BA]' : 'text-[#5A8F6E]'}`}>{thisWeekCount}</span>
       </div>
-      <div className={`h-px ${isDark ? 'bg-white/5' : 'bg-[#E8E5DE]'}`} />
+      <div className={`h-px mx-1 ${isDark ? 'bg-white/[0.04]' : 'bg-[#E8E5DE]/80'}`} />
       {/* Mood Trend */}
-      <div className="flex items-center justify-between py-3">
+      <div className={`flex items-center justify-between py-3 px-1 rounded-lg transition-colors ${isDark ? 'hover:bg-white/[0.03]' : 'hover:bg-[#F5F3EE]/60'}`}>
         <div className="flex items-center gap-3">
-          <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${isDark ? 'bg-[#C4B5E0]/10' : 'bg-[#EDE7F6]'}`}>
+          <div className={`h-9 w-9 rounded-xl flex items-center justify-center ${isDark ? 'bg-[#C4B5E0]/10' : 'bg-[#EDE7F6]'}`}>
             <Activity className={`h-4 w-4 ${isDark ? 'text-[#C4B5E0]' : 'text-[#7E6BA5]'}`} />
           </div>
           <span className={`text-sm ${isDark ? 'text-white/50' : 'text-[#5A5A4E]'}`}>Mood trend</span>
