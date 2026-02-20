@@ -11,7 +11,7 @@ import { verifyAdminAccess } from '@/lib/middleware/verifyAdminAccess'
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const auth = await verifyAdminAccess(request)
@@ -22,6 +22,7 @@ export async function PATCH(
       )
     }
 
+    const { id } = await params
     const body = await request.json()
     const { new_password } = body
 
@@ -33,7 +34,7 @@ export async function PATCH(
     }
 
     const dto: UpdateAdminPasswordDTO = {
-      user_id: params.id,
+      user_id: id,
       new_password,
       updated_by_email: auth.adminEmail!
     }

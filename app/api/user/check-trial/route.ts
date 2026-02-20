@@ -1,8 +1,7 @@
 "use server"
 
 import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
-import { createServiceRoleClient } from "@/lib/supabase/server"
+import { getAuthUser, createServiceRoleClient } from "@/lib/supabase/server"
 
 /**
  * On-demand trial expiry check.
@@ -10,8 +9,7 @@ import { createServiceRoleClient } from "@/lib/supabase/server"
  */
 export async function POST() {
   try {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const user = await getAuthUser()
 
     if (!user) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 })

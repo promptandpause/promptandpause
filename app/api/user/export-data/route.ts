@@ -1,17 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { getAuthUser, createClient } from '@/lib/supabase/server'
 import { sendDataExportEmail } from '@/lib/services/emailService'
 import { generateUserDataPDF } from '@/lib/services/pdfService'
 import { withRateLimit } from '@/lib/security/rateLimit'
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient()
+    const user = await getAuthUser()
     
-    // Get authenticated user
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
-    
-    if (userError || !user) {
+    if (!user) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 401 }
@@ -23,6 +20,8 @@ export async function POST(request: NextRequest) {
     if (!rateLimitResult.allowed) {
       return rateLimitResult.response!
     }
+
+    const supabase = await createClient()
 
     // Fetch all user data in parallel
     const [profileRes, reflectionsRes, preferencesRes] = await Promise.all([

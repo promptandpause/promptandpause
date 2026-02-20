@@ -1,6 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { getAuthUser } from '@/lib/supabase/server'
 import { checkAdminAuth, getAdminActivityLogs, logAdminActivity } from '@/lib/services/adminService'
+
+/**
+ * Neutralize formula-injection characters in CSV cells.
+ * Spreadsheet apps (Excel, Google Sheets) treat cells starting with
+ * =, +, -, @, \t, or \r as formulas. Prefixing with a single-quote
+ * forces text interpretation and the quote is hidden by most readers.
+ */
+function sanitizeCsvCell(value: unknown): string {
+  const str = String(value ?? '')
+  // Escape double quotes for CSV
+  const escaped = str.replace(/"/g, '""')
+  // Neutralize formula-leading characters
+  if (/^[=+\-@\t\r]/.test(escaped)) {
+    return `"'${escaped}"`
+  }
+  return `"${escaped}"`
+}
 
 function logsToCSV(logs: any[]): string {
   const headers = ['Timestamp', 'Admin Email', 'Action Type', 'Target User ID', 'Target User Email', 'Details']
@@ -15,7 +32,7 @@ function logsToCSV(logs: any[]): string {
 
   const csvContent = [
     headers.join(','),
-    ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+    ...rows.map(row => row.map(cell => sanitizeCsvCell(cell)).join(','))
   ].join('\n')
 
   return csvContent
@@ -24,10 +41,9 @@ function logsToCSV(logs: any[]): string {
 export async function GET(request: NextRequest) {
   try {
     // Check authentication
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const user = await getAuthUser()
 
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -69,9 +85,9 @@ export async function GET(request: NextRequest) {
 
     // Log the export action
     await logAdminActivity({
-      admin_email: authCheck.userEmail!,
+      admin_email: authCheck.email!,
       action_type: 'export_data',
-      target_user_id: null,
+      target_user_id: undefined,
       details: {
         export_type: 'activity_logs',
         record_count: result.logs.length,

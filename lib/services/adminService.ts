@@ -2278,6 +2278,21 @@ export async function updateFeatureFlag(
 // ============================================================================
 
 /**
+ * Neutralize formula-injection characters in CSV cells.
+ * Spreadsheet apps (Excel, Google Sheets) treat cells starting with
+ * =, +, -, @, \t, or \r as formulas. Prefixing with a single-quote
+ * forces text interpretation and the quote is hidden by most readers.
+ */
+function sanitizeCsvCell(value: unknown): string {
+  const str = String(value ?? '')
+  const escaped = str.replace(/"/g, '""')
+  if (/^[=+\-@\t\r]/.test(escaped)) {
+    return `"'${escaped}"`
+  }
+  return `"${escaped}"`
+}
+
+/**
  * Export users to CSV format
  */
 export function usersToCSV(users: any[]): string {
@@ -2305,7 +2320,7 @@ export function usersToCSV(users: any[]): string {
 
   const csvContent = [
     headers.join(','),
-    ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+    ...rows.map(row => row.map(cell => sanitizeCsvCell(cell)).join(','))
   ].join('\n')
 
   return csvContent

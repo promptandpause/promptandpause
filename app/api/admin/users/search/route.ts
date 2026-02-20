@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServiceRoleClient } from '@/lib/supabase/server'
+import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
+import { checkAdminAuth } from '@/lib/services/adminService'
 import { z } from 'zod'
 import { withRateLimit } from '@/lib/security/rateLimit'
 
@@ -13,6 +14,26 @@ export async function GET(request: NextRequest) {
     const rateLimitResult = await withRateLimit(request, 'api')
     if (!rateLimitResult.allowed) {
       return rateLimitResult.response!
+    }
+
+    // Authenticate user
+    const supabaseAuth = await createClient()
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser()
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
+
+    // Verify admin access
+    const adminAuth = await checkAdminAuth(user.email || '')
+    if (!adminAuth.isAdmin) {
+      return NextResponse.json(
+        { error: 'Unauthorized - Admin access required' },
+        { status: 403 }
+      )
     }
 
     const { searchParams } = new URL(request.url)

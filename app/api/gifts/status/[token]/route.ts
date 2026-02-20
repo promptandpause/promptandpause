@@ -3,10 +3,10 @@ import { createServiceRoleClient } from '@/lib/supabase/server'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { token: string } }
+  { params }: { params: Promise<{ token: string }> }
 ) {
   try {
-    const token = params.token
+    const { token } = await params
 
     if (!token || token.length !== 32) {
       return NextResponse.json(

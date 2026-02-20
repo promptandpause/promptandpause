@@ -27,7 +27,12 @@ export async function createClient() {
         setAll(cookiesToSet) {
           try {
             cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
+              cookieStore.set(name, value, {
+                ...options,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax' as const,
+                path: '/',
+              })
             )
           } catch {
             // Cookie operations might fail in Server Components
@@ -81,6 +86,33 @@ export async function getCurrentUser() {
     data: { user },
   } = await supabase.auth.getUser()
   return user
+}
+
+/**
+ * Fast authentication check using JWT claims verification.
+ * 
+ * Uses getClaims() which verifies the JWT locally using the project's
+ * public signing key (asymmetric JWTs) instead of making a network
+ * request to the Auth server on every call like getUser() does.
+ * 
+ * Returns { id, email } if authenticated, or null if not.
+ * Use this in API routes where you only need user.id and user.email.
+ * For routes needing user_metadata or the full User object, use getUser() directly.
+ */
+export async function getAuthUser() {
+  const supabase = await createClient()
+  const { data, error } = await supabase.auth.getClaims()
+
+  if (error || !data) {
+    return null
+  }
+
+  const { claims } = data
+  return {
+    id: claims.sub,
+    email: claims.email ?? null,
+    user_metadata: (claims.user_metadata ?? {}) as Record<string, any>,
+  }
 }
 
 /**

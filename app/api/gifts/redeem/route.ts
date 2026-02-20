@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
+import { createClient, createServiceRoleClient, getAuthUser } from '@/lib/supabase/server'
 import { z } from 'zod'
 import { sendGiftActivatedEmail, sendGiftRedeemedBuyerEmail } from '@/lib/services/emailService'
 
@@ -10,9 +10,9 @@ const RedeemSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const user = await getAuthUser()
 
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized. You must be signed in to redeem a gift.' },
         { status: 401 }

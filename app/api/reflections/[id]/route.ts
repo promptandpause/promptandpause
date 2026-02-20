@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { getAuthUser, createClient } from '@/lib/supabase/server'
 import { decryptIfEncrypted, encryptIfPossible } from '@/lib/utils/crypto'
 
 /**
@@ -11,10 +11,9 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const user = await getAuthUser()
 
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized. Please sign in.' },
         { status: 401 }
@@ -22,6 +21,7 @@ export async function GET(
     }
 
     const { id } = await params
+    const supabase = await createClient()
 
     // Fetch reflection by ID (SSR + decrypt)
     const { data, error } = await supabase
@@ -69,10 +69,9 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const user = await getAuthUser()
 
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized. Please sign in.' },
         { status: 401 }
@@ -80,6 +79,7 @@ export async function PATCH(
     }
 
     const { id } = await params
+    const supabase = await createClient()
     const body = await request.json()
 
     // Get existing reflection to ensure it belongs to the user
@@ -159,10 +159,9 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const user = await getAuthUser()
 
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized. Please sign in.' },
         { status: 401 }
@@ -170,6 +169,7 @@ export async function DELETE(
     }
 
     const { id } = await params
+    const supabase = await createClient()
 
     // Check if reflection exists
     const { data: existing } = await supabase

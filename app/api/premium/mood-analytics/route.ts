@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { getAuthUser, createClient } from '@/lib/supabase/server'
 import { calculateMoodTrendsServer } from '@/lib/services/analyticsServiceServer'
 import { getUserTier } from '@/lib/utils/tierManagement'
 import { MoodType } from '@/lib/types/reflection'
@@ -27,17 +27,16 @@ const MOOD_SCORES: Record<string, number> = {
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient()
-    
-    // Get authenticated user
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
-    if (authError || !user) {
+    const user = await getAuthUser()
+
+    if (!user) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 401 }
       )
     }
+
+    const supabase = await createClient()
 
     // Check if user is premium
     const { data: profile } = await supabase

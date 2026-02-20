@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { createServiceRoleClient } from '@/lib/supabase/server'
+import { withRateLimit } from '@/lib/security/rateLimit'
 import crypto from 'crypto'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
@@ -9,17 +10,31 @@ const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'admin@promptandpause.com'
 // OTP expires in 10 minutes
 const OTP_EXPIRY_MINUTES = 10
 
+// Generic success response used for ALL outcomes to prevent admin enumeration.
+// Attackers must not be able to distinguish between invalid domain, unknown
+// user, inactive account, or a genuinely sent OTP.
+const GENERIC_SUCCESS = { success: true, message: 'If this email is eligible, a login code has been sent.' }
+
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit: prevent automated enumeration / abuse
+    const rateLimitResult = await withRateLimit(request, 'auth')
+    if (!rateLimitResult.allowed) {
+      return rateLimitResult.response!
+    }
+
     const { email } = await request.json()
 
     if (!email) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 })
     }
 
-    // Check domain restriction
+    // All validation failures below return the same generic response
+    // to prevent admin account enumeration.
+
+    // Check domain restriction (silently reject)
     if (!email.endsWith('@promptandpause.com')) {
-      return NextResponse.json({ error: 'Only @promptandpause.com emails are allowed' }, { status: 403 })
+      return NextResponse.json(GENERIC_SUCCESS)
     }
 
     const supabase = createServiceRoleClient()
@@ -32,11 +47,13 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (adminError || !adminUser) {
-      return NextResponse.json({ error: 'Access denied. You are not registered as an admin user.' }, { status: 403 })
+      // User not found — return same generic response
+      return NextResponse.json(GENERIC_SUCCESS)
     }
 
     if (!adminUser.is_active) {
-      return NextResponse.json({ error: 'Access denied. Your admin account is inactive.' }, { status: 403 })
+      // Inactive account — return same generic response
+      return NextResponse.json(GENERIC_SUCCESS)
     }
 
     // Generate 6-digit OTP
@@ -61,7 +78,8 @@ export async function POST(request: NextRequest) {
 
     if (insertError) {
       console.error('[Admin OTP] Failed to store OTP:', insertError)
-      return NextResponse.json({ error: 'Failed to generate OTP' }, { status: 500 })
+      // Return generic response even on internal failure to avoid leaking info
+      return NextResponse.json(GENERIC_SUCCESS)
     }
 
     // Send OTP via Resend
@@ -87,14 +105,15 @@ export async function POST(request: NextRequest) {
 
     if (emailError) {
       console.error('[Admin OTP] Failed to send email:', emailError)
-      return NextResponse.json({ error: 'Failed to send OTP email' }, { status: 500 })
+      // Return generic response even on email failure
+      return NextResponse.json(GENERIC_SUCCESS)
     }
 
-    console.log('[Admin OTP] OTP sent successfully to:', email)
-    return NextResponse.json({ success: true, message: 'OTP sent to your email' })
+    return NextResponse.json(GENERIC_SUCCESS)
 
   } catch (error: any) {
     console.error('[Admin OTP] Error:', error)
-    return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 })
+    // Return generic response on unexpected errors to avoid leaking info
+    return NextResponse.json(GENERIC_SUCCESS)
   }
 }

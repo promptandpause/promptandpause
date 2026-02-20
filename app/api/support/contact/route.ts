@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
+import { getAuthUser, createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { sendSupportEmail, sendSupportConfirmationEmail } from '@/lib/services/emailService'
 import { z } from 'zod'
@@ -48,10 +48,9 @@ const SupportRequestSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     // Authenticate user
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const user = await getAuthUser()
 
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 401 }
@@ -106,6 +105,8 @@ export async function POST(request: NextRequest) {
     const PDSDESK_SERVICE_ROLE_KEY = process.env.PDSDESK_SUPABASE_SERVICE_ROLE_KEY
     const PDSDESK_SUPPORT_SYSTEM_USER_ID =
       process.env.PDSDESK_SUPPORT_SYSTEM_USER_ID || PDSDESK_SUPPORT_SYSTEM_USER_ID_FALLBACK
+
+    const supabase = await createClient()
 
     // Create ticket in local database first
     let localTicketId: string

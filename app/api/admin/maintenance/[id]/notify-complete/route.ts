@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { getAuthUser } from '@/lib/supabase/server'
 import { checkAdminAuth } from '@/lib/services/adminService'
 import { sendMaintenanceCompleteNotifications } from '@/lib/services/maintenanceService'
 
@@ -9,14 +9,13 @@ import { sendMaintenanceCompleteNotifications } from '@/lib/services/maintenance
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check admin authentication
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const user = await getAuthUser()
     
-    if (authError || !user?.email) {
+    if (!user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -25,13 +24,15 @@ export async function POST(
       return NextResponse.json({ error: auth.error }, { status: 403 })
     }
 
+    const { id } = await params
+
     // Parse optional improvements/notes from request body
     const body = await request.json().catch(() => ({}))
     const { improvements, notes } = body
 
     // Send completion notifications (batch processing handled in service)
     const result = await sendMaintenanceCompleteNotifications(
-      params.id,
+      id,
       user.id,
       { improvements, notes }
     )

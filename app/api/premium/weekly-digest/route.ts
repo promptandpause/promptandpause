@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { getAuthUser, createClient } from '@/lib/supabase/server'
 import { generateWeeklyDigestServer } from '@/lib/services/analyticsServiceServer'
 import { generateWeeklyInsights } from '@/lib/services/weeklyInsightService'
 import { sendWeeklyDigestEmail } from '@/lib/services/emailService'
@@ -19,17 +19,16 @@ import { getUserTier } from '@/lib/utils/tierManagement'
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient()
-    
-    // Get authenticated user
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
-    if (authError || !user) {
+    const user = await getAuthUser()
+
+    if (!user) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 401 }
       )
     }
+
+    const supabase = await createClient()
 
     // Check if user is premium
     const { data: profile } = await supabase
@@ -183,17 +182,16 @@ export async function POST(request: NextRequest) {
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient()
-    
-    // Get authenticated user
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
-    if (authError || !user) {
+    const user = await getAuthUser()
+
+    if (!user) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 401 }
       )
     }
+
+    const supabase = await createClient()
 
     // Check if user is premium
     const { data: profile } = await supabase

@@ -5,7 +5,7 @@ import { z } from 'zod'
 import { withRateLimit } from '@/lib/security/rateLimit'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-12-18.acacia' as any,
+  apiVersion: '2025-10-29.clover' as any,
 })
 
 const DiscountCheckoutSchema = z.object({

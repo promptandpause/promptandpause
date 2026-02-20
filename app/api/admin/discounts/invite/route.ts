@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
+import { createClient, createServiceRoleClient, getAuthUser } from '@/lib/supabase/server'
 import Stripe from 'stripe'
 import { z } from 'zod'
 import { checkAdminAuth } from '@/lib/services/adminService'
 import { sendDiscountInvitationEmail } from '@/lib/services/emailService'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-12-18.acacia' as any,
+  apiVersion: '2025-10-29.clover' as any,
 })
 
 const InviteSchema = z.object({
@@ -19,10 +19,9 @@ const InviteSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     // Verify admin authentication
-    const authSupabase = await createClient()
-    const { data: { user: authUser }, error: authError } = await authSupabase.auth.getUser()
+    const authUser = await getAuthUser()
 
-    if (authError || !authUser?.email) {
+    if (!authUser?.email) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }

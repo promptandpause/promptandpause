@@ -147,7 +147,7 @@ export async function createOrUpdateContact(
       limit: 1
     }
 
-    const searchResults = await hs.crm.contacts.searchApi.doSearch(searchRequest)
+    const searchResults = await hs.crm.contacts.searchApi.doSearch(searchRequest as any)
     
     // If contact exists, return ID
     if (searchResults.results && searchResults.results.length > 0) {
@@ -267,7 +267,7 @@ export async function updateHubSpotTicket(
     const properties = mapLocalToHubSpot(local)
 
     // Update ticket
-    await hs.crm.tickets.basicApi.update(local.hubspot_ticket_id, { properties })
+    await hs.crm.tickets.basicApi.update(local.hubspot_ticket_id, { properties: properties as any })
 
     logger.info('hubspot_ticket_updated', { 
       localId: local.id, 

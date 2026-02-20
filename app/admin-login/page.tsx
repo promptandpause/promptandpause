@@ -11,6 +11,27 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Shield, Lock, Mail, AlertCircle, Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
+/**
+ * Sanitize redirect path to prevent open redirect attacks.
+ * Only allows relative, same-origin paths starting with '/'.
+ * Blocks absolute URLs, protocol-relative URLs (//), and non-admin paths.
+ */
+function sanitizeRedirectPath(raw: string | null): string {
+  const fallback = '/admin-panel'
+  if (!raw) return fallback
+
+  // Must start with exactly one '/' (block protocol-relative "//evil.com")
+  if (!raw.startsWith('/') || raw.startsWith('//')) return fallback
+
+  // Block any URL that contains a protocol scheme (e.g. /foo\nhttps://evil.com)
+  if (/[:\\/]{2}/.test(raw)) return fallback
+
+  // Only allow paths under known admin routes
+  if (!raw.startsWith('/admin-panel') && !raw.startsWith('/admin-login')) return fallback
+
+  return raw
+}
+
 function AdminLoginContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -24,7 +45,7 @@ function AdminLoginContent() {
   const [loginMethod, setLoginMethod] = useState<'password' | 'otp'>('password')
   const hasCheckedAuthRef = useRef(false)
 
-  const redirectPath = searchParams.get('redirect') || '/admin-panel'
+  const redirectPath = sanitizeRedirectPath(searchParams.get('redirect'))
 
   const checkExistingAuth = useCallback(async () => {
     if (hasCheckedAuthRef.current) return

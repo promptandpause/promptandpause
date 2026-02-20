@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { getAuthUser, createClient } from '@/lib/supabase/server'
 import { decryptIfEncrypted, encryptIfPossible } from '@/lib/utils/crypto'
 import { z } from 'zod'
 
@@ -11,13 +11,13 @@ const CreateSelfJournalSchema = z.object({
 
 export async function GET() {
   try {
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const user = await getAuthUser()
 
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized. Please sign in.' }, { status: 401 })
     }
 
+    const supabase = await createClient()
     const { data, error } = await supabase
       .from('self_journals')
       .select('*')
@@ -39,10 +39,9 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const user = await getAuthUser()
 
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized. Please sign in.' }, { status: 401 })
     }
 
@@ -55,6 +54,7 @@ export async function POST(request: NextRequest) {
     const { journal_text, mood, tags } = parsed.data
     const encryptedText = encryptIfPossible(journal_text)
 
+    const supabase = await createClient()
     const { data: inserted, error } = await supabase
       .from('self_journals')
       .insert({

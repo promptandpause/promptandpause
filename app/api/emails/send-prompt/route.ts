@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { getAuthUser, createClient } from '@/lib/supabase/server'
 import { sendDailyPromptEmail } from '@/lib/services/emailService'
 import { rateLimit } from '@/lib/utils/rateLimit'
 
@@ -27,15 +27,16 @@ import { rateLimit } from '@/lib/utils/rateLimit'
 export async function POST(request: NextRequest) {
   try {
     // Verify user authentication
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const user = await getAuthUser()
 
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized. Please sign in.' },
         { status: 401 }
       )
     }
+
+    const supabase = await createClient()
 
     // Rate limit: prevent mass email sends (3 per 10 minutes)
     const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'

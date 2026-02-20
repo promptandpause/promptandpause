@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 import crypto from 'crypto'
-import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
+import { getAuthUser, createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { checkAdminAuth } from '@/lib/services/adminService'
 import { generatePrompt } from '@/lib/services/aiService'
 import { getUserPreferences, getUserTier, listFocusAreas } from '@/lib/services/userService'
@@ -65,10 +65,9 @@ async function resolveAdminEmail(request: NextRequest) {
   }
 
   if (!adminEmail) {
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const user = await getAuthUser()
 
-    if (authError || !user?.email) {
+    if (!user?.email) {
       return {
         email: null,
         response: NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

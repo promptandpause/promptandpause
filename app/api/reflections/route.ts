@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { getAuthUser, createClient } from '@/lib/supabase/server'
 import { canCreateReflection, getWeeklyPromptAllowance } from '@/lib/utils/tierManagement'
 import { decryptIfEncrypted, encryptIfPossible } from '@/lib/utils/crypto'
 import { z } from 'zod'
@@ -22,15 +22,16 @@ const CreateReflectionSchema = z.object({
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const user = await getAuthUser()
 
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized. Please sign in.' },
         { status: 401 }
       )
     }
+
+    const supabase = await createClient()
 
     // Get query parameters for filtering
     const { searchParams } = new URL(request.url)
@@ -89,15 +90,16 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const user = await getAuthUser()
 
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized. Please sign in.' },
         { status: 401 }
       )
     }
+
+    const supabase = await createClient()
 
     const body = await request.json()
 

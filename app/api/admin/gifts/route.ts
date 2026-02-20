@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
+import { getAuthUser, createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { checkAdminAuth } from '@/lib/services/adminService'
 
 export async function GET(request: NextRequest) {
   try {
-    const authSupabase = await createClient()
-    const { data: { user }, error: authError } = await authSupabase.auth.getUser()
+    const user = await getAuthUser()
 
-    if (authError || !user?.email) {
+    if (!user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { getAuthUser, createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers'
 
 /**
@@ -41,10 +41,9 @@ export async function GET(request: NextRequest) {
     }
 
     // Verify user authentication
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const user = await getAuthUser()
 
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.redirect(
         new URL('/auth/signin?redirect=/dashboard/settings', request.url)
       )
@@ -93,6 +92,8 @@ export async function GET(request: NextRequest) {
         new URL('/dashboard/settings?slack_error=no_webhook', request.url)
       )
     }
+
+    const supabase = await createClient()
 
     // Save Slack integration details to user preferences
     const { error: updateError } = await supabase

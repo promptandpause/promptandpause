@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { getAuthUser, createClient } from '@/lib/supabase/server'
 import { sendWeeklyDigestEmail } from '@/lib/services/emailService'
 import { generateWeeklyDigest } from '@/lib/services/analyticsService'
 import { rateLimit } from '@/lib/utils/rateLimit'
@@ -24,15 +24,16 @@ import { rateLimit } from '@/lib/utils/rateLimit'
 export async function POST(request: NextRequest) {
   try {
     // Verify user authentication
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const user = await getAuthUser()
 
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized. Please sign in.' },
         { status: 401 }
       )
     }
+
+    const supabase = await createClient()
 
     // Rate limit: digest send test (1 per 10 minutes)
     const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
@@ -80,16 +81,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate weekly digest data
-    const digestResult = await generateWeeklyDigest(user.id)
-
-    if (!digestResult.success || !digestResult.data) {
-      return NextResponse.json(
-        { error: 'Failed to generate weekly digest', details: digestResult.error },
-        { status: 500 }
-      )
-    }
-
-    const digest = digestResult.data
+    const digest = await generateWeeklyDigest(user.id)
 
     // Check if user has any reflections this week
     if (digest.totalReflections === 0) {

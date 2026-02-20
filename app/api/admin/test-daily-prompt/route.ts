@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
+import { getAuthUser, createServiceRoleClient } from '@/lib/supabase/server'
 import { checkAdminAuth } from '@/lib/services/adminService'
 import { sendDailyPromptEmail } from '@/lib/services/emailService'
 import { sendDailyPromptToSlack } from '@/lib/services/slackService'
@@ -40,10 +40,9 @@ export async function POST(request: NextRequest) {
 
     // If no OTP session, check Supabase auth
     if (!userEmail) {
-      const supabase = await createClient()
-      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      const user = await getAuthUser()
 
-      if (authError || !user) {
+    if (!user) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
       }
 
@@ -222,10 +221,9 @@ export async function GET(request: NextRequest) {
 
     // If no OTP session, check Supabase auth
     if (!userEmail) {
-      const supabase = await createClient()
-      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      const user = await getAuthUser()
 
-      if (authError || !user) {
+    if (!user) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
       }
 

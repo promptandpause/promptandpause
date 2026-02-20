@@ -12,7 +12,10 @@ try {
   Ratelimit = require('@upstash/ratelimit').Ratelimit
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   Redis = require('@upstash/redis').Redis
-  upstashAvailable = !!(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN)
+  upstashAvailable = !!(
+    (process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL) &&
+    (process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN)
+  )
 } catch {
   upstashAvailable = false
 }
@@ -42,8 +45,8 @@ async function upstashRateLimit(
   let limiter = upstashCache.get(cacheKey)
   if (!limiter) {
     const redis = new Redis({
-      url: process.env.UPSTASH_REDIS_REST_URL!,
-      token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+      url: (process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL)!,
+      token: (process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN)!,
     })
     limiter = new Ratelimit({
       redis,
@@ -94,8 +97,16 @@ export async function rateLimit(
   const windowMs = opts?.windowMs ?? 60_000
 
   if (upstashAvailable) {
-    return upstashRateLimit(key, { limit, windowMs })
+    try {
+      return await upstashRateLimit(key, { limit, windowMs })
+    } catch (error) {
+      // FAIL-CLOSED: fall back to in-memory limiter on Redis error
+      console.error('[SECURITY] Upstash rate limit failed, using in-memory fallback:', error)
+    }
+  } else if (process.env.NODE_ENV === 'production') {
+    console.warn('[SECURITY] Upstash not configured in production, using in-memory rate limiter')
   }
+  // Always enforce rate limits via in-memory fallback
   const local = inMemoryRateLimit(key, { limit, windowMs })
   return { allowed: local.allowed, retryAfter: local.retryAfter, limit, remaining: Math.max(0, limit - (local.__count || 0)), resetAt: local.__resetAt || (Date.now() + windowMs) }
 }

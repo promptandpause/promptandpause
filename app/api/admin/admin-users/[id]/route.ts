@@ -12,7 +12,7 @@ import { verifyAdminAccess } from '@/lib/middleware/verifyAdminAccess'
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const auth = await verifyAdminAccess(request, 'admin')
@@ -23,6 +23,7 @@ export async function PATCH(
       )
     }
 
+    const { id } = await params
     const body = await request.json()
     const { full_name, role, department, is_active } = body
 
@@ -34,7 +35,7 @@ export async function PATCH(
       updated_by_email: auth.adminEmail!
     }
 
-    const result = await updateAdminUser(params.id, dto)
+    const result = await updateAdminUser(id, dto)
 
     if (!result.success) {
       return NextResponse.json(
@@ -62,7 +63,7 @@ export async function PATCH(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const auth = await verifyAdminAccess(request, 'admin')
@@ -73,7 +74,8 @@ export async function DELETE(
       )
     }
 
-    const result = await deactivateAdminUser(params.id, auth.adminEmail!)
+    const { id } = await params
+    const result = await deactivateAdminUser(id, auth.adminEmail!)
 
     if (!result.success) {
       return NextResponse.json(

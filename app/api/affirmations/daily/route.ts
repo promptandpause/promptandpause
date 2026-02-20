@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import OpenAI from "openai"
-import { createClient } from "@/lib/supabase/server"
+import { createClient, getAuthUser } from "@/lib/supabase/server"
 
 const FALLBACK_AFFIRMATIONS = [
   "You're doing great—one step at a time.",
@@ -40,10 +40,7 @@ export async function GET() {
   const fallback = getDailyFallback()
 
   try {
-    const supabase = await createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
+    const user = await getAuthUser()
 
     if (!user) {
       return NextResponse.json({
@@ -54,6 +51,8 @@ export async function GET() {
         reason: "Not authenticated",
       })
     }
+
+    const supabase = await createClient()
 
     const { data: cachedAffirmation } = await supabase
       .from("daily_affirmations")

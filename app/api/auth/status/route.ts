@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServiceRoleClient } from '@/lib/supabase/server'
+import { getAuthUser, createServiceRoleClient } from '@/lib/supabase/server'
 import { withRateLimit } from '@/lib/security/rateLimit'
 
 export async function GET(request: NextRequest) {
@@ -10,12 +10,9 @@ export async function GET(request: NextRequest) {
       return rateLimitResult.response!
     }
 
-    const supabase = createServiceRoleClient()
+    const user = await getAuthUser()
 
-    // Get user from session
-    const { data: { user }, error } = await supabase.auth.getUser()
-
-    if (error || !user) {
+    if (!user) {
       return NextResponse.json({
         authenticated: false,
         user: null,
@@ -23,6 +20,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get user profile info
+    const supabase = createServiceRoleClient()
     const { data: profile } = await supabase
       .from('users')
       .select('email, full_name')

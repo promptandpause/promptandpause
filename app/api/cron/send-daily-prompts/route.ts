@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     const authHeader = request.headers.get('authorization')
     const cronSecret = process.env.CRON_SECRET
     
-    console.log('[CRON] Auth check', { hasAuth: !!authHeader, hasSecret: !!cronSecret })
+    console.log('[CRON] Auth check initiated')
 
     if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
       console.log('[CRON] Auth failed')

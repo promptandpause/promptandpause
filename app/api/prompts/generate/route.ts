@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { getAuthUser, createClient } from '@/lib/supabase/server'
 import { generatePrompt } from '@/lib/services/aiService'
 import { getUserPreferences, getUserTier, listFocusAreas } from '@/lib/services/userService'
 import { reflectionServiceServer } from '@/lib/services/reflectionServiceServer'
@@ -18,13 +18,9 @@ import { rateLimit } from '@/lib/utils/rateLimit'
 export async function POST(request: NextRequest) {
   try {
     // Get authenticated user
-    const supabase = await createClient()
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
+    const user = await getAuthUser()
 
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 401 }
@@ -44,6 +40,8 @@ export async function POST(request: NextRequest) {
         { status: 429, headers }
       )
     }
+
+    const supabase = await createClient()
 
     // Check if prompt already exists for today
     const today = new Date().toISOString().split('T')[0]

@@ -1,4 +1,4 @@
-import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
+import { getAuthUser, createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 
 /**
@@ -15,17 +15,16 @@ import { NextResponse } from 'next/server'
 
 export async function POST(request: Request) {
   try {
-    const supabase = await createClient()
+    const user = await getAuthUser()
     
-    // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized. Please sign in.' },
         { status: 401 }
       )
     }
+
+    const supabase = await createClient()
     
     // Parse request body
     const body = await request.json()
@@ -181,12 +180,13 @@ export async function POST(request: Request) {
                                user.user_metadata?.name ||
                                user.email?.split('@')[0] ||
                                'there'
+
             await serviceClient
               .from('email_queue')
               .insert({
                 user_id: user.id,
                 email_type: 'welcome',
-                recipient_email: user.email!,
+                recipient_email: user.email ?? '',
                 recipient_name: displayName,
                 scheduled_for: new Date().toISOString(),
                 status: 'pending',
@@ -222,17 +222,16 @@ export async function POST(request: Request) {
  */
 export async function GET(request: Request) {
   try {
-    const supabase = await createClient()
+    const user = await getAuthUser()
     
-    // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized. Please sign in.' },
         { status: 401 }
       )
     }
+
+    const supabase = await createClient()
     
     // Check if user has preferences (completed onboarding)
     const { data: preferences, error } = await supabase

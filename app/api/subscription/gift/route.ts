@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { getAuthUser, createClient } from '@/lib/supabase/server'
 import { checkAdminAuth } from '@/lib/services/adminService'
 import { sendSubscriptionEmail } from '@/lib/services/emailService'
 
@@ -10,10 +10,9 @@ import { sendSubscriptionEmail } from '@/lib/services/emailService'
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const user = await getAuthUser()
 
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized. Please sign in.' },
         { status: 401 }
@@ -27,6 +26,8 @@ export async function POST(request: NextRequest) {
         { status: 403 }
       )
     }
+
+    const supabase = await createClient()
 
     // Get request body
     const body = await request.json()

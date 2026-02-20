@@ -81,24 +81,14 @@ export function SignupForm() {
       if (error) throw error
       
       if (data.user) {
-        // Check if email confirmation is required
-        if (data.user.identities && data.user.identities.length === 0) {
-          toast({
-            title: "Email already registered",
-            description: "This email is already in use. Please sign in instead.",
-            variant: "destructive",
-          })
-          setIsLoading(false)
-          return
-        }
-
-        // Check if email confirmation is enabled
+        // Always show the same generic message regardless of whether the
+        // email is already registered or new. This prevents user enumeration
+        // attacks that exploit different responses for existing vs new emails.
         if (!data.session) {
           toast({
             title: "Check your email",
-            description: "We've sent you a confirmation link. Please check your inbox.",
+            description: "If this email is valid, we'll send you a confirmation link. Please check your inbox.",
           })
-          // Optionally redirect to verification page
           setTimeout(() => router.push('/verify'), 2000)
         } else {
           // If email confirmation is disabled, redirect to onboarding

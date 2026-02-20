@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { getAuthUser } from '@/lib/supabase/server'
 import { checkAdminAuth } from '@/lib/services/adminService'
 import { 
   getMaintenanceWindow, 
@@ -13,14 +13,13 @@ import {
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check admin authentication
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const user = await getAuthUser()
     
-    if (authError || !user?.email) {
+    if (!user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -29,8 +28,10 @@ export async function GET(
       return NextResponse.json({ error: auth.error }, { status: 403 })
     }
 
+    const { id } = await params
+
     // Fetch maintenance window
-    const result = await getMaintenanceWindow(params.id)
+    const result = await getMaintenanceWindow(id)
 
     if (!result.success) {
       return NextResponse.json({ error: result.error }, { status: 404 })
@@ -48,14 +49,13 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check admin authentication
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const user = await getAuthUser()
     
-    if (authError || !user?.email) {
+    if (!user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -63,6 +63,8 @@ export async function PUT(
     if (!auth.isAdmin) {
       return NextResponse.json({ error: auth.error }, { status: 403 })
     }
+
+    const { id } = await params
 
     // Parse request body
     const body = await request.json()
@@ -105,7 +107,7 @@ export async function PUT(
     }
 
     // Update maintenance window (weekend validation happens in service layer)
-    const result = await updateMaintenanceWindow(params.id, body)
+    const result = await updateMaintenanceWindow(id, body)
 
     if (!result.success) {
       return NextResponse.json({ error: result.error }, { status: 400 })
@@ -123,14 +125,13 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check admin authentication
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const user = await getAuthUser()
     
-    if (authError || !user?.email) {
+    if (!user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -139,8 +140,10 @@ export async function DELETE(
       return NextResponse.json({ error: auth.error }, { status: 403 })
     }
 
+    const { id } = await params
+
     // Cancel maintenance window
-    const result = await cancelMaintenanceWindow(params.id)
+    const result = await cancelMaintenanceWindow(id)
 
     if (!result.success) {
       return NextResponse.json({ error: result.error }, { status: 500 })
