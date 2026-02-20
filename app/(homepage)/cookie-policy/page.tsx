@@ -6,8 +6,10 @@ import Navigation from "../Navigation"
 import Footer from "../footer"
 import { useRef, useState, useEffect } from "react"
 import Link from "next/link"
+import { useLenis } from "@/hooks/useLenis"
 
 export default function CookiePolicyPage() {
+  useLenis()
   const heroRef = useRef(null)
   const { scrollYProgress } = useScroll({
     target: heroRef,

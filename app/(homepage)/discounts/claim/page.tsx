@@ -11,8 +11,10 @@ import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
 import { GraduationCap, Stethoscope, Check, AlertCircle, Loader2 } from "lucide-react"
 import { useTheme } from "@/contexts/ThemeContext"
+import { useLenis } from "@/hooks/useLenis"
 
 function DiscountClaimContent() {
+  useLenis()
   const router = useRouter()
   const searchParams = useSearchParams()
   const { toast } = useToast()

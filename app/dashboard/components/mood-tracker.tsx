@@ -98,7 +98,7 @@ export default function MoodTracker() {
       </div>
       
       {/* Week Mood Row */}
-      <div className={`rounded-xl p-4 mb-4 ${isDark ? 'bg-white/[0.03] border border-white/[0.04]' : 'bg-[#F8F6F2]/80 border border-[#E8E5DE]/80'}`}>
+      <div className={`rounded-xl p-4 px-5 mb-4 ${isDark ? 'bg-white/[0.03] border border-white/[0.04]' : 'bg-[#F8F6F2]/80 border border-[#E8E5DE]/80'}`}>
         <div className="flex justify-between">
           {weekData.map((day, i) => {
             const isToday = i === todayIndex;
@@ -176,13 +176,46 @@ export default function MoodTracker() {
         )}
       </AnimatePresence>
 
-      {/* This Week Summary */}
-      <div className={`mt-4 rounded-xl p-4 ${isDark ? 'bg-white/[0.03] border border-white/[0.04]' : 'bg-[#F8F6F2]/80 border border-[#E8E5DE]/80'}`}>
-        <p className={`text-xs ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>Your mood trend</p>
-        <p className={`text-base font-semibold mt-0.5 ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>
-          {weekData.filter(d => d.mood).length > 0 ? 'Improving' : 'Start tracking'}
-        </p>
-      </div>
+      {/* Top Feelings This Week */}
+      {(() => {
+        const moodLabels: Record<string, string> = {
+          "😔": "Sad", "😐": "Neutral", "😊": "Happy", "😄": "Joyful",
+          "🤔": "Thoughtful", "😌": "Calm", "🙏": "Grateful", "💪": "Strong",
+        };
+        const moodsThisWeek = weekData.filter(d => d.mood).map(d => d.mood!);
+        if (moodsThisWeek.length === 0) {
+          return (
+            <div className={`mt-4 rounded-xl p-4 ${isDark ? 'bg-white/[0.03] border border-white/[0.04]' : 'bg-[#F8F6F2]/80 border border-[#E8E5DE]/80'}`}>
+              <p className={`text-xs ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>Top feelings</p>
+              <p className={`text-sm mt-1 ${isDark ? 'text-white/30' : 'text-[#A0A090]'}`}>
+                Start tracking to see your top feelings
+              </p>
+            </div>
+          );
+        }
+        const counts: Record<string, number> = {};
+        moodsThisWeek.forEach(m => { counts[m] = (counts[m] || 0) + 1; });
+        const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 3);
+        return (
+          <div className={`mt-4 rounded-xl p-4 ${isDark ? 'bg-white/[0.03] border border-white/[0.04]' : 'bg-[#F8F6F2]/80 border border-[#E8E5DE]/80'}`}>
+            <p className={`text-xs mb-2.5 ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>Top feelings this week</p>
+            <div className="flex gap-2 flex-wrap">
+              {sorted.map(([emoji, count]) => (
+                <span
+                  key={emoji}
+                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
+                    isDark ? 'bg-white/[0.06] text-white/70' : 'bg-white text-[#5A5A4E] border border-[#E8E5DE]'
+                  }`}
+                >
+                  <span className="text-sm">{emoji}</span>
+                  {moodLabels[emoji] || emoji}
+                  {count > 1 && <span className={`${isDark ? 'text-white/30' : 'text-[#A0A090]'}`}>×{count}</span>}
+                </span>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
     </section>
   );
 }

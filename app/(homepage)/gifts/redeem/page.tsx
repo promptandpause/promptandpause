@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import Navigation from '../../Navigation'
 import Footer from '../../footer'
+import { useLenis } from '@/hooks/useLenis'
 
 type RedeemResult = {
   success: boolean
@@ -17,6 +18,7 @@ type RedeemResult = {
 }
 
 function GiftRedeemContent() {
+  useLenis()
   const searchParams = useSearchParams()
 
   const initialToken = useMemo(() => {

@@ -22,20 +22,26 @@ export async function getTodayGratitude(
   supabase: SupabaseClient,
   userId: string
 ): Promise<GratitudeEntry | null> {
-  const today = new Date().toISOString().split('T')[0]
-  
-  const { data, error } = await supabase
-    .from('gratitude_entries')
-    .select('*')
-    .eq('user_id', userId)
-    .eq('entry_date', today)
-    .single()
+  try {
+    const today = new Date().toISOString().split('T')[0]
+    
+    const { data, error } = await supabase
+      .from('gratitude_entries')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('entry_date', today)
+      .single()
 
-  if (error && error.code !== 'PGRST116') {
-    console.error('Error fetching gratitude:', error)
+    if (error && error.code !== 'PGRST116') {
+      // Silently ignore 406 (table doesn't exist yet)
+      if (error.message?.includes('406') || error.code === '42P01') return null
+      console.error('Error fetching gratitude:', error)
+    }
+
+    return data
+  } catch {
+    return null
   }
-
-  return data
 }
 
 /**
@@ -103,16 +109,17 @@ export async function getGratitudeStreak(
   supabase: SupabaseClient,
   userId: string
 ): Promise<number> {
-  const { data, error } = await supabase
-    .from('gratitude_entries')
-    .select('entry_date')
-    .eq('user_id', userId)
-    .order('entry_date', { ascending: false })
-    .limit(30)
+  try {
+    const { data, error } = await supabase
+      .from('gratitude_entries')
+      .select('entry_date')
+      .eq('user_id', userId)
+      .order('entry_date', { ascending: false })
+      .limit(30)
 
-  if (error || !data || data.length === 0) {
-    return 0
-  }
+    if (error || !data || data.length === 0) {
+      return 0
+    }
 
   let streak = 0
   const today = new Date()
@@ -132,7 +139,10 @@ export async function getGratitudeStreak(
     }
   }
 
-  return streak
+    return streak
+  } catch {
+    return 0
+  }
 }
 
 /**

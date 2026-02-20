@@ -6,8 +6,10 @@ import Navigation from "../Navigation"
 import Footer from "../footer"
 import { useRef } from "react"
 import Link from "next/link"
+import { useLenis } from "@/hooks/useLenis"
 
 export default function PrivacyPolicyPage() {
+  useLenis()
   const heroRef = useRef(null)
   const { scrollYProgress } = useScroll({
     target: heroRef,

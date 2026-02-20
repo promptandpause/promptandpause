@@ -6,6 +6,7 @@ import Navigation from "../Navigation"
 import Footer from "../footer"
 import { Gift, Check, Loader2, Heart, Sparkles } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { useLenis } from "@/hooks/useLenis"
 
 const GIFT_OPTIONS = [
   {
@@ -37,6 +38,7 @@ const GIFT_OPTIONS = [
 ]
 
 export default function GiftPurchasePage() {
+  useLenis()
   const router = useRouter()
   const { toast } = useToast()
   

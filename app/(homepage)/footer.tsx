@@ -103,6 +103,12 @@ export default function Footer() {
                 >
                   Cookie Policy
                 </Link>
+                <Link
+                  href="/security"
+                  className="text-[#2F3B34] hover:text-[#4A5A49] transition-colors duration-300 text-sm sm:text-base"
+                >
+                  Security
+                </Link>
                 <div className="flex gap-3 mt-3">
                   <a
                     href="https://linkedin.com/promptandpause"

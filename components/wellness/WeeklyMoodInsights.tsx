@@ -128,11 +128,11 @@ export default function WeeklyMoodInsights({ userId }: WeeklyMoodInsightsProps) 
 
   if (isLoading) {
     return (
-      <Card className={theme === 'dark' ? 'bg-white/5 border-white/10' : ''}>
+      <Card className={`rounded-2xl border shadow-none ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#E8E5DE]'}`}>
         <CardContent className="p-6">
           <div className="animate-pulse space-y-4">
-            <div className={`h-6 rounded w-1/3 ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-200'}`}></div>
-            <div className={`h-32 rounded ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-200'}`}></div>
+            <div className={`h-6 rounded w-1/3 ${theme === 'dark' ? 'bg-white/[0.08]' : 'bg-[#E8E5DE]/60'}`}></div>
+            <div className={`h-32 rounded ${theme === 'dark' ? 'bg-white/[0.08]' : 'bg-[#E8E5DE]/60'}`}></div>
           </div>
         </CardContent>
       </Card>
@@ -140,7 +140,7 @@ export default function WeeklyMoodInsights({ userId }: WeeklyMoodInsightsProps) 
   }
 
   return (
-    <Card className={`overflow-hidden ${theme === 'dark' ? 'bg-white/5 border-white/10' : ''}`}>
+    <Card className={`overflow-hidden rounded-2xl border shadow-none ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#E8E5DE]'}`}>
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className={`text-lg flex items-center gap-2 ${theme === 'dark' ? 'text-white' : ''}`}>
@@ -181,14 +181,14 @@ export default function WeeklyMoodInsights({ userId }: WeeklyMoodInsightsProps) 
       <CardContent className="space-y-4">
         {/* Mood Chart */}
         <div className="pt-2">
-          <div className="flex items-end justify-between gap-1 h-24">
+          <div className={`flex items-end justify-between h-24 ${period === 'month' ? 'gap-[1px]' : 'gap-1'}`}>
             {moodData.map((day, index) => (
               <div key={day.date} className="flex-1 flex flex-col items-center gap-1">
                 <motion.div
                   initial={{ height: 0 }}
                   animate={{ height: day.mood ? `${(day.mood / 10) * 100}%` : '10%' }}
-                  transition={{ delay: index * 0.05, duration: 0.3 }}
-                  className={`w-full max-w-[20px] rounded-t ${getMoodColor(day.mood)} ${
+                  transition={{ delay: index * (period === 'month' ? 0.02 : 0.05), duration: 0.3 }}
+                  className={`w-full ${period === 'month' ? 'max-w-[8px]' : 'max-w-[20px]'} rounded-t ${getMoodColor(day.mood)} ${
                     !day.hasReflection ? 'opacity-30' : ''
                   }`}
                   title={day.mood ? `${day.mood}/10` : 'No reflection'}
@@ -197,32 +197,40 @@ export default function WeeklyMoodInsights({ userId }: WeeklyMoodInsightsProps) 
             ))}
           </div>
           <div className="flex justify-between mt-1">
-            {moodData.map((day) => (
-              <div key={day.date} className="flex-1 text-center">
-                <span className={`text-[10px] ${theme === 'dark' ? 'text-white/50' : 'text-gray-400'}`}>{formatDate(day.date)}</span>
-              </div>
-            ))}
+            {moodData.map((day, index) => {
+              // Week: show all labels; Month: show every 5th + last
+              const showLabel = period === 'week' || index % 5 === 0 || index === moodData.length - 1
+              return (
+                <div key={day.date} className="flex-1 text-center">
+                  {showLabel && (
+                    <span className={`text-[10px] ${theme === 'dark' ? 'text-white/50' : 'text-gray-400'}`}>
+                      {formatDate(day.date)}
+                    </span>
+                  )}
+                </div>
+              )
+            })}
           </div>
         </div>
 
         {/* Stats Row */}
         {stats && (
           <div className="grid grid-cols-3 gap-3 pt-2">
-            <div className={`text-center p-2 rounded-lg ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-50'}`}>
-              <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            <div className={`text-center p-2.5 rounded-xl ${theme === 'dark' ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-[#F8F6F2]/80 border border-[#E8E5DE]/80'}`}>
+              <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>
                 {stats.averageMood !== null ? stats.averageMood : '—'}
               </div>
-              <div className={`text-xs ${theme === 'dark' ? 'text-white/60' : 'text-gray-500'}`}>Avg Mood</div>
+              <div className={`text-xs ${theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'}`}>Avg Mood</div>
             </div>
-            <div className={`text-center p-2 rounded-lg ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-50'}`}>
-              <div className={`text-2xl font-bold flex items-center justify-center gap-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            <div className={`text-center p-2.5 rounded-xl ${theme === 'dark' ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-[#F8F6F2]/80 border border-[#E8E5DE]/80'}`}>
+              <div className={`text-2xl font-bold flex items-center justify-center gap-1 ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>
                 {getTrendIcon()}
               </div>
-              <div className={`text-xs capitalize ${theme === 'dark' ? 'text-white/60' : 'text-gray-500'}`}>{stats.trend}</div>
+              <div className={`text-xs capitalize ${theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'}`}>{stats.trend}</div>
             </div>
-            <div className={`text-center p-2 rounded-lg ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-50'}`}>
-              <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{stats.totalReflections}</div>
-              <div className={`text-xs ${theme === 'dark' ? 'text-white/60' : 'text-gray-500'}`}>Reflections</div>
+            <div className={`text-center p-2.5 rounded-xl ${theme === 'dark' ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-[#F8F6F2]/80 border border-[#E8E5DE]/80'}`}>
+              <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>{stats.totalReflections}</div>
+              <div className={`text-xs ${theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'}`}>Reflections</div>
             </div>
           </div>
         )}
@@ -250,15 +258,17 @@ export default function WeeklyMoodInsights({ userId }: WeeklyMoodInsightsProps) 
           </div>
         )}
 
-        {/* Top Emotions */}
+        {/* Top Feelings */}
         {stats?.topEmotions && stats.topEmotions.length > 0 && (
           <div className="pt-2">
-            <div className={`text-sm font-medium mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>Top Feelings</div>
+            <div className={`text-[10px] uppercase tracking-[0.16em] font-semibold mb-2.5 ${theme === 'dark' ? 'text-white/35' : 'text-[#8A8A7A]'}`}>Top feelings</div>
             <div className="flex flex-wrap gap-2">
-              {stats.topEmotions.map((emotion, index) => (
+              {stats.topEmotions.map((emotion) => (
                 <span
                   key={emotion}
-                  className={`px-2 py-1 rounded-full text-xs ${theme === 'dark' ? 'bg-blue-500/20 text-blue-300' : 'bg-blue-50 text-blue-700'}`}
+                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${
+                    theme === 'dark' ? 'bg-white/[0.06] text-white/70 border border-white/[0.08]' : 'bg-white text-[#5A5A4E] border border-[#E8E5DE]'
+                  }`}
                 >
                   {emotion}
                 </span>

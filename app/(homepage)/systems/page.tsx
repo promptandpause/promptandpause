@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { CheckCircle2, AlertCircle, XCircle, Clock, Activity, ChevronDown, RefreshCw } from 'lucide-react'
 import { SystemRow } from './_components/SystemRow'
+import { useLenis } from '@/hooks/useLenis'
 
 interface SystemStatus {
   name: string
@@ -22,6 +23,7 @@ interface HealthCheckResponse {
 }
 
 export default function SystemsPage() {
+  useLenis()
   const [healthData, setHealthData] = useState<HealthCheckResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
@@ -178,9 +180,7 @@ export default function SystemsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#F0EDE6] via-[#E8EAE6] to-[#DCE6D9] relative overflow-hidden">
-      {/* Background overlay to match site theme */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#F0EDE6] via-[#E8EAE6] to-[#DCE6D9] opacity-90" />
+    <div className="min-h-screen bg-gradient-to-br from-[#F0EDE6] via-[#E8EAE6] to-[#DCE6D9] relative">
       {/* Navigation */}
       <nav className="relative z-10 border-b border-[#DCE6D9]/50 bg-[#F0EDE6]/30 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-6 py-4">

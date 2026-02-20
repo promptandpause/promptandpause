@@ -27,19 +27,35 @@ export interface MoodCorrelation {
   description: string
 }
 
+// Shared emoji → numeric score mapping
+const MOOD_SCORE: Record<string, number> = {
+  "😔": 2, "😐": 4, "🤔": 5, "😌": 6, "😊": 7, "🙏": 8, "😄": 9, "💪": 9,
+}
+function toMoodScore(mood: unknown): number | null {
+  if (typeof mood === 'number') return mood
+  if (typeof mood === 'string') return MOOD_SCORE[mood] ?? null
+  return null
+}
+
 /**
- * Get weekly mood data for chart display
+ * Get weekly mood data for chart display (Mon → Sun order)
  */
 export async function getWeeklyMoodData(
   supabase: SupabaseClient,
   userId: string
 ): Promise<WeeklyMoodData[]> {
   const today = new Date()
-  const weekAgo = new Date(today)
-  weekAgo.setDate(today.getDate() - 6)
+  // Find this week's Monday
+  const dayOfWeek = today.getDay() // 0=Sun, 1=Mon, ..., 6=Sat
+  const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1
+  const monday = new Date(today)
+  monday.setDate(today.getDate() - mondayOffset)
   
-  const startDate = weekAgo.toISOString().split('T')[0]
-  const endDate = today.toISOString().split('T')[0]
+  const sunday = new Date(monday)
+  sunday.setDate(monday.getDate() + 6)
+
+  const startDate = monday.toISOString().split('T')[0]
+  const endDate = sunday.toISOString().split('T')[0]
 
   const { data, error } = await supabase
     .from('reflections')
@@ -54,19 +70,20 @@ export async function getWeeklyMoodData(
     return []
   }
 
-  // Create array for last 7 days
+  // Build Mon-Sun array
   const weekData: WeeklyMoodData[] = []
-  for (let i = 6; i >= 0; i--) {
-    const date = new Date(today)
-    date.setDate(today.getDate() - i)
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(monday)
+    date.setDate(monday.getDate() + i)
     const dateStr = date.toISOString().split('T')[0]
     
     const dayReflections = data?.filter(r => 
       r.created_at.startsWith(dateStr)
     ) || []
     
-    const avgMood = dayReflections.length > 0
-      ? dayReflections.reduce((sum, r) => sum + (r.mood || 0), 0) / dayReflections.length
+    const scores = dayReflections.map(r => toMoodScore(r.mood)).filter((s): s is number => s !== null)
+    const avgMood = scores.length > 0
+      ? scores.reduce((sum, s) => sum + s, 0) / scores.length
       : null
 
     weekData.push({
@@ -80,7 +97,7 @@ export async function getWeeklyMoodData(
 }
 
 /**
- * Get monthly mood data for chart display
+ * Get monthly mood data for chart display (last 30 days)
  */
 export async function getMonthlyMoodData(
   supabase: SupabaseClient,
@@ -117,8 +134,9 @@ export async function getMonthlyMoodData(
       r.created_at.startsWith(dateStr)
     ) || []
     
-    const avgMood = dayReflections.length > 0
-      ? dayReflections.reduce((sum, r) => sum + (r.mood || 0), 0) / dayReflections.length
+    const scores = dayReflections.map(r => toMoodScore(r.mood)).filter((s): s is number => s !== null)
+    const avgMood = scores.length > 0
+      ? scores.reduce((sum, s) => sum + s, 0) / scores.length
       : null
 
     monthData.push({
@@ -166,10 +184,10 @@ export async function getMoodStats(
     }
   }
 
-  // Calculate average mood
-  const moodsWithValues = data.filter(r => r.mood !== null)
+  // Calculate average mood using shared toMoodScore
+  const moodsWithValues = data.filter(r => r.mood !== null && toMoodScore(r.mood) !== null)
   const averageMood = moodsWithValues.length > 0
-    ? moodsWithValues.reduce((sum, r) => sum + r.mood, 0) / moodsWithValues.length
+    ? moodsWithValues.reduce((sum, r) => sum + (toMoodScore(r.mood) ?? 0), 0) / moodsWithValues.length
     : null
 
   // Calculate trend (compare first half to second half)
@@ -178,10 +196,10 @@ export async function getMoodStats(
   const secondHalf = moodsWithValues.slice(midpoint)
   
   const firstHalfAvg = firstHalf.length > 0
-    ? firstHalf.reduce((sum, r) => sum + r.mood, 0) / firstHalf.length
+    ? firstHalf.reduce((sum, r) => sum + (toMoodScore(r.mood) ?? 0), 0) / firstHalf.length
     : 0
   const secondHalfAvg = secondHalf.length > 0
-    ? secondHalf.reduce((sum, r) => sum + r.mood, 0) / secondHalf.length
+    ? secondHalf.reduce((sum, r) => sum + (toMoodScore(r.mood) ?? 0), 0) / secondHalf.length
     : 0
 
   let trend: 'improving' | 'stable' | 'declining' = 'stable'
@@ -193,7 +211,7 @@ export async function getMoodStats(
   for (const r of moodsWithValues) {
     const day = new Date(r.created_at).toLocaleDateString('en-US', { weekday: 'long' })
     if (!dayMoods[day]) dayMoods[day] = { total: 0, count: 0 }
-    dayMoods[day].total += r.mood
+    dayMoods[day].total += toMoodScore(r.mood) ?? 0
     dayMoods[day].count++
   }
 
@@ -214,19 +232,23 @@ export async function getMoodStats(
     }
   }
 
-  // Get top emotions from tags
-  const emotionCounts: Record<string, number> = {}
-  for (const r of data) {
-    const tags = r.tags as string[] || []
-    for (const tag of tags) {
-      emotionCounts[tag] = (emotionCounts[tag] || 0) + 1
+  // Get top feelings from actual mood emojis selected
+  const moodEmojiLabels: Record<string, string> = {
+    "😔": "Sad", "😐": "Neutral", "😊": "Happy", "😄": "Joyful",
+    "🤔": "Thoughtful", "😌": "Calm", "🙏": "Grateful", "💪": "Strong",
+  }
+  const moodCounts: Record<string, number> = {}
+  for (const r of moodsWithValues) {
+    const mood = r.mood as string
+    if (mood) {
+      moodCounts[mood] = (moodCounts[mood] || 0) + 1
     }
   }
 
-  const topEmotions = Object.entries(emotionCounts)
+  const topEmotions = Object.entries(moodCounts)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5)
-    .map(([emotion]) => emotion)
+    .map(([emoji]) => `${emoji} ${moodEmojiLabels[emoji] || emoji}`)
 
   return {
     averageMood: averageMood ? Math.round(averageMood * 10) / 10 : null,

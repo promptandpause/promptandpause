@@ -5,8 +5,10 @@ import { Search, ChevronDown, Phone, MessageCircle, Mail, ExternalLink, BookOpen
 import Navigation from "../Navigation"
 import Footer from "../footer"
 import { motion, AnimatePresence } from "framer-motion"
+import { useLenis } from "@/hooks/useLenis"
 
 export default function ResearchPage() {
+  useLenis()
   const [activeTab, setActiveTab] = useState<"getting-started" | "account" | "research">("getting-started")
   const [searchQuery, setSearchQuery] = useState("")
   const [openFAQ, setOpenFAQ] = useState<number | null>(null)
