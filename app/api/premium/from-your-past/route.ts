@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthUser, createClient } from '@/lib/supabase/server'
 import { getFromYourPastServer } from '@/lib/services/resurfacingServiceServer'
+import { getUserTier } from '@/lib/utils/tierManagement'
 
 /**
  * GET /api/premium/from-your-past
@@ -17,7 +18,7 @@ export async function GET(_request: NextRequest) {
     const supabase = await createClient()
     const { data: profile } = await supabase
       .from('profiles')
-      .select('subscription_tier, subscription_status')
+      .select('subscription_status, subscription_end_date')
       .eq('id', user.id)
       .single()
 
@@ -25,7 +26,9 @@ export async function GET(_request: NextRequest) {
       return NextResponse.json({ success: false, error: 'User profile not found' }, { status: 404 })
     }
 
-    if (profile.subscription_tier !== 'premium' || profile.subscription_status !== 'active') {
+    const tier = getUserTier(profile.subscription_status, null, profile.subscription_end_date)
+
+    if (tier !== 'premium') {
       return NextResponse.json(
         { success: false, error: 'This feature is a premium feature', requiresPremium: true },
         { status: 403 }
