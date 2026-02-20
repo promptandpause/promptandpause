@@ -19,12 +19,19 @@ export function middleware(request: NextRequest) {
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64')
 
   // Build the Content-Security-Policy with the nonce
+  //
+  // NOTE: 'strict-dynamic' is intentionally omitted. When present it causes
+  // browsers to ignore 'unsafe-inline' and host-based allowlists, which
+  // blocks Next.js hydration scripts that don't carry the nonce.
+  // Instead we use 'unsafe-inline' as a fallback alongside the nonce so
+  // that Next.js inline scripts work while explicitly-tagged scripts
+  // still benefit from nonce verification.
   const csp = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'wasm-unsafe-eval' https://js.stripe.com https://m.stripe.network https://va.vercel-scripts.com`,
+    `script-src 'self' 'nonce-${nonce}' 'unsafe-inline' 'wasm-unsafe-eval' https://js.stripe.com https://m.stripe.network https://va.vercel-scripts.com`,
     "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.openai.com https://api.x.ai https://api.stripe.com https://api.resend.com https://hooks.slack.com https://*.upstash.io https://vitals.vercel-insights.com https://lottie.host https://*.lottiefiles.com https://cdn.jsdelivr.net https://unpkg.com",
     "img-src 'self' data: blob: https://*.supabase.co https://*.stripe.com https://lottie.host https://res.cloudinary.com",
-    `style-src 'self' 'nonce-${nonce}' 'unsafe-inline' https://fonts.googleapis.com`,
+    `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
     "font-src 'self' data: https://fonts.gstatic.com",
     "frame-src 'self' https://js.stripe.com https://hooks.stripe.com",
     "object-src 'none'",
