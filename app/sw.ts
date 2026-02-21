@@ -1,7 +1,7 @@
 /// <reference lib="webworker" />
 
-const CACHE_NAME = 'prompt-and-pause-v1'
-const RUNTIME_CACHE = 'runtime-cache-v1'
+const CACHE_NAME = 'prompt-and-pause-v2'
+const RUNTIME_CACHE = 'runtime-cache-v2'
 
 declare const self: ServiceWorkerGlobalScope
 
@@ -51,9 +51,16 @@ self.addEventListener('fetch', (event: FetchEvent) => {
     return
   }
 
-  // Skip API calls and Supabase requests - always go to network
+  // Skip API calls, Supabase requests, and auth routes - always go to network
   if (
     request.url.includes('/api/') ||
+    request.url.includes('/auth/') ||
+    request.url.includes('/login') ||
+    request.url.includes('/signup') ||
+    request.url.includes('/onboarding') ||
+    request.url.includes('/verify') ||
+    request.url.includes('/change-password') ||
+    request.url.includes('/forgot-password') ||
     request.url.includes('supabase.co') ||
     request.url.includes('stripe.com')
   ) {
