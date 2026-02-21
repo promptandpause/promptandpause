@@ -51,12 +51,11 @@ self.addEventListener('fetch', (event: FetchEvent) => {
     return
   }
 
-  // Skip API calls, Supabase endpoints, and auth callbacks - always go to network
+  // Skip API calls and Supabase requests - always go to network
   if (
     request.url.includes('/api/') ||
     request.url.includes('supabase.co') ||
-    request.url.includes('stripe.com') ||
-    request.url.includes('/auth/callback')
+    request.url.includes('stripe.com')
   ) {
     return
   }

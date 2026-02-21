@@ -37,10 +37,8 @@ const nextConfig = {
           { key: 'X-DNS-Prefetch-Control', value: 'on' },
           // Performance and caching headers - use stale-while-revalidate for pages
           { key: 'Cache-Control', value: 'public, s-maxage=60, stale-while-revalidate=300' },
-          // Cookie security headers
-          { key: 'Set-Cookie', value: 'SameSite=Lax; Secure; HttpOnly; Path=/' },
-          // CSP is set dynamically by middleware.ts with per-request nonces
-          // (removed static CSP to avoid duplicate/conflicting headers)
+          // Cookie security is handled by Supabase SSR client and middleware
+          // CSP is set dynamically by middleware.ts per request
         ],
       },
       // Specific headers for dashboard routes
@@ -50,7 +48,6 @@ const nextConfig = {
           { key: 'Cache-Control', value: 'no-cache, no-store, must-revalidate' },
           { key: 'Pragma', value: 'no-cache' },
           { key: 'Expires', value: '0' },
-          { key: 'Set-Cookie', value: 'SameSite=Strict; Secure; HttpOnly; Path=/dashboard' },
         ],
       },
       // Static assets caching
@@ -65,7 +62,6 @@ const nextConfig = {
         source: '/api/:path*',
         headers: [
           { key: 'Cache-Control', value: 'no-store, must-revalidate' },
-          { key: 'Set-Cookie', value: 'SameSite=Strict; Secure; HttpOnly; Path=/api' },
         ],
       },
     ]
