@@ -1,9 +1,14 @@
-import { Loader2 } from "lucide-react"
+"use client"
+
+import { useTheme } from "@/contexts/ThemeContext"
 
 export default function DashboardLoading() {
+  const { theme } = useTheme()
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F5F3EE]">
-      <Loader2 className="h-8 w-8 text-purple-500 animate-spin" />
-    </div>
+    <div 
+      data-dashboard
+      className={`min-h-screen ${theme === 'dark' ? 'bg-[#141820]' : 'bg-[#F5F3EE]'}`}
+    />
   )
 }

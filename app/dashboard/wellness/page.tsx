@@ -84,9 +84,7 @@ export default function WellnessPage() {
 
   if (!userId) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${theme === 'dark' ? 'bg-[#141820]' : 'bg-[#F5F3EE]'}`}>
-        <div className={`animate-spin rounded-full h-8 w-8 border-b-2 ${theme === 'dark' ? 'border-[#C4B5E0]' : 'border-[#7E6BA5]'}`}></div>
-      </div>
+      <div className={`min-h-screen ${theme === 'dark' ? 'bg-[#141820]' : 'bg-[#F5F3EE]'}`} />
     )
   }
 

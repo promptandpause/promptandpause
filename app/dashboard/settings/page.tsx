@@ -42,6 +42,7 @@ import {
   invalidateCacheOnLogout
 } from "@/lib/services/cacheService"
 import { usePushNotifications } from "@/lib/hooks/usePushNotifications"
+import FocusAreasManager from "../components/focus-areas-manager"
 import {
   Select,
   SelectContent,
@@ -1767,6 +1768,13 @@ function SettingsPageContent() {
                       <Button onClick={handleSavePreferences} className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white h-10">
                         Save Preferences
                       </Button>
+
+                      {/* Custom Focus Areas - Premium Only */}
+                      {currentPlan === 'premium' && (
+                        <div className="pt-2">
+                          <FocusAreasManager />
+                        </div>
+                      )}
                     </div>
                   </Card>
 
@@ -2823,6 +2831,13 @@ function SettingsPageContent() {
                 >
                   Save Preferences
                 </Button>
+
+                {/* Custom Focus Areas - Premium Only */}
+                {currentPlan === 'premium' && (
+                  <div className="pt-2">
+                    <FocusAreasManager />
+                  </div>
+                )}
               </div>
             </Card>
           </div>
