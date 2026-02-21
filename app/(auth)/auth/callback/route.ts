@@ -8,6 +8,7 @@ export async function GET(request: Request) {
   const nextParam = requestUrl.searchParams.get('next')
   const safeNext = nextParam && nextParam.startsWith('/') ? nextParam : null
   const origin = requestUrl.origin
+  console.log('[auth/callback] incoming cookies:', request.headers.get('cookie') || '(none)')
 
   if (code) {
     const supabase = await createClient()
