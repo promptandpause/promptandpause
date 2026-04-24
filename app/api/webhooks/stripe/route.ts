@@ -2,7 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import Stripe from 'stripe'
 import { createClient } from '@supabase/supabase-js'
-import { sendGiftBuyerConfirmationEmail, sendGiftRecipientEmail, sendSubscriptionEmail } from '@/lib/services/emailService'
+import {
+  sendGiftBuyerConfirmationEmail,
+  sendGiftRecipientEmail,
+  sendPaymentFailedEmail,
+  sendSubscriptionEmail,
+} from '@/lib/services/emailService'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-10-29.clover',
@@ -351,7 +356,7 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
 
   const { data: profile } = await supabaseAdmin
     .from('profiles')
-    .select('id')
+    .select('id, email, full_name')
     .eq('stripe_customer_id', customerId)
     .single()
 
@@ -369,4 +374,29 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
       stripe_event_id: invoice.id,
       metadata: { invoice_id: invoice.id, amount: invoice.amount_due },
     })
+
+  // Send the payment-failed email. Idempotency: Stripe already dedupes
+  // webhook deliveries via `stripe_event_id`, and we gate on email presence
+  // so an invoice for a deleted account can't crash the handler. Fire-and-
+  // forget so the webhook responds fast; email failures are logged by the
+  // sender itself.
+  if (profile.email) {
+    // `next_payment_attempt` is seconds-since-epoch; undefined when Stripe
+    // won't retry automatically (e.g. final failure on a retry schedule).
+    const nextAttemptAt =
+      typeof (invoice as any).next_payment_attempt === 'number'
+        ? new Date((invoice as any).next_payment_attempt * 1000).toISOString()
+        : null
+
+    sendPaymentFailedEmail(
+      profile.email,
+      profile.full_name ?? null,
+      {
+        amount: invoice.amount_due ?? null,
+        currency: invoice.currency ?? null,
+        nextAttemptAt,
+      },
+      profile.id,
+    ).catch(() => {})
+  }
 }

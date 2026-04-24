@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceRoleClient } from '@/lib/supabase/server'
-import { sendWelcomeEmail, sendGettingStartedEmail } from '@/lib/services/emailService'
+import {
+  sendWelcomeEmail,
+  sendGettingStartedEmail,
+  sendTrialStartedEmail,
+  sendTrialEndingSoonEmail,
+} from '@/lib/services/emailService'
 
 /**
  * Cron Job: Send Welcome Emails
@@ -25,16 +30,22 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = createServiceRoleClient()
-    // Process both lifecycle emails:
-    //  - 'welcome'         — queued on first auth-callback landing
-    //  - 'getting_started' — queued after onboarding completion
-    // Both currently render through sendWelcomeEmail (same template); admin
-    // can introduce a distinct 'getting_started' template later without any
-    // cron changes.
+    // Process the full lifecycle-email set. Each type has its own dedicated
+    // sender + `template_name` in email_logs so analytics stay separable:
+    //   welcome           — queued on first auth-callback landing
+    //   getting_started   — queued after onboarding completion
+    //   trial_started     — queued when the 7-day trial is granted
+    //   trial_ending_soon — queued ~48h before trial_end_date (see
+    //                       /api/cron/send-trial-reminders)
     const { data: pendingEmails, error: fetchError } = await supabase
       .from('email_queue')
       .select('*')
-      .in('email_type', ['welcome', 'getting_started'])
+      .in('email_type', [
+        'welcome',
+        'getting_started',
+        'trial_started',
+        'trial_ending_soon',
+      ])
       .eq('status', 'pending')
       .lte('scheduled_for', new Date().toISOString())
       .lt('retry_count', 3)
@@ -69,18 +80,44 @@ export async function POST(request: NextRequest) {
         // Route to the correct sender based on lifecycle stage.
         // Each sender logs under its own `template_name` in email_logs so
         // delivery and engagement analytics stay cleanly separable.
-        const emailResult =
-          emailJob.email_type === 'getting_started'
-            ? await sendGettingStartedEmail(
-                emailJob.recipient_email,
-                emailJob.recipient_name,
-                emailJob.user_id,
-              )
-            : await sendWelcomeEmail(
-                emailJob.recipient_email,
-                emailJob.recipient_name,
-                emailJob.user_id,
-              )
+        //
+        // Trial emails carry their `trial_end_date` in the queue row's
+        // `metadata` jsonb so we can render a personalised end-date without
+        // re-querying the profiles table per send.
+        let emailResult: { success: boolean; emailId?: string; error?: string }
+
+        switch (emailJob.email_type) {
+          case 'getting_started':
+            emailResult = await sendGettingStartedEmail(
+              emailJob.recipient_email,
+              emailJob.recipient_name,
+              emailJob.user_id,
+            )
+            break
+          case 'trial_started':
+            emailResult = await sendTrialStartedEmail(
+              emailJob.recipient_email,
+              emailJob.recipient_name,
+              emailJob.metadata?.trial_end_date || new Date().toISOString(),
+              emailJob.user_id,
+            )
+            break
+          case 'trial_ending_soon':
+            emailResult = await sendTrialEndingSoonEmail(
+              emailJob.recipient_email,
+              emailJob.recipient_name,
+              emailJob.metadata?.trial_end_date || new Date().toISOString(),
+              emailJob.user_id,
+            )
+            break
+          case 'welcome':
+          default:
+            emailResult = await sendWelcomeEmail(
+              emailJob.recipient_email,
+              emailJob.recipient_name,
+              emailJob.user_id,
+            )
+        }
 
         if (emailResult.success) {
           // Mark as sent

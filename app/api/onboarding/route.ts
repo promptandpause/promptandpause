@@ -126,6 +126,12 @@ export async function POST(request: Request) {
     const isPaidUser = existingStatus === 'active' || existingStatus === 'trialing'
     const shouldGrantTrial = !isPaidUser && existingStatus !== 'premium' && existingTier !== 'premium'
 
+    // Capture the computed trial window up-front so downstream code
+    // (trial_started email queue, lifecycle events) can reference the same
+    // canonical values we just persisted on the profile.
+    const trialStartDate = new Date().toISOString()
+    const trialEndDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+
     if (shouldGrantTrial) {
       const { error: profileError } = await serviceClient
         .from('profiles')
@@ -134,8 +140,8 @@ export async function POST(request: Request) {
           email: user.email,
           subscription_status: 'premium',
           subscription_tier: 'premium',
-          trial_start_date: new Date().toISOString(),
-          trial_end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+          trial_start_date: trialStartDate,
+          trial_end_date: trialEndDate,
           is_trial: true,
           timezone_iana: userTimezone || 'Europe/London',
           timezone: userTimezone || 'Europe/London',
@@ -208,12 +214,23 @@ export async function POST(request: Request) {
       })
     }
     
-    // Queue a "getting started" email after first successful onboarding.
-    // The plain welcome email is handled separately in the auth callback on
-    // first login (covers email/password AND SSO). This one fires when the
-    // user has actually finished onboarding and is ready for how-to guidance.
-    if (!hadExistingPreferences) {
+    // Queue a "getting started" email whenever this endpoint completes
+    // successfully for a user who has a valid email. No longer gated on
+    // `!hadExistingPreferences` — that guard meant any user who onboarded
+    // before this code was deployed would never receive the email at all.
+    // Idempotency is enforced by the email_queue + email_logs lookups below,
+    // so re-posting onboarding can never double-queue a send.
+    if (user.email) {
       try {
+        const { data: existingGettingStartedLog } = await serviceClient
+          .from('email_logs')
+          .select('id')
+          .eq('recipient_email', user.email)
+          .eq('template_name', 'getting_started')
+          .in('status', ['sent', 'delivered', 'opened', 'clicked'])
+          .limit(1)
+          .maybeSingle()
+
         const { data: existingGettingStarted } = await serviceClient
           .from('email_queue')
           .select('id')
@@ -223,10 +240,10 @@ export async function POST(request: Request) {
           .limit(1)
           .maybeSingle()
 
-        if (!existingGettingStarted) {
+        if (!existingGettingStartedLog && !existingGettingStarted) {
           const displayName = user.user_metadata?.full_name ||
                              user.user_metadata?.name ||
-                             user.email?.split('@')[0] ||
+                             user.email.split('@')[0] ||
                              'there'
 
           await serviceClient
@@ -234,7 +251,7 @@ export async function POST(request: Request) {
             .insert({
               user_id: user.id,
               email_type: 'getting_started',
-              recipient_email: user.email ?? '',
+              recipient_email: user.email,
               recipient_name: displayName,
               scheduled_for: new Date().toISOString(),
               status: 'pending',
@@ -244,14 +261,69 @@ export async function POST(request: Request) {
             })
 
           await trackLifecycleEvent(user.id, 'getting_started_email_queued', {
-            trigger: 'onboarding_completed',
+            trigger: hadExistingPreferences
+              ? 'onboarding_replay_backfill'
+              : 'onboarding_completed',
           })
         }
       } catch (emailError) {
         // Don't fail the onboarding if email queueing fails.
       }
     }
-    
+
+    // Queue a "trial started" email when (and only when) we actually just
+    // granted a new trial on this request. The T-48h reminder is handled by
+    // /api/cron/send-trial-reminders, so this email only needs to fire once
+    // at grant-time. Idempotent via the same dual-lookup pattern.
+    if (user.email && shouldGrantTrial) {
+      try {
+        const { data: existingTrialStartedLog } = await serviceClient
+          .from('email_logs')
+          .select('id')
+          .eq('recipient_email', user.email)
+          .eq('template_name', 'trial_started')
+          .in('status', ['sent', 'delivered', 'opened', 'clicked'])
+          .limit(1)
+          .maybeSingle()
+
+        const { data: existingTrialStartedQueued } = await serviceClient
+          .from('email_queue')
+          .select('id')
+          .eq('user_id', user.id)
+          .eq('email_type', 'trial_started')
+          .in('status', ['pending', 'sent'])
+          .limit(1)
+          .maybeSingle()
+
+        if (!existingTrialStartedLog && !existingTrialStartedQueued) {
+          const displayName =
+            user.user_metadata?.full_name ||
+            user.user_metadata?.name ||
+            user.email.split('@')[0] ||
+            'there'
+
+          await serviceClient.from('email_queue').insert({
+            user_id: user.id,
+            email_type: 'trial_started',
+            recipient_email: user.email,
+            recipient_name: displayName,
+            scheduled_for: new Date().toISOString(),
+            status: 'pending',
+            retry_count: 0,
+            metadata: { trial_end_date: trialEndDate },
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+
+          await trackLifecycleEvent(user.id, 'trial_started_email_queued', {
+            trial_end_date: trialEndDate,
+          })
+        }
+      } catch (emailError) {
+        // Don't fail the onboarding if email queueing fails.
+      }
+    }
+
     // Success response
     return NextResponse.json({
       success: true,

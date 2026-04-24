@@ -198,24 +198,26 @@ export default function TodaysPrompt() {
     if (closeAction) return
     setCloseAction(action)
     try {
-      if (action === 'revisit' && savedReflectionId) {
-        const tomorrow = new Date()
-        tomorrow.setDate(tomorrow.getDate() + 1)
-        try {
-          window.localStorage.setItem(
-            'pp_revisit',
-            JSON.stringify({ reflection_id: savedReflectionId, date: tomorrow.toISOString().split('T')[0] })
-          )
-        } catch {}
-        toast({ title: 'Noted', description: 'We\'ll gently bring this back tomorrow.' })
-      } else if (action === 'save' && savedReflectionId) {
-        try {
-          const raw = window.localStorage.getItem('pp_saved_reflections')
-          const arr: string[] = raw ? JSON.parse(raw) : []
-          if (!arr.includes(savedReflectionId)) arr.push(savedReflectionId)
-          window.localStorage.setItem('pp_saved_reflections', JSON.stringify(arr.slice(-50)))
-        } catch {}
-        toast({ title: 'Saved for later', description: 'You can come back to this anytime.' })
+      if ((action === 'revisit' || action === 'save') && savedReflectionId) {
+        const res = await fetch('/api/bookmarks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            reflection_id: savedReflectionId,
+            kind: action === 'revisit' ? 'revisit' : 'saved',
+          }),
+        })
+        if (!res.ok) {
+          setCloseAction(null)
+          toast({ title: 'Couldn\'t save', description: 'Please try again.', variant: 'destructive' })
+          return
+        }
+        toast({
+          title: action === 'revisit' ? 'Noted' : 'Saved for later',
+          description: action === 'revisit'
+            ? 'We\'ll gently bring this back tomorrow.'
+            : 'You can find this in Saved anytime.',
+        })
       } else if (action === 'reminders_on') {
         setRemindersBusy(true)
         try {

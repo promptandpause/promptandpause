@@ -33,15 +33,30 @@ export default function ReturnToSelfCard() {
     let cancelled = false
     async function load() {
       try {
+        // 1. Prefer a reflection the user explicitly flagged "revisit tomorrow"
+        //    whose revisit_on date is <= today. This makes the gentle
+        //    session-close action feel alive.
+        const todayStr = new Date().toISOString().split('T')[0]
+        let dueRevisit: Reflection | null = null
+        try {
+          const revRes = await fetch('/api/bookmarks?kind=revisit&due=true', { cache: 'no-store' })
+          if (revRes.ok) {
+            const revJson = await revRes.json()
+            const rows = (revJson?.data || []) as { reflections: Reflection | null }[]
+            const first = rows.find(r => r.reflections && r.reflections.date !== todayStr)
+            if (first && first.reflections) dueRevisit = first.reflections
+          }
+        } catch {}
+
+        // 2. Fallback to most-recent past reflection.
         const res = await fetch('/api/reflections', { cache: 'no-store' })
         if (!res.ok) return
         const json = await res.json()
         const reflections: Reflection[] = json?.data || []
         if (cancelled || reflections.length === 0) return
 
-        const todayStr = new Date().toISOString().split('T')[0]
         // reflections come back ordered by date desc
-        const latest = reflections[0]
+        const latest = dueRevisit || reflections[0]
         if (!latest || latest.date === todayStr) return
 
         // Compute top tag over the last 14 days for a gentle "theme".

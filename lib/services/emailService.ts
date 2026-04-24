@@ -1,6 +1,6 @@
 import { Resend } from 'resend'
 import { createServiceRoleClient } from '@/lib/supabase/server'
-import { WeeklyDigest } from '@/lib/types/reflection'
+import { MonthlyReflection, WeeklyDigest } from '@/lib/types/reflection'
 import { logger } from '@/lib/utils/logger'
 import { getTemplateByKey } from '@/lib/services/emailTemplateService'
 import { EmailTemplateCustomization, DEFAULT_EMAIL_CUSTOMIZATION } from '@/lib/types/emailTemplate'
@@ -496,6 +496,369 @@ export async function sendGettingStartedEmail(
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',
     }
+  }
+}
+
+/**
+ * Send "trial started" email — confirms the 7-day premium trial is active.
+ *
+ * Honest companion to the existing `trial_expiration` / `trial_expired`
+ * emails: tells the user up-front what they get, when it ends, and that
+ * they'll be warned 48h before. Reduces support tickets from users who
+ * discover the trial only when it silently downgrades.
+ */
+export async function sendTrialStartedEmail(
+  email: string,
+  name: string | null,
+  trialEndDate: string,
+  userId?: string | null,
+): Promise<{ success: boolean; emailId?: string; error?: string }> {
+  try {
+    if (!process.env.RESEND_API_KEY) {
+      return { success: false, error: 'Email service not configured' }
+    }
+
+    const displayName = name || email.split('@')[0]
+    const html = await generateWithCustomization('trial_started', () =>
+      generateTrialStartedEmailHTML(displayName, trialEndDate),
+    )
+
+    const subject =
+      (await getSubjectForTemplate('trial_started', { userName: displayName })) ||
+      `Your ${APP_NAME} trial is on — until ${formatTrialDate(trialEndDate)}`
+
+    const { data, error } = await resend.emails.send({
+      from: `${APP_NAME} <${FROM_EMAIL}>`,
+      to: email,
+      subject,
+      html,
+    })
+
+    if (error) {
+      logger.error('email_trial_started_send_error', { error, email })
+      await logEmailSend({
+        userId: userId || 'unknown',
+        recipientEmail: email,
+        subject,
+        templateName: 'trial_started',
+        provider: 'resend',
+        status: 'failed',
+        providerMessageId: null,
+        errorMessage: error.message,
+      })
+      return { success: false, error: error.message }
+    }
+
+    await logEmailSend({
+      userId: userId || 'unknown',
+      recipientEmail: email,
+      subject,
+      templateName: 'trial_started',
+      provider: 'resend',
+      status: 'sent',
+      providerMessageId: data?.id || null,
+    })
+    return { success: true, emailId: data?.id }
+  } catch (error) {
+    logger.error('email_trial_started_unexpected_error', { error, email })
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
+  }
+}
+
+/**
+ * Send "trial ending soon" email — fires ~48 hours before trial_end_date.
+ *
+ * Complements the existing expiration email. Gives the user runway to
+ * decide before any downgrade. Tone is calm, not urgent (Stripe Dashboard
+ * standard: clarity about what changes, no countdown-timer anxiety).
+ */
+export async function sendTrialEndingSoonEmail(
+  email: string,
+  name: string | null,
+  trialEndDate: string,
+  userId?: string | null,
+): Promise<{ success: boolean; emailId?: string; error?: string }> {
+  try {
+    if (!process.env.RESEND_API_KEY) {
+      return { success: false, error: 'Email service not configured' }
+    }
+
+    const displayName = name || email.split('@')[0]
+    const html = await generateWithCustomization('trial_ending_soon', () =>
+      generateTrialEndingSoonEmailHTML(displayName, trialEndDate),
+    )
+
+    const subject =
+      (await getSubjectForTemplate('trial_ending_soon', { userName: displayName })) ||
+      `Your trial ends ${formatTrialDate(trialEndDate)}`
+
+    const { data, error } = await resend.emails.send({
+      from: `${APP_NAME} <${FROM_EMAIL}>`,
+      to: email,
+      subject,
+      html,
+    })
+
+    if (error) {
+      logger.error('email_trial_ending_soon_send_error', { error, email })
+      await logEmailSend({
+        userId: userId || 'unknown',
+        recipientEmail: email,
+        subject,
+        templateName: 'trial_ending_soon',
+        provider: 'resend',
+        status: 'failed',
+        providerMessageId: null,
+        errorMessage: error.message,
+      })
+      return { success: false, error: error.message }
+    }
+
+    await logEmailSend({
+      userId: userId || 'unknown',
+      recipientEmail: email,
+      subject,
+      templateName: 'trial_ending_soon',
+      provider: 'resend',
+      status: 'sent',
+      providerMessageId: data?.id || null,
+    })
+    return { success: true, emailId: data?.id }
+  } catch (error) {
+    logger.error('email_trial_ending_soon_unexpected_error', { error, email })
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
+  }
+}
+
+/**
+ * Send "new device sign-in" security email.
+ *
+ * Fires the first time we see a given (country, browser-family) combo for a
+ * user. Linear-tier security hygiene: calm, not alarming. No marketing,
+ * no links other than a single "secure your account" action.
+ *
+ * Send inline from the auth callback (not queued) — security emails should
+ * arrive as close to the event as possible. The sender is still idempotent
+ * via its own short-circuits below + a 30-day email_logs lookback in the
+ * caller (see auth callback's new-device detection).
+ */
+export async function sendNewDeviceSignInEmail(
+  email: string,
+  name: string | null,
+  details: {
+    country?: string | null
+    city?: string | null
+    userAgent?: string | null
+    signedInAt?: string
+  },
+  userId?: string | null,
+): Promise<{ success: boolean; emailId?: string; error?: string }> {
+  try {
+    if (!process.env.RESEND_API_KEY) {
+      return { success: false, error: 'Email service not configured' }
+    }
+
+    const displayName = name || email.split('@')[0]
+    const html = await generateWithCustomization('new_device_sign_in', () =>
+      generateNewDeviceSignInEmailHTML(displayName, details),
+    )
+
+    const subject =
+      (await getSubjectForTemplate('new_device_sign_in', {
+        userName: displayName,
+      })) || `New sign-in to your ${APP_NAME} account`
+
+    const { data, error } = await resend.emails.send({
+      from: `${APP_NAME} <${FROM_EMAIL}>`,
+      to: email,
+      subject,
+      html,
+    })
+
+    if (error) {
+      logger.error('email_new_device_send_error', { error, email })
+      await logEmailSend({
+        userId: userId || 'unknown',
+        recipientEmail: email,
+        subject,
+        templateName: 'new_device_sign_in',
+        provider: 'resend',
+        status: 'failed',
+        providerMessageId: null,
+        errorMessage: error.message,
+      })
+      return { success: false, error: error.message }
+    }
+
+    await logEmailSend({
+      userId: userId || 'unknown',
+      recipientEmail: email,
+      subject,
+      templateName: 'new_device_sign_in',
+      provider: 'resend',
+      status: 'sent',
+      providerMessageId: data?.id || null,
+    })
+    return { success: true, emailId: data?.id }
+  } catch (error) {
+    logger.error('email_new_device_unexpected_error', { error, email })
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    }
+  }
+}
+
+/**
+ * Send "payment failed" email — fires from the Stripe webhook on
+ * `invoice.payment_failed`. Calm, specific, no countdown language.
+ */
+export async function sendPaymentFailedEmail(
+  email: string,
+  name: string | null,
+  details: {
+    amount?: number | null
+    currency?: string | null
+    nextAttemptAt?: string | null
+  },
+  userId?: string | null,
+): Promise<{ success: boolean; emailId?: string; error?: string }> {
+  try {
+    if (!process.env.RESEND_API_KEY) {
+      return { success: false, error: 'Email service not configured' }
+    }
+
+    const displayName = name || email.split('@')[0]
+    const html = await generateWithCustomization('payment_failed', () =>
+      generatePaymentFailedEmailHTML(displayName, details),
+    )
+
+    const subject =
+      (await getSubjectForTemplate('payment_failed', { userName: displayName })) ||
+      `We couldn't process your ${APP_NAME} payment`
+
+    const { data, error } = await resend.emails.send({
+      from: `${APP_NAME} <${FROM_EMAIL}>`,
+      to: email,
+      subject,
+      html,
+    })
+
+    if (error) {
+      logger.error('email_payment_failed_send_error', { error, email })
+      await logEmailSend({
+        userId: userId || 'unknown',
+        recipientEmail: email,
+        subject,
+        templateName: 'payment_failed',
+        provider: 'resend',
+        status: 'failed',
+        providerMessageId: null,
+        errorMessage: error.message,
+      })
+      return { success: false, error: error.message }
+    }
+
+    await logEmailSend({
+      userId: userId || 'unknown',
+      recipientEmail: email,
+      subject,
+      templateName: 'payment_failed',
+      provider: 'resend',
+      status: 'sent',
+      providerMessageId: data?.id || null,
+    })
+    return { success: true, emailId: data?.id }
+  } catch (error) {
+    logger.error('email_payment_failed_unexpected_error', { error, email })
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    }
+  }
+}
+
+/**
+ * Send the monthly reflection email (Premium-only).
+ *
+ * Fulfils the pricing-page promise of a "monthly reflection" feature. Sent
+ * on the 1st of each month by /api/cron/send-monthly-reflection, scoped to
+ * the previous calendar month. Zero-reflection months are intentionally
+ * skipped by the cron, so the body always has something to say.
+ */
+export async function sendMonthlyReflectionEmail(
+  email: string,
+  userId: string,
+  name: string | null,
+  reflection: MonthlyReflection,
+): Promise<{ success: boolean; emailId?: string; error?: string }> {
+  try {
+    if (!process.env.RESEND_API_KEY) {
+      return { success: false, error: 'Email service not configured' }
+    }
+
+    const displayName = name || email.split('@')[0]
+    const html = await generateWithCustomization('monthly_reflection', () =>
+      generateMonthlyReflectionEmailHTML(displayName, reflection),
+    )
+
+    const subject =
+      (await getSubjectForTemplate('monthly_reflection', {
+        userName: displayName,
+        monthLabel: reflection.monthLabel,
+      })) || `Your ${reflection.monthLabel} reflection`
+
+    const { data, error } = await resend.emails.send({
+      from: `${APP_NAME} <${FROM_EMAIL}>`,
+      to: email,
+      subject,
+      html,
+    })
+
+    if (error) {
+      logger.error('email_monthly_reflection_send_error', { error, email, userId })
+      await logEmailSend({
+        userId,
+        recipientEmail: email,
+        subject,
+        templateName: 'monthly_reflection',
+        provider: 'resend',
+        status: 'failed',
+        providerMessageId: null,
+        errorMessage: error.message,
+      })
+      return { success: false, error: error.message }
+    }
+
+    await logEmailSend({
+      userId,
+      recipientEmail: email,
+      subject,
+      templateName: 'monthly_reflection',
+      provider: 'resend',
+      status: 'sent',
+      providerMessageId: data?.id || null,
+    })
+    return { success: true, emailId: data?.id }
+  } catch (error) {
+    logger.error('email_monthly_reflection_unexpected_error', { error, email, userId })
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    }
+  }
+}
+
+/** Human-friendly date used in trial email subjects + bodies. */
+function formatTrialDate(iso: string): string {
+  try {
+    return new Date(iso).toLocaleDateString('en-GB', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+    })
+  } catch {
+    return 'soon'
   }
 }
 
@@ -1279,6 +1642,293 @@ function generateGettingStartedEmailHTML(name: string): string {
 }
 
 /**
+ * Generate "trial started" email HTML — confirms the 7-day premium trial.
+ * Mirrors the lifecycle tone: specific dates, clear about what ends, no urgency.
+ */
+function generateTrialStartedEmailHTML(name: string, trialEndDate: string): string {
+  const dashboardUrl = `${APP_URL.replace(/\/$/, '')}/dashboard`
+  const settingsUrl = `${APP_URL.replace(/\/$/, '')}/dashboard/settings`
+  const prettyEnd = formatTrialDate(trialEndDate)
+
+  const bodyHTML = contentSection(`
+    ${h1('Your trial is on')}
+
+    ${paragraph(`Hi ${name},`)}
+
+    ${paragraph(`You're on Premium until <strong>${prettyEnd}</strong>. Nothing to do — all features are active. Here's what's included:`)}
+
+    ${infoBox(`
+      <ul class="email-text-gray" style="color: ${TEXT_GRAY}; line-height: 1.8; margin: 0; padding-left: 20px; font-size: 15px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <li class="email-text-gray" style="margin-bottom: 10px;"><strong>Daily personalised prompts</strong>, seven days a week.</li>
+        <li class="email-text-gray" style="margin-bottom: 10px;"><strong>Unlimited archive</strong> of everything you write.</li>
+        <li class="email-text-gray" style="margin-bottom: 10px;"><strong>Weekly &amp; monthly reflections</strong> — gentle pattern summaries.</li>
+        <li class="email-text-gray"><strong>Custom focus areas</strong> and export (PDF / TXT).</li>
+      </ul>
+    `)}
+
+    ${paragraph(`We'll email you once, 48 hours before your trial ends, so there are no surprises. After that you can stay on the free tier or continue on Premium — your choice.`)}
+
+    <div style="text-align: center; margin: 40px 0;">
+      ${standardButton({ href: dashboardUrl, label: 'Open your dashboard' })}
+    </div>
+
+    ${paragraph(`Manage your plan anytime in <a href="${settingsUrl}" style="color: ${PRIMARY_ACCENT}; text-decoration: underline;">Settings</a>.`, { align: 'center', fontSize: '14px', color: TEXT_MUTED })}
+  `)
+
+  return buildBaseEmail({
+    preheader: `Premium is active until ${prettyEnd}`,
+    title: 'Your trial is on',
+    bodyHTML,
+  })
+}
+
+/**
+ * Generate "trial ending soon" email HTML — calm 48h heads-up before downgrade.
+ */
+function generateTrialEndingSoonEmailHTML(name: string, trialEndDate: string): string {
+  const pricingUrl = `${APP_URL.replace(/\/$/, '')}/pricing`
+  const settingsUrl = `${APP_URL.replace(/\/$/, '')}/dashboard/settings`
+  const prettyEnd = formatTrialDate(trialEndDate)
+
+  const bodyHTML = contentSection(`
+    ${h1('Your trial ends in two days')}
+
+    ${paragraph(`Hi ${name},`)}
+
+    ${paragraph(`Just a heads-up: your Premium trial ends on <strong>${prettyEnd}</strong>. No action needed — we'll move you to the free tier automatically when the trial finishes.`)}
+
+    ${infoBox(`
+      <p class="email-text-gray" style="margin: 0 0 12px 0; color: ${TEXT_GRAY}; font-size: 15px; line-height: 1.7; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <strong class="email-text-dark" style="color: ${TEXT_DARK}; font-weight: 600;">What stays on Free:</strong> three prompts a week, optional check-ins, your last 50 reflections.
+      </p>
+      <p class="email-text-gray" style="margin: 0; color: ${TEXT_GRAY}; font-size: 15px; line-height: 1.7; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <strong class="email-text-dark" style="color: ${TEXT_DARK}; font-weight: 600;">What Premium keeps:</strong> daily prompts, unlimited archive, weekly &amp; monthly reflections, export.
+      </p>
+    `)}
+
+    <div style="text-align: center; margin: 40px 0;">
+      ${standardButton({ href: pricingUrl, label: 'Continue on Premium' })}
+    </div>
+
+    ${paragraph(`Not ready? That's fine. You can return to Premium anytime from <a href="${settingsUrl}" style="color: ${PRIMARY_ACCENT}; text-decoration: underline;">Settings</a> — your reflections stay either way.`, { align: 'center', fontSize: '14px', color: TEXT_MUTED })}
+  `)
+
+  return buildBaseEmail({
+    preheader: `Your Premium trial ends ${prettyEnd}`,
+    title: 'Your trial ends in two days',
+    bodyHTML,
+  })
+}
+
+/**
+ * Extract a human-friendly browser + OS family from a raw User-Agent string.
+ * Deliberately conservative: better to say "a browser" than mis-identify.
+ */
+function describeUserAgent(ua: string | null | undefined): string {
+  if (!ua) return 'a browser'
+  const lower = ua.toLowerCase()
+  let browser = 'a browser'
+  if (lower.includes('edg/')) browser = 'Edge'
+  else if (lower.includes('chrome/') && !lower.includes('edg/')) browser = 'Chrome'
+  else if (lower.includes('firefox/')) browser = 'Firefox'
+  else if (lower.includes('safari/') && !lower.includes('chrome/')) browser = 'Safari'
+  else if (lower.includes('opera') || lower.includes('opr/')) browser = 'Opera'
+
+  let os = ''
+  if (lower.includes('iphone') || lower.includes('ipad') || lower.includes('ios')) os = ' on iOS'
+  else if (lower.includes('android')) os = ' on Android'
+  else if (lower.includes('mac os') || lower.includes('macintosh')) os = ' on macOS'
+  else if (lower.includes('windows')) os = ' on Windows'
+  else if (lower.includes('linux')) os = ' on Linux'
+
+  return `${browser}${os}`
+}
+
+/**
+ * Generate "new device sign-in" security email HTML — Linear / Stripe tone.
+ */
+function generateNewDeviceSignInEmailHTML(
+  name: string,
+  details: { country?: string | null; city?: string | null; userAgent?: string | null; signedInAt?: string },
+): string {
+  const settingsUrl = `${APP_URL.replace(/\/$/, '')}/dashboard/settings`
+  const supportUrl = `${APP_URL.replace(/\/$/, '')}/dashboard/support`
+  const uaLabel = describeUserAgent(details.userAgent)
+  const locationLabel = [details.city, details.country].filter(Boolean).join(', ') || 'a new location'
+  const when = details.signedInAt
+    ? new Date(details.signedInAt).toLocaleString('en-GB', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    : 'just now'
+
+  const bodyHTML = contentSection(`
+    ${h1('New sign-in to your account')}
+
+    ${paragraph(`Hi ${name},`)}
+
+    ${paragraph(`We noticed a sign-in to your ${APP_NAME} account from a device or location we haven't seen before.`)}
+
+    ${infoBox(`
+      <p class="email-text-gray" style="margin:0 0 8px 0;color:${TEXT_GRAY};font-size:15px;line-height:1.7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+        <strong class="email-text-dark" style="color:${TEXT_DARK};font-weight:600;">When:</strong> ${when}
+      </p>
+      <p class="email-text-gray" style="margin:0 0 8px 0;color:${TEXT_GRAY};font-size:15px;line-height:1.7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+        <strong class="email-text-dark" style="color:${TEXT_DARK};font-weight:600;">Where:</strong> ${locationLabel}
+      </p>
+      <p class="email-text-gray" style="margin:0;color:${TEXT_GRAY};font-size:15px;line-height:1.7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+        <strong class="email-text-dark" style="color:${TEXT_DARK};font-weight:600;">Device:</strong> ${uaLabel}
+      </p>
+    `)}
+
+    ${paragraph(`If this was you, you can ignore this email — we'll stop sending it for this device.`)}
+
+    ${paragraph(`If it wasn't you, head to Settings to sign out of all sessions and change your password.`, { fontSize: '15px' })}
+
+    <div style="text-align: center; margin: 40px 0;">
+      ${standardButton({ href: settingsUrl, label: 'Review account security' })}
+    </div>
+
+    ${paragraph(`Need help? Reply to this email or <a href="${supportUrl}" style="color:${PRIMARY_ACCENT};text-decoration:underline;">open a support ticket</a>. A real person reads every message.`, { align: 'center', fontSize: '13px', color: TEXT_MUTED })}
+  `)
+
+  return buildBaseEmail({
+    preheader: `New sign-in from ${uaLabel} in ${locationLabel}`,
+    title: 'New sign-in to your account',
+    bodyHTML,
+  })
+}
+
+/** Format a minor-unit Stripe amount into a human-friendly string. */
+function formatStripeAmount(amount: number | null | undefined, currency: string | null | undefined): string {
+  if (typeof amount !== 'number' || !currency) return 'your payment'
+  try {
+    return new Intl.NumberFormat('en-GB', {
+      style: 'currency',
+      currency: currency.toUpperCase(),
+    }).format(amount / 100)
+  } catch {
+    return `${(amount / 100).toFixed(2)} ${currency.toUpperCase()}`
+  }
+}
+
+/**
+ * Generate "payment failed" email HTML — no urgency, no fear, just clarity.
+ */
+function generatePaymentFailedEmailHTML(
+  name: string,
+  details: { amount?: number | null; currency?: string | null; nextAttemptAt?: string | null },
+): string {
+  const billingUrl = `${APP_URL.replace(/\/$/, '')}/dashboard/settings?tab=billing`
+  const amountLabel = formatStripeAmount(details.amount, details.currency)
+  const nextAttempt = details.nextAttemptAt
+    ? new Date(details.nextAttemptAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })
+    : null
+
+  const bodyHTML = contentSection(`
+    ${h1("We couldn't process your payment")}
+
+    ${paragraph(`Hi ${name},`)}
+
+    ${paragraph(`Your card was declined when we tried to charge ${amountLabel} for ${APP_NAME} Premium. Your account stays on Premium for now — this is just a heads-up so nothing lapses unexpectedly.`)}
+
+    ${infoBox(`
+      <p class="email-text-gray" style="margin:0 0 8px 0;color:${TEXT_GRAY};font-size:15px;line-height:1.7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+        <strong class="email-text-dark" style="color:${TEXT_DARK};font-weight:600;">Most common fix:</strong> update your card details — expired cards are the usual cause.
+      </p>
+      ${
+        nextAttempt
+          ? `<p class="email-text-gray" style="margin:0;color:${TEXT_GRAY};font-size:15px;line-height:1.7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;"><strong class="email-text-dark" style="color:${TEXT_DARK};font-weight:600;">We'll retry automatically</strong> on ${nextAttempt}.</p>`
+          : ''
+      }
+    `)}
+
+    <div style="text-align: center; margin: 40px 0;">
+      ${standardButton({ href: billingUrl, label: 'Update payment method' })}
+    </div>
+
+    ${paragraph(`If the retry also fails, your account will move to the free tier — your reflections and archive stay either way.`, { align: 'center', fontSize: '14px', color: TEXT_MUTED })}
+
+    ${paragraph(`Questions? Just reply to this email. A real person reads every message.`, { align: 'center', fontSize: '13px', color: TEXT_MUTED })}
+  `)
+
+  return buildBaseEmail({
+    preheader: `We couldn't charge ${amountLabel} — update your card`,
+    title: "We couldn't process your payment",
+    bodyHTML,
+  })
+}
+
+/**
+ * Generate monthly reflection email HTML (Premium-only).
+ *
+ * Same visual vocabulary as welcome / getting_started / weekly_digest —
+ * `buildBaseEmail({ bodyHTML: contentSection(...) })`. Copy tone is Headspace
+ * / Calm: pattern observation, no gamification, no numeric comparisons
+ * month-over-month. Zero-reflection months should never reach this generator
+ * (the cron skips them up-front), so we don't render an empty-state branch.
+ */
+function generateMonthlyReflectionEmailHTML(name: string, reflection: MonthlyReflection): string {
+  const archiveUrl = `${APP_URL.replace(/\/$/, '')}/dashboard/archive`
+
+  const topTagsHTML = reflection.topTags
+    .map(
+      ({ tag, count }) =>
+        `<span class="email-text-primary email-section-bg" style="display:inline-block;background:rgba(56,76,55,0.08);color:${PRIMARY_ACCENT};padding:6px 14px;border-radius:20px;margin:4px;font-size:13px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">${tag} (${count})</span>`,
+    )
+    .join('')
+
+  const bodyHTML = contentSection(`
+    ${h1(`Your ${reflection.monthLabel} reflection`)}
+
+    ${paragraph(reflection.monthLabel, { align: 'center', fontSize: '13px', color: TEXT_MUTED })}
+
+    ${paragraph(`Hi ${name},`)}
+
+    ${paragraph(`A quiet look back at the month — no scoreboard, just the shape of what you wrote.`)}
+
+    ${infoBox(`
+      <p class="email-text-gray" style="margin:0 0 8px 0;color:${TEXT_GRAY};font-size:15px;line-height:1.7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+        <strong class="email-text-dark" style="color:${TEXT_DARK};font-weight:600;">Reflections this month:</strong> ${reflection.totalReflections}
+      </p>
+      <p class="email-text-gray" style="margin:0 0 8px 0;color:${TEXT_GRAY};font-size:15px;line-height:1.7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+        <strong class="email-text-dark" style="color:${TEXT_DARK};font-weight:600;">Days you showed up:</strong> ${reflection.daysWithEntries}
+      </p>
+      ${
+        reflection.dominantMood
+          ? `<p class="email-text-gray" style="margin:0;color:${TEXT_GRAY};font-size:15px;line-height:1.7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;"><strong class="email-text-dark" style="color:${TEXT_DARK};font-weight:600;">Most-felt mood:</strong> ${reflection.dominantMood}</p>`
+          : ''
+      }
+    `)}
+
+    ${
+      reflection.topTags.length > 0
+        ? `
+    <div style="margin:32px 0;">
+      ${h3('Themes you kept returning to')}
+      <div style="text-align:center;">${topTagsHTML}</div>
+    </div>`
+        : ''
+    }
+
+    <div style="text-align: center; margin: 40px 0;">
+      ${standardButton({ href: archiveUrl, label: 'Open your archive' })}
+    </div>
+
+    ${paragraph(`A reflection practice doesn't have a "right" shape — showing up some of the time is the whole thing.`, { align: 'center', fontSize: '14px', color: TEXT_MUTED })}
+  `)
+
+  return buildBaseEmail({
+    preheader: `${reflection.monthLabel} — ${reflection.totalReflections} reflections`,
+    title: `Your ${reflection.monthLabel} reflection`,
+    bodyHTML,
+  })
+}
+
+/**
  * Generate daily prompt email HTML using professional template system
  */
 function generateDailyPromptEmailHTML(name: string, prompt: string): string {
@@ -1342,51 +1992,77 @@ function generateDailyPromptEmailHTML(name: string, prompt: string): string {
     `)}
   `
 
-  return contentSection(promptContent)
+  // Wrap through buildBaseEmail so daily prompts ship with the same document
+  // wrapper (dark-mode CSS, header, footer, preheader) that welcome /
+  // getting-started / weekly-digest use. Visual + tonal parity across the
+  // entire lifecycle.
+  return buildBaseEmail({
+    preheader: "Today's reflection prompt is ready",
+    title: "Today's Reflection Prompt",
+    bodyHTML: contentSection(promptContent),
+  })
 }
 
 /**
- * Generate weekly digest email HTML
+ * Generate weekly digest email HTML.
+ *
+ * Rebuilt to match the welcome / getting-started layout exactly:
+ *   - bodyHTML wrapped in `contentSection(...)` so the outer card, padding and
+ *     background match every other lifecycle email.
+ *   - Date range rendered through `paragraph(...)` (same muted-centered pattern
+ *     every other email uses) instead of a hand-rolled <p>.
+ *   - Themes heading rendered through `h3(...)` for the same type scale as the
+ *     rest of the system.
+ *   - CTA/copy tone aligned with the getting-started email so the whole
+ *     lifecycle reads as a single voice.
  */
 function generateWeeklyDigestEmailHTML(name: string, digest: WeeklyDigest): string {
+  const archiveUrl = `${APP_URL.replace(/\/$/, '')}/dashboard/archive`
+  const dateRange = `${new Date(digest.weekStart).toLocaleDateString('en-GB')} – ${new Date(digest.weekEnd).toLocaleDateString('en-GB')}`
+
   const topTagsHTML = digest.topTags
-    .map(({ tag, count }) => `<span class="email-text-primary email-section-bg" style="display: inline-block; background: rgba(56, 76, 55, 0.08); color: ${PRIMARY_ACCENT}; padding: 6px 14px; border-radius: 20px; margin: 4px; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">${tag} (${count})</span>`)
+    .map(
+      ({ tag, count }) =>
+        `<span class="email-text-primary email-section-bg" style="display: inline-block; background: rgba(56, 76, 55, 0.08); color: ${PRIMARY_ACCENT}; padding: 6px 14px; border-radius: 20px; margin: 4px; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">${tag} (${count})</span>`,
+    )
     .join('')
 
-  const bodyHTML = `
-    ${h1('A Gentle Weekly Recap')}
-    <p class="email-text-muted" style="color: ${TEXT_MUTED}; font-size: 13px; margin: 0 0 32px 0; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-      ${new Date(digest.weekStart).toLocaleDateString('en-GB')} - ${new Date(digest.weekEnd).toLocaleDateString('en-GB')}
-    </p>
-    
+  const bodyHTML = contentSection(`
+    ${h1('Your weekly recap')}
+
+    ${paragraph(dateRange, { align: 'center', fontSize: '13px', color: TEXT_MUTED })}
+
     ${paragraph(`Hi ${name},`)}
-    
-    ${paragraph('Here is a small recap from your reflections this week:')}
-    
+
+    ${paragraph('A small recap from your reflections this week — nothing to act on, just something to notice.')}
+
     ${infoBox(`
       <p class="email-text-gray" style="margin: 0; color: ${TEXT_GRAY}; font-size: 15px; line-height: 1.7; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
         <strong class="email-text-dark" style="color: ${TEXT_DARK}; font-weight: 600;">Reflections this week:</strong> ${digest.totalReflections}
       </p>
     `)}
-    
-    ${digest.topTags.length > 0 ? `
+
+    ${
+      digest.topTags.length > 0
+        ? `
     <div style="margin: 32px 0;">
-      <h3 class="email-text-dark" style="color: ${TEXT_DARK}; font-size: 14px; margin: 0 0 16px 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Themes You Touched On</h3>
+      ${h3('Themes you touched on')}
       <div style="text-align: center;">${topTagsHTML}</div>
-    </div>
-    ` : ''}
-    
+    </div>`
+        : ''
+    }
+
     <div style="text-align: center; margin: 40px 0;">
-      ${standardButton({ href: 'https://promptandpause.com/dashboard/archive', label: 'View Full Archive' })}
+      ${standardButton({ href: archiveUrl, label: 'Open your archive' })}
     </div>
-    
-    ${paragraph('If you want, you can revisit anything you wrote this week.', { align: 'center' })}
-  `
+
+    ${paragraph('Revisit anything you wrote this week, or just let it sit. Either is fine.', { align: 'center', fontSize: '14px', color: TEXT_MUTED })}
+  `)
 
   return buildBaseEmail({
-    preheader: `Your weekly reflection summary (${digest.totalReflections} reflections)`,
-    title: 'Your Weekly Reflection Summary',
-    bodyHTML
+    preheader: `Your weekly recap — ${digest.totalReflections} reflections`,
+    title: 'Your weekly recap',
+    bodyHTML,
   })
 }
 
@@ -1498,7 +2174,13 @@ function generateTrialExpiredEmailHTML(name: string): string {
     ${paragraph('You can keep using Prompt & Pause on the free tier, or return to Premium later.', { align: 'center' })}
   `
 
-  return contentSection(bodyHTML)
+  // Wrap through buildBaseEmail for the same document shell every other
+  // lifecycle email ships with (dark-mode CSS, header, footer, preheader).
+  return buildBaseEmail({
+    preheader: 'Your Prompt & Pause trial has ended',
+    title: 'Your trial has ended',
+    bodyHTML: contentSection(bodyHTML),
+  })
 }
 
 /**

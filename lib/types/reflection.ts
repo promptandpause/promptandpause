@@ -197,6 +197,23 @@ export interface EmailDeliveryLog {
 // ANALYTICS TYPES
 // =============================================================================
 
+/**
+ * Compact month-scoped recap used by the Premium monthly reflection email.
+ * Deliberately lighter than WeeklyDigest — one email per month earns its
+ * place by being a pattern summary, not a dashboard dump.
+ */
+export interface MonthlyReflection {
+  monthStart: string        // ISO date of the first day of the month
+  monthEnd: string          // ISO date of the last day of the month
+  monthLabel: string        // e.g. "March 2026" — pre-computed so the email
+                            // generator never has to localise dates.
+  totalReflections: number
+  daysWithEntries: number
+  averageWordCount: number
+  topTags: { tag: string; count: number }[]
+  dominantMood: MoodType | null
+}
+
 export interface WeeklyDigest {
   weekStart: string
   weekEnd: string
