@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceRoleClient } from '@/lib/supabase/server'
-import { sendWelcomeEmail } from '@/lib/services/emailService'
+import { sendWelcomeEmail, sendGettingStartedEmail } from '@/lib/services/emailService'
 
 /**
  * Cron Job: Send Welcome Emails
@@ -25,11 +25,16 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = createServiceRoleClient()
-    // Get pending welcome emails
+    // Process both lifecycle emails:
+    //  - 'welcome'         — queued on first auth-callback landing
+    //  - 'getting_started' — queued after onboarding completion
+    // Both currently render through sendWelcomeEmail (same template); admin
+    // can introduce a distinct 'getting_started' template later without any
+    // cron changes.
     const { data: pendingEmails, error: fetchError } = await supabase
       .from('email_queue')
       .select('*')
-      .eq('email_type', 'welcome')
+      .in('email_type', ['welcome', 'getting_started'])
       .eq('status', 'pending')
       .lte('scheduled_for', new Date().toISOString())
       .lt('retry_count', 3)
@@ -61,12 +66,21 @@ export async function POST(request: NextRequest) {
       try {
         results.processed++
 
-        // Send welcome email
-        const emailResult = await sendWelcomeEmail(
-          emailJob.recipient_email,
-          emailJob.recipient_name,
-          emailJob.user_id
-        )
+        // Route to the correct sender based on lifecycle stage.
+        // Each sender logs under its own `template_name` in email_logs so
+        // delivery and engagement analytics stay cleanly separable.
+        const emailResult =
+          emailJob.email_type === 'getting_started'
+            ? await sendGettingStartedEmail(
+                emailJob.recipient_email,
+                emailJob.recipient_name,
+                emailJob.user_id,
+              )
+            : await sendWelcomeEmail(
+                emailJob.recipient_email,
+                emailJob.recipient_name,
+                emailJob.user_id,
+              )
 
         if (emailResult.success) {
           // Mark as sent

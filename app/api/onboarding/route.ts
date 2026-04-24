@@ -2,6 +2,51 @@ import { getAuthUser, createClient, createServiceRoleClient } from '@/lib/supaba
 import { NextResponse } from 'next/server'
 
 /**
+ * Server-side lifecycle event. Fire-and-forget — analytics must never block
+ * user flow or leak error surface to the client.
+ *
+ * Runs through the user-scoped Supabase client so RLS still governs writes:
+ * the `user_events` policy (`auth.uid() = user_id`) guarantees an event can
+ * only ever be attributed to the authenticated caller, even if another part
+ * of the route is holding a service-role client for privileged operations.
+ */
+async function trackLifecycleEvent(
+  userId: string,
+  event: string,
+  properties: Record<string, unknown> = {},
+) {
+  try {
+    const client = await createClient()
+    await client.from('user_events').insert({
+      user_id: userId,
+      event,
+      properties,
+    })
+  } catch {
+    // Non-blocking.
+  }
+}
+
+/**
+ * Map raw Postgres / Supabase errors to a calm, user-safe message.
+ * Following Apple HIG + Linear: specific when it helps the user, silent about
+ * internals otherwise. Real error stays in server logs.
+ */
+function friendlyOnboardingError(rawMessage: string): string {
+  const lower = rawMessage.toLowerCase()
+  if (lower.includes('duplicate key') || lower.includes('unique constraint')) {
+    return "Looks like you've already set this up. Refresh and you should land on your dashboard."
+  }
+  if (lower.includes('permission') || lower.includes('rls')) {
+    return "We couldn't save your preferences from this session. Sign in again and try once more."
+  }
+  if (lower.includes('network') || lower.includes('timeout') || lower.includes('fetch')) {
+    return 'Your connection dropped mid-save. Give it another go in a moment.'
+  }
+  return "Something didn't settle on our end. Try again — your answers are still here."
+}
+
+/**
  * Onboarding API Route
  * 
  * This endpoint handles saving user onboarding preferences to the database.
@@ -100,9 +145,13 @@ export async function POST(request: Request) {
       if (profileError) {
         // Abort before writing preferences so the user remains gated on
         // /onboarding and can safely retry. No half-finished state.
+        console.error('onboarding_trial_provision_error', {
+          userId: user.id,
+          message: profileError.message,
+        })
         return NextResponse.json(
-          { error: 'Failed to provision trial: ' + profileError.message },
-          { status: 500 }
+          { error: "We couldn't activate your trial. Try again in a moment." },
+          { status: 500 },
         )
       }
     }
@@ -139,57 +188,67 @@ export async function POST(request: Request) {
     const result = { data: upserted, error: upsertError }
 
     if (result.error) {
+      console.error('onboarding_preferences_save_error', {
+        userId: user.id,
+        message: result.error.message,
+      })
       return NextResponse.json(
-        { error: 'Failed to save preferences: ' + result.error.message },
-        { status: 500 }
+        { error: friendlyOnboardingError(result.error.message) },
+        { status: 500 },
       )
     }
+
+    // Lifecycle event — fires exactly once, tied to the first successful save.
+    if (!hadExistingPreferences) {
+      await trackLifecycleEvent(user.id, 'onboarding_completed', {
+        reason: body.reason,
+        delivery: deliveryMethod,
+        focus_count: Array.isArray(body.focus) ? body.focus.length : 0,
+        trial_granted: shouldGrantTrial,
+      })
+    }
     
-    // Send welcome email after successful onboarding (one-time)
+    // Queue a "getting started" email after first successful onboarding.
+    // The plain welcome email is handled separately in the auth callback on
+    // first login (covers email/password AND SSO). This one fires when the
+    // user has actually finished onboarding and is ready for how-to guidance.
     if (!hadExistingPreferences) {
       try {
-        const { data: existingWelcomeEmail } = await serviceClient
-          .from('email_logs')
+        const { data: existingGettingStarted } = await serviceClient
+          .from('email_queue')
           .select('id')
-          .eq('recipient_email', user.email!)
-          .eq('template_name', 'welcome')
-          .in('status', ['sent', 'delivered', 'opened', 'clicked'])
+          .eq('user_id', user.id)
+          .eq('email_type', 'getting_started')
+          .in('status', ['pending', 'sent'])
           .limit(1)
           .maybeSingle()
 
-        if (!existingWelcomeEmail) {
-          const { data: existingWelcomeJob } = await serviceClient
+        if (!existingGettingStarted) {
+          const displayName = user.user_metadata?.full_name ||
+                             user.user_metadata?.name ||
+                             user.email?.split('@')[0] ||
+                             'there'
+
+          await serviceClient
             .from('email_queue')
-            .select('id')
-            .eq('user_id', user.id)
-            .eq('email_type', 'welcome')
-            .in('status', ['pending', 'sent'])
-            .limit(1)
-            .maybeSingle()
+            .insert({
+              user_id: user.id,
+              email_type: 'getting_started',
+              recipient_email: user.email ?? '',
+              recipient_name: displayName,
+              scheduled_for: new Date().toISOString(),
+              status: 'pending',
+              retry_count: 0,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            })
 
-          if (!existingWelcomeJob) {
-            const displayName = user.user_metadata?.full_name ||
-                               user.user_metadata?.name ||
-                               user.email?.split('@')[0] ||
-                               'there'
-
-            await serviceClient
-              .from('email_queue')
-              .insert({
-                user_id: user.id,
-                email_type: 'welcome',
-                recipient_email: user.email ?? '',
-                recipient_name: displayName,
-                scheduled_for: new Date().toISOString(),
-                status: 'pending',
-                retry_count: 0,
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString(),
-              })
-          }
+          await trackLifecycleEvent(user.id, 'getting_started_email_queued', {
+            trigger: 'onboarding_completed',
+          })
         }
       } catch (emailError) {
-        // Don't fail the onboarding if email fails
+        // Don't fail the onboarding if email queueing fails.
       }
     }
     
@@ -201,9 +260,13 @@ export async function POST(request: Request) {
     }, { status: 200 })
     
   } catch (error: any) {
+    console.error('onboarding_unexpected_error', {
+      message: error?.message,
+      stack: error?.stack,
+    })
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
-      { status: 500 }
+      { error: "Something didn't settle on our end. Try again — your answers are still here." },
+      { status: 500 },
     )
   }
 }

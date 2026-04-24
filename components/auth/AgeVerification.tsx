@@ -131,15 +131,20 @@ export default function AgeVerification({ onVerified, initialCountry = "US" }: A
 
       if (profileError) throw profileError
 
-      // Update user preferences
+      // Update user preferences — upsert on user_id (not the default PK),
+      // otherwise a pre-existing row triggers
+      // "duplicate key value violates unique constraint user_preferences_user_id_key".
       const { error: prefError } = await supabase
         .from("user_preferences")
-        .upsert({
-          user_id: user.id,
-          age_consent_version: "2026.01",
-          age_consent_accepted: true,
-          age_consent_accepted_at: new Date().toISOString(),
-        })
+        .upsert(
+          {
+            user_id: user.id,
+            age_consent_version: "2026.01",
+            age_consent_accepted: true,
+            age_consent_accepted_at: new Date().toISOString(),
+          },
+          { onConflict: "user_id" },
+        )
 
       if (prefError) throw prefError
 
@@ -155,10 +160,15 @@ export default function AgeVerification({ onVerified, initialCountry = "US" }: A
       })
 
     } catch (error: any) {
+      // Never leak raw DB / provider errors into the UI — keep the copy
+      // human (Linear/Stripe tone) and funnel the details to server logs.
+      console.error('age_verification_error', {
+        message: error?.message,
+      })
       toast({
-        title: "Verification Failed",
-        description: error.message || "Failed to verify age. Please try again.",
-        variant: "destructive"
+        title: 'Verification didn\'t go through',
+        description: "Give it another try in a moment — your details are still here.",
+        variant: 'destructive',
       })
     } finally {
       setIsSubmitting(false)

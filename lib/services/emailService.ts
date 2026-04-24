@@ -426,6 +426,80 @@ export async function sendWelcomeEmail(
 }
 
 /**
+ * Send "getting started" email — fires after onboarding completes.
+ *
+ * Distinct from the welcome email (which goes out on first login). This one
+ * arrives once the user has a `user_preferences` row and gives them three
+ * concrete next steps in their reflection practice.
+ *
+ * @param email - Recipient email address
+ * @param name - User's name (or fallback to email)
+ * @param userId - Optional user ID for logging
+ * @returns Promise with email send result
+ */
+export async function sendGettingStartedEmail(
+  email: string,
+  name: string | null,
+  userId?: string | null
+): Promise<{ success: boolean; emailId?: string; error?: string }> {
+  try {
+    if (!process.env.RESEND_API_KEY) {
+      return { success: false, error: 'Email service not configured' }
+    }
+
+    const displayName = name || email.split('@')[0]
+    const html = await generateWithCustomization('getting_started', () =>
+      generateGettingStartedEmailHTML(displayName)
+    )
+
+    // Falls back to a sensible default when the admin hasn't customized
+    // the subject for this template yet.
+    const subject =
+      (await getSubjectForTemplate('getting_started', { userName: displayName })) ||
+      `You're set up, ${displayName} — here's how to start`
+
+    const { data, error } = await resend.emails.send({
+      from: `${APP_NAME} <${FROM_EMAIL}>`,
+      to: email,
+      subject,
+      html,
+    })
+
+    if (error) {
+      logger.error('email_getting_started_send_error', { error, email })
+      await logEmailSend({
+        userId: userId || 'unknown',
+        recipientEmail: email,
+        subject,
+        templateName: 'getting_started',
+        provider: 'resend',
+        status: 'failed',
+        providerMessageId: null,
+        errorMessage: error.message,
+      })
+      return { success: false, error: error.message }
+    }
+
+    await logEmailSend({
+      userId: userId || 'unknown',
+      recipientEmail: email,
+      subject,
+      templateName: 'getting_started',
+      provider: 'resend',
+      status: 'sent',
+      providerMessageId: data?.id || null,
+    })
+    return { success: true, emailId: data?.id }
+  } catch (error) {
+    logger.error('email_getting_started_unexpected_error', { error, email })
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    }
+  }
+}
+
+/**
  * Send daily reflection prompt email
  * 
  * @param email - Recipient email address
@@ -1157,6 +1231,49 @@ function generateWelcomeEmailHTML(name: string): string {
   return buildBaseEmail({
     preheader: 'Welcome to Prompt & Pause',
     title: 'Welcome to Prompt & Pause',
+    bodyHTML,
+  })
+}
+
+/**
+ * Generate "getting started" email HTML — sent once onboarding completes.
+ *
+ * Tone: quiet, specific, action-oriented (Apple HIG + Stripe dashboard clarity
+ * + Headspace warmth). Unlike `welcome`, this email assumes the user has
+ * already confirmed and onboarded, and gives them three concrete first steps
+ * plus an honest promise of restraint.
+ */
+function generateGettingStartedEmailHTML(name: string): string {
+  const dashboardUrl = `${APP_URL.replace(/\/$/, '')}/dashboard`
+  const settingsUrl = `${APP_URL.replace(/\/$/, '')}/dashboard/settings`
+
+  const bodyHTML = contentSection(`
+    ${h1("You're set up")}
+
+    ${paragraph(`Hi ${name},`)}
+
+    ${paragraph(`Your reflection space is ready. ${APP_NAME} is designed to be quiet — one prompt a day, nothing that nags. Here's how to make it yours in a few minutes.`)}
+
+    ${infoBox(`
+      <ol class="email-text-gray" style="color: ${TEXT_GRAY}; line-height: 1.8; margin: 0; padding-left: 20px; font-size: 15px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <li class="email-text-gray" style="margin-bottom: 10px;"><strong>Answer today's prompt.</strong> Two sentences is plenty. You're building a habit, not a résumé.</li>
+        <li class="email-text-gray" style="margin-bottom: 10px;"><strong>Pick a time that's yours.</strong> Most people choose early morning or the end of the workday. You can change this anytime in Settings.</li>
+        <li class="email-text-gray"><strong>Come back tomorrow.</strong> That's the whole practice. We'll surface gentle patterns over time — never before they're useful.</li>
+      </ol>
+    `)}
+
+    <div style="text-align: center; margin: 40px 0;">
+      ${standardButton({ href: dashboardUrl, label: "Open today's prompt" })}
+    </div>
+
+    ${paragraph(`You can adjust your delivery time, focus areas, or reminder cadence in <a href="${settingsUrl}" style="color: ${PRIMARY_ACCENT}; text-decoration: underline;">Settings</a>. Nothing is locked in.`, { align: 'center', fontSize: '14px', color: TEXT_MUTED })}
+
+    ${paragraph("If anything gets in the way — from a confusing button to the wrong reminder time — just reply to this email. A real person reads every message.", { align: 'center', fontSize: '14px', color: TEXT_MUTED })}
+  `)
+
+  return buildBaseEmail({
+    preheader: "You're set up — here's how to make Prompt & Pause yours",
+    title: "You're set up on Prompt & Pause",
     bodyHTML,
   })
 }
