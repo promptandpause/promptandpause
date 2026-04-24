@@ -46,60 +46,50 @@ export async function POST(request: Request) {
       "9pm": "21:00:00"
     }
     
-    // Prepare preferences data
+    // Normalise delivery method — Slack is premium-only, so new users
+    // are forced to email even if they somehow selected Slack.
+    const requestedDelivery = typeof body.delivery === 'string' ? body.delivery.toLowerCase() : 'email'
+    const deliveryMethod: 'email' | 'slack' = requestedDelivery === 'slack' ? 'email' : 'email'
+
+    // Check if preferences already exist (so we know whether this is first-time onboarding)
+    const { data: existing } = await supabase
+      .from('user_preferences')
+      .select('id, created_at')
+      .eq('user_id', user.id)
+      .maybeSingle()
+
+    const hadExistingPreferences = !!existing
+
+    // Prepare preferences data. Use upsert to make this idempotent and
+    // race-safe (fixes "duplicate key value violates unique constraint
+    // user_preferences_user_id_key" when the client double-submits).
     const preferences = {
       user_id: user.id,
       reason: body.reason,
       current_mood: body.mood || 5,
       prompt_time: timeMap[body.promptTime] || "09:00:00",
       prompt_frequency: body.promptFrequency || "daily",
-      delivery_method: "email" as "email" | "slack", // All new users start on free tier — Slack is premium only
+      delivery_method: deliveryMethod,
       focus_areas: Array.isArray(body.focus) ? body.focus : [],
       push_notifications: body.pushNotifications ?? true,
       daily_reminders: body.dailyReminders ?? true,
       weekly_digest: body.weeklyDigest ?? false,
-      created_at: new Date().toISOString(),
+      // Only set created_at on first insert; preserve original otherwise
+      created_at: existing?.created_at || new Date().toISOString(),
       updated_at: new Date().toISOString()
     }
-    
+
     // Set timezone in profile if provided (auto-detected from browser)
     const userTimezone = body.timezone // Should be IANA timezone like 'America/New_York'
-    
-    // Check if preferences already exist
-    const { data: existing } = await supabase
-      .from('user_preferences')
-      .select('id')
-      .eq('user_id', user.id)
-      .maybeSingle()
-    
-    let result
-    
-    const hadExistingPreferences = !!existing
 
-    if (hadExistingPreferences) {
-      // Update existing preferences
-      const { data, error } = await supabase
-        .from('user_preferences')
-        .update({
-          ...preferences,
-          created_at: undefined, // Don't update created_at
-        })
-        .eq('user_id', user.id)
-        .select()
-        .single()
-      
-      result = { data, error }
-    } else {
-      // Insert new preferences
-      const { data, error } = await supabase
-        .from('user_preferences')
-        .insert(preferences)
-        .select()
-        .single()
-      
-      result = { data, error }
-    }
-    
+    const { data: upserted, error: upsertError } = await supabase
+      .from('user_preferences')
+      .upsert(preferences, { onConflict: 'user_id' })
+      .select()
+      .single()
+
+    const result = { data: upserted, error: upsertError }
+
     if (result.error) {
       return NextResponse.json(
         { error: 'Failed to save preferences: ' + result.error.message },
@@ -139,13 +129,8 @@ export async function POST(request: Request) {
         }, { onConflict: 'id' })
 
       if (profileError) {
-        if (!hadExistingPreferences) {
-          await supabase
-            .from('user_preferences')
-            .delete()
-            .eq('user_id', user.id)
-        }
-
+        // Do not delete user_preferences here — the upsert above may have
+        // updated an existing row, and deleting would lose prior data.
         return NextResponse.json(
           { error: 'Failed to provision trial: ' + profileError.message },
           { status: 500 }

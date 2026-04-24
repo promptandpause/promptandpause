@@ -1,0 +1,12 @@
+CREATE INDEX IF NOT EXISTS idx_admin_sessions_admin_user_id ON public.admin_sessions USING btree (admin_user_id);
+CREATE INDEX IF NOT EXISTS idx_admin_users_created_by ON public.admin_users USING btree (created_by);
+CREATE INDEX IF NOT EXISTS idx_allowed_ips_added_by ON public.allowed_ips USING btree (added_by);
+CREATE INDEX IF NOT EXISTS idx_blocked_ips_blocked_by ON public.blocked_ips USING btree (blocked_by);
+CREATE INDEX IF NOT EXISTS idx_gratitude_entries_reflection_id ON public.gratitude_entries USING btree (reflection_id);
+CREATE INDEX IF NOT EXISTS idx_maintenance_mode_enabled_by ON public.maintenance_mode USING btree (enabled_by);
+CREATE INDEX IF NOT EXISTS idx_maintenance_notifications_sent_by ON public.maintenance_notifications USING btree (sent_by);
+CREATE INDEX IF NOT EXISTS idx_maintenance_status_cache_maintenance_window_id ON public.maintenance_status_cache USING btree (maintenance_window_id);
+CREATE INDEX IF NOT EXISTS idx_moods_reflection_id ON public.moods USING btree (reflection_id);
+CREATE INDEX IF NOT EXISTS idx_reflection_resurfacing_events_reflection_id ON public.reflection_resurfacing_events USING btree (reflection_id);
+CREATE INDEX IF NOT EXISTS idx_reflections_prompt_id ON public.reflections USING btree (prompt_id);
+CREATE INDEX IF NOT EXISTS idx_support_requests_admin_id ON public.support_requests USING btree (admin_id);

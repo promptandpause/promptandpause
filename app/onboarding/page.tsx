@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
@@ -67,6 +67,8 @@ export default function Onboarding() {
   const { toast } = useToast()
   const supabase = getSupabaseClient()
   
+  const STORAGE_KEY = "pp_onboarding_progress_v1"
+  const [hydrated, setHydrated] = useState(false)
   const [step, setStep] = useState(-2) // Start at -2 for age verification
   const [acceptedTerms, setAcceptedTerms] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -80,6 +82,58 @@ export default function Onboarding() {
     delivery: "",
     focus: [] as string[]
   })
+
+  // --- Hydrate saved progress from localStorage on mount ---
+  useEffect(() => {
+    try {
+      const raw = typeof window !== "undefined" ? window.localStorage.getItem(STORAGE_KEY) : null
+      if (raw) {
+        const saved = JSON.parse(raw)
+        if (saved && typeof saved === "object") {
+          if (saved.answers && typeof saved.answers === "object") {
+            setAnswers((prev) => ({ ...prev, ...saved.answers, focus: Array.isArray(saved.answers.focus) ? saved.answers.focus : prev.focus }))
+          }
+          if (typeof saved.acceptedTerms === "boolean") setAcceptedTerms(saved.acceptedTerms)
+          if (saved.ageData && typeof saved.ageData === "object") {
+            setAgeData(saved.ageData)
+            setAgeVerified(true)
+          }
+          if (typeof saved.step === "number") {
+            // Clamp to valid range; never auto-resume into the final success screen.
+            const maxResumable = steps.length // preview screen allowed
+            const resumed = Math.min(Math.max(saved.step, -2), maxResumable)
+            setStep(resumed)
+          }
+        }
+      }
+    } catch {
+      // ignore malformed storage
+    }
+    setHydrated(true)
+  }, [])
+
+  // --- Persist progress on change (after hydration) ---
+  useEffect(() => {
+    if (!hydrated) return
+    try {
+      // Don't persist the terminal success screen
+      if (step > steps.length) return
+      const payload = { step, answers, acceptedTerms, ageData }
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
+    } catch {
+      // ignore quota/storage errors
+    }
+  }, [hydrated, step, answers, acceptedTerms, ageData])
+
+  // Re-generate the preview prompt if the user refreshed directly onto the preview step
+  const didRegeneratePreviewOnHydrate = useRef(false)
+  useEffect(() => {
+    if (!hydrated) return
+    if (step === steps.length && !previewPrompt && !didRegeneratePreviewOnHydrate.current) {
+      didRegeneratePreviewOnHydrate.current = true
+      generatePreviewPrompt()
+    }
+  }, [hydrated, step, previewPrompt])
 
   // --- Age Verification Handler ---
   function handleAgeVerified(data: { dateOfBirth: string; country: string; isCompliant: boolean }) {
@@ -173,6 +227,9 @@ export default function Onboarding() {
         throw new Error(errorData.error || 'Failed to save onboarding data')
       }
       
+      // Clear saved onboarding progress now that it's committed server-side
+      try { window.localStorage.removeItem(STORAGE_KEY) } catch {}
+
       // Move to completion screen
       setStep(steps.length + 1)
       

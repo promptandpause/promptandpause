@@ -94,9 +94,23 @@
     "web-push": "^3.6.7",
     "zod": "4.1.12"
   },
+  "overrides": {
+    "minimatch": ">=9.0.5",
+    "picomatch": "^4.0.3",
+    "flatted": "^3.4.2",
+    "brace-expansion": "^2.0.2",
+    "uuid": "^14.0.0",
+    "follow-redirects": "^1.16.0"
+  },
   "pnpm": {
     "overrides": {
-      "motion-dom": "12.24.8"
+      "motion-dom": "12.24.8",
+      "minimatch": ">=9.0.5",
+      "picomatch": "^4.0.3",
+      "flatted": "^3.4.2",
+      "brace-expansion": "^2.0.2",
+      "uuid": "^14.0.0",
+      "follow-redirects": "^1.16.0"
     },
     "peerDependencyRules": {
       "ignoreMissing": [
