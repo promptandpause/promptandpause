@@ -98,7 +98,7 @@ export default function WellnessPage() {
           <DashboardSidebar />
 
           <main className="flex-1 pb-32 md:pb-10 overflow-y-auto scrollbar-thin">
-            <div className="max-w-[1000px] mx-auto px-4 md:px-6 pt-16 md:pt-10">
+            <div className="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-10 pt-16 md:pt-10">
             <div className="space-y-5 md:space-y-6">
               {/* Header */}
               <Card className={`rounded-2xl p-5 md:p-6 border shadow-none ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#E8E5DE]'}`}>
@@ -189,67 +189,44 @@ export default function WellnessPage() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.2 }}
                     >
-                      <Card className={`rounded-2xl h-full border shadow-none ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#E8E5DE]'}`}>
+                      <Card className={`rounded-2xl h-full border shadow-none overflow-hidden ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#E8E5DE]'}`}>
                         <CardHeader className="pb-3">
-                          <CardTitle className={`text-lg flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>
-                            <Wind className="w-5 h-5 text-blue-500" />
-                            Quick Tools
-                          </CardTitle>
+                          <div className="flex items-center justify-between">
+                            <CardTitle className={`text-lg flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>
+                              <Sparkles className="w-5 h-5 text-[#6FA984]" />
+                              Quick Tools
+                            </CardTitle>
+                            <span className={`text-[11px] font-medium uppercase tracking-[0.12em] ${theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
+                              Tap to begin
+                            </span>
+                          </div>
                         </CardHeader>
-                        <CardContent className="space-y-2">
-                          <Button
-                            variant="outline"
-                            className={`w-full justify-between h-auto py-2.5 rounded-lg ${theme === 'dark' ? 'border-white/10 hover:bg-white/10' : 'border-[#E8E5DE] hover:bg-[#F0EDE6]'}`}
+                        <CardContent className="space-y-2.5">
+                          <QuickToolRow
+                            isDark={theme === 'dark'}
+                            accent="sky"
+                            icon={<Wind className="w-[18px] h-[18px]" strokeWidth={1.9} />}
+                            title="Breathing Exercises"
+                            subtitle="Calm your mind in 4 minutes"
                             onClick={() => setShowBreathingDialog(true)}
-                          >
-                            <div className="flex items-center gap-2">
-                              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${theme === 'dark' ? 'bg-blue-500/20' : 'bg-[#D4E4F7]'}`}>
-                                <Wind className={`w-4 h-4 ${theme === 'dark' ? 'text-blue-400' : 'text-[#5B7FA5]'}`} />
-                              </div>
-                              <div className="text-left">
-                                <div className={`font-medium text-sm ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>Breathing Exercises</div>
-                                <div className={`text-xs ${theme === 'dark' ? 'text-white/50' : 'text-[#8A8A7A]'}`}>Calm your mind</div>
-                              </div>
-                            </div>
-                            <ChevronRight className={`w-4 h-4 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />
-                          </Button>
-
-                          <Button
-                            variant="outline"
-                            className={`w-full justify-between h-auto py-2.5 rounded-lg ${theme === 'dark' ? 'border-rose-500/20 hover:bg-rose-500/10' : 'border-rose-200 hover:bg-rose-50'}`}
+                          />
+                          <QuickToolRow
+                            isDark={theme === 'dark'}
+                            accent="rose"
+                            icon={<Heart className="w-[18px] h-[18px]" strokeWidth={1.9} />}
+                            title="Crisis Support"
+                            subtitle="Grounding, coping & hotlines"
                             onClick={() => setShowCrisisDialog(true)}
-                          >
-                            <div className="flex items-center gap-2">
-                              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${theme === 'dark' ? 'bg-rose-500/20' : 'bg-rose-100'}`}>
-                                <Heart className={`w-4 h-4 ${theme === 'dark' ? 'text-rose-400' : 'text-rose-600'}`} />
-                              </div>
-                              <div className="text-left">
-                                <div className={`font-medium text-sm ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>Crisis Support</div>
-                                <div className={`text-xs ${theme === 'dark' ? 'text-white/50' : 'text-[#8A8A7A]'}`}>Grounding & hotlines</div>
-                              </div>
-                            </div>
-                            <ChevronRight className={`w-4 h-4 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />
-                          </Button>
-
-                          <Button
-                            variant="outline"
-                            className={`w-full justify-between h-auto py-2.5 rounded-lg ${theme === 'dark' ? 'border-white/10 hover:bg-white/10' : 'border-[#E8E5DE] hover:bg-[#F0EDE6]'}`}
+                          />
+                          <QuickToolRow
+                            isDark={theme === 'dark'}
+                            accent="violet"
+                            icon={<Target className="w-[18px] h-[18px]" strokeWidth={1.9} />}
+                            title="Goals & Intentions"
+                            subtitle="Track your progress"
                             onClick={() => setActiveTab('goals')}
-                          >
-                            <div className="flex items-center gap-2">
-                              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${theme === 'dark' ? 'bg-purple-500/20' : 'bg-purple-100'}`}>
-                                <Target className={`w-4 h-4 ${theme === 'dark' ? 'text-purple-400' : 'text-purple-600'}`} />
-                              </div>
-                              <div className="text-left">
-                                <div className={`font-medium text-sm ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>Goals & Intentions</div>
-                                <div className={`text-xs ${theme === 'dark' ? 'text-white/50' : 'text-[#8A8A7A]'}`}>Track your progress</div>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              {!isPremium && <Lock className={`w-3 h-3 ${theme === 'dark' ? 'text-white/40' : 'text-[#A0A090]'}`} />}
-                              <ChevronRight className={`w-4 h-4 ${theme === 'dark' ? 'text-white/40' : 'text-[#A0A090]'}`} />
-                            </div>
-                          </Button>
+                            locked={!isPremium}
+                          />
                         </CardContent>
                       </Card>
                     </motion.div>
@@ -441,5 +418,94 @@ export default function WellnessPage() {
         </Dialog>
       </div>
     </AuthGuard>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Premium Quick Tool row — gradient surface, layered icon orb, spring press
+// ─────────────────────────────────────────────────────────────────────────────
+type QuickToolAccent = 'sky' | 'rose' | 'violet'
+
+function QuickToolRow({
+  isDark,
+  accent,
+  icon,
+  title,
+  subtitle,
+  onClick,
+  locked = false,
+}: {
+  isDark: boolean
+  accent: QuickToolAccent
+  icon: React.ReactNode
+  title: string
+  subtitle: string
+  onClick: () => void
+  locked?: boolean
+}) {
+  const surface =
+    accent === 'sky'
+      ? (isDark
+          ? 'from-sky-500/10 via-white/[0.02] to-transparent border-sky-400/15 hover:border-sky-400/30'
+          : 'from-sky-50/90 via-white/70 to-white/60 border-sky-200/50 hover:border-sky-300/70')
+      : accent === 'rose'
+      ? (isDark
+          ? 'from-rose-500/10 via-white/[0.02] to-transparent border-rose-400/15 hover:border-rose-400/30'
+          : 'from-rose-50/90 via-white/70 to-white/60 border-rose-200/50 hover:border-rose-300/70')
+      : (isDark
+          ? 'from-violet-500/10 via-white/[0.02] to-transparent border-violet-400/15 hover:border-violet-400/30'
+          : 'from-violet-50/90 via-white/70 to-white/60 border-violet-200/50 hover:border-violet-300/70')
+
+  const orb =
+    accent === 'sky'
+      ? 'bg-gradient-to-br from-sky-500 to-sky-600'
+      : accent === 'rose'
+      ? 'bg-gradient-to-br from-rose-500 to-rose-600'
+      : 'bg-gradient-to-br from-violet-500 to-violet-600'
+
+  const glow =
+    accent === 'sky' ? 'bg-sky-400/25' : accent === 'rose' ? 'bg-rose-400/25' : 'bg-violet-400/25'
+
+  return (
+    <motion.button
+      type="button"
+      onClick={onClick}
+      whileHover={{ y: -1 }}
+      whileTap={{ scale: 0.985 }}
+      transition={{ type: 'spring', stiffness: 420, damping: 26 }}
+      className={[
+        'group relative w-full text-left overflow-hidden',
+        'rounded-2xl px-3.5 py-3 border bg-gradient-to-br transition-colors duration-200',
+        surface,
+        'shadow-[0_1px_2px_rgba(15,20,20,0.04)] hover:shadow-[0_10px_22px_-12px_rgba(15,20,20,0.15)]',
+        'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#6FA984]/40',
+      ].join(' ')}
+    >
+      <span
+        aria-hidden
+        className={`pointer-events-none absolute -top-6 -right-6 h-20 w-20 rounded-full blur-2xl opacity-0 group-hover:opacity-70 transition-opacity duration-500 ${glow}`}
+      />
+      <div className="relative flex items-center gap-3">
+        <span className={`relative inline-flex h-10 w-10 items-center justify-center rounded-xl text-white shadow-sm ${orb}`}>
+          {icon}
+        </span>
+        <div className="flex-1 min-w-0">
+          <p className={`text-[14px] font-semibold tracking-tight ${isDark ? 'text-white' : 'text-[#2F3B34]'}`}>
+            {title}
+          </p>
+          <p className={`mt-0.5 text-[12px] leading-snug ${isDark ? 'text-white/55' : 'text-[#6B7F6E]'}`}>
+            {subtitle}
+          </p>
+        </div>
+        <div className="flex items-center gap-1.5 shrink-0">
+          {locked && (
+            <Lock className={`w-3.5 h-3.5 ${isDark ? 'text-white/40' : 'text-[#A0A090]'}`} />
+          )}
+          <ChevronRight
+            className={`w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5 ${isDark ? 'text-white/40' : 'text-[#8A9B8F]'}`}
+          />
+        </div>
+      </div>
+    </motion.button>
   )
 }

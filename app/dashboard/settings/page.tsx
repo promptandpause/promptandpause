@@ -43,6 +43,7 @@ import {
 } from "@/lib/services/cacheService"
 import { usePushNotifications } from "@/lib/hooks/usePushNotifications"
 import FocusAreasManager from "../components/focus-areas-manager"
+import { IconOrb, type Accent } from "@/components/ui/accent-card"
 import {
   Select,
   SelectContent,
@@ -947,7 +948,7 @@ function SettingsPageContent() {
         <DashboardSidebar />
 
         <main className="flex-1 pb-32 md:pb-10 overflow-y-auto scrollbar-thin">
-          <div className="max-w-[1000px] mx-auto px-4 md:px-6 pt-16 md:pt-10">
+          <div className="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-10 pt-16 md:pt-10">
           <div className="space-y-5 md:space-y-6">
           {/* Mobile: Apple iOS-style Settings List */}
           <div className="md:hidden">
@@ -2218,13 +2219,18 @@ function SettingsPageContent() {
               ? 'bg-white/5 border-white/8'
               : 'bg-[#FAFAF7] border-2 border-[#E8E5DE]'
           }`}>
-            <div>
-              <h2 className={`text-xl md:text-3xl font-bold ${
-                theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
-              }`}>Settings</h2>
-              <p className={`text-xs md:text-base ${
-                theme === 'dark' ? 'text-white/50' : 'text-[#8A8A7A]'
-              }`}>Manage your account and preferences</p>
+            <div className="flex items-center gap-3">
+              <IconOrb accent="violet" size="md">
+                <Settings2 className="w-5 h-5 text-white" strokeWidth={1.75} />
+              </IconOrb>
+              <div>
+                <h2 className={`text-xl md:text-3xl font-bold tracking-tight ${
+                  theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                }`}>Settings</h2>
+                <p className={`text-xs md:text-base ${
+                  theme === 'dark' ? 'text-white/50' : 'text-[#8A8A7A]'
+                }`}>Manage your account and preferences</p>
+              </div>
             </div>
           </Card>
 

@@ -60,45 +60,14 @@ export async function POST(request: Request) {
 
     const hadExistingPreferences = !!existing
 
-    // Prepare preferences data. Use upsert to make this idempotent and
-    // race-safe (fixes "duplicate key value violates unique constraint
-    // user_preferences_user_id_key" when the client double-submits).
-    const preferences = {
-      user_id: user.id,
-      reason: body.reason,
-      current_mood: body.mood || 5,
-      prompt_time: timeMap[body.promptTime] || "09:00:00",
-      prompt_frequency: body.promptFrequency || "daily",
-      delivery_method: deliveryMethod,
-      focus_areas: Array.isArray(body.focus) ? body.focus : [],
-      push_notifications: body.pushNotifications ?? true,
-      daily_reminders: body.dailyReminders ?? true,
-      weekly_digest: body.weeklyDigest ?? false,
-      // Only set created_at on first insert; preserve original otherwise
-      created_at: existing?.created_at || new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    }
-
     // Set timezone in profile if provided (auto-detected from browser)
     const userTimezone = body.timezone // Should be IANA timezone like 'America/New_York'
 
-    const { data: upserted, error: upsertError } = await supabase
-      .from('user_preferences')
-      .upsert(preferences, { onConflict: 'user_id' })
-      .select()
-      .single()
-
-    const result = { data: upserted, error: upsertError }
-
-    if (result.error) {
-      return NextResponse.json(
-        { error: 'Failed to save preferences: ' + result.error.message },
-        { status: 500 }
-      )
-    }
-    
-    // Create or update user profile record with 7-day premium trial
-    // This is essential for useTier hook and other features
+    // ─────────────────────────────────────────────────────────────────────────
+    // STEP 1: Provision the user's profile (including 7-day premium trial)
+    // BEFORE writing user_preferences. If this fails, the user stays gated on
+    // /onboarding (because the preferences row is what unlocks the dashboard).
+    // ─────────────────────────────────────────────────────────────────────────
     const serviceClient = createServiceRoleClient()
 
     const { data: existingProfile } = await serviceClient
@@ -129,13 +98,51 @@ export async function POST(request: Request) {
         }, { onConflict: 'id' })
 
       if (profileError) {
-        // Do not delete user_preferences here — the upsert above may have
-        // updated an existing row, and deleting would lose prior data.
+        // Abort before writing preferences so the user remains gated on
+        // /onboarding and can safely retry. No half-finished state.
         return NextResponse.json(
           { error: 'Failed to provision trial: ' + profileError.message },
           { status: 500 }
         )
       }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // STEP 2: Save preferences. This is the record that unlocks the dashboard,
+    // so it MUST be written last — only after the trial profile is in place.
+    // Using upsert makes this idempotent and race-safe (fixes
+    // "duplicate key value violates unique constraint user_preferences_user_id_key"
+    // when the client double-submits).
+    // ─────────────────────────────────────────────────────────────────────────
+    const preferences = {
+      user_id: user.id,
+      reason: body.reason,
+      current_mood: body.mood || 5,
+      prompt_time: timeMap[body.promptTime] || "09:00:00",
+      prompt_frequency: body.promptFrequency || "daily",
+      delivery_method: deliveryMethod,
+      focus_areas: Array.isArray(body.focus) ? body.focus : [],
+      push_notifications: body.pushNotifications ?? true,
+      daily_reminders: body.dailyReminders ?? true,
+      weekly_digest: body.weeklyDigest ?? false,
+      // Only set created_at on first insert; preserve original otherwise
+      created_at: existing?.created_at || new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }
+
+    const { data: upserted, error: upsertError } = await supabase
+      .from('user_preferences')
+      .upsert(preferences, { onConflict: 'user_id' })
+      .select()
+      .single()
+
+    const result = { data: upserted, error: upsertError }
+
+    if (result.error) {
+      return NextResponse.json(
+        { error: 'Failed to save preferences: ' + result.error.message },
+        { status: 500 }
+      )
     }
     
     // Send welcome email after successful onboarding (one-time)

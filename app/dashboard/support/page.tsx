@@ -33,6 +33,7 @@ import { useToast } from "@/hooks/use-toast"
 import { useTranslation } from "@/hooks/useTranslation"
 import { useTheme } from "@/contexts/ThemeContext"
 import { DashboardSidebar } from "../components/DashboardSidebar"
+import { IconOrb } from "@/components/ui/accent-card"
 import {
   Select,
   SelectContent,
@@ -245,7 +246,7 @@ function ContactSupportPageContent() {
         <DashboardSidebar />
 
         <main className="flex-1 pb-32 md:pb-10 overflow-y-auto scrollbar-thin">
-          <div className="max-w-[1000px] mx-auto px-4 md:px-6 pt-16 md:pt-10">
+          <div className="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-10 pt-16 md:pt-10">
           <div className="space-y-5 md:space-y-6">
           {/* Mobile Back Button */}
           <div className="md:hidden">
@@ -269,15 +270,9 @@ function ContactSupportPageContent() {
               : 'bg-white/70 border-[#E8E5DE]'
           }`}>
             <div className="flex items-start gap-4">
-              <div className={`p-4 rounded-2xl ${
-                theme === 'dark'
-                  ? 'bg-blue-500/10 border border-blue-400/20'
-                  : 'bg-[#D4E4F7] border border-[#B8C9E0]'
-              }`}>
-                <HelpCircle className={`h-8 w-8 ${
-                  theme === 'dark' ? 'text-blue-400' : 'text-[#5B7FA5]'
-                }`} />
-              </div>
+              <IconOrb accent="blue" size="lg">
+                <LifeBuoy className="w-7 h-7 text-white" strokeWidth={1.75} />
+              </IconOrb>
               <div className="flex-1">
                 <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight mb-2 ${
                   theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'

@@ -25,6 +25,7 @@ import { TierGate, UpgradePrompt } from "@/components/tier/TierGate"
 import { useTranslation } from "@/hooks/useTranslation"
 import { DashboardSidebar } from "../components/DashboardSidebar"
 import { useTheme } from "@/contexts/ThemeContext"
+import { IconOrb } from "@/components/ui/accent-card"
 
 
 export default function ArchivePage() {
@@ -184,14 +185,19 @@ function ArchivePageContent() {
         <DashboardSidebar />
 
         <main className="flex-1 pb-32 md:pb-10 overflow-y-auto scrollbar-thin">
-          <div className="max-w-[1000px] mx-auto px-4 md:px-6 pt-16 md:pt-10">
+          <div className="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-10 pt-16 md:pt-10">
           <div className="space-y-5 md:space-y-6">
           {/* Header Card */}
           <Card className={`rounded-2xl p-4 md:p-6 border shadow-none ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#E8E5DE]'}`}>
             <div className="flex flex-col md:flex-row md:items-center md:items-center md:justify-between gap-3 md:gap-4">
-              <div>
-                <h2 className={`text-xl md:text-3xl font-semibold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>Archive</h2>
-                <p className={`text-xs md:text-sm ${theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'}`}>Browse your past reflections.</p>
+              <div className="flex items-center gap-3">
+                <IconOrb accent="blue" size="md">
+                  <Archive className="w-5 h-5 text-white" strokeWidth={1.75} />
+                </IconOrb>
+                <div>
+                  <h2 className={`text-xl md:text-3xl font-semibold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>Archive</h2>
+                  <p className={`text-xs md:text-sm ${theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'}`}>Browse your past reflections.</p>
+                </div>
               </div>
               <div className="flex items-center gap-2 md:gap-4 overflow-x-auto pb-2 md:pb-0">
                 {/* Search - Premium Feature */}

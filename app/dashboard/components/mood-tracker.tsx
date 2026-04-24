@@ -6,6 +6,8 @@ import { supabaseMoodService, supabaseReflectionService, supabaseAnalyticsServic
 import { MoodType } from "@/lib/types/reflection";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/contexts/ThemeContext";
+import { IconOrb } from "@/components/ui/accent-card";
+import { Sparkles, Flame } from "lucide-react";
 
 const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -89,10 +91,19 @@ export default function MoodTracker() {
     <section className={`rounded-2xl p-5 ${isDark ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-white/70 border border-[#E8E5DE]'}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
-        <h3 className={`font-semibold text-base ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>Your Rhythm</h3>
+        <div className="flex items-center gap-3">
+          <IconOrb accent="violet" size="sm">
+            <Sparkles className="w-4 h-4 text-white" strokeWidth={2} />
+          </IconOrb>
+          <div>
+            <h3 className={`font-semibold text-base tracking-tight ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>Your Rhythm</h3>
+            <p className={`text-[11px] ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>This week at a glance</p>
+          </div>
+        </div>
         {currentStreak > 0 && (
-          <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${isDark ? 'bg-[#A8D5BA]/15 text-[#A8D5BA]' : 'bg-[#E8F5E9] text-[#5A8F6E]'}`}>
-            {currentStreak} day streak
+          <span className={`inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full ${isDark ? 'bg-amber-400/10 text-amber-300 border border-amber-400/20' : 'bg-amber-50 text-amber-700 border border-amber-200/60'}`}>
+            <Flame className="w-3 h-3" strokeWidth={2.25} />
+            {currentStreak} day{currentStreak === 1 ? '' : 's'}
           </span>
         )}
       </div>

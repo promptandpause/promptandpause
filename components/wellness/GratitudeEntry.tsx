@@ -226,23 +226,48 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
   }
 
   return (
-    <Card className={theme === 'dark' ? 'bg-white/5 border-white/10' : ''}>
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className={`text-lg flex items-center gap-2 ${theme === 'dark' ? 'text-white' : ''}`}>
-            <Heart className="w-5 h-5 text-rose-500" />
-            Daily Gratitude
-          </CardTitle>
-          {streak > 0 && (
-            <span className={`text-sm px-3 py-1 rounded-full flex items-center gap-1 ${theme === 'dark' ? 'text-amber-400 bg-amber-500/20' : 'text-amber-600 bg-amber-50'}`}>
-              <Sparkles className="w-3 h-3" />
-              {streak} day streak
+    <Card className={`relative overflow-hidden rounded-2xl border shadow-none ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#E8E5DE]'}`}>
+      {/* Ambient amber glow top-right */}
+      <span
+        aria-hidden
+        className={`pointer-events-none absolute -top-12 -right-12 h-40 w-40 rounded-full blur-3xl ${theme === 'dark' ? 'bg-amber-400/15' : 'bg-amber-300/25'}`}
+      />
+      <CardHeader className="pb-3 relative">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-3.5 min-w-0">
+            {/* Gradient orb */}
+            <span className="relative inline-flex items-center justify-center shrink-0">
+              <span className={`absolute inset-[-8px] rounded-2xl blur-lg ${theme === 'dark' ? 'bg-amber-400/30' : 'bg-amber-300/40'}`} />
+              <span className="relative inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 via-amber-500 to-rose-500 shadow-[0_10px_24px_-8px_rgba(245,158,11,0.45)]">
+                <span aria-hidden className="absolute inset-1 rounded-xl bg-gradient-to-br from-white/30 via-white/5 to-transparent" />
+                <Sparkles className="relative w-5 h-5 text-white" strokeWidth={1.9} />
+              </span>
             </span>
+            <div className="min-w-0">
+              <CardTitle className={`text-lg font-semibold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-[#2F3B34]'}`}>
+                Daily gratitude
+              </CardTitle>
+              <p className={`mt-0.5 text-[13px] ${theme === 'dark' ? 'text-white/55' : 'text-[#6B7F6E]'}`}>
+                What are you grateful for today?
+              </p>
+            </div>
+          </div>
+          {streak > 0 && (
+            <motion.span
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[12px] font-semibold whitespace-nowrap shrink-0 ${
+                theme === 'dark'
+                  ? 'text-amber-300 bg-amber-500/10 border border-amber-400/25'
+                  : 'text-amber-700 bg-amber-50 border border-amber-200'
+              }`}
+            >
+              <Sparkles className="w-3 h-3" />
+              {streak}-day streak
+            </motion.span>
           )}
         </div>
-        <p className={`text-sm ${theme === 'dark' ? 'text-white/60' : 'text-gray-500'}`}>
-          What are you grateful for today?
-        </p>
       </CardHeader>
 
       <CardContent className="space-y-4">

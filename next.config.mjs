@@ -50,13 +50,9 @@ const nextConfig = {
           { key: 'Expires', value: '0' },
         ],
       },
-      // Static assets caching
-      {
-        source: '/_next/static/:path*',
-        headers: [
-          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
-        ],
-      },
+      // Note: /_next/static/:path* caching is handled automatically by Next.js
+      // and the hosting platform (Vercel sets immutable long-cache headers).
+      // Defining it here triggers a warning and can suppress platform defaults.
       // API routes
       {
         source: '/api/:path*',

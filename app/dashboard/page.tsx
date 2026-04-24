@@ -8,16 +8,19 @@ import { useTheme } from "@/contexts/ThemeContext"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { getSupabaseClient } from "@/lib/supabase/client"
+import { trackEventOncePerSession } from "@/lib/services/eventsService"
 import QuickStats from "./components/quick-stats"
 import { Wind, Heart, NotebookPen, Sparkles, Crown } from "lucide-react"
 import { useTranslation } from "@/hooks/useTranslation"
 import dynamic from "next/dynamic"
+import { motion } from "framer-motion"
 
 const TodaysPrompt = dynamic(() => import("./components/todays-prompt"), { ssr: false })
 const MoodTracker = dynamic(() => import("./components/mood-tracker"), { ssr: false })
 const WeeklyReflectionCard = dynamic(() => import("./components/weekly-reflection-card"), { ssr: false })
 const MonthlyReflectionCard = dynamic(() => import("./components/monthly-reflection-card"), { ssr: false })
 const FromYourPastCard = dynamic(() => import("./components/from-your-past-card"), { ssr: false })
+const ReturnToSelfCard = dynamic(() => import("./components/return-to-self-card"), { ssr: false })
 const SettingsLinkCard = dynamic(() => import("./components/settings-link-card"), { ssr: false })
 const HistorySearchCard = dynamic(() => import("./components/history-search-card"), { ssr: false })
 const PushNotificationPrompt = dynamic(() => import("@/components/notifications/PushNotificationPrompt").then(mod => ({ default: mod.PushNotificationPrompt })), { ssr: false })
@@ -35,6 +38,13 @@ export default function DashboardPage() {
     if (hour < 12) setGreetingKey('dashboard.goodMorning')
     else if (hour < 18) setGreetingKey('dashboard.goodAfternoon')
     else setGreetingKey('dashboard.goodEvening')
+
+    // Track a session start once per browser session so we can measure
+    // return cohorts (D1/D7/D14) without spamming the events table.
+    trackEventOncePerSession('session_start', 'session_start', {
+      hour,
+      tz_offset: new Date().getTimezoneOffset(),
+    })
 
     async function loadName() {
       try {
@@ -85,6 +95,9 @@ export default function DashboardPage() {
                       </p>
                     </div>
                   </div>
+
+                  {/* Return-to-Self Card — only shown to users coming back on a new day */}
+                  <ReturnToSelfCard />
 
                   {/* Daily Quote Card */}
                   <DailyQuoteCard isDark={isDark} />
@@ -282,26 +295,47 @@ function QuickActionCard({
   iconColor: string
 }) {
   const isAnchor = href.startsWith('#')
-  const cardClass = `rounded-2xl p-4 md:p-5 flex flex-col gap-3 transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.98] cursor-pointer group text-left ${
+  const cardClass = [
+    'group relative overflow-hidden w-full text-left cursor-pointer',
+    'rounded-2xl p-4 md:p-5 flex flex-col gap-3 border transition-colors duration-200',
     isDark
-      ? 'bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.08] hover:border-white/[0.12] hover:shadow-lg hover:shadow-black/20'
-      : 'bg-white/80 border border-[#E8E5DE] hover:border-[#C8C4BC] hover:shadow-lg hover:shadow-[#D4D0C8]/30'
-  }`
+      ? 'bg-white/[0.04] border-white/[0.06] hover:bg-white/[0.08] hover:border-white/[0.12]'
+      : 'bg-white/80 border-[#E8E5DE] hover:border-[#C8C4BC]',
+    'shadow-[0_1px_2px_rgba(15,20,20,0.04)] hover:shadow-[0_14px_28px_-14px_rgba(15,20,20,0.18)]',
+    'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#6FA984]/40',
+  ].join(' ')
+
   const content = (
     <>
-      <div className={`h-11 w-11 rounded-xl flex items-center justify-center transition-all duration-200 group-hover:scale-110 group-hover:shadow-md ${iconBg}`}>
+      {/* Ambient hover glow */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute -top-10 -right-10 h-24 w-24 rounded-full blur-2xl opacity-0 group-hover:opacity-70 transition-opacity duration-500 bg-[#6FA984]/20"
+      />
+      <div
+        className={`relative h-11 w-11 rounded-xl flex items-center justify-center transition-transform duration-200 group-hover:scale-[1.08] group-hover:shadow-md ${iconBg}`}
+      >
         <span className={iconColor}>{icon}</span>
       </div>
-      <div>
-        <p className={`font-semibold text-sm ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>{label}</p>
-        <p className={`text-xs mt-0.5 ${isDark ? 'text-white/35' : 'text-[#8A8A7A]'}`}>{sublabel}</p>
+      <div className="relative">
+        <p className={`font-semibold text-sm tracking-tight ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>
+          {label}
+        </p>
+        <p className={`text-xs mt-0.5 ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>{sublabel}</p>
       </div>
     </>
   )
 
+  const motionProps = {
+    whileHover: { y: -2 },
+    whileTap: { scale: 0.985 },
+    transition: { type: 'spring' as const, stiffness: 420, damping: 26 },
+  }
+
   if (isAnchor) {
     return (
-      <button
+      <motion.button
+        {...motionProps}
         onClick={() => {
           const el = document.querySelector(href)
           if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -309,14 +343,16 @@ function QuickActionCard({
         className={cardClass}
       >
         {content}
-      </button>
+      </motion.button>
     )
   }
 
   return (
-    <Link href={href} className={cardClass}>
-      {content}
-    </Link>
+    <motion.div {...motionProps}>
+      <Link href={href} className={cardClass}>
+        {content}
+      </Link>
+    </motion.div>
   )
 }
 

@@ -4,11 +4,21 @@ import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
-import { Mail, Slack, ChevronLeft, ChevronRight, Sparkles, Heart, Brain, Target, Clock, Check, Crown } from "lucide-react"
+import { Mail, Slack, ChevronLeft, ChevronRight, Sparkles, Heart, Brain, Target, Clock, Check, Crown, Compass, Sun } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { getSupabaseClient } from "@/lib/supabase/client"
 import { detectUserTimezone } from "@/lib/utils/timezoneDetection"
 import AgeVerification from "@/components/auth/AgeVerification"
+import { trackEvent } from "@/lib/services/eventsService"
+import { AccentOrb, type Accent } from "@/components/ui/accent-card"
+
+const stepMeta: Array<{ accent: Accent; icon: React.ComponentType<{ className?: string; strokeWidth?: number }> }> = [
+  { accent: "blue", icon: Compass },
+  { accent: "rose", icon: Heart },
+  { accent: "amber", icon: Clock },
+  { accent: "emerald", icon: Mail },
+  { accent: "violet", icon: Target },
+]
 
 const steps = [
   {
@@ -230,6 +240,14 @@ export default function Onboarding() {
       // Clear saved onboarding progress now that it's committed server-side
       try { window.localStorage.removeItem(STORAGE_KEY) } catch {}
 
+      // Activation event: user finished onboarding successfully.
+      trackEvent('onboarding_completed', {
+        reason: answers.reason,
+        prompt_time: answers.promptTime,
+        delivery: answers.delivery,
+        focus_count: Array.isArray(answers.focus) ? answers.focus.length : 0,
+      })
+
       // Move to completion screen
       setStep(steps.length + 1)
       
@@ -397,7 +415,22 @@ export default function Onboarding() {
                   >
                     {/* Question Header */}
                     <div className="mb-8 text-center">
-                      <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
+                      {stepMeta[step] && (() => {
+                        const Icon = stepMeta[step].icon
+                        return (
+                          <motion.div
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ type: 'spring', stiffness: 220, damping: 18 }}
+                            className="mb-5"
+                          >
+                            <AccentOrb accent={stepMeta[step].accent} size="md">
+                              <Icon className="w-6 h-6 text-white" strokeWidth={1.75} />
+                            </AccentOrb>
+                          </motion.div>
+                        )
+                      })()}
+                      <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 tracking-tight">
                         {steps[step].question}
                       </h2>
                       <p className="text-sm text-gray-500">

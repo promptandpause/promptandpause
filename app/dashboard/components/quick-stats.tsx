@@ -6,6 +6,8 @@ import { calculateMoodTrends } from "@/lib/services/analyticsService"
 import { supabaseReflectionService } from "@/lib/services/supabaseReflectionService"
 import { getSupabaseClient } from "@/lib/supabase/client"
 import { useTheme } from "@/contexts/ThemeContext"
+import { IconOrb, type Accent } from "@/components/ui/accent-card"
+import { motion } from "framer-motion"
 
 export default function QuickStats() {
   const { theme } = useTheme()
@@ -74,43 +76,59 @@ export default function QuickStats() {
 
   const isDark = theme === 'dark'
 
-  return (
-    <div className={`rounded-2xl p-5 space-y-0 ${isDark ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-white/70 border border-[#E8E5DE]'}`}>
-      {/* Reflections */}
-      <div className={`flex items-center justify-between py-3 px-1 rounded-lg transition-colors ${isDark ? 'hover:bg-white/[0.03]' : 'hover:bg-[#F5F3EE]/60'}`}>
-        <div className="flex items-center gap-3">
-          <div className={`h-9 w-9 rounded-xl flex items-center justify-center ${isDark ? 'bg-[#B8C9E0]/10' : 'bg-[#D4E4F7]/50'}`}>
-            <BookOpen className={`h-4 w-4 ${isDark ? 'text-[#B8C9E0]' : 'text-[#5B7FA5]'}`} />
-          </div>
-          <span className={`text-sm ${isDark ? 'text-white/50' : 'text-[#5A5A4E]'}`}>Reflections</span>
-        </div>
-        <span className={`text-xl font-bold tabular-nums ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>{totalReflections}</span>
-      </div>
-      <div className={`h-px mx-1 ${isDark ? 'bg-white/[0.04]' : 'bg-[#E8E5DE]/80'}`} />
-      {/* This Week */}
-      <div className={`flex items-center justify-between py-3 px-1 rounded-lg transition-colors ${isDark ? 'hover:bg-white/[0.03]' : 'hover:bg-[#F5F3EE]/60'}`}>
-        <div className="flex items-center gap-3">
-          <div className={`h-9 w-9 rounded-xl flex items-center justify-center ${isDark ? 'bg-[#A8D5BA]/10' : 'bg-[#E8F5E9]'}`}>
-            <CalendarCheck className={`h-4 w-4 ${isDark ? 'text-[#A8D5BA]' : 'text-[#5A8F6E]'}`} />
-          </div>
-          <span className={`text-sm ${isDark ? 'text-white/50' : 'text-[#5A5A4E]'}`}>This week</span>
-        </div>
-        <span className={`text-xl font-bold tabular-nums ${isDark ? 'text-[#A8D5BA]' : 'text-[#5A8F6E]'}`}>{thisWeekCount}</span>
-      </div>
-      <div className={`h-px mx-1 ${isDark ? 'bg-white/[0.04]' : 'bg-[#E8E5DE]/80'}`} />
-      {/* Mood Trend */}
-      <div className={`flex items-center justify-between py-3 px-1 rounded-lg transition-colors ${isDark ? 'hover:bg-white/[0.03]' : 'hover:bg-[#F5F3EE]/60'}`}>
-        <div className="flex items-center gap-3">
-          <div className={`h-9 w-9 rounded-xl flex items-center justify-center ${isDark ? 'bg-[#C4B5E0]/10' : 'bg-[#EDE7F6]'}`}>
-            <Activity className={`h-4 w-4 ${isDark ? 'text-[#C4B5E0]' : 'text-[#7E6BA5]'}`} />
-          </div>
-          <span className={`text-sm ${isDark ? 'text-white/50' : 'text-[#5A5A4E]'}`}>Mood trend</span>
-        </div>
-        <div className="flex items-center gap-2">
+  const tiles: Array<{
+    key: string
+    accent: Accent
+    icon: React.ReactNode
+    label: string
+    value: React.ReactNode
+  }> = [
+    {
+      key: 'reflections',
+      accent: 'blue',
+      icon: <BookOpen className="w-4 h-4 text-white" strokeWidth={2} />,
+      label: 'Reflections',
+      value: <span className={`text-xl font-bold tabular-nums ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>{totalReflections}</span>,
+    },
+    {
+      key: 'week',
+      accent: 'emerald',
+      icon: <CalendarCheck className="w-4 h-4 text-white" strokeWidth={2} />,
+      label: 'This week',
+      value: <span className={`text-xl font-bold tabular-nums ${isDark ? 'text-emerald-300' : 'text-[#5A8F6E]'}`}>{thisWeekCount}</span>,
+    },
+    {
+      key: 'mood',
+      accent: 'violet',
+      icon: <Activity className="w-4 h-4 text-white" strokeWidth={2} />,
+      label: 'Mood trend',
+      value: (
+        <div className="flex items-center gap-1.5">
           {getTrendIcon()}
           <span className={`text-sm font-bold ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>{getTrendText()}</span>
         </div>
-      </div>
+      ),
+    },
+  ]
+
+  return (
+    <div className={`rounded-2xl p-5 space-y-0 ${isDark ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-white/70 border border-[#E8E5DE]'}`}>
+      {tiles.map((t, i) => (
+        <div key={t.key}>
+          <motion.div
+            whileHover={{ x: 1 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+            className={`flex items-center justify-between py-3 px-1 rounded-lg transition-colors ${isDark ? 'hover:bg-white/[0.03]' : 'hover:bg-[#F5F3EE]/60'}`}
+          >
+            <div className="flex items-center gap-3">
+              <IconOrb accent={t.accent} size="sm">{t.icon}</IconOrb>
+              <span className={`text-sm ${isDark ? 'text-white/60' : 'text-[#5A5A4E]'}`}>{t.label}</span>
+            </div>
+            {t.value}
+          </motion.div>
+          {i < tiles.length - 1 && <div className={`h-px mx-1 ${isDark ? 'bg-white/[0.04]' : 'bg-[#E8E5DE]/80'}`} />}
+        </div>
+      ))}
     </div>
   )
 }

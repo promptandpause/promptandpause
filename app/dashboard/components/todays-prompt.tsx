@@ -14,6 +14,9 @@ import { getSupabaseClient } from "@/lib/supabase/client";
 import VoicePromptPlayer from "./voice-prompt-player";
 import { useTheme } from "@/contexts/ThemeContext";
 import { PromptLimitBanner } from "@/components/tier/TierGate";
+import { trackEvent } from "@/lib/services/eventsService";
+import { Sprout, Bookmark, Bell, Sparkles } from "lucide-react";
+import { IconOrb } from "@/components/ui/accent-card";
 
 const moods: MoodType[] = ["😔", "😐", "😊", "😄", "🤔", "😌", "🙏", "💪"]
 const availableTags = ["Gratitude", "Relationships", "Career", "Self-care", "Personal Growth", "Health", "Achievement", "Nature", "Creativity", "Family"]
@@ -39,6 +42,9 @@ export default function TodaysPrompt() {
   const [userName, setUserName] = useState<string | null>(null)
   const [isFocused, setIsFocused] = useState(false)
   const [wordCount, setWordCount] = useState(0)
+  // Gentle session-close actions (shown after a reflection is saved)
+  const [closeAction, setCloseAction] = useState<null | 'revisit' | 'save' | 'reminders_on'>(null)
+  const [remindersBusy, setRemindersBusy] = useState(false)
   // Self-Journal state
   const [showSelfJournal, setShowSelfJournal] = useState(false)
   const [journalText, setJournalText] = useState("")
@@ -155,6 +161,25 @@ export default function TodaysPrompt() {
 
       setSavedReflectionId(saved.id)
       setSubmitted(true)
+
+      // Track activation: was this the user's first reflection?
+      try {
+        const statsRes = await fetch('/api/analytics/stats', { cache: 'no-store' })
+        if (statsRes.ok) {
+          const { data } = await statsRes.json()
+          const isFirst = (data?.totalReflections || 0) <= 1
+          trackEvent(isFirst ? 'reflection_first_saved' : 'reflection_saved', {
+            word_count: reflection.trim().split(/\s+/).filter(Boolean).length,
+            mood: selectedMood || '😊',
+            tag_count: selectedTags.length,
+          })
+        } else {
+          trackEvent('reflection_saved')
+        }
+      } catch {
+        trackEvent('reflection_saved')
+      }
+
       toast({
         title: "Saved",
         description: "Your reflection has been saved.",
@@ -168,6 +193,55 @@ export default function TodaysPrompt() {
     }
   }
   
+  // Gentle session-close handlers — optional, no pressure.
+  async function handleCloseAction(action: 'revisit' | 'save' | 'reminders_on') {
+    if (closeAction) return
+    setCloseAction(action)
+    try {
+      if (action === 'revisit' && savedReflectionId) {
+        const tomorrow = new Date()
+        tomorrow.setDate(tomorrow.getDate() + 1)
+        try {
+          window.localStorage.setItem(
+            'pp_revisit',
+            JSON.stringify({ reflection_id: savedReflectionId, date: tomorrow.toISOString().split('T')[0] })
+          )
+        } catch {}
+        toast({ title: 'Noted', description: 'We\'ll gently bring this back tomorrow.' })
+      } else if (action === 'save' && savedReflectionId) {
+        try {
+          const raw = window.localStorage.getItem('pp_saved_reflections')
+          const arr: string[] = raw ? JSON.parse(raw) : []
+          if (!arr.includes(savedReflectionId)) arr.push(savedReflectionId)
+          window.localStorage.setItem('pp_saved_reflections', JSON.stringify(arr.slice(-50)))
+        } catch {}
+        toast({ title: 'Saved for later', description: 'You can come back to this anytime.' })
+      } else if (action === 'reminders_on') {
+        setRemindersBusy(true)
+        try {
+          const res = await fetch('/api/user/preferences', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ daily_reminders: true }),
+          })
+          if (res.ok) {
+            trackEvent('reminder_opt_in', { source: 'session_close' })
+            toast({ title: 'Gentle reminders on', description: 'We\'ll check in softly. You can turn this off anytime in settings.' })
+          } else {
+            setCloseAction(null)
+            toast({ title: 'Couldn\'t update', description: 'Try again from settings.', variant: 'destructive' })
+            return
+          }
+        } finally {
+          setRemindersBusy(false)
+        }
+      }
+      trackEvent('session_close_action', { action })
+    } catch {
+      setCloseAction(null)
+    }
+  }
+
   // Handle feedback update
   async function handleFeedback(feedbackType: "helped" | "irrelevant") {
     setFeedback(feedbackType)
@@ -235,9 +309,18 @@ export default function TodaysPrompt() {
       {/* Prompt limit banner for free users */}
       {tier === 'free' && <PromptLimitBanner />}
       
-      <section className={`rounded-2xl p-5 md:p-6 flex flex-col gap-4 md:gap-5 relative transition-all duration-200 ${theme === 'dark' ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-white/70 border border-[#E8E5DE]'}`} style={{ pointerEvents: 'auto' }}>
-        <div className="flex items-center justify-between gap-3 mb-1">
-          <h3 className={`text-lg md:text-xl font-extrabold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Today</h3>
+      <section className={`relative overflow-hidden rounded-3xl p-5 md:p-7 flex flex-col gap-4 md:gap-5 transition-all duration-300 backdrop-blur-xl ${theme === 'dark' ? 'bg-gradient-to-br from-white/[0.05] via-white/[0.03] to-transparent border border-white/[0.08] shadow-[0_20px_60px_-20px_rgba(0,0,0,0.5)]' : 'bg-gradient-to-br from-white/90 via-white/70 to-white/60 border border-[#E8E5DE] shadow-[0_20px_50px_-24px_rgba(76,60,120,0.18)]'}`} style={{ pointerEvents: 'auto' }}>
+        <span aria-hidden className={`pointer-events-none absolute -top-16 -right-16 h-56 w-56 rounded-full blur-3xl ${theme === 'dark' ? 'bg-violet-500/10' : 'bg-violet-300/25'}`} />
+        <div className="relative flex items-center justify-between gap-3 mb-1">
+          <div className="flex items-center gap-3">
+            <IconOrb accent="violet" size="sm">
+              <Sparkles className="w-4 h-4 text-white" strokeWidth={2} />
+            </IconOrb>
+            <div>
+              <h3 className={`text-lg md:text-xl font-semibold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Today</h3>
+              <p className={`text-[11px] md:text-xs ${theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'}`}>A small pause for a clearer mind</p>
+            </div>
+          </div>
         </div>
       {todaysPrompt && (
         <>
@@ -518,20 +601,78 @@ export default function TodaysPrompt() {
               </Button>
             </div>
           </div>
+
+          {/* Gentle session close — optional, low-pressure reasons to return */}
+          <div className={`pt-3 md:pt-4 border-t ${theme === 'dark' ? 'border-white/10' : 'border-gray-200'}`}>
+            {!closeAction ? (
+              <div className="space-y-2">
+                <p className={`text-xs md:text-sm ${theme === 'dark' ? 'text-white/70' : 'text-gray-700'}`}>
+                  Before you go — no pressure, just if it helps:
+                </p>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => handleCloseAction('revisit')}
+                    className={`text-xs md:text-sm justify-start gap-2 ${theme === 'dark' ? 'text-white/80 hover:bg-white/10' : 'text-gray-700 hover:bg-white/80'}`}
+                  >
+                    <Sprout className="h-4 w-4" aria-hidden="true" />
+                    Revisit this tomorrow
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => handleCloseAction('save')}
+                    className={`text-xs md:text-sm justify-start gap-2 ${theme === 'dark' ? 'text-white/80 hover:bg-white/10' : 'text-gray-700 hover:bg-white/80'}`}
+                  >
+                    <Bookmark className="h-4 w-4" aria-hidden="true" />
+                    Save for later
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    disabled={remindersBusy}
+                    onClick={() => handleCloseAction('reminders_on')}
+                    className={`text-xs md:text-sm justify-start gap-2 ${theme === 'dark' ? 'text-white/80 hover:bg-white/10' : 'text-gray-700 hover:bg-white/80'}`}
+                  >
+                    <Bell className="h-4 w-4" aria-hidden="true" />
+                    Quiet reminder
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <p className={`text-xs md:text-sm italic ${theme === 'dark' ? 'text-purple-300' : 'text-purple-700'}`}>
+                {closeAction === 'revisit' && 'Okay — we\'ll gently bring this back tomorrow.'}
+                {closeAction === 'save' && 'Saved. You can return to this whenever you\'re ready.'}
+                {closeAction === 'reminders_on' && 'Gentle reminders are on. Adjust anytime in settings.'}
+              </p>
+            )}
+          </div>
         </motion.div>
       )}
 
       {/* Self-Journal Modal */}
       {showSelfJournal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setShowSelfJournal(false)} />
-          <div className={`relative w-full max-w-2xl rounded-2xl p-5 md:p-6 shadow-2xl ${theme === 'dark' ? 'glass-light' : 'glass-medium'}`}>
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h3 className={`text-lg md:text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Self-Journal</h3>
-                <p className={`text-xs md:text-sm ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>No timer, no AI. Saved privately. Does not affect streaks or mood stats.</p>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowSelfJournal(false)} />
+          <motion.div
+            initial={{ opacity: 0, y: 12, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+            className={`relative w-full max-w-2xl overflow-hidden rounded-3xl p-5 md:p-7 backdrop-blur-xl ${theme === 'dark' ? 'bg-gradient-to-br from-white/[0.06] via-white/[0.03] to-transparent border border-white/[0.1] shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)]' : 'bg-gradient-to-br from-white/95 via-white/80 to-white/70 border border-[#E8E5DE] shadow-[0_30px_70px_-24px_rgba(76,60,120,0.25)]'}`}
+          >
+            <span aria-hidden className={`pointer-events-none absolute -top-20 -right-16 h-64 w-64 rounded-full blur-3xl ${theme === 'dark' ? 'bg-rose-500/10' : 'bg-rose-300/25'}`} />
+            <div className="relative flex items-start justify-between mb-5 gap-3">
+              <div className="flex items-center gap-3">
+                <IconOrb accent="rose" size="md">
+                  <Sparkles className="w-5 h-5 text-white" strokeWidth={1.75} />
+                </IconOrb>
+                <div>
+                  <h3 className={`text-lg md:text-xl font-semibold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Self-Journal</h3>
+                  <p className={`text-xs md:text-sm ${theme === 'dark' ? 'text-white/55' : 'text-gray-600'}`}>No timer, no AI. Saved privately. Doesn't affect streaks or stats.</p>
+                </div>
               </div>
-              <Button variant="ghost" size="sm" onClick={() => setShowSelfJournal(false)}>Close</Button>
+              <Button variant="ghost" size="sm" onClick={() => setShowSelfJournal(false)} className={theme === 'dark' ? 'text-white/70 hover:bg-white/10' : ''}>Close</Button>
             </div>
 
             <div className="space-y-3">
@@ -602,7 +743,7 @@ export default function TodaysPrompt() {
                 </Button>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       )}
       </section>

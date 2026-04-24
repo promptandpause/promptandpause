@@ -240,7 +240,7 @@ export default function JournalsPage() {
         <DashboardSidebar />
 
         <main className="flex-1 pb-32 md:pb-10 overflow-y-auto scrollbar-thin">
-          <div className="max-w-[1000px] mx-auto px-4 md:px-6 pt-16 md:pt-10">
+          <div className="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-10 pt-16 md:pt-10">
           <div className="space-y-5 md:space-y-6">
           {/* Header Card */}
           <Card className={`rounded-2xl p-4 md:p-6 border shadow-none ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#E8E5DE]'}`}>
