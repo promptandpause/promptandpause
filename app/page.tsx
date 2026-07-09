@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Homepage from './(homepage)/page'
 import { organizationJsonLd, websiteJsonLd, premiumProductJsonLd } from '@/lib/structured-data'
+import AuthHomeRedirect from './AuthHomeRedirect'
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://promptandpause.com'
 
@@ -25,6 +26,7 @@ export default function RootPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: site }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: product }} />
       <Homepage />
+      <AuthHomeRedirect />
     </>
   );
 }

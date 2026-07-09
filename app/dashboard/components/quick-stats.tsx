@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { TrendUp, TrendDown, Minus, BookOpenText, CalendarCheck, Activity } from "phosphor-react"
+import { TrendUp, TrendDown, Minus, BookOpen, CalendarCheck, Activity } from "phosphor-react"
 import { calculateMoodTrends } from "@/lib/services/analyticsService"
 import { supabaseReflectionService } from "@/lib/services/supabaseReflectionService"
 import { getSupabaseClient } from "@/lib/supabase/client"
@@ -86,7 +86,7 @@ export default function QuickStats() {
     {
       key: 'reflections',
       accent: 'blue',
-      icon: <BookOpenText size={16} weight="bold" className="text-white" />,
+      icon: <BookOpen size={16} weight="bold" className="text-white" />,
       label: 'Reflections',
       value: <span className={`text-xl font-bold tabular-nums ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>{totalReflections}</span>,
     },

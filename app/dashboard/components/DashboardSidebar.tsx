@@ -22,6 +22,7 @@ import {
   Layout,
   Users,
   PencilLine,
+  ChartBar,
 } from "phosphor-react"
 import Link from "next/link"
 import { getSupabaseClient } from "@/lib/supabase/client"
@@ -61,6 +62,7 @@ export function DashboardSidebar() {
     { icon: ArchiveBox, label: "archive", href: "/archive", active: isActive("/archive") },
     { icon: BookmarkSimple, label: "saved", href: "/saved", active: isActive("/saved") },
     { icon: Notebook, label: "my_journals", href: "/journals", active: isActive("/journals") },
+    { icon: ChartBar, label: "insights", href: "/insights", active: isActive("/insights") },
     { icon: Gear, label: "settings", href: "/settings", active: isActive("/settings") },
     { icon: UserCircle, label: "profile", href: "/settings/profile", active: isActive("/settings/profile") },
   ]
