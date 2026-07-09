@@ -21,6 +21,7 @@ import {
   UserPlus,
   Layout,
   Users,
+  PencilLine,
 } from "phosphor-react"
 import Link from "next/link"
 import { getSupabaseClient } from "@/lib/supabase/client"
@@ -53,6 +54,7 @@ export function DashboardSidebar() {
 
   const sidebarNav = [
     { icon: Layout, label: "dashboard", href: "/", active: isActive("/") },
+    { icon: PencilLine, label: "reflect", href: "/reflect", active: isActive("/reflect") },
     { icon: Rss, label: "feed", href: "/feed", active: isActive("/feed") },
     { icon: UserPlus, label: "friends", href: "/friends", active: isActive("/friends") },
     { icon: Heart, label: "wellness", href: "/wellness", active: isActive("/wellness") },

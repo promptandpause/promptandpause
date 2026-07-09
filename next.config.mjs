@@ -75,6 +75,22 @@ const nextConfig = {
 		  { source: '/auth/change-password', destination: '/change-password', permanent: false },
 	  ]
 	},
+  async rewrites() {
+    return [
+      { source: '/feed', destination: '/dashboard/feed' },
+      { source: '/friends', destination: '/dashboard/friends' },
+      { source: '/wellness', destination: '/dashboard/wellness' },
+      { source: '/archive', destination: '/dashboard/archive' },
+      { source: '/saved', destination: '/dashboard/saved' },
+      { source: '/journals', destination: '/dashboard/journals' },
+      { source: '/settings', destination: '/dashboard/settings' },
+      { source: '/settings/:path*', destination: '/dashboard/settings/:path*' },
+      { source: '/support', destination: '/dashboard/support' },
+      { source: '/achievements', destination: '/dashboard/achievements' },
+      { source: '/history', destination: '/dashboard/history' },
+      { source: '/reflect', destination: '/dashboard/reflect' },
+    ]
+  },
   // Add turbopack config to set root to the promptandpause repo directory
   turbopack: {
     root: __dirname,
