@@ -82,7 +82,7 @@ function AchievementsPageContent() {
         className="max-w-6xl mx-auto mb-6 md:mb-8"
       >
         <Link
-          href="/"
+          href="/dashboard"
           className={`inline-flex items-center gap-2 mb-3 md:mb-4 text-sm hover:opacity-70 transition-opacity ${
             theme === 'dark' ? 'text-white/50' : 'text-[#8B98A5]'
           }`}

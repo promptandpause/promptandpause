@@ -939,7 +939,7 @@ function SettingsPageContent() {
   return (
     <div 
       data-dashboard
-      className={`min-h-screen ${theme === 'dark' ? 'bg-[#141820]' : 'bg-[#F5F3EE]'}`}
+      className={`min-h-screen ${theme === 'dark' ? 'bg-[#0A0A0A]' : 'bg-[#FFFFFF]'}`}
     >
       <div className="flex h-screen overflow-hidden">
         <DashboardSidebar />
@@ -1141,7 +1141,7 @@ function SettingsPageContent() {
                     }`}
                   >
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-gray-400 to-gray-600">
-                      <ArrowRight size={16} weight="bold" className="text-white rotate-180" />
+                      <ArrowRight size={16} weight="bold" className="text-white" />
                     </div>
                     <span className={`flex-1 text-left text-[17px] ${
                       theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
@@ -1184,7 +1184,7 @@ function SettingsPageContent() {
                         : 'text-blue-600 active:text-blue-800'
                     }`}
                   >
-                    <CaretLeft size={20} weight="bold" className="rotate-180" />
+                    <CaretLeft size={20} weight="bold" />
                     <span className="font-medium">Settings</span>
                   </button>
                 </div>

@@ -5,9 +5,6 @@ import { useRouter, usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
-  Question,
-  SignOut,
-  Crown,
   ArchiveBox,
   Gear,
   House,
@@ -20,9 +17,9 @@ import {
   Rss,
   UserPlus,
   Layout,
-  Users,
   PencilLine,
   ChartBar,
+  Trophy,
 } from "phosphor-react"
 import Link from "next/link"
 import { getSupabaseClient } from "@/lib/supabase/client"
@@ -54,7 +51,7 @@ export function DashboardSidebar() {
   }
 
   const sidebarNav = [
-    { icon: Layout, label: "dashboard", href: "/", active: isActive("/") },
+    { icon: Layout, label: "dashboard", href: "/dashboard", active: isActive("/") },
     { icon: PencilLine, label: "reflect", href: "/reflect", active: isActive("/reflect") },
     { icon: Rss, label: "feed", href: "/feed", active: isActive("/feed") },
     { icon: UserPlus, label: "friends", href: "/friends", active: isActive("/friends") },
@@ -65,10 +62,11 @@ export function DashboardSidebar() {
     { icon: ChartBar, label: "insights", href: "/insights", active: isActive("/insights") },
     { icon: Gear, label: "settings", href: "/settings", active: isActive("/settings") },
     { icon: UserCircle, label: "profile", href: "/settings/profile", active: isActive("/settings/profile") },
+    { icon: Trophy, label: "achievements", href: "/achievements", active: isActive("/achievements") },
   ]
 
   const mobileNav = [
-    { id: "home", label: t("nav.dashboard"), href: "/", active: isActive("/"), crisis: false },
+    { id: "home", label: t("nav.dashboard"), href: "/dashboard", active: isActive("/"), crisis: false },
     { id: "wellness", label: t("nav.wellness"), href: "/wellness", active: isActive("/wellness"), crisis: false },
     { id: "journal", label: t("nav.my_journals"), href: "/journals", active: isActive("/journals"), crisis: false },
     { id: "crisis", label: t("nav.crisis_resources"), href: "/crisis-resources", active: isActive("/crisis-resources"), crisis: true },
@@ -152,7 +150,7 @@ export function DashboardSidebar() {
         <div className="h-screen flex flex-col overflow-y-auto scrollbar-hide px-3 py-2 fixed w-[240px] xl:w-[275px]">
           {/* Logo */}
           <div className="px-3 py-3 mb-1">
-            <Link href="/" className="inline-flex items-center gap-2">
+            <Link href="/dashboard" className="inline-flex items-center gap-2">
               <img
                 className={`h-8 ${isDark ? "invert" : ""}`}
                 alt="Prompt & Pause"
@@ -202,7 +200,7 @@ export function DashboardSidebar() {
             ) : userProfile ? (
               <div className="p-4">
                 <div className="flex items-center gap-3 mb-3">
-                  <Link href={`/@${userProfile.username}`} className="shrink-0">
+                  <Link href={`/${userProfile.username}`} className="shrink-0">
                     <div className={`h-10 w-10 rounded-full flex items-center justify-center ${isDark ? "bg-[#161618]" : "bg-[#EFF3F4]"}`}>
                       {userProfile.avatar_url ? (
                         <img src={userProfile.avatar_url} alt="" className="h-10 w-10 rounded-full object-cover" />
@@ -212,7 +210,7 @@ export function DashboardSidebar() {
                     </div>
                   </Link>
                   <div className="flex-1 min-w-0">
-                    <Link href={`/@${userProfile.username}`} className={`text-sm font-semibold truncate block hover:underline ${isDark ? "text-white" : "text-[#0F1419]"}`}>
+                    <Link href={`/${userProfile.username}`} className={`text-sm font-semibold truncate block hover:underline ${isDark ? "text-white" : "text-[#0F1419]"}`}>
                       {userProfile.full_name}
                     </Link>
                     <p className={`text-xs truncate ${isDark ? "text-white/30" : "text-[#536471]"}`}>
@@ -232,7 +230,7 @@ export function DashboardSidebar() {
                   </span>
                 </div>
                 <Link
-                  href={`/@${userProfile.username}`}
+                  href={`/${userProfile.username}`}
                   className={`block w-full text-center py-2 rounded-full text-sm font-semibold transition-colors border ${
                     isDark
                       ? "border-white/20 text-white hover:bg-white/[0.06]"
@@ -252,7 +250,7 @@ export function DashboardSidebar() {
         <div className={`px-5 h-14 flex items-center justify-between mt-[env(safe-area-inset-top,0px)] ${
           isDark ? "bg-[#0A0A0A]/90 backdrop-blur-lg border-b border-white/[0.06]" : "bg-white/90 backdrop-blur-lg border-b border-[#EFF3F4]"
         }`}>
-          <Link href="/">
+          <Link href="/dashboard">
             <img
               className={`h-7 ${isDark ? "invert" : ""}`}
               alt="Prompt & Pause"

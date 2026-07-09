@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
-import { MagnifyingGlass, Funnel, DownloadSimple, CaretDown, CaretUp, FileText, FileCsv, ArchiveBox } from "phosphor-react"
+import { MagnifyingGlass, Funnel, DownloadSimple, CaretDown, CaretUp, FileText, FileCsv, ArchiveBox, Globe, Users, Lock, ShareNetwork } from "phosphor-react"
 import Link from "next/link"
 import {
   DropdownMenu,
@@ -46,6 +46,8 @@ function ArchivePageContent() {
   const [showAll, setShowAll] = useState(false)
   const [archivedReflections, setArchivedReflections] = useState<Reflection[]>([])
   const [loading, setLoading] = useState(true)
+  const [sharingReflectionId, setSharingReflectionId] = useState<string | null>(null)
+  const [updatingVisibility, setUpdatingVisibility] = useState<string | null>(null)
 
   // Load reflections from Supabase
   useEffect(() => {
@@ -104,6 +106,27 @@ function ArchivePageContent() {
     }
     return matchesSearch
   })
+
+  const updateVisibility = async (id: string, visibility: 'private' | 'friends_only' | 'public') => {
+    setUpdatingVisibility(id)
+    setSharingReflectionId(null)
+    try {
+      const res = await fetch(`/api/reflections/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ visibility }),
+      })
+      if (!res.ok) throw new Error('Failed to update visibility')
+      setArchivedReflections(prev =>
+        prev.map(r => r.id === id ? { ...r, visibility } as Reflection : r)
+      )
+      const label = visibility === 'public' ? 'Shared publicly' : visibility === 'friends_only' ? 'Shared with friends' : 'Made private'
+      toast({ title: label, description: 'Reflection visibility updated.' })
+    } catch {
+      toast({ title: 'Error', description: 'Failed to update visibility.', variant: 'destructive' })
+    }
+    setUpdatingVisibility(null)
+  }
 
   const toggleReflection = (id: string) => {
     setExpandedReflections(prev => 
@@ -464,6 +487,72 @@ function ArchivePageContent() {
                                         {tag}
                                       </Badge>
                                     ))}
+                                  </div>
+                                  {/* Share row */}
+                                  <div className="flex items-center gap-2 pl-12 pt-1 relative">
+                                    {item.visibility === 'public' ? (
+                                      <span className={`inline-flex items-center gap-1 text-xs ${theme === 'dark' ? 'text-emerald-400' : 'text-emerald-600'}`}>
+                                        <Globe size={12} weight="bold" /> Public
+                                      </span>
+                                    ) : item.visibility === 'friends_only' ? (
+                                      <span className={`inline-flex items-center gap-1 text-xs ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>
+                                        <Users size={12} weight="bold" /> Friends
+                                      </span>
+                                    ) : (
+                                      <span className={`inline-flex items-center gap-1 text-xs ${theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'}`}>
+                                        <Lock size={12} weight="bold" /> Private
+                                      </span>
+                                    )}
+                                    <div className="relative">
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        disabled={updatingVisibility === item.id}
+                                        onClick={(e) => { e.stopPropagation(); setSharingReflectionId(sharingReflectionId === item.id ? null : item.id) }}
+                                        className={`text-xs gap-1.5 h-7 px-2 rounded-full ${theme === 'dark' ? 'text-white/50 hover:text-white hover:bg-white/10' : 'text-[#536471] hover:text-[#0F1419] hover:bg-[#EFF3F4]'}`}
+                                      >
+                                        <ShareNetwork size={14} weight="bold" />
+                                        {updatingVisibility === item.id ? '...' : 'Share'}
+                                      </Button>
+                                      {sharingReflectionId === item.id && (
+                                        <>
+                                          <div className="fixed inset-0 z-40" onClick={() => setSharingReflectionId(null)} />
+                                          <div className={`absolute left-0 top-full mt-1 z-50 w-48 rounded-xl shadow-lg border py-1 ${theme === 'dark' ? 'bg-[#1A1F2E] border-white/10' : 'bg-white border-[#EFF3F4]'}`}>
+                                            <button
+                                              onClick={() => updateVisibility(item.id, 'public')}
+                                              className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${theme === 'dark' ? 'text-white hover:bg-white/8' : 'text-[#0F1419] hover:bg-[#F7F9FA]'}`}
+                                            >
+                                              <Globe size={16} weight="bold" className="text-[#1D9BF0]" />
+                                              <div className="text-left">
+                                                <p className="font-medium">Share publicly</p>
+                                                <p className={`text-xs ${theme === 'dark' ? 'text-white/40' : 'text-[#536471]'}`}>Everyone can see</p>
+                                              </div>
+                                            </button>
+                                            <button
+                                              onClick={() => updateVisibility(item.id, 'friends_only')}
+                                              className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${theme === 'dark' ? 'text-white hover:bg-white/8' : 'text-[#0F1419] hover:bg-[#F7F9FA]'}`}
+                                            >
+                                              <Users size={16} weight="bold" className="text-emerald-500" />
+                                              <div className="text-left">
+                                                <p className="font-medium">Share with friends</p>
+                                                <p className={`text-xs ${theme === 'dark' ? 'text-white/40' : 'text-[#536471]'}`}>Only your friends</p>
+                                              </div>
+                                            </button>
+                                            <div className={`h-px mx-3 ${theme === 'dark' ? 'bg-white/10' : 'bg-[#EFF3F4]'}`} />
+                                            <button
+                                              onClick={() => updateVisibility(item.id, 'private')}
+                                              className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${theme === 'dark' ? 'text-white/50 hover:text-white hover:bg-white/8' : 'text-[#536471] hover:text-[#0F1419] hover:bg-[#F7F9FA]'}`}
+                                            >
+                                              <Lock size={16} weight="bold" />
+                                              <div className="text-left">
+                                                <p className="font-medium">Make private</p>
+                                                <p className={`text-xs ${theme === 'dark' ? 'text-white/40' : 'text-[#536471]'}`}>Only you</p>
+                                              </div>
+                                            </button>
+                                          </div>
+                                        </>
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
                               </motion.div>

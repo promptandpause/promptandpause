@@ -90,6 +90,8 @@ const nextConfig = {
       { source: '/history', destination: '/dashboard/history' },
       { source: '/reflect', destination: '/dashboard/reflect' },
       { source: '/insights', destination: '/dashboard/insights' },
+      { source: '/@:username', destination: '/:username' },
+      { source: '/@:username/:path*', destination: '/:username/:path*' },
     ]
   },
   // Add turbopack config to set root to the promptandpause repo directory

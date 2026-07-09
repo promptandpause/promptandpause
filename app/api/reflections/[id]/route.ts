@@ -62,7 +62,7 @@ export async function GET(
 /**
  * PATCH /api/reflections/[id]
  * Update a reflection
- * Body: { reflection_text?, mood?, tags? }
+ * Body: { reflection_text?, mood?, tags?, feedback?, visibility? }
  */
 export async function PATCH(
   request: NextRequest,
@@ -117,6 +117,17 @@ export async function PATCH(
 
     if (body.feedback !== undefined) {
       updateData.feedback = body.feedback
+    }
+
+    if (body.visibility !== undefined) {
+      const validVisibilities = ['private', 'friends_only', 'public']
+      if (!validVisibilities.includes(body.visibility)) {
+        return NextResponse.json(
+          { error: 'Invalid visibility value' },
+          { status: 400 }
+        )
+      }
+      updateData.visibility = body.visibility
     }
 
     // Update via Supabase

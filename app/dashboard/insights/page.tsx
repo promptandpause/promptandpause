@@ -8,10 +8,17 @@ import { useTranslation } from "@/hooks/useTranslation"
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { getSupabaseClient } from "@/lib/supabase/client"
-import { Hash, BookOpen, CalendarBlank } from "phosphor-react"
+import { Hash, BookOpen, CalendarBlank, ChartBar, Brain, ClockClockwise, Calendar } from "phosphor-react"
 import QuickStats from "../components/quick-stats"
 import ActivityCalendar from "../components/activity-calendar"
 import { calculateWritingMetrics } from "@/lib/services/analyticsService"
+import { TierGate } from "@/components/tier/TierGate"
+import dynamic from "next/dynamic"
+
+const MoodAnalytics = dynamic(() => import("../components/mood-analytics"), { ssr: false })
+const WeeklyInsights = dynamic(() => import("../components/weekly-insights"), { ssr: false })
+const FromYourPastCard = dynamic(() => import("../components/from-your-past-card"), { ssr: false })
+const MonthlyReflectionCard = dynamic(() => import("../components/monthly-reflection-card"), { ssr: false })
 
 interface TagCount {
   tag: string
@@ -35,7 +42,9 @@ function InsightsContent() {
   const [writingMetrics, setWritingMetrics] = useState<{
     averageWordCount: number
     totalWords: number
-    totalReflections: number
+    shortestReflection: number
+    longestReflection: number
+    trend: 'increasing' | 'decreasing' | 'stable'
   } | null>(null)
 
   useEffect(() => {
@@ -110,7 +119,25 @@ function InsightsContent() {
 
             <ActivityCalendar />
 
-            {writingMetrics && writingMetrics.totalReflections > 0 && (
+            <div className="space-y-6">
+              <TierGate feature="mood-analytics">
+                <MoodAnalytics />
+              </TierGate>
+
+              <TierGate feature="weekly-insights">
+                <WeeklyInsights />
+              </TierGate>
+
+              <TierGate feature="from-your-past">
+                <FromYourPastCard />
+              </TierGate>
+
+              <TierGate feature="monthly-summary">
+                <MonthlyReflectionCard />
+              </TierGate>
+            </div>
+
+            {writingMetrics && writingMetrics.averageWordCount > 0 && (
               <div className={`rounded-2xl p-5 ${isDark ? "bg-white/[0.04] border border-white/[0.06]" : "bg-white/70 border border-[#EFF3F4]"}`}>
                 <div className="flex items-center gap-2 mb-4">
                   <BookOpen size={18} weight="bold" className={isDark ? "text-white/40" : "text-[#8B98A5]"} />
@@ -130,11 +157,14 @@ function InsightsContent() {
                     </p>
                   </div>
                   <div>
-                    <p className={`text-xs ${isDark ? "text-white/30" : "text-[#8B98A5]"}`}>Entries</p>
+                    <p className={`text-xs ${isDark ? "text-white/30" : "text-[#8B98A5]"}`}>Shortest</p>
                     <p className={`text-lg font-bold tabular-nums ${isDark ? "text-white" : "text-[#0F1419]"}`}>
-                      {writingMetrics.totalReflections}
+                      {writingMetrics.shortestReflection}
                     </p>
                   </div>
+                </div>
+                <div className={`mt-2 flex items-center gap-1.5 text-xs ${isDark ? "text-white/30" : "text-[#8B98A5]"}`}>
+                  {writingMetrics.trend === 'increasing' ? 'Trending longer' : writingMetrics.trend === 'decreasing' ? 'Trending shorter' : 'Steady writing'} · Longest: {writingMetrics.longestReflection}
                 </div>
               </div>
             )}
@@ -172,7 +202,7 @@ function InsightsContent() {
               </div>
             )}
 
-            {(!writingMetrics || writingMetrics.totalReflections === 0) && (
+            {(!writingMetrics || writingMetrics.averageWordCount === 0) && (
               <div className={`text-center py-12 rounded-2xl ${isDark ? "bg-white/[0.02] border border-white/[0.06]" : "bg-white/50 border border-[#EFF3F4]"}`}>
                 <CalendarBlank size={36} weight="bold" className={`mx-auto mb-3 ${isDark ? "text-white/15" : "text-[#D0CFC0]"}`} />
                 <p className={`text-sm font-medium ${isDark ? "text-white/50" : "text-[#8B98A5]"}`}>

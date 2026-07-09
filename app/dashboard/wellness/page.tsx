@@ -28,6 +28,7 @@ import { getSupabaseClient } from '@/lib/supabase/client'
 import { useTier } from '@/hooks/useTier'
 import { useTheme } from '@/contexts/ThemeContext'
 import { AuthGuard } from '@/components/auth/AuthGuard'
+import { TierGate } from '@/components/tier/TierGate'
 import { DashboardSidebar } from '../components/DashboardSidebar'
 import dynamic from 'next/dynamic'
 
@@ -308,7 +309,9 @@ export default function WellnessPage() {
                 {/* Insights Tab */}
                 <TabsContent value="insights" className="space-y-4">
                   <div className="grid gap-4 md:grid-cols-2">
-                    <WeeklyMoodInsights userId={userId} />
+                    <TierGate requiresPremium feature="weekly-insights">
+                      <WeeklyMoodInsights userId={userId} />
+                    </TierGate>
                     
                     <Card className={`rounded-2xl border shadow-none ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#EFF3F4]'}`}>
                       <CardHeader>

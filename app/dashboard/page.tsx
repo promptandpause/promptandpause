@@ -4,13 +4,15 @@ import { AuthGuard } from "@/components/auth/AuthGuard"
 import GlobalDataSync from "./components/global-data-sync"
 import { DashboardSidebar } from "./components/DashboardSidebar"
 import { RandomFeed } from "./components/RandomFeed"
+import YourRhythm from "./components/your-rhythm"
 import { useTheme } from "@/contexts/ThemeContext"
 import { useTranslation } from "@/hooks/useTranslation"
+import { useTier } from "@/hooks/useTier"
 import { useEffect, useState, useCallback } from "react"
 import { getSupabaseClient } from "@/lib/supabase/client"
 import { trackEventOncePerSession } from "@/lib/services/eventsService"
 import { motion, AnimatePresence } from "framer-motion"
-import { Sparkle, Rss, Spinner } from "phosphor-react"
+import { Sparkle, Rss, Spinner, Wind, Heart, PencilLine, Sun, Crown, Star } from "phosphor-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
@@ -45,6 +47,7 @@ function DashboardContent() {
   const { t } = useTranslation()
   const router = useRouter()
   const supabase = getSupabaseClient()
+  const { tier } = useTier()
   const [userName, setUserName] = useState("")
   const [greetingKey, setGreetingKey] = useState<"dashboard.goodMorning" | "dashboard.goodAfternoon" | "dashboard.goodEvening">("dashboard.goodMorning")
   const [tab, setTab] = useState<"for_you" | "following">("for_you")
@@ -140,7 +143,7 @@ function DashboardContent() {
           {/* Compose box */}
           <div className={`px-4 py-3 border-b ${isDark ? "border-white/[0.06]" : "border-[#EFF3F4]"}`}>
             <Link
-              href="/journals"
+              href="/archive"
               className={`flex items-center gap-3 rounded-2xl px-4 py-2.5 transition-colors ${
                 isDark ? "bg-white/[0.03] hover:bg-white/[0.06]" : "bg-[#F7F9FA] hover:bg-[#EFF3F4]"
               }`}
@@ -150,6 +153,68 @@ function DashboardContent() {
                 Share your reflection...
               </span>
             </Link>
+          </div>
+
+          {/* Upgrade CTA for free users */}
+          {tier === "free" && (
+            <div className={`px-4 py-3 border-b ${isDark ? "border-white/[0.06]" : "border-[#EFF3F4]"}`}>
+              <Link href="/settings#subscription">
+                <div className={`rounded-2xl p-4 text-center space-y-3 ${
+                  isDark
+                    ? "bg-gradient-to-br from-[#0A2E4A] to-[#0A0A0A] border border-[#1D9BF0]/20"
+                    : "bg-gradient-to-br from-[#E8F5FE] to-[#FFFFFF] border border-[#1D9BF0]/30"
+                }`}>
+                  <div className="flex justify-center gap-1">
+                    {[Star, Crown, Star].map((Icon, i) => (
+                      <span key={i} className={`p-2 rounded-full ${isDark ? "bg-amber-400/10 text-amber-300" : "bg-amber-50 text-amber-600"}`}>
+                        <Icon size={16} weight={i === 1 ? "fill" : "bold"} />
+                      </span>
+                    ))}
+                  </div>
+                  <h4 className={`font-bold text-sm ${isDark ? "text-white" : "text-[#0F1419]"}`}>
+                    Unlock Premium Insights
+                  </h4>
+                  <p className={`text-[11px] leading-relaxed ${isDark ? "text-white/50" : "text-[#8B98A5]"}`}>
+                    Weekly insights, monthly reflections, unlimited prompts & more
+                  </p>
+                  <div className="w-full text-sm font-semibold h-9 rounded-lg bg-gradient-to-r from-[#1D9BF0] to-[#0085FF] text-white shadow-lg flex items-center justify-center gap-2">
+                    <Crown size={14} weight="fill" />
+                    Upgrade Now
+                  </div>
+                </div>
+              </Link>
+            </div>
+          )}
+
+          {/* Quick Actions + Streak Row */}
+          <div className={`px-4 py-3 border-b ${isDark ? "border-white/[0.06]" : "border-[#EFF3F4]"}`}>
+            <div className="grid grid-cols-2 gap-2 mb-3">
+              <QuickActionBtn
+                icon={<Wind size={16} weight="bold" />}
+                label="Breathe"
+                href="/wellness?open=breathing"
+                isDark={isDark}
+              />
+              <QuickActionBtn
+                icon={<Heart size={16} weight="bold" />}
+                label="Check In"
+                href="/wellness"
+                isDark={isDark}
+              />
+              <QuickActionBtn
+                icon={<PencilLine size={16} weight="bold" />}
+                label="Reflect"
+                href="/reflect"
+                isDark={isDark}
+              />
+              <QuickActionBtn
+                icon={<Sun size={16} weight="bold" />}
+                label="Gratitude"
+                href="/wellness?open=gratitude"
+                isDark={isDark}
+              />
+            </div>
+            <YourRhythm />
           </div>
 
           {/* Feed */}
@@ -229,5 +294,24 @@ function DashboardContent() {
         </main>
       </div>
     </div>
+  )
+}
+
+function QuickActionBtn({ icon, label, href, isDark }: { icon: React.ReactNode; label: string; href: string; isDark: boolean }) {
+  return (
+    <Link href={href}>
+      <div className={`flex items-center gap-2 rounded-xl px-3 py-2.5 transition-colors cursor-pointer border ${
+        isDark
+          ? "bg-white/[0.03] border-white/[0.06] hover:bg-white/[0.06]"
+          : "bg-[#F7F9FA] border-[#EFF3F4] hover:bg-[#EFF3F4]"
+      }`}>
+        <span className={`w-7 h-7 rounded-lg flex items-center justify-center ${
+          isDark ? "bg-white/[0.06] text-white/60" : "bg-white text-[#536471]"
+        }`}>
+          {icon}
+        </span>
+        <span className={`text-xs font-semibold ${isDark ? "text-white/80" : "text-[#0F1419]"}`}>{label}</span>
+      </div>
+    </Link>
   )
 }

@@ -91,7 +91,7 @@ export function WhoToFollow() {
               animate={{ opacity: 1, y: 0 }}
               className="flex items-center gap-3"
             >
-              <Link href={`/@${user.username}`} className="shrink-0">
+              <Link href={`/${user.username}`} className="shrink-0">
                 <Avatar className="h-10 w-10">
                   <AvatarImage src={user.avatar_url || undefined} />
                   <AvatarFallback className={`text-xs ${isDark ? 'bg-[#161618] text-white/40' : 'bg-[#EFF3F4] text-[#536471]'}`}>
@@ -100,7 +100,7 @@ export function WhoToFollow() {
                 </Avatar>
               </Link>
               <div className="flex-1 min-w-0">
-                <Link href={`/@${user.username}`} className={`text-sm font-semibold truncate block hover:underline ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+                <Link href={`/${user.username}`} className={`text-sm font-semibold truncate block hover:underline ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
                   {displayName}
                 </Link>
                 <p className={`text-xs truncate ${isDark ? 'text-white/30' : 'text-[#536471]'}`}>

@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
-import Homepage from './(homepage)/page'
+import { redirect } from 'next/navigation'
+import { getAuthUser } from '@/lib/supabase/server'
 import { organizationJsonLd, websiteJsonLd, premiumProductJsonLd } from '@/lib/structured-data'
+import Homepage from './(homepage)/page'
 import AuthHomeRedirect from './AuthHomeRedirect'
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://promptandpause.com'
@@ -15,7 +17,14 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootPage() {
+export default async function RootPage() {
+  const user = await getAuthUser()
+
+  // Authenticated users go directly to dashboard — no flash of homepage
+  if (user) {
+    redirect('/dashboard')
+  }
+
   const org = JSON.stringify(organizationJsonLd())
   const site = JSON.stringify(websiteJsonLd())
   const product = JSON.stringify(premiumProductJsonLd())
@@ -28,5 +37,5 @@ export default function RootPage() {
       <Homepage />
       <AuthHomeRedirect />
     </>
-  );
+  )
 }

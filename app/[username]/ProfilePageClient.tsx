@@ -133,7 +133,7 @@ export function ProfilePageClient({
           {isPrivate ? (
             <div className={`rounded-2xl p-10 text-center ${isDark ? 'bg-white/[0.03] border border-white/[0.06]' : 'bg-white/60 border border-[#EFF3F4]'}`}>
               <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${isDark ? 'bg-white/[0.06]' : 'bg-[#EFF3F4]'}`}>
-                <Lock size={28} weight="bold" className={isDark ? 'text-white/20' : 'text-[#8B98A5]'} />
+                <Lock size={28} className={isDark ? 'text-white/20' : 'text-[#8B98A5]'} />
               </div>
               <h2 className={`text-xl font-semibold mb-2 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
                 This account&apos;s profile is private
