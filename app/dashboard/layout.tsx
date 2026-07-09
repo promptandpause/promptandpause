@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { getAuthUser, createClient } from '@/lib/supabase/server'
+import { DashboardRightSidebar } from './DashboardRightSidebar'
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -10,17 +11,6 @@ export const metadata: Metadata = {
   },
 }
 
-/**
- * Server-side gate for all /dashboard routes.
- *
- * Guarantees that a user cannot render any dashboard page without:
- *   1. Being authenticated
- *   2. Having completed onboarding (i.e. a user_preferences row exists)
- *
- * This is defence-in-depth on top of the edge proxy check in `proxy.ts` —
- * if the proxy ever fails (cache, race, or config change) the user still
- * cannot reach the dashboard UI.
- */
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const user = await getAuthUser()
   if (!user) {
@@ -38,5 +28,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
     redirect('/onboarding')
   }
 
-  return children
+  return (
+    <div className="flex h-screen overflow-hidden">
+      <div className="flex-1 min-w-0">
+        {children}
+      </div>
+      <DashboardRightSidebar />
+    </div>
+  )
 }

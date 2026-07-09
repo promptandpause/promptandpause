@@ -16,11 +16,11 @@ import {
   Notebook,
   Heart,
   BookOpen,
-  CaretRight,
   BookmarkSimple,
   Rss,
   UserPlus,
   Layout,
+  Users,
 } from "phosphor-react"
 import Link from "next/link"
 import { getSupabaseClient } from "@/lib/supabase/client"
@@ -40,7 +40,8 @@ export function DashboardSidebar() {
   const { t } = useTranslation()
   const { theme } = useTheme()
   const { tier, isLoading: tierLoading } = useTier()
-  const [userProfile, setUserProfile] = useState<{ full_name: string; username: string; subscription_tier: string } | null>(null)
+  const [userProfile, setUserProfile] = useState<{ full_name: string; username: string; avatar_url: string; subscription_tier: string } | null>(null)
+  const [friendCount, setFriendCount] = useState(0)
   const [loading, setLoading] = useState(true)
 
   const isDark = theme === "dark"
@@ -67,46 +68,54 @@ export function DashboardSidebar() {
   useEffect(() => {
     let isMounted = true
 
-    async function loadUserProfile() {
+    async function loadData() {
       try {
         const { data: { user } } = await supabase.auth.getUser()
         if (!user || !isMounted) return
 
         const cachedProfile = getCachedUserProfile(user.id)
         if (cachedProfile && isMounted) {
-            setUserProfile({
-              full_name: cachedProfile.full_name || user.email?.split("@")[0] || "User",
-              username: cachedProfile.username || user.email?.split("@")[0] || "user",
-              subscription_tier: tier,
-            })
-            setLoading(false)
+          setUserProfile({
+            full_name: cachedProfile.full_name || user.email?.split("@")[0] || "User",
+            username: cachedProfile.username || user.email?.split("@")[0] || "user",
+            avatar_url: cachedProfile.avatar_url || "",
+            subscription_tier: tier,
+          })
+          setLoading(false)
         }
 
-        const response = await fetch("/api/user/profile")
-        if (!response.ok) {
-          if (!cachedProfile && isMounted) {
+        const [profileRes, friendsRes] = await Promise.all([
+          fetch("/api/user/profile"),
+          fetch("/api/social/friends"),
+        ])
+
+        if (isMounted) {
+          if (profileRes.ok) {
+            const { data } = await profileRes.json()
+            if (data) {
+              setUserProfile({
+                full_name: data.full_name || user.email?.split("@")[0] || "User",
+                username: data.username || user.email?.split("@")[0] || "user",
+                avatar_url: data.avatar_url || "",
+                subscription_tier: tier,
+              })
+              cacheUserProfile(data, user.id)
+            }
+          } else if (!cachedProfile && isMounted) {
             setUserProfile({
               full_name: user.email?.split("@")[0] || "User",
+              username: user.email?.split("@")[0] || "user",
+              avatar_url: "",
               subscription_tier: tier,
             })
           }
-          return
-        }
 
-        const { success, data } = await response.json()
-        if (success && data && isMounted) {
-          setUserProfile({
-            full_name: data.full_name || user.email?.split("@")[0] || "User",
-            username: data.username || user.email?.split("@")[0] || "user",
-            subscription_tier: tier,
-          })
-          cacheUserProfile(data, user.id)
-        } else if (!cachedProfile && isMounted) {
-          setUserProfile({
-            full_name: user.email?.split("@")[0] || "User",
-            username: data?.username || user.email?.split("@")[0] || "user",
-            subscription_tier: tier,
-          })
+          if (friendsRes.ok) {
+            const { data: friends } = await friendsRes.json()
+            if (friends) {
+              setFriendCount(friends.filter((f: any) => f.status === "accepted").length)
+            }
+          }
         }
       } catch (error) {
         const { data: { user } } = await supabase.auth.getUser()
@@ -114,6 +123,7 @@ export function DashboardSidebar() {
           setUserProfile({
             full_name: user.email?.split("@")[0] || "User",
             username: user.email?.split("@")[0] || "user",
+            avatar_url: "",
             subscription_tier: tier,
           })
         }
@@ -122,173 +132,108 @@ export function DashboardSidebar() {
       }
     }
 
-    loadUserProfile()
+    loadData()
     return () => { isMounted = false }
   }, [supabase, tier])
 
   return (
     <>
       {/* ─── Desktop Sidebar ─── */}
-      <div className="hidden md:block flex-shrink-0 w-[240px] p-4 pl-4 pr-0">
-        <div
-          className={`rounded-3xl p-6 h-fit sticky top-6 flex flex-col gap-6 transition-all duration-200 max-h-[calc(100vh-3rem)] overflow-y-auto scrollbar-hide ${
-            isDark
-              ? "bg-[#161618] border border-white/8 shadow-lg"
-              : "bg-white border border-[#EFF3F4] shadow-sm"
-          }`}
-        >
-          <div className={`text-center pb-5 border-b ${isDark ? "border-white/8" : "border-[#EFF3F4]"}`}>
-            <div className="flex items-center justify-center gap-2 mb-2">
+      <div className="hidden md:block flex-shrink-0 w-[240px] xl:w-[275px]">
+        <div className="h-screen flex flex-col overflow-y-auto scrollbar-hide px-3 py-2 fixed w-[240px] xl:w-[275px]">
+          {/* Logo */}
+          <div className="px-3 py-3 mb-1">
+            <Link href="/dashboard" className="inline-flex items-center gap-2">
               <img
-                className={`h-10 ${isDark ? "invert" : ""}`}
+                className={`h-8 ${isDark ? "invert" : ""}`}
                 alt="Prompt & Pause"
                 src="https://res.cloudinary.com/dh1rrfpmq/image/upload/v1766460430/prompt_pause-JRsbZR3dxCXndC8YMcyX6XU3XeT2Vw_vdvqfj.svg"
               />
-            </div>
-            <p className={`text-xs font-medium tracking-wide ${isDark ? "text-white/40" : "text-[#8B98A5]"}`}>
-              Pause. Reflect. Grow.
-            </p>
+            </Link>
           </div>
 
-          <div className={`pb-5 border-b ${isDark ? "border-white/8" : "border-[#EFF3F4]"}`}>
+          {/* Navigation */}
+          <nav className="flex-1 space-y-0.5">
+            {sidebarNav.map((item) => (
+              <Link key={item.label} href={item.href}>
+                <button
+                  className={`w-full flex items-center gap-4 px-3 py-2.5 rounded-xl text-[15px] font-medium transition-colors duration-150 ${
+                    item.active
+                      ? isDark
+                        ? "text-white font-semibold"
+                        : "text-[#0F1419] font-semibold"
+                      : isDark
+                        ? "text-white/50 hover:bg-white/[0.06] hover:text-white"
+                        : "text-[#536471] hover:bg-[#EFF3F4] hover:text-[#0F1419]"
+                  }`}
+                >
+                  <item.icon
+                    size={24}
+                    weight={item.active ? "fill" : "regular"}
+                    className={item.active ? (isDark ? "text-white" : "text-[#1D9BF0]") : ""}
+                  />
+                  <span>{t(`nav.${item.label}` as any)}</span>
+                </button>
+              </Link>
+            ))}
+          </nav>
+
+          {/* Profile Card */}
+          <div className={`mt-auto mb-3 rounded-2xl ${isDark ? "bg-white/[0.03] border border-white/[0.06]" : "bg-white border border-[#EFF3F4]"}`}>
             {loading ? (
-              <div className="flex items-center gap-3">
-                <Skeleton className={`h-12 w-12 rounded-full ${isDark ? "bg-white/10" : "bg-[#EFF3F4]"}`} />
-                <div className="flex-1 space-y-1.5">
-                  <Skeleton className={`h-4 w-28 ${isDark ? "bg-white/10" : "bg-[#EFF3F4]"}`} />
-                  <Skeleton className={`h-3 w-16 ${isDark ? "bg-white/10" : "bg-[#EFF3F4]"}`} />
+              <div className="p-4 space-y-3">
+                <div className="flex items-center gap-3">
+                  <Skeleton className={`h-10 w-10 rounded-full ${isDark ? "bg-white/10" : "bg-[#EFF3F4]"}`} />
+                  <div className="flex-1 space-y-1">
+                    <Skeleton className={`h-3 w-20 ${isDark ? "bg-white/10" : "bg-[#EFF3F4]"}`} />
+                    <Skeleton className={`h-2.5 w-14 ${isDark ? "bg-white/5" : "bg-[#EFF3F4]"}`} />
+                  </div>
                 </div>
               </div>
             ) : userProfile ? (
-              <Link href={`/@${userProfile.username}`} className="flex items-center gap-3 group">
-                <div className={`h-12 w-12 rounded-full flex items-center justify-center ring-2 ${
-                  isDark
-                    ? "bg-gradient-to-br from-[#1D3A5C] to-[#0A2E4A] ring-[#1D9BF0]/30"
-                    : "bg-gradient-to-br from-[#E8F5FE] to-[#D4E9F7] ring-[#1D9BF0]/50"
-                }`}>
-                  <UserCircle size={24} weight="bold" className={isDark ? "text-[#1D9BF0]" : "text-[#1D9BF0]"} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className={`font-semibold text-sm truncate group-hover:underline ${isDark ? "text-white" : "text-[#0F1419]"}`}>
-                    {userProfile.full_name}
-                  </p>
-                  <div className="flex items-center gap-1 mt-0.5">
-                    {tier === "premium" ? (
-                      <span className={`text-xs font-medium flex items-center gap-1 ${isDark ? "text-amber-400" : "text-amber-600"}`}>
-                        <Crown size={12} weight="fill" /> Premium
-                      </span>
-                    ) : (
-                      <span className={`text-xs font-medium ${isDark ? "text-white/40" : "text-[#8B98A5]"}`}>
-                        {t("settings.freeTier")}
-                      </span>
-                    )}
+              <div className="p-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <Link href={`/@${userProfile.username}`} className="shrink-0">
+                    <div className={`h-10 w-10 rounded-full flex items-center justify-center ${isDark ? "bg-[#161618]" : "bg-[#EFF3F4]"}`}>
+                      {userProfile.avatar_url ? (
+                        <img src={userProfile.avatar_url} alt="" className="h-10 w-10 rounded-full object-cover" />
+                      ) : (
+                        <UserCircle size={22} weight="bold" className={isDark ? "text-white/40" : "text-[#536471]"} />
+                      )}
+                    </div>
+                  </Link>
+                  <div className="flex-1 min-w-0">
+                    <Link href={`/@${userProfile.username}`} className={`text-sm font-semibold truncate block hover:underline ${isDark ? "text-white" : "text-[#0F1419]"}`}>
+                      {userProfile.full_name}
+                    </Link>
+                    <p className={`text-xs truncate ${isDark ? "text-white/30" : "text-[#536471]"}`}>
+                      @{userProfile.username}
+                    </p>
                   </div>
+                  <Link href="/dashboard/settings">
+                    <Gear size={16} weight="bold" className={`shrink-0 cursor-pointer transition-colors ${isDark ? "text-white/20 hover:text-white/40" : "text-[#8B98A5] hover:text-[#536471]"}`} />
+                  </Link>
                 </div>
-              </Link>
-            ) : null}
-          </div>
-
-          <nav className="flex-1">
-            <h4 className={`text-xs font-bold uppercase tracking-wider mb-4 px-1 ${isDark ? "text-white/30" : "text-[#8B98A5]"}`}>
-              {t("nav.dashboard")}
-            </h4>
-            <div className="space-y-1.5">
-              {sidebarNav.map((item) => (
-                <Link key={item.label} href={item.href}>
-                  <button
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors duration-150 border border-transparent ${
-                      item.active
-                        ? isDark
-                          ? "bg-[#1D9BF0]/15 text-white border-[#1D9BF0]/20"
-                          : "bg-[#E8F5FE] text-[#1D9BF0] border-[#1D9BF0]/40"
-                        : isDark
-                          ? "text-white/50 hover:bg-white/5 hover:text-white"
-                          : "text-[#536471] hover:bg-[#EFF3F4] hover:text-[#0F1419]"
-                    }`}
-                  >
-                    <item.icon size={18} weight="bold" />
-                    {t(`nav.${item.label}` as any)}
-                  </button>
-                </Link>
-              ))}
-            </div>
-          </nav>
-
-          {tier !== "premium" && (
-            <div className={`pt-5 border-t ${isDark ? "border-white/8" : "border-[#EFF3F4]"}`}>
-              <div className={`rounded-2xl p-5 text-center space-y-4 ${
-                isDark
-                  ? "bg-gradient-to-br from-[#0A2E4A] to-[#0A0A0A] border-2 border-[#1D9BF0]/30 shadow-lg"
-                  : "bg-gradient-to-br from-[#E8F5FE] to-[#FFFFFF] border-2 border-[#1D9BF0]/40 shadow-lg"
-              }`}>
-                <div className="flex justify-center">
-                  <div className={`p-3 rounded-full ${isDark ? "bg-[#1D9BF0]/15" : "bg-[#E8F5FE]"}`}>
-                    <Crown size={28} weight="bold" className="text-[#1D9BF0]" />
-                  </div>
+                <div className="flex items-center gap-4 text-sm mb-3">
+                  <span className={`${isDark ? "text-white/30" : "text-[#536471]"}`}>
+                    <span className={`font-semibold ${isDark ? "text-white" : "text-[#0F1419]"}`}>{friendCount}</span> Following
+                  </span>
+                  <span className={`${isDark ? "text-white/30" : "text-[#536471]"}`}>
+                    <span className={`font-semibold ${isDark ? "text-white" : "text-[#0F1419]"}`}>{friendCount}</span> Followers
+                  </span>
                 </div>
-                <div>
-                  <h4 className={`font-bold text-base mb-1 ${isDark ? "text-white" : "text-[#0F1419]"}`}>
-                    {t("dashboard.upgrade")}
-                  </h4>
-                  <p className={`text-xs leading-relaxed ${isDark ? "text-white/50" : "text-[#8B98A5]"}`}>
-                    {t("dashboard.upgradeDesc")}
-                  </p>
-                </div>
-                <Link href="/dashboard/settings">
-                  <button className={`w-full text-sm font-semibold h-10 rounded-lg transition-all duration-200 hover:brightness-110 hover:shadow-xl shadow-lg flex items-center justify-center gap-1 ${
+                <Link
+                  href={`/@${userProfile.username}`}
+                  className={`block w-full text-center py-2 rounded-full text-sm font-semibold transition-colors border ${
                     isDark
-                      ? "bg-gradient-to-r from-[#1D9BF0] to-[#0085FF] text-white"
-                      : "bg-gradient-to-r from-[#1D9BF0] to-[#0085FF] text-white"
-                  }`}>
-                    {t("dashboard.upgrade")}
-                    <CaretRight size={14} weight="bold" />
-                  </button>
+                      ? "border-white/20 text-white hover:bg-white/[0.06]"
+                      : "border-[#CFD9DE] text-[#0F1419] hover:bg-[#EFF3F4]"
+                  }`}
+                >
+                  View Profile
                 </Link>
               </div>
-            </div>
-          )}
-
-          <div className={`pt-5 border-t ${isDark ? "border-white/8" : "border-[#EFF3F4]"}`}>
-            <h4 className={`text-xs font-bold uppercase tracking-wider mb-4 px-1 ${isDark ? "text-white/30" : "text-[#8B98A5]"}`}>
-              {t("nav.help")}
-            </h4>
-            <div className="space-y-1.5">
-              <Link href="/crisis-resources">
-                <button className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors duration-150 border ${
-                  isDark
-                    ? "text-rose-400 border-rose-500/20 hover:bg-rose-500/10"
-                    : "text-rose-600 border-rose-200 hover:bg-rose-50"
-                }`}>
-                  <Lifebuoy size={18} weight="bold" />
-                  {t("nav.crisis_resources")}
-                </button>
-              </Link>
-              <Link href="/dashboard/support">
-                <button className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors duration-150 ${
-                  isDark
-                    ? "text-white/50 hover:bg-white/5 hover:text-white"
-                    : "text-[#536471] hover:bg-[#EFF3F4] hover:text-[#0F1419]"
-                }`}>
-                  <Question size={18} weight="bold" />
-                  {t("nav.help")}
-                </button>
-              </Link>
-              <button
-                onClick={async () => {
-                  invalidateCacheOnLogout()
-                  await supabase.auth.signOut()
-                  router.push("/auth")
-                }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors duration-150 ${
-                  isDark
-                    ? "text-white/50 hover:bg-rose-500/10 hover:text-rose-400"
-                    : "text-[#536471] hover:bg-rose-50 hover:text-rose-600"
-                }`}
-              >
-                <SignOut size={18} weight="bold" />
-                {t("nav.logout")}
-              </button>
-            </div>
+            ) : null}
           </div>
         </div>
       </div>
@@ -296,92 +241,58 @@ export function DashboardSidebar() {
       {/* ─── Mobile Top Nav Bar ─── */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-50">
         <div className={`px-5 h-14 flex items-center justify-between mt-[env(safe-area-inset-top,0px)] ${
-          isDark
-            ? "bg-[#0A0A0A]/98 md:backdrop-blur-lg border-b border-white/5"
-            : "bg-white/98 md:backdrop-blur-lg border-b border-[#EFF3F4]"
+          isDark ? "bg-[#0A0A0A]/90 backdrop-blur-lg border-b border-white/[0.06]" : "bg-white/90 backdrop-blur-lg border-b border-[#EFF3F4]"
         }`}>
-          <img
-            className={`h-6 ${isDark ? "invert" : ""}`}
-            alt="Prompt & Pause"
-            src="https://res.cloudinary.com/dh1rrfpmq/image/upload/v1766460430/prompt_pause-JRsbZR3dxCXndC8YMcyX6XU3XeT2Vw_vdvqfj.svg"
-          />
-          <div className="flex items-center -mr-2.5">
-            <Link
-              href="/dashboard/archive"
-              className={`p-2.5 rounded-xl transition-colors ${
-                pathname === "/dashboard/archive"
-                  ? isDark ? "bg-[#1D9BF0]/10 text-[#1D9BF0]" : "bg-[#E8F5FE] text-[#1D9BF0]"
-                  : isDark ? "text-white/40 hover:text-white/60" : "text-[#536471] hover:text-[#0F1419] hover:bg-[#EFF3F4]"
-              }`}
-            >
-              <ArchiveBox size={22} weight="bold" />
+          <Link href="/dashboard">
+            <img
+              className={`h-7 ${isDark ? "invert" : ""}`}
+              alt="Prompt & Pause"
+              src="https://res.cloudinary.com/dh1rrfpmq/image/upload/v1766460430/prompt_pause-JRsbZR3dxCXndC8YMcyX6XU3XeT2Vw_vdvqfj.svg"
+            />
+          </Link>
+          <div className="flex items-center gap-2">
+            <Link href="/dashboard/archive">
+              <button className={`p-2 rounded-lg transition-colors ${isDark ? "hover:bg-white/10" : "hover:bg-[#EFF3F4]"}`}>
+                <ArchiveBox size={20} weight="bold" className={isDark ? "text-white/50" : "text-[#536471]"} />
+              </button>
             </Link>
-            <Link
-              href="/dashboard/settings"
-              className={`p-2.5 rounded-xl transition-colors ${
-                pathname?.startsWith("/dashboard/settings")
-                  ? isDark ? "bg-[#1D9BF0]/10 text-[#1D9BF0]" : "bg-[#E8F5FE] text-[#1D9BF0]"
-                  : isDark ? "text-white/40 hover:text-white/60" : "text-[#536471] hover:text-[#0F1419] hover:bg-[#EFF3F4]"
-              }`}
-            >
-              <Gear size={22} weight="bold" />
+            <Link href="/dashboard/settings">
+              <button className={`p-2 rounded-lg transition-colors ${isDark ? "hover:bg-white/10" : "hover:bg-[#EFF3F4]"}`}>
+                <Gear size={20} weight="bold" className={isDark ? "text-white/50" : "text-[#536471]"} />
+              </button>
             </Link>
           </div>
         </div>
       </div>
 
       {/* ─── Mobile Bottom Tab Bar ─── */}
-      <div className={`md:hidden fixed bottom-0 left-0 right-0 z-50 ${
-        isDark
-          ? "bg-[#161618] border-t border-white/[0.06]"
-          : "bg-white border-t border-[#EFF3F4]"
+      <div className={`md:hidden fixed bottom-0 left-0 right-0 z-50 pb-[env(safe-area-inset-bottom,0px)] ${
+        isDark ? "bg-[#0A0A0A]/90 backdrop-blur-lg border-t border-white/[0.06]" : "bg-white/90 backdrop-blur-lg border-t border-[#EFF3F4]"
       }`}>
-        <div className="flex justify-around items-center h-16 px-2">
-          {mobileNav.map((item) => {
-            const iconColor = item.crisis
-              ? isDark ? "text-rose-400" : "text-rose-500"
-              : item.active
-                ? isDark ? "text-[#1D9BF0]" : "text-[#1D9BF0]"
-                : isDark ? "text-white/30" : "text-[#8B98A5]"
-            return (
-              <Link
-                key={item.id}
-                href={item.href}
-                className={`flex flex-col items-center justify-center gap-1 flex-1 py-2 rounded-xl transition-colors ${
-                  item.active && !item.crisis
-                    ? isDark ? "bg-[#1D9BF0]/10" : "bg-[#E8F5FE]"
-                    : ""
-                }`}
+        <div className="flex items-center justify-around h-14">
+          {mobileNav.map((item) => (
+            <Link key={item.id} href={item.href}>
+              <button
+                className={`flex flex-col items-center gap-0.5 px-4 py-1 rounded-lg transition-colors ${
+                  item.active
+                    ? isDark
+                      ? "text-white"
+                      : "text-[#1D9BF0]"
+                    : isDark
+                      ? "text-white/30"
+                      : "text-[#536471]"
+                } ${item.crisis ? (isDark ? "text-rose-400" : "text-rose-500") : ""}`}
               >
-                <span className={iconColor}>
-                  <MobileNavIcon id={item.id} isDark={isDark} />
-                </span>
-                <span className={`text-[10px] font-semibold ${iconColor}`}>
-                  {item.label}
-                </span>
-              </Link>
-            )
-          })}
+                {item.id === "home" && <House size={22} weight={item.active ? "fill" : "regular"} />}
+                {item.id === "wellness" && <Heart size={22} weight={item.active ? "fill" : "regular"} />}
+                {item.id === "journal" && <BookOpen size={22} weight={item.active ? "fill" : "regular"} />}
+                {item.id === "crisis" && <Lifebuoy size={22} weight="fill" />}
+                <span className="text-[10px] font-medium leading-none">{item.label}</span>
+              </button>
+            </Link>
+          ))}
         </div>
-        <div className="h-[env(safe-area-inset-bottom,0px)]" />
       </div>
     </>
   )
-}
-
-function MobileNavIcon({ id, isDark }: { id: string; isDark: boolean }) {
-  const size = 20
-  const color = isDark ? "white" : "#0F1419"
-  switch (id) {
-    case "home":
-      return <House size={size} weight="bold" color={color} />
-    case "wellness":
-      return <Heart size={size} weight="bold" color={color} />
-    case "journal":
-      return <Notebook size={size} weight="bold" color={color} />
-    case "crisis":
-      return <Lifebuoy size={size} weight="bold" color={color} />
-    default:
-      return null
-  }
 }

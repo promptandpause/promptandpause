@@ -1,41 +1,17 @@
 "use client"
 
 import { AuthGuard } from "@/components/auth/AuthGuard"
-import { useTier } from "@/hooks/useTier"
 import GlobalDataSync from "./components/global-data-sync"
 import { DashboardSidebar } from "./components/DashboardSidebar"
+import { RandomFeed } from "./components/RandomFeed"
 import { useTheme } from "@/contexts/ThemeContext"
 import { useTranslation } from "@/hooks/useTranslation"
 import { useEffect, useState } from "react"
 import { getSupabaseClient } from "@/lib/supabase/client"
 import { trackEventOncePerSession } from "@/lib/services/eventsService"
 import { motion } from "framer-motion"
-import dynamic from "next/dynamic"
-
-import {
-  ProfileModule,
-  MoodModule,
-  PromptModule,
-  QuickActionsModule,
-  StreakModule,
-  AffirmationModule,
-  FocusAreasModule,
-  FeedModule,
-  UpgradeModule,
-  ModuleErrorBoundary,
-} from "./modules"
-
-const MoodTracker = dynamic(() => import("./components/mood-tracker"), { ssr: false })
-const WeeklyReflectionCard = dynamic(() => import("./components/weekly-reflection-card"), { ssr: false })
-const MonthlyReflectionCard = dynamic(() => import("./components/monthly-reflection-card"), { ssr: false })
-const FromYourPastCard = dynamic(() => import("./components/from-your-past-card"), { ssr: false })
-const ReturnToSelfCard = dynamic(() => import("./components/return-to-self-card"), { ssr: false })
-const SettingsLinkCard = dynamic(() => import("./components/settings-link-card"), { ssr: false })
-const HistorySearchCard = dynamic(() => import("./components/history-search-card"), { ssr: false })
-const PushNotificationPrompt = dynamic(() =>
-  import("@/components/notifications/PushNotificationPrompt").then(mod => ({ default: mod.PushNotificationPrompt })),
-  { ssr: false }
-)
+import { Sparkle } from "phosphor-react"
+import Link from "next/link"
 
 export default function DashboardPage() {
   return (
@@ -48,7 +24,6 @@ export default function DashboardPage() {
 function DashboardContent() {
   const { theme } = useTheme()
   const isDark = theme === "dark"
-  const { tier } = useTier()
   const { t } = useTranslation()
   const supabase = getSupabaseClient()
   const [userName, setUserName] = useState("")
@@ -80,92 +55,62 @@ function DashboardContent() {
   }, [supabase])
 
   return (
-    <div data-dashboard className={`min-h-screen ${isDark ? "bg-[#0A0A0A]" : "bg-[#FFFFFF]"}`}>
+    <div className={`min-h-screen ${isDark ? "bg-[#0A0A0A]" : "bg-[#FFFFFF]"}`}>
       <GlobalDataSync />
 
       <div className="flex h-screen overflow-hidden">
         <DashboardSidebar />
 
-        <main className="flex-1 pb-32 md:pb-10 overflow-y-auto scrollbar-thin">
-          <div className="max-w-[1280px] mx-auto px-4 md:px-8 pt-16 md:pt-10 pb-6">
-
-            {/* Greeting — clean Twitter-style header */}
-            <motion.div
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ type: "spring", stiffness: 260, damping: 22 }}
-              className="mb-6"
-            >
-              <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight ${isDark ? "text-white" : "text-[#0F1419]"}`}>
+        <main className="flex-1 overflow-y-auto scrollbar-thin border-r border-[#EFF3F4] dark:border-white/[0.06] max-w-[600px]">
+          {/* Twitter-style header */}
+          <div className={`sticky top-0 z-10 backdrop-blur-md ${
+            isDark ? "bg-[#0A0A0A]/80 border-b border-white/[0.06]" : "bg-white/80 border-b border-[#EFF3F4]"
+          }`}>
+            <div className="px-4 h-12 flex items-center">
+              <h1 className={`text-xl font-semibold ${isDark ? "text-white" : "text-[#0F1419]"}`}>
                 {t(greetingKey)}{userName ? `, ${userName}` : ""}
               </h1>
-              <p className={`text-sm mt-1 ${isDark ? "text-white/40" : "text-[#8B98A5]"}`}>
-                {t("dashboard.breatheMoment")}
-              </p>
-            </motion.div>
-
-            {/* Bebo-inspired 3-column modular grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-start">
-
-              {/* ── Left Column: Core modules ── */}
-              <div className="lg:col-span-8 space-y-5 lg:space-y-6">
-
-                {/* Return-to-Self card (shown conditionally) */}
-                <ReturnToSelfCard />
-
-                {/* Profile Module */}
-                <ProfileModule />
-
-                {/* Mood / Rhythm Module */}
-                <MoodModule />
-
-                {/* Today's Prompt Module */}
-                <PromptModule />
-
-                {/* Quick Actions */}
-                <QuickActionsModule />
-
-                {/* Premium: Weekly + Monthly Reflections */}
-                {tier === "premium" && (
-                  <div className="space-y-5 lg:space-y-6">
-                    <ModuleErrorBoundary>
-                      <WeeklyReflectionCard />
-                    </ModuleErrorBoundary>
-                    <ModuleErrorBoundary>
-                      <MonthlyReflectionCard />
-                    </ModuleErrorBoundary>
-                    <ModuleErrorBoundary>
-                      <FromYourPastCard />
-                    </ModuleErrorBoundary>
-                  </div>
-                )}
-
-                {/* Settings Link */}
-                <ModuleErrorBoundary>
-                  <SettingsLinkCard />
-                </ModuleErrorBoundary>
-
-                {/* Upgrade Banner (free users) */}
-                {tier !== "premium" && <UpgradeModule />}
-              </div>
-
-              {/* ── Right Column (desktop sidebar modules) ── */}
-              <div className="hidden lg:block lg:col-span-4 space-y-5 lg:space-y-6 lg:sticky lg:top-6">
-                <StreakModule />
-                <AffirmationModule />
-                <FocusAreasModule />
-                <FeedModule />
-                <ModuleErrorBoundary>
-                  <HistorySearchCard />
-                </ModuleErrorBoundary>
-              </div>
-
             </div>
+            <div className="flex">
+              <button
+                className={`flex-1 py-3 text-sm font-semibold text-center border-b-2 border-[#1D9BF0] ${
+                  isDark ? "text-white" : "text-[#0F1419]"
+                }`}
+              >
+                For You
+              </button>
+              <button
+                className={`flex-1 py-3 text-sm font-medium text-center ${
+                  isDark ? "text-white/40 hover:text-white/60" : "text-[#536471] hover:text-[#0F1419]"
+                }`}
+                onClick={() => window.location.href = "/dashboard/feed"}
+              >
+                Following
+              </button>
+            </div>
+          </div>
+
+          {/* Compose box */}
+          <div className={`px-4 py-3 border-b ${isDark ? "border-white/[0.06]" : "border-[#EFF3F4]"}`}>
+            <Link
+              href="/dashboard/journals"
+              className={`flex items-center gap-3 rounded-2xl px-4 py-2.5 transition-colors ${
+                isDark ? "bg-white/[0.03] hover:bg-white/[0.06]" : "bg-[#F7F9FA] hover:bg-[#EFF3F4]"
+              }`}
+            >
+              <Sparkle size={18} weight="bold" className={isDark ? "text-[#1D9BF0]" : "text-[#1D9BF0]"} />
+              <span className={`text-sm ${isDark ? "text-white/30" : "text-[#8B98A5]"}`}>
+                Share your reflection...
+              </span>
+            </Link>
+          </div>
+
+          {/* Feed */}
+          <div className="pb-16">
+            <RandomFeed />
           </div>
         </main>
       </div>
-
-      <PushNotificationPrompt />
     </div>
   )
 }
