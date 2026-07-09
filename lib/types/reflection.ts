@@ -90,6 +90,8 @@ export interface Reflection {
   tags: string[]
   word_count: number
   feedback: "helped" | "irrelevant" | null
+  visibility?: 'private' | 'friends_only' | 'public'
+  allow_comments?: boolean
   date: string
   created_at: string
   updated_at: string
@@ -102,6 +104,8 @@ export interface CreateReflectionInput {
   mood: MoodType
   tags: string[]
   prompt_id?: string
+  visibility?: 'private' | 'friends_only' | 'public'
+  allow_comments?: boolean
 }
 
 export interface MoodEntry {
@@ -198,20 +202,20 @@ export interface EmailDeliveryLog {
 // =============================================================================
 
 /**
- * Compact month-scoped recap used by the Premium monthly reflection email.
- * Deliberately lighter than WeeklyDigest — one email per month earns its
- * place by being a pattern summary, not a dashboard dump.
+ * Payload for the Premium monthly reflection email.
+ *
+ * Mirrors the AI-generated summary already produced by
+ * `generateMonthlyReflectionSummaryServer` — so the email and the in-app
+ * monthly summary page are reading from the exact same source of truth.
  */
 export interface MonthlyReflection {
-  monthStart: string        // ISO date of the first day of the month
-  monthEnd: string          // ISO date of the last day of the month
-  monthLabel: string        // e.g. "March 2026" — pre-computed so the email
-                            // generator never has to localise dates.
-  totalReflections: number
-  daysWithEntries: number
-  averageWordCount: number
-  topTags: { tag: string; count: number }[]
-  dominantMood: MoodType | null
+  monthStart: string        // ISO date (YYYY-MM-DD) of the first day
+  monthEnd: string          // ISO date (YYYY-MM-DD) of the last day
+  monthLabel: string        // e.g. "March 2026" — pre-localised for the email
+  overviewText: string
+  observations: string[]
+  themeReflection: string
+  closingQuestion: string
 }
 
 export interface WeeklyDigest {

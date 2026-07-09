@@ -1,0 +1,244 @@
+"use client"
+
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { AuthGuard } from '@/components/auth/AuthGuard'
+import { DashboardSidebar } from '@/app/dashboard/components/DashboardSidebar'
+import { useTheme } from '@/contexts/ThemeContext'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { UserPlus, UserCheck, Clock, Loader2, Search, X, ArrowLeft, MessageCircle } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useTranslation } from '@/hooks/useTranslation'
+import type { Friend } from '@/lib/types/social'
+
+export default function FriendsPage() {
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
+  const router = useRouter()
+  const { t } = useTranslation()
+  const [friends, setFriends] = useState<Friend[]>([])
+  const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
+  const [tab, setTab] = useState<'all' | 'pending' | 'requests'>('all')
+  const [actionLoading, setActionLoading] = useState<string | null>(null)
+
+  useEffect(() => { loadFriends() }, [])
+
+  async function loadFriends() {
+    try {
+      const res = await fetch('/api/social/friends')
+      const { data } = await res.json()
+      setFriends(data || [])
+    } catch {}
+    setLoading(false)
+  }
+
+  async function handleAction(id: string, action: 'accept' | 'remove') {
+    setActionLoading(id)
+    try {
+      if (action === 'accept') {
+        await fetch(`/api/social/friends/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'accept' }),
+        })
+      } else {
+        await fetch(`/api/social/friends/${id}`, { method: 'DELETE' })
+      }
+      loadFriends()
+    } catch {}
+    setActionLoading(null)
+  }
+
+  const accepted = friends.filter(f => f.status === 'accepted')
+  const pending = friends.filter(f => f.status === 'pending' && f.profile?.id !== undefined)
+  const incoming = friends.filter(f => f.status === 'pending')
+  // Determine which pending are sent by us vs received
+  const sentRequests = pending
+  const receivedRequests = friends.filter(f => f.status === 'pending')
+
+  const filtered = tab === 'all' ? accepted : tab === 'pending' ? sentRequests : receivedRequests
+
+  const displayList = search
+    ? filtered.filter(f =>
+        f.profile?.full_name?.toLowerCase().includes(search.toLowerCase()) ||
+        f.profile?.display_name?.toLowerCase().includes(search.toLowerCase()) ||
+        f.profile?.username?.toLowerCase().includes(search.toLowerCase())
+      )
+    : filtered
+
+  return (
+    <AuthGuard redirectPath="/dashboard/friends">
+      <div className={`min-h-screen ${isDark ? 'bg-[#141820]' : 'bg-[#F5F3EE]'}`}>
+        <div className="flex h-screen overflow-hidden">
+          <DashboardSidebar />
+          <main className="flex-1 pb-32 md:pb-10 overflow-y-auto scrollbar-thin">
+            <div className="max-w-[800px] mx-auto px-4 md:px-8 pt-16 md:pt-10 pb-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>
+                    Friends
+                  </h1>
+                  <p className={`text-sm mt-1 ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
+                    Connect with others on their reflection journey
+                  </p>
+                </div>
+              </div>
+
+              {/* Search */}
+              <div className="relative mb-4">
+                <Search className={`absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 ${isDark ? 'text-white/20' : 'text-[#B0AFA0]'}`} />
+                <Input
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  placeholder="Search friends..."
+                  className={`pl-9 text-sm rounded-xl ${
+                    isDark
+                      ? 'bg-white/[0.06] border-white/[0.08] text-white placeholder:text-white/20'
+                      : 'bg-white/80 border-[#E8E5DE] text-[#3D3D3D] placeholder:text-[#B0AFA0]'
+                  }`}
+                />
+              </div>
+
+              {/* Tabs */}
+              <div className="flex gap-1 mb-6">
+                {[
+                  { key: 'all', label: `All (${accepted.length})` },
+                  { key: 'pending', label: `Sent (${sentRequests.length})` },
+                  { key: 'requests', label: `Requests (${receivedRequests.length})` },
+                ].map(t => (
+                  <button
+                    key={t.key}
+                    onClick={() => setTab(t.key as typeof tab)}
+                    className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                      tab === t.key
+                        ? isDark ? 'bg-white/10 text-white' : 'bg-white text-[#3D3D3D] shadow-sm'
+                        : isDark ? 'text-white/30 hover:text-white/50' : 'text-[#A0A090] hover:text-[#5A5A4E]'
+                    }`}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* List */}
+              {loading ? (
+                <div className="flex justify-center py-20">
+                  <Loader2 className={`h-6 w-6 animate-spin ${isDark ? 'text-white/20' : 'text-[#B0AFA0]'}`} />
+                </div>
+              ) : displayList.length === 0 ? (
+                <div className={`rounded-2xl p-10 text-center ${isDark ? 'bg-white/[0.03] border border-white/[0.06]' : 'bg-white/60 border border-[#E8E5DE]'}`}>
+                  <UserPlus className={`h-10 w-10 mx-auto mb-4 ${isDark ? 'text-white/15' : 'text-[#D0CFC0]'}`} />
+                  <h3 className={`font-semibold mb-1 ${isDark ? 'text-white/60' : 'text-[#5A5A4E]'}`}>
+                    {tab === 'all' ? 'No friends yet' : tab === 'pending' ? 'No pending requests' : 'No incoming requests'}
+                  </h3>
+                  <p className={`text-sm ${isDark ? 'text-white/30' : 'text-[#8A8A7A]'}`}>
+                    {tab === 'all' ? 'Find people to connect with on their profiles.' : ''}
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <AnimatePresence>
+                    {displayList.map(friend => (
+                      <motion.div
+                        key={friend.id}
+                        layout
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        className={`rounded-xl p-3 flex items-center gap-3 transition-all ${
+                          isDark
+                            ? 'bg-white/[0.03] hover:bg-white/[0.06]'
+                            : 'bg-white/60 hover:bg-white/80'
+                        }`}
+                      >
+                        <button
+                          onClick={() => router.push(`/${friend.profile?.username}`)}
+                          className="flex items-center gap-3 flex-1 min-w-0 text-left"
+                        >
+                          <Avatar className="h-10 w-10">
+                            <AvatarImage src={friend.profile?.avatar_url || undefined} />
+                            <AvatarFallback className={`text-xs ${isDark ? 'bg-[#1E2430] text-white/40' : 'bg-[#F0EFEA] text-[#8A8A7A]'}`}>
+                              {friend.profile?.full_name?.[0] || '?'}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="min-w-0">
+                            <p className={`text-sm font-medium truncate ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>
+                              {friend.profile?.display_name || friend.profile?.full_name || 'Unknown'}
+                            </p>
+                            {friend.profile?.username && (
+                              <p className={`text-xs ${isDark ? 'text-white/30' : 'text-[#A0A090]'}`}>
+                                @{friend.profile.username}
+                              </p>
+                            )}
+                          </div>
+                        </button>
+
+                        <div className="flex gap-1.5">
+                          {friend.status === 'accepted' && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleAction(friend.id, 'remove')}
+                              disabled={actionLoading === friend.id}
+                              className={`h-8 text-xs ${isDark ? 'text-white/30 hover:text-red-400' : 'text-[#A0A090] hover:text-red-500'}`}
+                            >
+                              {actionLoading === friend.id ? (
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                              ) : (
+                                'Remove'
+                              )}
+                            </Button>
+                          )}
+                          {friend.status === 'pending' && (
+                            <>
+                              {friend.requester_id !== friend.profile?.id && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleAction(friend.id, 'accept')}
+                                  disabled={actionLoading === friend.id}
+                                  className={`h-8 text-xs ${
+                                    isDark
+                                      ? 'border-[#A8D5BA]/30 text-[#A8D5BA] hover:bg-[#A8D5BA]/10'
+                                      : 'border-[#C8E6D0] text-[#5A8F6E] hover:bg-[#E8F5E9]'
+                                  }`}
+                                >
+                                  {actionLoading === friend.id ? (
+                                    <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                                  ) : (
+                                    <UserCheck className="h-3 w-3 mr-1" />
+                                  )}
+                                  Accept
+                                </Button>
+                              )}
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleAction(friend.id, 'remove')}
+                                disabled={actionLoading === friend.id}
+                                className={`h-8 text-xs ${isDark ? 'text-white/30 hover:text-red-400' : 'text-[#A0A090] hover:text-red-500'}`}
+                              >
+                                {actionLoading === friend.id && friend.requester_id !== friend.profile?.id ? (
+                                  <Loader2 className="h-3 w-3 animate-spin" />
+                                ) : (
+                                  <X className="h-3 w-3" />
+                                )}
+                              </Button>
+                            </>
+                          )}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
+              )}
+            </div>
+          </main>
+        </div>
+      </div>
+    </AuthGuard>
+  )
+}

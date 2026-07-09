@@ -17,6 +17,7 @@ import { PromptLimitBanner } from "@/components/tier/TierGate";
 import { trackEvent } from "@/lib/services/eventsService";
 import { Sprout, Bookmark, Bell, Sparkles } from "lucide-react";
 import { IconOrb } from "@/components/ui/accent-card";
+import { VisibilitySelector } from "@/components/social/VisibilitySelector";
 
 const moods: MoodType[] = ["😔", "😐", "😊", "😄", "🤔", "😌", "🙏", "💪"]
 const availableTags = ["Gratitude", "Relationships", "Career", "Self-care", "Personal Growth", "Health", "Achievement", "Nature", "Creativity", "Family"]
@@ -45,6 +46,8 @@ export default function TodaysPrompt() {
   // Gentle session-close actions (shown after a reflection is saved)
   const [closeAction, setCloseAction] = useState<null | 'revisit' | 'save' | 'reminders_on'>(null)
   const [remindersBusy, setRemindersBusy] = useState(false)
+  // Sharing visibility
+  const [visibility, setVisibility] = useState<'private' | 'friends_only' | 'public'>('private')
   // Self-Journal state
   const [showSelfJournal, setShowSelfJournal] = useState(false)
   const [journalText, setJournalText] = useState("")
@@ -155,6 +158,7 @@ export default function TodaysPrompt() {
         reflection_text: reflection.trim(),
         mood: selectedMood || "😊",
         tags: selectedTags,
+        visibility,
       })
 
       if (!saved) throw new Error('Failed to save reflection')
@@ -518,6 +522,12 @@ export default function TodaysPrompt() {
             <p className={`text-xs mt-1.5 ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>Selected: {selectedTags.length > 0 ? selectedTags.join(', ') : 'None'}</p>
           </div>
           
+          <div className="flex items-center justify-between mb-3">
+            <p className={`text-[10px] uppercase tracking-wide font-semibold ${theme === 'dark' ? 'text-white/30' : 'text-gray-500'}`}>
+              Who can see this
+            </p>
+            <VisibilitySelector value={visibility} onChange={setVisibility} />
+          </div>
           <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2 md:gap-4">
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full md:w-auto">
               <Button

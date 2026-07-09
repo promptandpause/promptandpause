@@ -10,7 +10,9 @@ const CreateReflectionSchema = z.object({
   reflection_text: z.string().min(1, 'Reflection text is required').max(10000, 'Reflection text too long'),
   mood: z.string().max(50, 'Mood too long').optional().default('😊'),
   tags: z.array(z.string().max(50, 'Tag too long')).max(10, 'Too many tags').optional().default([]),
-  word_count: z.number().int().min(0).optional()
+  word_count: z.number().int().min(0).optional(),
+  visibility: z.enum(['private', 'friends_only', 'public']).optional().default('private'),
+  allow_comments: z.boolean().optional().default(true),
 })
 
 /**
@@ -112,7 +114,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { prompt_text, reflection_text, mood, tags, word_count } = parsed.data
+    const { prompt_text, reflection_text, mood, tags, word_count, visibility, allow_comments } = parsed.data
 
     // CHECK TIER LIMITS: Enforce weekly reflection limit for free users
     // Fetch user's subscription tier
@@ -178,6 +180,8 @@ export async function POST(request: NextRequest) {
         tags: tags || [],
         word_count: finalWordCount,
         date: todayStr,
+        visibility: visibility || 'private',
+        allow_comments,
       })
       .select()
       .single()

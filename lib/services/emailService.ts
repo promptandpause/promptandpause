@@ -1872,12 +1872,17 @@ function generatePaymentFailedEmailHTML(
  * (the cron skips them up-front), so we don't render an empty-state branch.
  */
 function generateMonthlyReflectionEmailHTML(name: string, reflection: MonthlyReflection): string {
-  const archiveUrl = `${APP_URL.replace(/\/$/, '')}/dashboard/archive`
+  const summaryUrl = `${APP_URL.replace(/\/$/, '')}/dashboard/archive?view=monthly`
 
-  const topTagsHTML = reflection.topTags
+  // Observations render as a calm bulleted list — we own the spacing/colour
+  // directly so the email client can't reflow it into something loud.
+  const observationsHTML = (reflection.observations ?? [])
+    .filter((line) => line && line.trim().length > 0)
     .map(
-      ({ tag, count }) =>
-        `<span class="email-text-primary email-section-bg" style="display:inline-block;background:rgba(56,76,55,0.08);color:${PRIMARY_ACCENT};padding:6px 14px;border-radius:20px;margin:4px;font-size:13px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">${tag} (${count})</span>`,
+      (line) => `
+      <li class="email-text-gray" style="margin:0 0 10px 0;padding:0;color:${TEXT_GRAY};font-size:15px;line-height:1.7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+        ${line.replace(/^[-•]\s*/, '')}
+      </li>`,
     )
     .join('')
 
@@ -1888,41 +1893,48 @@ function generateMonthlyReflectionEmailHTML(name: string, reflection: MonthlyRef
 
     ${paragraph(`Hi ${name},`)}
 
-    ${paragraph(`A quiet look back at the month — no scoreboard, just the shape of what you wrote.`)}
-
-    ${infoBox(`
-      <p class="email-text-gray" style="margin:0 0 8px 0;color:${TEXT_GRAY};font-size:15px;line-height:1.7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-        <strong class="email-text-dark" style="color:${TEXT_DARK};font-weight:600;">Reflections this month:</strong> ${reflection.totalReflections}
-      </p>
-      <p class="email-text-gray" style="margin:0 0 8px 0;color:${TEXT_GRAY};font-size:15px;line-height:1.7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-        <strong class="email-text-dark" style="color:${TEXT_DARK};font-weight:600;">Days you showed up:</strong> ${reflection.daysWithEntries}
-      </p>
-      ${
-        reflection.dominantMood
-          ? `<p class="email-text-gray" style="margin:0;color:${TEXT_GRAY};font-size:15px;line-height:1.7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;"><strong class="email-text-dark" style="color:${TEXT_DARK};font-weight:600;">Most-felt mood:</strong> ${reflection.dominantMood}</p>`
-          : ''
-      }
-    `)}
+    ${reflection.overviewText ? paragraph(reflection.overviewText) : ''}
 
     ${
-      reflection.topTags.length > 0
+      observationsHTML
         ? `
     <div style="margin:32px 0;">
-      ${h3('Themes you kept returning to')}
-      <div style="text-align:center;">${topTagsHTML}</div>
+      ${h3('A few things we noticed')}
+      <ul style="margin:0;padding:0 0 0 20px;">
+        ${observationsHTML}
+      </ul>
     </div>`
         : ''
     }
 
+    ${
+      reflection.themeReflection
+        ? infoBox(`
+      <p class="email-text-gray" style="margin:0;color:${TEXT_GRAY};font-size:15px;line-height:1.7;font-style:italic;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+        ${reflection.themeReflection}
+      </p>
+    `)
+        : ''
+    }
+
+    ${
+      reflection.closingQuestion
+        ? paragraph(
+            `<strong class="email-text-dark" style="color:${TEXT_DARK};font-weight:600;">Something to sit with:</strong> ${reflection.closingQuestion}`,
+            { fontSize: '15px' },
+          )
+        : ''
+    }
+
     <div style="text-align: center; margin: 40px 0;">
-      ${standardButton({ href: archiveUrl, label: 'Open your archive' })}
+      ${standardButton({ href: summaryUrl, label: 'Open your monthly summary' })}
     </div>
 
     ${paragraph(`A reflection practice doesn't have a "right" shape — showing up some of the time is the whole thing.`, { align: 'center', fontSize: '14px', color: TEXT_MUTED })}
   `)
 
   return buildBaseEmail({
-    preheader: `${reflection.monthLabel} — ${reflection.totalReflections} reflections`,
+    preheader: `${reflection.monthLabel} — a quiet look back`,
     title: `Your ${reflection.monthLabel} reflection`,
     bodyHTML,
   })

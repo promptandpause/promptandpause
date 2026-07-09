@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { HelpCircle, LogOut, Crown, Archive, Settings, LayoutDashboard, User, LifeBuoy, NotebookPen, Heart, Home, BookOpen, ChevronRight, Bookmark } from "lucide-react"
+import { HelpCircle, LogOut, Crown, Archive, Settings, LayoutDashboard, User, LifeBuoy, NotebookPen, Heart, Home, BookOpen, ChevronRight, Bookmark, Rss, UserPlus } from "lucide-react"
 import Link from "next/link"
 import { getSupabaseClient } from "@/lib/supabase/client"
 import { useTier } from "@/hooks/useTier"
@@ -31,11 +31,14 @@ export function DashboardSidebar() {
   // Desktop navigation items
   const sidebarNav = [
     { icon: LayoutDashboard, label: "dashboard", href: "/dashboard", active: pathname === "/dashboard" },
+    { icon: Rss, label: "feed", href: "/dashboard/feed", active: pathname === "/dashboard/feed" },
+    { icon: UserPlus, label: "friends", href: "/dashboard/friends", active: pathname === "/dashboard/friends" },
     { icon: Heart, label: "wellness", href: "/dashboard/wellness", active: pathname === "/dashboard/wellness" },
     { icon: Archive, label: "archive", href: "/dashboard/archive", active: pathname === "/dashboard/archive" },
     { icon: Bookmark, label: "saved", href: "/dashboard/saved", active: pathname === "/dashboard/saved" },
     { icon: NotebookPen, label: "my_journals", href: "/dashboard/journals", active: pathname === "/dashboard/journals" },
     { icon: Settings, label: "settings", href: "/dashboard/settings", active: pathname?.startsWith("/dashboard/settings") || false },
+    { icon: User, label: "profile", href: "/dashboard/settings/profile", active: pathname === "/dashboard/settings/profile" },
   ]
 
   // Mobile bottom tab items

@@ -66,7 +66,7 @@ export const supabaseReflectionService = {
   /**
    * Save a new reflection
    */
-  async saveReflection(input: CreateReflectionInput): Promise<Reflection | null> {
+  async saveReflection(input: CreateReflectionInput & { visibility?: 'private' | 'friends_only' | 'public'; allow_comments?: boolean }): Promise<Reflection | null> {
     try {
       const res = await fetch('/api/reflections', {
         method: 'POST',
