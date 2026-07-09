@@ -139,7 +139,7 @@ export function emailFooter(): string {
           
           <!-- Copyright -->
           <p class="email-text-muted" style="color: ${BRAND_COLORS.textMuted}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; margin: 0; opacity: 0.7;">
-            © 2026 ${APP_NAME}. All rights reserved.
+            © 2026 ${APP_NAME} from DC REGENT GROUP
           </p>
           
           <!-- Unsubscribe hint -->
