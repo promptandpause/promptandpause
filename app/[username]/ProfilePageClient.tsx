@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { useTheme } from '@/contexts/ThemeContext'
 import { FriendButton } from '@/components/social/FriendButton'
 import { WhiteboardSection } from '@/components/social/WhiteboardSection'
-import type { ProfileWithSocial } from '@/lib/types/social'
+import type { ProfileWithSocial, WhiteboardEntry } from '@/lib/types/social'
 
 interface Reflection {
   id: string
@@ -18,15 +18,6 @@ interface Reflection {
   tags: string[]
   visibility: string
   created_at: string
-}
-
-interface WhiteboardEntry {
-  id: string
-  author_id: string
-  content_type: string
-  content: Record<string, any>
-  created_at: string
-  author: any
 }
 
 export function ProfilePageClient({
