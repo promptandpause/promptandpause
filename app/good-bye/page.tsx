@@ -131,7 +131,7 @@ export default function GoodByePage() {
             Pause. Reflect. Grow.
           </p>
           <p className="text-xs text-[#6B7F6E]/40 mt-1">
-            © 2026 Prompt & Pause. All rights reserved.
+            © 2026 Prompt & Pause from DC REGENT GROUP
           </p>
         </div>
       </div>

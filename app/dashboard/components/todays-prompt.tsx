@@ -15,7 +15,7 @@ import VoicePromptPlayer from "./voice-prompt-player";
 import { useTheme } from "@/contexts/ThemeContext";
 import { PromptLimitBanner } from "@/components/tier/TierGate";
 import { trackEvent } from "@/lib/services/eventsService";
-import { Sprout, Bookmark, Bell, Sparkles } from "lucide-react";
+import { Leaf, BookmarkSimple, Bell, Sparkle } from "phosphor-react";
 import { IconOrb } from "@/components/ui/accent-card";
 import { VisibilitySelector } from "@/components/social/VisibilitySelector";
 
@@ -320,7 +320,7 @@ export default function TodaysPrompt() {
         <div className="relative flex items-center justify-between gap-3 mb-1">
           <div className="flex items-center gap-3">
             <IconOrb accent="blue" size="sm">
-              <Sparkles className="w-4 h-4 text-white" strokeWidth={2} />
+              <Sparkle size={16} weight="bold" className="text-white" />
             </IconOrb>
             <div>
               <h3 className={`text-lg md:text-xl font-semibold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-[#0F1419]'}`}>Today</h3>
@@ -628,7 +628,7 @@ export default function TodaysPrompt() {
                     onClick={() => handleCloseAction('revisit')}
                     className={`text-xs md:text-sm justify-start gap-2 ${theme === 'dark' ? 'text-white/80 hover:bg-white/10' : 'text-gray-700 hover:bg-white/80'}`}
                   >
-                    <Sprout className="h-4 w-4" aria-hidden="true" />
+                    <Leaf size={16} weight="bold" aria-hidden="true" />
                     Revisit this tomorrow
                   </Button>
                   <Button
@@ -637,7 +637,7 @@ export default function TodaysPrompt() {
                     onClick={() => handleCloseAction('save')}
                     className={`text-xs md:text-sm justify-start gap-2 ${theme === 'dark' ? 'text-white/80 hover:bg-white/10' : 'text-gray-700 hover:bg-white/80'}`}
                   >
-                    <Bookmark className="h-4 w-4" aria-hidden="true" />
+                    <BookmarkSimple size={16} weight="bold" aria-hidden="true" />
                     Save for later
                   </Button>
                   <Button
@@ -647,7 +647,7 @@ export default function TodaysPrompt() {
                     onClick={() => handleCloseAction('reminders_on')}
                     className={`text-xs md:text-sm justify-start gap-2 ${theme === 'dark' ? 'text-white/80 hover:bg-white/10' : 'text-gray-700 hover:bg-white/80'}`}
                   >
-                    <Bell className="h-4 w-4" aria-hidden="true" />
+                    <Bell size={16} weight="bold" aria-hidden="true" />
                     Quiet reminder
                   </Button>
                 </div>
@@ -677,7 +677,7 @@ export default function TodaysPrompt() {
             <div className="relative flex items-start justify-between mb-5 gap-3">
               <div className="flex items-center gap-3">
                 <IconOrb accent="rose" size="md">
-                  <Sparkles className="w-5 h-5 text-white" strokeWidth={1.75} />
+                  <Sparkle size={20} weight="bold" className="text-white" />
                 </IconOrb>
                 <div>
                   <h3 className={`text-lg md:text-xl font-semibold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Self-Journal</h3>

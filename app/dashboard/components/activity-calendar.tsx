@@ -7,7 +7,7 @@ import { calculateReflectionStreak, getDailyActivity } from "@/lib/services/anal
 import { supabaseReflectionService } from "@/lib/services/supabaseReflectionService"
 import { DailyActivity } from "@/lib/types/reflection"
 import { motion, AnimatePresence } from "framer-motion"
-import { Calendar, TrendingUp } from "lucide-react"
+import { Calendar, TrendUp } from "phosphor-react"
 import { getSupabaseClient } from "@/lib/supabase/client"
 import { useTheme } from "@/contexts/ThemeContext"
 
@@ -87,7 +87,7 @@ export default function ActivityCalendar() {
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Calendar className="h-5 w-5 text-purple-400" />
+          <Calendar size={20} weight="bold" className="text-purple-400" />
           <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Activity</h3>
         </div>
       </div>
@@ -100,7 +100,7 @@ export default function ActivityCalendar() {
         </div>
         <div className={`rounded-lg p-3 border ${theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200'}`}>
           <div className="flex items-center gap-1">
-            <TrendingUp className="h-4 w-4 text-purple-400" />
+            <TrendUp size={16} weight="bold" className="text-purple-400" />
             <p className={`text-xs ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>Streak</p>
           </div>
           <p className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{currentStreak} 🔥</p>

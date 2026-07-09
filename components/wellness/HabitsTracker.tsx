@@ -3,14 +3,14 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
-  CheckCircle2, 
+  CheckCircle, 
   Circle, 
   Plus, 
   X, 
-  TrendingUp,
+  TrendUp,
   Flame,
-  BarChart3
-} from 'lucide-react'
+  ChartBar
+} from 'phosphor-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -224,7 +224,7 @@ export default function HabitsTracker({ userId, compact = false }: HabitsTracker
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+            <CheckCircle size={16} weight="bold" className="text-emerald-500" />
             <span className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-700'}`}>Today&apos;s Habits</span>
           </div>
           <span className={`text-xs ${isDark ? 'text-white/50' : 'text-gray-500'}`}>
@@ -244,9 +244,9 @@ export default function HabitsTracker({ userId, compact = false }: HabitsTracker
               }`}
             >
               {todayLogs[habit.id] ? (
-                <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                <CheckCircle size={20} className="text-emerald-500" />
               ) : (
-                <Circle className={`w-5 h-5 ${isDark ? 'text-white/30' : 'text-gray-300'}`} />
+                <Circle size={20} className={`${isDark ? 'text-white/30' : 'text-gray-300'}`} />
               )}
               <span className="text-lg">{habit.icon}</span>
               <span className={`text-sm flex-1 text-left ${
@@ -256,7 +256,7 @@ export default function HabitsTracker({ userId, compact = false }: HabitsTracker
               </span>
               {habit.streak > 0 && (
                 <span className="text-xs text-amber-600 flex items-center gap-0.5">
-                  <Flame className="w-3 h-3" />
+                  <Flame size={12} />
                   {habit.streak}
                 </span>
               )}
@@ -271,7 +271,7 @@ export default function HabitsTracker({ userId, compact = false }: HabitsTracker
             onClick={() => setShowCreateDialog(true)}
             className="w-full"
           >
-            <Plus className="w-4 h-4 mr-1" />
+            <Plus size={16} weight="bold" className="mr-1" />
             Add Habit
           </Button>
         )}
@@ -284,13 +284,13 @@ export default function HabitsTracker({ userId, compact = false }: HabitsTracker
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className={`text-lg flex items-center gap-2 ${isDark ? 'text-white' : ''}`}>
-            <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+            <CheckCircle size={20} className="text-emerald-500" />
             Habit Tracker
           </CardTitle>
           <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
             <DialogTrigger asChild>
               <Button size="sm" className="gap-1">
-                <Plus className="w-4 h-4" />
+                <Plus size={16} weight="bold" />
                 Add
               </Button>
             </DialogTrigger>
@@ -391,7 +391,7 @@ export default function HabitsTracker({ userId, compact = false }: HabitsTracker
         <AnimatePresence>
           {habits.length === 0 ? (
             <div className={`text-center py-8 ${isDark ? 'text-white/50' : 'text-gray-500'}`}>
-              <CheckCircle2 className={`w-10 h-10 mx-auto mb-2 ${isDark ? 'text-white/20' : 'text-gray-300'}`} />
+              <CheckCircle size={40} className={`mx-auto mb-2 ${isDark ? 'text-white/20' : 'text-gray-300'}`} />
               <p className="text-sm">No habits yet</p>
               <Button
                 variant="link"
@@ -420,9 +420,9 @@ export default function HabitsTracker({ userId, compact = false }: HabitsTracker
                   className="flex-shrink-0"
                 >
                   {todayLogs[habit.id] ? (
-                    <CheckCircle2 className="w-6 h-6 text-emerald-500" />
+                    <CheckCircle size={24} className="text-emerald-500" />
                   ) : (
-                    <Circle className={`w-6 h-6 ${isDark ? 'text-white/30 hover:text-white/50' : 'text-gray-300 hover:text-gray-400'}`} />
+                    <Circle size={24} className={`${isDark ? 'text-white/30 hover:text-white/50' : 'text-gray-300 hover:text-gray-400'}`} />
                   )}
                 </button>
                 
@@ -440,7 +440,7 @@ export default function HabitsTracker({ userId, compact = false }: HabitsTracker
                     </span>
                     {habit.streak > 0 && (
                       <span className="flex items-center gap-0.5 text-amber-600">
-                        <Flame className="w-3 h-3" />
+                        <Flame size={12} />
                         {habit.streak} day streak
                       </span>
                     )}
@@ -452,7 +452,7 @@ export default function HabitsTracker({ userId, compact = false }: HabitsTracker
                   onClick={() => handleDeleteHabit(habit.id)}
                   className={`opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded ${isDark ? 'hover:bg-white/10' : 'hover:bg-gray-200'}`}
                 >
-                  <X className={`w-4 h-4 ${isDark ? 'text-white/40' : 'text-gray-400'}`} />
+                  <X size={16} weight="bold" className={`${isDark ? 'text-white/40' : 'text-gray-400'}`} />
                 </button>
               </motion.div>
             ))
@@ -466,9 +466,9 @@ export default function HabitsTracker({ userId, compact = false }: HabitsTracker
               onClick={() => setShowCorrelations(!showCorrelations)}
               className={`flex items-center gap-2 text-sm font-medium w-full ${isDark ? 'text-white' : 'text-gray-700'}`}
             >
-              <BarChart3 className="w-4 h-4 text-blue-500" />
+              <ChartBar size={16} weight="bold" className="text-blue-500" />
               Mood Correlations
-              <TrendingUp className={`w-4 h-4 ml-auto transition-transform ${showCorrelations ? 'rotate-180' : ''}`} />
+              <TrendUp size={16} weight="bold" className={`ml-auto transition-transform ${showCorrelations ? 'rotate-180' : ''}`} />
             </button>
             
             <AnimatePresence>

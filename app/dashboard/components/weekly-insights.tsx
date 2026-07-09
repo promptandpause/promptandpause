@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Sparkles, TrendingUp, Target, Brain, Mail, Loader2, ChevronRight } from "lucide-react"
+import { Sparkle, TrendUp, Target, Brain, Envelope, Spinner, CaretRight } from "phosphor-react"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { useTheme } from "@/contexts/ThemeContext"
@@ -94,7 +94,7 @@ export default function WeeklyInsights() {
           : 'glass-medium shadow-soft-md'
       }`}>
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="h-8 w-8 text-purple-400 animate-spin" />
+          <Spinner size={32} weight="bold" className="text-purple-400 animate-spin" />
           <p className={theme === 'dark' ? 'text-white/60 text-sm' : 'text-gray-500 text-sm'}>Preparing your weekly recap...</p>
         </div>
       </section>
@@ -154,12 +154,12 @@ export default function WeeklyInsights() {
         >
           {sending ? (
             <>
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              <Spinner size={16} weight="bold" className="mr-2 animate-spin" />
               Sending...
             </>
           ) : (
             <>
-              <Mail className="h-4 w-4 mr-2" />
+              <Envelope size={16} weight="bold" className="mr-2" />
               Email this recap
             </>
           )}
@@ -209,7 +209,7 @@ export default function WeeklyInsights() {
       {/* AI Summary */}
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-3">
-          <Brain className="h-4 w-4 text-purple-400" />
+          <Brain size={16} weight="bold" className="text-purple-400" />
           <h5 className={`font-medium text-sm ${
             theme === 'dark' ? 'text-white' : 'text-gray-900'
           }`}>This Week</h5>
@@ -225,7 +225,7 @@ export default function WeeklyInsights() {
       {observations.length > 0 && (
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-3">
-            <TrendingUp className="h-4 w-4 text-green-400" />
+            <TrendUp size={16} weight="bold" className="text-green-400" />
             <h5 className={`font-medium text-sm ${
               theme === 'dark' ? 'text-white' : 'text-gray-900'
             }`}>Observations</h5>
@@ -253,7 +253,7 @@ export default function WeeklyInsights() {
       {reflectionText && (
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-3">
-            <Target className="h-4 w-4 text-blue-400" />
+            <Target size={16} weight="bold" className="text-blue-400" />
             <h5 className={`font-medium text-sm ${
               theme === 'dark' ? 'text-white' : 'text-gray-900'
             }`}>Theme Reflection</h5>
@@ -329,7 +329,7 @@ export default function WeeklyInsights() {
         }`}
       >
         {showAll ? 'Show Less' : 'Show More'}
-        <ChevronRight className={`h-4 w-4 transition-transform ${showAll ? 'rotate-90' : '-rotate-90'}`} />
+        <CaretRight size={16} weight="bold" className={`transition-transform ${showAll ? 'rotate-90' : '-rotate-90'}`} />
       </button>
 
       {/* AI Attribution */}

@@ -6,7 +6,7 @@ import { AuthGuard } from '@/components/auth/AuthGuard'
 import { DashboardSidebar } from '@/app/dashboard/components/DashboardSidebar'
 import { useTheme } from '@/contexts/ThemeContext'
 import { FeedCard } from '@/components/social/FeedCard'
-import { Loader2, Rss, Users } from 'lucide-react'
+import { Spinner, Rss, Users } from 'phosphor-react'
 import { useTranslation } from '@/hooks/useTranslation'
 import Link from 'next/link'
 import type { FeedItem } from '@/lib/types/social'
@@ -48,7 +48,12 @@ export default function FeedPage() {
           <main className="flex-1 pb-32 md:pb-10 overflow-y-auto scrollbar-thin">
             <div className="max-w-[800px] mx-auto px-4 md:px-8 pt-16 md:pt-10 pb-6">
               {/* Header */}
-              <div className="flex items-center justify-between mb-6">
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ type: 'spring', stiffness: 260, damping: 22 }}
+                className="flex items-center justify-between mb-6"
+              >
                 <div>
                   <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
                     Feed
@@ -65,15 +70,15 @@ export default function FeedPage() {
                       : 'bg-white/80 text-[#536471] hover:bg-white hover:border-[#EFF3F4] border border-[#EFF3F4]'
                   }`}
                 >
-                  <Users className="h-4 w-4" />
+                  <Users size={16} weight="bold" />
                   Friends
                 </Link>
-              </div>
+              </motion.div>
 
               {/* Feed */}
               {loading ? (
                 <div className="flex flex-col items-center justify-center py-20 gap-3">
-                  <Loader2 className={`h-6 w-6 animate-spin ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`} />
+                  <Spinner size={24} weight="bold" className={`animate-spin ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`} />
                   <p className={`text-sm ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`}>Loading feed...</p>
                 </div>
               ) : feed.length === 0 ? (
@@ -82,7 +87,7 @@ export default function FeedPage() {
                   animate={{ opacity: 1, y: 0 }}
                   className={`rounded-2xl p-10 text-center ${isDark ? 'bg-white/[0.03] border border-white/[0.06]' : 'bg-white/60 border border-[#EFF3F4]'}`}
                 >
-                  <Rss className={`h-10 w-10 mx-auto mb-4 ${isDark ? 'text-white/15' : 'text-[#D0CFC0]'}`} />
+                  <Rss size={40} weight="bold" className={`mx-auto mb-4 ${isDark ? 'text-white/15' : 'text-[#D0CFC0]'}`} />
                   <h3 className={`font-semibold mb-1 ${isDark ? 'text-white/60' : 'text-[#536471]'}`}>
                     Your feed is empty
                   </h3>
@@ -97,7 +102,7 @@ export default function FeedPage() {
                         : 'bg-[#0F1419] text-white hover:bg-[#536471]'
                     }`}
                   >
-                    <Users className="h-4 w-4" />
+                    <Users size={16} weight="bold" />
                     Find Friends
                   </Link>
                 </motion.div>
@@ -122,7 +127,7 @@ export default function FeedPage() {
                         }`}
                       >
                         {loadingMore ? (
-                          <Loader2 className="h-4 w-4 animate-spin mx-auto" />
+                          <Spinner size={16} weight="bold" className="animate-spin mx-auto" />
                         ) : (
                           'Load more'
                         )}

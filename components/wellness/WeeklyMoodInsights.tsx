@@ -4,16 +4,16 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { 
-  TrendingUp, 
-  TrendingDown, 
+  TrendUp, 
+  TrendDown, 
   Minus, 
   Calendar, 
-  BarChart3, 
-  Sparkles,
+  ChartBar, 
+  Sparkle,
   Lock,
-  ChevronRight,
+  CaretRight,
   Crown
-} from 'lucide-react'
+} from 'phosphor-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { 
@@ -101,14 +101,14 @@ export default function WeeklyMoodInsights({ userId }: WeeklyMoodInsightsProps) 
   }
 
   const getTrendIcon = () => {
-    if (!stats) return <Minus className={`w-5 h-5 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />
+    if (!stats) return <Minus size={20} className={`${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />
     switch (stats.trend) {
       case 'improving':
-        return <TrendingUp className="w-5 h-5 text-emerald-500" />
+        return <TrendUp size={20} className="text-emerald-500" />
       case 'declining':
-        return <TrendingDown className="w-5 h-5 text-rose-500" />
+        return <TrendDown size={20} className="text-rose-500" />
       default:
-        return <Minus className={`w-5 h-5 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />
+        return <Minus size={20} className={`${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />
     }
   }
 
@@ -144,7 +144,7 @@ export default function WeeklyMoodInsights({ userId }: WeeklyMoodInsightsProps) 
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className={`text-lg flex items-center gap-2 ${theme === 'dark' ? 'text-white' : ''}`}>
-            <BarChart3 className="w-5 h-5 text-blue-500" />
+            <ChartBar size={20} weight="bold" className="text-blue-500" />
             Mood Insights
           </CardTitle>
           <div className={`flex gap-1 rounded-lg p-1 ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-100'}`}>
@@ -171,7 +171,7 @@ export default function WeeklyMoodInsights({ userId }: WeeklyMoodInsightsProps) 
               }}
               disabled={!isPremium}
             >
-              {!isPremium && <Lock className="w-3 h-3 mr-1" />}
+              {!isPremium && <Lock size={12} className="mr-1" />}
               Month
             </button>
           </div>
@@ -239,7 +239,7 @@ export default function WeeklyMoodInsights({ userId }: WeeklyMoodInsightsProps) 
         {insights.length > 0 && (
           <div className="space-y-2 pt-2">
             <div className={`flex items-center gap-2 text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>
-              <Sparkles className="w-4 h-4 text-amber-500" />
+              <Sparkle size={16} weight="bold" className="text-amber-500" />
               Insights
             </div>
             <div className="space-y-2">
@@ -301,7 +301,7 @@ export default function WeeklyMoodInsights({ userId }: WeeklyMoodInsightsProps) 
               </div>
               <Link href="/dashboard/settings#subscription">
                 <Button size="sm" className="text-xs bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white border-0">
-                  <Crown className="w-3 h-3 mr-1" />
+                  <Crown size={12} className="mr-1" />
                   Upgrade
                 </Button>
               </Link>

@@ -78,9 +78,20 @@ export async function PATCH(request: NextRequest) {
       )
     }
 
-    // Directly update the profiles table for social fields,
-    // fall back to the existing userService for legacy fields
     const supabase = await createClient()
+
+    if (parsed.data.username) {
+      const { data: existing } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('username', parsed.data.username)
+        .neq('id', user.id)
+        .maybeSingle()
+
+      if (existing) {
+        return NextResponse.json({ error: 'Username already taken' }, { status: 409 })
+      }
+    }
 
     const { data, error } = await supabase
       .from('profiles')

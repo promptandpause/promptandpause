@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
-import { HelpCircle, LogOut, Crown, Archive, Settings, LayoutDashboard, Search, Calendar, Filter, Download, ChevronDown, ChevronUp, FileText, FileSpreadsheet, LifeBuoy } from "lucide-react"
+import { MagnifyingGlass, Funnel, DownloadSimple, CaretDown, CaretUp, FileText, FileCsv, ArchiveBox } from "phosphor-react"
 import Link from "next/link"
 import {
   DropdownMenu,
@@ -25,8 +25,6 @@ import { TierGate, UpgradePrompt } from "@/components/tier/TierGate"
 import { useTranslation } from "@/hooks/useTranslation"
 import { DashboardSidebar } from "../components/DashboardSidebar"
 import { useTheme } from "@/contexts/ThemeContext"
-import { IconOrb } from "@/components/ui/accent-card"
-
 
 export default function ArchivePage() {
   return (
@@ -188,12 +186,15 @@ function ArchivePageContent() {
           <div className="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-10 pt-16 md:pt-10">
           <div className="space-y-5 md:space-y-6">
           {/* Header Card */}
-          <Card className={`rounded-2xl p-4 md:p-6 border shadow-none ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#EFF3F4]'}`}>
+          <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ type: "spring", stiffness: 100, damping: 20 }}
+            >
+            <Card className={`rounded-2xl p-4 md:p-6 border shadow-none ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#EFF3F4]'}`}>
             <div className="flex flex-col md:flex-row md:items-center md:items-center md:justify-between gap-3 md:gap-4">
               <div className="flex items-center gap-3">
-                <IconOrb accent="blue" size="md">
-                  <Archive className="w-5 h-5 text-white" strokeWidth={1.75} />
-                </IconOrb>
+                <ArchiveBox size={20} weight="bold" className="text-white" />
                 <div>
                   <h2 className={`text-xl md:text-3xl font-semibold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-[#0F1419]'}`}>Archive</h2>
                   <p className={`text-xs md:text-sm ${theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'}`}>Browse your past reflections.</p>
@@ -203,7 +204,7 @@ function ArchivePageContent() {
                 {/* Search - Premium Feature */}
                 {tier === 'premium' ? (
                   <div className="relative flex-1 md:flex-initial">
-                    <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />
+                    <MagnifyingGlass size={16} weight="bold" className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />
                     <Input
                       placeholder={t('archive.search')}
                       value={searchQuery}
@@ -218,7 +219,7 @@ function ArchivePageContent() {
                 ) : (
                   <div className="relative flex-1 md:flex-initial">
                     <div className="relative">
-                      <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />
+                      <MagnifyingGlass size={16} weight="bold" className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />
                       <Input
                         placeholder="🔒 Premium"
                         disabled
@@ -238,7 +239,7 @@ function ArchivePageContent() {
                         ? 'text-white border border-white/10 hover:bg-white/8'
                         : 'text-[#536471] border border-[#EFF3F4] hover:bg-[#EFF3F4]'
                     }`}>
-                      <Filter className={`mr-1 md:mr-2 h-4 w-4 ${
+                      <Funnel size={16} weight="bold" className={`mr-1 md:mr-2 h-4 w-4 ${
                         theme === 'dark' ? 'text-white' : 'text-[#536471]'
                       }`} />
                       <span className="hidden md:inline">{selectedFilter}</span>
@@ -291,7 +292,7 @@ function ArchivePageContent() {
                           ? 'bg-white/8 hover:bg-white/12 border border-white/10 text-white'
                           : 'bg-white hover:bg-[#EFF3F4] border border-[#EFF3F4] text-[#536471]'
                       }`}>
-                        <Download className="mr-1 md:mr-2 h-4 w-4" />
+                        <DownloadSimple size={16} weight="bold" className="mr-1 md:mr-2 h-4 w-4" />
                         <span className="hidden md:inline">Export</span>
                       </Button>
                     </DropdownMenuTrigger>
@@ -308,7 +309,7 @@ function ArchivePageContent() {
                         }`}
                         onClick={exportToCSV}
                       >
-                        <FileSpreadsheet className="mr-2 h-4 w-4" />
+                        <FileCsv size={16} weight="bold" className="mr-2" />
                         Export as CSV
                       </DropdownMenuItem>
                       <DropdownMenuItem 
@@ -319,7 +320,7 @@ function ArchivePageContent() {
                         }`}
                         onClick={exportToText}
                       >
-                        <FileText className="mr-2 h-4 w-4" />
+                        <FileText size={16} weight="bold" className="mr-2" />
                         Export as Text
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -334,7 +335,7 @@ function ArchivePageContent() {
                           : 'bg-[#EFF3F4] border border-[#EFF3F4] text-[#8B98A5]'
                       }`}
                     >
-                      <Download className="mr-1 md:mr-2 h-4 w-4" />
+                      <DownloadSimple size={16} weight="bold" className="mr-1 md:mr-2 h-4 w-4" />
                       <span className="hidden md:inline">Export 🔒</span>
                       <span className="md:hidden">🔒</span>
                     </Button>
@@ -346,6 +347,7 @@ function ArchivePageContent() {
               </div>
             </div>
           </Card>
+          </motion.div>
 
           {/* Reflections List */}
           <Card className={`rounded-2xl p-4 md:p-6 border shadow-none ${
@@ -373,9 +375,9 @@ function ArchivePageContent() {
                   }`}
                 >
                   {showAll ? (
-                    <>Show Less <ChevronUp className="ml-2 h-4 w-4" /></>
+                    <>Show Less <CaretUp size={20} weight="bold" className="ml-2 h-4 w-4" /></>
                   ) : (
-                    <>See More ({filteredReflections.length - 3} more) <ChevronDown className="ml-2 h-4 w-4" /></>
+                    <>See More ({filteredReflections.length - 3} more) <CaretDown size={20} weight="bold" className="ml-2 h-4 w-4" /></>
                   )}
                 </Button>
               )}
@@ -432,7 +434,7 @@ function ArchivePageContent() {
                               className={`transition-colors ${theme === 'dark' ? 'text-white hover:bg-white/8' : 'text-[#536471] hover:bg-[#EFF3F4]'}`}
                             >
                               <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.3 }}>
-                                <ChevronDown className={`h-5 w-5 ${theme === 'dark' ? 'text-white' : 'text-[#536471]'}`} />
+                                <CaretDown size={20} weight="bold" className={`h-5 w-5 ${theme === 'dark' ? 'text-white' : 'text-[#536471]'}`} />
                               </motion.div>
                             </Button>
                           </div>

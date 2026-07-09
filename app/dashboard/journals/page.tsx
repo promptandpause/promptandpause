@@ -11,7 +11,7 @@ import { Card } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
 import { useTheme } from "@/contexts/ThemeContext"
 import { motion, AnimatePresence } from "framer-motion"
-import { Search, Trash2, Pencil, Flame, ChevronLeft, ChevronRight, X, Eye, Filter, Plus, ChevronDown, ChevronUp } from "lucide-react"
+import { MagnifyingGlass, Trash, PencilSimple, CaretLeft, CaretRight, X, Eye, Funnel, Plus, CaretDown, CaretUp } from "phosphor-react"
 import { DashboardSidebar } from "../components/DashboardSidebar"
 
 const moods = ["😔", "😐", "😊", "😄", "🤔", "😌", "🙏", "💪"]
@@ -247,10 +247,15 @@ export default function JournalsPage() {
             <div className="space-y-3 md:space-y-4">
               {/* Title Row with Filter Toggle (Mobile) */}
               <div className="flex items-center justify-between gap-3">
-                <div className="flex-1 min-w-0">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ type: "spring", stiffness: 100, damping: 20 }}
+                  className="flex-1 min-w-0"
+                >
                   <h1 className={`text-xl md:text-3xl font-semibold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-[#0F1419]'}`}>My Journals</h1>
                   <p className={`text-xs md:text-sm ${theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'} hidden md:block`}>Private self-journals (no AI, no streaks). Edit or add freely.</p>
-                </div>
+                </motion.div>
                 {/* Mobile Filter Toggle Button */}
                 <button
                   onClick={() => setFiltersExpanded(!filtersExpanded)}
@@ -262,17 +267,17 @@ export default function JournalsPage() {
                         : 'bg-gray-100 text-gray-700 border border-gray-200'
                   }`}
                 >
-                  <Filter className="h-4 w-4" />
+                  <Funnel size={16} weight="bold" className="h-4 w-4" />
                   {(filterTag || filterMood || filterDate || searchText) && (
                     <span className="w-2 h-2 rounded-full bg-green-500" />
                   )}
-                  {filtersExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                  {filtersExpanded ? <CaretUp size={16} weight="bold" className="h-4 w-4" /> : <CaretDown size={16} weight="bold" className="h-4 w-4" />}
                 </button>
               </div>
               
               {/* Search Bar - Always visible */}
               <div className="relative">
-                <Search className={`h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />
+                <MagnifyingGlass size={16} weight="bold" className={`h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />
                 <Input
                   className={`pl-10 h-10 w-full ${theme === 'dark' ? 'bg-white/10 border-white/20 text-white placeholder:text-white/50' : 'bg-white border-gray-300 text-gray-900'}`}
                   placeholder="Search journals..."
@@ -344,7 +349,7 @@ export default function JournalsPage() {
                     onClick={() => { setFilterTag(null); setFilterMood(null); setFilterDate(""); setSearchText(""); }} 
                     className={`text-xs ${theme === 'dark' ? 'text-white/70 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
                   >
-                    <X className="h-3 w-3 mr-1" />
+                    <X size={12} weight="bold" className="mr-1" />
                     Clear all filters
                   </Button>
                 )}
@@ -370,7 +375,7 @@ export default function JournalsPage() {
                   onClick={() => { setShowEditor(false); if (!editingId) { setText(""); setTags([]); setMood("😊"); } }}
                   className={`md:hidden p-1.5 rounded-lg transition-colors ${theme === 'dark' ? 'hover:bg-white/10 text-white/60' : 'hover:bg-gray-100 text-gray-500'}`}
                 >
-                  <X className="h-5 w-5" />
+                  <X size={12} weight="bold" className="h-5 w-5" />
                 </button>
               </div>
             </div>
@@ -442,7 +447,7 @@ export default function JournalsPage() {
                   onClick={() => setShowAllJournals(true)}
                   className={`text-xs ${theme === 'dark' ? 'text-white/60 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
                 >
-                  <Eye className="h-3 w-3 mr-1" />
+                  <Eye size={12} weight="bold" className="mr-1" />
                   See All
                 </Button>
               )}
@@ -453,7 +458,7 @@ export default function JournalsPage() {
                   onClick={() => setShowAllJournals(false)}
                   className={`text-xs ${theme === 'dark' ? 'text-white/60 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
                 >
-                  <X className="h-3 w-3 mr-1" />
+                  <X size={12} weight="bold" className="mr-1" />
                   Show Less
                 </Button>
               )}
@@ -491,8 +496,8 @@ export default function JournalsPage() {
                             </p>
                           </div>
                           <div className="flex flex-col gap-2">
-                            <Button variant="ghost" size="icon" onClick={() => startEdit(entry)}><Pencil className="h-4 w-4" /></Button>
-                            <Button variant="ghost" size="icon" onClick={() => handleDelete(entry.id)}><Trash2 className="h-4 w-4 text-red-500" /></Button>
+                            <Button variant="ghost" size="icon" onClick={() => startEdit(entry)}><PencilSimple size={16} weight="bold" /></Button>
+                            <Button variant="ghost" size="icon" onClick={() => handleDelete(entry.id)}><Trash size={16} weight="bold" className="text-red-500" /></Button>
                           </div>
                         </div>
                       </motion.div>
@@ -510,7 +515,7 @@ export default function JournalsPage() {
                           disabled={currentPage === 1}
                           className={`px-3 py-1 ${theme === 'dark' ? 'text-white/60 hover:text-white' : 'text-gray-600 hover:text-gray-900'} ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
-                          <ChevronLeft className="h-4 w-4" />
+                          <CaretLeft size={16} weight="bold" className="h-4 w-4" />
                           Previous
                         </Button>
                         
@@ -549,7 +554,7 @@ export default function JournalsPage() {
                           className={`px-3 py-1 ${theme === 'dark' ? 'text-white/60 hover:text-white' : 'text-gray-600 hover:text-gray-900'} ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
                           Next
-                          <ChevronRight className="h-4 w-4" />
+                          <CaretRight size={16} weight="bold" className="h-4 w-4" />
                         </Button>
                       </div>
                       
@@ -578,7 +583,7 @@ export default function JournalsPage() {
           }`}
           aria-label="New Journal"
         >
-          <Plus className="h-6 w-6" />
+          <Plus size={24} weight="bold" />
         </button>
       )}
     </div>

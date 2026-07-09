@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { TrendingUp, TrendingDown, Minus, BookOpen, CalendarCheck, Activity } from "lucide-react"
+import { TrendUp, TrendDown, Minus, BookOpenText, CalendarCheck, Activity } from "phosphor-react"
 import { calculateMoodTrends } from "@/lib/services/analyticsService"
 import { supabaseReflectionService } from "@/lib/services/supabaseReflectionService"
 import { getSupabaseClient } from "@/lib/supabase/client"
@@ -54,9 +54,9 @@ export default function QuickStats() {
   }, [supabase])
 
   const getTrendIcon = () => {
-    if (moodTrend === 'improving') return <TrendingUp className="h-5 w-5 md:h-6 md:w-6 text-green-400" />
-    if (moodTrend === 'declining') return <TrendingDown className="h-5 w-5 md:h-6 md:w-6 text-red-400" />
-    return <Minus className="h-5 w-5 md:h-6 md:w-6 text-yellow-400" />
+    if (moodTrend === 'improving') return <TrendUp size={20} weight="bold" className="text-green-400" />
+    if (moodTrend === 'declining') return <TrendDown size={20} weight="bold" className="text-red-400" />
+    return <Minus size={20} weight="bold" className="text-yellow-400" />
   }
 
   const getTrendText = () => {
@@ -86,21 +86,21 @@ export default function QuickStats() {
     {
       key: 'reflections',
       accent: 'blue',
-      icon: <BookOpen className="w-4 h-4 text-white" strokeWidth={2} />,
+      icon: <BookOpenText size={16} weight="bold" className="text-white" />,
       label: 'Reflections',
       value: <span className={`text-xl font-bold tabular-nums ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>{totalReflections}</span>,
     },
     {
       key: 'week',
       accent: 'emerald',
-      icon: <CalendarCheck className="w-4 h-4 text-white" strokeWidth={2} />,
+      icon: <CalendarCheck size={16} weight="bold" className="text-white" />,
       label: 'This week',
       value: <span className={`text-xl font-bold tabular-nums ${isDark ? 'text-emerald-300' : 'text-[#5A8F6E]'}`}>{thisWeekCount}</span>,
     },
     {
       key: 'mood',
       accent: 'violet',
-      icon: <Activity className="w-4 h-4 text-white" strokeWidth={2} />,
+      icon: <Activity size={16} weight="bold" className="text-white" />,
       label: 'Mood trend',
       value: (
         <div className="flex items-center gap-1.5">

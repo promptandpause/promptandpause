@@ -8,24 +8,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { 
-  LogOut, 
-  Crown, 
-  Archive, 
-  Settings, 
-  LayoutDashboard, 
-  User, 
-  LifeBuoy, 
-  HelpCircle,
-  Bug,
-  CreditCard,
-  MessageCircle,
-  Send,
-  CheckCircle2,
-  AlertCircle,
-  Loader2,
-  ArrowLeft
-} from "lucide-react"
+import { UserCircle, Lifebuoy, Question, Bug, CreditCard, ChatText, PaperPlaneTilt, CheckCircle, WarningCircle, Spinner, CaretLeft } from "phosphor-react"
+import { motion } from "framer-motion"
 import Link from "next/link"
 import { getSupabaseClient } from "@/lib/supabase/client"
 import { useTier } from "@/hooks/useTier"
@@ -47,7 +31,7 @@ const supportCategories = [
   {
     value: "general",
     label: "General Inquiry",
-    icon: MessageCircle,
+    icon: ChatText,
     description: "General questions about the platform",
     color: "text-blue-400 bg-blue-500/10 border-blue-400/30"
   },
@@ -68,21 +52,21 @@ const supportCategories = [
   {
     value: "feature",
     label: "Feature Request",
-    icon: HelpCircle,
+    icon: Question,
     description: "Suggest a new feature",
     color: "text-green-400 bg-green-500/10 border-green-400/30"
   },
   {
     value: "account",
     label: "Account & Privacy",
-    icon: User,
+    icon: UserCircle,
     description: "Account settings and privacy concerns",
     color: "text-purple-400 bg-purple-500/10 border-purple-400/30"
   },
   {
     value: "other",
     label: "Other",
-    icon: MessageCircle,
+    icon: ChatText,
     description: "Something else",
     color: "text-gray-400 bg-gray-500/10 border-gray-400/30"
   }
@@ -258,12 +242,13 @@ function ContactSupportPageContent() {
                 : 'text-[#536471] hover:text-[#0F1419] hover:bg-[#EFF3F4] border border-[#EFF3F4]'
               }
             >
-              <ArrowLeft className="h-5 w-5 mr-2" />
+              <CaretLeft size={20} weight="bold" className="mr-2" />
               Back
             </Button>
           </div>
 
           {/* Header */}
+          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ type: 'spring', stiffness: 260, damping: 22 }}>
           <Card className={`rounded-2xl p-5 md:p-8 border shadow-none ${
             theme === 'dark'
               ? 'bg-white/[0.04] border-white/[0.06]'
@@ -271,7 +256,7 @@ function ContactSupportPageContent() {
           }`}>
             <div className="flex items-start gap-4">
               <IconOrb accent="blue" size="lg">
-                <LifeBuoy className="w-7 h-7 text-white" strokeWidth={1.75} />
+                <Lifebuoy size={28} weight="bold" className="text-white" />
               </IconOrb>
               <div className="flex-1">
                 <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight mb-2 ${
@@ -285,6 +270,7 @@ function ContactSupportPageContent() {
               </div>
             </div>
           </Card>
+          </motion.div>
 
           {/* Support Form */}
           <Card className={`rounded-2xl p-5 md:p-8 border shadow-none ${
@@ -299,7 +285,7 @@ function ContactSupportPageContent() {
                     ? 'bg-green-500/10 border border-green-400/20'
                     : 'bg-[#D4E8D4] border border-[#B8D4B8]'
                 }`}>
-                  <CheckCircle2 className={`h-8 w-8 ${
+                  <CheckCircle size={32} weight="bold" className={`${
                     theme === 'dark' ? 'text-green-400' : 'text-[#5A8A5A]'
                   }`} />
                 </div>
@@ -352,7 +338,7 @@ function ContactSupportPageContent() {
                           }`}
                         >
                           <div className="flex items-start gap-3">
-                            <Icon className={`h-5 w-5 mt-0.5 ${
+                            <Icon size={20} weight="bold" className={`mt-0.5 ${
                               isSelected
                                 ? theme === 'dark' ? 'text-blue-400' : 'text-[#5B7FA5]'
                                 : theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
@@ -477,7 +463,7 @@ function ContactSupportPageContent() {
                     theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                   }`}>Your message will be sent from:</p>
                   <div className="flex items-center gap-3">
-                    <User className={`h-5 w-5 ${
+                    <UserCircle size={20} weight="bold" className={`${
                       theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                     }`} />
                     <div>
@@ -499,12 +485,12 @@ function ContactSupportPageContent() {
                 >
                   {submitting ? (
                     <>
-                      <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                      <Spinner size={20} weight="bold" className="mr-2 animate-spin" />
                       Sending...
                     </>
                   ) : (
                     <>
-                      <Send className="h-5 w-5 mr-2" />
+                      <PaperPlaneTilt size={20} weight="bold" className="mr-2" />
                       Send Message
                     </>
                   )}
@@ -528,7 +514,7 @@ function ContactSupportPageContent() {
             <h3 className={`font-semibold mb-4 flex items-center gap-2 ${
               theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
             }`}>
-              <AlertCircle className={`h-5 w-5 ${
+              <WarningCircle size={20} weight="bold" className={`${
                 theme === 'dark' ? 'text-blue-400' : 'text-[#5B7FA5]'
               }`} />
               Before you reach out...

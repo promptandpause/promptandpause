@@ -7,7 +7,7 @@ import { MoodType } from "@/lib/types/reflection";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/contexts/ThemeContext";
 import { IconOrb } from "@/components/ui/accent-card";
-import { Sparkles, Flame } from "lucide-react";
+import { Sparkle, Flame } from "phosphor-react";
 
 const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -93,7 +93,7 @@ export default function MoodTracker() {
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-3">
           <IconOrb accent="violet" size="sm">
-            <Sparkles className="w-4 h-4 text-white" strokeWidth={2} />
+            <Sparkle size={16} weight="bold" className="text-white" />
           </IconOrb>
           <div>
             <h3 className={`font-semibold text-base tracking-tight ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>Your Rhythm</h3>
@@ -102,7 +102,7 @@ export default function MoodTracker() {
         </div>
         {currentStreak > 0 && (
           <span className={`inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full ${isDark ? 'bg-amber-400/10 text-amber-300 border border-amber-400/20' : 'bg-amber-50 text-amber-700 border border-amber-200/60'}`}>
-            <Flame className="w-3 h-3" strokeWidth={2.25} />
+            <Flame size={12} weight="bold" />
             {currentStreak} day{currentStreak === 1 ? '' : 's'}
           </span>
         )}

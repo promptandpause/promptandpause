@@ -7,9 +7,19 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useToast } from '@/hooks/use-toast'
-import { Check, Palette, MusicNote, ImageSquare, Spinner, FloppyDisk } from 'phosphor-react'
+import { Check, Palette, MusicNote, ImageSquare, Spinner, FloppyDisk, XCircle, CheckCircle } from 'phosphor-react'
 import { profileThemePresets, getThemeById } from '@/lib/utils/profileThemes'
 import { cn } from '@/lib/utils'
+
+const RESERVED_USERNAMES = new Set([
+  'dashboard', 'settings', 'admin', 'api', 'auth', 'login', 'signup',
+  'feed', 'friends', 'archive', 'journals', 'saved', 'support',
+  'wellness', 'achievements', 'profile', 'u', 'help', 'about',
+  'privacy', 'terms', 'pricing', 'contact', 'security', 'crisis',
+  'good-bye', 'admin-login', 'admin-panel', 'research', 'features',
+  'our-mission', 'support-us', 'cookie-policy', 'privacy-policy',
+  'terms-of-service', 'promptandpause', 'home', 'discover', 'explore',
+])
 
 export function ProfileEditor() {
   const { theme } = useTheme()
@@ -27,6 +37,9 @@ export function ProfileEditor() {
     show_in_discover: false,
     share_default: 'private' as 'private' | 'friends_only' | 'public',
   })
+  const [usernameError, setUsernameError] = useState('')
+  const [usernameValid, setUsernameValid] = useState(false)
+  const [checkingUsername, setCheckingUsername] = useState(false)
 
   useEffect(() => {
     loadProfile()
@@ -53,6 +66,12 @@ export function ProfileEditor() {
   }
 
   async function handleSave() {
+    const u = profile.username.trim()
+    if (u && RESERVED_USERNAMES.has(u)) {
+      toast({ title: 'Invalid username', description: 'That username is reserved', variant: 'destructive' })
+      setSaving(false)
+      return
+    }
     setSaving(true)
     try {
       const selectedTheme = getThemeById(profile.profile_theme_id)
@@ -102,15 +121,51 @@ export function ProfileEditor() {
           </div>
           <div>
             <Label isDark={isDark}>Username</Label>
-            <Input
-              value={profile.username}
-              onChange={e => setProfile(p => ({ ...p, username: e.target.value.replace(/[^a-zA-Z0-9_-]/g, '') }))}
-              placeholder="your-username"
-              className={inputClass(isDark)}
-            />
-            <p className={`text-xs mt-1 ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`}>
-              Your public profile URL: promptandpause.com/<strong>{profile.username || 'your-username'}</strong>
-            </p>
+            <div className="relative">
+              <Input
+                value={profile.username}
+                onChange={e => {
+                  const val = e.target.value.replace(/[^a-zA-Z0-9_-]/g, '').toLowerCase()
+                  setProfile(p => ({ ...p, username: val }))
+                  setUsernameError('')
+                  setUsernameValid(false)
+                }}
+                onBlur={async () => {
+                  const u = profile.username.trim()
+                  if (!u) { setUsernameError(''); setUsernameValid(false); return }
+                  if (RESERVED_USERNAMES.has(u)) {
+                    setUsernameError('This username is reserved')
+                    setUsernameValid(false)
+                    return
+                  }
+                  if (u.length < 2) {
+                    setUsernameError('Username must be at least 2 characters')
+                    setUsernameValid(false)
+                    return
+                  }
+                  setCheckingUsername(true)
+                  try {
+                    const res = await fetch(`/api/user/check-username?username=${encodeURIComponent(u)}`)
+                    const { available } = await res.json()
+                    if (available) { setUsernameValid(true); setUsernameError('') }
+                    else { setUsernameError('Username already taken'); setUsernameValid(false) }
+                  } catch { setUsernameError('Could not verify username') }
+                  setCheckingUsername(false)
+                }}
+                placeholder="your-username"
+                className={cn(inputClass(isDark), usernameError ? 'border-rose-500/50' : usernameValid ? 'border-emerald-500/50' : '')}
+              />
+              {checkingUsername && <Spinner size={14} weight="bold" className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-[#8B98A5]" />}
+              {usernameValid && <CheckCircle size={14} weight="bold" className="absolute right-3 top-1/2 -translate-y-1/2 text-emerald-500" />}
+              {usernameError && <XCircle size={14} weight="bold" className="absolute right-3 top-1/2 -translate-y-1/2 text-rose-500" />}
+            </div>
+            {usernameError ? (
+              <p className="text-xs mt-1 text-rose-500">{usernameError}</p>
+            ) : (
+              <p className={`text-xs mt-1 ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`}>
+                Your public profile: promptandpause.com/<strong>@{profile.username || 'username'}</strong>
+              </p>
+            )}
           </div>
         </div>
       </Section>

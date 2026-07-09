@@ -3,15 +3,15 @@
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useTheme } from "@/contexts/ThemeContext"
-import { 
-  Play, 
-  Pause, 
-  Volume2, 
-  VolumeX,
-  Download,
-  Settings as SettingsIcon,
-  Loader2
-} from "lucide-react"
+import {
+  Play,
+  Pause,
+  SpeakerHigh,
+  SpeakerSlash,
+  DownloadSimple,
+  Gear,
+  Spinner
+} from "phosphor-react"
 import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
 import {
@@ -291,7 +291,7 @@ export default function VoicePromptPlayer({ promptText, userName }: VoicePromptP
       <div className="flex items-center justify-between mb-4 relative">
         <div className="flex items-center gap-3 min-w-0 flex-1">
           <div className="p-2.5 bg-gradient-to-br from-indigo-500/40 to-purple-500/40 rounded-xl flex-shrink-0 shadow-lg ring-2 ring-indigo-400/30">
-            <Volume2 className="h-5 w-5 text-white drop-shadow-lg" />
+            <SpeakerHigh size={20} weight="bold" className="text-white drop-shadow-lg" />
           </div>
           <div className="min-w-0">
             <h5 className={`font-bold text-base truncate drop-shadow-sm ${
@@ -317,7 +317,7 @@ export default function VoicePromptPlayer({ promptText, userName }: VoicePromptP
                 }`}
                 title="Voice Settings"
               >
-                <SettingsIcon className="h-4 w-4" />
+                <Gear size={16} weight="bold" />
               </Button>
             </PopoverTrigger>
             <PopoverContent className={`w-80 backdrop-blur-xl border-2 p-5 shadow-2xl ${theme === 'dark' ? 'bg-[#1A1F2E] border-white/20' : 'bg-white border-gray-300'}`} align="end">
@@ -379,7 +379,7 @@ export default function VoicePromptPlayer({ promptText, userName }: VoicePromptP
             }`}
             title="Download Prompt"
           >
-            <Download className="h-4 w-4" />
+            <DownloadSimple size={16} weight="bold" />
           </Button>
         </div>
       </div>
@@ -421,12 +421,12 @@ export default function VoicePromptPlayer({ promptText, userName }: VoicePromptP
         >
           {isPlaying && !isPaused ? (
             <>
-              <Pause className="h-4 w-4 mr-2" />
+              <Pause size={16} weight="bold" className="mr-2" />
               <span className="hidden xs:inline">Pause</span>
             </>
           ) : (
             <>
-              <Play className="h-4 w-4 mr-1 sm:mr-2" />
+              <Play size={16} weight="bold" className="mr-1 sm:mr-2" />
               <span className="hidden xs:inline">{isPaused ? 'Resume' : 'Play Prompt'}</span>
               <span className="xs:hidden">{isPaused ? 'Resume' : 'Play'}</span>
             </>
@@ -449,9 +449,9 @@ export default function VoicePromptPlayer({ promptText, userName }: VoicePromptP
           }`}
         >
           {isMuted ? (
-            <VolumeX className="h-5 w-5" />
+            <SpeakerSlash size={20} weight="bold" />
           ) : (
-            <Volume2 className="h-5 w-5" />
+            <SpeakerHigh size={20} weight="bold" />
           )}
         </Button>
 

@@ -2,13 +2,13 @@
 
 import { useCallback, useEffect, useState } from "react"
 import { motion } from "framer-motion"
-import { 
-  BarChart3, 
-  TrendingUp, 
-  Calendar, 
-  Loader2,
-  ChevronDown
-} from "lucide-react"
+import {
+  ChartBar,
+  TrendUp,
+  Calendar,
+  Spinner,
+  CaretDown
+} from "phosphor-react"
 import { useTheme } from "@/contexts/ThemeContext"
 import { 
   LineChart, 
@@ -119,7 +119,7 @@ export default function MoodAnalytics() {
           : 'glass-medium shadow-soft-md'
       }`}>
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="h-8 w-8 text-blue-400 animate-spin" />
+          <Spinner size={32} weight="bold" className="text-blue-400 animate-spin" />
           <p className={theme === 'dark' ? 'text-white/60 text-sm' : 'text-gray-500 text-sm'}>Analyzing your moods...</p>
         </div>
       </section>
@@ -161,7 +161,7 @@ export default function MoodAnalytics() {
       <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
         <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
           <div className="p-2 sm:p-2.5 bg-blue-500/20 rounded-lg sm:rounded-xl flex-shrink-0">
-            <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5 text-blue-400" />
+            <ChartBar size={20} weight="bold" className="text-blue-400" />
           </div>
           <div className="min-w-0 flex-1">
             <h4 className={`font-semibold text-base sm:text-lg truncate ${
@@ -253,7 +253,7 @@ export default function MoodAnalytics() {
           }`}>Trend</p>
           <div className="flex flex-col gap-0.5 sm:gap-1">
             <div className="flex items-center gap-1 sm:gap-1.5">
-              <TrendingUp className={`h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 flex-shrink-0 ${
+              <TrendUp size={20} weight="bold" className={`flex-shrink-0 ${
                 data.trend === 'improving' ? 'text-green-400 rotate-0' :
                 data.trend === 'declining' ? 'text-red-400 rotate-180' :
                 'text-yellow-400 rotate-90'
@@ -309,7 +309,7 @@ export default function MoodAnalytics() {
           <h5 className={`font-semibold text-xs sm:text-sm mb-3 sm:mb-4 flex items-center gap-1.5 sm:gap-2 ${
             theme === 'dark' ? 'text-white' : 'text-gray-900'
           }`}>
-            <Calendar className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-blue-400 flex-shrink-0" />
+            <Calendar size={16} weight="bold" className="text-blue-400 flex-shrink-0" />
             Mood Distribution
           </h5>
           <ResponsiveContainer width="100%" height={200}>

@@ -7,13 +7,13 @@ import {
   Plus, 
   Check, 
   Pause, 
-  Trash2, 
-  ChevronRight,
+  Trash, 
+  CaretRight,
   Calendar,
-  Sparkles,
-  Edit2,
+  Sparkle,
+  PencilSimple,
   X
-} from 'lucide-react'
+} from 'phosphor-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -234,13 +234,13 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className={`text-lg flex items-center gap-2 ${isDark ? 'text-white' : ''}`}>
-            <Target className="w-5 h-5 text-blue-500" />
+            <Target size={20} className="text-blue-500" />
             Goals
           </CardTitle>
           <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
             <DialogTrigger asChild>
               <Button size="sm" className="gap-1">
-                <Plus className="w-4 h-4" />
+                <Plus size={16} weight="bold" />
                 New Goal
               </Button>
             </DialogTrigger>
@@ -346,7 +346,7 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
         <AnimatePresence>
           {goals.length === 0 ? (
             <div className={`text-center py-8 ${isDark ? 'text-white/50' : 'text-gray-500'}`}>
-              <Target className={`w-10 h-10 mx-auto mb-2 ${isDark ? 'text-white/20' : 'text-gray-300'}`} />
+              <Target size={40} className={`mx-auto mb-2 ${isDark ? 'text-white/20' : 'text-gray-300'}`} />
               <p className="text-sm">No {filter !== 'all' ? filter : ''} goals yet</p>
               <Button
                 variant="link"
@@ -409,7 +409,7 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
 
                     {goal.target_date && (
                       <div className={`flex items-center gap-1 mt-2 text-xs ${isDark ? 'text-white/50' : 'text-gray-500'}`}>
-                        <Calendar className="w-3 h-3" />
+                        <Calendar size={12} />
                         Target: {new Date(goal.target_date).toLocaleDateString()}
                       </div>
                     )}
@@ -426,7 +426,7 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
                           onClick={() => handleUpdateStatus(goal.id, 'completed')}
                           title="Mark complete"
                         >
-                          <Check className="w-4 h-4 text-emerald-500" />
+                          <Check size={16} weight="bold" className="text-emerald-500" />
                         </Button>
                         <Button
                           size="sm"
@@ -435,7 +435,7 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
                           onClick={() => handleUpdateStatus(goal.id, 'paused')}
                           title="Pause goal"
                         >
-                          <Pause className="w-4 h-4 text-amber-500" />
+                          <Pause size={16} weight="bold" className="text-amber-500" />
                         </Button>
                       </>
                     )}
@@ -446,7 +446,7 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
                       onClick={() => handleDeleteGoal(goal.id)}
                       title="Delete goal"
                     >
-                      <Trash2 className={`w-4 h-4 hover:text-rose-500 ${isDark ? 'text-white/40' : 'text-gray-400'}`} />
+                      <Trash size={16} weight="bold" className={`hover:text-rose-500 ${isDark ? 'text-white/40' : 'text-gray-400'}`} />
                     </Button>
                   </div>
                 </div>

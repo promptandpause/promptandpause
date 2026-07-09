@@ -3,21 +3,21 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useTheme } from "@/contexts/ThemeContext"
-import { 
-  Plus, 
-  X, 
-  Target, 
-  TrendingUp,
+import {
+  Plus,
+  X,
+  Target,
+  TrendUp,
   Heart,
   Briefcase,
   Users,
-  Sparkles,
-  Edit2,
-  Trash2,
-  Save,
-  Loader2,
+  Sparkle,
+  PencilSimple,
+  Trash,
+  FloppyDisk,
+  Spinner,
   Check
-} from "lucide-react"
+} from "phosphor-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -244,7 +244,7 @@ export default function FocusAreasManager() {
           : 'glass-medium shadow-soft-md'
       }`}>
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="h-8 w-8 text-purple-400 animate-spin" />
+          <Spinner size={32} weight="bold" className="text-purple-400 animate-spin" />
           <p className={theme === 'dark' ? 'text-white/60 text-sm' : 'text-gray-500 text-sm'}>Loading focus areas...</p>
         </div>
       </section>
@@ -285,7 +285,7 @@ export default function FocusAreasManager() {
                   : 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 hover:from-purple-500/30 hover:to-pink-500/30 text-purple-700 border border-purple-400/40'
               }`}
             >
-              <Plus className="h-4 w-4" />
+              <Plus size={16} weight="bold" />
             </Button>
           </DialogTrigger>
            <DialogContent className={`backdrop-blur-xl border-3 max-h-[90vh] sm:max-h-[85vh] flex flex-col p-0 gap-0 overflow-hidden shadow-2xl ${theme === 'dark' ? 'bg-[#161618] border-white/20 text-white' : 'bg-white border-gray-400 text-gray-900'}`}>
@@ -385,7 +385,7 @@ export default function FocusAreasManager() {
                       {selectedColor === color && (
                         <div className="absolute inset-0 flex items-center justify-center">
                           <div className={`w-8 h-8 rounded-full flex items-center justify-center shadow-xl border-2 ${theme === 'dark' ? 'bg-white/90 border-white/40' : 'bg-white border-gray-200'}`}>
-                            <Check className={`w-5 h-5 stroke-[3] ${theme === 'dark' ? 'text-gray-900' : 'text-gray-900'}`} />
+                            <Check size={20} weight="bold" className={`${theme === 'dark' ? 'text-gray-900' : 'text-gray-900'}`} />
                           </div>
                         </div>
                       )}
@@ -397,7 +397,7 @@ export default function FocusAreasManager() {
               {/* Preview Card */}
               <div className="space-y-2 pb-2">
                 <Label className={`text-sm font-semibold flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                  <Sparkles className="w-4 h-4 text-purple-400" />
+                  <Sparkle size={16} weight="bold" className="text-purple-400" />
                   Preview
                 </Label>
                 <div className={`p-4 rounded-xl bg-gradient-to-br ${selectedColor} border backdrop-blur-sm`}>
@@ -433,7 +433,7 @@ export default function FocusAreasManager() {
                   disabled={!name.trim()}
                   className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white font-bold h-12 text-base rounded-xl shadow-xl shadow-purple-500/30 hover:shadow-2xl hover:shadow-purple-500/40 transition-all hover:scale-[1.02]"
                 >
-                  <Save className="h-5 w-5 mr-2" />
+                  <FloppyDisk size={20} weight="bold" className="mr-2" />
                   {editingArea ? 'Update Focus Area' : 'Create Focus Area'}
                 </Button>
               </div>
@@ -446,7 +446,7 @@ export default function FocusAreasManager() {
       {focusAreas.length === 0 ? (
         <div className="text-center py-10">
           <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-400/30 flex items-center justify-center">
-            <Target className="h-8 w-8 text-purple-300/60" />
+            <Target size={32} weight="bold" className="text-purple-300/60" />
           </div>
           <p className={`text-sm mb-1 font-medium ${
             theme === 'dark' ? 'text-white/60' : 'text-gray-400'
@@ -463,7 +463,7 @@ export default function FocusAreasManager() {
             size="sm"
             className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg hover:shadow-xl transition-all"
           >
-            <Plus className="h-4 w-4 mr-2" />
+            <Plus size={16} weight="bold" className="mr-2" />
             Create Focus Area
           </Button>
         </div>
@@ -502,7 +502,7 @@ export default function FocusAreasManager() {
                     <div className={`flex items-center gap-1.5 text-[10px] ${
                       theme === 'dark' ? 'text-white/50' : 'text-gray-400'
                     }`}>
-                      <TrendingUp className="h-3 w-3" />
+                    <TrendUp size={12} weight="bold" />
                       <span>{area.reflectionCount || 0} reflection{area.reflectionCount !== 1 ? 's' : ''}</span>
                     </div>
                   </div>
@@ -522,7 +522,7 @@ export default function FocusAreasManager() {
                           : 'hover:bg-white/40 text-gray-900'
                       }`}
                     >
-                      <Edit2 className="h-3.5 w-3.5" />
+                      <PencilSimple size={14} weight="bold" />
                     </Button>
                     <Button
                       onClick={(e) => {
@@ -537,7 +537,7 @@ export default function FocusAreasManager() {
                           : 'hover:bg-red-500/20 text-red-600'
                       }`}
                     >
-                      <Trash2 className="h-3.5 w-3.5" />
+                      <Trash size={14} weight="bold" />
                     </Button>
                   </div>
                 </div>

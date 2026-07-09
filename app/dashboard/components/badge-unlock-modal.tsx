@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { useTheme } from "@/contexts/ThemeContext"
 import { Badge, getRarityColor } from "@/lib/types/achievements"
 import { Button } from "@/components/ui/button"
-import { Share2, X, Twitter, Linkedin, Instagram } from "lucide-react"
+import { ShareNetwork, X, TwitterLogo, LinkedinLogo, InstagramLogo } from "phosphor-react"
 import {
   Dialog,
   DialogContent,
@@ -204,7 +204,7 @@ export default function BadgeUnlockModal({
                 `}
                 aria-label="Close badge notification"
               >
-                <X className="w-4 h-4" />
+                <X size={16} weight="bold" />
               </motion.button>
 
               {/* Content with stagger animation */}
@@ -429,7 +429,7 @@ export default function BadgeUnlockModal({
                             : 'border-gray-300 hover:bg-gray-50'
                         }`}
                       >
-                        <Share2 className="w-4 h-4" />
+                        <ShareNetwork size={16} weight="bold" />
                         Share Achievement
                       </Button>
 
@@ -488,7 +488,7 @@ export default function BadgeUnlockModal({
                   }}
                   className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-semibold text-sm transition-all bg-[#1DA1F2] hover:bg-[#1a8cd8] text-white shadow-md hover:shadow-lg"
                 >
-                  <Twitter className="w-4 h-4" />
+                  <TwitterLogo size={16} weight="bold" />
                   <span>Twitter</span>
                 </motion.button>
 
@@ -502,7 +502,7 @@ export default function BadgeUnlockModal({
                   }}
                   className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-semibold text-sm transition-all bg-[#0A66C2] hover:bg-[#004182] text-white shadow-md hover:shadow-lg"
                 >
-                  <Linkedin className="w-4 h-4" />
+                  <LinkedinLogo size={16} weight="bold" />
                   <span>LinkedIn</span>
                 </motion.button>
 
@@ -516,7 +516,7 @@ export default function BadgeUnlockModal({
                   }}
                   className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-semibold text-sm transition-all bg-gradient-to-br from-[#833AB4] via-[#FD1D1D] to-[#F77737] hover:opacity-90 text-white shadow-md hover:shadow-lg"
                 >
-                  <Instagram className="w-4 h-4" />
+                  <InstagramLogo size={16} weight="bold" />
                   <span>Instagram</span>
                 </motion.button>
 

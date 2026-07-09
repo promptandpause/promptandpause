@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { ArrowRight, Sprout } from "lucide-react"
+import { ArrowRight, Leaf } from "phosphor-react"
 import { useTheme } from "@/contexts/ThemeContext"
 import { Reflection } from "@/lib/types/reflection"
 import { IconOrb } from "@/components/ui/accent-card"
@@ -113,7 +113,7 @@ export default function ReturnToSelfCard() {
       <div className="relative flex items-start justify-between gap-3 mb-3">
         <div className="flex items-center gap-3">
           <IconOrb accent="emerald" size="sm">
-            <Sprout className="w-4 h-4 text-white" strokeWidth={2} />
+            <Leaf size={16} weight="bold" className="text-white" />
           </IconOrb>
           <div>
             <p className={`text-[11px] uppercase tracking-wide font-semibold ${isDark ? 'text-white/50' : 'text-[#8B98A5]'}`}>Welcome back</p>
@@ -140,7 +140,7 @@ export default function ReturnToSelfCard() {
           className={`inline-flex items-center gap-1.5 text-xs md:text-sm font-medium underline-offset-4 hover:underline ${isDark ? 'text-[#B8C9E0]' : 'text-[#5B7FA5]'}`}
         >
           Revisit your thoughts
-          <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+          <ArrowRight size={14} weight="bold" aria-hidden="true" />
         </Link>
       </div>
     </motion.section>

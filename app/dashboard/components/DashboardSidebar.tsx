@@ -53,7 +53,7 @@ export function DashboardSidebar() {
     { icon: ArchiveBox, label: "archive", href: "/dashboard/archive", active: pathname === "/dashboard/archive" },
     { icon: BookmarkSimple, label: "saved", href: "/dashboard/saved", active: pathname === "/dashboard/saved" },
     { icon: Notebook, label: "my_journals", href: "/dashboard/journals", active: pathname === "/dashboard/journals" },
-    { icon: Gear, label: "settings", href: "/dashboard/settings", active: pathname?.startsWith("/dashboard/settings") || false },
+    { icon: Gear, label: "settings", href: "/dashboard/settings", active: pathname === "/dashboard/settings" },
     { icon: UserCircle, label: "profile", href: "/dashboard/settings/profile", active: pathname === "/dashboard/settings/profile" },
   ]
 

@@ -4,21 +4,21 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { 
   Phone, 
-  MessageCircle, 
-  ExternalLink, 
+  ChatText, 
+  ArrowSquareOut, 
   Heart, 
   Wind, 
   Eye, 
   Hand, 
   Ear, 
-  Sparkles,
-  ChevronRight,
+  Sparkle,
+  CaretRight,
   X,
-  RefreshCw,
-  LifeBuoy,
+  ArrowsClockwise,
+  Lifebuoy,
   Shield,
-  Quote,
-} from 'lucide-react'
+  Quotes,
+} from 'phosphor-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
@@ -130,7 +130,7 @@ export default function CrisisSupport({ userCountry = 'UK', userId, onClose }: C
     TOUCH: Hand,
     HEAR: Ear,
     SMELL: Wind,
-    TASTE: Sparkles
+    TASTE: Sparkle
   }
 
   return (
@@ -155,7 +155,7 @@ export default function CrisisSupport({ userCountry = 'UK', userId, onClose }: C
               >
                 <div className={`absolute inset-0 rounded-full blur-xl opacity-60 ${isDark ? 'bg-rose-500/40' : 'bg-rose-300/50'}`} />
                 <div className={`relative w-14 h-14 rounded-full flex items-center justify-center ${isDark ? 'bg-gradient-to-br from-rose-500/25 to-rose-400/10' : 'bg-gradient-to-br from-rose-100 to-rose-50'} border ${isDark ? 'border-rose-400/20' : 'border-rose-200/60'}`}>
-                  <Heart className={`w-6 h-6 ${isDark ? 'text-rose-300' : 'text-rose-500'}`} strokeWidth={1.75} />
+                  <Heart size={24} className={`${isDark ? 'text-rose-300' : 'text-rose-500'}`} />
                 </div>
               </motion.div>
               <div>
@@ -240,7 +240,7 @@ export default function CrisisSupport({ userCountry = 'UK', userId, onClose }: C
                         <span className={`absolute inset-[-10px] rounded-full blur-xl ${isDark ? 'bg-emerald-500/40' : 'bg-emerald-400/35'}`} />
                         <div className="relative w-20 h-20 rounded-full flex items-center justify-center bg-gradient-to-br from-emerald-400 via-emerald-500 to-emerald-600 shadow-[0_16px_40px_-12px_rgba(16,185,129,0.45)]">
                           <span aria-hidden className="absolute inset-1 rounded-full bg-gradient-to-br from-white/30 via-white/5 to-transparent" />
-                          <Icon className="relative w-8 h-8 text-white" strokeWidth={1.9} />
+                          <Icon size={32} className="text-white" />
                         </div>
                       </div>
 
@@ -296,7 +296,7 @@ export default function CrisisSupport({ userCountry = 'UK', userId, onClose }: C
                       className="gap-2 rounded-full px-6 py-5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-lg shadow-emerald-500/25 border-0"
                     >
                       {groundingStep < groundingExercise.steps.length - 1 ? 'Next sense' : 'Complete'}
-                      <ChevronRight className="w-4 h-4" />
+                      <CaretRight size={16} weight="bold" />
                     </Button>
                   </motion.div>
                 </div>
@@ -425,7 +425,7 @@ export default function CrisisSupport({ userCountry = 'UK', userId, onClose }: C
                   <span className={`absolute inset-[-10px] rounded-full blur-xl ${isDark ? 'bg-sky-500/40' : 'bg-sky-400/35'}`} />
                   <div className="relative w-20 h-20 rounded-full flex items-center justify-center bg-gradient-to-br from-sky-400 via-sky-500 to-sky-600 shadow-[0_16px_40px_-12px_rgba(14,165,233,0.45)]">
                     <span aria-hidden className="absolute inset-1 rounded-full bg-gradient-to-br from-white/30 via-white/5 to-transparent" />
-                    <Heart className="relative w-9 h-9 text-white" strokeWidth={1.75} />
+                    <Heart size={36} className="text-white" />
                   </div>
                 </motion.div>
                 <div>
@@ -437,7 +437,7 @@ export default function CrisisSupport({ userCountry = 'UK', userId, onClose }: C
                 <div className="flex gap-2 justify-center">
                   <motion.div whileHover={{ y: -1 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 26 }}>
                     <Button onClick={startBreathing} className="gap-2 rounded-full px-5 bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white border-0 shadow-sm shadow-sky-500/20">
-                      <RefreshCw className="w-4 h-4" />
+                      <ArrowsClockwise size={16} weight="bold" />
                       Again
                     </Button>
                   </motion.div>
@@ -469,13 +469,13 @@ export default function CrisisSupport({ userCountry = 'UK', userId, onClose }: C
                 <span className={`absolute inset-[-8px] rounded-full blur-xl ${isDark ? 'bg-violet-500/45' : 'bg-violet-400/40'}`} />
                 <div className="relative w-16 h-16 rounded-full flex items-center justify-center bg-gradient-to-br from-violet-400 via-violet-500 to-violet-600 shadow-[0_14px_36px_-12px_rgba(139,92,246,0.45)]">
                   <span aria-hidden className="absolute inset-1 rounded-full bg-gradient-to-br from-white/30 via-white/5 to-transparent" />
-                  <Shield className="relative w-7 h-7 text-white" strokeWidth={1.85} />
+                  <Shield size={28} className="text-white" />
                 </div>
               </div>
 
               {/* Quote card — editorial framing */}
               <figure className={`relative mx-auto max-w-md rounded-2xl p-6 md:p-7 border ${isDark ? 'bg-violet-500/8 border-violet-400/15' : 'bg-white/85 border-[#E8E5DE]'} shadow-[0_1px_2px_rgba(15,20,20,0.04)]`}>
-                <Quote className={`absolute -top-3 left-6 w-6 h-6 ${isDark ? 'text-violet-300' : 'text-violet-400'}`} strokeWidth={1.5} aria-hidden />
+                <Quotes size={24} className={`absolute -top-3 left-6 ${isDark ? 'text-violet-300' : 'text-violet-400'}`} aria-hidden />
                 <AnimatePresence mode="wait">
                   <motion.blockquote
                     key={copingIndex}
@@ -500,7 +500,7 @@ export default function CrisisSupport({ userCountry = 'UK', userId, onClose }: C
                     variant="outline"
                     className={`gap-2 rounded-full px-5 ${isDark ? 'border-white/15 text-white hover:bg-white/10' : 'border-[#E8E5DE] text-[#2F3B34] hover:bg-white'}`}
                   >
-                    <RefreshCw className="w-4 h-4" />
+                    <ArrowsClockwise size={16} weight="bold" />
                     Another reminder
                   </Button>
                 </motion.div>
@@ -525,7 +525,7 @@ export default function CrisisSupport({ userCountry = 'UK', userId, onClose }: C
                 <span className={`absolute inset-[-8px] rounded-full blur-xl ${isDark ? 'bg-rose-500/45' : 'bg-rose-400/40'}`} />
                 <div className="relative w-14 h-14 rounded-full flex items-center justify-center bg-gradient-to-br from-rose-400 via-rose-500 to-rose-600 shadow-[0_14px_36px_-12px_rgba(244,63,94,0.45)]">
                   <span aria-hidden className="absolute inset-1 rounded-full bg-gradient-to-br from-white/30 via-white/5 to-transparent" />
-                  <LifeBuoy className="relative w-6 h-6 text-white" strokeWidth={1.85} />
+                  <Lifebuoy size={24} className="text-white" />
                 </div>
               </div>
               <div>
@@ -564,7 +564,7 @@ export default function CrisisSupport({ userCountry = 'UK', userId, onClose }: C
                           rel="noopener noreferrer"
                           className={`inline-flex items-center gap-1.5 mt-2 text-[12px] font-medium ${isDark ? 'text-white/45 hover:text-white/80' : 'text-[#6FA984] hover:text-[#5A8F6E]'}`}
                         >
-                          <ExternalLink className="w-3 h-3" />
+                          <ArrowSquareOut size={12} />
                           {hotline.website.replace(/^https?:\/\//, '')}
                         </a>
                       )}
@@ -580,7 +580,7 @@ export default function CrisisSupport({ userCountry = 'UK', userId, onClose }: C
                         href={`tel:${hotline.phone.replace(/\s/g, '')}`}
                         className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[13px] font-semibold bg-gradient-to-r from-rose-500 to-rose-600 text-white shadow-sm shadow-rose-500/25 hover:shadow-md"
                       >
-                        <Phone className="w-3.5 h-3.5" />
+                        <Phone size={14} />
                         {hotline.phone}
                       </motion.a>
                     )}
@@ -590,7 +590,7 @@ export default function CrisisSupport({ userCountry = 'UK', userId, onClose }: C
                         transition={{ type: 'spring', stiffness: 420, damping: 26 }}
                         className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[13px] font-semibold ${isDark ? 'bg-sky-500/15 text-sky-300 border border-sky-400/25' : 'bg-sky-50 text-sky-700 border border-sky-200'}`}
                       >
-                        <MessageCircle className="w-3.5 h-3.5" />
+                        <ChatText size={14} />
                         {hotline.text}
                       </motion.span>
                     )}
@@ -619,8 +619,8 @@ function GroundingIcon({ isDark: _ }: { isDark: boolean }) {
     <IconOrb accent="emerald">
       {/* Layered senses: eye with subtle ear + hand hint */}
       <span className="relative">
-        <Eye className="w-5 h-5" strokeWidth={1.9} />
-        <Hand className="absolute -bottom-1 -right-1.5 w-3 h-3 opacity-80" strokeWidth={2} />
+        <Eye size={20} />
+        <Hand size={12} className="absolute -bottom-1 -right-1.5 opacity-80" />
       </span>
     </IconOrb>
   )
@@ -639,7 +639,7 @@ function BreathingIcon({ isDark: _ }: { isDark: boolean }) {
             transition={{ duration: 4, ease: 'easeInOut', repeat: Infinity }}
           />
         )}
-        <Wind className="w-5 h-5" strokeWidth={1.9} />
+        <Wind size={20} />
       </span>
     </IconOrb>
   )
@@ -649,8 +649,8 @@ function CopingIcon({ isDark: _ }: { isDark: boolean }) {
   return (
     <IconOrb accent="violet">
       <span className="relative">
-        <Shield className="w-5 h-5" strokeWidth={1.9} />
-        <Quote className="absolute -bottom-1 -right-1 w-2.5 h-2.5 opacity-80" strokeWidth={2.4} />
+        <Shield size={20} />
+        <Quotes size={10} className="absolute -bottom-1 -right-1 opacity-80" />
       </span>
     </IconOrb>
   )
@@ -660,8 +660,8 @@ function SupportIcon({ isDark: _ }: { isDark: boolean }) {
   return (
     <IconOrb accent="rose">
       <span className="relative">
-        <LifeBuoy className="w-5 h-5" strokeWidth={1.9} />
-        <Phone className="absolute -bottom-1 -right-1 w-2.5 h-2.5 opacity-85" strokeWidth={2.2} />
+        <Lifebuoy size={20} />
+        <Phone size={10} className="absolute -bottom-1 -right-1 opacity-85" />
       </span>
     </IconOrb>
   )

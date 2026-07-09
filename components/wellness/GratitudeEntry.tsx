@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
-import { Heart, Plus, X, Check, Sparkles, Crown } from 'lucide-react'
+import { Heart, Plus, X, Check, Sparkle, Crown } from 'phosphor-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -149,7 +149,7 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Heart className="w-4 h-4 text-rose-500" />
+            <Heart size={16} weight="bold" className="text-rose-500" />
             <span className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>Gratitude</span>
           </div>
           {streak > 0 && (
@@ -169,13 +169,13 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
                 exit={{ opacity: 0, x: -10 }}
                 className={`flex items-center gap-2 p-2 rounded-lg group ${theme === 'dark' ? 'bg-rose-500/20' : 'bg-rose-50'}`}
               >
-                <Heart className="w-3 h-3 text-rose-400 flex-shrink-0" />
+                <Heart size={12} className="text-rose-400 flex-shrink-0" />
                 <span className={`text-sm flex-1 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>{item.text}</span>
                 <button
                   onClick={() => removeItem(index)}
                   className="opacity-0 group-hover:opacity-100 transition-opacity"
                 >
-                  <X className={`w-4 h-4 ${theme === 'dark' ? 'text-white/50 hover:text-white' : 'text-gray-400 hover:text-gray-600'}`} />
+                  <X size={16} weight="bold" className={`${theme === 'dark' ? 'text-white/50 hover:text-white' : 'text-gray-400 hover:text-gray-600'}`} />
                 </button>
               </motion.div>
             ))}
@@ -197,7 +197,7 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
               disabled={!newItem.trim()}
               className="h-9 px-3"
             >
-              <Plus className="w-4 h-4" />
+              <Plus size={16} weight="bold" />
             </Button>
           </div>
         )}
@@ -205,7 +205,7 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
         {!isPremium && items.length >= maxItems && (
           <Link href="/dashboard/settings#subscription" className="block">
             <p className={`text-xs text-center cursor-pointer ${theme === 'dark' ? 'text-amber-400 hover:text-amber-300' : 'text-amber-600 hover:text-amber-700'}`}>
-              <Crown className="w-3 h-3 inline mr-1" />
+              <Crown size={12} className="inline mr-1" />
               Upgrade to Premium for unlimited entries
             </p>
           </Link>
@@ -240,7 +240,7 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
               <span className={`absolute inset-[-8px] rounded-2xl blur-lg ${theme === 'dark' ? 'bg-amber-400/30' : 'bg-amber-300/40'}`} />
               <span className="relative inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 via-amber-500 to-rose-500 shadow-[0_10px_24px_-8px_rgba(245,158,11,0.45)]">
                 <span aria-hidden className="absolute inset-1 rounded-xl bg-gradient-to-br from-white/30 via-white/5 to-transparent" />
-                <Sparkles className="relative w-5 h-5 text-white" strokeWidth={1.9} />
+                <Sparkle size={20} className="text-white" />
               </span>
             </span>
             <div className="min-w-0">
@@ -263,7 +263,7 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
                   : 'text-amber-700 bg-amber-50 border border-amber-200'
               }`}
             >
-              <Sparkles className="w-3 h-3" />
+              <Sparkle size={12} />
               {streak}-day streak
             </motion.span>
           )}
@@ -282,14 +282,14 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
                 className={`flex items-center gap-3 p-3 rounded-lg group ${theme === 'dark' ? 'bg-rose-500/20' : 'bg-gradient-to-r from-rose-50 to-pink-50'}`}
               >
                 <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${theme === 'dark' ? 'bg-rose-500/30' : 'bg-rose-100'}`}>
-                  <Heart className="w-3 h-3 text-rose-500" />
+                  <Heart size={12} className="text-rose-500" />
                 </div>
                 <span className={`flex-1 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>{item.text}</span>
                 <button
                   onClick={() => removeItem(index)}
                   className={`opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded ${theme === 'dark' ? 'hover:bg-white/10' : 'hover:bg-rose-100'}`}
                 >
-                  <X className={`w-4 h-4 ${theme === 'dark' ? 'text-white/50 hover:text-white' : 'text-gray-400 hover:text-gray-600'}`} />
+                  <X size={16} weight="bold" className={`${theme === 'dark' ? 'text-white/50 hover:text-white' : 'text-gray-400 hover:text-gray-600'}`} />
                 </button>
               </motion.div>
             ))}
@@ -311,7 +311,7 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
               variant="outline"
               className={theme === 'dark' ? 'border-white/20 text-white hover:bg-white/10' : ''}
             >
-              <Plus className="w-4 h-4 mr-1" />
+              <Plus size={16} weight="bold" className="mr-1" />
               Add
             </Button>
           </div>
@@ -325,7 +325,7 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
             {items.length >= maxItems && (
               <Link href="/dashboard/settings#subscription">
                 <Button variant="link" size="sm" className={`p-0 h-auto ${theme === 'dark' ? 'text-amber-400' : 'text-amber-600'}`}>
-                  <Crown className="w-3 h-3 mr-1" />
+                  <Crown size={12} className="mr-1" />
                   Upgrade for more
                 </Button>
               </Link>
@@ -343,7 +343,7 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
               'Saving...'
             ) : (
               <>
-                <Check className="w-4 h-4 mr-2" />
+                <Check size={16} weight="bold" className="mr-2" />
                 Save Gratitude
               </>
             )}
@@ -352,7 +352,7 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
 
         {items.length === 0 && !hasChanges && (
           <div className={`text-center py-4 ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>
-            <Heart className={`w-8 h-8 mx-auto mb-2 ${theme === 'dark' ? 'text-white/20' : 'text-gray-300'}`} />
+            <Heart size={32} className={`mx-auto mb-2 ${theme === 'dark' ? 'text-white/20' : 'text-gray-300'}`} />
             <p className="text-sm">Start your gratitude practice today</p>
           </div>
         )}

@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 import { WeeklyDigest } from "@/lib/types/reflection"
-import { Calendar, TrendingUp, Tag, FileText, Award } from "lucide-react"
+import { Calendar, TrendUp, Tag, FileText, Trophy } from "phosphor-react"
 
 interface DigestModalProps {
   open: boolean
@@ -25,7 +25,7 @@ export default function DigestModal({ open, onOpenChange, digest }: DigestModalP
       <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto backdrop-blur-xl bg-white/10 border border-white/20 text-white">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-white flex items-center gap-2">
-            <Calendar className="h-6 w-6 text-purple-400" />
+            <Calendar size={24} weight="bold" className="text-purple-400" />
             Weekly Digest
           </DialogTitle>
           <p className="text-white/60 text-sm">
@@ -38,7 +38,7 @@ export default function DigestModal({ open, onOpenChange, digest }: DigestModalP
           <div className="grid grid-cols-3 gap-4">
             <Card className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-4">
               <div className="flex items-center gap-3">
-                <FileText className="h-8 w-8 text-blue-400" />
+                <FileText size={32} weight="bold" className="text-blue-400" />
                 <div>
                   <p className="text-white/60 text-xs">Reflections</p>
                   <p className="text-2xl font-bold text-white">{digest.totalReflections}</p>
@@ -47,7 +47,7 @@ export default function DigestModal({ open, onOpenChange, digest }: DigestModalP
             </Card>
             <Card className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-4">
               <div className="flex items-center gap-3">
-                <TrendingUp className="h-8 w-8 text-green-400" />
+                <TrendUp size={32} weight="bold" className="text-green-400" />
                 <div>
                   <p className="text-white/60 text-xs">Avg Words</p>
                   <p className="text-2xl font-bold text-white">{digest.averageWordCount}</p>
@@ -56,7 +56,7 @@ export default function DigestModal({ open, onOpenChange, digest }: DigestModalP
             </Card>
             <Card className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-4">
               <div className="flex items-center gap-3">
-                <Award className="h-8 w-8 text-yellow-400" />
+                <Trophy size={32} weight="bold" className="text-yellow-400" />
                 <div>
                   <p className="text-white/60 text-xs">Streak</p>
                   <p className="text-2xl font-bold text-white">{digest.currentStreak} 🔥</p>
@@ -99,7 +99,7 @@ export default function DigestModal({ open, onOpenChange, digest }: DigestModalP
           {digest.topTags.length > 0 && (
             <Card className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-5">
               <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                <Tag className="h-5 w-5 text-purple-400" />
+                <Tag size={20} weight="bold" className="text-purple-400" />
                 Most Focused Areas
               </h3>
               <div className="flex gap-2 flex-wrap">

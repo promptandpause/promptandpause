@@ -1,12 +1,12 @@
 "use client"
 
-import { LogOut, Archive, Settings, LayoutDashboard } from "lucide-react";
+import { SignOut, ArchiveBox, Gear, Layout } from "phosphor-react";
 import Link from "next/link";
 
 const sidebarItems = [
-  { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard", active: true },
-  { label: "Archive", icon: Archive, href: "/dashboard/archive" },
-  { label: "Settings", icon: Settings, href: "/dashboard/settings" },
+  { label: "Dashboard", icon: Layout, href: "/dashboard", active: true },
+  { label: "Archive", icon: ArchiveBox, href: "/dashboard/archive" },
+  { label: "Settings", icon: Gear, href: "/dashboard/settings" },
 ];
 
 export default function Sidebar() {
@@ -23,7 +23,7 @@ export default function Sidebar() {
         {sidebarItems.map((item) => (
           <Link href={item.href} key={item.label} legacyBehavior>
             <a className={`flex items-center gap-3 px-4 py-2 rounded-lg font-medium text-base hover:bg-zinc-200/60 transition-all ${item.active ? "bg-zinc-900 text-white font-bold" : "text-zinc-800"}`}>
-              <item.icon className="w-5 h-5" />
+              <item.icon size={20} weight="bold" />
               {item.label}
             </a>
           </Link>
@@ -35,7 +35,7 @@ export default function Sidebar() {
 
       {/* Logout */}
       <button className="flex items-center gap-3 text-base text-zinc-700 w-full px-4 py-2 hover:bg-zinc-200/60 rounded-lg mb-8 border border-transparent hover:border-zinc-300 transition-all">
-        <LogOut className="w-5 h-5" /> Logout
+        <SignOut size={20} weight="bold" /> Logout
       </button>
     </aside>
   );

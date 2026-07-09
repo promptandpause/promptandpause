@@ -8,13 +8,13 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
-import { 
-  Bell, ChevronLeft, ChevronRight, HelpCircle, Lock, Palette, 
-  Shield, Trash2, Upload, User, Zap, CreditCard, Smartphone, 
-  Globe2, Loader2, CheckCircle2, XCircle, Settings2, SmartphoneCharging, 
-  ArrowRight, Mail, KeyRound, Eye, EyeOff, Copy, Check, ExternalLink, NotebookPen, 
-  LayoutDashboard, Archive, Settings, Crown, Calendar 
-} from "lucide-react"
+import {
+  Bell, CaretLeft, CaretRight, Question, Lock, Palette,
+  Shield, Trash, Upload, User, Lightning, CreditCard,
+  GlobeHemisphereWest, Spinner, CheckCircle, XCircle, Gear, BatteryCharging,
+  ArrowRight, Envelope, Key, Eye, EyeSlash, Copy, Check, ArrowSquareOut, Notebook,
+  Layout, ArchiveBox, Crown, Calendar, DeviceMobile
+} from "phosphor-react"
 import { SlackIcon } from "@/components/icons/SlackIcon"
 import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon"
 import { TeamsIcon } from "@/components/icons/TeamsIcon"
@@ -61,9 +61,9 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 const sidebarNav = [
-  { icon: LayoutDashboard, label: "dashboard", href: "/dashboard", active: false },
-  { icon: Archive, label: "archive", href: "/dashboard/archive", active: false },
-  { icon: Settings, label: "settings", href: "/dashboard/settings", active: true },
+  { icon: Layout, label: "dashboard", href: "/dashboard", active: false },
+  { icon: ArchiveBox, label: "archive", href: "/dashboard/archive", active: false },
+  { icon: Gear, label: "settings", href: "/dashboard/settings", active: true },
 ]
 
 // Use IANA timezones from the timezone utility (imported at top)
@@ -973,7 +973,7 @@ function SettingsPageContent() {
                         ? 'bg-gradient-to-br from-blue-400 to-blue-600'
                         : 'bg-gradient-to-br from-blue-400 to-blue-600'
                     }`}>
-                      <User className="h-7 w-7 text-white" />
+                      <User size={28} weight="bold" className="text-white" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className={`font-semibold text-lg ${
@@ -983,7 +983,7 @@ function SettingsPageContent() {
                         theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                       }`}>Manage your profile</p>
                     </div>
-                    <ChevronRight className={`h-5 w-5 flex-shrink-0 ${
+                    <CaretRight size={20} weight="bold" className={`flex-shrink-0 ${
                       theme === 'dark' ? 'text-white/30' : 'text-gray-300'
                     }`} />
                   </div>
@@ -1001,12 +1001,12 @@ function SettingsPageContent() {
                     }`}
                   >
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-red-400 to-red-600">
-                      <Bell className="h-4.5 w-4.5 text-white" />
+                      <Bell size={16} weight="bold" className="text-white" />
                     </div>
                     <span className={`flex-1 text-[17px] ${
                       theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                     }`}>Notifications</span>
-                    <ChevronRight className={`h-5 w-5 ${
+                    <CaretRight size={20} weight="bold" className={`${
                       theme === 'dark' ? 'text-white/30' : 'text-gray-300'
                     }`} />
                   </div>
@@ -1022,12 +1022,12 @@ function SettingsPageContent() {
                     }`}
                   >
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-gray-500 to-gray-700">
-                      <Lock className="h-4.5 w-4.5 text-white" />
+                      <Lock size={16} weight="bold" className="text-white" />
                     </div>
                     <span className={`flex-1 text-[17px] ${
                       theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                     }`}>Security</span>
-                    <ChevronRight className={`h-5 w-5 ${
+                    <CaretRight size={20} weight="bold" className={`${
                       theme === 'dark' ? 'text-white/30' : 'text-gray-300'
                     }`} />
                   </div>
@@ -1043,12 +1043,12 @@ function SettingsPageContent() {
                     }`}
                   >
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-purple-400 to-purple-600">
-                      <Palette className="h-4.5 w-4.5 text-white" />
+                      <Palette size={16} weight="bold" className="text-white" />
                     </div>
                     <span className={`flex-1 text-[17px] ${
                       theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                     }`}>Preferences</span>
-                    <ChevronRight className={`h-5 w-5 ${
+                    <CaretRight size={20} weight="bold" className={`${
                       theme === 'dark' ? 'text-white/30' : 'text-gray-300'
                     }`} />
                   </div>
@@ -1066,7 +1066,7 @@ function SettingsPageContent() {
                     }`}
                   >
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-green-400 to-green-600">
-                      <CreditCard className="h-4.5 w-4.5 text-white" />
+                      <CreditCard size={16} weight="bold" className="text-white" />
                     </div>
                     <span className={`flex-1 text-[17px] ${
                       theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
@@ -1076,7 +1076,7 @@ function SettingsPageContent() {
                     }`}>
                       {tier === 'premium' && isTrial ? 'Trial' : tier === 'premium' ? 'Premium' : 'Free'}
                     </span>
-                    <ChevronRight className={`h-5 w-5 ${
+                    <CaretRight size={20} weight="bold" className={`${
                       theme === 'dark' ? 'text-white/30' : 'text-gray-300'
                     }`} />
                   </div>
@@ -1092,12 +1092,12 @@ function SettingsPageContent() {
                     }`}
                   >
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-indigo-400 to-indigo-600">
-                      <Zap className="h-4.5 w-4.5 text-white" />
+                      <Lightning size={16} weight="bold" className="text-white" />
                     </div>
                     <span className={`flex-1 text-[17px] ${
                       theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                     }`}>Integrations</span>
-                    <ChevronRight className={`h-5 w-5 ${
+                    <CaretRight size={20} weight="bold" className={`${
                       theme === 'dark' ? 'text-white/30' : 'text-gray-300'
                     }`} />
                   </div>
@@ -1114,12 +1114,12 @@ function SettingsPageContent() {
                       }`}
                     >
                       <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-blue-400 to-blue-600">
-                        <HelpCircle className="h-4.5 w-4.5 text-white" />
+                        <Question size={16} weight="bold" className="text-white" />
                       </div>
                       <span className={`flex-1 text-[17px] ${
                         theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                       }`}>Contact Support</span>
-                      <ChevronRight className={`h-5 w-5 ${
+                      <CaretRight size={20} weight="bold" className={`${
                         theme === 'dark' ? 'text-white/30' : 'text-gray-300'
                       }`} />
                     </div>
@@ -1141,7 +1141,7 @@ function SettingsPageContent() {
                     }`}
                   >
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-gray-400 to-gray-600">
-                      <ArrowRight className="h-4.5 w-4.5 text-white rotate-180" />
+                      <ArrowRight size={16} weight="bold" className="text-white rotate-180" />
                     </div>
                     <span className={`flex-1 text-left text-[17px] ${
                       theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
@@ -1159,12 +1159,12 @@ function SettingsPageContent() {
                     }`}
                   >
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-red-500 to-red-700">
-                      <Shield className="h-4.5 w-4.5 text-white" />
+                      <Shield size={16} weight="bold" className="text-white" />
                     </div>
                     <span className={`flex-1 text-[17px] ${
                       theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                     }`}>Account Management</span>
-                    <ChevronRight className={`h-5 w-5 ${
+                    <CaretRight size={20} weight="bold" className={`${
                       theme === 'dark' ? 'text-white/30' : 'text-gray-300'
                     }`} />
                   </div>
@@ -1184,7 +1184,7 @@ function SettingsPageContent() {
                         : 'text-blue-600 active:text-blue-800'
                     }`}
                   >
-                    <ChevronRight className="h-5 w-5 rotate-180" />
+                    <CaretLeft size={20} weight="bold" className="rotate-180" />
                     <span className="font-medium">Settings</span>
                   </button>
                 </div>
@@ -1197,7 +1197,7 @@ function SettingsPageContent() {
                       : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
                   }`}>
                     <div className="flex items-center gap-2 mb-4">
-                      <User className="h-5 w-5 text-blue-600" />
+                      <User size={20} weight="bold" className="text-blue-600" />
                       <h3 className={`text-xl font-semibold ${
                         theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                       }`}>Profile</h3>
@@ -1295,7 +1295,7 @@ function SettingsPageContent() {
                         : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
                     }`}>
                       <div className="flex items-center gap-2 mb-3">
-                        <Smartphone className="h-4 w-4 text-blue-500" />
+                        <DeviceMobile size={16} weight="bold" className="text-blue-500" />
                         <h4 className={`text-sm font-semibold uppercase tracking-wide ${
                           theme === 'dark' ? 'text-white/50' : 'text-[#8B98A5]'
                         }`}>Device</h4>
@@ -1310,7 +1310,7 @@ function SettingsPageContent() {
                         : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
                     }`}>
                       <div className="flex items-center gap-2 mb-3">
-                        <Mail className="h-4 w-4 text-green-500" />
+                        <Envelope size={16} weight="bold" className="text-green-500" />
                         <h4 className={`text-sm font-semibold uppercase tracking-wide ${
                           theme === 'dark' ? 'text-white/50' : 'text-[#8B98A5]'
                         }`}>Email</h4>
@@ -1365,7 +1365,7 @@ function SettingsPageContent() {
                         : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
                     }`}>
                       <div className="flex items-center gap-2 mb-3">
-                        <Calendar className="h-4 w-4 text-purple-500" />
+                        <Calendar size={16} weight="bold" className="text-purple-500" />
                         <h4 className={`text-sm font-semibold uppercase tracking-wide ${
                           theme === 'dark' ? 'text-white/50' : 'text-[#8B98A5]'
                         }`}>Schedule</h4>
@@ -1399,7 +1399,7 @@ function SettingsPageContent() {
                             <div className={`absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none ${
                               theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                             }`}>
-                              <ChevronRight className="h-5 w-5 rotate-90" />
+                              <CaretRight size={20} weight="bold" className="rotate-90" />
                             </div>
                           </div>
                           <p className={`text-xs ${
@@ -1417,7 +1417,7 @@ function SettingsPageContent() {
                               <Link href="/dashboard/settings" onClick={() => navigateToView('subscription')} className={`text-xs px-2 py-1 rounded-full flex items-center gap-1 ${
                                 theme === 'dark' ? 'bg-purple-500/20 text-purple-300 hover:bg-purple-500/30' : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
                               }`}>
-                                <Crown className="h-3 w-3" />
+                                <Crown size={12} weight="bold" />
                                 3 included
                               </Link>
                             )}
@@ -1483,7 +1483,7 @@ function SettingsPageContent() {
                       : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
                   }`}>
                     <div className="flex items-center gap-2 mb-4">
-                      <Lock className="h-5 w-5 text-[#8B98A5]" />
+                      <Lock size={20} weight="bold" className="text-[#8B98A5]" />
                       <h3 className={`text-xl font-semibold ${
                         theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                       }`}>Security</h3>
@@ -1495,7 +1495,7 @@ function SettingsPageContent() {
                           : 'bg-green-50'
                       }`}>
                         <div className="flex items-center gap-2">
-                          <CheckCircle2 className={`h-4 w-4 ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`} />
+                          <CheckCircle size={16} weight="bold" className={`${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`} />
                           <p className={`text-sm font-medium ${
                             theme === 'dark' ? 'text-green-300' : 'text-green-700'
                           }`}>Signed in with Google</p>
@@ -1534,7 +1534,7 @@ function SettingsPageContent() {
                                 theme === 'dark' ? 'text-white/40 hover:text-white/50' : 'text-[#8B98A5] hover:text-[#8B98A5]'
                               }`}
                             >
-                              {showPasswordFields ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                              {showPasswordFields ? <EyeSlash size={20} weight="bold" /> : <Eye size={20} weight="bold" />}
                             </button>
                           </div>
                         </div>
@@ -1562,7 +1562,7 @@ function SettingsPageContent() {
                               theme === 'dark' ? 'text-white/40 hover:text-white/50' : 'text-[#8B98A5] hover:text-[#8B98A5]'
                             }`}
                           >
-                            {showPasswordFields ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                            {showPasswordFields ? <EyeSlash size={20} weight="bold" /> : <Eye size={20} weight="bold" />}
                           </button>
                         </div>
                       </div>
@@ -1589,7 +1589,7 @@ function SettingsPageContent() {
                               theme === 'dark' ? 'text-white/40 hover:text-white/50' : 'text-[#8B98A5] hover:text-[#8B98A5]'
                             }`}
                           >
-                            {showPasswordFields ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                            {showPasswordFields ? <EyeSlash size={20} weight="bold" /> : <Eye size={20} weight="bold" />}
                           </button>
                         </div>
                       </div>
@@ -1613,7 +1613,7 @@ function SettingsPageContent() {
                       : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
                   }`}>
                     <div className="flex items-center gap-2 mb-4">
-                      <Palette className="h-5 w-5 text-purple-600" />
+                      <Palette size={20} weight="bold" className="text-purple-600" />
                       <h3 className={`text-xl font-semibold ${
                         theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                       }`}>Preferences</h3>
@@ -1785,7 +1785,7 @@ function SettingsPageContent() {
                       : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
                   }`}>
                     <div className="flex items-center gap-2 mb-4">
-                      <CreditCard className="h-5 w-5 text-green-600" />
+                      <CreditCard size={20} weight="bold" className="text-green-600" />
                       <h3 className={`text-xl font-semibold ${
                         theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                       }`}>Subscription</h3>
@@ -1835,7 +1835,7 @@ function SettingsPageContent() {
                                 ? 'bg-yellow-500/20 border border-yellow-400/40 text-yellow-300'
                                 : 'bg-yellow-100 border-2 border-yellow-300 text-yellow-700'
                             }`}>
-                              <Crown className="h-3 w-3" /> Active
+                              <Crown size={12} weight="bold" /> Active
                             </span>
                           )}
                           {currentPlan === "premium" && isTrial && (
@@ -1844,7 +1844,7 @@ function SettingsPageContent() {
                                 ? 'bg-purple-500/20 border border-purple-400/40 text-purple-300'
                                 : 'bg-purple-100 border-2 border-purple-300 text-purple-700'
                             }`}>
-                              <Zap className="h-3 w-3" /> Trial
+                              <Lightning size={12} weight="bold" /> Trial
                             </span>
                           )}
                           {currentPlan === "free" && (
@@ -1868,7 +1868,7 @@ function SettingsPageContent() {
                               : 'bg-gradient-to-br from-yellow-100 to-purple-100 border-2 border-yellow-300'
                           }`}>
                             <div className="flex items-center gap-2 mb-3">
-                              <Crown className={`h-5 w-5 ${
+                              <Crown size={20} weight="bold" className={`${
                                 theme === 'dark' ? 'text-yellow-400' : 'text-yellow-700'
                               }`} />
                               <h4 className={`font-semibold ${
@@ -1934,7 +1934,7 @@ function SettingsPageContent() {
                                 <div key={index} className={`flex items-center gap-2 text-xs ${
                                   theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                                 }`}>
-                                  <Check className="h-3 w-3 text-green-600 flex-shrink-0" />
+                                  <Check size={12} weight="bold" className="text-green-600 flex-shrink-0" />
                                   <span>{feature}</span>
                                 </div>
                               ))}
@@ -1944,7 +1944,7 @@ function SettingsPageContent() {
                               onClick={handleUpgradeToPremium} 
                               className="w-full bg-gradient-to-r from-yellow-500 to-purple-500 hover:from-yellow-600 hover:to-purple-600 text-white font-semibold h-10"
                             >
-                              <Crown className="mr-2 h-4 w-4" /> 
+                              <Crown size={16} weight="bold" className="mr-2" /> 
                               Upgrade to Premium
                             </Button>
                           </div>
@@ -1961,7 +1961,7 @@ function SettingsPageContent() {
                               : 'bg-gradient-to-br from-yellow-100 to-purple-100 border-2 border-yellow-300'
                           }`}>
                             <div className="flex items-center gap-2 mb-2">
-                              <Crown className={`h-4 w-4 ${
+                              <Crown size={16} weight="bold" className={`${
                                 theme === 'dark' ? 'text-yellow-400' : 'text-yellow-700'
                               }`} />
                               <p className={`text-sm font-semibold ${
@@ -1980,7 +1980,7 @@ function SettingsPageContent() {
                                 "Slack integration",
                               ].map((feature, index) => (
                                 <div key={index} className="flex items-center gap-1.5">
-                                  <Check className="h-3 w-3 text-green-600 flex-shrink-0" />
+                                  <Check size={12} weight="bold" className="text-green-600 flex-shrink-0" />
                                   <span>{feature}</span>
                                 </div>
                               ))}
@@ -2020,7 +2020,7 @@ function SettingsPageContent() {
                                 <div key={index} className={`flex items-start gap-2 text-xs ${
                                   theme === 'dark' ? 'text-white/80' : 'text-[#536471]'
                                 }`}>
-                                  <Check className="h-3 w-3 text-blue-600 flex-shrink-0 mt-0.5" />
+                                  <Check size={12} weight="bold" className="text-blue-600 flex-shrink-0 mt-0.5" />
                                   <span>{feature}</span>
                                 </div>
                               ))}
@@ -2074,7 +2074,7 @@ function SettingsPageContent() {
                       : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
                   }`}>
                     <div className="flex items-center gap-2 mb-4">
-                      <Zap className="h-5 w-5 text-purple-600" />
+                      <Lightning size={20} weight="bold" className="text-purple-600" />
                       <h3 className={`text-xl font-semibold ${
                         theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                       }`}>Integrations</h3>
@@ -2094,7 +2094,7 @@ function SettingsPageContent() {
                             {currentPlan !== 'premium' ? (
                               <p className={`text-xs flex items-center gap-1 ${
                                 theme === 'dark' ? 'text-amber-400' : 'text-amber-600'
-                              }`}><Crown className="h-3 w-3" /> Premium Feature</p>
+                              }`}><Crown size={12} weight="bold" /> Premium Feature</p>
                             ) : slackConnected ? (
                               <p className={`text-xs ${
                                 theme === 'dark' ? 'text-green-400' : 'text-green-600'
@@ -2157,7 +2157,7 @@ function SettingsPageContent() {
                       : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
                   }`}>
                     <div className="flex items-center gap-2 mb-4">
-                      <Settings2 className="h-5 w-5 text-[#8B98A5]" />
+                      <Gear size={20} weight="bold" className="text-[#8B98A5]" />
                       <h3 className={`text-xl font-semibold ${
                         theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                       }`}>Account Management</h3>
@@ -2218,7 +2218,7 @@ function SettingsPageContent() {
           }`}>
             <div className="flex items-center gap-3">
               <IconOrb accent="violet" size="md">
-                <Settings2 className="w-5 h-5 text-white" strokeWidth={1.75} />
+                <Gear size={20} weight="bold" className="text-white" />
               </IconOrb>
               <div>
                 <h2 className={`text-xl md:text-3xl font-bold tracking-tight ${
@@ -2239,7 +2239,7 @@ function SettingsPageContent() {
                 : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
             }`}>
               <div className="flex items-center gap-2 mb-4">
-                <User className="h-5 w-5 text-blue-600" />
+                <User size={20} weight="bold" className="text-blue-600" />
                 <h3 className={`text-base md:text-xl font-semibold ${
                   theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                 }`}>Profile Information</h3>
@@ -2352,7 +2352,7 @@ function SettingsPageContent() {
                 : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
             }`}>
               <div className="flex items-center gap-2 mb-4">
-                <Bell className="h-5 w-5 text-yellow-600" />
+                <Bell size={20} weight="bold" className="text-yellow-600" />
                 <h3 className={`text-base md:text-xl font-semibold ${
                   theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                 }`}>Notifications</h3>
@@ -2499,7 +2499,7 @@ function SettingsPageContent() {
                 : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
             }`}>
               <div className="flex items-center gap-2 mb-4">
-                <Lock className="h-5 w-5 text-red-600" />
+                <Lock size={20} weight="bold" className="text-red-600" />
                 <h3 className={`text-base md:text-xl font-semibold ${
                   theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                 }`}>Security</h3>
@@ -2606,7 +2606,7 @@ function SettingsPageContent() {
                 : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
             }`}>
               <div className="flex items-center gap-2 mb-4">
-                <Palette className="h-5 w-5 text-purple-600" />
+                <Palette size={20} weight="bold" className="text-purple-600" />
                 <h3 className={`text-base md:text-xl font-semibold ${
                   theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                 }`}>Preferences</h3>
@@ -2744,7 +2744,7 @@ function SettingsPageContent() {
                   }`}>
                     <div className="flex items-center justify-between gap-2 mb-2">
                       <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-purple-600" />
+                        <Calendar size={16} weight="bold" className="text-purple-600" />
                         <Label className={`font-medium ${
                           theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                         }`}>Select Days for Prompts</Label>
@@ -2852,7 +2852,7 @@ function SettingsPageContent() {
               : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
           }`}>
             <div className="flex items-center gap-3 mb-6">
-              <CreditCard className="h-6 w-6 text-green-600" />
+              <CreditCard size={24} weight="bold" className="text-green-600" />
               <h3 className={`text-xl font-semibold ${
                 theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
               }`}>Subscription</h3>
@@ -2884,7 +2884,7 @@ function SettingsPageContent() {
                         ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-400/30'
                         : 'bg-yellow-100 text-yellow-700 border-2 border-yellow-400'
                     }`}>
-                      <Crown className="h-3 w-3" />
+                      <Crown size={12} weight="bold" />
                       Premium
                     </span>
                   )}
@@ -2924,7 +2924,7 @@ function SettingsPageContent() {
                     : 'bg-gradient-to-br from-yellow-50 to-purple-50 border-2 border-yellow-300'
                 }`}>
                   <div className="flex items-center gap-3 mb-4">
-                    <Crown className="h-8 w-8 text-yellow-600 flex-shrink-0" />
+                    <Crown size={32} weight="bold" className="text-yellow-600 flex-shrink-0" />
                     <h4 className={`text-xl font-bold ${
                       theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                     }`}>Premium Tier</h4>
@@ -2992,7 +2992,7 @@ function SettingsPageContent() {
                       <div key={index} className={`flex items-start gap-2 text-sm ${
                         theme === 'dark' ? 'text-white/80' : 'text-gray-800'
                       }`}>
-                        <Check className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                        <Check size={16} weight="bold" className="text-green-600 flex-shrink-0 mt-0.5" />
                         <span>{feature}</span>
                       </div>
                     ))}
@@ -3002,7 +3002,7 @@ function SettingsPageContent() {
                     onClick={handleUpgradeToPremium}
                     className="w-full bg-gradient-to-r from-yellow-500 to-purple-500 hover:from-yellow-600 hover:to-purple-600 text-white font-semibold text-base transition-all duration-700 ease-out hover:scale-[1.02] h-12"
                   >
-                    <Crown className="mr-2 h-5 w-5" />
+                    <Crown size={20} weight="bold" className="mr-2" />
                     Upgrade to Premium
                   </Button>
                 </div>
@@ -3056,7 +3056,7 @@ function SettingsPageContent() {
                         <div key={index} className={`flex items-start gap-2 text-sm ${
                           theme === 'dark' ? 'text-white/50' : 'text-[#536471]'
                         }`}>
-                          <Check className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                          <Check size={16} weight="bold" className="text-blue-600 flex-shrink-0 mt-0.5" />
                           <span>{feature}</span>
                         </div>
                       ))}
@@ -3102,7 +3102,7 @@ function SettingsPageContent() {
               : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
           }`}>
             <div className="flex items-center gap-3 mb-6">
-              <Zap className="h-6 w-6 text-purple-600" />
+              <Lightning size={24} weight="bold" className="text-purple-600" />
               <h3 className={`text-xl font-semibold ${
                 theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
               }`}>Integrations</h3>
@@ -3142,7 +3142,7 @@ function SettingsPageContent() {
                             ? 'bg-amber-500/10 border border-amber-400/30 text-amber-400'
                             : 'bg-amber-100 border-2 border-amber-300 text-amber-700'
                         }`}>
-                          <Crown className="h-3 w-3" />
+                          <Crown size={12} weight="bold" />
                           Premium
                         </span>
                       ) : slackConnected ? (
@@ -3172,7 +3172,7 @@ function SettingsPageContent() {
                           size="sm"
                           className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white transition-all duration-300"
                         >
-                          <Crown className="h-4 w-4 mr-2" />
+                          <Crown size={16} weight="bold" className="mr-2" />
                           Upgrade to Premium
                         </Button>
                       </Link>
@@ -3332,7 +3332,7 @@ function SettingsPageContent() {
               : 'bg-red-50 border-2 border-red-300'
           }`}>
             <div className="flex items-center gap-3 mb-4">
-              <Shield className="h-6 w-6 text-red-600" />
+              <Shield size={24} weight="bold" className="text-red-600" />
               <h3 className={`text-xl font-semibold ${
                 theme === 'dark' ? 'text-red-200' : 'text-[#0F1419]'
               }`}>Danger Zone</h3>
@@ -3519,7 +3519,7 @@ function SettingsPageContent() {
               >
                 {isDeleting ? (
                   <span className="flex items-center gap-2">
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <Spinner size={16} weight="bold" className="animate-spin" />
                     Deleting...
                   </span>
                 ) : (

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from 'react'
-import { X, Sparkles, ArrowRight } from 'lucide-react'
+import { X, Sparkle, ArrowRight } from 'phosphor-react'
 import { useRouter } from 'next/navigation'
 
 interface TrialExpiryBannerProps {
@@ -33,7 +33,7 @@ export function TrialExpiryBanner({ daysRemaining, isExpired, userName }: TrialE
             <div className="flex items-start space-x-3 flex-1 min-w-0">
               <div className="flex-shrink-0 mt-0.5">
                 <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                  <Sparkles className="w-4 h-4 text-red-600" />
+                  <Sparkle size={16} weight="bold" className="text-red-600" />
                 </div>
               </div>
               <div className="flex-1 min-w-0">
@@ -53,14 +53,14 @@ export function TrialExpiryBanner({ daysRemaining, isExpired, userName }: TrialE
                 className="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
               >
                 Upgrade to Premium
-                <ArrowRight className="ml-2 w-4 h-4" />
+                <ArrowRight size={16} weight="bold" className="ml-2" />
               </button>
               <button
                 onClick={() => setIsDismissed(true)}
                 className="text-red-400 hover:text-red-600 transition-colors duration-200 focus:outline-none"
                 aria-label="Dismiss banner"
               >
-                <X className="w-5 h-5" />
+                <X size={20} weight="bold" />
               </button>
             </div>
           </div>
@@ -79,7 +79,7 @@ export function TrialExpiryBanner({ daysRemaining, isExpired, userName }: TrialE
             <div className="flex items-start space-x-3 flex-1 min-w-0">
               <div className="flex-shrink-0 mt-0.5">
                 <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center">
-                  <Sparkles className="w-4 h-4 text-amber-600" />
+                  <Sparkle size={16} weight="bold" className="text-amber-600" />
                 </div>
               </div>
               <div className="flex-1 min-w-0">
@@ -99,14 +99,14 @@ export function TrialExpiryBanner({ daysRemaining, isExpired, userName }: TrialE
                 className="inline-flex items-center px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
               >
                 Upgrade Now
-                <ArrowRight className="ml-2 w-4 h-4" />
+                <ArrowRight size={16} weight="bold" className="ml-2" />
               </button>
               <button
                 onClick={() => setIsDismissed(true)}
                 className="text-amber-400 hover:text-amber-600 transition-colors duration-200 focus:outline-none"
                 aria-label="Dismiss banner"
               >
-                <X className="w-5 h-5" />
+                <X size={20} weight="bold" />
               </button>
             </div>
           </div>
@@ -124,7 +124,7 @@ export function TrialExpiryBanner({ daysRemaining, isExpired, userName }: TrialE
           <div className="flex items-start space-x-3 flex-1 min-w-0">
             <div className="flex-shrink-0 mt-0.5">
               <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <Sparkles className="w-4 h-4 text-blue-600" />
+                  <Sparkle size={16} weight="bold" className="text-blue-600" />
               </div>
             </div>
             <div className="flex-1 min-w-0">
@@ -144,14 +144,14 @@ export function TrialExpiryBanner({ daysRemaining, isExpired, userName }: TrialE
               className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               View Plans
-              <ArrowRight className="ml-2 w-4 h-4" />
+                <ArrowRight size={16} weight="bold" className="ml-2" />
             </button>
-            <button
-              onClick={() => setIsDismissed(true)}
-              className="text-blue-400 hover:text-blue-600 transition-colors duration-200 focus:outline-none"
-              aria-label="Dismiss banner"
-            >
-              <X className="w-5 h-5" />
+              <button
+                onClick={() => setIsDismissed(true)}
+                className="text-blue-400 hover:text-blue-600 transition-colors duration-200 focus:outline-none"
+                aria-label="Dismiss banner"
+              >
+                <X size={20} weight="bold" />
             </button>
           </div>
         </div>

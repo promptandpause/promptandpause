@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { AuthGuard } from "@/components/auth/AuthGuard"
 import { DashboardSidebar } from "../components/DashboardSidebar"
 import { useTheme } from "@/contexts/ThemeContext"
-import { Bookmark, Sprout, Trash2, Loader2 } from "lucide-react"
+import { BookmarkSimple, Leaf, Trash, Spinner } from "phosphor-react"
 import { useToast } from "@/hooks/use-toast"
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -87,6 +87,11 @@ export default function SavedPage() {
 
           <main className="flex-1 pb-32 md:pb-10 overflow-y-auto scrollbar-thin">
             <div className="max-w-[900px] mx-auto px-4 md:px-8 pt-16 md:pt-10 pb-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ type: "spring", stiffness: 100, damping: 20 }}
+              >
               <header className="mb-6 md:mb-8">
                 <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
                   Saved
@@ -95,17 +100,18 @@ export default function SavedPage() {
                   Reflections you marked to revisit or return to.
                 </p>
               </header>
+              </motion.div>
 
               {loading ? (
                 <div className={`flex items-center gap-2 py-10 ${isDark ? 'text-white/50' : 'text-[#8B98A5]'}`}>
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Spinner size={16} weight="bold" className="animate-spin" />
                   <span className="text-sm">Loading…</span>
                 </div>
               ) : (
                 <div className="space-y-10">
                   <Section
                     title="To revisit"
-                    icon={<Sprout className="h-4 w-4" aria-hidden="true" />}
+                    icon={<Leaf size={16} weight="bold" aria-hidden="true" />}
                     emptyText="Nothing flagged for revisit yet."
                     items={revisits}
                     kind="revisit"
@@ -115,7 +121,7 @@ export default function SavedPage() {
                   />
                   <Section
                     title="Saved for later"
-                    icon={<Bookmark className="h-4 w-4" aria-hidden="true" />}
+                    icon={<BookmarkSimple size={16} weight="bold" aria-hidden="true" />}
                     emptyText="You haven't saved any reflections yet."
                     items={saved}
                     kind="saved"
@@ -216,8 +222,8 @@ function Section({
                       className={`flex-shrink-0 p-2 rounded-lg transition-colors ${isDark ? 'text-white/40 hover:text-white/80 hover:bg-white/10' : 'text-[#8B98A5] hover:text-[#0F1419] hover:bg-[#EFF3F4]'} disabled:opacity-40 disabled:cursor-not-allowed`}
                     >
                       {removingId === b.id
-                        ? <Loader2 className="h-4 w-4 animate-spin" />
-                        : <Trash2 className="h-4 w-4" />}
+                        ? <Spinner size={16} weight="bold" className="animate-spin" />
+                        : <Trash size={16} weight="bold" />}
                     </button>
                   </div>
                 </motion.li>

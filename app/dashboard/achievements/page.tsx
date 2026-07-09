@@ -13,7 +13,7 @@ import {
   getRarityColor
 } from "@/lib/types/achievements"
 import { achievementService } from "@/lib/services/achievementService"
-import { Trophy, Lock, ChevronLeft } from "lucide-react"
+import { Trophy, Lock, CaretLeft } from "phosphor-react"
 import Link from "next/link"
 import { BadgeIcon } from "./components/BadgeIcon"
 
@@ -87,7 +87,7 @@ function AchievementsPageContent() {
             theme === 'dark' ? 'text-white/50' : 'text-[#8B98A5]'
           }`}
         >
-          <ChevronLeft className="w-4 h-4" />
+          <CaretLeft size={16} weight="bold" />
           Back to Dashboard
         </Link>
 
@@ -121,7 +121,7 @@ function AchievementsPageContent() {
                 of {totalCount}
               </div>
             </div>
-            <Trophy className={`absolute -top-2 -right-2 w-5 h-5 md:w-6 md:h-6 ${
+            <Trophy size={20} weight="bold" className={`absolute -top-2 -right-2 md:w-6 md:h-6 ${
               theme === 'dark' ? 'text-[#C4B5E0]' : 'text-[#7E6BA5]'
             }`} />
           </div>
@@ -265,7 +265,7 @@ function BadgeCard({ badge, isUnlocked, earnedAt, theme, index }: BadgeCardProps
           <div className={`p-2 md:p-3 rounded-full ${
             theme === 'dark' ? 'bg-black/50' : 'bg-[#FFFFFF]/80'
           } backdrop-blur-sm`}>
-            <Lock className={`w-5 h-5 md:w-6 md:h-6 ${
+            <Lock size={20} weight="bold" className={`md:w-6 md:h-6 ${
               theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
             }`} />
           </div>

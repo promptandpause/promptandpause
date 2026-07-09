@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { useTheme } from "@/contexts/ThemeContext"
 import { Button } from "@/components/ui/button"
-import { X } from "lucide-react"
+import { X } from "phosphor-react"
 import FromYourPastModal from "./from-your-past-modal"
 
 type FromYourPastResponse =
@@ -104,7 +104,7 @@ export default function FromYourPastCard() {
           className={theme === "dark" ? "text-white/50 hover:text-white" : "text-gray-400 hover:text-gray-700"}
           aria-label="Dismiss"
         >
-          <X className="h-4 w-4" />
+          <X size={16} weight="bold" />
         </button>
       </div>
 
