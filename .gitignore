@@ -67,8 +67,8 @@ docs/email-template-preview.html
 # SQL scripts (run manually, not needed in deployment)
 Sql scripts/
 
-# Dev proxy
-proxy.ts
+# Dev proxy (renamed to middleware.ts, no longer needed in gitignore)
+# proxy.ts
 
 # Misc
 *.log
