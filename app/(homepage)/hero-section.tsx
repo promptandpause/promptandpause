@@ -191,12 +191,12 @@ export default function HeroSection() {
   }
 
   return (
-    <div className="relative min-h-screen bg-white overflow-hidden">
+    <div className="relative h-screen flex flex-col bg-white">
       <Navigation />
 
-      <div id="auth-section" className="relative z-10 flex items-center min-h-screen pt-20 pb-20">
-        <div className="max-w-[1280px] mx-auto w-full px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-4 items-center min-h-[78vh]">
+      <div id="auth-section" className="relative z-10 flex-1 flex items-center overflow-y-auto">
+        <div className="max-w-[1280px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-4 items-center">
             <div className="max-w-md mx-auto lg:mx-0 w-full">
               <h1 className="font-bold text-[#0F1419] text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.1] mb-10 whitespace-nowrap">
                 Prompt. Pause. Reflect.
