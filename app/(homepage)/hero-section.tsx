@@ -3,6 +3,8 @@
 import Navigation from "./Navigation"
 import Link from "next/link"
 import { useState } from "react"
+import { getSupabaseClient } from "@/lib/supabase/client"
+import { useToast } from "@/hooks/use-toast"
 
 function GoogleIcon() {
   return (
@@ -14,6 +16,59 @@ function GoogleIcon() {
 
 export default function HeroSection() {
   const [email, setEmail] = useState("")
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
+  const [isEmailLoading, setIsEmailLoading] = useState(false)
+  const supabase = getSupabaseClient()
+  const { toast } = useToast()
+
+  async function handleGoogleSignIn() {
+    try {
+      setIsGoogleLoading(true)
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      })
+      if (error) throw error
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to sign in with Google",
+        variant: "destructive",
+      })
+      setIsGoogleLoading(false)
+    }
+  }
+
+  async function handleEmailSignUp(e: React.FormEvent) {
+    e.preventDefault()
+    if (!email) return
+
+    try {
+      setIsEmailLoading(true)
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      })
+      if (error) throw error
+      toast({
+        title: "Check your email",
+        description: "We sent you a magic link to sign in.",
+      })
+      setEmail("")
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Something went wrong",
+        variant: "destructive",
+      })
+    } finally {
+      setIsEmailLoading(false)
+    }
+  }
 
   return (
     <div className="relative min-h-screen bg-white overflow-hidden">
@@ -34,13 +89,18 @@ export default function HeroSection() {
                 </p>
 
                 <div className="flex flex-col gap-3">
-                  <Link
-                    href="/login?mode=signup"
-                    className="flex items-center justify-center gap-2 w-full rounded-full bg-[#0F1419] text-white font-medium py-2.5 px-6 hover:bg-black/90 transition-colors"
+                  <button
+                    onClick={handleGoogleSignIn}
+                    disabled={isGoogleLoading}
+                    className="flex items-center justify-center gap-2 w-full rounded-full bg-[#0F1419] text-white font-medium py-2.5 px-6 hover:bg-black/90 transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
                   >
-                    <GoogleIcon />
-                    Sign up with Google
-                  </Link>
+                    {isGoogleLoading ? (
+                      <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" />
+                    ) : (
+                      <GoogleIcon />
+                    )}
+                    {isGoogleLoading ? "Signing in..." : "Sign up with Google"}
+                  </button>
 
                   <div className="flex items-center gap-3 my-1">
                     <div className="h-px flex-1 bg-[#EFF3F4]" />
@@ -48,20 +108,21 @@ export default function HeroSection() {
                     <div className="h-px flex-1 bg-[#EFF3F4]" />
                   </div>
 
-                  <form onSubmit={(e) => e.preventDefault()}>
+                  <form onSubmit={handleEmailSignUp}>
                     <input
-                      type="text"
+                      type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="Email"
-                      className="w-full rounded-xl border border-[#CFD9DE] px-3 py-3 text-[#0F1419] text-base placeholder:text-[#536471] focus:border-[#1D9BF0] focus:outline-none focus:ring-1 focus:ring-[#1D9BF0] mb-3"
+                      disabled={isEmailLoading}
+                      className="w-full rounded-xl border border-[#CFD9DE] px-3 py-3 text-[#0F1419] text-base placeholder:text-[#536471] focus:border-[#1D9BF0] focus:outline-none focus:ring-1 focus:ring-[#1D9BF0] mb-3 disabled:opacity-50"
                     />
                     <button
                       type="submit"
-                      disabled={!email}
+                      disabled={!email || isEmailLoading}
                       className="w-full rounded-full bg-[#1D9BF0] text-white font-bold py-3 px-6 hover:bg-[#1A8CD8] transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
                     >
-                      Continue
+                      {isEmailLoading ? "Sending..." : "Continue"}
                     </button>
                   </form>
 
