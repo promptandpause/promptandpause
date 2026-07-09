@@ -43,7 +43,16 @@ export function TrendingTopics() {
     )
   }
 
-  if (trending.length === 0) return null
+  if (trending.length === 0) {
+    return (
+      <div className={`rounded-2xl ${isDark ? 'bg-white/[0.03] border border-white/[0.06]' : 'bg-white border border-[#EFF3F4]'} p-4`}>
+        <h3 className={`text-lg font-semibold mb-2 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>Trends for you</h3>
+        <p className={`text-sm ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
+          No trending topics yet. Trends appear as the community shares reflections.
+        </p>
+      </div>
+    )
+  }
 
   return (
     <div className={`rounded-2xl ${isDark ? 'bg-white/[0.03] border border-white/[0.06]' : 'bg-white border border-[#EFF3F4]'} p-4`}>
