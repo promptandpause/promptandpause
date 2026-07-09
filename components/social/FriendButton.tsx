@@ -137,14 +137,3 @@ export function FriendButton({ profileUserId, className }: FriendButtonProps) {
     </motion.div>
   )
 }
-
-function useAuth() {
-  const [user, setUser] = useState<any>(null)
-  useEffect(() => {
-    import('@/lib/supabase/client').then(({ getSupabaseClient }) => {
-      const supabase = getSupabaseClient()
-      supabase.auth.getUser().then(({ data }) => setUser(data.user))
-    })
-  }, [])
-  return { user }
-}

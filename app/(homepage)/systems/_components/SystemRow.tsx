@@ -7,8 +7,8 @@ interface SystemRowProps {
 const STATUS_META = {
   operational: {
     label: 'Operational',
-    dotClass: 'bg-[#6FA984]',
-    textClass: 'text-[#6FA984]',
+    dotClass: 'bg-[#1D9BF0]',
+    textClass: 'text-[#1D9BF0]',
   },
   degraded: {
     label: 'Degraded',

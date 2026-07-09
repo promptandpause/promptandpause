@@ -44,7 +44,7 @@ export default function MissionPage() {
   return (
     <>
       <Navigation />
-      <main className="bg-[#F0EDE6] text-[#2F3B34]">
+      <main className="bg-[#EFF3F4] text-[#0F1419]">
       <HeroSection />
 
       <ProblemSection />
@@ -85,7 +85,7 @@ function HeroSection() {
           className="brightness-90"
         />
         <motion.div style={{ opacity }} className="absolute inset-0 flex items-center justify-center z-10 px-6">
-          <div className="absolute inset-0 bg-gradient-to-b from-[#F0EDE6]/5 via-[#E8EAE6]/10 to-[#DCE6D9]/15 z-[-1]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#EFF3F4]/5 via-[#E8F5FE]/10 to-[#B3D9F2]/15 z-[-1]" />
           <div className="text-center text-white max-w-5xl relative z-10">
             <h1 className="text-4xl md:text-6xl lg:text-8xl font-bold mb-8 leading-tight text-balance">
               Why We Built Prompt & Pause
@@ -102,14 +102,14 @@ function HeroSection() {
 
 function ProblemSection() {
   return (
-    <div className="min-h-screen flex items-center px-6 py-32 bg-[#F5F3EE]">
+    <div className="min-h-screen flex items-center px-6 py-32 bg-[#F7F9FA]">
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
         <div className="order-2 lg:order-1">
-          <div className="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-full bg-[#6FA984] mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-full bg-[#1D9BF0] mb-8">
             <Frown className="w-8 h-8 md:w-10 md:h-10 text-white" />
           </div>
           <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-10 leading-tight">The Wellness App Fatigue</h2>
-          <div className="space-y-8 text-lg md:text-xl leading-relaxed text-[#4A5A49]">
+          <div className="space-y-8 text-lg md:text-xl leading-relaxed text-[#536471]">
             <p>
               Traditional mental health apps ask too much: download an app, create a profile, navigate complex features,
               commit to 20-minute meditations, track 15 different habits. For someone already overwhelmed, it's just
@@ -163,8 +163,8 @@ function SolutionSection() {
       </div>
 
       <div className="relative z-10 max-w-5xl mx-auto px-6 py-32">
-        <div className="backdrop-blur-xl bg-[#F0EDE6]/80 border border-[#DCE6D9] rounded-3xl p-10 md:p-16 lg:p-20">
-          <div className="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-full bg-[#6FA984] mb-8">
+        <div className="backdrop-blur-xl bg-[#EFF3F4]/80 border border-[#B3D9F2] rounded-3xl p-10 md:p-16 lg:p-20">
+          <div className="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-full bg-[#1D9BF0] mb-8">
             <Lightbulb className="w-8 h-8 md:w-10 md:h-10 text-white" />
           </div>
           <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-10 leading-tight text-white">
@@ -189,48 +189,48 @@ function SolutionSection() {
 
 function WhoItsForSection() {
   return (
-    <div className="min-h-screen flex items-center px-6 py-32 bg-[#E8EAE6]">
+    <div className="min-h-screen flex items-center px-6 py-32 bg-[#E8F5FE]">
       <div className="max-w-7xl mx-auto w-full">
         <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-20 leading-tight">Who It's For</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
-          <div className="group backdrop-blur-md bg-[#F0EDE6]/80 border border-[#DCE6D9] p-10 lg:p-12 rounded-3xl hover:bg-[#F5F3EE] hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
+          <div className="group backdrop-blur-md bg-[#EFF3F4]/80 border border-[#B3D9F2] p-10 lg:p-12 rounded-3xl hover:bg-[#F7F9FA] hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
             <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">The Job Seeker</h3>
-            <p className="text-[#4A5A49] leading-relaxed text-lg">
+            <p className="text-[#536471] leading-relaxed text-lg">
               Navigating redundancy or career uncertainty. Need space to process rejection and rebuild confidence.
             </p>
           </div>
 
-          <div className="group backdrop-blur-md bg-[#F0EDE6]/80 border border-[#DCE6D9] p-10 lg:p-12 rounded-3xl hover:bg-[#F5F3EE] hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
+          <div className="group backdrop-blur-md bg-[#EFF3F4]/80 border border-[#B3D9F2] p-10 lg:p-12 rounded-3xl hover:bg-[#F7F9FA] hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
             <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">The Burnt-Out Professional</h3>
-            <p className="text-[#4A5A49] leading-relaxed text-lg">
+            <p className="text-[#536471] leading-relaxed text-lg">
               Giving 110% at work but running on empty. Need permission to acknowledge struggle without quitting.
             </p>
           </div>
 
-          <div className="group backdrop-blur-md bg-[#F0EDE6]/80 border border-[#DCE6D9] p-10 lg:p-12 rounded-3xl hover:bg-[#F5F3EE] hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
+          <div className="group backdrop-blur-md bg-[#EFF3F4]/80 border border-[#B3D9F2] p-10 lg:p-12 rounded-3xl hover:bg-[#F7F9FA] hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
             <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">The Quietly Struggling</h3>
-            <p className="text-[#4A5A49] leading-relaxed text-lg">
+            <p className="text-[#536471] leading-relaxed text-lg">
               Functional but not thriving. Need tools for self-awareness before things get worse.
             </p>
           </div>
 
-          <div className="group backdrop-blur-md bg-[#F0EDE6]/80 border border-[#DCE6D9] p-10 lg:p-12 rounded-3xl hover:bg-[#F5F3EE] hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
+          <div className="group backdrop-blur-md bg-[#EFF3F4]/80 border border-[#B3D9F2] p-10 lg:p-12 rounded-3xl hover:bg-[#F7F9FA] hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
             <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">The New Parent</h3>
-            <p className="text-[#4A5A49] leading-relaxed text-lg">
+            <p className="text-[#536471] leading-relaxed text-lg">
               Adjusting to a life that's changed overnight. Need a few minutes of clarity between feeds, naps, and self-doubt.
             </p>
           </div>
 
-          <div className="group backdrop-blur-md bg-[#F0EDE6]/80 border border-[#DCE6D9] p-10 lg:p-12 rounded-3xl hover:bg-[#F5F3EE] hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
+          <div className="group backdrop-blur-md bg-[#EFF3F4]/80 border border-[#B3D9F2] p-10 lg:p-12 rounded-3xl hover:bg-[#F7F9FA] hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
             <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">The Overthinker</h3>
-            <p className="text-[#4A5A49] leading-relaxed text-lg">
+            <p className="text-[#536471] leading-relaxed text-lg">
               Stuck in loops of "what if" and "should have." Need a focused question to cut through the noise and find perspective.
             </p>
           </div>
 
-          <div className="group backdrop-blur-md bg-[#F0EDE6]/80 border border-[#DCE6D9] p-10 lg:p-12 rounded-3xl hover:bg-[#F5F3EE] hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
+          <div className="group backdrop-blur-md bg-[#EFF3F4]/80 border border-[#B3D9F2] p-10 lg:p-12 rounded-3xl hover:bg-[#F7F9FA] hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
             <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">The Caregiver</h3>
-            <p className="text-[#4A5A49] leading-relaxed text-lg">
+            <p className="text-[#536471] leading-relaxed text-lg">
               Always looking after everyone else. Need a moment that's just for you—no guilt, no agenda, just honest reflection.
             </p>
           </div>
@@ -242,63 +242,63 @@ function WhoItsForSection() {
 
 function ValuesSection() {
   return (
-    <div className="min-h-screen flex items-center px-6 py-32 bg-[#F5F3EE]">
+    <div className="min-h-screen flex items-center px-6 py-32 bg-[#F7F9FA]">
       <div className="max-w-6xl mx-auto w-full">
         <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-20 leading-tight">Our Values</h2>
         <div className="grid md:grid-cols-2 gap-x-16 gap-y-12 lg:gap-y-16">
           <div className="flex gap-6 items-start group">
-            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#6FA984] flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#1D9BF0] flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
               <CheckCircle2 className="w-6 h-6 text-white" />
             </div>
             <div>
               <h3 className="text-2xl md:text-3xl font-bold mb-4">Globally Aware</h3>
-              <p className="text-[#4A5A49] leading-relaxed text-lg">
+              <p className="text-[#536471] leading-relaxed text-lg">
                 Built with UK & US crisis resources at its core, with multi-language support and timezone-adaptive delivery for anyone, anywhere
               </p>
             </div>
           </div>
 
           <div className="flex gap-6 items-start group">
-            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#6FA984] flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#1D9BF0] flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
               <CheckCircle2 className="w-6 h-6 text-white" />
             </div>
             <div>
               <h3 className="text-2xl md:text-3xl font-bold mb-4">Privacy-First</h3>
-              <p className="text-[#4A5A49] leading-relaxed text-lg">
+              <p className="text-[#536471] leading-relaxed text-lg">
                 Your reflections are encrypted, never sold, never shared
               </p>
             </div>
           </div>
 
           <div className="flex gap-6 items-start group">
-            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#6FA984] flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#1D9BF0] flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
               <CheckCircle2 className="w-6 h-6 text-white" />
             </div>
             <div>
               <h3 className="text-2xl md:text-3xl font-bold mb-4">Simple-First</h3>
-              <p className="text-[#4A5A49] leading-relaxed text-lg">One prompt. One inbox. No feature bloat.</p>
+              <p className="text-[#536471] leading-relaxed text-lg">One prompt. One inbox. No feature bloat.</p>
             </div>
           </div>
 
           <div className="flex gap-6 items-start group">
-            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#6FA984] flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#1D9BF0] flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
               <CheckCircle2 className="w-6 h-6 text-white" />
             </div>
             <div>
               <h3 className="text-2xl md:text-3xl font-bold mb-4">Honest-First</h3>
-              <p className="text-[#4A5A49] leading-relaxed text-lg">
+              <p className="text-[#536471] leading-relaxed text-lg">
                 No toxic positivity. Some days are hard, and that's okay.
               </p>
             </div>
           </div>
 
           <div className="flex gap-6 items-start group md:col-span-2 max-w-xl">
-            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#6FA984] flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#1D9BF0] flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
               <CheckCircle2 className="w-6 h-6 text-white" />
             </div>
             <div>
               <h3 className="text-2xl md:text-3xl font-bold mb-4">Accessible-First</h3>
-              <p className="text-[#4A5A49] leading-relaxed text-lg">
+              <p className="text-[#536471] leading-relaxed text-lg">
                 Free tier forever. Premium is less than 5 coffees/month.
               </p>
             </div>
@@ -311,7 +311,7 @@ function ValuesSection() {
 
 function FounderSection() {
   return (
-    <div className="min-h-screen flex items-center px-6 py-32 bg-[#E8EAE6]">
+    <div className="min-h-screen flex items-center px-6 py-32 bg-[#E8F5FE]">
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
         <div className="h-[500px] lg:h-[700px] relative">
           <Image
@@ -324,7 +324,7 @@ function FounderSection() {
         </div>
         <div>
           <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-10 leading-tight">Founder's Note</h2>
-          <div className="space-y-8 text-lg md:text-xl leading-relaxed text-[#4A5A49]">
+          <div className="space-y-8 text-lg md:text-xl leading-relaxed text-[#536471]">
             <p>
               I built Prompt & Pause during my own career transition and through unexpected life changes, I was too
               overwhelmed for therapy, and very much stuck on what to do next, I found myself way too restless for
@@ -332,7 +332,7 @@ function FounderSection() {
               me where I was—exhausted, uncertain, but still trying.
             </p>
             <p>If you're in that space too, this is for you.</p>
-            <p className="text-[#6B7F6E] italic text-lg md:text-xl">— Dishaun Codjoe, Founder</p>
+            <p className="text-[#8B98A5] italic text-lg md:text-xl">— Dishaun Codjoe, Founder</p>
           </div>
         </div>
       </div>
@@ -342,7 +342,7 @@ function FounderSection() {
 
 function CTASection() {
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 py-32 bg-[#DCE6D9] text-[#2F3B34]">
+    <div className="min-h-screen flex items-center justify-center px-6 py-32 bg-[#B3D9F2] text-[#0F1419]">
       <div className="max-w-4xl text-center">
         <h2 className="text-4xl md:text-6xl lg:text-8xl font-bold mb-16 leading-tight text-balance">
           Start Your Reflection Practice Today
@@ -350,13 +350,13 @@ function CTASection() {
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <a
               href="/auth"
-              className="px-10 py-5 bg-[#6FA984] text-white border-2 border-[#6FA984] text-base font-medium tracking-wide transition-all duration-300 hover:bg-[#5A8F6E] cursor-pointer text-center"
+              className="px-10 py-5 bg-[#1D9BF0] text-white border-2 border-[#1D9BF0] text-base font-medium tracking-wide transition-all duration-300 hover:bg-[#1A8CD8] cursor-pointer text-center"
             >
               START FREE
             </a>
           <a
             href="/pricing"
-            className="px-10 py-5 border-2 border-[#6FA984] bg-transparent text-[#6FA984] text-base font-medium tracking-wide transition-all duration-300 hover:bg-[#6FA984] hover:text-white cursor-pointer text-center"
+            className="px-10 py-5 border-2 border-[#1D9BF0] bg-transparent text-[#1D9BF0] text-base font-medium tracking-wide transition-all duration-300 hover:bg-[#1D9BF0] hover:text-white cursor-pointer text-center"
           >
             VIEW PRICING
           </a>

@@ -1,101 +1,69 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Feather, Leaf, Lock, Moon } from "lucide-react"
+import { Sparkles, Shield, Wind, Moon } from "lucide-react"
 
 const principles = [
   {
-    icon: Feather,
-    title: "Gentle on purpose",
-    body: "No streaks to defend, no badges to chase. Skip a day and we're still here — exactly where you left off.",
+    icon: Sparkles,
+    title: "One prompt at a time",
+    body: "No feeds, no algorithm. Just a single question chosen to help you pause and reflect.",
   },
   {
-    icon: Lock,
+    icon: Shield,
     title: "Truly private",
-    body: "Your reflections are encrypted at rest and never used to train models. This is your space, not a dataset.",
+    body: "Your reflections are encrypted and never used to train AI. This space belongs to you.",
   },
   {
-    icon: Leaf,
-    title: "Slow by design",
-    body: "One prompt at a time. No feeds to scroll, nothing to optimise. The pace is set by you, not an algorithm.",
+    icon: Wind,
+    title: "No pressure",
+    body: "Skip a day, take a week off — we'll be here when you come back. No guilt, no streaks.",
   },
   {
     icon: Moon,
-    title: "Calm first",
-    body: "Quiet colours, soft motion, gentle copy. Everything here is tuned to lower your shoulders, not raise your pulse.",
+    title: "Calm by design",
+    body: "Quiet colors, gentle copy, soft motion. Everything here is meant to lower your shoulders.",
   },
 ]
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as any } },
-}
-
 export default function Principles() {
   return (
-    <section
-      aria-labelledby="principles-heading"
-      className="relative isolate overflow-hidden bg-[#F0EDE6] px-6 py-24 sm:py-32 lg:px-12"
-    >
-      {/* Soft ambient wash */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 opacity-70"
-        style={{
-          background:
-            "radial-gradient(800px 500px at 20% 10%, rgba(111,169,132,0.10), transparent 60%), radial-gradient(700px 500px at 90% 100%, rgba(220,230,217,0.45), transparent 60%)",
-        }}
-      />
-
-      <div className="mx-auto max-w-7xl">
-        <motion.header
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
-          className="max-w-3xl"
-        >
-          <span className="inline-flex items-center gap-2 rounded-full border border-[#6FA984]/25 bg-white/60 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#4A5A49] backdrop-blur">
-            How it feels
-          </span>
-          <h2
-            id="principles-heading"
-            className="mt-6 font-serif text-4xl leading-[1.1] tracking-tight text-[#2F3B34] sm:text-5xl lg:text-6xl"
-          >
-            Built around four quiet&nbsp;principles.
+    <section className="bg-white py-24 sm:py-32">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#0F1419]">
+            Built on four principles
           </h2>
-          <p className="mt-5 max-w-2xl text-lg leading-relaxed text-[#4A5A49] sm:text-xl">
-            Prompt &amp; Pause isn't another productivity app. It's a small, deliberate ritual —
-            designed to make space, not fill it.
+          <p className="mt-4 text-lg text-[#536471]">
+            Every decision in Prompt &amp; Pause comes back to these.
           </p>
-        </motion.header>
-
-        <motion.ul
+        </div>
+        <motion.div
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-80px" }}
           variants={{ show: { transition: { staggerChildren: 0.1 } } }}
-          className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
+          className="mx-auto mt-16 grid max-w-5xl grid-cols-1 gap-6 sm:grid-cols-2"
         >
           {principles.map(({ icon: Icon, title, body }) => (
-            <motion.li
+            <motion.div
               key={title}
-              variants={itemVariants}
-              whileHover={{ y: -4 }}
-              transition={{ type: "spring", stiffness: 220, damping: 22 }}
-              className="group relative flex flex-col rounded-3xl border border-white/60 bg-white/60 p-7 shadow-sm shadow-[#2F3B34]/5 backdrop-blur-xl transition-colors hover:bg-white/80"
+              variants={{
+                hidden: { opacity: 0, y: 16 },
+                show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+              }}
+              className="flex gap-5 rounded-2xl border border-[#EFF3F4] bg-white p-6 shadow-sm"
             >
-              <span
-                aria-hidden="true"
-                className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#6FA984] to-[#5A8F6E] text-white shadow-lg shadow-[#6FA984]/25"
-              >
-                <Icon className="h-5 w-5" />
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#F7F9FA] border border-[#EFF3F4]">
+                <Icon className="h-5 w-5 text-[#1D9BF0]" />
               </span>
-              <h3 className="mt-6 font-serif text-xl text-[#2F3B34]">{title}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-[#4A5A49] sm:text-base">{body}</p>
-            </motion.li>
+              <div>
+                <h3 className="font-semibold text-[#0F1419]">{title}</h3>
+                <p className="mt-1 text-sm leading-relaxed text-[#536471]">{body}</p>
+              </div>
+            </motion.div>
           ))}
-        </motion.ul>
+        </motion.div>
       </div>
     </section>
   )

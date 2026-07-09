@@ -37,10 +37,10 @@ export default function TermsOfServicePage() {
   return (
     <>
       <Navigation />
-      <main className="min-h-screen bg-[#F0EDE6] text-[#2F3B34]">
+      <main className="min-h-screen bg-[#EFF3F4] text-[#0F1419]">
       {/* Hero Section */}
       <section ref={heroRef} className="relative h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#F0EDE6] via-[#E8EAE6] to-[#DCE6D9]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#EFF3F4] via-[#E8F5FE] to-[#B3D9F2]" />
 
         <motion.div style={{ opacity, scale }} className="relative z-10 text-center px-4 max-w-4xl mx-auto">
           <motion.div
@@ -49,7 +49,7 @@ export default function TermsOfServicePage() {
             transition={{ duration: 0.8 }}
             className="mb-6"
           >
-            <FileText className="w-16 h-16 mx-auto mb-6 text-[#6FA984]" />
+            <FileText className="w-16 h-16 mx-auto mb-6 text-[#1D9BF0]" />
           </motion.div>
 
           <motion.h1
@@ -65,7 +65,7 @@ export default function TermsOfServicePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-xl md:text-2xl text-[#4A5A49] mb-8 text-balance"
+            className="text-xl md:text-2xl text-[#536471] mb-8 text-balance"
           >
             The legal agreement between you and Prompt & Pause.
           </motion.p>
@@ -74,7 +74,7 @@ export default function TermsOfServicePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-sm text-[#6B7F6E]"
+            className="text-sm text-[#8B98A5]"
           >
             Effective Date: January 2026
           </motion.p>
@@ -94,9 +94,9 @@ export default function TermsOfServicePage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.05 }}
                 viewport={{ once: true }}
-                className="p-4 bg-[#F5F3EE] backdrop-blur-md rounded-lg hover:bg-[#F0EDE6] transition-all duration-300 hover:scale-105"
+                className="p-4 bg-[#F7F9FA] backdrop-blur-md rounded-lg hover:bg-[#EFF3F4] transition-all duration-300 hover:scale-105"
               >
-                <span className="text-[#6B7F6E] text-sm">0{index + 1}</span>
+                <span className="text-[#8B98A5] text-sm">0{index + 1}</span>
                 <h3 className="text-lg font-bold">{section.title}</h3>
               </motion.a>
             ))}
@@ -110,7 +110,7 @@ export default function TermsOfServicePage() {
           {/* Acceptance */}
           <div id="acceptance" className="scroll-mt-20">
             <h2 className="text-4xl font-bold mb-6 uppercase">Acceptance of Terms</h2>
-            <div className="space-y-4 text-[#4A5A49] leading-relaxed">
+            <div className="space-y-4 text-[#536471] leading-relaxed">
               <p>
                 By accessing or using Prompt & Pause ("Service"), you agree to be bound by these Terms of Service
                 ("Terms"). If you do not agree to these Terms, do not use the Service.
@@ -119,10 +119,10 @@ export default function TermsOfServicePage() {
                 These Terms constitute a legally binding agreement between you ("User," "you," or "your") and Prompt &
                 Pause ("we," "us," or "our"), a service operated in the United Kingdom.
               </p>
-              <p className="p-4 bg-[#E8EAE6] border border-[#DCE6D9] rounded-lg">
+              <p className="p-4 bg-[#E8F5FE] border border-[#B3D9F2] rounded-lg">
                 <strong>Important:</strong> By creating an account or using our Service, you acknowledge that you have
                 read, understood, and agree to be bound by these Terms and our{" "}
-                <Link href="/privacy-policy" className="text-[#6FA984] underline hover:text-[#2F3B34]">
+                <Link href="/privacy-policy" className="text-[#1D9BF0] underline hover:text-[#0F1419]">
                   Privacy Policy
                 </Link>
                 .
@@ -133,7 +133,7 @@ export default function TermsOfServicePage() {
           {/* Service Description */}
           <div id="service-description" className="scroll-mt-20">
             <h2 className="text-4xl font-bold mb-6 uppercase">Service Description</h2>
-            <div className="space-y-4 text-[#4A5A49] leading-relaxed">
+            <div className="space-y-4 text-[#536471] leading-relaxed">
               <p>Prompt & Pause provides:</p>
               <ul className="space-y-2 list-disc list-inside ml-4">
                 <li>Daily reflection prompts delivered via email or Slack</li>
@@ -155,7 +155,7 @@ export default function TermsOfServicePage() {
               <UserCheck className="w-8 h-8" />
               User Accounts
             </h2>
-            <div className="space-y-4 text-[#4A5A49] leading-relaxed">
+            <div className="space-y-4 text-[#536471] leading-relaxed">
               <h3 className="text-2xl font-bold mt-6">Account Creation</h3>
               <ul className="space-y-2 list-disc list-inside ml-4">
                 <li>You must be at least 16 years old to create an account (UK/EU) or 13 years old (US)</li>
@@ -175,13 +175,13 @@ export default function TermsOfServicePage() {
               </ul>
 
               <h3 className="text-2xl font-bold mt-6">AI Transparency</h3>
-              <p className="p-4 bg-[#DCE6D9]/40 border border-[#6FA984]/30 rounded-lg">
+              <p className="p-4 bg-[#B3D9F2]/40 border border-[#1D9BF0]/30 rounded-lg">
                 <strong>AI Disclosure:</strong> Our service uses artificial intelligence to generate personalized prompts. 
                 AI-generated content is for reflection purposes only and should not be considered medical or therapeutic advice.
               </p>
               
               <h3 className="text-2xl font-bold mt-6">Mental Health Disclaimer</h3>
-              <p className="p-4 bg-[#F5F3EE] border border-[#DCE6D9] rounded-lg">
+              <p className="p-4 bg-[#F7F9FA] border border-[#B3D9F2] rounded-lg">
                 <strong>Important:</strong> Prompt & Pause is not a substitute for professional mental health services. 
                 If you are experiencing a mental health crisis, please contact emergency services or a qualified healthcare provider.
               </p>
@@ -191,7 +191,7 @@ export default function TermsOfServicePage() {
           {/* Subscription & Payment */}
           <div id="subscription" className="scroll-mt-20">
             <h2 className="text-4xl font-bold mb-6 uppercase">Subscription & Payment</h2>
-            <div className="space-y-4 text-[#4A5A49] leading-relaxed">
+            <div className="space-y-4 text-[#536471] leading-relaxed">
               <h3 className="text-2xl font-bold">Pricing</h3>
               <ul className="space-y-2 list-disc list-inside ml-4">
                 <li>
@@ -217,7 +217,7 @@ export default function TermsOfServicePage() {
               <h3 className="text-2xl font-bold mt-6">Refund Policy</h3>
               <p>
                 We offer a 14-day money-back guarantee for Premium subscriptions. To request a refund, contact{" "}
-                <a href="mailto:support@promptandpause.com" className="text-[#6FA984] underline hover:text-[#2F3B34]">
+                <a href="mailto:support@promptandpause.com" className="text-[#1D9BF0] underline hover:text-[#0F1419]">
                   support@promptandpause.com
                 </a>{" "}
                 within 14 days of purchase.
@@ -234,7 +234,7 @@ export default function TermsOfServicePage() {
           {/* User Conduct */}
           <div id="user-conduct" className="scroll-mt-20">
             <h2 className="text-4xl font-bold mb-6 uppercase">User Conduct</h2>
-            <div className="space-y-4 text-[#4A5A49] leading-relaxed">
+            <div className="space-y-4 text-[#536471] leading-relaxed">
               <p>You agree NOT to:</p>
               <ul className="space-y-2 list-disc list-inside ml-4">
                 <li>Use the Service for any illegal purpose</li>
@@ -248,7 +248,7 @@ export default function TermsOfServicePage() {
                 <li>Harass, abuse, or harm others</li>
                 <li>Use the Service to provide therapy or medical advice to others</li>
               </ul>
-              <p className="mt-6 p-4 bg-[#E8EAE6] border border-[#DCE6D9] rounded-lg">
+              <p className="mt-6 p-4 bg-[#E8F5FE] border border-[#B3D9F2] rounded-lg">
                 Violation of these terms may result in immediate account termination and legal action.
               </p>
             </div>
@@ -257,7 +257,7 @@ export default function TermsOfServicePage() {
           {/* Intellectual Property */}
           <div id="intellectual-property" className="scroll-mt-20">
             <h2 className="text-4xl font-bold mb-6 uppercase">Intellectual Property</h2>
-            <div className="space-y-4 text-[#4A5A49] leading-relaxed">
+            <div className="space-y-4 text-[#536471] leading-relaxed">
               <h3 className="text-2xl font-bold">Our Content</h3>
               <p>
                 All content, features, and functionality of the Service (including but not limited to text, graphics,
@@ -286,7 +286,7 @@ export default function TermsOfServicePage() {
               <AlertTriangle className="w-8 h-8 text-yellow-500" />
               Medical Disclaimer
             </h2>
-            <div className="space-y-4 text-[#4A5A49] leading-relaxed">
+            <div className="space-y-4 text-[#536471] leading-relaxed">
               <div className="p-6 bg-red-50 border-2 border-red-200 rounded-lg">
                 <p className="font-bold text-xl mb-4">IMPORTANT: READ CAREFULLY</p>
                 <ul className="space-y-3 list-disc list-inside">
@@ -310,7 +310,7 @@ export default function TermsOfServicePage() {
               </div>
 
               <h3 className="text-2xl font-bold mt-6">Crisis Resources</h3>
-              <div className="p-4 bg-[#E8EAE6] border border-[#DCE6D9] rounded-lg">
+              <div className="p-4 bg-[#E8F5FE] border border-[#B3D9F2] rounded-lg">
                 <p>
                   <strong>UK:</strong> Samaritans - 116 123 (24/7)
                 </p>
@@ -335,7 +335,7 @@ export default function TermsOfServicePage() {
               <Scale className="w-8 h-8" />
               Limitation of Liability
             </h2>
-            <div className="space-y-4 text-[#4A5A49] leading-relaxed">
+            <div className="space-y-4 text-[#536471] leading-relaxed">
               <p>TO THE MAXIMUM EXTENT PERMITTED BY LAW:</p>
               <ul className="space-y-2 list-disc list-inside ml-4">
                 <li>The Service is provided "AS IS" and "AS AVAILABLE" without warranties of any kind</li>
@@ -347,7 +347,7 @@ export default function TermsOfServicePage() {
                 <li>We are not responsible for third-party services (Stripe, Supabase, Groq, OpenAI, etc.)</li>
               </ul>
 
-              <p className="mt-6 p-4 bg-[#E8EAE6] border border-[#DCE6D9] rounded-lg">
+              <p className="mt-6 p-4 bg-[#E8F5FE] border border-[#B3D9F2] rounded-lg">
                 <strong>UK/EU Users:</strong> Nothing in these Terms excludes or limits our liability for death or
                 personal injury caused by negligence, fraud, or any liability that cannot be excluded by law.
               </p>
@@ -357,11 +357,11 @@ export default function TermsOfServicePage() {
           {/* Termination */}
           <div id="termination" className="scroll-mt-20">
             <h2 className="text-4xl font-bold mb-6 uppercase">Termination</h2>
-            <div className="space-y-4 text-[#4A5A49] leading-relaxed">
+            <div className="space-y-4 text-[#536471] leading-relaxed">
               <h3 className="text-2xl font-bold">By You</h3>
               <p>
                 You may terminate your account at any time by contacting{" "}
-                <a href="mailto:support@promptandpause.com" className="text-[#6FA984] underline hover:text-[#2F3B34]">
+                <a href="mailto:support@promptandpause.com" className="text-[#1D9BF0] underline hover:text-[#0F1419]">
                   support@promptandpause.com
                 </a>{" "}
                 or through your account settings.
@@ -382,7 +382,7 @@ export default function TermsOfServicePage() {
                 <li>Your access to the Service will cease immediately</li>
                 <li>
                   Your data will be deleted according to our{" "}
-                  <Link href="/privacy-policy" className="text-[#6FA984] underline hover:text-[#2F3B34]">
+                  <Link href="/privacy-policy" className="text-[#1D9BF0] underline hover:text-[#0F1419]">
                     Privacy Policy
                   </Link>
                 </li>
@@ -395,7 +395,7 @@ export default function TermsOfServicePage() {
           {/* Governing Law */}
           <div id="governing-law" className="scroll-mt-20">
             <h2 className="text-4xl font-bold mb-6 uppercase">Governing Law</h2>
-            <div className="space-y-4 text-[#4A5A49] leading-relaxed">
+            <div className="space-y-4 text-[#536471] leading-relaxed">
               <p>
                 These Terms are governed by the laws of England and Wales. Any disputes will be subject to the exclusive
                 jurisdiction of the courts of England and Wales.
@@ -416,7 +416,7 @@ export default function TermsOfServicePage() {
           {/* Changes to Terms */}
           <div id="changes" className="scroll-mt-20">
             <h2 className="text-4xl font-bold mb-6 uppercase">Changes to Terms</h2>
-            <div className="space-y-4 text-[#4A5A49] leading-relaxed">
+            <div className="space-y-4 text-[#536471] leading-relaxed">
               <p>We may update these Terms from time to time. We will notify you of material changes by:</p>
               <ul className="space-y-2 list-disc list-inside ml-4">
                 <li>Email notification to your registered email address</li>
@@ -427,25 +427,25 @@ export default function TermsOfServicePage() {
                 Continued use of the Service after changes constitutes acceptance of the new Terms. If you do not agree
                 to the changes, you must stop using the Service and terminate your account.
               </p>
-              <p className="text-sm text-[#6B7F6E] mt-6">Last updated: January 2026</p>
+              <p className="text-sm text-[#8B98A5] mt-6">Last updated: January 2026</p>
             </div>
           </div>
 
           {/* Contact */}
           <div id="contact" className="scroll-mt-20">
             <h2 className="text-4xl font-bold mb-6 uppercase">Contact Information</h2>
-            <div className="space-y-4 text-[#4A5A49] leading-relaxed">
+            <div className="space-y-4 text-[#536471] leading-relaxed">
               <p>For questions about these Terms:</p>
-              <div className="p-6 bg-[#F5F3EE] border border-[#DCE6D9] rounded-lg mt-6">
+              <div className="p-6 bg-[#F7F9FA] border border-[#B3D9F2] rounded-lg mt-6">
                 <p>
                   <strong>Email:</strong>{" "}
-                  <a href="mailto:legal@promptandpause.com" className="text-[#6FA984] underline hover:text-[#2F3B34]">
+                  <a href="mailto:legal@promptandpause.com" className="text-[#1D9BF0] underline hover:text-[#0F1419]">
                     legal@promptandpause.com
                   </a>
                 </p>
                 <p className="mt-2">
                   <strong>Support:</strong>{" "}
-                  <a href="mailto:support@promptandpause.com" className="text-[#6FA984] underline hover:text-[#2F3B34]">
+                  <a href="mailto:support@promptandpause.com" className="text-[#1D9BF0] underline hover:text-[#0F1419]">
                     support@promptandpause.com
                   </a>
                 </p>
@@ -453,7 +453,7 @@ export default function TermsOfServicePage() {
                   <strong>Website:</strong>{" "}
                   <a
                     href="https://promptandpause.com"
-                    className="text-[#6FA984] underline hover:text-[#2F3B34]"
+                    className="text-[#1D9BF0] underline hover:text-[#0F1419]"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -467,13 +467,13 @@ export default function TermsOfServicePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-[#DCE6D9]">
+      <section className="py-20 px-4 bg-[#B3D9F2]">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 uppercase text-[#2F3B34]">Start with one prompt</h2>
-          <p className="text-xl text-[#4A5A49] mb-8">Start with one prompt when you're ready.</p>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 uppercase text-[#0F1419]">Start with one prompt</h2>
+          <p className="text-xl text-[#536471] mb-8">Start with one prompt when you're ready.</p>
           <Link
             href="/pricing"
-            className="inline-block px-8 py-4 bg-white text-[#2F3B34] font-bold uppercase hover:bg-[#F0EDE6] transition-colors duration-300"
+            className="inline-block px-8 py-4 bg-white text-[#0F1419] font-bold uppercase hover:bg-[#EFF3F4] transition-colors duration-300"
           >
             View Pricing
           </Link>

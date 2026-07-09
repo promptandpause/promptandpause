@@ -2,91 +2,73 @@
 
 import Navigation from "./Navigation"
 import Link from "next/link"
-import { MeshGradient } from "@paper-design/shaders-react"
-import { useEffect, useState } from "react"
 
 export default function HeroSection() {
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
   return (
-    <div className="relative min-h-screen bg-[#F0EDE6] overflow-hidden">
-      {/* Animated Mesh Gradient Background */}
-      {!mounted ? (
-        <div className="absolute inset-0 bg-gradient-to-br from-[#F0EDE6] via-[#E8EAE6] to-[#E1EAE0]" />
-      ) : (
-        <>
-          <MeshGradient
-            className="absolute inset-0 w-full h-full"
-            colors={["#F0EDE6", "#E8EAE6", "#E1EAE0", "#DCE6D9"]}
-            speed={1.0}
-          />
-
-          {/* Lighting overlay effects */}
-          <div className="absolute inset-0 pointer-events-none">
-            <div
-              className="absolute top-1/4 left-1/3 w-32 h-32 bg-[#6FA984]/5 rounded-full blur-3xl animate-pulse"
-              style={{ animationDuration: "3s" }}
-            />
-            <div
-              className="absolute bottom-1/3 right-1/4 w-24 h-24 bg-white/2 rounded-full blur-2xl animate-pulse"
-              style={{ animationDuration: "2s", animationDelay: "1s" }}
-            />
-            <div
-              className="absolute top-1/2 right-1/3 w-20 h-20 bg-[#4A5A49]/3 rounded-full blur-xl animate-pulse"
-              style={{ animationDuration: "4s", animationDelay: "0.5s" }}
-            />
-          </div>
-        </>
-      )}
-
-      {/* Overlay for better text readability */}
-      <div className="absolute inset-0 bg-[#2F3B34]/10 z-[1]" />
-      
-      {/* Navigation - Using shared component */}
+    <div className="relative min-h-screen bg-white overflow-hidden">
       <Navigation />
 
-      {/* Hero Content */}
       <div className="relative z-10 flex items-center min-h-screen pt-20 pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="max-w-3xl fade-in">
-            {/* Hero Heading */}
-            <h1 className="font-serif text-[#2F3B34] text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal tracking-tight mb-6 sm:mb-8 leading-[1.15]">
-              Five quiet minutes a day to make sense of your life.
-            </h1>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            {/* Left: Text */}
+            <div className="max-w-xl">
+              <h1 className="font-sans text-[#0F1419] text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight leading-[1.05]">
+                Pause.
+                <br />
+                Reflect.
+                <br />
+                Grow.
+              </h1>
+              <p className="mt-6 text-lg sm:text-xl text-[#536471] leading-relaxed max-w-md">
+                One thoughtful question a day. Five quiet minutes. A private space that's just yours.
+              </p>
+              <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                <Link
+                  href="/login?mode=signup"
+                  className="inline-flex items-center justify-center px-8 py-3.5 bg-[#1D9BF0] text-white font-semibold text-base rounded-full hover:bg-[#1A8CD8] transition-colors"
+                >
+                  Start reflecting
+                </Link>
+                <Link
+                  href="/login"
+                  className="inline-flex items-center justify-center px-8 py-3.5 border border-[#EFF3F4] text-[#0F1419] font-semibold text-base rounded-full hover:bg-[#F7F9FA] transition-colors"
+                >
+                  Sign in
+                </Link>
+              </div>
+            </div>
 
-            {/* Hero Subheading */}
-            <p className="font-sans text-[#4A5A49] text-lg sm:text-xl md:text-2xl font-light leading-relaxed mb-10 sm:mb-14 max-w-2xl">
-              Prompt &amp; Pause gives you one thoughtful question at a time - so you can stop, reflect, and move forward with clarity. No pressure. No performance. Just you.
-            </p>
-
-            {/* Call to Action Button */}
-            <Link href="/login?mode=signup" className="inline-block w-full sm:w-auto text-center bg-gradient-to-r from-[#6FA984] to-[#5A8F6E] text-white font-sans font-semibold px-10 py-5 rounded-2xl text-lg hover:from-[#5E9876] hover:to-[#4F7C5F] hover:scale-105 hover:shadow-2xl hover:shadow-[#6FA984]/30 transition-all duration-300 touch-manipulation shadow-xl shadow-[#6FA984]/20">
-              Start today's reflection
-            </Link>
-            
-            {/* Trial Information */}
-            <p className="font-sans text-[#6B7F6E] text-sm md:text-base font-light mt-4 sm:mt-6">
-              Try it free for <span className="font-semibold text-[#2F3B34]">7 days</span> no credit card required
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Footer Copyright */}
-      <div className="absolute bottom-4 sm:bottom-6 left-0 right-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="flex justify-center sm:justify-start items-center">
-            <p className="font-sans text-[#7A8778] text-xs sm:text-sm font-light text-center sm:text-left">
-              © 2026 Prompt & Pause. All rights reserved.
-            </p>
+            {/* Right: Product preview */}
+            <div className="hidden lg:flex justify-center">
+              <div className="relative w-full max-w-md">
+                <div className="rounded-2xl border border-[#EFF3F4] bg-white shadow-xl shadow-[#0F1419]/5 p-8">
+                  <div className="flex items-center gap-2 mb-6">
+                    <div className="h-8 w-8 rounded-full bg-[#1D9BF0] flex items-center justify-center">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
+                      </svg>
+                    </div>
+                    <span className="text-sm font-semibold text-[#0F1419]">Today's Prompt</span>
+                  </div>
+                  <blockquote className="text-xl font-serif leading-relaxed text-[#0F1419]">
+                    &ldquo;What moment from this week are you most grateful for?&rdquo;
+                  </blockquote>
+                  <div className="mt-6 pt-6 border-t border-[#EFF3F4]">
+                    <div className="h-20 rounded-lg bg-[#F7F9FA] border border-[#EFF3F4] p-3">
+                      <p className="text-sm text-[#8B98A5] italic">Write your reflection here...</p>
+                    </div>
+                    <div className="mt-3 flex justify-end">
+                      <div className="h-2 w-16 rounded-full bg-[#EFF3F4]" />
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-[#1D9BF0]/5 rounded-full blur-2xl" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   )
 }
-

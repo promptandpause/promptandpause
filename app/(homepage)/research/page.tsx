@@ -16,7 +16,7 @@ export default function ResearchPage() {
   return (
     <>
       <Navigation />
-      <main className="bg-[#F0EDE6] text-[#2F3B34] min-h-screen">
+      <main className="bg-[#EFF3F4] text-[#0F1419] min-h-screen">
       <HeroSection searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
       <div className="max-w-7xl mx-auto px-6 py-16 lg:py-24">
@@ -48,23 +48,23 @@ function HeroSection({
   setSearchQuery: (query: string) => void
 }) {
   return (
-    <div className="bg-[#E8EAE6] text-[#2F3B34] px-6 py-24 lg:py-32">
+    <div className="bg-[#E8F5FE] text-[#0F1419] px-6 py-24 lg:py-32">
       <div className="max-w-4xl mx-auto text-center">
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-8 leading-tight text-balance">
           Support & Resources
         </h1>
-        <p className="text-lg md:text-xl lg:text-2xl leading-relaxed text-[#4A5A49] mb-12 text-balance">
+        <p className="text-lg md:text-xl lg:text-2xl leading-relaxed text-[#536471] mb-12 text-balance">
           Everything you need to get the most from Prompt & Pause, plus evidence-based research on reflection and mental
           health.
         </p>
         <div className="relative max-w-2xl mx-auto">
-          <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-[#6B7F6E]" />
+          <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-[#8B98A5]" />
           <input
             type="text"
             placeholder="Search documentation..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-16 pr-6 py-5 bg-white border border-[#DCE6D9] rounded-full text-[#2F3B34] placeholder:text-[#6B7F6E] focus:outline-none focus:border-[#6FA984] transition-colors text-lg"
+            className="w-full pl-16 pr-6 py-5 bg-white border border-[#B3D9F2] rounded-full text-[#0F1419] placeholder:text-[#8B98A5] focus:outline-none focus:border-[#1D9BF0] transition-colors text-lg"
           />
         </div>
       </div>
@@ -80,13 +80,13 @@ function TabNavigation({
   setActiveTab: (tab: "getting-started" | "account" | "research") => void
 }) {
   return (
-    <div className="flex gap-2 sm:gap-4 border-b-2 border-[#DCE6D9] mb-12 overflow-x-auto scrollbar-hide">
+    <div className="flex gap-2 sm:gap-4 border-b-2 border-[#B3D9F2] mb-12 overflow-x-auto scrollbar-hide">
       <button
         onClick={() => setActiveTab("getting-started")}
         className={`pb-4 px-2 sm:px-4 text-sm sm:text-lg font-bold whitespace-nowrap transition-colors ${
           activeTab === "getting-started"
-            ? "border-b-4 border-[#6FA984] -mb-[2px] text-[#2F3B34]"
-            : "text-[#4A5A49] hover:text-[#2F3B34]"
+            ? "border-b-4 border-[#1D9BF0] -mb-[2px] text-[#0F1419]"
+            : "text-[#536471] hover:text-[#0F1419]"
         }`}
       >
         Getting Started
@@ -95,8 +95,8 @@ function TabNavigation({
         onClick={() => setActiveTab("account")}
         className={`pb-4 px-2 sm:px-4 text-sm sm:text-lg font-bold whitespace-nowrap transition-colors ${
           activeTab === "account"
-            ? "border-b-4 border-[#6FA984] -mb-[2px] text-[#2F3B34]"
-            : "text-[#4A5A49] hover:text-[#2F3B34]"
+            ? "border-b-4 border-[#1D9BF0] -mb-[2px] text-[#0F1419]"
+            : "text-[#536471] hover:text-[#0F1419]"
         }`}
       >
         Account & Billing
@@ -105,8 +105,8 @@ function TabNavigation({
         onClick={() => setActiveTab("research")}
         className={`pb-4 px-2 sm:px-4 text-sm sm:text-lg font-bold whitespace-nowrap transition-colors ${
           activeTab === "research"
-            ? "border-b-4 border-[#6FA984] -mb-[2px] text-[#2F3B34]"
-            : "text-[#4A5A49] hover:text-[#2F3B34]"
+            ? "border-b-4 border-[#1D9BF0] -mb-[2px] text-[#0F1419]"
+            : "text-[#536471] hover:text-[#0F1419]"
         }`}
       >
         Research & Evidence
@@ -305,8 +305,8 @@ function TabContent({
 
   const NoResults = () => (
     <div className="text-center py-16">
-      <p className="text-xl text-[#4A5A49] mb-4">No results found for "{searchQuery}"</p>
-      <p className="text-[#6B7F6E]">Try different keywords or browse all content</p>
+      <p className="text-xl text-[#536471] mb-4">No results found for "{searchQuery}"</p>
+      <p className="text-[#8B98A5]">Try different keywords or browse all content</p>
     </div>
   )
 
@@ -328,16 +328,16 @@ function TabContent({
                   }
                 }, 100)
               }}
-              className="w-full block p-6 bg-[#F5F3EE] hover:bg-[#F0EDE6] rounded-xl transition-all group text-left"
+              className="w-full block p-6 bg-[#F7F9FA] hover:bg-[#EFF3F4] rounded-xl transition-all group text-left"
               whileHover={{ scale: 1.01 }}
               transition={{ duration: 0.2 }}
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
                   <h3 className="text-xl font-bold mb-2 group-hover:underline">{article.title}</h3>
-                  <p className="text-[#4A5A49] leading-relaxed">{article.description}</p>
+                  <p className="text-[#536471] leading-relaxed">{article.description}</p>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-[#6B7F6E] whitespace-nowrap">
+                <div className="flex items-center gap-2 text-sm text-[#8B98A5] whitespace-nowrap">
                   <Clock className="w-4 h-4" />
                   {article.readTime}
                 </div>
@@ -367,16 +367,16 @@ function TabContent({
                   }
                 }, 100)
               }}
-              className="w-full block p-6 bg-[#F5F3EE] hover:bg-[#F0EDE6] rounded-xl transition-all group text-left"
+              className="w-full block p-6 bg-[#F7F9FA] hover:bg-[#EFF3F4] rounded-xl transition-all group text-left"
               whileHover={{ scale: 1.01 }}
               transition={{ duration: 0.2 }}
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
                   <h3 className="text-xl font-bold mb-2 group-hover:underline">{article.title}</h3>
-                  <p className="text-[#4A5A49] leading-relaxed">{article.description}</p>
+                  <p className="text-[#536471] leading-relaxed">{article.description}</p>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-[#6B7F6E] whitespace-nowrap">
+                <div className="flex items-center gap-2 text-sm text-[#8B98A5] whitespace-nowrap">
                   <Clock className="w-4 h-4" />
                   {article.readTime}
                 </div>
@@ -399,7 +399,7 @@ function TabContent({
             href={article.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="block p-8 bg-[#F5F3EE] hover:bg-[#F0EDE6] rounded-xl transition-all group"
+            className="block p-8 bg-[#F7F9FA] hover:bg-[#EFF3F4] rounded-xl transition-all group"
             whileHover={{ scale: 1.01 }}
             transition={{ duration: 0.2 }}
           >
@@ -409,8 +409,8 @@ function TabContent({
                 <ExternalLink className="w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity" />
               </h3>
             </div>
-            <p className="text-[#4A5A49] leading-relaxed text-lg mb-4">{article.summary}</p>
-            <div className="flex items-center gap-4 text-sm text-[#6B7F6E]">
+            <p className="text-[#536471] leading-relaxed text-lg mb-4">{article.summary}</p>
+            <div className="flex items-center gap-4 text-sm text-[#8B98A5]">
               <span className="flex items-center gap-1">
                 <BookOpen className="w-4 h-4" />
                 {article.author}
@@ -508,9 +508,9 @@ function FAQSection({
     return (
       <div className="mb-16">
         <h2 className="text-3xl md:text-4xl font-bold mb-8">Frequently Asked Questions</h2>
-        <div className="text-center py-16 bg-[#F5F3EE] rounded-xl">
-          <p className="text-xl text-[#4A5A49] mb-4">No FAQs found for "{searchQuery}"</p>
-          <p className="text-[#6B7F6E]">Try different keywords or clear your search</p>
+        <div className="text-center py-16 bg-[#F7F9FA] rounded-xl">
+          <p className="text-xl text-[#536471] mb-4">No FAQs found for "{searchQuery}"</p>
+          <p className="text-[#8B98A5]">Try different keywords or clear your search</p>
         </div>
       </div>
     )
@@ -520,7 +520,7 @@ function FAQSection({
     <div className="mb-16">
       <h2 className="text-3xl md:text-4xl font-bold mb-8">Frequently Asked Questions</h2>
       {searchQuery.trim() && (
-        <p className="text-[#4A5A49] mb-6">
+        <p className="text-[#536471] mb-6">
           Showing {filteredFAQs.length} result{filteredFAQs.length !== 1 ? "s" : ""} for "{searchQuery}"
         </p>
       )}
@@ -529,11 +529,11 @@ function FAQSection({
           <div
             key={faq.originalIndex}
             id={`faq-${faq.originalIndex}`}
-            className="border border-[#DCE6D9] rounded-xl overflow-hidden scroll-mt-24"
+            className="border border-[#B3D9F2] rounded-xl overflow-hidden scroll-mt-24"
           >
             <button
               onClick={() => setOpenFAQ(openFAQ === faq.originalIndex ? null : faq.originalIndex)}
-              className="w-full flex items-center justify-between p-6 text-left hover:bg-[#F5F3EE] transition-colors"
+              className="w-full flex items-center justify-between p-6 text-left hover:bg-[#F7F9FA] transition-colors"
             >
               <span className="text-lg font-bold pr-4">{faq.question}</span>
               <ChevronDown
@@ -548,7 +548,7 @@ function FAQSection({
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                 >
-                  <div className="px-6 pb-6 text-[#4A5A49] leading-relaxed text-lg">{faq.answer}</div>
+                  <div className="px-6 pb-6 text-[#536471] leading-relaxed text-lg">{faq.answer}</div>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -561,64 +561,64 @@ function FAQSection({
 
 function CrisisResourcesSidebar() {
   return (
-    <div id="need-urgent-help" className="bg-[#F5F3EE] border-2 border-[#DCE6D9] rounded-2xl p-8">
-      <h3 className="text-2xl font-bold mb-6 text-[#2F3B34]">Need Urgent Help?</h3>
+    <div id="need-urgent-help" className="bg-[#F7F9FA] border-2 border-[#B3D9F2] rounded-2xl p-8">
+      <h3 className="text-2xl font-bold mb-6 text-[#0F1419]">Need Urgent Help?</h3>
 
       <div className="space-y-8">
         <div>
-          <h4 className="text-lg font-bold mb-4 text-[#2F3B34]">UK Resources</h4>
+          <h4 className="text-lg font-bold mb-4 text-[#0F1419]">UK Resources</h4>
           <div className="space-y-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <Phone className="w-4 h-4 text-[#6FA984]" />
-                <p className="font-bold text-[#2F3B34]">Samaritans: 116 123</p>
+                <Phone className="w-4 h-4 text-[#1D9BF0]" />
+                <p className="font-bold text-[#0F1419]">Samaritans: 116 123</p>
               </div>
-              <p className="text-sm text-[#4A5A49]">24/7, free. For anyone struggling to cope, feeling suicidal</p>
+              <p className="text-sm text-[#536471]">24/7, free. For anyone struggling to cope, feeling suicidal</p>
             </div>
 
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <Phone className="w-4 h-4 text-[#6FA984]" />
-                <p className="font-bold text-[#2F3B34]">NHS 111: 111</p>
+                <Phone className="w-4 h-4 text-[#1D9BF0]" />
+                <p className="font-bold text-[#0F1419]">NHS 111: 111</p>
               </div>
-              <p className="text-sm text-[#4A5A49]">For urgent mental health support</p>
+              <p className="text-sm text-[#536471]">For urgent mental health support</p>
             </div>
 
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <MessageCircle className="w-4 h-4 text-[#6FA984]" />
-                <p className="font-bold text-[#2F3B34]">Shout: Text SHOUT to 85258</p>
+                <MessageCircle className="w-4 h-4 text-[#1D9BF0]" />
+                <p className="font-bold text-[#0F1419]">Shout: Text SHOUT to 85258</p>
               </div>
-              <p className="text-sm text-[#4A5A49]">24/7 text support for crisis moments</p>
+              <p className="text-sm text-[#536471]">24/7 text support for crisis moments</p>
             </div>
 
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <Phone className="w-4 h-4 text-[#6FA984]" />
-                <p className="font-bold text-[#2F3B34]">Mind Infoline: 0300 123 3393</p>
+                <Phone className="w-4 h-4 text-[#1D9BF0]" />
+                <p className="font-bold text-[#0F1419]">Mind Infoline: 0300 123 3393</p>
               </div>
-              <p className="text-sm text-[#4A5A49]">Mon-Fri 9am-6pm, mental health information</p>
+              <p className="text-sm text-[#536471]">Mon-Fri 9am-6pm, mental health information</p>
             </div>
           </div>
         </div>
 
         <div>
-          <h4 className="text-lg font-bold mb-4 text-[#2F3B34]">US Resources</h4>
+          <h4 className="text-lg font-bold mb-4 text-[#0F1419]">US Resources</h4>
           <div className="space-y-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <Phone className="w-4 h-4 text-[#6FA984]" />
-                <p className="font-bold text-[#2F3B34]">988 Suicide & Crisis Lifeline</p>
+                <Phone className="w-4 h-4 text-[#1D9BF0]" />
+                <p className="font-bold text-[#0F1419]">988 Suicide & Crisis Lifeline</p>
               </div>
-              <p className="text-sm text-[#4A5A49]">24/7 support for people in crisis</p>
+              <p className="text-sm text-[#536471]">24/7 support for people in crisis</p>
             </div>
 
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <MessageCircle className="w-4 h-4 text-[#6FA984]" />
-                <p className="font-bold text-[#2F3B34]">Crisis Text Line: Text HOME to 741741</p>
+                <MessageCircle className="w-4 h-4 text-[#1D9BF0]" />
+                <p className="font-bold text-[#0F1419]">Crisis Text Line: Text HOME to 741741</p>
               </div>
-              <p className="text-sm text-[#4A5A49]">Free, 24/7 text support</p>
+              <p className="text-sm text-[#536471]">Free, 24/7 text support</p>
             </div>
           </div>
         </div>
@@ -629,20 +629,20 @@ function CrisisResourcesSidebar() {
 
 function SupportCTASection() {
   return (
-    <div className="bg-[#E8EAE6] text-[#2F3B34] px-6 py-24 lg:py-32">
+    <div className="bg-[#E8F5FE] text-[#0F1419] px-6 py-24 lg:py-32">
       <div className="max-w-3xl mx-auto text-center">
         <h2 className="text-3xl md:text-5xl font-bold mb-8 leading-tight">Still Need Help?</h2>
-        <p className="text-lg md:text-xl text-[#4A5A49] mb-10 leading-relaxed">
+        <p className="text-lg md:text-xl text-[#536471] mb-10 leading-relaxed">
           Can't find what you're looking for? Our support team is here to help.
         </p>
         <a
           href="/contact"
-          className="inline-flex items-center gap-3 px-10 py-5 bg-[#6FA984] text-white border-2 border-[#6FA984] text-base font-medium tracking-wide transition-all duration-300 hover:bg-[#5A8F6E] cursor-pointer"
+          className="inline-flex items-center gap-3 px-10 py-5 bg-[#1D9BF0] text-white border-2 border-[#1D9BF0] text-base font-medium tracking-wide transition-all duration-300 hover:bg-[#1A8CD8] cursor-pointer"
         >
           <Mail className="w-5 h-5" />
           CONTACT SUPPORT
         </a>
-        <p className="text-sm text-[#6B7F6E] mt-6">Premium users get responses within 24 hours.</p>
+        <p className="text-sm text-[#8B98A5] mt-6">Premium users get responses within 24 hours.</p>
       </div>
     </div>
   )

@@ -270,15 +270,5 @@ function ToggleRow({ label, description, checked, onChange, isDark }: {
 function inputClass(isDark: boolean) {
   return isDark
     ? 'bg-white/[0.06] border-white/[0.08] text-white placeholder:text-white/20'
-    : 'bg-white border-[#E8E5DE] text-[#3D3D3D] placeholder:text-[#B0AFA0]'
-}
-
-function useToast() {
-  const [toasts, setToasts] = useState<{ id: string; title: string; description?: string; variant?: 'default' | 'destructive' }[]>([])
-  const toast = (t: { title: string; description?: string; variant?: 'default' | 'destructive' }) => {
-    const id = Math.random().toString()
-    setToasts(prev => [...prev, { ...t, id }])
-    setTimeout(() => setToasts(prev => prev.filter(x => x.id !== id)), 3000)
-  }
-  return { toast }
+    : 'bg-white border-[#EFF3F4] text-[#0F1419] placeholder:text-[#8B98A5]'
 }
