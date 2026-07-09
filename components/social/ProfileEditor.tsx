@@ -18,7 +18,7 @@ const RESERVED_USERNAMES = new Set([
   'privacy', 'terms', 'pricing', 'contact', 'security', 'crisis',
   'good-bye', 'admin-login', 'admin-panel', 'research', 'features',
   'our-mission', 'support-us', 'cookie-policy', 'privacy-policy',
-  'terms-of-service', 'promptandpause', 'home', 'discover', 'explore',
+  'terms-of-service', 'home', 'discover', 'explore',
 ])
 
 export function ProfileEditor() {

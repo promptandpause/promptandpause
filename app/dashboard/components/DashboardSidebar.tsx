@@ -40,7 +40,7 @@ export function DashboardSidebar() {
   const { t } = useTranslation()
   const { theme } = useTheme()
   const { tier, isLoading: tierLoading } = useTier()
-  const [userProfile, setUserProfile] = useState<{ full_name: string; subscription_tier: string } | null>(null)
+  const [userProfile, setUserProfile] = useState<{ full_name: string; username: string; subscription_tier: string } | null>(null)
   const [loading, setLoading] = useState(true)
 
   const isDark = theme === "dark"
@@ -74,11 +74,12 @@ export function DashboardSidebar() {
 
         const cachedProfile = getCachedUserProfile(user.id)
         if (cachedProfile && isMounted) {
-          setUserProfile({
-            full_name: cachedProfile.full_name || user.email?.split("@")[0] || "User",
-            subscription_tier: tier,
-          })
-          setLoading(false)
+            setUserProfile({
+              full_name: cachedProfile.full_name || user.email?.split("@")[0] || "User",
+              username: cachedProfile.username || user.email?.split("@")[0] || "user",
+              subscription_tier: tier,
+            })
+            setLoading(false)
         }
 
         const response = await fetch("/api/user/profile")
@@ -96,12 +97,14 @@ export function DashboardSidebar() {
         if (success && data && isMounted) {
           setUserProfile({
             full_name: data.full_name || user.email?.split("@")[0] || "User",
+            username: data.username || user.email?.split("@")[0] || "user",
             subscription_tier: tier,
           })
           cacheUserProfile(data, user.id)
         } else if (!cachedProfile && isMounted) {
           setUserProfile({
             full_name: user.email?.split("@")[0] || "User",
+            username: data?.username || user.email?.split("@")[0] || "user",
             subscription_tier: tier,
           })
         }
@@ -110,6 +113,7 @@ export function DashboardSidebar() {
         if (user && isMounted) {
           setUserProfile({
             full_name: user.email?.split("@")[0] || "User",
+            username: user.email?.split("@")[0] || "user",
             subscription_tier: tier,
           })
         }
@@ -156,7 +160,7 @@ export function DashboardSidebar() {
                 </div>
               </div>
             ) : userProfile ? (
-              <div className="flex items-center gap-3">
+              <Link href={`/@${userProfile.username}`} className="flex items-center gap-3 group">
                 <div className={`h-12 w-12 rounded-full flex items-center justify-center ring-2 ${
                   isDark
                     ? "bg-gradient-to-br from-[#1D3A5C] to-[#0A2E4A] ring-[#1D9BF0]/30"
@@ -165,7 +169,7 @@ export function DashboardSidebar() {
                   <UserCircle size={24} weight="bold" className={isDark ? "text-[#1D9BF0]" : "text-[#1D9BF0]"} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className={`font-semibold text-sm truncate ${isDark ? "text-white" : "text-[#0F1419]"}`}>
+                  <p className={`font-semibold text-sm truncate group-hover:underline ${isDark ? "text-white" : "text-[#0F1419]"}`}>
                     {userProfile.full_name}
                   </p>
                   <div className="flex items-center gap-1 mt-0.5">
@@ -180,7 +184,7 @@ export function DashboardSidebar() {
                     )}
                   </div>
                 </div>
-              </div>
+              </Link>
             ) : null}
           </div>
 

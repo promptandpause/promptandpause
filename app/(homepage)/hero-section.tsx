@@ -5,6 +5,7 @@ import Link from "next/link"
 import { useState, useEffect } from "react"
 import { getSupabaseClient } from "@/lib/supabase/client"
 import { useToast } from "@/hooks/use-toast"
+import Footer from "./footer"
 
 function GoogleIcon() {
   return (
@@ -382,12 +383,7 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="text-center pb-6">
-        <p className="text-xs text-[#8B98A5]">
-          &copy; 2026 Prompt &amp; Pause from DC REGENT GROUP
-        </p>
-      </div>
+      <Footer />
     </div>
   )
 }

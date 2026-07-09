@@ -24,6 +24,9 @@ export const en = {
   // Navigation
   'nav.dashboard': 'Dashboard',
   'nav.achievements': 'Achievements',
+  'nav.feed': 'Feed',
+  'nav.friends': 'Friends',
+  'nav.profile': 'Profile',
   'nav.archive': 'Archive',
   'nav.saved': 'Saved',
   'nav.my_journals': 'My Journals',
@@ -177,6 +180,9 @@ export const es: Record<TranslationKey, string> = {
   // Navigation
   'nav.dashboard': 'Panel',
   'nav.achievements': 'Logros',
+  'nav.feed': 'Feed',
+  'nav.friends': 'Amigos',
+  'nav.profile': 'Perfil',
   'nav.archive': 'Archivo',
   'nav.saved': 'Guardado',
   'nav.my_journals': 'Mis Diarios',
@@ -330,6 +336,9 @@ export const fr: Record<TranslationKey, string> = {
   // Navigation
   'nav.dashboard': 'Tableau de Bord',
   'nav.achievements': 'Réalisations',
+  'nav.feed': 'Fil d\'actualité',
+  'nav.friends': 'Amis',
+  'nav.profile': 'Profil',
   'nav.archive': 'Archives',
   'nav.saved': 'Enregistrés',
   'nav.my_journals': 'Mes Journaux',
@@ -483,6 +492,9 @@ export const nl: Record<TranslationKey, string> = {
   // Navigation
   'nav.dashboard': 'Dashboard',
   'nav.achievements': 'Prestaties',
+  'nav.feed': 'Feed',
+  'nav.friends': 'Vrienden',
+  'nav.profile': 'Profiel',
   'nav.archive': 'Archief',
   'nav.saved': 'Opgeslagen',
   'nav.my_journals': 'Mijn Dagboeken',

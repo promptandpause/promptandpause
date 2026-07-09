@@ -37,7 +37,7 @@ export default function Footer() {
         ))}
         <span className="flex items-center">
           <span className="text-[11px] text-[#536471] px-1 py-0.5 leading-none">
-            &copy; 2026 Prompt &amp; Pause
+            &copy; 2026 Prompt &amp; Pause from DC REGENT GROUP
           </span>
         </span>
       </nav>
