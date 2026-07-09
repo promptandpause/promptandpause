@@ -35,7 +35,7 @@ export default function MaintenancePage() {
 
         if (!error && data && !data.is_enabled) {
           // Maintenance mode is off, redirect to dashboard
-          router.push('/dashboard')
+          router.push('/')
         }
       } catch (error) {
       }

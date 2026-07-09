@@ -20,6 +20,17 @@ export default async function UserProfilePage({ params }: { params: Promise<{ us
     notFound()
   }
 
+  if (!profile.is_public_profile) {
+    return (
+      <ProfilePageClient
+        profile={profile}
+        reflections={[]}
+        whiteboard={[]}
+        isPrivate
+      />
+    )
+  }
+
   const { data: reflections } = await supabase
     .from('reflections')
     .select('id, prompt_text, reflection_text, mood, tags, word_count, visibility, created_at')

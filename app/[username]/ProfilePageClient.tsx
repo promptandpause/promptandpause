@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { User, MessageCircle, Music, Palette, Sparkles } from 'lucide-react'
+import { User, MessageCircle, Music, Palette, Sparkles, Lock } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { useTheme } from '@/contexts/ThemeContext'
@@ -24,10 +24,12 @@ export function ProfilePageClient({
   profile,
   reflections,
   whiteboard,
+  isPrivate,
 }: {
   profile: ProfileWithSocial
   reflections: Reflection[]
   whiteboard: WhiteboardEntry[]
+  isPrivate?: boolean
 }) {
   const { theme } = useTheme()
   const isDark = theme === 'dark'
@@ -128,7 +130,41 @@ export function ProfilePageClient({
 
         {/* Tab Content */}
         <div className="mt-6 pb-16">
-          {activeTab === 'reflections' && (
+          {isPrivate ? (
+            <div className={`rounded-2xl p-10 text-center ${isDark ? 'bg-white/[0.03] border border-white/[0.06]' : 'bg-white/60 border border-[#EFF3F4]'}`}>
+              <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${isDark ? 'bg-white/[0.06]' : 'bg-[#EFF3F4]'}`}>
+                <Lock size={28} weight="bold" className={isDark ? 'text-white/20' : 'text-[#8B98A5]'} />
+              </div>
+              <h2 className={`text-xl font-semibold mb-2 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+                This account&apos;s profile is private
+              </h2>
+              <p className={`text-sm mb-6 max-w-md mx-auto ${isDark ? 'text-white/40' : 'text-[#536471]'}`}>
+                @{profile.username} has marked their profile as private. Reflections and activity are not visible to others.
+              </p>
+              <div className="flex items-center justify-center gap-3">
+                <button
+                  onClick={() => window.history.back()}
+                  className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-colors border ${
+                    isDark
+                      ? 'border-white/20 text-white hover:bg-white/[0.06]'
+                      : 'border-[#CFD9DE] text-[#0F1419] hover:bg-[#EFF3F4]'
+                  }`}
+                >
+                  Go Back
+                </button>
+                <a
+                  href="/"
+                  className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-colors ${
+                    isDark
+                      ? 'bg-[#1D9BF0] text-white hover:bg-[#1A8CD8]'
+                      : 'bg-[#1D9BF0] text-white hover:bg-[#1A8CD8]'
+                  }`}
+                >
+                  Go to Dashboard
+                </a>
+              </div>
+            </div>
+          ) : activeTab === 'reflections' && (
             <div className="space-y-4">
               {reflections.length === 0 ? (
                 <p className={`text-sm ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
@@ -173,7 +209,7 @@ export function ProfilePageClient({
             </div>
           )}
 
-          {activeTab === 'whiteboard' && (
+          {!isPrivate && activeTab === 'whiteboard' && (
             <WhiteboardSection
               profileUserId={profile.id}
               entries={whiteboard}

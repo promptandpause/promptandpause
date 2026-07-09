@@ -83,7 +83,7 @@ function DashboardContent() {
                 className={`flex-1 py-3 text-sm font-medium text-center ${
                   isDark ? "text-white/40 hover:text-white/60" : "text-[#536471] hover:text-[#0F1419]"
                 }`}
-                onClick={() => window.location.href = "/dashboard/feed"}
+                onClick={() => window.location.href = "/feed"}
               >
                 Following
               </button>
@@ -93,7 +93,7 @@ function DashboardContent() {
           {/* Compose box */}
           <div className={`px-4 py-3 border-b ${isDark ? "border-white/[0.06]" : "border-[#EFF3F4]"}`}>
             <Link
-              href="/dashboard/journals"
+              href="/journals"
               className={`flex items-center gap-3 rounded-2xl px-4 py-2.5 transition-colors ${
                 isDark ? "bg-white/[0.03] hover:bg-white/[0.06]" : "bg-[#F7F9FA] hover:bg-[#EFF3F4]"
               }`}

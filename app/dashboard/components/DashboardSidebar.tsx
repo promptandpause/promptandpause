@@ -46,23 +46,28 @@ export function DashboardSidebar() {
 
   const isDark = theme === "dark"
 
+  const isActive = (cleanHref: string) => {
+    const dashboardHref = cleanHref === '/' ? '/dashboard' : `/dashboard${cleanHref}`
+    return pathname === cleanHref || pathname === dashboardHref
+  }
+
   const sidebarNav = [
-    { icon: Layout, label: "dashboard", href: "/dashboard", active: pathname === "/dashboard" },
-    { icon: Rss, label: "feed", href: "/dashboard/feed", active: pathname === "/dashboard/feed" },
-    { icon: UserPlus, label: "friends", href: "/dashboard/friends", active: pathname === "/dashboard/friends" },
-    { icon: Heart, label: "wellness", href: "/dashboard/wellness", active: pathname === "/dashboard/wellness" },
-    { icon: ArchiveBox, label: "archive", href: "/dashboard/archive", active: pathname === "/dashboard/archive" },
-    { icon: BookmarkSimple, label: "saved", href: "/dashboard/saved", active: pathname === "/dashboard/saved" },
-    { icon: Notebook, label: "my_journals", href: "/dashboard/journals", active: pathname === "/dashboard/journals" },
-    { icon: Gear, label: "settings", href: "/dashboard/settings", active: pathname === "/dashboard/settings" },
-    { icon: UserCircle, label: "profile", href: "/dashboard/settings/profile", active: pathname === "/dashboard/settings/profile" },
+    { icon: Layout, label: "dashboard", href: "/", active: isActive("/") },
+    { icon: Rss, label: "feed", href: "/feed", active: isActive("/feed") },
+    { icon: UserPlus, label: "friends", href: "/friends", active: isActive("/friends") },
+    { icon: Heart, label: "wellness", href: "/wellness", active: isActive("/wellness") },
+    { icon: ArchiveBox, label: "archive", href: "/archive", active: isActive("/archive") },
+    { icon: BookmarkSimple, label: "saved", href: "/saved", active: isActive("/saved") },
+    { icon: Notebook, label: "my_journals", href: "/journals", active: isActive("/journals") },
+    { icon: Gear, label: "settings", href: "/settings", active: isActive("/settings") },
+    { icon: UserCircle, label: "profile", href: "/settings/profile", active: isActive("/settings/profile") },
   ]
 
   const mobileNav = [
-    { id: "home", label: t("nav.dashboard"), href: "/dashboard", active: pathname === "/dashboard", crisis: false },
-    { id: "wellness", label: t("nav.wellness"), href: "/dashboard/wellness", active: pathname === "/dashboard/wellness", crisis: false },
-    { id: "journal", label: t("nav.my_journals"), href: "/dashboard/journals", active: pathname === "/dashboard/journals", crisis: false },
-    { id: "crisis", label: t("nav.crisis_resources"), href: "/crisis-resources", active: pathname === "/crisis-resources", crisis: true },
+    { id: "home", label: t("nav.dashboard"), href: "/", active: isActive("/"), crisis: false },
+    { id: "wellness", label: t("nav.wellness"), href: "/wellness", active: isActive("/wellness"), crisis: false },
+    { id: "journal", label: t("nav.my_journals"), href: "/journals", active: isActive("/journals"), crisis: false },
+    { id: "crisis", label: t("nav.crisis_resources"), href: "/crisis-resources", active: isActive("/crisis-resources"), crisis: true },
   ]
 
   useEffect(() => {
@@ -143,7 +148,7 @@ export function DashboardSidebar() {
         <div className="h-screen flex flex-col overflow-y-auto scrollbar-hide px-3 py-2 fixed w-[240px] xl:w-[275px]">
           {/* Logo */}
           <div className="px-3 py-3 mb-1">
-            <Link href="/dashboard" className="inline-flex items-center gap-2">
+            <Link href="/" className="inline-flex items-center gap-2">
               <img
                 className={`h-8 ${isDark ? "invert" : ""}`}
                 alt="Prompt & Pause"
@@ -210,7 +215,7 @@ export function DashboardSidebar() {
                       @{userProfile.username}
                     </p>
                   </div>
-                  <Link href="/dashboard/settings">
+                  <Link href="/settings">
                     <Gear size={16} weight="bold" className={`shrink-0 cursor-pointer transition-colors ${isDark ? "text-white/20 hover:text-white/40" : "text-[#8B98A5] hover:text-[#536471]"}`} />
                   </Link>
                 </div>
@@ -243,7 +248,7 @@ export function DashboardSidebar() {
         <div className={`px-5 h-14 flex items-center justify-between mt-[env(safe-area-inset-top,0px)] ${
           isDark ? "bg-[#0A0A0A]/90 backdrop-blur-lg border-b border-white/[0.06]" : "bg-white/90 backdrop-blur-lg border-b border-[#EFF3F4]"
         }`}>
-          <Link href="/dashboard">
+          <Link href="/">
             <img
               className={`h-7 ${isDark ? "invert" : ""}`}
               alt="Prompt & Pause"
@@ -251,12 +256,12 @@ export function DashboardSidebar() {
             />
           </Link>
           <div className="flex items-center gap-2">
-            <Link href="/dashboard/archive">
+            <Link href="/archive">
               <button className={`p-2 rounded-lg transition-colors ${isDark ? "hover:bg-white/10" : "hover:bg-[#EFF3F4]"}`}>
                 <ArchiveBox size={20} weight="bold" className={isDark ? "text-white/50" : "text-[#536471]"} />
               </button>
             </Link>
-            <Link href="/dashboard/settings">
+            <Link href="/settings">
               <button className={`p-2 rounded-lg transition-colors ${isDark ? "hover:bg-white/10" : "hover:bg-[#EFF3F4]"}`}>
                 <Gear size={20} weight="bold" className={isDark ? "text-white/50" : "text-[#536471]"} />
               </button>

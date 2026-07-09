@@ -63,7 +63,7 @@ export default function FeedPage() {
                   </p>
                 </div>
                 <Link
-                  href="/dashboard/friends"
+                  href="/friends"
                   className={`flex items-center gap-2 text-sm px-4 py-2 rounded-xl transition-all ${
                     isDark
                       ? 'bg-white/[0.06] text-white/60 hover:bg-white/10 hover:text-white'
@@ -95,7 +95,7 @@ export default function FeedPage() {
                     Add friends to see their shared reflections here. Reflections are private by default — friends choose to share.
                   </p>
                   <Link
-                    href="/dashboard/friends"
+                    href="/friends"
                     className={`inline-flex items-center gap-2 text-sm px-4 py-2 rounded-xl ${
                       isDark
                         ? 'bg-white/10 text-white hover:bg-white/15'

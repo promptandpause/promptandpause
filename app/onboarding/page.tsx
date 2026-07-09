@@ -237,7 +237,7 @@ export default function Onboarding() {
         title: "Saved",
         description: "Your preferences have been saved. Redirecting to the dashboard...",
       })
-      setTimeout(() => { router.push('/dashboard') }, 2000)
+      setTimeout(() => { router.push('/') }, 2000)
     } catch (error: any) {
       toast({
         title: "Error",

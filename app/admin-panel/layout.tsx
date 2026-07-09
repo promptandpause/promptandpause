@@ -90,7 +90,7 @@ export default async function AdminLayout({
   // Check admin access
   const hasAdminAccess = user.email ? await isAdminUser(user.email) : false
   if (!hasAdminAccess) {
-    redirect('/dashboard')
+    redirect('/')
   }
 
   const adminRole = user.email ? await getAdminRole(user.email) : null

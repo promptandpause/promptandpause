@@ -68,7 +68,7 @@ function ProfileModuleInner() {
           </span>
         ) : (
           <Link
-            href="/dashboard/settings"
+            href="/settings"
             className="text-[10px] font-medium text-[#1D9BF0] hover:underline"
           >
             Upgrade

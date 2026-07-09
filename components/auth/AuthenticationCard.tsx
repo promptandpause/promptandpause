@@ -130,7 +130,7 @@ export default function AuthenticationCard({ initialStep = "login" }: Authentica
         if (!preferences) {
           router.push('/onboarding')
         } else {
-          router.push('/dashboard')
+          router.push('/')
         }
       }
     } catch (error: any) {

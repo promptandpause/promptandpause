@@ -205,7 +205,7 @@ function WaysToSupportSection({ isAuthenticated, router }: { isAuthenticated: bo
             <a
               onClick={() => {
                 if (isAuthenticated) {
-                  router.push("/dashboard/settings")
+                  router.push("/settings")
                 } else {
                   router.push("/")
                 }
@@ -443,7 +443,7 @@ function CTASection({ isAuthenticated, router }: { isAuthenticated: boolean; rou
           <button
             onClick={() => {
               if (isAuthenticated) {
-                router.push("/dashboard/settings")
+                router.push("/settings")
               } else {
                 router.push("/")
               }

@@ -54,7 +54,7 @@ function FeedInner() {
       subtitle={hasFriends ? "Recent reflections" : "Connect with others"}
       accent="blue"
       action={
-        <Link href="/dashboard/friends" className="text-[10px] font-medium text-[#1D9BF0] hover:underline">
+        <Link href="/friends" className="text-[10px] font-medium text-[#1D9BF0] hover:underline">
           {hasFriends ? "See all" : "Find friends"}
         </Link>
       }
@@ -82,7 +82,7 @@ function FeedInner() {
             No friends yet. Connect to see their reflections.
           </p>
           <Link
-            href="/dashboard/friends"
+            href="/friends"
             className="inline-block mt-2 text-xs font-medium text-[#1D9BF0] hover:underline"
           >
             Find friends

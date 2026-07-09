@@ -292,7 +292,7 @@ export default function WellnessPage() {
                                 </p>
                               </div>
                             </div>
-                            <Link href="/dashboard/settings#subscription">
+                            <Link href="/settings#subscription">
                               <Button className={`border-0 shadow-sm ${theme === 'dark' ? 'bg-[#C4B5E0] text-[#1A1A2E] hover:bg-[#B0A0D0]' : 'bg-[#7E6BA5] text-white hover:bg-[#6B5A90]'}`}>
                                 <Crown size={16} weight="bold" className="mr-2" />
                                 Upgrade Now
@@ -339,7 +339,7 @@ export default function WellnessPage() {
                       <p className={`mb-4 ${theme === 'dark' ? 'text-white/50' : 'text-[#8B98A5]'}`}>
                         Goal tracking helps you set intentions and track progress toward what matters most.
                       </p>
-                      <Link href="/dashboard/settings#subscription">
+                      <Link href="/settings#subscription">
                         <Button className={`border-0 ${theme === 'dark' ? 'bg-[#C4B5E0] text-[#1A1A2E] hover:bg-[#B0A0D0]' : 'bg-[#7E6BA5] text-white hover:bg-[#6B5A90]'}`}>
                           <Crown size={16} weight="bold" className="mr-2" />
                           Upgrade to Premium
@@ -362,7 +362,7 @@ export default function WellnessPage() {
                       <p className={`mb-4 ${theme === 'dark' ? 'text-white/50' : 'text-[#8B98A5]'}`}>
                         Track daily habits and see how they correlate with your mood over time.
                       </p>
-                      <Link href="/dashboard/settings#subscription">
+                      <Link href="/settings#subscription">
                         <Button className={`border-0 ${theme === 'dark' ? 'bg-[#C4B5E0] text-[#1A1A2E] hover:bg-[#B0A0D0]' : 'bg-[#7E6BA5] text-white hover:bg-[#6B5A90]'}`}>
                           <Crown size={16} weight="bold" className="mr-2" />
                           Upgrade to Premium

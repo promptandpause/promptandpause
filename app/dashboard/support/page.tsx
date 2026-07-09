@@ -525,7 +525,7 @@ function ContactSupportPageContent() {
               }`}>
                 • Check our Help Center for common questions
               </Link>
-              <Link href="/dashboard/settings" className={`block transition-colors text-sm hover:underline ${
+              <Link href="/settings" className={`block transition-colors text-sm hover:underline ${
                 theme === 'dark' ? 'text-white/50 hover:text-white' : 'text-[#8B98A5] hover:text-[#0F1419]'
               }`}>
                 • Review your account settings

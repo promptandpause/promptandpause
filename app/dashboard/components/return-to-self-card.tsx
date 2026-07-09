@@ -136,7 +136,7 @@ export default function ReturnToSelfCard() {
       )}
       <div className="mt-4">
         <Link
-          href="/dashboard/history"
+          href="/history"
           className={`inline-flex items-center gap-1.5 text-xs md:text-sm font-medium underline-offset-4 hover:underline ${isDark ? 'text-[#B8C9E0]' : 'text-[#5B7FA5]'}`}
         >
           Revisit your thoughts

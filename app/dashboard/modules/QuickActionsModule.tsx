@@ -8,10 +8,10 @@ import Link from "next/link"
 import { motion } from "framer-motion"
 
 const actions = [
-  { icon: Wind, labelKey: "dashboard.breathe", sublabelKey: "dashboard.breatheSublabel", href: "/dashboard/wellness?open=breathing", accent: "emerald" as const },
+  { icon: Wind, labelKey: "dashboard.breathe", sublabelKey: "dashboard.breatheSublabel", href: "/wellness?open=breathing", accent: "emerald" as const },
   { icon: Heart, labelKey: "dashboard.checkIn", sublabelKey: "dashboard.checkInSublabel", href: "#mood-section", accent: "rose" as const },
   { icon: PencilLine, labelKey: "dashboard.reflect", sublabelKey: "dashboard.reflectSublabel", href: "#prompt-section", accent: "blue" as const },
-  { icon: Sun, labelKey: "dashboard.gratitude", sublabelKey: "dashboard.gratitudeSublabel", href: "/dashboard/wellness?open=gratitude", accent: "amber" as const },
+  { icon: Sun, labelKey: "dashboard.gratitude", sublabelKey: "dashboard.gratitudeSublabel", href: "/wellness?open=gratitude", accent: "amber" as const },
 ]
 
 const accentColors: Record<string, { icon: string; bg: string }> = {

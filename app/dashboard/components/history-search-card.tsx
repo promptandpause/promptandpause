@@ -29,7 +29,7 @@ export default function HistorySearchCard() {
         </div>
         <div className="flex-shrink-0">
           <Button asChild variant="outline" className={isDark ? "border-white/15 bg-white/5 text-white hover:bg-white/10 rounded-lg" : "border-[#E0DDD6] bg-white text-[#0F1419] hover:bg-[#EFF3F4] rounded-lg"}>
-            <Link href="/dashboard/archive">Open history</Link>
+            <Link href="/archive">Open history</Link>
           </Button>
         </div>
       </div>

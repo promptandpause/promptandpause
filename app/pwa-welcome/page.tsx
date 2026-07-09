@@ -76,7 +76,7 @@ export default function PWAWelcomePage() {
           .single()
 
         if (preferences) {
-          router.push('/dashboard')
+          router.push('/')
         } else {
           router.push('/onboarding')
         }

@@ -38,12 +38,12 @@ export function useAuthGuard(redirectPath?: string, requireAdmin: boolean = fals
 
           if (!data?.isAdmin) {
             // Not an admin - redirect to dashboard
-            router.push('/dashboard')
+            router.push('/')
             return
           }
         } catch (_error) {
           setIsAdmin(false)
-          router.push('/dashboard')
+          router.push('/')
           return
         }
       }

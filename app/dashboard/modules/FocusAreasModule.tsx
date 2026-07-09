@@ -43,7 +43,7 @@ function FocusAreasInner() {
       icon={<Compass size={18} weight="bold" />}
       title="Focus Areas"
       action={
-        <Link href="/dashboard/settings" className="text-[10px] font-medium text-[#1D9BF0] hover:underline">
+        <Link href="/settings" className="text-[10px] font-medium text-[#1D9BF0] hover:underline">
           Edit
         </Link>
       }

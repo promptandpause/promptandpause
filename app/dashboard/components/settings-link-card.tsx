@@ -23,7 +23,7 @@ export default function SettingsLinkCard() {
           <p className={`text-[13px] leading-relaxed ${isDark ? "text-white/60" : "text-[#536471]"}`}>Focus areas, prompt time, privacy, and export.</p>
         </div>
         <Button asChild variant="outline" className={isDark ? "border-white/15 bg-white/5 text-white hover:bg-white/10 rounded-lg" : "border-[#E0DDD6] bg-white text-[#0F1419] hover:bg-[#EFF3F4] rounded-lg"}>
-          <Link href="/dashboard/settings">Open settings</Link>
+          <Link href="/settings">Open settings</Link>
         </Button>
       </div>
     </section>

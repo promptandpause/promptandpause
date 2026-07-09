@@ -97,7 +97,7 @@ export default function HeroSection() {
           .select("id")
           .eq("user_id", data.user.id)
           .single()
-        window.location.href = preferences ? "/dashboard" : "/onboarding"
+        window.location.href = preferences ? "/" : "/onboarding"
       }
     } catch (error: any) {
       toast({
@@ -157,7 +157,7 @@ export default function HeroSection() {
         title: "Password updated",
         description: "Your password has been changed successfully.",
       })
-      setTimeout(() => { window.location.href = "/dashboard" }, 2000)
+      setTimeout(() => { window.location.href = "/" }, 2000)
     } catch (error: any) {
       toast({
         title: "Error",

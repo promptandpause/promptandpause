@@ -124,7 +124,7 @@ export function WhoToFollow() {
         })}
       </div>
       <Link
-        href="/dashboard/friends"
+        href="/friends"
         className={`block text-sm mt-3 transition-colors ${isDark ? 'text-[#1D9BF0] hover:text-[#1A8CD8]' : 'text-[#1D9BF0] hover:text-[#1A8CD8]'}`}
       >
         Show more

@@ -61,9 +61,9 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 const sidebarNav = [
-  { icon: Layout, label: "dashboard", href: "/dashboard", active: false },
-  { icon: ArchiveBox, label: "archive", href: "/dashboard/archive", active: false },
-  { icon: Gear, label: "settings", href: "/dashboard/settings", active: true },
+  { icon: Layout, label: "dashboard", href: "/", active: false },
+  { icon: ArchiveBox, label: "archive", href: "/archive", active: false },
+  { icon: Gear, label: "settings", href: "/settings", active: true },
 ]
 
 // Use IANA timezones from the timezone utility (imported at top)
@@ -341,7 +341,7 @@ function SettingsPageContent() {
         description: "Your subscription has been activated. Welcome to Premium!",
       })
       // Clean URL
-      window.history.replaceState({}, '', '/dashboard/settings')
+      window.history.replaceState({}, '', '/settings')
       // Reload data to update subscription status
       loadUserData()
     } else if (canceled === 'true') {
@@ -350,7 +350,7 @@ function SettingsPageContent() {
         description: "You can upgrade anytime from the settings page.",
       })
       // Clean URL
-      window.history.replaceState({}, '', '/dashboard/settings')
+      window.history.replaceState({}, '', '/settings')
     }
   }, [loadUserData, toast])
 
@@ -1107,7 +1107,7 @@ function SettingsPageContent() {
                 <div className={`rounded-xl overflow-hidden ${
                   theme === 'dark' ? 'bg-white/10 backdrop-blur-xl' : 'bg-white shadow-sm'
                 }`}>
-                  <Link href="/dashboard/support" className="block">
+                  <Link href="/support" className="block">
                     <div 
                       className={`flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity cursor-pointer ${
                         theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#EFF3F4]'
@@ -1414,7 +1414,7 @@ function SettingsPageContent() {
                               theme === 'dark' ? 'text-white/90' : 'text-[#536471]'
                             }`}>Notification Days</Label>
                             {tier !== 'premium' && (
-                              <Link href="/dashboard/settings" onClick={() => navigateToView('subscription')} className={`text-xs px-2 py-1 rounded-full flex items-center gap-1 ${
+                              <Link href="/settings" onClick={() => navigateToView('subscription')} className={`text-xs px-2 py-1 rounded-full flex items-center gap-1 ${
                                 theme === 'dark' ? 'bg-purple-500/20 text-purple-300 hover:bg-purple-500/30' : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
                               }`}>
                                 <Crown size={12} weight="bold" />

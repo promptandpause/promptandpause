@@ -411,7 +411,7 @@ export default function FocusAreasManager() {
                     </p>
                   )}
                   <div className={`flex items-center gap-2 text-xs mt-3 ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>
-                    <TrendingUp className="h-3 w-3" />
+                    <TrendUp className="h-3 w-3" />
                     <span>0 reflections</span>
                   </div>
                 </div>

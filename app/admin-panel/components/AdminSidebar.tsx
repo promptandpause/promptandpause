@@ -223,7 +223,7 @@ export default function AdminSidebar({ userEmail, userRole }: AdminSidebarProps)
 
       {/* Footer actions */}
       <div className="p-4 space-y-2">
-        <Link href="/dashboard">
+        <Link href="/">
           <Button
             variant="ghost"
             className="w-full justify-start gap-3 text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg"

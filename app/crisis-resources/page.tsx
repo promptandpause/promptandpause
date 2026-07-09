@@ -25,7 +25,7 @@ export default function CrisisResourcesPage() {
       <div className="relative z-10 p-3 sm:p-4 md:p-8 max-w-7xl mx-auto pb-24 md:pb-8">
         {/* Header */}
         <div className="mb-6 md:mb-8">
-          <Link href="/dashboard">
+          <Link href="/">
             <Button
               variant="ghost"
               className={`mb-3 md:mb-4 text-sm md:text-base ${

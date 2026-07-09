@@ -21,7 +21,7 @@ export default function ProfileSettingsPage() {
             <div className="max-w-[800px] mx-auto px-4 md:px-8 pt-16 md:pt-10 pb-6">
               <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ type: 'spring', stiffness: 260, damping: 22 }}>
                 <Link
-                  href="/dashboard/settings"
+                  href="/settings"
                   className={`inline-flex items-center gap-1.5 text-sm mb-6 transition-colors ${
                     isDark ? 'text-white/40 hover:text-white' : 'text-[#8B98A5] hover:text-[#536471]'
                   }`}

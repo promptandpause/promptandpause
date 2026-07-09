@@ -47,7 +47,7 @@ function UpgradeInner() {
             {t("dashboard.upgradeDesc")}
           </p>
         </div>
-        <Link href="/dashboard/settings">
+        <Link href="/settings">
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
