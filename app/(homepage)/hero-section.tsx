@@ -24,8 +24,8 @@ export default function HeroSection() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-4 items-center min-h-[78vh]">
             {/* Left: Heading + Sign up form */}
             <div className="max-w-md mx-auto lg:mx-0 w-full">
-              <h1 className="font-bold text-[#0F1419] text-5xl sm:text-6xl lg:text-7xl tracking-tight leading-[1.05] mb-10">
-                Pause &amp; reflect.
+              <h1 className="font-bold text-[#0F1419] text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.1] mb-10 whitespace-nowrap">
+                Prompt. Pause. Reflect.
               </h1>
 
               <div className="max-w-sm">
