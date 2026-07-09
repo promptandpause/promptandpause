@@ -240,7 +240,7 @@ function ContactSupportPageContent() {
   return (
     <div 
       data-dashboard
-      className={`min-h-screen ${theme === 'dark' ? 'bg-[#141820]' : 'bg-[#F5F3EE]'}`}
+      className={`min-h-screen ${theme === 'dark' ? 'bg-[#0A0A0A]' : 'bg-[#FFFFFF]'}`}
     >
       <div className="flex h-screen overflow-hidden">
         <DashboardSidebar />
@@ -308,7 +308,7 @@ function ContactSupportPageContent() {
                 }`}>Support Ticket Created!</h3>
                 {ticketId && (
                   <p className={`text-lg font-semibold mb-2 ${
-                    theme === 'dark' ? 'text-blue-400' : 'text-[#5B7FA5]'
+                    theme === 'dark' ? 'text-blue-400' : 'text-[#1D9BF0]'
                   }`}>
                     Ticket ID: {ticketId}
                   </p>
@@ -345,7 +345,7 @@ function ContactSupportPageContent() {
                             isSelected
                               ? theme === 'dark'
                                 ? 'bg-blue-500/15 border-2 border-blue-400/50 shadow-sm'
-                                : 'bg-[#D4E4F7] border-2 border-[#B8C9E0] shadow-sm'
+                                : 'bg-[#E8F5FE] border-2 border-[#1D9BF0] shadow-sm'
                               : theme === 'dark'
                                 ? 'border border-white/10 bg-white/5 hover:bg-white/8'
                                 : 'border border-[#E8E5DE] bg-white hover:bg-[#FAFAF7]'

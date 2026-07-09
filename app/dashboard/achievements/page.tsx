@@ -70,7 +70,7 @@ function AchievementsPageContent() {
   return (
     <div 
       data-dashboard
-      className={`min-h-screen ${theme === 'dark' ? 'bg-[#141820]' : 'bg-[#F5F3EE]'}`}
+      className={`min-h-screen ${theme === 'dark' ? 'bg-[#0A0A0A]' : 'bg-[#FFFFFF]'}`}
     >
       
       <div className="relative z-10 px-3 md:px-6 py-4 md:py-8 pb-32 md:pb-8">
@@ -252,7 +252,7 @@ function BadgeCard({ badge, isUnlocked, earnedAt, theme, index }: BadgeCardProps
       className={`relative p-3 md:p-4 rounded-xl md:rounded-2xl transition-all backdrop-blur-sm ${
         theme === 'dark'
           ? 'bg-white/5 border border-white/8'
-          : 'bg-[#FAFAF7] border border-[#E8E5DE]'
+          : 'bg-[#FFFFFF] border border-[#EFF3F4]'
       } ${
         isUnlocked
           ? 'shadow-lg hover:shadow-xl cursor-pointer'
@@ -263,7 +263,7 @@ function BadgeCard({ badge, isUnlocked, earnedAt, theme, index }: BadgeCardProps
       {!isUnlocked && (
         <div className="absolute inset-0 flex items-center justify-center z-10 rounded-xl md:rounded-2xl">
           <div className={`p-2 md:p-3 rounded-full ${
-            theme === 'dark' ? 'bg-black/50' : 'bg-[#F5F3EE]/80'
+            theme === 'dark' ? 'bg-black/50' : 'bg-[#FFFFFF]/80'
           } backdrop-blur-sm`}>
             <Lock className={`w-5 h-5 md:w-6 md:h-6 ${
               theme === 'dark' ? 'text-white/40' : 'text-[#A0A090]'

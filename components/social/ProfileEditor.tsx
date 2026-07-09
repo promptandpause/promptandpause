@@ -256,7 +256,7 @@ function ToggleRow({ label, description, checked, onChange, isDark }: {
       </div>
       <button
         onClick={() => onChange(!checked)}
-        className={`relative h-6 w-11 rounded-full transition-colors ${checked ? 'bg-[#A8D5BA]' : isDark ? 'bg-white/10' : 'bg-[#E0DDD6]'}`}
+        className={`relative h-6 w-11 rounded-full transition-colors ${checked ? 'bg-[#1D9BF0]' : isDark ? 'bg-white/10' : 'bg-[#EFF3F4]'}`}
       >
         <motion.div
           animate={{ x: checked ? 22 : 2 }}

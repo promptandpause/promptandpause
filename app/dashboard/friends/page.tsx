@@ -71,7 +71,7 @@ export default function FriendsPage() {
 
   return (
     <AuthGuard redirectPath="/dashboard/friends">
-      <div className={`min-h-screen ${isDark ? 'bg-[#141820]' : 'bg-[#F5F3EE]'}`}>
+      <div className={`min-h-screen ${isDark ? 'bg-[#0A0A0A]' : 'bg-[#FFFFFF]'}`}>
         <div className="flex h-screen overflow-hidden">
           <DashboardSidebar />
           <main className="flex-1 pb-32 md:pb-10 overflow-y-auto scrollbar-thin">
@@ -202,8 +202,8 @@ export default function FriendsPage() {
                                   disabled={actionLoading === friend.id}
                                   className={`h-8 text-xs ${
                                     isDark
-                                      ? 'border-[#A8D5BA]/30 text-[#A8D5BA] hover:bg-[#A8D5BA]/10'
-                                      : 'border-[#C8E6D0] text-[#5A8F6E] hover:bg-[#E8F5E9]'
+                                      ? 'border-[#1D9BF0]/30 text-[#1D9BF0] hover:bg-[#1D9BF0]/10'
+                                      : 'border-[#B3D9F2] text-[#1D9BF0] hover:bg-[#E8F5FE]'
                                   }`}
                                 >
                                   {actionLoading === friend.id ? (

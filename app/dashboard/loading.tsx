@@ -26,7 +26,7 @@ export default function DashboardLoading() {
       aria-live="polite"
       aria-label="Loading"
       className={`min-h-screen relative overflow-hidden ${
-        isDark ? 'bg-[#141820]' : 'bg-[#F5F3EE]'
+        isDark ? 'bg-[#0A0A0A]' : 'bg-[#FFFFFF]'
       }`}
     >
       {/* Ambient brand blobs — continuous with the real dashboard backdrop. */}
@@ -48,7 +48,7 @@ export default function DashboardLoading() {
           mounts. Uses the browser's compositor, so it's essentially free. */}
       <div
         className={`absolute inset-0 backdrop-blur-xl ${
-          isDark ? 'bg-[#141820]/40' : 'bg-[#F5F3EE]/50'
+          isDark ? 'bg-[#0A0A0A]/40' : 'bg-[#FFFFFF]/50'
         }`}
       />
 

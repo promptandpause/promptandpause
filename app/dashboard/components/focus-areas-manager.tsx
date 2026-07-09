@@ -288,7 +288,7 @@ export default function FocusAreasManager() {
               <Plus className="h-4 w-4" />
             </Button>
           </DialogTrigger>
-          <DialogContent className={`backdrop-blur-xl border-3 max-h-[90vh] sm:max-h-[85vh] flex flex-col p-0 gap-0 overflow-hidden shadow-2xl ${theme === 'dark' ? 'bg-[#1A1F2E] border-white/20 text-white' : 'bg-white border-gray-400 text-gray-900'}`}>
+           <DialogContent className={`backdrop-blur-xl border-3 max-h-[90vh] sm:max-h-[85vh] flex flex-col p-0 gap-0 overflow-hidden shadow-2xl ${theme === 'dark' ? 'bg-[#161618] border-white/20 text-white' : 'bg-white border-gray-400 text-gray-900'}`}>
             {/* Header with gradient */}
             <div className={`relative p-6 pb-5 bg-gradient-to-br from-purple-500/15 via-pink-500/10 to-transparent border-b-2 flex-shrink-0 ${theme === 'dark' ? 'border-white/10' : 'border-gray-300'}`}>
               <div className="absolute top-0 right-0 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl" />
@@ -419,7 +419,7 @@ export default function FocusAreasManager() {
             </div>
 
             {/* Sticky Footer Buttons */}
-            <div className={`flex-shrink-0 p-6 pt-5 border-t-2 ${theme === 'dark' ? 'border-white/10 bg-gradient-to-t from-[#141820] to-[#1A1F2E]' : 'border-gray-300 bg-gradient-to-t from-gray-50 to-white'}`}>
+            <div className={`flex-shrink-0 p-6 pt-5 border-t-2 ${theme === 'dark' ? 'border-white/10 bg-gradient-to-t from-[#0A0A0A] to-[#161618]' : 'border-gray-300 bg-gradient-to-t from-gray-50 to-white'}`}>
               <div className="flex flex-col-reverse sm:flex-row gap-3">
                 <Button
                   onClick={() => setIsDialogOpen(false)}

@@ -43,13 +43,13 @@ export function ProfilePageClient({
   const [activeTab, setActiveTab] = useState<'reflections' | 'whiteboard'>('reflections')
 
   const themePreset = profile.profile_theme?.preset || 'default'
-  const accentColor = profile.profile_theme?.accent_color || (isDark ? '#A8D5BA' : '#5A8F6E')
+  const accentColor = profile.profile_theme?.accent_color || (isDark ? '#1D9BF0' : '#1D9BF0')
 
   const displayName = profile.display_name || profile.full_name || profile.username
   const initials = displayName?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || '?'
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-[#141820]' : 'bg-[#F5F3EE]'}`}>
+    <div className={`min-h-screen ${isDark ? 'bg-[#0A0A0A]' : 'bg-[#FFFFFF]'}`}>
       {/* Cover Image */}
       <div
         className="h-48 md:h-64 w-full relative overflow-hidden"
@@ -68,7 +68,7 @@ export function ProfilePageClient({
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 200, damping: 20 }}
           >
-            <Avatar className="h-32 w-32 md:h-40 md:w-40 border-4 border-white dark:border-[#141820] ring-2 ring-black/5">
+            <Avatar className="h-32 w-32 md:h-40 md:w-40 border-4 border-white dark:border-[#0A0A0A] ring-2 ring-black/5">
               <AvatarImage src={profile.avatar_url || undefined} />
               <AvatarFallback className={`text-4xl font-light ${isDark ? 'bg-[#1E2430] text-white/60' : 'bg-white text-[#5A5A4E]'}`}>
                 {initials}

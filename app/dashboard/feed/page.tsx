@@ -42,7 +42,7 @@ export default function FeedPage() {
 
   return (
     <AuthGuard redirectPath="/dashboard/feed">
-      <div className={`min-h-screen ${isDark ? 'bg-[#141820]' : 'bg-[#F5F3EE]'}`}>
+      <div className={`min-h-screen ${isDark ? 'bg-[#0A0A0A]' : 'bg-[#FFFFFF]'}`}>
         <div className="flex h-screen overflow-hidden">
           <DashboardSidebar />
           <main className="flex-1 pb-32 md:pb-10 overflow-y-auto scrollbar-thin">

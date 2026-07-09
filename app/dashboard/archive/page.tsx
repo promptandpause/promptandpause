@@ -179,7 +179,7 @@ function ArchivePageContent() {
   return (
     <div 
       data-dashboard
-      className={`min-h-screen ${theme === 'dark' ? 'bg-[#141820]' : 'bg-[#F5F3EE]'}`}
+      className={`min-h-screen ${theme === 'dark' ? 'bg-[#0A0A0A]' : 'bg-[#FFFFFF]'}`}
     >
       <div className="flex h-screen overflow-hidden">
         <DashboardSidebar />
@@ -211,7 +211,7 @@ function ArchivePageContent() {
                       className={`pl-10 h-9 md:h-10 rounded-xl text-sm min-w-[120px] ${
                         theme === 'dark'
                           ? 'bg-white/8 border border-white/10 text-white placeholder:text-white/40 focus:border-white/20'
-                          : 'bg-white border border-[#E8E5DE] text-[#3D3D3D] placeholder:text-[#A0A090] focus:border-[#B8C9E0]'
+                          : 'bg-white border border-[#EFF3F4] text-[#0F1419] placeholder:text-[#8B98A5] focus:border-[#1D9BF0]'
                       }`}
                     />
                   </div>

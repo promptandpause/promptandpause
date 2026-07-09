@@ -91,28 +91,28 @@ export function FriendButton({ profileUserId, className }: FriendButtonProps) {
       icon: UserPlus,
       style: isDark
         ? 'border-white/10 text-white/70 hover:bg-white/10 hover:text-white'
-        : 'border-[#E8E5DE] text-[#5A5A4E] hover:bg-white hover:border-[#D4D0C8]',
+        : 'border-[#EFF3F4] text-[#536471] hover:bg-white hover:border-[#1D9BF0]/30',
     },
     pending_sent: {
-      label: 'Request Sent',
+      label: 'Requested',
       icon: Clock,
       style: isDark
-        ? 'border-[#C4B5E0]/30 text-[#C4B5E0]/60 cursor-default'
-        : 'border-[#D1C4E9] text-[#7E6BA5]/60 cursor-default',
+        ? 'border-[#1D9BF0]/30 text-[#1D9BF0]/60 cursor-default'
+        : 'border-[#B3D9F2] text-[#1D9BF0]/60 cursor-default',
     },
     pending_received: {
       label: 'Accept Request',
       icon: UserCheck,
       style: isDark
-        ? 'border-[#A8D5BA]/40 text-[#A8D5BA] hover:bg-[#A8D5BA]/10'
-        : 'border-[#C8E6D0] text-[#5A8F6E] hover:bg-[#E8F5E9]',
+        ? 'border-[#1D9BF0]/40 text-[#1D9BF0] hover:bg-[#1D9BF0]/10'
+        : 'border-[#B3D9F2] text-[#1D9BF0] hover:bg-[#E8F5FE]',
     },
     accepted: {
       label: 'Friends',
       icon: UserCheck,
       style: isDark
-        ? 'border-[#A8D5BA]/30 text-[#A8D5BA]/70 hover:border-red-400/30 hover:text-red-400/70'
-        : 'border-[#C8E6D0] text-[#5A8F6E] hover:border-red-300 hover:text-red-500',
+        ? 'border-[#1D9BF0]/30 text-[#1D9BF0]/70 hover:border-red-400/30 hover:text-red-400/70'
+        : 'border-[#B3D9F2] text-[#1D9BF0] hover:border-red-300 hover:text-red-500',
     },
   }
 

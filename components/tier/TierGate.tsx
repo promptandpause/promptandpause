@@ -285,7 +285,7 @@ export function PromptLimitBanner() {
         ? 'bg-gradient-to-r from-orange-500/10 to-red-500/10 border-orange-400/30'
         : theme === 'dark'
           ? 'bg-white/5 border-white/8'
-          : 'bg-[#FAFAF7] border-[#E8E5DE]'
+          : 'bg-[#FFFFFF] border-[#EFF3F4]'
     }`}>
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">

@@ -234,7 +234,7 @@ export default function JournalsPage() {
   return (
     <div 
       data-dashboard
-      className={`min-h-screen ${theme === 'dark' ? 'bg-[#141820]' : 'bg-[#F5F3EE]'}`}
+      className={`min-h-screen ${theme === 'dark' ? 'bg-[#0A0A0A]' : 'bg-[#FFFFFF]'}`}
     >
       <div className="flex h-screen overflow-hidden">
         <DashboardSidebar />

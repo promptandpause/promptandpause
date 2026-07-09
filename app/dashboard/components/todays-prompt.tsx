@@ -315,16 +315,16 @@ export default function TodaysPrompt() {
       {/* Prompt limit banner for free users */}
       {tier === 'free' && <PromptLimitBanner />}
       
-      <section className={`relative overflow-hidden rounded-3xl p-5 md:p-7 flex flex-col gap-4 md:gap-5 transition-all duration-300 backdrop-blur-xl ${theme === 'dark' ? 'bg-gradient-to-br from-white/[0.05] via-white/[0.03] to-transparent border border-white/[0.08] shadow-[0_20px_60px_-20px_rgba(0,0,0,0.5)]' : 'bg-gradient-to-br from-white/90 via-white/70 to-white/60 border border-[#E8E5DE] shadow-[0_20px_50px_-24px_rgba(76,60,120,0.18)]'}`} style={{ pointerEvents: 'auto' }}>
-        <span aria-hidden className={`pointer-events-none absolute -top-16 -right-16 h-56 w-56 rounded-full blur-3xl ${theme === 'dark' ? 'bg-violet-500/10' : 'bg-violet-300/25'}`} />
+      <section className={`relative overflow-hidden rounded-3xl p-5 md:p-7 flex flex-col gap-4 md:gap-5 transition-all duration-300 backdrop-blur-xl ${theme === 'dark' ? 'bg-gradient-to-br from-white/[0.05] via-white/[0.03] to-transparent border border-white/[0.08] shadow-[0_20px_60px_-20px_rgba(0,0,0,0.5)]' : 'bg-gradient-to-br from-white/90 via-white/70 to-white/60 border border-[#EFF3F4] shadow-[0_20px_50px_-24px_rgba(29,155,240,0.12)]'}`} style={{ pointerEvents: 'auto' }}>
+        <span aria-hidden className={`pointer-events-none absolute -top-16 -right-16 h-56 w-56 rounded-full blur-3xl ${theme === 'dark' ? 'bg-[#1D9BF0]/10' : 'bg-[#1D9BF0]/15'}`} />
         <div className="relative flex items-center justify-between gap-3 mb-1">
           <div className="flex items-center gap-3">
-            <IconOrb accent="violet" size="sm">
+            <IconOrb accent="blue" size="sm">
               <Sparkles className="w-4 h-4 text-white" strokeWidth={2} />
             </IconOrb>
             <div>
-              <h3 className={`text-lg md:text-xl font-semibold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Today</h3>
-              <p className={`text-[11px] md:text-xs ${theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'}`}>A small pause for a clearer mind</p>
+              <h3 className={`text-lg md:text-xl font-semibold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-[#0F1419]'}`}>Today</h3>
+              <p className={`text-[11px] md:text-xs ${theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'}`}>A small pause for a clearer mind</p>
             </div>
           </div>
         </div>
@@ -671,9 +671,9 @@ export default function TodaysPrompt() {
             initial={{ opacity: 0, y: 12, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ type: 'spring', stiffness: 260, damping: 24 }}
-            className={`relative w-full max-w-2xl overflow-hidden rounded-3xl p-5 md:p-7 backdrop-blur-xl ${theme === 'dark' ? 'bg-gradient-to-br from-white/[0.06] via-white/[0.03] to-transparent border border-white/[0.1] shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)]' : 'bg-gradient-to-br from-white/95 via-white/80 to-white/70 border border-[#E8E5DE] shadow-[0_30px_70px_-24px_rgba(76,60,120,0.25)]'}`}
+            className={`relative w-full max-w-2xl overflow-hidden rounded-3xl p-5 md:p-7 backdrop-blur-xl ${theme === 'dark' ? 'bg-gradient-to-br from-white/[0.06] via-white/[0.03] to-transparent border border-white/[0.1] shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)]' : 'bg-gradient-to-br from-white/95 via-white/80 to-white/70 border border-[#EFF3F4] shadow-[0_30px_70px_-24px_rgba(29,155,240,0.15)]'}`}
           >
-            <span aria-hidden className={`pointer-events-none absolute -top-20 -right-16 h-64 w-64 rounded-full blur-3xl ${theme === 'dark' ? 'bg-rose-500/10' : 'bg-rose-300/25'}`} />
+            <span aria-hidden className={`pointer-events-none absolute -top-20 -right-16 h-64 w-64 rounded-full blur-3xl ${theme === 'dark' ? 'bg-[#1D9BF0]/10' : 'bg-[#1D9BF0]/15'}`} />
             <div className="relative flex items-start justify-between mb-5 gap-3">
               <div className="flex items-center gap-3">
                 <IconOrb accent="rose" size="md">
