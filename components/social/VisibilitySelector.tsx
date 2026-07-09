@@ -24,7 +24,7 @@ export function VisibilitySelector({ value, onChange, className }: VisibilitySel
   const isDark = theme === 'dark'
 
   return (
-    <div className={cn('flex gap-1 p-1 rounded-xl', isDark ? 'bg-white/[0.06]' : 'bg-[#F0EFEA]', className)}>
+    <div className={cn('flex gap-1 p-1 rounded-xl', isDark ? 'bg-white/[0.06]' : 'bg-[#F7F9FA]', className)}>
       {options.map(opt => {
         const Icon = opt.icon
         const selected = value === opt.value
@@ -35,8 +35,8 @@ export function VisibilitySelector({ value, onChange, className }: VisibilitySel
             className={cn(
               'relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all',
               selected
-                ? isDark ? 'text-white' : 'text-[#3D3D3D]'
-                : isDark ? 'text-white/30 hover:text-white/50' : 'text-[#A0A090] hover:text-[#5A5A4E]'
+                ? isDark ? 'text-white' : 'text-[#0F1419]'
+                : isDark ? 'text-white/30 hover:text-white/50' : 'text-[#8B98A5] hover:text-[#536471]'
             )}
           >
             {selected && (
@@ -44,7 +44,7 @@ export function VisibilitySelector({ value, onChange, className }: VisibilitySel
                 layoutId="visibility-bg"
                 className={cn(
                   'absolute inset-0 rounded-lg',
-                  isDark ? 'bg-[#1E2430]' : 'bg-white shadow-sm'
+                  isDark ? 'bg-[#161618]' : 'bg-white shadow-sm'
                 )}
               />
             )}

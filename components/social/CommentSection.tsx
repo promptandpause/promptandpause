@@ -63,7 +63,7 @@ export function CommentSection({ reflectionId }: CommentSectionProps) {
           className={`flex-1 text-sm bg-transparent border-0 border-b outline-none py-1.5 ${
             isDark
               ? 'text-white/70 placeholder:text-white/20 border-white/10 focus:border-white/30'
-              : 'text-[#3D3D3D] placeholder:text-[#B0AFA0] border-[#E0DDD4] focus:border-[#5A5A4E]'
+              : 'text-[#0F1419] placeholder:text-[#8B98A5] border-[#EFF3F4] focus:border-[#536471]'
           }`}
         />
         <Button
@@ -71,7 +71,7 @@ export function CommentSection({ reflectionId }: CommentSectionProps) {
           variant="ghost"
           onClick={handlePost}
           disabled={!text.trim() || posting}
-          className={`h-8 w-8 p-0 ${isDark ? 'text-white/40 hover:text-white' : 'text-[#A0A090] hover:text-[#3D3D3D]'}`}
+          className={`h-8 w-8 p-0 ${isDark ? 'text-white/40 hover:text-white' : 'text-[#8B98A5] hover:text-[#0F1419]'}`}
         >
           {posting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
         </Button>
@@ -80,10 +80,10 @@ export function CommentSection({ reflectionId }: CommentSectionProps) {
       {/* Comments list */}
       {loading ? (
         <div className="flex justify-center py-4">
-          <Loader2 className={`h-4 w-4 animate-spin ${isDark ? 'text-white/20' : 'text-[#B0AFA0]'}`} />
+          <Loader2 className={`h-4 w-4 animate-spin ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`} />
         </div>
       ) : comments.length === 0 ? (
-        <p className={`text-xs text-center py-4 ${isDark ? 'text-white/20' : 'text-[#B0AFA0]'}`}>
+        <p className={`text-xs text-center py-4 ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`}>
           No comments yet
         </p>
       ) : (
@@ -97,20 +97,20 @@ export function CommentSection({ reflectionId }: CommentSectionProps) {
             >
               <Avatar className="h-6 w-6 flex-shrink-0">
                 <AvatarImage src={comment.author?.avatar_url || undefined} />
-                <AvatarFallback className={`text-[8px] ${isDark ? 'bg-[#1E2430] text-white/30' : 'bg-[#F0EFEA] text-[#8A8A7A]'}`}>
+                <AvatarFallback className={`text-[8px] ${isDark ? 'bg-[#161618] text-white/30' : 'bg-[#F7F9FA] text-[#8B98A5]'}`}>
                   {comment.author?.full_name?.[0] || '?'}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline gap-2">
-                  <span className={`text-xs font-medium ${isDark ? 'text-white/60' : 'text-[#5A5A4E]'}`}>
+                  <span className={`text-xs font-medium ${isDark ? 'text-white/60' : 'text-[#536471]'}`}>
                     {comment.author?.display_name || comment.author?.full_name || 'Someone'}
                   </span>
-                  <span className={`text-[10px] ${isDark ? 'text-white/20' : 'text-[#B0AFA0]'}`}>
+                  <span className={`text-[10px] ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`}>
                     {getTimeAgo(comment.created_at)}
                   </span>
                 </div>
-                <p className={`text-sm mt-0.5 ${isDark ? 'text-white/70' : 'text-[#3D3D3D]'}`}>
+                <p className={`text-sm mt-0.5 ${isDark ? 'text-white/70' : 'text-[#0F1419]'}`}>
                   {comment.body}
                 </p>
               </div>

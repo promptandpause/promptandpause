@@ -106,7 +106,7 @@ export function ProfileEditor() {
               placeholder="your-username"
               className={inputClass(isDark)}
             />
-            <p className={`text-xs mt-1 ${isDark ? 'text-white/20' : 'text-[#A0A090]'}`}>
+            <p className={`text-xs mt-1 ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`}>
               Your public profile URL: promptandpause.com/<strong>{profile.username || 'your-username'}</strong>
             </p>
           </div>
@@ -122,7 +122,7 @@ export function ProfileEditor() {
           maxLength={500}
           className={cn(inputClass(isDark), 'min-h-[80px]')}
         />
-        <p className={`text-xs mt-1 ${isDark ? 'text-white/20' : 'text-[#A0A090]'}`}>{profile.bio.length}/500</p>
+        <p className={`text-xs mt-1 ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`}>{profile.bio.length}/500</p>
       </Section>
 
       {/* Theme Selector */}
@@ -185,13 +185,13 @@ export function ProfileEditor() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className={`text-sm font-medium ${isDark ? 'text-white/70' : 'text-[#5A5A4E]'}`}>Default visibility</p>
-              <p className={`text-xs ${isDark ? 'text-white/30' : 'text-[#A0A090]'}`}>When you write a new reflection</p>
+              <p className={`text-sm font-medium ${isDark ? 'text-white/70' : 'text-[#536471]'}`}>Default visibility</p>
+              <p className={`text-xs ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>When you write a new reflection</p>
             </div>
             <select
               value={profile.share_default}
               onChange={e => setProfile(p => ({ ...p, share_default: e.target.value as any }))}
-              className={`text-sm rounded-xl px-3 py-2 ${isDark ? 'bg-white/[0.06] text-white border-white/10' : 'bg-white text-[#3D3D3D] border-[#E8E5DE]'} border`}
+              className={`text-sm rounded-xl px-3 py-2 ${isDark ? 'bg-white/[0.06] text-white border-white/10' : 'bg-white text-[#0F1419] border-[#EFF3F4]'} border`}
             >
               <option value="private">Private</option>
               <option value="friends_only">Friends only</option>
@@ -220,7 +220,7 @@ export function ProfileEditor() {
         <Button
           onClick={handleSave}
           disabled={saving}
-          className={`px-6 ${isDark ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-[#3D3D3D] text-white hover:bg-[#5A5A4E]'}`}
+          className={`px-6 ${isDark ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-[#0F1419] text-white hover:bg-[#536471]'}`}
         >
           {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
           Save Profile
@@ -232,8 +232,8 @@ export function ProfileEditor() {
 
 function Section({ title, children, isDark, icon }: { title: string; children: React.ReactNode; isDark: boolean; icon?: React.ReactNode }) {
   return (
-    <div className={`rounded-2xl p-5 ${isDark ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-white/80 border border-[#E8E5DE]'}`}>
-      <h3 className={`flex items-center gap-2 text-sm font-semibold mb-4 ${isDark ? 'text-white/70' : 'text-[#5A5A4E]'}`}>
+    <div className={`rounded-2xl p-5 ${isDark ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-white/80 border border-[#EFF3F4]'}`}>
+      <h3 className={`flex items-center gap-2 text-sm font-semibold mb-4 ${isDark ? 'text-white/70' : 'text-[#536471]'}`}>
         {icon}{title}
       </h3>
       {children}
@@ -242,7 +242,7 @@ function Section({ title, children, isDark, icon }: { title: string; children: R
 }
 
 function Label({ children, isDark }: { children: React.ReactNode; isDark: boolean }) {
-  return <p className={`text-xs font-medium mb-1.5 ${isDark ? 'text-white/50' : 'text-[#8A8A7A]'}`}>{children}</p>
+  return <p className={`text-xs font-medium mb-1.5 ${isDark ? 'text-white/50' : 'text-[#8B98A5]'}`}>{children}</p>
 }
 
 function ToggleRow({ label, description, checked, onChange, isDark }: {
@@ -251,8 +251,8 @@ function ToggleRow({ label, description, checked, onChange, isDark }: {
   return (
     <label className="flex items-center justify-between cursor-pointer">
       <div>
-        <p className={`text-sm font-medium ${isDark ? 'text-white/70' : 'text-[#5A5A4E]'}`}>{label}</p>
-        <p className={`text-xs ${isDark ? 'text-white/30' : 'text-[#A0A090]'}`}>{description}</p>
+        <p className={`text-sm font-medium ${isDark ? 'text-white/70' : 'text-[#536471]'}`}>{label}</p>
+        <p className={`text-xs ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>{description}</p>
       </div>
       <button
         onClick={() => onChange(!checked)}
