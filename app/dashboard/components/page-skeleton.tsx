@@ -17,7 +17,7 @@ export default function PageSkeleton() {
   const cardClass = `relative overflow-hidden rounded-2xl p-5 md:p-6 border backdrop-blur-xl ${
     isDark
       ? 'bg-gradient-to-br from-white/[0.04] via-white/[0.02] to-transparent border-white/[0.06]'
-      : 'bg-gradient-to-br from-white/80 via-white/60 to-white/50 border-[#E8E5DE]'
+      : 'bg-gradient-to-br from-white/80 via-white/60 to-white/50 border-[#EFF3F4]'
   }`
 
   return (

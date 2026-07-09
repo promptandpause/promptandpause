@@ -188,15 +188,15 @@ function ArchivePageContent() {
           <div className="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-10 pt-16 md:pt-10">
           <div className="space-y-5 md:space-y-6">
           {/* Header Card */}
-          <Card className={`rounded-2xl p-4 md:p-6 border shadow-none ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#E8E5DE]'}`}>
+          <Card className={`rounded-2xl p-4 md:p-6 border shadow-none ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#EFF3F4]'}`}>
             <div className="flex flex-col md:flex-row md:items-center md:items-center md:justify-between gap-3 md:gap-4">
               <div className="flex items-center gap-3">
                 <IconOrb accent="blue" size="md">
                   <Archive className="w-5 h-5 text-white" strokeWidth={1.75} />
                 </IconOrb>
                 <div>
-                  <h2 className={`text-xl md:text-3xl font-semibold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>Archive</h2>
-                  <p className={`text-xs md:text-sm ${theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'}`}>Browse your past reflections.</p>
+                  <h2 className={`text-xl md:text-3xl font-semibold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-[#0F1419]'}`}>Archive</h2>
+                  <p className={`text-xs md:text-sm ${theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'}`}>Browse your past reflections.</p>
                 </div>
               </div>
               <div className="flex items-center gap-2 md:gap-4 overflow-x-auto pb-2 md:pb-0">
@@ -225,7 +225,7 @@ function ArchivePageContent() {
                         className={`pl-10 h-9 md:h-10 rounded-xl text-sm cursor-not-allowed opacity-50 min-w-[120px] ${
                           theme === 'dark'
                             ? 'bg-white/5 border border-white/8 text-white/40 placeholder:text-white/30'
-                            : 'bg-[#F0EDE6] border border-[#E8E5DE] text-[#A0A090] placeholder:text-[#C4C0B8]'
+                            : 'bg-[#EFF3F4] border border-[#EFF3F4] text-[#8B98A5] placeholder:text-[#C4C0B8]'
                         }`}
                       />
                     </div>
@@ -236,10 +236,10 @@ function ArchivePageContent() {
                     <Button variant="ghost" className={`h-9 md:h-10 text-sm whitespace-nowrap ${
                       theme === 'dark'
                         ? 'text-white border border-white/10 hover:bg-white/8'
-                        : 'text-[#5A5A4E] border border-[#E8E5DE] hover:bg-[#F0EDE6]'
+                        : 'text-[#536471] border border-[#EFF3F4] hover:bg-[#EFF3F4]'
                     }`}>
                       <Filter className={`mr-1 md:mr-2 h-4 w-4 ${
-                        theme === 'dark' ? 'text-white' : 'text-[#5A5A4E]'
+                        theme === 'dark' ? 'text-white' : 'text-[#536471]'
                       }`} />
                       <span className="hidden md:inline">{selectedFilter}</span>
                       <span className="md:hidden">All</span>
@@ -248,13 +248,13 @@ function ArchivePageContent() {
                   <DropdownMenuContent className={`${
                     theme === 'dark'
                       ? 'bg-[#1A1F2E] border border-white/10'
-                      : 'bg-[#FAFAF7] border border-[#E8E5DE]'
+                      : 'bg-[#F7F9FA] border border-[#EFF3F4]'
                   }`}>
                     <DropdownMenuItem 
                       className={`cursor-pointer ${
                         theme === 'dark'
                           ? 'text-white hover:bg-white/8 focus:bg-white/8'
-                          : 'text-[#3D3D3D] hover:bg-[#F0EDE6] focus:bg-[#F0EDE6]'
+                          : 'text-[#0F1419] hover:bg-[#EFF3F4] focus:bg-[#EFF3F4]'
                       }`}
                       onClick={() => setSelectedFilter("All")}
                     >
@@ -264,7 +264,7 @@ function ArchivePageContent() {
                       className={`cursor-pointer ${
                         theme === 'dark'
                           ? 'text-white hover:bg-white/8 focus:bg-white/8'
-                          : 'text-[#3D3D3D] hover:bg-[#F0EDE6] focus:bg-[#F0EDE6]'
+                          : 'text-[#0F1419] hover:bg-[#EFF3F4] focus:bg-[#EFF3F4]'
                       }`}
                       onClick={() => setSelectedFilter("This Week")}
                     >
@@ -274,7 +274,7 @@ function ArchivePageContent() {
                       className={`cursor-pointer ${
                         theme === 'dark'
                           ? 'text-white hover:bg-white/8 focus:bg-white/8'
-                          : 'text-[#3D3D3D] hover:bg-[#F0EDE6] focus:bg-[#F0EDE6]'
+                          : 'text-[#0F1419] hover:bg-[#EFF3F4] focus:bg-[#EFF3F4]'
                       }`}
                       onClick={() => setSelectedFilter("This Month")}
                     >
@@ -289,7 +289,7 @@ function ArchivePageContent() {
                       <Button className={`transition-colors h-9 md:h-10 text-sm ${
                         theme === 'dark'
                           ? 'bg-white/8 hover:bg-white/12 border border-white/10 text-white'
-                          : 'bg-white hover:bg-[#F0EDE6] border border-[#E8E5DE] text-[#5A5A4E]'
+                          : 'bg-white hover:bg-[#EFF3F4] border border-[#EFF3F4] text-[#536471]'
                       }`}>
                         <Download className="mr-1 md:mr-2 h-4 w-4" />
                         <span className="hidden md:inline">Export</span>
@@ -298,13 +298,13 @@ function ArchivePageContent() {
                     <DropdownMenuContent className={`${
                       theme === 'dark'
                         ? 'bg-[#1A1F2E] border border-white/10'
-                        : 'bg-[#FAFAF7] border border-[#E8E5DE]'
+                        : 'bg-[#F7F9FA] border border-[#EFF3F4]'
                     }`}>
                       <DropdownMenuItem 
                         className={`cursor-pointer ${
                           theme === 'dark'
                             ? 'text-white hover:bg-white/8 focus:bg-white/8'
-                            : 'text-[#3D3D3D] hover:bg-[#F0EDE6] focus:bg-[#F0EDE6]'
+                            : 'text-[#0F1419] hover:bg-[#EFF3F4] focus:bg-[#EFF3F4]'
                         }`}
                         onClick={exportToCSV}
                       >
@@ -315,7 +315,7 @@ function ArchivePageContent() {
                         className={`cursor-pointer ${
                           theme === 'dark'
                             ? 'text-white hover:bg-white/8 focus:bg-white/8'
-                            : 'text-[#3D3D3D] hover:bg-[#F0EDE6] focus:bg-[#F0EDE6]'
+                            : 'text-[#0F1419] hover:bg-[#EFF3F4] focus:bg-[#EFF3F4]'
                         }`}
                         onClick={exportToText}
                       >
@@ -331,7 +331,7 @@ function ArchivePageContent() {
                       className={`cursor-not-allowed opacity-50 h-9 md:h-10 text-sm ${
                         theme === 'dark'
                           ? 'bg-white/5 border border-white/8 text-white/30'
-                          : 'bg-[#F0EDE6] border border-[#E8E5DE] text-[#A0A090]'
+                          : 'bg-[#EFF3F4] border border-[#EFF3F4] text-[#8B98A5]'
                       }`}
                     >
                       <Download className="mr-1 md:mr-2 h-4 w-4" />
@@ -349,17 +349,17 @@ function ArchivePageContent() {
 
           {/* Reflections List */}
           <Card className={`rounded-2xl p-4 md:p-6 border shadow-none ${
-            theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#E8E5DE]'
+            theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#EFF3F4]'
           }`}>
             <div className="flex items-center justify-between mb-4 md:mb-6">
               <div>
                 <h3 className={`text-lg md:text-xl font-semibold ${
-                  theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                  theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                 }`}>Past Reflections</h3>
                 {loading ? (
-                  <Skeleton className={`h-4 w-32 mt-1 ${theme === 'dark' ? 'bg-white/8' : 'bg-[#E8E5DE]'}`} />
+                  <Skeleton className={`h-4 w-32 mt-1 ${theme === 'dark' ? 'bg-white/8' : 'bg-[#EFF3F4]'}`} />
                 ) : (
-                  <p className={`text-xs md:text-sm mt-1 ${theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
+                  <p className={`text-xs md:text-sm mt-1 ${theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'}`}>
                     {filteredReflections.length} reflection{filteredReflections.length !== 1 ? 's' : ''} found
                   </p>
                 )}
@@ -369,7 +369,7 @@ function ArchivePageContent() {
                   variant="ghost"
                   onClick={() => setShowAll(!showAll)}
                   className={`transition-colors ${
-                    theme === 'dark' ? 'text-white hover:bg-white/8' : 'text-[#5A5A4E] hover:bg-[#F0EDE6]'
+                    theme === 'dark' ? 'text-white hover:bg-white/8' : 'text-[#536471] hover:bg-[#EFF3F4]'
                   }`}
                 >
                   {showAll ? (
@@ -384,22 +384,22 @@ function ArchivePageContent() {
               {loading ? (
                 Array(3).fill(0).map((_, index) => (
                   <Card key={index} className={`rounded-2xl p-5 border shadow-none ${
-                    theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white border-[#E8E5DE]'
+                    theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white border-[#EFF3F4]'
                   }`}>
                     <div className="flex items-start gap-3">
-                      <Skeleton className={`h-10 w-10 rounded-full ${theme === 'dark' ? 'bg-white/8' : 'bg-[#E8E5DE]'}`} />
+                      <Skeleton className={`h-10 w-10 rounded-full ${theme === 'dark' ? 'bg-white/8' : 'bg-[#EFF3F4]'}`} />
                       <div className="flex-1 space-y-2">
-                        <Skeleton className={`h-4 w-24 ${theme === 'dark' ? 'bg-white/8' : 'bg-[#E8E5DE]'}`} />
-                        <Skeleton className={`h-5 w-full ${theme === 'dark' ? 'bg-white/8' : 'bg-[#E8E5DE]'}`} />
-                        <Skeleton className={`h-4 w-3/4 ${theme === 'dark' ? 'bg-white/8' : 'bg-[#E8E5DE]'}`} />
+                        <Skeleton className={`h-4 w-24 ${theme === 'dark' ? 'bg-white/8' : 'bg-[#EFF3F4]'}`} />
+                        <Skeleton className={`h-5 w-full ${theme === 'dark' ? 'bg-white/8' : 'bg-[#EFF3F4]'}`} />
+                        <Skeleton className={`h-4 w-3/4 ${theme === 'dark' ? 'bg-white/8' : 'bg-[#EFF3F4]'}`} />
                       </div>
                     </div>
                   </Card>
                 ))
               ) : filteredReflections.length === 0 ? (
                 <div className="text-center py-12">
-                  <p className={`text-lg ${theme === 'dark' ? 'text-white/50' : 'text-[#8A8A7A]'}`}>No reflections found</p>
-                  <p className={`text-sm mt-2 ${theme === 'dark' ? 'text-white/30' : 'text-[#A0A090]'}`}>
+                  <p className={`text-lg ${theme === 'dark' ? 'text-white/50' : 'text-[#8B98A5]'}`}>No reflections found</p>
+                  <p className={`text-sm mt-2 ${theme === 'dark' ? 'text-white/30' : 'text-[#8B98A5]'}`}>
                     {searchQuery ? "Try adjusting your search" : "Start writing your first reflection!"}
                   </p>
                 </div>
@@ -414,25 +414,25 @@ function ArchivePageContent() {
                       transition={{ duration: 0.3, delay: index * 0.1 }}
                     >
                       <Card className={`rounded-2xl p-4 md:p-5 transition-all duration-200 border shadow-none ${
-                        theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06] hover:bg-white/8' : 'bg-white border-[#E8E5DE] hover:bg-[#FAFAF7]'
+                        theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06] hover:bg-white/8' : 'bg-white border-[#EFF3F4] hover:bg-[#F7F9FA]'
                       }`}>
                         <div className="space-y-3">
                           <div className="flex items-start justify-between gap-3">
                             <div className="flex items-start gap-2 md:gap-3 flex-1 min-w-0">
                               <span className="text-2xl md:text-3xl flex-shrink-0">{item.mood}</span>
                               <div className="flex-1 min-w-0">
-                                <p className={`text-xs md:text-sm ${theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'}`}>{item.date}</p>
-                                <p className={`font-medium italic text-sm md:text-base mt-1 line-clamp-2 ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>{item.prompt_text}</p>
+                                <p className={`text-xs md:text-sm ${theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'}`}>{item.date}</p>
+                                <p className={`font-medium italic text-sm md:text-base mt-1 line-clamp-2 ${theme === 'dark' ? 'text-white' : 'text-[#0F1419]'}`}>{item.prompt_text}</p>
                               </div>
                             </div>
                             <Button
                               size="sm"
                               variant="ghost"
                               onClick={() => toggleReflection(item.id)}
-                              className={`transition-colors ${theme === 'dark' ? 'text-white hover:bg-white/8' : 'text-[#5A5A4E] hover:bg-[#F0EDE6]'}`}
+                              className={`transition-colors ${theme === 'dark' ? 'text-white hover:bg-white/8' : 'text-[#536471] hover:bg-[#EFF3F4]'}`}
                             >
                               <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.3 }}>
-                                <ChevronDown className={`h-5 w-5 ${theme === 'dark' ? 'text-white' : 'text-[#5A5A4E]'}`} />
+                                <ChevronDown className={`h-5 w-5 ${theme === 'dark' ? 'text-white' : 'text-[#536471]'}`} />
                               </motion.div>
                             </Button>
                           </div>
@@ -446,7 +446,7 @@ function ArchivePageContent() {
                                 className="overflow-hidden"
                               >
                                 <div className="space-y-3 pt-2">
-                                  <p className={`text-sm leading-relaxed pl-12 ${theme === 'dark' ? 'text-white/70' : 'text-[#5A5A4E]'}`}>
+                                  <p className={`text-sm leading-relaxed pl-12 ${theme === 'dark' ? 'text-white/70' : 'text-[#536471]'}`}>
                                     {item.reflection_text}
                                   </p>
                                   <div className="flex gap-2 pl-12 flex-wrap">
@@ -456,7 +456,7 @@ function ArchivePageContent() {
                                         className={`cursor-pointer ${
                                           theme === 'dark'
                                             ? 'bg-white/8 text-white/70 border border-white/10 hover:bg-white/12'
-                                            : 'bg-[#F0EDE6] text-[#5A5A4E] border border-[#E8E5DE] hover:bg-[#E8E5DE]'
+                                            : 'bg-[#EFF3F4] text-[#536471] border border-[#EFF3F4] hover:bg-[#EFF3F4]'
                                         }`}
                                       >
                                         {tag}

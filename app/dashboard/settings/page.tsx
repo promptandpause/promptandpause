@@ -99,10 +99,10 @@ function PushNotificationRow({ theme }: { theme: string }) {
     return (
       <div className="flex items-center justify-between">
         <div>
-          <Label className={`text-sm ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>
+          <Label className={`text-sm ${theme === 'dark' ? 'text-white' : 'text-[#0F1419]'}`}>
             Push Notifications
           </Label>
-          <p className={`text-xs ${theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
+          <p className={`text-xs ${theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'}`}>
             Checking device capabilities...
           </p>
         </div>
@@ -115,10 +115,10 @@ function PushNotificationRow({ theme }: { theme: string }) {
     return (
       <div className="flex items-center justify-between">
         <div>
-          <Label className={`text-sm ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>
+          <Label className={`text-sm ${theme === 'dark' ? 'text-white' : 'text-[#0F1419]'}`}>
             Push Notifications
           </Label>
-          <p className={`text-xs ${theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
+          <p className={`text-xs ${theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'}`}>
             {error ?? 'Not supported on this device'}
           </p>
         </div>
@@ -138,10 +138,10 @@ function PushNotificationRow({ theme }: { theme: string }) {
   return (
     <div className="flex items-center justify-between">
       <div>
-        <Label className={`text-sm ${theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'}`}>
+        <Label className={`text-sm ${theme === 'dark' ? 'text-white' : 'text-[#0F1419]'}`}>
           Push Notifications
         </Label>
-        <p className={`text-xs ${theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
+        <p className={`text-xs ${theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'}`}>
           {error ? error : isSubscribed ? 'Enabled on this device' : 'Receive notifications on your device'}
         </p>
       </div>
@@ -957,7 +957,7 @@ function SettingsPageContent() {
                 {/* Header - Large title like iOS */}
                 <div className="px-1 pt-2">
                   <h1 className={`text-[34px] font-bold leading-tight ${
-                    theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                    theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                   }`}>Settings</h1>
                 </div>
 
@@ -980,10 +980,10 @@ function SettingsPageContent() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className={`font-semibold text-lg ${
-                        theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                        theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                       }`}>{fullName || 'Your Profile'}</p>
                       <p className={`text-sm ${
-                        theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                        theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                       }`}>Manage your profile</p>
                     </div>
                     <ChevronRight className={`h-5 w-5 flex-shrink-0 ${
@@ -1000,14 +1000,14 @@ function SettingsPageContent() {
                   <div 
                     onClick={() => navigateToView('notifications')}
                     className={`flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity cursor-pointer ${
-                      theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#F0EDE6]'
+                      theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#EFF3F4]'
                     }`}
                   >
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-red-400 to-red-600">
                       <Bell className="h-4.5 w-4.5 text-white" />
                     </div>
                     <span className={`flex-1 text-[17px] ${
-                      theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                      theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                     }`}>Notifications</span>
                     <ChevronRight className={`h-5 w-5 ${
                       theme === 'dark' ? 'text-white/30' : 'text-gray-300'
@@ -1021,14 +1021,14 @@ function SettingsPageContent() {
                   <div 
                     onClick={() => navigateToView('security')}
                     className={`flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity cursor-pointer ${
-                      theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#F0EDE6]'
+                      theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#EFF3F4]'
                     }`}
                   >
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-gray-500 to-gray-700">
                       <Lock className="h-4.5 w-4.5 text-white" />
                     </div>
                     <span className={`flex-1 text-[17px] ${
-                      theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                      theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                     }`}>Security</span>
                     <ChevronRight className={`h-5 w-5 ${
                       theme === 'dark' ? 'text-white/30' : 'text-gray-300'
@@ -1042,14 +1042,14 @@ function SettingsPageContent() {
                   <div 
                     onClick={() => navigateToView('preferences')}
                     className={`flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity cursor-pointer ${
-                      theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#F0EDE6]'
+                      theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#EFF3F4]'
                     }`}
                   >
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-purple-400 to-purple-600">
                       <Palette className="h-4.5 w-4.5 text-white" />
                     </div>
                     <span className={`flex-1 text-[17px] ${
-                      theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                      theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                     }`}>Preferences</span>
                     <ChevronRight className={`h-5 w-5 ${
                       theme === 'dark' ? 'text-white/30' : 'text-gray-300'
@@ -1065,17 +1065,17 @@ function SettingsPageContent() {
                   <div 
                     onClick={() => navigateToView('subscription')}
                     className={`flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity cursor-pointer ${
-                      theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#F0EDE6]'
+                      theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#EFF3F4]'
                     }`}
                   >
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-green-400 to-green-600">
                       <CreditCard className="h-4.5 w-4.5 text-white" />
                     </div>
                     <span className={`flex-1 text-[17px] ${
-                      theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                      theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                     }`}>Subscription</span>
                     <span className={`text-[15px] mr-1 ${
-                      theme === 'dark' ? 'text-white/40' : 'text-[#A0A090]'
+                      theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                     }`}>
                       {tier === 'premium' && isTrial ? 'Trial' : tier === 'premium' ? 'Premium' : 'Free'}
                     </span>
@@ -1091,14 +1091,14 @@ function SettingsPageContent() {
                   <div 
                     onClick={() => navigateToView('integrations')}
                     className={`flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity cursor-pointer ${
-                      theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#F0EDE6]'
+                      theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#EFF3F4]'
                     }`}
                   >
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-indigo-400 to-indigo-600">
                       <Zap className="h-4.5 w-4.5 text-white" />
                     </div>
                     <span className={`flex-1 text-[17px] ${
-                      theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                      theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                     }`}>Integrations</span>
                     <ChevronRight className={`h-5 w-5 ${
                       theme === 'dark' ? 'text-white/30' : 'text-gray-300'
@@ -1113,14 +1113,14 @@ function SettingsPageContent() {
                   <Link href="/dashboard/support" className="block">
                     <div 
                       className={`flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity cursor-pointer ${
-                        theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#F0EDE6]'
+                        theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#EFF3F4]'
                       }`}
                     >
                       <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-blue-400 to-blue-600">
                         <HelpCircle className="h-4.5 w-4.5 text-white" />
                       </div>
                       <span className={`flex-1 text-[17px] ${
-                        theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                        theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                       }`}>Contact Support</span>
                       <ChevronRight className={`h-5 w-5 ${
                         theme === 'dark' ? 'text-white/30' : 'text-gray-300'
@@ -1140,14 +1140,14 @@ function SettingsPageContent() {
                       router.push('/auth')
                     }}
                     className={`w-full flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity cursor-pointer ${
-                      theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#F0EDE6]'
+                      theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#EFF3F4]'
                     }`}
                   >
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-gray-400 to-gray-600">
                       <ArrowRight className="h-4.5 w-4.5 text-white rotate-180" />
                     </div>
                     <span className={`flex-1 text-left text-[17px] ${
-                      theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                      theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                     }`}>Sign Out</span>
                   </button>
                   
@@ -1158,14 +1158,14 @@ function SettingsPageContent() {
                   <div 
                     onClick={() => navigateToView('danger')}
                     className={`flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity cursor-pointer ${
-                      theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#F0EDE6]'
+                      theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#EFF3F4]'
                     }`}
                   >
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-red-500 to-red-700">
                       <Shield className="h-4.5 w-4.5 text-white" />
                     </div>
                     <span className={`flex-1 text-[17px] ${
-                      theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                      theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                     }`}>Account Management</span>
                     <ChevronRight className={`h-5 w-5 ${
                       theme === 'dark' ? 'text-white/30' : 'text-gray-300'
@@ -1197,18 +1197,18 @@ function SettingsPageContent() {
                   <Card className={`rounded-2xl p-4 shadow-lg ${
                     theme === 'dark'
                       ? 'bg-white/5 border-white/8'
-                      : 'bg-[#FAFAF7] border-2 border-[#E8E5DE]'
+                      : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
                   }`}>
                     <div className="flex items-center gap-2 mb-4">
                       <User className="h-5 w-5 text-blue-600" />
                       <h3 className={`text-xl font-semibold ${
-                        theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                        theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                       }`}>Profile</h3>
                     </div>
                     <div className="space-y-3">
                       <div className="space-y-1.5">
                         <Label htmlFor="name-mobile" className={`text-sm font-medium ${
-                          theme === 'dark' ? 'text-white/90' : 'text-[#5A5A4E]'
+                          theme === 'dark' ? 'text-white/90' : 'text-[#536471]'
                         }`}>Full Name</Label>
                         <Input
                           id="name-mobile"
@@ -1217,13 +1217,13 @@ function SettingsPageContent() {
                           className={`text-sm h-10 ${
                             theme === 'dark'
                               ? 'bg-white/10 border border-white/10 text-white placeholder:text-white/40 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20'
-                              : 'bg-white border-2 border-[#E8E5DE] text-[#3D3D3D] placeholder:text-[#A0A090] focus:border-blue-500 focus:ring-2 focus:ring-blue-200'
+                              : 'bg-white border-2 border-[#EFF3F4] text-[#0F1419] placeholder:text-[#8B98A5] focus:border-blue-500 focus:ring-2 focus:ring-blue-200'
                           }`}
                         />
                       </div>
                       <div className="space-y-1.5">
                         <Label htmlFor="email-mobile" className={`text-sm font-medium ${
-                          theme === 'dark' ? 'text-white/90' : 'text-[#5A5A4E]'
+                          theme === 'dark' ? 'text-white/90' : 'text-[#536471]'
                         }`}>Email</Label>
                         <Input
                           id="email-mobile"
@@ -1233,16 +1233,16 @@ function SettingsPageContent() {
                           className={`text-sm h-10 ${
                             theme === 'dark'
                               ? 'bg-white/5 border-white/8 text-white/40'
-                              : 'bg-[#F0EDE6] border-2 border-[#E8E5DE] text-[#8A8A7A]'
+                              : 'bg-[#EFF3F4] border-2 border-[#EFF3F4] text-[#8B98A5]'
                           }`}
                         />
                         <p className={`text-xs ${
-                          theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                          theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                         }`}>Email cannot be changed</p>
                       </div>
                       <div className="space-y-1.5">
                         <Label htmlFor="timezone-mobile" className={`text-sm font-medium ${
-                          theme === 'dark' ? 'text-white/90' : 'text-[#5A5A4E]'
+                          theme === 'dark' ? 'text-white/90' : 'text-[#536471]'
                         }`}>Timezone</Label>
                         <Select value={timezone} onValueChange={(value) => {
                           setTimezone(value)
@@ -1251,14 +1251,14 @@ function SettingsPageContent() {
                           <SelectTrigger className={`text-sm h-10 ${
                             theme === 'dark'
                               ? 'bg-white/10 border border-white/10 text-white'
-                              : 'bg-white border-2 border-[#E8E5DE] text-[#3D3D3D]'
+                              : 'bg-white border-2 border-[#EFF3F4] text-[#0F1419]'
                           }`}>
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent className={`max-h-[300px] ${
                             theme === 'dark'
                               ? 'bg-black/90 border border-white/10'
-                              : 'bg-white border-2 border-[#E8E5DE]'
+                              : 'bg-white border-2 border-[#EFF3F4]'
                           }`}>
                             {commonTimezones.map((tz) => {
                               const tzInfo = getTimezoneInfo(tz.value)
@@ -1268,7 +1268,7 @@ function SettingsPageContent() {
                               return (
                                 <SelectItem key={tz.value} value={tz.value} className={theme === 'dark'
                                   ? 'text-white hover:bg-white/8'
-                                  : 'text-[#3D3D3D] hover:bg-[#F0EDE6]'
+                                  : 'text-[#0F1419] hover:bg-[#EFF3F4]'
                                 }>
                                   {tz.label} ({offsetDisplay})
                                 </SelectItem>
@@ -1278,7 +1278,7 @@ function SettingsPageContent() {
                         </Select>
                         {timezoneInfo && timezoneInfo.dstNote && (
                           <p className={`text-xs ${
-                            theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                            theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                           }`}>{timezoneInfo.dstNote}</p>
                         )}
                       </div>
@@ -1295,12 +1295,12 @@ function SettingsPageContent() {
                     <Card className={`backdrop-blur-xl rounded-2xl p-4 shadow-lg ${
                       theme === 'dark'
                         ? 'bg-white/5 border-white/8'
-                        : 'bg-[#FAFAF7] border-2 border-[#E8E5DE]'
+                        : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
                     }`}>
                       <div className="flex items-center gap-2 mb-3">
                         <Smartphone className="h-4 w-4 text-blue-500" />
                         <h4 className={`text-sm font-semibold uppercase tracking-wide ${
-                          theme === 'dark' ? 'text-white/50' : 'text-[#8A8A7A]'
+                          theme === 'dark' ? 'text-white/50' : 'text-[#8B98A5]'
                         }`}>Device</h4>
                       </div>
                       <PushNotificationRow theme={theme} />
@@ -1310,22 +1310,22 @@ function SettingsPageContent() {
                     <Card className={`backdrop-blur-xl rounded-2xl p-4 shadow-lg ${
                       theme === 'dark'
                         ? 'bg-white/5 border-white/8'
-                        : 'bg-[#FAFAF7] border-2 border-[#E8E5DE]'
+                        : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
                     }`}>
                       <div className="flex items-center gap-2 mb-3">
                         <Mail className="h-4 w-4 text-green-500" />
                         <h4 className={`text-sm font-semibold uppercase tracking-wide ${
-                          theme === 'dark' ? 'text-white/50' : 'text-[#8A8A7A]'
+                          theme === 'dark' ? 'text-white/50' : 'text-[#8B98A5]'
                         }`}>Email</h4>
                       </div>
                       <div className="space-y-4">
                         <div className="flex items-center justify-between min-h-[44px]">
                           <div className="flex-1 pr-3">
                             <Label className={`text-sm font-medium ${
-                              theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                              theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                             }`}>Daily Reminders</Label>
                             <p className={`text-xs ${
-                              theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                              theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                             }`}>Get your daily prompt via email</p>
                           </div>
                           <Switch checked={dailyReminders} onCheckedChange={setDailyReminders} className="shrink-0" />
@@ -1334,10 +1334,10 @@ function SettingsPageContent() {
                         <div className="flex items-center justify-between min-h-[44px]">
                           <div className="flex-1 pr-3">
                             <Label className={`text-sm font-medium ${
-                              theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                              theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                             }`}>Weekly Digest</Label>
                             <p className={`text-xs ${
-                              theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                              theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                             }`}>Summary every Sunday</p>
                           </div>
                           <Switch checked={weeklyDigest} onCheckedChange={setWeeklyDigest} className="shrink-0" />
@@ -1346,10 +1346,10 @@ function SettingsPageContent() {
                         <div className="flex items-center justify-between min-h-[44px]">
                           <div className="flex-1 pr-3">
                             <Label className={`text-sm font-medium ${
-                              theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                              theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                             }`}>Include Self-Journals</Label>
                             <p className={`text-xs ${
-                              theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                              theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                             }`}>Add private journals to insights</p>
                           </div>
                           <Switch
@@ -1365,19 +1365,19 @@ function SettingsPageContent() {
                     <Card className={`backdrop-blur-xl rounded-2xl p-4 shadow-lg ${
                       theme === 'dark'
                         ? 'bg-white/5 border-white/8'
-                        : 'bg-[#FAFAF7] border-2 border-[#E8E5DE]'
+                        : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
                     }`}>
                       <div className="flex items-center gap-2 mb-3">
                         <Calendar className="h-4 w-4 text-purple-500" />
                         <h4 className={`text-sm font-semibold uppercase tracking-wide ${
-                          theme === 'dark' ? 'text-white/50' : 'text-[#8A8A7A]'
+                          theme === 'dark' ? 'text-white/50' : 'text-[#8B98A5]'
                         }`}>Schedule</h4>
                       </div>
                       <div className="space-y-4">
                         {/* Time Picker with Clock Icon and Chevron */}
                         <div className="space-y-1.5">
                           <Label htmlFor="reminder-time-mobile" className={`text-sm font-medium ${
-                            theme === 'dark' ? 'text-white/90' : 'text-[#5A5A4E]'
+                            theme === 'dark' ? 'text-white/90' : 'text-[#536471]'
                           }`}>Reminder Time</Label>
                           <div className="relative">
                             <Input
@@ -1388,11 +1388,11 @@ function SettingsPageContent() {
                               className={`text-base h-14 pl-12 pr-10 rounded-xl cursor-pointer ${
                                 theme === 'dark'
                                   ? 'bg-white/10 border border-white/10 text-white hover:bg-white/15'
-                                  : 'bg-white border-2 border-[#E8E5DE] text-[#3D3D3D] hover:border-gray-400 shadow-sm'
+                                  : 'bg-white border-2 border-[#EFF3F4] text-[#0F1419] hover:border-gray-400 shadow-sm'
                               }`}
                             />
                             <div className={`absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none ${
-                              theme === 'dark' ? 'text-white/40' : 'text-[#A0A090]'
+                              theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                             }`}>
                               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <circle cx="12" cy="12" r="10"/>
@@ -1400,13 +1400,13 @@ function SettingsPageContent() {
                               </svg>
                             </div>
                             <div className={`absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none ${
-                              theme === 'dark' ? 'text-white/40' : 'text-[#A0A090]'
+                              theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                             }`}>
                               <ChevronRight className="h-5 w-5 rotate-90" />
                             </div>
                           </div>
                           <p className={`text-xs ${
-                            theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                            theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                           }`}>Daily reminders will be sent at this time</p>
                         </div>
                         
@@ -1414,7 +1414,7 @@ function SettingsPageContent() {
                         <div className="space-y-2">
                           <div className="flex items-center justify-between">
                             <Label className={`text-sm font-medium ${
-                              theme === 'dark' ? 'text-white/90' : 'text-[#5A5A4E]'
+                              theme === 'dark' ? 'text-white/90' : 'text-[#536471]'
                             }`}>Notification Days</Label>
                             {tier !== 'premium' && (
                               <Link href="/dashboard/settings" onClick={() => navigateToView('subscription')} className={`text-xs px-2 py-1 rounded-full flex items-center gap-1 ${
@@ -1450,10 +1450,10 @@ function SettingsPageContent() {
                                     isSelected
                                       ? 'bg-gradient-to-br from-yellow-400 to-purple-500 text-white shadow-md'
                                       : !canSelect
-                                      ? 'opacity-40 cursor-not-allowed ' + (theme === 'dark' ? 'bg-white/5 text-white/40' : 'bg-[#F0EDE6] text-[#A0A090]')
+                                      ? 'opacity-40 cursor-not-allowed ' + (theme === 'dark' ? 'bg-white/5 text-white/40' : 'bg-[#EFF3F4] text-[#8B98A5]')
                                       : theme === 'dark'
                                       ? 'bg-white/10 text-white/80 hover:bg-white/20 active:bg-white/25'
-                                      : 'bg-[#F0EDE6] text-[#5A5A4E] hover:bg-[#E8E5DE] active:bg-gray-300'
+                                      : 'bg-[#EFF3F4] text-[#536471] hover:bg-[#EFF3F4] active:bg-gray-300'
                                   }`}
                                 >
                                   {day.charAt(0).toUpperCase()}
@@ -1465,7 +1465,7 @@ function SettingsPageContent() {
                           <div className="grid grid-cols-7 gap-1.5">
                             {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
                               <span key={day} className={`text-center text-[10px] ${
-                                theme === 'dark' ? 'text-white/40' : 'text-[#A0A090]'
+                                theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                               }`}>{day}</span>
                             ))}
                           </div>
@@ -1483,12 +1483,12 @@ function SettingsPageContent() {
                   <Card className={`rounded-2xl p-4 shadow-lg ${
                     theme === 'dark'
                       ? 'bg-white/5 border-white/8'
-                      : 'bg-[#FAFAF7] border-2 border-[#E8E5DE]'
+                      : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
                   }`}>
                     <div className="flex items-center gap-2 mb-4">
-                      <Lock className="h-5 w-5 text-[#8A8A7A]" />
+                      <Lock className="h-5 w-5 text-[#8B98A5]" />
                       <h3 className={`text-xl font-semibold ${
-                        theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                        theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                       }`}>Security</h3>
                     </div>
                     {authProvider && authProvider !== 'email' && (
@@ -1505,7 +1505,7 @@ function SettingsPageContent() {
                         </div>
                         {!hasPassword && (
                           <p className={`text-xs mt-1.5 ml-6 ${
-                            theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                            theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                           }`}>
                             Want extra security? Set a backup password below (optional)
                           </p>
@@ -1516,7 +1516,7 @@ function SettingsPageContent() {
                       {hasPassword && (
                         <div className="space-y-1.5">
                           <Label className={`text-sm font-medium ${
-                            theme === 'dark' ? 'text-white/90' : 'text-[#5A5A4E]'
+                            theme === 'dark' ? 'text-white/90' : 'text-[#536471]'
                           }`}>Current Password</Label>
                           <div className="relative">
                             <Input
@@ -1527,14 +1527,14 @@ function SettingsPageContent() {
                               className={`text-sm h-12 pr-10 ${
                                 theme === 'dark'
                                   ? 'bg-white/10 border border-white/10 text-white placeholder:text-white/40 focus:border-blue-400'
-                                  : 'bg-white border-2 border-[#E8E5DE] text-[#3D3D3D] placeholder:text-[#A0A090] focus:border-blue-500 focus:ring-2 focus:ring-blue-200'
+                                  : 'bg-white border-2 border-[#EFF3F4] text-[#0F1419] placeholder:text-[#8B98A5] focus:border-blue-500 focus:ring-2 focus:ring-blue-200'
                               }`}
                             />
                             <button
                               type="button"
                               onClick={() => setShowPasswordFields(!showPasswordFields)}
                               className={`absolute right-3 top-1/2 -translate-y-1/2 ${
-                                theme === 'dark' ? 'text-white/40 hover:text-white/50' : 'text-[#A0A090] hover:text-[#8A8A7A]'
+                                theme === 'dark' ? 'text-white/40 hover:text-white/50' : 'text-[#8B98A5] hover:text-[#8B98A5]'
                               }`}
                             >
                               {showPasswordFields ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -1544,7 +1544,7 @@ function SettingsPageContent() {
                       )}
                       <div className="space-y-1.5">
                         <Label className={`text-sm font-medium ${
-                          theme === 'dark' ? 'text-white/90' : 'text-[#5A5A4E]'
+                          theme === 'dark' ? 'text-white/90' : 'text-[#536471]'
                         }`}>{hasPassword ? 'New Password' : 'Set Password'}</Label>
                         <div className="relative">
                           <Input
@@ -1555,14 +1555,14 @@ function SettingsPageContent() {
                             className={`text-sm h-12 pr-10 ${
                               theme === 'dark'
                                 ? 'bg-white/10 border border-white/10 text-white placeholder:text-white/40 focus:border-blue-400'
-                                : 'bg-white border-2 border-[#E8E5DE] text-[#3D3D3D] placeholder:text-[#A0A090] focus:border-blue-500 focus:ring-2 focus:ring-blue-200'
+                                : 'bg-white border-2 border-[#EFF3F4] text-[#0F1419] placeholder:text-[#8B98A5] focus:border-blue-500 focus:ring-2 focus:ring-blue-200'
                             }`}
                           />
                           <button
                             type="button"
                             onClick={() => setShowPasswordFields(!showPasswordFields)}
                             className={`absolute right-3 top-1/2 -translate-y-1/2 ${
-                              theme === 'dark' ? 'text-white/40 hover:text-white/50' : 'text-[#A0A090] hover:text-[#8A8A7A]'
+                              theme === 'dark' ? 'text-white/40 hover:text-white/50' : 'text-[#8B98A5] hover:text-[#8B98A5]'
                             }`}
                           >
                             {showPasswordFields ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -1571,7 +1571,7 @@ function SettingsPageContent() {
                       </div>
                       <div className="space-y-1.5">
                         <Label className={`text-sm font-medium ${
-                          theme === 'dark' ? 'text-white/90' : 'text-[#5A5A4E]'
+                          theme === 'dark' ? 'text-white/90' : 'text-[#536471]'
                         }`}>Confirm Password</Label>
                         <div className="relative">
                           <Input
@@ -1582,14 +1582,14 @@ function SettingsPageContent() {
                             className={`text-sm h-12 pr-10 ${
                               theme === 'dark'
                                 ? 'bg-white/10 border border-white/10 text-white placeholder:text-white/40 focus:border-blue-400'
-                                : 'bg-white border-2 border-[#E8E5DE] text-[#3D3D3D] placeholder:text-[#A0A090] focus:border-blue-500 focus:ring-2 focus:ring-blue-200'
+                                : 'bg-white border-2 border-[#EFF3F4] text-[#0F1419] placeholder:text-[#8B98A5] focus:border-blue-500 focus:ring-2 focus:ring-blue-200'
                             }`}
                           />
                           <button
                             type="button"
                             onClick={() => setShowPasswordFields(!showPasswordFields)}
                             className={`absolute right-3 top-1/2 -translate-y-1/2 ${
-                              theme === 'dark' ? 'text-white/40 hover:text-white/50' : 'text-[#A0A090] hover:text-[#8A8A7A]'
+                              theme === 'dark' ? 'text-white/40 hover:text-white/50' : 'text-[#8B98A5] hover:text-[#8B98A5]'
                             }`}
                           >
                             {showPasswordFields ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -1598,7 +1598,7 @@ function SettingsPageContent() {
                       </div>
                       {/* Password requirements */}
                       <p className={`text-xs ${
-                        theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                        theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                       }`}>
                         Password must be at least 8 characters
                       </p>
@@ -1613,22 +1613,22 @@ function SettingsPageContent() {
                   <Card className={`rounded-2xl p-4 shadow-lg ${
                     theme === 'dark'
                       ? 'bg-white/5 border-white/8'
-                      : 'bg-[#FAFAF7] border-2 border-[#E8E5DE]'
+                      : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
                   }`}>
                     <div className="flex items-center gap-2 mb-4">
                       <Palette className="h-5 w-5 text-purple-600" />
                       <h3 className={`text-xl font-semibold ${
-                        theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                        theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                       }`}>Preferences</h3>
                     </div>
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
                         <div>
                           <Label className={`text-sm ${
-                            theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                            theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                           }`}>Dark Mode</Label>
                           <p className={`text-xs ${
-                            theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                            theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                           }`}>Use dark theme</p>
                         </div>
                         <Switch checked={darkMode} onCheckedChange={(checked) => { setDarkMode(checked); setTheme(checked ? 'dark' : 'light') }} />
@@ -1636,35 +1636,35 @@ function SettingsPageContent() {
                       <div className="flex items-center justify-between">
                         <div>
                           <Label className={`text-sm ${
-                            theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                            theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                           }`}>Privacy Mode</Label>
                           <p className={`text-xs ${
-                            theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                            theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                           }`}>Hide reflections preview</p>
                         </div>
                         <Switch checked={privacyMode} onCheckedChange={setPrivacyMode} />
                       </div>
                       <div className="space-y-1.5">
                         <Label className={`text-sm font-medium ${
-                          theme === 'dark' ? 'text-white/90' : 'text-[#5A5A4E]'
+                          theme === 'dark' ? 'text-white/90' : 'text-[#536471]'
                         }`}>Language</Label>
                         <Select value={language} onValueChange={setLanguage}>
                           <SelectTrigger className={`text-sm h-10 ${
                             theme === 'dark'
                               ? 'bg-white/10 border border-white/10 text-white'
-                              : 'bg-white border-2 border-[#E8E5DE] text-[#3D3D3D]'
+                              : 'bg-white border-2 border-[#EFF3F4] text-[#0F1419]'
                           }`}>
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent className={`max-h-[300px] ${
                             theme === 'dark'
                               ? 'bg-black/90 border border-white/10'
-                              : 'bg-white border-2 border-[#E8E5DE]'
+                              : 'bg-white border-2 border-[#EFF3F4]'
                           }`}>
                             {languages.map((lang) => (
                               <SelectItem key={lang.value} value={lang.value} className={theme === 'dark'
                                 ? 'text-white hover:bg-white/8'
-                                : 'text-[#3D3D3D] hover:bg-[#F0EDE6]'
+                                : 'text-[#0F1419] hover:bg-[#EFF3F4]'
                               }>
                                 {lang.label} ({lang.nativeName})
                               </SelectItem>
@@ -1674,25 +1674,25 @@ function SettingsPageContent() {
                       </div>
                       <div className="space-y-1.5">
                         <Label className={`text-sm font-medium ${
-                          theme === 'dark' ? 'text-white/90' : 'text-[#5A5A4E]'
+                          theme === 'dark' ? 'text-white/90' : 'text-[#536471]'
                         }`}>Prompt Frequency</Label>
                         <Select value={promptFrequency} onValueChange={setPromptFrequency}>
                           <SelectTrigger className={`text-sm h-10 ${
                             theme === 'dark'
                               ? 'bg-white/10 border border-white/10 text-white'
-                              : 'bg-white border-2 border-[#E8E5DE] text-[#3D3D3D]'
+                              : 'bg-white border-2 border-[#EFF3F4] text-[#0F1419]'
                           }`}>
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent className={`max-h-[300px] ${
                             theme === 'dark'
                               ? 'bg-black/90 border border-white/10'
-                              : 'bg-white border-2 border-[#E8E5DE]'
+                              : 'bg-white border-2 border-[#EFF3F4]'
                           }`}>
                             {promptFrequencies.map((freq) => (
                               <SelectItem key={freq.value} value={freq.value} className={theme === 'dark'
                                 ? 'text-white hover:bg-white/8'
-                                : 'text-[#3D3D3D] hover:bg-[#F0EDE6]'
+                                : 'text-[#0F1419] hover:bg-[#EFF3F4]'
                               }>
                                 {freq.label}
                               </SelectItem>
@@ -1701,7 +1701,7 @@ function SettingsPageContent() {
                         </Select>
                         {currentPlan === 'free' && (
                           <p className={`text-xs ${
-                            theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                            theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                           }`}>
                             Free tier: Limited to 3 prompts per week (Mon/Wed/Fri). Upgrade to Premium for custom scheduling.
                           </p>
@@ -1711,10 +1711,10 @@ function SettingsPageContent() {
                         <div className={`space-y-3 p-4 rounded-xl ${
                           theme === 'dark'
                             ? 'bg-white/5 border-white/8'
-                            : 'bg-[#F0EDE6] border-2 border-[#E8E5DE]'
+                            : 'bg-[#EFF3F4] border-2 border-[#EFF3F4]'
                         }`}>
                           <Label className={`font-medium text-sm ${
-                            theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                            theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                           }`}>Select Days</Label>
                           <div className="grid grid-cols-2 gap-2">
                             {["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].map((day) => (
@@ -1727,7 +1727,7 @@ function SettingsPageContent() {
                                     ? 'bg-purple-500 text-white hover:bg-purple-600'
                                     : theme === 'dark'
                                     ? 'bg-white/10 border border-white/10 text-white/80 hover:bg-white/20'
-                                    : 'bg-white border-2 border-[#E8E5DE] text-[#5A5A4E] hover:bg-[#F0EDE6]'
+                                    : 'bg-white border-2 border-[#EFF3F4] text-[#536471] hover:bg-[#EFF3F4]'
                                 }`}
                               >
                                 {day.charAt(0).toUpperCase() + day.slice(1)}
@@ -1739,10 +1739,10 @@ function SettingsPageContent() {
                       {/* Focus Preferences */}
                       <div className="space-y-1.5">
                         <Label className={`text-sm font-medium ${
-                          theme === 'dark' ? 'text-white/90' : 'text-[#5A5A4E]'
+                          theme === 'dark' ? 'text-white/90' : 'text-[#536471]'
                         }`}>Focus Preferences</Label>
                         <p className={`text-xs mb-2 ${
-                          theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                          theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                         }`}>Choose topics that guide your daily prompts</p>
                         <div className="flex flex-wrap gap-2">
                           {["Clarity", "Emotional Balance", "Work & Responsibility", "Relationships", "Change & Uncertainty", "Grounding"].map((topic) => (
@@ -1758,7 +1758,7 @@ function SettingsPageContent() {
                                   ? 'bg-purple-500 text-white hover:bg-purple-600'
                                   : theme === 'dark'
                                   ? 'bg-white/10 border border-white/10 text-white/80 hover:bg-white/20'
-                                  : 'bg-white border-2 border-[#E8E5DE] text-[#5A5A4E] hover:bg-[#F0EDE6]'
+                                  : 'bg-white border-2 border-[#EFF3F4] text-[#536471] hover:bg-[#EFF3F4]'
                               }`}
                             >
                               {topic}
@@ -1785,12 +1785,12 @@ function SettingsPageContent() {
                   <Card className={`rounded-2xl p-4 shadow-lg ${
                     theme === 'dark'
                       ? 'bg-white/5 border-white/8'
-                      : 'bg-[#FAFAF7] border-2 border-[#E8E5DE]'
+                      : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
                   }`}>
                     <div className="flex items-center gap-2 mb-4">
                       <CreditCard className="h-5 w-5 text-green-600" />
                       <h3 className={`text-xl font-semibold ${
-                        theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                        theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                       }`}>Subscription</h3>
                     </div>
                     <div className="space-y-4">
@@ -1798,15 +1798,15 @@ function SettingsPageContent() {
                       <div className={`p-4 rounded-xl ${
                         theme === 'dark'
                           ? 'bg-white/5 border-white/8'
-                          : 'bg-[#F0EDE6] border-2 border-[#E8E5DE]'
+                          : 'bg-[#EFF3F4] border-2 border-[#EFF3F4]'
                       }`}>
                         <Label className={`text-sm mb-2 block font-medium ${
-                          theme === 'dark' ? 'text-white/90' : 'text-[#5A5A4E]'
+                          theme === 'dark' ? 'text-white/90' : 'text-[#536471]'
                         }`}>Current Plan</Label>
                         <div className="flex items-center justify-between">
                           <div>
                             <p className={`text-2xl font-bold ${
-                              theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                              theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                             }`}>
                               {currentPlan === "free" ? "Free" : "Premium"}
                               {isTrial && currentPlan === "premium" && (
@@ -1821,12 +1821,12 @@ function SettingsPageContent() {
                                   trialEndDate={trialEndDate}
                                   compact={true}
                                   showIcon={false}
-                                  className={theme === 'dark' ? 'text-white/50' : 'text-[#8A8A7A]'}
+                                  className={theme === 'dark' ? 'text-white/50' : 'text-[#8B98A5]'}
                                 />
                               </div>
                             ) : (
                               <p className={`text-sm mt-1 ${
-                                theme === 'dark' ? 'text-white/50' : 'text-[#8A8A7A]'
+                                theme === 'dark' ? 'text-white/50' : 'text-[#8B98A5]'
                               }`}>
                                 {currentPlan === "free" ? "£0/month" : `£${billingCycle === "monthly" ? "12" : "8.25"}/month`}
                               </p>
@@ -1875,7 +1875,7 @@ function SettingsPageContent() {
                                 theme === 'dark' ? 'text-yellow-400' : 'text-yellow-700'
                               }`} />
                               <h4 className={`font-semibold ${
-                                theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                                theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                               }`}>Upgrade to Premium</h4>
                             </div>
                             
@@ -1887,10 +1887,10 @@ function SettingsPageContent() {
                                   billingCycle === "monthly" 
                                     ? theme === 'dark'
                                       ? 'bg-yellow-500/40 border border-yellow-400 text-white'
-                                      : 'bg-yellow-200 border-2 border-yellow-500 text-[#3D3D3D]'
+                                      : 'bg-yellow-200 border-2 border-yellow-500 text-[#0F1419]'
                                     : theme === 'dark'
                                     ? 'bg-white/10 border border-white/10 text-white/50'
-                                    : 'bg-white border-2 border-[#E8E5DE] text-[#8A8A7A]'
+                                    : 'bg-white border-2 border-[#EFF3F4] text-[#8B98A5]'
                                 }`}
                               >
                                 <div className="text-center">
@@ -1904,10 +1904,10 @@ function SettingsPageContent() {
                                   billingCycle === "yearly" 
                                     ? theme === 'dark'
                                       ? 'bg-yellow-500/40 border border-yellow-400 text-white'
-                                      : 'bg-yellow-200 border-2 border-yellow-500 text-[#3D3D3D]'
+                                      : 'bg-yellow-200 border-2 border-yellow-500 text-[#0F1419]'
                                     : theme === 'dark'
                                     ? 'bg-white/10 border border-white/10 text-white/50'
-                                    : 'bg-white border-2 border-[#E8E5DE] text-[#8A8A7A]'
+                                    : 'bg-white border-2 border-[#EFF3F4] text-[#8B98A5]'
                                 }`}
                               >
                                 <span className="text-[9px] absolute -top-1.5 left-1/2 -translate-x-1/2 px-1.5 py-0.5 bg-green-600 text-white rounded-full font-bold shadow-md">SAVE £45</span>
@@ -1922,7 +1922,7 @@ function SettingsPageContent() {
                             <div className={`space-y-2 mb-3 p-3 rounded-lg ${
                               theme === 'dark'
                                 ? 'bg-white/10 border border-white/10'
-                                : 'bg-white border-2 border-[#E8E5DE]'
+                                : 'bg-white border-2 border-[#EFF3F4]'
                             }`}>
                               {[
                                 "Daily prompts (7 days/week)",
@@ -1935,7 +1935,7 @@ function SettingsPageContent() {
                                 "Export reflections",
                               ].map((feature, index) => (
                                 <div key={index} className={`flex items-center gap-2 text-xs ${
-                                  theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                                  theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                                 }`}>
                                   <Check className="h-3 w-3 text-green-600 flex-shrink-0" />
                                   <span>{feature}</span>
@@ -1968,7 +1968,7 @@ function SettingsPageContent() {
                                 theme === 'dark' ? 'text-yellow-400' : 'text-yellow-700'
                               }`} />
                               <p className={`text-sm font-semibold ${
-                                theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                                theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                               }`}>Premium plan</p>
                             </div>
                             <div className={`grid grid-cols-2 gap-2 text-[11px] ${
@@ -1994,15 +1994,15 @@ function SettingsPageContent() {
                           <div className={`p-4 rounded-xl ${
                             theme === 'dark'
                               ? 'bg-white/5 border-white/8'
-                              : 'bg-white border-2 border-[#E8E5DE]'
+                              : 'bg-white border-2 border-[#EFF3F4]'
                           }`}>
                             <div className="flex items-start gap-3 mb-3">
                               <div className="flex-1">
                                 <h4 className={`font-semibold text-base ${
-                                  theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                                  theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                                 }`}>Free Tier</h4>
                                 <p className={`text-sm ${
-                                  theme === 'dark' ? 'text-white/50' : 'text-[#8A8A7A]'
+                                  theme === 'dark' ? 'text-white/50' : 'text-[#8B98A5]'
                                 }`}>£0/month</p>
                               </div>
                             </div>
@@ -2010,7 +2010,7 @@ function SettingsPageContent() {
                             <div className={`space-y-2 mb-4 p-3 rounded-lg ${
                               theme === 'dark'
                                 ? 'bg-white/5 border-white/8'
-                                : 'bg-[#F0EDE6] border-2 border-[#E8E5DE]'
+                                : 'bg-[#EFF3F4] border-2 border-[#EFF3F4]'
                             }`}>
                               {[
                                 "3 prompts per week",
@@ -2021,7 +2021,7 @@ function SettingsPageContent() {
                                 "Email delivery only",
                               ].map((feature, index) => (
                                 <div key={index} className={`flex items-start gap-2 text-xs ${
-                                  theme === 'dark' ? 'text-white/80' : 'text-[#5A5A4E]'
+                                  theme === 'dark' ? 'text-white/80' : 'text-[#536471]'
                                 }`}>
                                   <Check className="h-3 w-3 text-blue-600 flex-shrink-0 mt-0.5" />
                                   <span>{feature}</span>
@@ -2058,7 +2058,7 @@ function SettingsPageContent() {
                                 Cancel Subscription
                               </button>
                               <p className={`text-[10px] mt-2 ${
-                                theme === 'dark' ? 'text-red-300/70' : 'text-[#8A8A7A]'
+                                theme === 'dark' ? 'text-red-300/70' : 'text-[#8B98A5]'
                               }`}>
                                 Your Premium access will continue until the end of your current billing period.
                               </p>
@@ -2074,25 +2074,25 @@ function SettingsPageContent() {
                   <Card className={`rounded-2xl p-4 shadow-lg ${
                     theme === 'dark'
                       ? 'bg-white/5 border-white/8'
-                      : 'bg-[#FAFAF7] border-2 border-[#E8E5DE]'
+                      : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
                   }`}>
                     <div className="flex items-center gap-2 mb-4">
                       <Zap className="h-5 w-5 text-purple-600" />
                       <h3 className={`text-xl font-semibold ${
-                        theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                        theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                       }`}>Integrations</h3>
                     </div>
                     <div className="space-y-3">
                       <div className={`p-4 rounded-xl ${currentPlan !== 'premium' ? 'opacity-60' : ''} ${
                         theme === 'dark'
                           ? 'bg-white/5 border-white/8'
-                          : 'bg-[#F0EDE6] border-2 border-[#E8E5DE]'
+                          : 'bg-[#EFF3F4] border-2 border-[#EFF3F4]'
                       }`}>
                         <div className="flex items-center gap-3 mb-2">
                           <SlackIcon size={24} />
                           <div className="flex-1">
                             <h4 className={`font-medium ${
-                              theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                              theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                             }`}>Slack</h4>
                             {currentPlan !== 'premium' ? (
                               <p className={`text-xs flex items-center gap-1 ${
@@ -2118,13 +2118,13 @@ function SettingsPageContent() {
                       <div className={`p-4 rounded-xl opacity-60 ${
                         theme === 'dark'
                           ? 'bg-white/5 border-white/8'
-                          : 'bg-[#F0EDE6] border-2 border-[#E8E5DE]'
+                          : 'bg-[#EFF3F4] border-2 border-[#EFF3F4]'
                       }`}>
                         <div className="flex items-center gap-3 mb-2">
                           <WhatsAppIcon size={24} />
                           <div className="flex-1">
                             <h4 className={`font-medium ${
-                              theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                              theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                             }`}>WhatsApp</h4>
                             <p className={`text-xs ${
                               theme === 'dark' ? 'text-blue-400' : 'text-blue-600'
@@ -2135,13 +2135,13 @@ function SettingsPageContent() {
                       <div className={`p-4 rounded-xl opacity-60 ${
                         theme === 'dark'
                           ? 'bg-white/5 border-white/8'
-                          : 'bg-[#F0EDE6] border-2 border-[#E8E5DE]'
+                          : 'bg-[#EFF3F4] border-2 border-[#EFF3F4]'
                       }`}>
                         <div className="flex items-center gap-3 mb-2">
                           <TeamsIcon size={24} />
                           <div className="flex-1">
                             <h4 className={`font-medium ${
-                              theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                              theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                             }`}>Microsoft Teams</h4>
                             <p className={`text-xs ${
                               theme === 'dark' ? 'text-blue-400' : 'text-blue-600'
@@ -2157,30 +2157,30 @@ function SettingsPageContent() {
                   <Card className={`rounded-2xl p-4 shadow-lg ${
                     theme === 'dark'
                       ? 'bg-white/5 border-white/8'
-                      : 'bg-[#FAFAF7] border-2 border-[#E8E5DE]'
+                      : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
                   }`}>
                     <div className="flex items-center gap-2 mb-4">
-                      <Settings2 className="h-5 w-5 text-[#8A8A7A]" />
+                      <Settings2 className="h-5 w-5 text-[#8B98A5]" />
                       <h3 className={`text-xl font-semibold ${
-                        theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                        theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                       }`}>Account Management</h3>
                     </div>
                     <div className="space-y-3">
                       <div className={`p-4 rounded-xl ${
                         theme === 'dark'
                           ? 'bg-white/5 border-white/8'
-                          : 'bg-white border-2 border-[#E8E5DE]'
+                          : 'bg-white border-2 border-[#EFF3F4]'
                       }`}>
                         <p className={`font-medium mb-1 ${
-                          theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                          theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                         }`}>Export All Data</p>
                         <p className={`text-sm mb-3 ${
-                          theme === 'dark' ? 'text-white/50' : 'text-[#8A8A7A]'
+                          theme === 'dark' ? 'text-white/50' : 'text-[#8B98A5]'
                         }`}>Download your reflections</p>
                         <Button onClick={handleExportData} variant="outline" className={`w-full h-9 ${
                           theme === 'dark'
                             ? 'bg-white/5 border border-white/10 text-white hover:bg-white/8'
-                            : 'bg-white border-2 border-[#E8E5DE] text-[#3D3D3D] hover:bg-[#F0EDE6]'
+                            : 'bg-white border-2 border-[#EFF3F4] text-[#0F1419] hover:bg-[#EFF3F4]'
                         }`}>
                           Export Data
                         </Button>
@@ -2194,7 +2194,7 @@ function SettingsPageContent() {
                           theme === 'dark' ? 'text-red-200' : 'text-red-700'
                         }`}>Delete Account</p>
                         <p className={`text-sm mb-3 ${
-                          theme === 'dark' ? 'text-red-300/80' : 'text-[#5A5A4E]'
+                          theme === 'dark' ? 'text-red-300/80' : 'text-[#536471]'
                         }`}>Permanently delete everything</p>
                         <Button onClick={handleDeleteAccount} className={`w-full h-9 ${
                           theme === 'dark'
@@ -2217,7 +2217,7 @@ function SettingsPageContent() {
           <Card className={`rounded-2xl p-3 md:p-6 shadow-lg ${
             theme === 'dark'
               ? 'bg-white/5 border-white/8'
-              : 'bg-[#FAFAF7] border-2 border-[#E8E5DE]'
+              : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
           }`}>
             <div className="flex items-center gap-3">
               <IconOrb accent="violet" size="md">
@@ -2225,10 +2225,10 @@ function SettingsPageContent() {
               </IconOrb>
               <div>
                 <h2 className={`text-xl md:text-3xl font-bold tracking-tight ${
-                  theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                  theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                 }`}>Settings</h2>
                 <p className={`text-xs md:text-base ${
-                  theme === 'dark' ? 'text-white/50' : 'text-[#8A8A7A]'
+                  theme === 'dark' ? 'text-white/50' : 'text-[#8B98A5]'
                 }`}>Manage your account and preferences</p>
               </div>
             </div>
@@ -2239,18 +2239,18 @@ function SettingsPageContent() {
             <Card className={`backdrop-blur-xl rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg hover:shadow-xl transition-shadow ${
               theme === 'dark'
                 ? 'bg-white/5 border-white/8'
-                : 'bg-[#FAFAF7] border-2 border-[#E8E5DE]'
+                : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
             }`}>
               <div className="flex items-center gap-2 mb-4">
                 <User className="h-5 w-5 text-blue-600" />
                 <h3 className={`text-base md:text-xl font-semibold ${
-                  theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                  theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                 }`}>Profile Information</h3>
               </div>
               <div className="space-y-3">
                 <div className="space-y-1.5">
                   <Label htmlFor="name" className={`text-sm font-medium ${
-                    theme === 'dark' ? 'text-white/90' : 'text-[#5A5A4E]'
+                    theme === 'dark' ? 'text-white/90' : 'text-[#536471]'
                   }`}>Full Name</Label>
                   <Input
                     id="name"
@@ -2259,13 +2259,13 @@ function SettingsPageContent() {
                     className={`text-sm h-9 md:h-10 ${
                       theme === 'dark'
                         ? 'bg-white/10 border border-white/10 text-white placeholder:text-white/40 focus:border-blue-400'
-                        : 'bg-white border-2 border-[#E8E5DE] text-[#3D3D3D] placeholder:text-[#A0A090] focus:border-blue-500 focus:ring-2 focus:ring-blue-200'
+                        : 'bg-white border-2 border-[#EFF3F4] text-[#0F1419] placeholder:text-[#8B98A5] focus:border-blue-500 focus:ring-2 focus:ring-blue-200'
                     }`}
                   />
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="email" className={`text-sm font-medium ${
-                    theme === 'dark' ? 'text-white/90' : 'text-[#5A5A4E]'
+                    theme === 'dark' ? 'text-white/90' : 'text-[#536471]'
                   }`}>{t('settings.email')}</Label>
                   <Input
                     id="email"
@@ -2275,17 +2275,17 @@ function SettingsPageContent() {
                     className={`text-sm h-9 md:h-10 ${
                       theme === 'dark'
                         ? 'bg-white/5 border-white/8 text-white/40'
-                        : 'bg-[#F0EDE6] border-2 border-[#E8E5DE] text-[#8A8A7A] placeholder:text-[#A0A090]'
+                        : 'bg-[#EFF3F4] border-2 border-[#EFF3F4] text-[#8B98A5] placeholder:text-[#8B98A5]'
                     }`}
                     disabled
                   />
                   <p className={`text-xs ${
-                    theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                    theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                   }`}>Email cannot be changed from settings</p>
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="timezone" className={`text-sm font-medium ${
-                    theme === 'dark' ? 'text-white/90' : 'text-[#5A5A4E]'
+                    theme === 'dark' ? 'text-white/90' : 'text-[#536471]'
                   }`}>Timezone</Label>
                   <Select value={timezone} onValueChange={(value) => {
                     setTimezone(value)
@@ -2294,14 +2294,14 @@ function SettingsPageContent() {
                     <SelectTrigger className={`text-sm h-9 md:h-10 ${
                       theme === 'dark'
                         ? 'bg-white/10 border border-white/10 text-white'
-                        : 'bg-white border-2 border-[#E8E5DE] text-[#3D3D3D] focus:border-blue-500 focus:ring-2 focus:ring-blue-200'
+                        : 'bg-white border-2 border-[#EFF3F4] text-[#0F1419] focus:border-blue-500 focus:ring-2 focus:ring-blue-200'
                     }`}>
                       <SelectValue placeholder="Select your timezone" />
                     </SelectTrigger>
                     <SelectContent className={`max-h-[300px] ${
                       theme === 'dark'
                         ? 'bg-black/90 border border-white/10'
-                        : 'bg-white border-2 border-[#E8E5DE]'
+                        : 'bg-white border-2 border-[#EFF3F4]'
                     }`}>
                       {commonTimezones.map((tz) => {
                         // Calculate current offset for this timezone
@@ -2315,7 +2315,7 @@ function SettingsPageContent() {
                             value={tz.value}
                             className={theme === 'dark'
                               ? 'text-white hover:bg-white/8 focus:bg-white/10 cursor-pointer'
-                              : 'text-[#3D3D3D] hover:bg-[#F0EDE6] focus:bg-[#F0EDE6] cursor-pointer'
+                              : 'text-[#0F1419] hover:bg-[#EFF3F4] focus:bg-[#EFF3F4] cursor-pointer'
                             }
                           >
                             {tz.label} ({offsetDisplay})
@@ -2326,17 +2326,17 @@ function SettingsPageContent() {
                   </Select>
                   {timezoneInfo && (
                     <div className={`text-xs space-y-1 mt-2 ${
-                      theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                      theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                     }`}>
                       <p className="flex items-center gap-1">
                         <span>🌍</span>
                         <span className="font-medium">{timezoneInfo.display}</span>
                       </p>
-                      <p className={theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'}>{timezoneInfo.dstNote}</p>
+                      <p className={theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'}>{timezoneInfo.dstNote}</p>
                     </div>
                   )}
                   <p className={`text-xs ${
-                    theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                    theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                   }`}>Automatically detects daylight saving time</p>
                 </div>
                 <Button 
@@ -2352,12 +2352,12 @@ function SettingsPageContent() {
             <Card className={`backdrop-blur-xl rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg hover:shadow-xl transition-shadow ${
               theme === 'dark'
                 ? 'bg-white/5 border-white/8'
-                : 'bg-[#FAFAF7] border-2 border-[#E8E5DE]'
+                : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
             }`}>
               <div className="flex items-center gap-2 mb-4">
                 <Bell className="h-5 w-5 text-yellow-600" />
                 <h3 className={`text-base md:text-xl font-semibold ${
-                  theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                  theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                 }`}>Notifications</h3>
               </div>
               <div className="space-y-4">
@@ -2365,10 +2365,10 @@ function SettingsPageContent() {
                 <div className="flex items-center justify-between gap-2 md:gap-3">
                   <div className="space-y-0.5 flex-1">
                     <Label className={`text-sm ${
-                      theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                      theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                     }`}>Daily Reminders</Label>
                     <p className={`text-xs ${
-                      theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                      theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                     }`}>Get reminded to complete your daily prompt</p>
                   </div>
                   <Switch
@@ -2379,10 +2379,10 @@ function SettingsPageContent() {
                 <div className="flex items-center justify-between gap-2 md:gap-3">
                   <div className="space-y-0.5 flex-1">
                     <Label className={`text-sm ${
-                      theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                      theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                     }`}>Weekly Digest</Label>
                     <p className={`text-xs ${
-                      theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                      theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                     }`}>Summary of your week every Sunday</p>
                   </div>
                   <Switch
@@ -2393,10 +2393,10 @@ function SettingsPageContent() {
                 <div className="flex items-center justify-between gap-2 md:gap-3">
                   <div className="space-y-0.5 flex-1">
                     <Label className={`text-sm ${
-                      theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                      theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                     }`}>Include Self-Journal in Weekly Insights</Label>
                     <p className={`text-xs ${
-                      theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                      theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                     }`}>Opt-in to include private self-journals in insights</p>
                   </div>
                   <Switch
@@ -2406,7 +2406,7 @@ function SettingsPageContent() {
                 </div>
                 <div className="space-y-2">
                   <Label className={`text-sm ${
-                    theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                    theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                   }`}>Reminder Time</Label>
                   <Input
                     id="reminder-time"
@@ -2416,7 +2416,7 @@ function SettingsPageContent() {
                     className={`text-sm h-11 ${
                       theme === 'dark'
                         ? 'bg-white/10 border border-white/10 text-white'
-                        : 'bg-white border-2 border-[#E8E5DE] text-[#3D3D3D]'
+                        : 'bg-white border-2 border-[#EFF3F4] text-[#0F1419]'
                     }`}
                   />
                 </div>
@@ -2425,7 +2425,7 @@ function SettingsPageContent() {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label className={`text-sm ${
-                      theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                      theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                     }`}>Notification Days</Label>
                     {tier !== 'premium' && (
                       <span className={`text-xs px-2 py-0.5 rounded-full ${
@@ -2436,7 +2436,7 @@ function SettingsPageContent() {
                     )}
                   </div>
                   <p className={`text-xs ${
-                    theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                    theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                   }`}>
                     {tier === 'premium' 
                       ? 'Choose which days to receive prompt notifications'
@@ -2467,7 +2467,7 @@ function SettingsPageContent() {
                               ? 'opacity-50 cursor-not-allowed'
                               : theme === 'dark'
                               ? 'bg-white/10 border border-white/10 text-white/80 hover:bg-white/20'
-                              : 'bg-white border-2 border-[#E8E5DE] text-[#5A5A4E] hover:bg-[#F0EDE6]'
+                              : 'bg-white border-2 border-[#EFF3F4] text-[#536471] hover:bg-[#EFF3F4]'
                           }`}
                         >
                           {day.charAt(0).toUpperCase() + day.slice(1, 3)}
@@ -2476,7 +2476,7 @@ function SettingsPageContent() {
                     })}
                   </div>
                   <p className={`text-xs mt-1 ${
-                    theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                    theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                   }`}>
                     Selected: {customDays.length > 0 
                       ? customDays.map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(', ') 
@@ -2499,12 +2499,12 @@ function SettingsPageContent() {
             <Card className={`backdrop-blur-xl rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg hover:shadow-xl transition-shadow ${
               theme === 'dark'
                 ? 'bg-white/5 border-white/8'
-                : 'bg-[#FAFAF7] border-2 border-[#E8E5DE]'
+                : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
             }`}>
               <div className="flex items-center gap-2 mb-4">
                 <Lock className="h-5 w-5 text-red-600" />
                 <h3 className={`text-base md:text-xl font-semibold ${
-                  theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                  theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                 }`}>Security</h3>
               </div>
               
@@ -2516,14 +2516,14 @@ function SettingsPageContent() {
                     : 'bg-blue-50 border-2 border-blue-300'
                 }`}>
                   <p className={`text-sm ${
-                    theme === 'dark' ? 'text-blue-200' : 'text-[#3D3D3D]'
+                    theme === 'dark' ? 'text-blue-200' : 'text-[#0F1419]'
                   }`}>
                     <span className="font-medium">Signed in with Google</span>
                     {!hasPassword && (
-                      <span className={theme === 'dark' ? 'text-blue-300' : 'text-[#5A5A4E]'}> • Set a password below for backup authentication</span>
+                      <span className={theme === 'dark' ? 'text-blue-300' : 'text-[#536471]'}> • Set a password below for backup authentication</span>
                     )}
                     {hasPassword && (
-                      <span className={theme === 'dark' ? 'text-blue-300' : 'text-[#5A5A4E]'}> • You can sign in with either Google or email/password</span>
+                      <span className={theme === 'dark' ? 'text-blue-300' : 'text-[#536471]'}> • You can sign in with either Google or email/password</span>
                     )}
                   </p>
                 </div>
@@ -2534,7 +2534,7 @@ function SettingsPageContent() {
                 {hasPassword && (
                   <div className="space-y-1.5">
                     <Label htmlFor="current-password" className={`text-sm font-medium ${
-                      theme === 'dark' ? 'text-white/90' : 'text-[#5A5A4E]'
+                      theme === 'dark' ? 'text-white/90' : 'text-[#536471]'
                     }`}>Current Password</Label>
                     <Input
                       id="current-password"
@@ -2545,14 +2545,14 @@ function SettingsPageContent() {
                       className={`text-sm h-9 md:h-10 ${
                         theme === 'dark'
                           ? 'bg-white/10 border border-white/10 text-white placeholder:text-white/40 focus:border-red-400'
-                          : 'bg-white border-2 border-[#E8E5DE] text-[#3D3D3D] placeholder:text-[#A0A090] focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                          : 'bg-white border-2 border-[#EFF3F4] text-[#0F1419] placeholder:text-[#8B98A5] focus:border-red-500 focus:ring-2 focus:ring-red-200'
                       }`}
                     />
                   </div>
                 )}
                 <div className="space-y-1.5">
                   <Label htmlFor="new-password" className={`text-sm font-medium ${
-                    theme === 'dark' ? 'text-white/90' : 'text-[#5A5A4E]'
+                    theme === 'dark' ? 'text-white/90' : 'text-[#536471]'
                   }`}>
                     {hasPassword ? 'New Password' : 'Set Password'}
                   </Label>
@@ -2565,13 +2565,13 @@ function SettingsPageContent() {
                     className={`text-sm h-9 md:h-10 ${
                       theme === 'dark'
                         ? 'bg-white/10 border border-white/10 text-white placeholder:text-white/40 focus:border-red-400'
-                        : 'bg-white border-2 border-[#E8E5DE] text-[#3D3D3D] placeholder:text-[#A0A090] focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                        : 'bg-white border-2 border-[#EFF3F4] text-[#0F1419] placeholder:text-[#8B98A5] focus:border-red-500 focus:ring-2 focus:ring-red-200'
                     }`}
                   />
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="confirm-password" className={`text-sm font-medium ${
-                    theme === 'dark' ? 'text-white/90' : 'text-[#5A5A4E]'
+                    theme === 'dark' ? 'text-white/90' : 'text-[#536471]'
                   }`}>Confirm Password</Label>
                   <Input
                     id="confirm-password"
@@ -2582,13 +2582,13 @@ function SettingsPageContent() {
                     className={`text-sm h-9 md:h-10 ${
                       theme === 'dark'
                         ? 'bg-white/10 border border-white/10 text-white placeholder:text-white/40 focus:border-red-400'
-                        : 'bg-white border-2 border-[#E8E5DE] text-[#3D3D3D] placeholder:text-[#A0A090] focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                        : 'bg-white border-2 border-[#EFF3F4] text-[#0F1419] placeholder:text-[#8B98A5] focus:border-red-500 focus:ring-2 focus:ring-red-200'
                     }`}
                   />
                 </div>
                 {!hasPassword && (
                   <p className={`text-xs ${
-                    theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                    theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                   }`}>
                     Setting a password allows you to sign in with email/password as a backup to Google sign-in.
                   </p>
@@ -2606,22 +2606,22 @@ function SettingsPageContent() {
             <Card className={`backdrop-blur-xl rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg hover:shadow-xl transition-shadow ${
               theme === 'dark'
                 ? 'bg-white/5 border-white/8'
-                : 'bg-[#FAFAF7] border-2 border-[#E8E5DE]'
+                : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
             }`}>
               <div className="flex items-center gap-2 mb-4">
                 <Palette className="h-5 w-5 text-purple-600" />
                 <h3 className={`text-base md:text-xl font-semibold ${
-                  theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                  theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                 }`}>Preferences</h3>
               </div>
               <div className="space-y-4">
                 <div className="flex items-center justify-between gap-2 md:gap-3">
                   <div className="space-y-0.5 flex-1">
                     <Label className={`text-sm ${
-                      theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                      theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                     }`}>Dark Mode</Label>
                     <p className={`text-xs ${
-                      theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                      theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                     }`}>Use dark theme throughout the app</p>
                   </div>
                   <Switch
@@ -2635,10 +2635,10 @@ function SettingsPageContent() {
                 <div className="flex items-center justify-between gap-2 md:gap-3">
                   <div className="space-y-0.5 flex-1">
                     <Label className={`text-sm ${
-                      theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                      theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                     }`}>Privacy Mode</Label>
                     <p className={`text-xs ${
-                      theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                      theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                     }`}>Hide reflections from preview</p>
                   </div>
                   <Switch
@@ -2648,20 +2648,20 @@ function SettingsPageContent() {
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="language" className={`text-sm font-medium ${
-                    theme === 'dark' ? 'text-white/90' : 'text-[#5A5A4E]'
+                    theme === 'dark' ? 'text-white/90' : 'text-[#536471]'
                   }`}>Language</Label>
                   <Select value={language} onValueChange={setLanguage}>
                     <SelectTrigger className={`text-sm h-9 md:h-10 ${
                       theme === 'dark'
                         ? 'bg-white/10 border border-white/10 text-white'
-                        : 'bg-white border-2 border-[#E8E5DE] text-[#3D3D3D] focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
+                        : 'bg-white border-2 border-[#EFF3F4] text-[#0F1419] focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
                     }`}>
                       <SelectValue placeholder="Select your language" />
                     </SelectTrigger>
                     <SelectContent className={`max-h-[300px] ${
                       theme === 'dark'
                         ? 'bg-black/90 border border-white/10'
-                        : 'bg-white border-2 border-[#E8E5DE]'
+                        : 'bg-white border-2 border-[#EFF3F4]'
                     }`}>
                       {languages.map((lang) => (
                         <SelectItem 
@@ -2669,7 +2669,7 @@ function SettingsPageContent() {
                           value={lang.value}
                           className={theme === 'dark'
                             ? 'text-white hover:bg-white/8 focus:bg-white/10 cursor-pointer'
-                            : 'text-[#3D3D3D] hover:bg-[#F0EDE6] focus:bg-[#F0EDE6] cursor-pointer'
+                            : 'text-[#0F1419] hover:bg-[#EFF3F4] focus:bg-[#EFF3F4] cursor-pointer'
                           }
                         >
                           {lang.label} ({lang.nativeName})
@@ -2678,24 +2678,24 @@ function SettingsPageContent() {
                     </SelectContent>
                   </Select>
                   <p className={`text-xs ${
-                    theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                    theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                   }`}>Language preference will be applied across the entire application</p>
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="prompt-frequency" className={`text-sm font-medium ${
-                    theme === 'dark' ? 'text-white/90' : 'text-[#5A5A4E]'
+                    theme === 'dark' ? 'text-white/90' : 'text-[#536471]'
                   }`}>Prompt Frequency</Label>
                   <Select value={promptFrequency} onValueChange={setPromptFrequency}>
                     <SelectTrigger className={`text-sm h-9 md:h-10 ${
                       theme === 'dark'
                         ? 'bg-white/10 border border-white/10 text-white'
-                        : 'bg-white border-2 border-[#E8E5DE] text-[#3D3D3D] focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
+                        : 'bg-white border-2 border-[#EFF3F4] text-[#0F1419] focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
                     }`}>
                       <SelectValue placeholder="Select frequency" />
                     </SelectTrigger>
                     <SelectContent className={theme === 'dark'
                       ? 'bg-black/90 border border-white/10'
-                      : 'bg-white border-2 border-[#E8E5DE]'
+                      : 'bg-white border-2 border-[#EFF3F4]'
                     }>
                       {promptFrequencies.map((freq) => {
                         // Dynamic description for custom schedule
@@ -2709,14 +2709,14 @@ function SettingsPageContent() {
                             value={freq.value}
                             className={theme === 'dark'
                               ? 'text-white hover:bg-white/8 focus:bg-white/10 cursor-pointer'
-                              : 'text-[#3D3D3D] hover:bg-[#F0EDE6] focus:bg-[#F0EDE6] cursor-pointer'
+                              : 'text-[#0F1419] hover:bg-[#EFF3F4] focus:bg-[#EFF3F4] cursor-pointer'
                             }
                           >
                             <div className="flex flex-col">
                               <span className="font-medium">{freq.label}</span>
                               {description && (
                                 <span className={`text-xs ${
-                                  theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                                  theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                                 }`}>{description}</span>
                               )}
                             </div>
@@ -2727,13 +2727,13 @@ function SettingsPageContent() {
                   </Select>
                   {currentPlan === 'free' ? (
                     <p className={`text-xs ${
-                      theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                      theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                     }`}>
                       Free tier: Limited to 3 prompts per week (Mon/Wed/Fri). Upgrade to Premium for custom scheduling.
                     </p>
                   ) : (
                     <p className={`text-xs ${
-                      theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                      theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                     }`}>How often you'd like to receive new reflection prompts</p>
                   )}
                 </div>
@@ -2743,13 +2743,13 @@ function SettingsPageContent() {
                   <div className={`space-y-3 p-4 rounded-xl ${
                     theme === 'dark'
                       ? 'bg-white/5 border-white/8'
-                      : 'bg-[#F0EDE6] border-2 border-[#E8E5DE]'
+                      : 'bg-[#EFF3F4] border-2 border-[#EFF3F4]'
                   }`}>
                     <div className="flex items-center justify-between gap-2 mb-2">
                       <div className="flex items-center gap-2">
                         <Calendar className="h-4 w-4 text-purple-600" />
                         <Label className={`font-medium ${
-                          theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                          theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                         }`}>Select Days for Prompts</Label>
                       </div>
                       {customScheduleSaved && (
@@ -2785,7 +2785,7 @@ function SettingsPageContent() {
                               ? "bg-purple-500 hover:bg-purple-600 text-white border-purple-400"
                               : theme === 'dark'
                                 ? "bg-white/10 border border-white/10 text-white/80 hover:bg-white/20"
-                                : "bg-white border-2 border-[#E8E5DE] text-[#3D3D3D] hover:bg-[#F0EDE6]"
+                                : "bg-white border-2 border-[#EFF3F4] text-[#0F1419] hover:bg-[#EFF3F4]"
                           }`}
                         >
                           {day.label}
@@ -2793,7 +2793,7 @@ function SettingsPageContent() {
                       ))}
                     </div>
                     <p className={`text-xs mt-2 ${
-                      theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                      theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                     }`}>
                       Selected: {customDays.length > 0 ? customDays.map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(", ") : "None"}
                     </p>
@@ -2803,10 +2803,10 @@ function SettingsPageContent() {
                 {/* Focus Preferences */}
                 <div className="space-y-2">
                   <Label className={`text-sm font-medium ${
-                    theme === 'dark' ? 'text-white/90' : 'text-[#5A5A4E]'
+                    theme === 'dark' ? 'text-white/90' : 'text-[#536471]'
                   }`}>Focus Preferences</Label>
                   <p className={`text-xs ${
-                    theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                    theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                   }`}>Choose topics that guide your daily prompts</p>
                   <div className="flex flex-wrap gap-2 pt-1">
                     {["Clarity", "Emotional Balance", "Work & Responsibility", "Relationships", "Change & Uncertainty", "Grounding"].map((topic) => (
@@ -2822,7 +2822,7 @@ function SettingsPageContent() {
                             ? 'bg-purple-500 text-white hover:bg-purple-600'
                             : theme === 'dark'
                             ? 'bg-white/10 border border-white/10 text-white/80 hover:bg-white/20'
-                            : 'bg-white border-2 border-[#E8E5DE] text-[#5A5A4E] hover:bg-[#F0EDE6]'
+                            : 'bg-white border-2 border-[#EFF3F4] text-[#536471] hover:bg-[#EFF3F4]'
                         }`}
                       >
                         {topic}
@@ -2852,12 +2852,12 @@ function SettingsPageContent() {
           <Card className={`rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow ${
             theme === 'dark'
               ? 'bg-white/5 border-white/8'
-              : 'bg-[#FAFAF7] border-2 border-[#E8E5DE]'
+              : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
           }`}>
             <div className="flex items-center gap-3 mb-6">
               <CreditCard className="h-6 w-6 text-green-600" />
               <h3 className={`text-xl font-semibold ${
-                theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
               }`}>Subscription</h3>
             </div>
             
@@ -2866,11 +2866,11 @@ function SettingsPageContent() {
               <div className={`p-4 rounded-xl ${
                 theme === 'dark'
                   ? 'bg-white/5 border-white/8'
-                  : 'bg-[#F0EDE6] border-2 border-[#E8E5DE]'
+                  : 'bg-[#EFF3F4] border-2 border-[#EFF3F4]'
               }`}>
                 <div className="flex items-center justify-between mb-2">
                   <Label className={`text-sm font-medium ${
-                    theme === 'dark' ? 'text-white/90' : 'text-[#5A5A4E]'
+                    theme === 'dark' ? 'text-white/90' : 'text-[#536471]'
                   }`}>Current Plan</Label>
                   {currentPlan === "free" && (
                     <span className={`text-xs px-2 py-1 rounded-full ${
@@ -2894,7 +2894,7 @@ function SettingsPageContent() {
                 </div>
                 <div>
                   <p className={`text-2xl font-bold ${
-                    theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                    theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                   }`}>
                     {currentPlan === "free" 
                       ? "Free - £0/month" 
@@ -2929,7 +2929,7 @@ function SettingsPageContent() {
                   <div className="flex items-center gap-3 mb-4">
                     <Crown className="h-8 w-8 text-yellow-600 flex-shrink-0" />
                     <h4 className={`text-xl font-bold ${
-                      theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                      theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                     }`}>Premium Tier</h4>
                   </div>
                   
@@ -2942,10 +2942,10 @@ function SettingsPageContent() {
                         billingCycle === "monthly"
                           ? theme === 'dark'
                             ? "bg-yellow-500/20 border-yellow-400 text-white"
-                            : "bg-yellow-100 border-yellow-400 text-[#3D3D3D]"
+                            : "bg-yellow-100 border-yellow-400 text-[#0F1419]"
                           : theme === 'dark'
                             ? "bg-white/10 border-white/20 text-white/80 hover:bg-white/20"
-                            : "bg-white border-[#E8E5DE] text-[#5A5A4E] hover:bg-[#F0EDE6]"
+                            : "bg-white border-[#EFF3F4] text-[#536471] hover:bg-[#EFF3F4]"
                       }`}
                     >
                       <div className="text-center">
@@ -2960,10 +2960,10 @@ function SettingsPageContent() {
                         billingCycle === "yearly"
                           ? theme === 'dark'
                             ? "bg-yellow-500/20 border-yellow-400 text-white"
-                            : "bg-yellow-100 border-yellow-400 text-[#3D3D3D]"
+                            : "bg-yellow-100 border-yellow-400 text-[#0F1419]"
                           : theme === 'dark'
                             ? "bg-white/10 border-white/20 text-white/80 hover:bg-white/20"
-                            : "bg-white border-[#E8E5DE] text-[#5A5A4E] hover:bg-[#F0EDE6]"
+                            : "bg-white border-[#EFF3F4] text-[#536471] hover:bg-[#EFF3F4]"
                       }`}
                     >
                       <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 text-[10px] px-2 py-0.5 bg-green-600 text-white rounded-full font-bold shadow-md">
@@ -3017,7 +3017,7 @@ function SettingsPageContent() {
                   <div className={`p-6 rounded-xl ${
                     theme === 'dark'
                       ? 'bg-white/5 border-white/8'
-                      : 'bg-[#F0EDE6] border-2 border-[#E8E5DE]'
+                      : 'bg-[#EFF3F4] border-2 border-[#EFF3F4]'
                   }`}>
                     <div className="flex items-start gap-3 mb-4">
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
@@ -3040,10 +3040,10 @@ function SettingsPageContent() {
                       </div>
                       <div>
                         <h4 className={`text-lg font-bold mb-1 ${
-                          theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                          theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                         }`}>Free Tier</h4>
                         <p className={`text-base font-semibold mb-3 ${
-                          theme === 'dark' ? 'text-white/80' : 'text-[#5A5A4E]'
+                          theme === 'dark' ? 'text-white/80' : 'text-[#536471]'
                         }`}>£0/month</p>
                       </div>
                     </div>
@@ -3057,7 +3057,7 @@ function SettingsPageContent() {
                         "Access to crisis resources (NHS 111, Samaritans)",
                       ].map((feature, index) => (
                         <div key={index} className={`flex items-start gap-2 text-sm ${
-                          theme === 'dark' ? 'text-white/50' : 'text-[#5A5A4E]'
+                          theme === 'dark' ? 'text-white/50' : 'text-[#536471]'
                         }`}>
                           <Check className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
                           <span>{feature}</span>
@@ -3071,7 +3071,7 @@ function SettingsPageContent() {
                       className={`w-full transition-all duration-300 font-medium ${
                         theme === 'dark'
                           ? 'border border-white/10 text-white bg-white/5 hover:bg-white/8'
-                          : 'border-2 border-gray-400 text-[#3D3D3D] bg-white hover:bg-[#F0EDE6] hover:border-gray-500'
+                          : 'border-2 border-gray-400 text-[#0F1419] bg-white hover:bg-[#EFF3F4] hover:border-gray-500'
                       }`}
                     >
                       Downgrade to Free Tier
@@ -3079,7 +3079,7 @@ function SettingsPageContent() {
                   </div>
                   
                   <div className={`pt-4 mt-6 ${
-                    theme === 'dark' ? 'border-t border-white/10' : 'border-t border-[#E8E5DE]'
+                    theme === 'dark' ? 'border-t border-white/10' : 'border-t border-[#EFF3F4]'
                   }`}>
                     <button
                       onClick={handleCancelSubscription}
@@ -3088,7 +3088,7 @@ function SettingsPageContent() {
                       Cancel Subscription
                     </button>
                     <p className={`text-xs mt-2 ${
-                      theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                      theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                     }`}>
                       You'll continue to have access until the end of your billing period.
                     </p>
@@ -3102,16 +3102,16 @@ function SettingsPageContent() {
           <Card className={`rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow ${
             theme === 'dark'
               ? 'bg-white/5 border-white/8'
-              : 'bg-[#FAFAF7] border-2 border-[#E8E5DE]'
+              : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
           }`}>
             <div className="flex items-center gap-3 mb-6">
               <Zap className="h-6 w-6 text-purple-600" />
               <h3 className={`text-xl font-semibold ${
-                theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
               }`}>Integrations</h3>
             </div>
             <p className={`text-sm mb-6 ${
-              theme === 'dark' ? 'text-white/50' : 'text-[#8A8A7A]'
+              theme === 'dark' ? 'text-white/50' : 'text-[#8B98A5]'
             }`}>
               Connect your favorite tools to receive prompts and sync your reflections across platforms.
             </p>
@@ -3121,14 +3121,14 @@ function SettingsPageContent() {
               <div className={`p-5 rounded-xl transition-all duration-300 hover:shadow-md ${currentPlan !== 'premium' ? 'opacity-70' : ''} ${
                 theme === 'dark'
                   ? 'bg-white/5 border-white/8'
-                  : 'bg-[#F0EDE6] border-2 border-[#E8E5DE]'
+                  : 'bg-[#EFF3F4] border-2 border-[#EFF3F4]'
               }`}>
                 <div className="flex items-start gap-4">
                   {/* Slack Icon */}
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
                     theme === 'dark'
                       ? 'bg-white/10 border border-white/10'
-                      : 'bg-white border-2 border-[#E8E5DE]'
+                      : 'bg-white border-2 border-[#EFF3F4]'
                   }`}>
                     <SlackIcon size={28} />
                   </div>
@@ -3137,7 +3137,7 @@ function SettingsPageContent() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <h4 className={`text-lg font-semibold ${
-                        theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                        theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                       }`}>Slack</h4>
                       {currentPlan !== 'premium' ? (
                         <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs ${
@@ -3160,7 +3160,7 @@ function SettingsPageContent() {
                       ) : null}
                     </div>
                     <p className={`text-sm mb-3 ${
-                      theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                      theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                     }`}>
                       {currentPlan !== 'premium'
                         ? "Upgrade to Premium to receive prompts in your Slack workspace"
@@ -3195,7 +3195,7 @@ function SettingsPageContent() {
                           disabled={slackLoading}
                           variant="outline"
                           size="sm"
-                          className="bg-white border-2 border-[#E8E5DE] text-[#3D3D3D] hover:bg-[#F0EDE6] transition-all duration-300"
+                          className="bg-white border-2 border-[#EFF3F4] text-[#0F1419] hover:bg-[#EFF3F4] transition-all duration-300"
                         >
                           {slackLoading ? "Loading..." : "Change Channel"}
                         </Button>
@@ -3228,14 +3228,14 @@ function SettingsPageContent() {
               <div className={`p-4 md:p-5 rounded-xl opacity-60 cursor-not-allowed ${
                 theme === 'dark'
                   ? 'bg-white/5 border-white/8'
-                  : 'bg-[#F0EDE6] border-2 border-[#E8E5DE]'
+                  : 'bg-[#EFF3F4] border-2 border-[#EFF3F4]'
               }`}>
                 <div className="flex items-start gap-3 md:gap-4">
                   {/* WhatsApp Icon */}
                   <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
                     theme === 'dark'
                       ? 'bg-white/10 border border-white/10'
-                      : 'bg-white border-2 border-[#E8E5DE]'
+                      : 'bg-white border-2 border-[#EFF3F4]'
                   }`}>
                     <WhatsAppIcon size={24} className="md:w-7 md:h-7" />
                   </div>
@@ -3244,7 +3244,7 @@ function SettingsPageContent() {
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2 mb-1">
                       <h4 className={`text-base md:text-lg font-semibold ${
-                        theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                        theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                       }`}>WhatsApp</h4>
                       <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs w-fit ${
                         theme === 'dark'
@@ -3255,7 +3255,7 @@ function SettingsPageContent() {
                       </span>
                     </div>
                     <p className={`text-xs md:text-sm mb-2 md:mb-3 ${
-                      theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                      theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                     }`}>
                       Receive prompts and reflections via WhatsApp messages
                     </p>
@@ -3266,7 +3266,7 @@ function SettingsPageContent() {
                       className={`cursor-not-allowed text-xs md:text-sm h-8 md:h-9 ${
                         theme === 'dark'
                           ? 'bg-white/5 border-white/8 text-white/40'
-                          : 'bg-white border-2 border-[#E8E5DE] text-[#A0A090]'
+                          : 'bg-white border-2 border-[#EFF3F4] text-[#8B98A5]'
                       }`}
                     >
                       Coming Soon
@@ -3279,14 +3279,14 @@ function SettingsPageContent() {
               <div className={`p-4 md:p-5 rounded-xl opacity-60 cursor-not-allowed ${
                 theme === 'dark'
                   ? 'bg-white/5 border-white/8'
-                  : 'bg-[#F0EDE6] border-2 border-[#E8E5DE]'
+                  : 'bg-[#EFF3F4] border-2 border-[#EFF3F4]'
               }`}>
                 <div className="flex items-start gap-3 md:gap-4">
                   {/* Teams Icon */}
                   <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
                     theme === 'dark'
                       ? 'bg-white/10 border border-white/10'
-                      : 'bg-white border-2 border-[#E8E5DE]'
+                      : 'bg-white border-2 border-[#EFF3F4]'
                   }`}>
                     <TeamsIcon size={24} className="md:w-7 md:h-7" />
                   </div>
@@ -3295,7 +3295,7 @@ function SettingsPageContent() {
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2 mb-1">
                       <h4 className={`text-base md:text-lg font-semibold ${
-                        theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                        theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                       }`}>Microsoft Teams</h4>
                       <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs w-fit ${
                         theme === 'dark'
@@ -3306,7 +3306,7 @@ function SettingsPageContent() {
                       </span>
                     </div>
                     <p className={`text-xs md:text-sm mb-2 md:mb-3 ${
-                      theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                      theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                     }`}>
                       Get daily prompts in your Microsoft Teams channels
                     </p>
@@ -3317,7 +3317,7 @@ function SettingsPageContent() {
                       className={`cursor-not-allowed text-xs md:text-sm h-8 md:h-9 ${
                         theme === 'dark'
                           ? 'bg-white/5 border-white/8 text-white/40'
-                          : 'bg-white border-2 border-[#E8E5DE] text-[#A0A090]'
+                          : 'bg-white border-2 border-[#EFF3F4] text-[#8B98A5]'
                       }`}
                     >
                       Coming Soon
@@ -3337,17 +3337,17 @@ function SettingsPageContent() {
             <div className="flex items-center gap-3 mb-4">
               <Shield className="h-6 w-6 text-red-600" />
               <h3 className={`text-xl font-semibold ${
-                theme === 'dark' ? 'text-red-200' : 'text-[#3D3D3D]'
+                theme === 'dark' ? 'text-red-200' : 'text-[#0F1419]'
               }`}>Danger Zone</h3>
             </div>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className={`font-medium ${
-                    theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                    theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                   }`}>Export All Data</p>
                   <p className={`text-sm ${
-                    theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                    theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                   }`}>Download all your reflections and data</p>
                 </div>
                 <Button 
@@ -3356,21 +3356,21 @@ function SettingsPageContent() {
                   className={`transition-all duration-300 ${
                     theme === 'dark'
                       ? 'bg-white/5 border border-white/10 text-white hover:bg-white/8'
-                      : 'bg-white border-2 border-[#E8E5DE] text-[#3D3D3D] hover:bg-[#F0EDE6]'
+                      : 'bg-white border-2 border-[#EFF3F4] text-[#0F1419] hover:bg-[#EFF3F4]'
                   }`}
                 >
                   Export Data
                 </Button>
               </div>
               <div className={`pt-4 flex items-center justify-between ${
-                theme === 'dark' ? 'border-t border-red-400/30' : 'border-t border-[#E8E5DE]'
+                theme === 'dark' ? 'border-t border-red-400/30' : 'border-t border-[#EFF3F4]'
               }`}>
                 <div>
                   <p className={`font-medium ${
                     theme === 'dark' ? 'text-red-300' : 'text-red-600'
                   }`}>Delete Account</p>
                   <p className={`text-sm ${
-                    theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                    theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                   }`}>Permanently delete your account and all data</p>
                 </div>
                 <Button 
@@ -3395,21 +3395,21 @@ function SettingsPageContent() {
           <AlertDialogContent className={`max-w-[90vw] sm:max-w-md left-[50%] right-auto translate-x-[-50%] rounded-2xl sm:rounded-3xl ${
             theme === 'dark'
               ? 'bg-[#1A1F2E] border border-white/10'
-              : 'bg-[#FAFAF7] border border-[#E8E5DE]'
+              : 'bg-[#F7F9FA] border border-[#EFF3F4]'
           }`}>
             <AlertDialogHeader className="space-y-3 sm:space-y-4">
               <AlertDialogTitle className={`text-lg sm:text-xl font-semibold leading-tight ${
-                theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
               }`}>
                 Downgrade to Free Tier?
               </AlertDialogTitle>
               <AlertDialogDescription className={`text-sm sm:text-base leading-relaxed ${
-                theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
               }`}>
                 Are you sure you want to downgrade? You'll lose access to:
               </AlertDialogDescription>
               <ul className={`mt-2 sm:mt-3 space-y-1.5 sm:space-y-2 text-xs sm:text-sm list-disc list-inside ${
-                theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
               }`}>
                 <li>Daily prompts (will revert to 3/week)</li>
                 <li>Weekly AI insights</li>
@@ -3428,7 +3428,7 @@ function SettingsPageContent() {
                 className={`w-full sm:w-auto h-11 sm:h-10 text-sm sm:text-base font-semibold rounded-xl sm:rounded-lg touch-manipulation active:scale-95 transition-transform ${
                   theme === 'dark'
                     ? 'bg-white/5 border-white/8 text-white hover:bg-white/8'
-                    : 'bg-white border border-[#E8E5DE] text-[#3D3D3D] hover:bg-[#F0EDE6]'
+                    : 'bg-white border border-[#EFF3F4] text-[#0F1419] hover:bg-[#EFF3F4]'
                 }`}
               >
                 Change my mind
@@ -3458,21 +3458,21 @@ function SettingsPageContent() {
           <AlertDialogContent className={`max-w-md mx-4 sm:mx-auto rounded-2xl ${
             theme === 'dark'
               ? 'bg-[#1C1C1E] border-white/10'
-              : 'bg-white border-[#E8E5DE]'
+              : 'bg-white border-[#EFF3F4]'
           }`}>
             <AlertDialogHeader>
               <AlertDialogTitle className={`text-lg sm:text-xl font-semibold leading-tight ${
-                theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
               }`}>
                 Delete Your Account?
               </AlertDialogTitle>
               <AlertDialogDescription className={`text-sm sm:text-base leading-relaxed ${
-                theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
               }`}>
                 This action is <strong className="text-red-500">permanent and irreversible</strong>. All of the following will be deleted:
               </AlertDialogDescription>
               <ul className={`mt-2 sm:mt-3 space-y-1.5 sm:space-y-2 text-xs sm:text-sm list-disc list-inside ${
-                theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
               }`}>
                 <li>Your profile and account credentials</li>
                 <li>All reflections and journal entries</li>
@@ -3482,7 +3482,7 @@ function SettingsPageContent() {
               </ul>
               <div className="mt-4 space-y-2">
                 <label className={`text-sm font-medium ${
-                  theme === 'dark' ? 'text-white/60' : 'text-[#5A5A4E]'
+                  theme === 'dark' ? 'text-white/60' : 'text-[#536471]'
                 }`}>
                   Type <strong className="text-red-500">DELETE</strong> to confirm:
                 </label>
@@ -3493,7 +3493,7 @@ function SettingsPageContent() {
                   className={`h-11 rounded-xl ${
                     theme === 'dark'
                       ? 'bg-white/5 border-white/10 text-white placeholder:text-white/20'
-                      : 'bg-[#F0EDE6] border-[#E8E5DE] text-[#3D3D3D] placeholder:text-[#8A8A7A]/40'
+                      : 'bg-[#EFF3F4] border-[#EFF3F4] text-[#0F1419] placeholder:text-[#8B98A5]/40'
                   }`}
                   disabled={isDeleting}
                   autoComplete="off"
@@ -3506,7 +3506,7 @@ function SettingsPageContent() {
                 className={`w-full sm:w-auto h-11 sm:h-10 text-sm sm:text-base font-semibold rounded-xl sm:rounded-lg touch-manipulation active:scale-95 transition-transform ${
                   theme === 'dark'
                     ? 'bg-white/5 border-white/8 text-white hover:bg-white/8'
-                    : 'bg-white border border-[#E8E5DE] text-[#3D3D3D] hover:bg-[#F0EDE6]'
+                    : 'bg-white border border-[#EFF3F4] text-[#0F1419] hover:bg-[#EFF3F4]'
                 }`}
               >
                 Cancel

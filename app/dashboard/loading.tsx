@@ -64,7 +64,7 @@ export default function DashboardLoading() {
         />
         <span
           className={`text-xs tracking-wide ${
-            isDark ? 'text-white/50' : 'text-[#5A5A4E]/70'
+            isDark ? 'text-white/50' : 'text-[#536471]/70'
           }`}
         >
           One moment…

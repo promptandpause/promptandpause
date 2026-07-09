@@ -12,7 +12,7 @@ import { Sparkles, Flame } from "lucide-react";
 const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const getMoodColor = (mood?: MoodType) => {
-  if (!mood) return "bg-[#F0EDE6]";
+  if (!mood) return "bg-[#EFF3F4]";
   const happyMoods: MoodType[] = ["😊", "😄", "🙏"];
   const neutralMoods: MoodType[] = ["😐", "🤔"];
   const sadMoods: MoodType[] = ["😔"];
@@ -88,7 +88,7 @@ export default function MoodTracker() {
   const isDark = theme === 'dark';
 
   return (
-    <section className={`rounded-2xl p-5 ${isDark ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-white/70 border border-[#E8E5DE]'}`}>
+    <section className={`rounded-2xl p-5 ${isDark ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-white/70 border border-[#EFF3F4]'}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-3">
@@ -96,8 +96,8 @@ export default function MoodTracker() {
             <Sparkles className="w-4 h-4 text-white" strokeWidth={2} />
           </IconOrb>
           <div>
-            <h3 className={`font-semibold text-base tracking-tight ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>Your Rhythm</h3>
-            <p className={`text-[11px] ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>This week at a glance</p>
+            <h3 className={`font-semibold text-base tracking-tight ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>Your Rhythm</h3>
+            <p className={`text-[11px] ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>This week at a glance</p>
           </div>
         </div>
         {currentStreak > 0 && (
@@ -109,7 +109,7 @@ export default function MoodTracker() {
       </div>
       
       {/* Week Mood Row */}
-      <div className={`rounded-xl p-4 px-5 mb-4 ${isDark ? 'bg-white/[0.03] border border-white/[0.04]' : 'bg-[#F8F6F2]/80 border border-[#E8E5DE]/80'}`}>
+      <div className={`rounded-xl p-4 px-5 mb-4 ${isDark ? 'bg-white/[0.03] border border-white/[0.04]' : 'bg-[#F8F6F2]/80 border border-[#EFF3F4]/80'}`}>
         <div className="flex justify-between">
           {weekData.map((day, i) => {
             const isToday = i === todayIndex;
@@ -129,12 +129,12 @@ export default function MoodTracker() {
                   } ${
                     !day.mood ? `${isDark ? 'border border-white/10' : ''}` : ''
                   }`}
-                  style={{ ['--tw-ring-offset-color' as string]: isDark ? '#141820' : '#FAFAF7' } as React.CSSProperties}
+                  style={{ ['--tw-ring-offset-color' as string]: isDark ? '#141820' : '#F7F9FA' } as React.CSSProperties}
                 >
                   {day.mood || <span className={`text-xs ${isDark ? 'text-white/20' : 'text-[#C4C0B8]'}`}>—</span>}
                 </div>
                 <span className={`text-[10px] font-medium ${
-                  isToday ? 'text-[#5B7FA5]' : isDark ? 'text-white/40' : 'text-[#A0A090]'
+                  isToday ? 'text-[#5B7FA5]' : isDark ? 'text-white/40' : 'text-[#8B98A5]'
                 }`}>
                   {isToday ? 'Today' : day.dayName}
                 </span>
@@ -153,13 +153,13 @@ export default function MoodTracker() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.15 }}
-            className={`rounded-xl p-4 ${isDark ? 'bg-white/[0.03] border border-white/[0.04]' : 'bg-[#F8F6F2]/80 border border-[#E8E5DE]/80'}`}
+            className={`rounded-xl p-4 ${isDark ? 'bg-white/[0.03] border border-white/[0.04]' : 'bg-[#F8F6F2]/80 border border-[#EFF3F4]/80'}`}
           >
             <div className="flex items-center justify-between mb-2">
-              <p className={`text-xs font-medium ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
+              <p className={`text-xs font-medium ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
                 {activeDay === todayIndex ? 'Today' : activeData.dayName}
               </p>
-              <p className={`text-xs ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
+              <p className={`text-xs ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
                 {new Date(activeData.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
               </p>
             </div>
@@ -169,17 +169,17 @@ export default function MoodTracker() {
                 {activeData.mood && (
                   <div className="flex items-center gap-2">
                     <span className="text-2xl">{activeData.mood}</span>
-                    <span className={`text-sm ${isDark ? 'text-white/70' : 'text-[#5A5A4E]'}`}>Mood recorded</span>
+                    <span className={`text-sm ${isDark ? 'text-white/70' : 'text-[#536471]'}`}>Mood recorded</span>
                   </div>
                 )}
                 {activeData.reflectionSnippet && (
-                  <p className={`text-xs leading-relaxed ${isDark ? 'text-white/50' : 'text-[#8A8A7A]'}`}>
+                  <p className={`text-xs leading-relaxed ${isDark ? 'text-white/50' : 'text-[#8B98A5]'}`}>
                     {activeData.reflectionSnippet}
                   </p>
                 )}
               </div>
             ) : (
-              <p className={`text-xs ${isDark ? 'text-white/30' : 'text-[#A0A090]'}`}>
+              <p className={`text-xs ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
                 {activeDay === todayIndex ? 'Write a short reflection for today' : 'No reflection for this day'}
               </p>
             )}
@@ -196,9 +196,9 @@ export default function MoodTracker() {
         const moodsThisWeek = weekData.filter(d => d.mood).map(d => d.mood!);
         if (moodsThisWeek.length === 0) {
           return (
-            <div className={`mt-4 rounded-xl p-4 ${isDark ? 'bg-white/[0.03] border border-white/[0.04]' : 'bg-[#F8F6F2]/80 border border-[#E8E5DE]/80'}`}>
-              <p className={`text-xs ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>Top feelings</p>
-              <p className={`text-sm mt-1 ${isDark ? 'text-white/30' : 'text-[#A0A090]'}`}>
+            <div className={`mt-4 rounded-xl p-4 ${isDark ? 'bg-white/[0.03] border border-white/[0.04]' : 'bg-[#F8F6F2]/80 border border-[#EFF3F4]/80'}`}>
+              <p className={`text-xs ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>Top feelings</p>
+              <p className={`text-sm mt-1 ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
                 Start tracking to see your top feelings
               </p>
             </div>
@@ -208,19 +208,19 @@ export default function MoodTracker() {
         moodsThisWeek.forEach(m => { counts[m] = (counts[m] || 0) + 1; });
         const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 3);
         return (
-          <div className={`mt-4 rounded-xl p-4 ${isDark ? 'bg-white/[0.03] border border-white/[0.04]' : 'bg-[#F8F6F2]/80 border border-[#E8E5DE]/80'}`}>
-            <p className={`text-xs mb-2.5 ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>Top feelings this week</p>
+          <div className={`mt-4 rounded-xl p-4 ${isDark ? 'bg-white/[0.03] border border-white/[0.04]' : 'bg-[#F8F6F2]/80 border border-[#EFF3F4]/80'}`}>
+            <p className={`text-xs mb-2.5 ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>Top feelings this week</p>
             <div className="flex gap-2 flex-wrap">
               {sorted.map(([emoji, count]) => (
                 <span
                   key={emoji}
                   className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
-                    isDark ? 'bg-white/[0.06] text-white/70' : 'bg-white text-[#5A5A4E] border border-[#E8E5DE]'
+                    isDark ? 'bg-white/[0.06] text-white/70' : 'bg-white text-[#536471] border border-[#EFF3F4]'
                   }`}
                 >
                   <span className="text-sm">{emoji}</span>
                   {moodLabels[emoji] || emoji}
-                  {count > 1 && <span className={`${isDark ? 'text-white/30' : 'text-[#A0A090]'}`}>×{count}</span>}
+                  {count > 1 && <span className={`${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>×{count}</span>}
                 </span>
               ))}
             </div>

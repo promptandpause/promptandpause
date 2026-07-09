@@ -106,7 +106,7 @@ export default function ReturnToSelfCard() {
       className={`relative overflow-hidden rounded-3xl p-5 md:p-6 border backdrop-blur-xl ${
         isDark
           ? 'bg-gradient-to-br from-white/[0.05] via-white/[0.03] to-transparent border-white/[0.08] shadow-[0_20px_60px_-24px_rgba(0,0,0,0.5)]'
-          : 'bg-gradient-to-br from-white/90 via-white/70 to-white/60 border-[#E8E5DE] shadow-[0_20px_50px_-28px_rgba(76,120,98,0.18)]'
+          : 'bg-gradient-to-br from-white/90 via-white/70 to-white/60 border-[#EFF3F4] shadow-[0_20px_50px_-28px_rgba(76,120,98,0.18)]'
       }`}
     >
       <span aria-hidden className={`pointer-events-none absolute -top-16 -right-16 h-52 w-52 rounded-full blur-3xl ${isDark ? 'bg-emerald-400/10' : 'bg-emerald-300/25'}`} />
@@ -116,21 +116,21 @@ export default function ReturnToSelfCard() {
             <Sprout className="w-4 h-4 text-white" strokeWidth={2} />
           </IconOrb>
           <div>
-            <p className={`text-[11px] uppercase tracking-wide font-semibold ${isDark ? 'text-white/50' : 'text-[#8A8A7A]'}`}>Welcome back</p>
-            <p className={`text-sm md:text-base font-semibold tracking-tight ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>Picking up from {whenLabel}</p>
+            <p className={`text-[11px] uppercase tracking-wide font-semibold ${isDark ? 'text-white/50' : 'text-[#8B98A5]'}`}>Welcome back</p>
+            <p className={`text-sm md:text-base font-semibold tracking-tight ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>Picking up from {whenLabel}</p>
           </div>
         </div>
       </div>
-      <p className={`relative text-sm md:text-base leading-relaxed ${isDark ? 'text-white/85' : 'text-[#3D3D3D]'}`}>
+      <p className={`relative text-sm md:text-base leading-relaxed ${isDark ? 'text-white/85' : 'text-[#0F1419]'}`}>
         Last time, you sat with:
       </p>
       {snippet && (
-        <blockquote className={`mt-2 italic text-sm md:text-base leading-relaxed ${isDark ? 'text-white/70' : 'text-[#5A5A4E]'}`}>
+        <blockquote className={`mt-2 italic text-sm md:text-base leading-relaxed ${isDark ? 'text-white/70' : 'text-[#536471]'}`}>
           &ldquo;{snippet}{lastReflection.prompt_text.length > 120 ? '…' : ''}&rdquo;
         </blockquote>
       )}
       {topTag && (
-        <p className={`text-xs mt-3 ${isDark ? 'text-white/50' : 'text-[#8A8A7A]'}`}>
+        <p className={`text-xs mt-3 ${isDark ? 'text-white/50' : 'text-[#8B98A5]'}`}>
           A recurring theme for you lately: <span className="font-medium">{topTag}</span>.
         </p>
       )}

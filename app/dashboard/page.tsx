@@ -87,10 +87,10 @@ export default function DashboardPage() {
                   {/* Greeting Header */}
                   <div className="flex items-center justify-between">
                     <div>
-                      <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>
+                      <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
                         {t(greetingKey)}{userName ? `, ${userName}` : ''}
                       </h1>
-                      <p className={`text-sm mt-1.5 ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
+                      <p className={`text-sm mt-1.5 ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
                         {t('dashboard.breatheMoment')}
                       </p>
                     </div>
@@ -147,7 +147,7 @@ export default function DashboardPage() {
 
                   {/* Today's Activity */}
                   <div>
-                    <h2 className={`text-base font-semibold mb-3 ${isDark ? 'text-white/70' : 'text-[#5A5A4E]'}`}>{t('dashboard.todaysActivity')}</h2>
+                    <h2 className={`text-base font-semibold mb-3 ${isDark ? 'text-white/70' : 'text-[#536471]'}`}>{t('dashboard.todaysActivity')}</h2>
                     <QuickStats />
                   </div>
 
@@ -175,8 +175,8 @@ export default function DashboardPage() {
                           <Crown className={`h-5 w-5 ${isDark ? 'text-[#C4B5E0]' : 'text-[#7E6BA5]'}`} />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className={`font-semibold text-sm ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>{t('dashboard.upgrade')}</p>
-                          <p className={`text-xs ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>{t('dashboard.upgradeDesc')}</p>
+                          <p className={`font-semibold text-sm ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>{t('dashboard.upgrade')}</p>
+                          <p className={`text-xs ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>{t('dashboard.upgradeDesc')}</p>
                         </div>
                         <span className={`text-xs font-medium px-3 py-1.5 rounded-full flex-shrink-0 ${isDark ? 'bg-[#C4B5E0]/15 text-[#C4B5E0]' : 'bg-[#D1C4E9] text-[#5E4B8B]'}`}>Go</span>
                       </div>
@@ -300,7 +300,7 @@ function QuickActionCard({
     'rounded-2xl p-4 md:p-5 flex flex-col gap-3 border transition-colors duration-200',
     isDark
       ? 'bg-white/[0.04] border-white/[0.06] hover:bg-white/[0.08] hover:border-white/[0.12]'
-      : 'bg-white/80 border-[#E8E5DE] hover:border-[#C8C4BC]',
+      : 'bg-white/80 border-[#EFF3F4] hover:border-[#C8C4BC]',
     'shadow-[0_1px_2px_rgba(15,20,20,0.04)] hover:shadow-[0_14px_28px_-14px_rgba(15,20,20,0.18)]',
     'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#6FA984]/40',
   ].join(' ')
@@ -318,10 +318,10 @@ function QuickActionCard({
         <span className={iconColor}>{icon}</span>
       </div>
       <div className="relative">
-        <p className={`font-semibold text-sm tracking-tight ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>
+        <p className={`font-semibold text-sm tracking-tight ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
           {label}
         </p>
-        <p className={`text-xs mt-0.5 ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>{sublabel}</p>
+        <p className={`text-xs mt-0.5 ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>{sublabel}</p>
       </div>
     </>
   )
@@ -362,7 +362,7 @@ function InfoCard({ children, isDark, accent }: { children: React.ReactNode; isD
     <section className={`rounded-2xl p-5 transition-all duration-200 relative overflow-hidden ${
       isDark
         ? 'bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.06] hover:border-white/[0.1]'
-        : 'bg-white/70 border border-[#E8E5DE] hover:border-[#D4D0C8] hover:shadow-sm'
+        : 'bg-white/70 border border-[#EFF3F4] hover:border-[#EFF3F4] hover:shadow-sm'
     }`}>
       {accent && (
         <div className={`absolute top-0 left-0 w-full h-[2px] ${accent}`} />

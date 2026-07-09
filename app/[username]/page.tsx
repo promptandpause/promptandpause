@@ -11,7 +11,7 @@ export default async function UserProfilePage({ params }: { params: Promise<{ us
     .select(`
       id, full_name, display_name, username, avatar_url, bio,
       cover_image_url, profile_theme, mood_song_url, mood_song_title,
-      is_public_profile, share_default, subscription_tier
+      is_public_profile, share_default, show_in_discover, subscription_tier
     `)
     .eq('username', username)
     .single()

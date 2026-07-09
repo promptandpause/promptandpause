@@ -88,7 +88,7 @@ export default function QuickStats() {
       accent: 'blue',
       icon: <BookOpen className="w-4 h-4 text-white" strokeWidth={2} />,
       label: 'Reflections',
-      value: <span className={`text-xl font-bold tabular-nums ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>{totalReflections}</span>,
+      value: <span className={`text-xl font-bold tabular-nums ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>{totalReflections}</span>,
     },
     {
       key: 'week',
@@ -105,14 +105,14 @@ export default function QuickStats() {
       value: (
         <div className="flex items-center gap-1.5">
           {getTrendIcon()}
-          <span className={`text-sm font-bold ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>{getTrendText()}</span>
+          <span className={`text-sm font-bold ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>{getTrendText()}</span>
         </div>
       ),
     },
   ]
 
   return (
-    <div className={`rounded-2xl p-5 space-y-0 ${isDark ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-white/70 border border-[#E8E5DE]'}`}>
+    <div className={`rounded-2xl p-5 space-y-0 ${isDark ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-white/70 border border-[#EFF3F4]'}`}>
       {tiles.map((t, i) => (
         <div key={t.key}>
           <motion.div
@@ -122,11 +122,11 @@ export default function QuickStats() {
           >
             <div className="flex items-center gap-3">
               <IconOrb accent={t.accent} size="sm">{t.icon}</IconOrb>
-              <span className={`text-sm ${isDark ? 'text-white/60' : 'text-[#5A5A4E]'}`}>{t.label}</span>
+              <span className={`text-sm ${isDark ? 'text-white/60' : 'text-[#536471]'}`}>{t.label}</span>
             </div>
             {t.value}
           </motion.div>
-          {i < tiles.length - 1 && <div className={`h-px mx-1 ${isDark ? 'bg-white/[0.04]' : 'bg-[#E8E5DE]/80'}`} />}
+          {i < tiles.length - 1 && <div className={`h-px mx-1 ${isDark ? 'bg-white/[0.04]' : 'bg-[#EFF3F4]/80'}`} />}
         </div>
       ))}
     </div>

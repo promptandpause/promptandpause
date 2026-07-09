@@ -14,7 +14,7 @@ const UpdateProfileSchema = z.object({
   mood_song_url: z.string().max(500).optional(),
   mood_song_title: z.string().max(200).optional(),
   cover_image_url: z.string().max(500).optional(),
-  profile_theme: z.record(z.any()).optional(),
+  profile_theme: z.record(z.string(), z.any()).optional(),
   share_default: z.enum(['private', 'friends_only', 'public']).optional(),
   is_public_profile: z.boolean().optional(),
   show_in_discover: z.boolean().optional(),

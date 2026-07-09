@@ -88,16 +88,16 @@ export default function SavedPage() {
           <main className="flex-1 pb-32 md:pb-10 overflow-y-auto scrollbar-thin">
             <div className="max-w-[900px] mx-auto px-4 md:px-8 pt-16 md:pt-10 pb-6">
               <header className="mb-6 md:mb-8">
-                <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>
+                <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
                   Saved
                 </h1>
-                <p className={`text-sm mt-1.5 ${isDark ? 'text-white/50' : 'text-[#8A8A7A]'}`}>
+                <p className={`text-sm mt-1.5 ${isDark ? 'text-white/50' : 'text-[#8B98A5]'}`}>
                   Reflections you marked to revisit or return to.
                 </p>
               </header>
 
               {loading ? (
-                <div className={`flex items-center gap-2 py-10 ${isDark ? 'text-white/50' : 'text-[#8A8A7A]'}`}>
+                <div className={`flex items-center gap-2 py-10 ${isDark ? 'text-white/50' : 'text-[#8B98A5]'}`}>
                   <Loader2 className="h-4 w-4 animate-spin" />
                   <span className="text-sm">Loading…</span>
                 </div>
@@ -155,17 +155,17 @@ function Section({
   return (
     <section>
       <div className="flex items-center gap-2 mb-3">
-        <span className={isDark ? 'text-white/60' : 'text-[#5A5A4E]'}>{icon}</span>
-        <h2 className={`text-base font-semibold ${isDark ? 'text-white/80' : 'text-[#3D3D3D]'}`}>
+        <span className={isDark ? 'text-white/60' : 'text-[#536471]'}>{icon}</span>
+        <h2 className={`text-base font-semibold ${isDark ? 'text-white/80' : 'text-[#0F1419]'}`}>
           {title}
         </h2>
-        <span className={`text-xs ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
+        <span className={`text-xs ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
           ({items.length})
         </span>
       </div>
 
       {items.length === 0 ? (
-        <p className={`text-sm ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>{emptyText}</p>
+        <p className={`text-sm ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>{emptyText}</p>
       ) : (
         <ul className="space-y-3">
           <AnimatePresence initial={false}>
@@ -178,21 +178,21 @@ function Section({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, height: 0, marginTop: 0, marginBottom: 0 }}
                   transition={{ duration: 0.2 }}
-                  className={`rounded-2xl p-4 md:p-5 border ${isDark ? 'bg-white/[0.04] border-white/[0.08]' : 'bg-white/70 border-[#E8E5DE]'}`}
+                  className={`rounded-2xl p-4 md:p-5 border ${isDark ? 'bg-white/[0.04] border-white/[0.08]' : 'bg-white/70 border-[#EFF3F4]'}`}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
-                      <p className={`text-xs uppercase tracking-wide font-semibold ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
+                      <p className={`text-xs uppercase tracking-wide font-semibold ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
                         {kind === 'revisit' && b.revisit_on
                           ? `For ${b.revisit_on}`
                           : formatDate(r.date)}
                       </p>
                       {r.prompt_text && (
-                        <blockquote className={`mt-1.5 italic text-sm md:text-base leading-relaxed ${isDark ? 'text-white/80' : 'text-[#3D3D3D]'}`}>
+                        <blockquote className={`mt-1.5 italic text-sm md:text-base leading-relaxed ${isDark ? 'text-white/80' : 'text-[#0F1419]'}`}>
                           &ldquo;{r.prompt_text}&rdquo;
                         </blockquote>
                       )}
-                      <p className={`mt-2 text-sm leading-relaxed whitespace-pre-wrap ${isDark ? 'text-white/70' : 'text-[#5A5A4E]'}`}>
+                      <p className={`mt-2 text-sm leading-relaxed whitespace-pre-wrap ${isDark ? 'text-white/70' : 'text-[#536471]'}`}>
                         {truncate(r.reflection_text, 320)}
                       </p>
                       {r.tags && r.tags.length > 0 && (
@@ -200,7 +200,7 @@ function Section({
                           {r.tags.map(t => (
                             <span
                               key={t}
-                              className={`text-xs px-2 py-0.5 rounded-full border ${isDark ? 'bg-white/5 text-white/70 border-white/10' : 'bg-white text-[#5A5A4E] border-[#E0DDD6]'}`}
+                              className={`text-xs px-2 py-0.5 rounded-full border ${isDark ? 'bg-white/5 text-white/70 border-white/10' : 'bg-white text-[#536471] border-[#E0DDD6]'}`}
                             >
                               {t}
                             </span>
@@ -213,7 +213,7 @@ function Section({
                       onClick={() => onRemove(b.id, kind)}
                       disabled={removingId === b.id}
                       aria-label="Remove bookmark"
-                      className={`flex-shrink-0 p-2 rounded-lg transition-colors ${isDark ? 'text-white/40 hover:text-white/80 hover:bg-white/10' : 'text-[#8A8A7A] hover:text-[#3D3D3D] hover:bg-[#F0EDE6]'} disabled:opacity-40 disabled:cursor-not-allowed`}
+                      className={`flex-shrink-0 p-2 rounded-lg transition-colors ${isDark ? 'text-white/40 hover:text-white/80 hover:bg-white/10' : 'text-[#8B98A5] hover:text-[#0F1419] hover:bg-[#EFF3F4]'} disabled:opacity-40 disabled:cursor-not-allowed`}
                     >
                       {removingId === b.id
                         ? <Loader2 className="h-4 w-4 animate-spin" />

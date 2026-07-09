@@ -61,7 +61,7 @@ export function ProfilePageClient({
           >
             <Avatar className="h-32 w-32 md:h-40 md:w-40 border-4 border-white dark:border-[#0A0A0A] ring-2 ring-black/5">
               <AvatarImage src={profile.avatar_url || undefined} />
-              <AvatarFallback className={`text-4xl font-light ${isDark ? 'bg-[#1E2430] text-white/60' : 'bg-white text-[#5A5A4E]'}`}>
+              <AvatarFallback className={`text-4xl font-light ${isDark ? 'bg-[#161618] text-white/60' : 'bg-white text-[#536471]'}`}>
                 {initials}
               </AvatarFallback>
             </Avatar>
@@ -70,11 +70,11 @@ export function ProfilePageClient({
           <div className="flex-1 pb-2">
             <div className="flex flex-col md:flex-row md:items-center gap-3">
               <div>
-                <h1 className={`text-2xl md:text-3xl font-bold ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>
+                <h1 className={`text-2xl md:text-3xl font-bold ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
                   {displayName}
                 </h1>
                 {profile.username && (
-                  <p className={`text-sm ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
+                  <p className={`text-sm ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
                     @{profile.username}
                   </p>
                 )}
@@ -88,7 +88,7 @@ export function ProfilePageClient({
               <motion.p
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`mt-3 text-sm leading-relaxed max-w-xl ${isDark ? 'text-white/60' : 'text-[#5A5A4E]'}`}
+                className={`mt-3 text-sm leading-relaxed max-w-xl ${isDark ? 'text-white/60' : 'text-[#536471]'}`}
               >
                 {profile.bio}
               </motion.p>
@@ -96,7 +96,7 @@ export function ProfilePageClient({
 
             {/* Mood Song */}
             {profile.mood_song_url && (
-              <div className={`mt-3 flex items-center gap-2 text-xs ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
+              <div className={`mt-3 flex items-center gap-2 text-xs ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
                 <Music className="h-3.5 w-3.5" />
                 <span>Current vibe: {profile.mood_song_title || '🎵'}</span>
               </div>
@@ -105,7 +105,7 @@ export function ProfilePageClient({
         </div>
 
         {/* Navigation Tabs */}
-        <div className={`mt-8 border-b ${isDark ? 'border-white/10' : 'border-[#E8E5DE]'}`}>
+        <div className={`mt-8 border-b ${isDark ? 'border-white/10' : 'border-[#EFF3F4]'}`}>
           <div className="flex gap-6">
             <TabButton
               active={activeTab === 'reflections'}
@@ -131,7 +131,7 @@ export function ProfilePageClient({
           {activeTab === 'reflections' && (
             <div className="space-y-4">
               {reflections.length === 0 ? (
-                <p className={`text-sm ${isDark ? 'text-white/30' : 'text-[#A0A090]'}`}>
+                <p className={`text-sm ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
                   No shared reflections yet.
                 </p>
               ) : (
@@ -144,13 +144,13 @@ export function ProfilePageClient({
                     className={`rounded-2xl p-5 ${
                       isDark
                         ? 'bg-white/[0.04] border border-white/[0.06]'
-                        : 'bg-white/80 border border-[#E8E5DE]'
+                        : 'bg-white/80 border border-[#EFF3F4]'
                     }`}
                   >
-                    <p className={`text-sm font-medium mb-2 ${isDark ? 'text-white/50' : 'text-[#8A8A7A]'}`}>
+                    <p className={`text-sm font-medium mb-2 ${isDark ? 'text-white/50' : 'text-[#8B98A5]'}`}>
                       {ref.prompt_text}
                     </p>
-                    <p className={`text-sm leading-relaxed ${isDark ? 'text-white/80' : 'text-[#3D3D3D]'}`}>
+                    <p className={`text-sm leading-relaxed ${isDark ? 'text-white/80' : 'text-[#0F1419]'}`}>
                       {ref.reflection_text.slice(0, 300)}
                       {ref.reflection_text.length > 300 ? '...' : ''}
                     </p>
@@ -160,7 +160,7 @@ export function ProfilePageClient({
                         <span
                           key={tag}
                           className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${
-                            isDark ? 'bg-white/[0.06] text-white/40' : 'bg-[#F0EFEA] text-[#8A8A7A]'
+                            isDark ? 'bg-white/[0.06] text-white/40' : 'bg-[#F7F9FA] text-[#8B98A5]'
                           }`}
                         >
                           {tag}
@@ -203,8 +203,8 @@ function TabButton({
       onClick={onClick}
       className={`relative pb-3 text-sm font-medium transition-colors ${
         active
-          ? isDark ? 'text-white' : 'text-[#3D3D3D]'
-          : isDark ? 'text-white/30 hover:text-white/50' : 'text-[#A0A090] hover:text-[#5A5A4E]'
+          ? isDark ? 'text-white' : 'text-[#0F1419]'
+          : isDark ? 'text-white/30 hover:text-white/50' : 'text-[#8B98A5] hover:text-[#536471]'
       }`}
     >
       {children}

@@ -50,10 +50,10 @@ export default function FeedPage() {
               {/* Header */}
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>
+                  <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
                     Feed
                   </h1>
-                  <p className={`text-sm mt-1 ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
+                  <p className={`text-sm mt-1 ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
                     Reflections shared by your friends
                   </p>
                 </div>
@@ -62,7 +62,7 @@ export default function FeedPage() {
                   className={`flex items-center gap-2 text-sm px-4 py-2 rounded-xl transition-all ${
                     isDark
                       ? 'bg-white/[0.06] text-white/60 hover:bg-white/10 hover:text-white'
-                      : 'bg-white/80 text-[#5A5A4E] hover:bg-white hover:border-[#D4D0C8] border border-[#E8E5DE]'
+                      : 'bg-white/80 text-[#536471] hover:bg-white hover:border-[#EFF3F4] border border-[#EFF3F4]'
                   }`}
                 >
                   <Users className="h-4 w-4" />
@@ -73,20 +73,20 @@ export default function FeedPage() {
               {/* Feed */}
               {loading ? (
                 <div className="flex flex-col items-center justify-center py-20 gap-3">
-                  <Loader2 className={`h-6 w-6 animate-spin ${isDark ? 'text-white/20' : 'text-[#B0AFA0]'}`} />
-                  <p className={`text-sm ${isDark ? 'text-white/20' : 'text-[#B0AFA0]'}`}>Loading feed...</p>
+                  <Loader2 className={`h-6 w-6 animate-spin ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`} />
+                  <p className={`text-sm ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`}>Loading feed...</p>
                 </div>
               ) : feed.length === 0 ? (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className={`rounded-2xl p-10 text-center ${isDark ? 'bg-white/[0.03] border border-white/[0.06]' : 'bg-white/60 border border-[#E8E5DE]'}`}
+                  className={`rounded-2xl p-10 text-center ${isDark ? 'bg-white/[0.03] border border-white/[0.06]' : 'bg-white/60 border border-[#EFF3F4]'}`}
                 >
                   <Rss className={`h-10 w-10 mx-auto mb-4 ${isDark ? 'text-white/15' : 'text-[#D0CFC0]'}`} />
-                  <h3 className={`font-semibold mb-1 ${isDark ? 'text-white/60' : 'text-[#5A5A4E]'}`}>
+                  <h3 className={`font-semibold mb-1 ${isDark ? 'text-white/60' : 'text-[#536471]'}`}>
                     Your feed is empty
                   </h3>
-                  <p className={`text-sm max-w-sm mx-auto mb-4 ${isDark ? 'text-white/30' : 'text-[#8A8A7A]'}`}>
+                  <p className={`text-sm max-w-sm mx-auto mb-4 ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
                     Add friends to see their shared reflections here. Reflections are private by default — friends choose to share.
                   </p>
                   <Link
@@ -94,7 +94,7 @@ export default function FeedPage() {
                     className={`inline-flex items-center gap-2 text-sm px-4 py-2 rounded-xl ${
                       isDark
                         ? 'bg-white/10 text-white hover:bg-white/15'
-                        : 'bg-[#3D3D3D] text-white hover:bg-[#5A5A4E]'
+                        : 'bg-[#0F1419] text-white hover:bg-[#536471]'
                     }`}
                   >
                     <Users className="h-4 w-4" />
@@ -118,7 +118,7 @@ export default function FeedPage() {
                         className={`text-sm px-6 py-2 rounded-xl transition-all ${
                           isDark
                             ? 'bg-white/[0.06] text-white/50 hover:bg-white/10 hover:text-white'
-                            : 'bg-white/80 text-[#5A5A4E] hover:bg-white border border-[#E8E5DE]'
+                            : 'bg-white/80 text-[#536471] hover:bg-white border border-[#EFF3F4]'
                         }`}
                       >
                         {loadingMore ? (

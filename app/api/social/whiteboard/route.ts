@@ -5,7 +5,7 @@ import { z } from 'zod'
 const CreateEntrySchema = z.object({
   profile_user_id: z.string().uuid(),
   content_type: z.enum(['text', 'doodle', 'voice_note', 'sticker']),
-  content: z.record(z.any()),
+  content: z.record(z.string(), z.any()),
 })
 
 export async function GET(request: NextRequest) {

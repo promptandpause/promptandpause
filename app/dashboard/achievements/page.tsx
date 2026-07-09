@@ -84,7 +84,7 @@ function AchievementsPageContent() {
         <Link
           href="/dashboard"
           className={`inline-flex items-center gap-2 mb-3 md:mb-4 text-sm hover:opacity-70 transition-opacity ${
-            theme === 'dark' ? 'text-white/50' : 'text-[#8A8A7A]'
+            theme === 'dark' ? 'text-white/50' : 'text-[#8B98A5]'
           }`}
         >
           <ChevronLeft className="w-4 h-4" />
@@ -94,12 +94,12 @@ function AchievementsPageContent() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex-1">
             <h1 className={`text-2xl md:text-4xl font-semibold tracking-tight mb-1 md:mb-2 ${
-              theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+              theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
             }`}>
               Achievements
             </h1>
             <p className={`text-sm md:text-lg ${
-              theme === 'dark' ? 'text-white/50' : 'text-[#8A8A7A]'
+              theme === 'dark' ? 'text-white/50' : 'text-[#8B98A5]'
             }`}>
               Your journey of growth and consistency
             </p>
@@ -107,16 +107,16 @@ function AchievementsPageContent() {
 
           {/* Progress Circle */}
           <div className={`relative w-20 h-20 md:w-24 md:h-24 rounded-full border-4 flex-shrink-0 ${
-            theme === 'dark' ? 'border-white/8' : 'border-[#E8E5DE]'
+            theme === 'dark' ? 'border-white/8' : 'border-[#EFF3F4]'
           } flex items-center justify-center`}>
             <div className="text-center">
               <div className={`text-xl md:text-2xl font-bold ${
-                theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+                theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
               }`}>
                 {unlockedCount}
               </div>
               <div className={`text-xs ${
-                theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+                theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
               }`}>
                 of {totalCount}
               </div>
@@ -145,7 +145,7 @@ function AchievementsPageContent() {
                   : 'bg-[#7E6BA5] text-white shadow-sm'
                 : theme === 'dark'
                   ? 'bg-white/5 text-white/50 hover:bg-white/8'
-                  : 'bg-[#F0EDE6] text-[#5A5A4E] hover:bg-[#E8E5DE]'
+                  : 'bg-[#EFF3F4] text-[#536471] hover:bg-[#EFF3F4]'
             }`}
           >
             All
@@ -165,7 +165,7 @@ function AchievementsPageContent() {
                       : 'bg-[#7E6BA5] text-white shadow-sm'
                     : theme === 'dark'
                       ? 'bg-white/5 text-white/50 hover:bg-white/8'
-                      : 'bg-[#F0EDE6] text-[#5A5A4E] hover:bg-[#E8E5DE]'
+                      : 'bg-[#EFF3F4] text-[#536471] hover:bg-[#EFF3F4]'
                 }`}
               >
                 <span className="text-base md:text-lg">{category.icon}</span>
@@ -175,7 +175,7 @@ function AchievementsPageContent() {
                     ? 'bg-white/20'
                     : theme === 'dark'
                       ? 'bg-white/8'
-                      : 'bg-[#E8E5DE]'
+                      : 'bg-[#EFF3F4]'
                 }`}>
                   {unlockedInCategory}/{categoryBadges.length}
                 </span>
@@ -195,7 +195,7 @@ function AchievementsPageContent() {
         {loading ? (
           <div className="text-center py-12">
             <div className={`text-lg ${
-              theme === 'dark' ? 'text-white/40' : 'text-[#8A8A7A]'
+              theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
             }`}>
               Loading achievements...
             </div>
@@ -266,7 +266,7 @@ function BadgeCard({ badge, isUnlocked, earnedAt, theme, index }: BadgeCardProps
             theme === 'dark' ? 'bg-black/50' : 'bg-[#FFFFFF]/80'
           } backdrop-blur-sm`}>
             <Lock className={`w-5 h-5 md:w-6 md:h-6 ${
-              theme === 'dark' ? 'text-white/40' : 'text-[#A0A090]'
+              theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
             }`} />
           </div>
         </div>
@@ -292,14 +292,14 @@ function BadgeCard({ badge, isUnlocked, earnedAt, theme, index }: BadgeCardProps
 
         {/* Badge Name */}
         <h3 className={`font-bold text-xs md:text-sm mb-0.5 md:mb-1 line-clamp-2 leading-tight ${
-          theme === 'dark' ? 'text-white' : 'text-[#3D3D3D]'
+          theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
         }`}>
           {badge.name}
         </h3>
 
         {/* Description */}
         <p className={`text-[10px] md:text-xs line-clamp-2 leading-snug ${
-          theme === 'dark' ? 'text-white/50' : 'text-[#8A8A7A]'
+          theme === 'dark' ? 'text-white/50' : 'text-[#8B98A5]'
         }`}>
           {badge.description}
         </p>
@@ -307,7 +307,7 @@ function BadgeCard({ badge, isUnlocked, earnedAt, theme, index }: BadgeCardProps
         {/* Earned Date */}
         {isUnlocked && earnedAt && (
           <div className={`mt-1.5 md:mt-2 pt-1.5 md:pt-2 border-t text-[10px] md:text-xs ${
-            theme === 'dark' ? 'border-white/8 text-white/40' : 'border-[#E8E5DE] text-[#8A8A7A]'
+            theme === 'dark' ? 'border-white/8 text-white/40' : 'border-[#EFF3F4] text-[#8B98A5]'
           }`}>
             {new Date(earnedAt).toLocaleDateString('en-US', {
               month: 'short',

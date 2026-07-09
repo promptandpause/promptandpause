@@ -78,10 +78,10 @@ export default function FriendsPage() {
             <div className="max-w-[800px] mx-auto px-4 md:px-8 pt-16 md:pt-10 pb-6">
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>
+                  <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
                     Friends
                   </h1>
-                  <p className={`text-sm mt-1 ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
+                  <p className={`text-sm mt-1 ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
                     Connect with others on their reflection journey
                   </p>
                 </div>
@@ -89,7 +89,7 @@ export default function FriendsPage() {
 
               {/* Search */}
               <div className="relative mb-4">
-                <Search className={`absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 ${isDark ? 'text-white/20' : 'text-[#B0AFA0]'}`} />
+                <Search className={`absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`} />
                 <Input
                   value={search}
                   onChange={e => setSearch(e.target.value)}
@@ -97,7 +97,7 @@ export default function FriendsPage() {
                   className={`pl-9 text-sm rounded-xl ${
                     isDark
                       ? 'bg-white/[0.06] border-white/[0.08] text-white placeholder:text-white/20'
-                      : 'bg-white/80 border-[#E8E5DE] text-[#3D3D3D] placeholder:text-[#B0AFA0]'
+                      : 'bg-white/80 border-[#EFF3F4] text-[#0F1419] placeholder:text-[#8B98A5]'
                   }`}
                 />
               </div>
@@ -114,8 +114,8 @@ export default function FriendsPage() {
                     onClick={() => setTab(t.key as typeof tab)}
                     className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
                       tab === t.key
-                        ? isDark ? 'bg-white/10 text-white' : 'bg-white text-[#3D3D3D] shadow-sm'
-                        : isDark ? 'text-white/30 hover:text-white/50' : 'text-[#A0A090] hover:text-[#5A5A4E]'
+                        ? isDark ? 'bg-white/10 text-white' : 'bg-white text-[#0F1419] shadow-sm'
+                        : isDark ? 'text-white/30 hover:text-white/50' : 'text-[#8B98A5] hover:text-[#536471]'
                     }`}
                   >
                     {t.label}
@@ -126,15 +126,15 @@ export default function FriendsPage() {
               {/* List */}
               {loading ? (
                 <div className="flex justify-center py-20">
-                  <Loader2 className={`h-6 w-6 animate-spin ${isDark ? 'text-white/20' : 'text-[#B0AFA0]'}`} />
+                  <Loader2 className={`h-6 w-6 animate-spin ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`} />
                 </div>
               ) : displayList.length === 0 ? (
-                <div className={`rounded-2xl p-10 text-center ${isDark ? 'bg-white/[0.03] border border-white/[0.06]' : 'bg-white/60 border border-[#E8E5DE]'}`}>
+                <div className={`rounded-2xl p-10 text-center ${isDark ? 'bg-white/[0.03] border border-white/[0.06]' : 'bg-white/60 border border-[#EFF3F4]'}`}>
                   <UserPlus className={`h-10 w-10 mx-auto mb-4 ${isDark ? 'text-white/15' : 'text-[#D0CFC0]'}`} />
-                  <h3 className={`font-semibold mb-1 ${isDark ? 'text-white/60' : 'text-[#5A5A4E]'}`}>
+                  <h3 className={`font-semibold mb-1 ${isDark ? 'text-white/60' : 'text-[#536471]'}`}>
                     {tab === 'all' ? 'No friends yet' : tab === 'pending' ? 'No pending requests' : 'No incoming requests'}
                   </h3>
-                  <p className={`text-sm ${isDark ? 'text-white/30' : 'text-[#8A8A7A]'}`}>
+                  <p className={`text-sm ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
                     {tab === 'all' ? 'Find people to connect with on their profiles.' : ''}
                   </p>
                 </div>
@@ -160,16 +160,16 @@ export default function FriendsPage() {
                         >
                           <Avatar className="h-10 w-10">
                             <AvatarImage src={friend.profile?.avatar_url || undefined} />
-                            <AvatarFallback className={`text-xs ${isDark ? 'bg-[#1E2430] text-white/40' : 'bg-[#F0EFEA] text-[#8A8A7A]'}`}>
+                            <AvatarFallback className={`text-xs ${isDark ? 'bg-[#161618] text-white/40' : 'bg-[#F7F9FA] text-[#8B98A5]'}`}>
                               {friend.profile?.full_name?.[0] || '?'}
                             </AvatarFallback>
                           </Avatar>
                           <div className="min-w-0">
-                            <p className={`text-sm font-medium truncate ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>
+                            <p className={`text-sm font-medium truncate ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
                               {friend.profile?.display_name || friend.profile?.full_name || 'Unknown'}
                             </p>
                             {friend.profile?.username && (
-                              <p className={`text-xs ${isDark ? 'text-white/30' : 'text-[#A0A090]'}`}>
+                              <p className={`text-xs ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
                                 @{friend.profile.username}
                               </p>
                             )}
@@ -183,7 +183,7 @@ export default function FriendsPage() {
                               size="sm"
                               onClick={() => handleAction(friend.id, 'remove')}
                               disabled={actionLoading === friend.id}
-                              className={`h-8 text-xs ${isDark ? 'text-white/30 hover:text-red-400' : 'text-[#A0A090] hover:text-red-500'}`}
+                              className={`h-8 text-xs ${isDark ? 'text-white/30 hover:text-red-400' : 'text-[#8B98A5] hover:text-red-500'}`}
                             >
                               {actionLoading === friend.id ? (
                                 <Loader2 className="h-3 w-3 animate-spin" />
@@ -219,7 +219,7 @@ export default function FriendsPage() {
                                 size="sm"
                                 onClick={() => handleAction(friend.id, 'remove')}
                                 disabled={actionLoading === friend.id}
-                                className={`h-8 text-xs ${isDark ? 'text-white/30 hover:text-red-400' : 'text-[#A0A090] hover:text-red-500'}`}
+                                className={`h-8 text-xs ${isDark ? 'text-white/30 hover:text-red-400' : 'text-[#8B98A5] hover:text-red-500'}`}
                               >
                                 {actionLoading === friend.id && friend.requester_id !== friend.profile?.id ? (
                                   <Loader2 className="h-3 w-3 animate-spin" />

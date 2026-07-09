@@ -55,19 +55,19 @@ export default function YourRhythm() {
   return (
     <section
       className={`rounded-2xl p-5 md:p-6 transition-all ${
-        isDark ? 'bg-white/5 border border-white/8' : 'bg-[#FAFAF7] border border-[#E8E5DE]'
+        isDark ? 'bg-white/5 border border-white/8' : 'bg-[#F7F9FA] border border-[#EFF3F4]'
       }`}
     >
       <div className="flex flex-col gap-4">
         <div className="flex items-start justify-between">
           <div>
-            <p className={`text-xs uppercase tracking-[0.14em] font-medium mb-2 ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>Your rhythm</p>
+            <p className={`text-xs uppercase tracking-[0.14em] font-medium mb-2 ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>Your rhythm</p>
             <div className="flex items-baseline gap-2">
-              <span className={`text-2xl font-bold tabular-nums ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>{streak}</span>
-              <span className={`text-xs ${isDark ? 'text-white/50' : 'text-[#8A8A7A]'}`}>current streak</span>
+              <span className={`text-2xl font-bold tabular-nums ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>{streak}</span>
+              <span className={`text-xs ${isDark ? 'text-white/50' : 'text-[#8B98A5]'}`}>current streak</span>
             </div>
           </div>
-          <p className={`text-xs max-w-[140px] text-right leading-relaxed ${isDark ? 'text-white/30' : 'text-[#A0A090]'}`}>Consistency matters more than length.</p>
+          <p className={`text-xs max-w-[140px] text-right leading-relaxed ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>Consistency matters more than length.</p>
         </div>
 
         <div className="flex justify-between gap-1.5">
@@ -76,8 +76,8 @@ export default function YourRhythm() {
               key={d.date}
               className={`w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center ${
                 d.mood
-                  ? isDark ? 'bg-white/8' : 'bg-white border border-[#E8E5DE]'
-                  : isDark ? 'bg-white/5' : 'bg-[#F0EDE6]'
+                  ? isDark ? 'bg-white/8' : 'bg-white border border-[#EFF3F4]'
+                  : isDark ? 'bg-white/5' : 'bg-[#EFF3F4]'
               }`}
               aria-label={d.date}
               title={d.date}

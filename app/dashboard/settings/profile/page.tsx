@@ -21,17 +21,17 @@ export default function ProfileSettingsPage() {
               <Link
                 href="/dashboard/settings"
                 className={`inline-flex items-center gap-1.5 text-sm mb-6 transition-colors ${
-                  isDark ? 'text-white/40 hover:text-white' : 'text-[#A0A090] hover:text-[#5A5A4E]'
+                  isDark ? 'text-white/40 hover:text-white' : 'text-[#8B98A5] hover:text-[#536471]'
                 }`}
               >
                 <ArrowLeft className="h-4 w-4" />
                 Back to Settings
               </Link>
 
-              <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight mb-1 ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>
+              <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight mb-1 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
                 Profile & Theme
               </h1>
-              <p className={`text-sm mb-8 ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
+              <p className={`text-sm mb-8 ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
                 Customize your public profile, choose a theme, and set sharing preferences
               </p>
 
