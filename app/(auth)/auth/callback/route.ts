@@ -155,6 +155,9 @@ export async function GET(request: Request) {
   const nextParam = requestUrl.searchParams.get('next')
   const safeNext = nextParam && nextParam.startsWith('/') ? nextParam : null
   const origin = requestUrl.origin
+  const type = requestUrl.searchParams.get('type')
+
+  const isRecovery = type === 'recovery'
 
   if (code) {
     const supabase = await createClient()
@@ -163,7 +166,11 @@ export async function GET(request: Request) {
 
     if (error) {
       console.error('Auth callback error:', error)
-      return NextResponse.redirect(`${origin}/login?error=auth_callback_error`)
+      return NextResponse.redirect(`${origin}/#mode=signin`)
+    }
+
+    if (isRecovery) {
+      return NextResponse.redirect(`${origin}/#mode=change-password`)
     }
 
     const {
@@ -235,5 +242,5 @@ export async function GET(request: Request) {
     }
   }
 
-  return NextResponse.redirect(`${origin}/login`)
+  return NextResponse.redirect(`${origin}/#mode=signin`)
 }

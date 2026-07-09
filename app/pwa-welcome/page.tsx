@@ -203,7 +203,7 @@ export default function PWAWelcomePage() {
         {/* Login Button - Bottom */}
         <div className="w-full max-w-md mx-auto pb-8">
           <Link 
-            href="/login"
+            href="/"
             className="block w-full text-center bg-[#6FA984]/80 border border-[#6FA984]/60 backdrop-blur-xl text-white font-sans font-semibold px-8 py-4 rounded-2xl text-lg shadow-2xl hover:bg-[#6FA984] hover:border-[#6FA984] transition-all duration-300 touch-manipulation"
           >
             Login

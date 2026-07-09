@@ -722,7 +722,7 @@ function FinalCTASection() {
         </p>
         <div className="flex flex-col sm:flex-row gap-6 justify-center">
           <a
-            href="/signup"
+            href="/"
             className="px-10 py-5 border-2 border-[#1D9BF0] bg-transparent text-[#1D9BF0] text-base font-medium tracking-wide transition-all duration-300 hover:bg-[#1D9BF0] hover:text-white cursor-pointer text-center min-h-[56px] flex items-center justify-center touch-manipulation"
           >
             TRY PREMIUM FREE FOR 7 DAYS

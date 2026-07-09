@@ -5,7 +5,7 @@ const RUNTIME_CACHE = 'runtime-cache-v2'
 const PRECACHE_ASSETS = [
   '/',
   '/pwa-welcome',
-  '/login',
+  '/#mode=signin',
   '/dashboard',
   '/icon.png',
   '/apple-icon.png',
@@ -75,12 +75,7 @@ self.addEventListener('fetch', (event) => {
   if (
     request.url.includes('/api/') ||
     request.url.includes('/auth/') ||
-    request.url.includes('/login') ||
-    request.url.includes('/signup') ||
     request.url.includes('/onboarding') ||
-    request.url.includes('/verify') ||
-    request.url.includes('/change-password') ||
-    request.url.includes('/forgot-password') ||
     request.url.includes('supabase.co') ||
     request.url.includes('stripe.com')
   ) {

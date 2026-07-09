@@ -118,7 +118,7 @@ export default function GoodByePage() {
             <ArrowRight className="w-4 h-4" />
           </Link>
           <Link
-            href="/signup"
+            href="/"
             className="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-[#DCE6D9] hover:border-[#6FA984] text-[#2F3B34] rounded-xl font-medium transition-colors"
           >
             Create New Account

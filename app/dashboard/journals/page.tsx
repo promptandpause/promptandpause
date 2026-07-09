@@ -86,7 +86,7 @@ export default function JournalsPage() {
         setLoading(true)
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) {
-          router.push("/login")
+          router.push("/")
           return
         }
         const res = await fetch('/api/self-journals', { cache: 'no-store' })

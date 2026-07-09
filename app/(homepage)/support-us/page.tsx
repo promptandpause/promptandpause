@@ -207,7 +207,7 @@ function WaysToSupportSection({ isAuthenticated, router }: { isAuthenticated: bo
                 if (isAuthenticated) {
                   router.push("/dashboard/settings")
                 } else {
-                  router.push("/login")
+                  router.push("/")
                 }
               }}
               className="block px-8 py-4 bg-[#1D9BF0] text-white text-sm font-medium tracking-wide transition-all duration-300 hover:bg-[#1A8CD8] cursor-pointer w-full text-center"
@@ -445,7 +445,7 @@ function CTASection({ isAuthenticated, router }: { isAuthenticated: boolean; rou
               if (isAuthenticated) {
                 router.push("/dashboard/settings")
               } else {
-                router.push("/login")
+                router.push("/")
               }
             }}
             className="px-10 py-5 bg-white text-[#0F1419] border-2 border-white text-base font-medium tracking-wide transition-all duration-300 hover:bg-transparent hover:text-[#0F1419] cursor-pointer text-center"

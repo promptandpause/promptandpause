@@ -4,6 +4,12 @@ import Link from "next/link"
 import { useState, useEffect } from "react"
 import { Menu, X } from "lucide-react"
 
+function scrollToAuth(e: React.MouseEvent) {
+  e.preventDefault()
+  const el = document.getElementById("auth-section")
+  if (el) el.scrollIntoView({ behavior: "smooth" })
+}
+
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -61,12 +67,13 @@ export default function Navigation() {
             <Link href="/research" className="hover:text-[#536471] transition-colors duration-200">
               Resources
             </Link>
-            <Link
-              href="/login"
-              className="px-5 py-2 bg-[#0F1419] hover:bg-black text-white font-semibold rounded-full transition-colors duration-200"
+            <a
+              href="#auth-section"
+              onClick={scrollToAuth}
+              className="px-5 py-2 bg-[#0F1419] hover:bg-black text-white font-semibold rounded-full transition-colors duration-200 inline-block cursor-pointer"
             >
               Log in
-            </Link>
+            </a>
           </div>
 
           <button
@@ -115,13 +122,13 @@ export default function Navigation() {
           >
             Resources
           </Link>
-          <Link
-            href="/login"
-            onClick={closeMenu}
-            className="mt-4 px-8 py-4 bg-[#0F1419] text-white text-xl font-semibold rounded-full hover:bg-black transition-colors duration-200 min-h-[52px] flex items-center touch-manipulation"
+          <a
+            href="#auth-section"
+            onClick={(e) => { scrollToAuth(e); closeMenu() }}
+            className="mt-4 px-8 py-4 bg-[#0F1419] text-white text-xl font-semibold rounded-full hover:bg-black transition-colors duration-200 min-h-[52px] flex items-center touch-manipulation cursor-pointer"
           >
             Log in
-          </Link>
+          </a>
         </div>
       </div>
     </>

@@ -40,7 +40,7 @@ function GiftRedeemContent() {
 
   const loginHref = useMemo(() => {
     const nextUrl = token ? `/gifts/redeem?token=${encodeURIComponent(trimmedToken)}` : '/gifts/redeem'
-    return `/login?next=${encodeURIComponent(nextUrl)}`
+    return `/`
   }, [token, trimmedToken])
 
   const endDateLabel = useMemo(() => {

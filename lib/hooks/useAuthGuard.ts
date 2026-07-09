@@ -23,7 +23,7 @@ export function useAuthGuard(redirectPath?: string, requireAdmin: boolean = fals
       if (!user) {
         // Not authenticated - redirect to sign in
         const redirect = redirectPath || window.location.pathname
-        router.push(`/login?redirect=${redirect}`)
+        router.push('/')
         return
       }
 

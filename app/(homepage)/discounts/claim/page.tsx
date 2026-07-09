@@ -203,7 +203,7 @@ function DiscountClaimContent() {
               {!isAuthenticated && (
                 <div className="mt-4">
                   <Button
-                    onClick={() => router.push("/login")}
+                    onClick={() => router.push("/")}
                     className="bg-[#1D9BF0] hover:bg-[#1A8CD8] text-white"
                   >
                     Sign In

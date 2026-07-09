@@ -15,13 +15,13 @@ export default function Cta() {
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
             <Link
-              href="/login?mode=signup"
+              href="/"
               className="inline-flex items-center justify-center px-8 py-3.5 bg-white text-[#0F1419] font-semibold text-base rounded-full hover:bg-white/90 transition-colors"
             >
               Start your free trial
             </Link>
             <Link
-              href="/login"
+              href="/"
               className="inline-flex items-center justify-center px-8 py-3.5 border border-white/20 text-white font-semibold text-base rounded-full hover:bg-white/10 transition-colors"
             >
               Sign in
