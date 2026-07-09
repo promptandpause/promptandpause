@@ -32,7 +32,6 @@ import { useTranslation } from "@/hooks/useTranslation"
 import { useTheme } from "@/contexts/ThemeContext"
 import { getSupabaseClient } from "@/lib/supabase/client"
 import { useTier } from "@/hooks/useTier"
-import PageSkeleton from "../components/page-skeleton"
 import { DashboardSidebar } from "../components/DashboardSidebar"
 import { 
   getCachedUserProfile, 
@@ -928,13 +927,11 @@ function SettingsPageContent() {
 
   if (isLoading) {
     return (
-      <div 
+      <div
         data-dashboard
-        className={`min-h-screen ${theme === 'dark' ? 'bg-[#141820]' : 'bg-[#F5F3EE]'}`}
+        className={`min-h-screen flex items-center justify-center ${theme === "dark" ? "bg-[#0A0A0A]" : "bg-[#FFFFFF]"}`}
       >
-        <div className="p-4 sm:p-6 md:p-8">
-          <PageSkeleton />
-        </div>
+        <div className={`text-sm ${theme === "dark" ? "text-white/30" : "text-[#8B98A5]"}`}>Loading...</div>
       </div>
     )
   }

@@ -2,22 +2,9 @@
 
 import { useTheme } from "@/contexts/ThemeContext"
 
-/**
- * DashboardLoading — lightweight blurred curtain shown while a dashboard
- * route segment resolves on the server.
- *
- * Design intent (matches the user's preference for the archive/journals feel):
- *   - No full-page skeleton scaffolding. That's reserved for in-page
- *     component-level loading states (e.g. Archive's Skeleton cards), where
- *     it communicates structure of the specific content being fetched.
- *   - A soft frosted-glass backdrop + breathing brand orb instead, so the
- *     previous paint isn't replaced by an aggressive grey-block skeleton.
- *   - Minimal motion: a gentle breathe on the orb + a faint shimmer band.
- *     Respects `prefers-reduced-motion` via the shared CSS primitives.
- */
 export default function DashboardLoading() {
   const { theme } = useTheme()
-  const isDark = theme === 'dark'
+  const isDark = theme === "dark"
 
   return (
     <div
@@ -25,50 +12,57 @@ export default function DashboardLoading() {
       role="status"
       aria-live="polite"
       aria-label="Loading"
-      className={`min-h-screen relative overflow-hidden ${
-        isDark ? 'bg-[#0A0A0A]' : 'bg-[#FFFFFF]'
-      }`}
+      className={`min-h-screen ${isDark ? "bg-[#0A0A0A]" : "bg-[#FFFFFF]"}`}
     >
-      {/* Ambient brand blobs — continuous with the real dashboard backdrop. */}
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div
-          className={`absolute -top-40 -left-24 h-[420px] w-[420px] rounded-full blur-3xl ${
-            isDark ? 'bg-violet-500/10' : 'bg-violet-300/30'
-          }`}
-        />
-        <div
-          className={`absolute -bottom-40 -right-24 h-[460px] w-[460px] rounded-full blur-3xl ${
-            isDark ? 'bg-emerald-400/10' : 'bg-emerald-300/25'
-          }`}
-        />
-      </div>
+      <div className="flex h-screen overflow-hidden">
+        <div className="hidden md:block flex-shrink-0 p-4 pl-4 pr-0">
+          <div
+            className={`rounded-3xl p-6 h-fit sticky top-6 flex flex-col gap-6 max-h-[calc(100vh-3rem)] overflow-y-auto scrollbar-hide ${
+              isDark
+                ? "bg-[#161618] border border-white/8 shadow-lg"
+                : "bg-white border border-[#EFF3F4] shadow-sm"
+            }`}
+          >
+            <div className={`text-center pb-5 border-b ${isDark ? "border-white/8" : "border-[#EFF3F4]"}`}>
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <img
+                  className={`h-10 ${isDark ? "invert" : ""}`}
+                  alt="Prompt & Pause"
+                  src="https://res.cloudinary.com/dh1rrfpmq/image/upload/v1766460430/prompt_pause-JRsbZR3dxCXndC8YMcyX6XU3XeT2Vw_vdvqfj.svg"
+                />
+              </div>
+              <p className={`text-xs font-medium tracking-wide ${isDark ? "text-white/40" : "text-[#8B98A5]"}`}>
+                Pause. Reflect. Grow.
+              </p>
+            </div>
+          </div>
+        </div>
 
-      {/* Frosted-glass curtain — softens the backdrop and gives the feeling
-          of content being just-out-of-focus, clearing as the real page
-          mounts. Uses the browser's compositor, so it's essentially free. */}
-      <div
-        className={`absolute inset-0 backdrop-blur-xl ${
-          isDark ? 'bg-[#0A0A0A]/40' : 'bg-[#FFFFFF]/50'
-        }`}
-      />
-
-      {/* Centered brand orb + single-line hint. No skeleton blocks — the
-          underlying surface stays calm while the next segment resolves. */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-5">
-        <div
-          className={`pp-orb-breathe h-14 w-14 rounded-2xl shadow-lg ring-1 ${
-            isDark
-              ? 'bg-gradient-to-br from-violet-500/60 to-fuchsia-500/40 ring-white/10'
-              : 'bg-gradient-to-br from-violet-400/80 to-fuchsia-400/70 ring-black/5'
-          }`}
-        />
-        <span
-          className={`text-xs tracking-wide ${
-            isDark ? 'text-white/50' : 'text-[#536471]/70'
-          }`}
-        >
-          One moment…
-        </span>
+        <main className="flex-1 overflow-y-auto scrollbar-thin">
+          <div className="max-w-[1280px] mx-auto px-4 md:px-8 pt-16 md:pt-10 pb-6">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-start">
+              <div className="lg:col-span-8 space-y-5">
+                <div className={`rounded-2xl p-5 ${isDark ? "bg-white/[0.02]" : "bg-white/40"}`}>
+                  <div className={`h-5 w-40 rounded ${isDark ? "bg-white/5" : "bg-[#EFF3F4]"}`} />
+                </div>
+                <div className={`rounded-2xl p-5 ${isDark ? "bg-white/[0.02]" : "bg-white/40"}`}>
+                  <div className={`h-24 rounded-lg ${isDark ? "bg-white/5" : "bg-[#EFF3F4]"}`} />
+                </div>
+                <div className={`rounded-2xl p-5 ${isDark ? "bg-white/[0.02]" : "bg-white/40"}`}>
+                  <div className={`h-16 rounded-lg ${isDark ? "bg-white/5" : "bg-[#EFF3F4]"}`} />
+                </div>
+              </div>
+              <div className="hidden lg:block lg:col-span-4 space-y-5">
+                <div className={`rounded-2xl p-5 ${isDark ? "bg-white/[0.02]" : "bg-white/40"}`}>
+                  <div className={`h-20 rounded-lg ${isDark ? "bg-white/5" : "bg-[#EFF3F4]"}`} />
+                </div>
+                <div className={`rounded-2xl p-5 ${isDark ? "bg-white/[0.02]" : "bg-white/40"}`}>
+                  <div className={`h-16 rounded-lg ${isDark ? "bg-white/5" : "bg-[#EFF3F4]"}`} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
       </div>
     </div>
   )

@@ -4,20 +4,23 @@ import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
-import { Mail, Slack, ChevronLeft, ChevronRight, Sparkles, Heart, Brain, Target, Clock, Check, Crown, Compass, Sun } from "lucide-react"
+import {
+  Mail, Slack, ChevronLeft, ChevronRight, Sparkles, Heart, Brain, Target,
+  Clock, Check, Crown, Sun, Compass, Moon, Star, Shield, Feather, Zap,
+  ArrowRight, Palette, Smile, BookOpen, Coffee
+} from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { getSupabaseClient } from "@/lib/supabase/client"
 import { detectUserTimezone } from "@/lib/utils/timezoneDetection"
 import AgeVerification from "@/components/auth/AgeVerification"
 import { trackEvent } from "@/lib/services/eventsService"
-import { AccentOrb, type Accent } from "@/components/ui/accent-card"
 
-const stepMeta: Array<{ accent: Accent; icon: React.ComponentType<{ className?: string; strokeWidth?: number }> }> = [
-  { accent: "blue", icon: Compass },
-  { accent: "rose", icon: Heart },
-  { accent: "amber", icon: Clock },
-  { accent: "emerald", icon: Mail },
-  { accent: "violet", icon: Target },
+const stepMeta = [
+  { icon: Compass },
+  { icon: Heart },
+  { icon: Clock },
+  { icon: Mail },
+  { icon: Target },
 ]
 
 const steps = [
@@ -72,14 +75,23 @@ const steps = [
   },
 ]
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.06 } },
+}
+const itemVariants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.35 } },
+}
+
 export default function Onboarding() {
   const router = useRouter()
   const { toast } = useToast()
   const supabase = getSupabaseClient()
-  
+
   const STORAGE_KEY = "pp_onboarding_progress_v1"
   const [hydrated, setHydrated] = useState(false)
-  const [step, setStep] = useState(-2) // Start at -2 for age verification
+  const [step, setStep] = useState(-2)
   const [acceptedTerms, setAcceptedTerms] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [previewPrompt, setPreviewPrompt] = useState("")
@@ -93,7 +105,6 @@ export default function Onboarding() {
     focus: [] as string[]
   })
 
-  // --- Hydrate saved progress from localStorage on mount ---
   useEffect(() => {
     try {
       const raw = typeof window !== "undefined" ? window.localStorage.getItem(STORAGE_KEY) : null
@@ -109,33 +120,25 @@ export default function Onboarding() {
             setAgeVerified(true)
           }
           if (typeof saved.step === "number") {
-            // Clamp to valid range; never auto-resume into the final success screen.
-            const maxResumable = steps.length // preview screen allowed
+            const maxResumable = steps.length
             const resumed = Math.min(Math.max(saved.step, -2), maxResumable)
             setStep(resumed)
           }
         }
       }
-    } catch {
-      // ignore malformed storage
-    }
+    } catch { }
     setHydrated(true)
   }, [])
 
-  // --- Persist progress on change (after hydration) ---
   useEffect(() => {
     if (!hydrated) return
     try {
-      // Don't persist the terminal success screen
       if (step > steps.length) return
       const payload = { step, answers, acceptedTerms, ageData }
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
-    } catch {
-      // ignore quota/storage errors
-    }
+    } catch { }
   }, [hydrated, step, answers, acceptedTerms, ageData])
 
-  // Re-generate the preview prompt if the user refreshed directly onto the preview step
   const didRegeneratePreviewOnHydrate = useRef(false)
   useEffect(() => {
     if (!hydrated) return
@@ -145,14 +148,12 @@ export default function Onboarding() {
     }
   }, [hydrated, step, previewPrompt])
 
-  // --- Age Verification Handler ---
   function handleAgeVerified(data: { dateOfBirth: string; country: string; isCompliant: boolean }) {
     setAgeData(data)
     setAgeVerified(true)
-    setStep(-1) // Move to welcome screen
+    setStep(-1)
   }
 
-  // --- UI Handlers ---
   function selectOption(opt: string) {
     const key = steps[step].key as keyof typeof answers
     setAnswers(prev => ({ ...prev, [key]: opt }))
@@ -166,23 +167,20 @@ export default function Onboarding() {
     }))
   }
   async function next() {
-    // If we're on the last step, generate preview
     if (step === steps.length - 1) {
-      setStep(s => s + 1) // Move to preview screen first
-      await generatePreviewPrompt() // Then generate AI prompt
+      setStep(s => s + 1)
+      await generatePreviewPrompt()
     } else {
       setStep(s => Math.min(steps.length, s + 1))
     }
   }
-  
+
   function back() {
     setStep(s => Math.max(0, s - 1))
   }
-  
+
   async function generatePreviewPrompt() {
-    // Generate AI-personalized prompt based on user's onboarding selections
     try {
-      // Call the AI prompt generation API with user's context
       const response = await fetch('/api/prompts/generate-preview', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -192,29 +190,21 @@ export default function Onboarding() {
           focusAreas: answers.focus
         })
       })
-      
       if (response.ok) {
         const data = await response.json()
         setPreviewPrompt(data.prompt || "What's on your mind today? Take a moment to reflect on how you're feeling.")
       } else {
-        // Fallback prompt if API fails
         setPreviewPrompt("What's on your mind today? Take a moment to reflect on how you're feeling.")
       }
     } catch (error) {
-      // Fallback prompt
       setPreviewPrompt("What's on your mind today? Take a moment to reflect on how you're feeling.")
     }
   }
-  
+
   async function handleSubmit() {
     setIsSubmitting(true)
-    
     try {
-      // Auto-detect user's timezone from browser
       const userTimezone = detectUserTimezone()
-      
-      // Call the API endpoint to save onboarding data
-      // This ensures both user_preferences AND profiles tables are populated
       const response = await fetch('/api/onboarding', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -228,39 +218,26 @@ export default function Onboarding() {
           pushNotifications: true,
           dailyReminders: true,
           weeklyDigest: false,
-          timezone: userTimezone // Auto-detected IANA timezone
+          timezone: userTimezone
         })
       })
-      
       if (!response.ok) {
         const errorData = await response.json()
         throw new Error(errorData.error || 'Failed to save onboarding data')
       }
-      
-      // Clear saved onboarding progress now that it's committed server-side
-      try { window.localStorage.removeItem(STORAGE_KEY) } catch {}
-
-      // Activation event: user finished onboarding successfully.
+      try { window.localStorage.removeItem(STORAGE_KEY) } catch { }
       trackEvent('onboarding_completed', {
         reason: answers.reason,
         prompt_time: answers.promptTime,
         delivery: answers.delivery,
         focus_count: Array.isArray(answers.focus) ? answers.focus.length : 0,
       })
-
-      // Move to completion screen
       setStep(steps.length + 1)
-      
       toast({
         title: "Saved",
         description: "Your preferences have been saved. Redirecting to the dashboard...",
       })
-      
-      // Redirect to dashboard after a short delay
-      setTimeout(() => {
-        router.push('/dashboard')
-      }, 2000)
-      
+      setTimeout(() => { router.push('/dashboard') }, 2000)
     } catch (error: any) {
       toast({
         title: "Error",
@@ -271,29 +248,14 @@ export default function Onboarding() {
     }
   }
 
-  // Dashboard-style glass morphism with calming gradients
   return (
-    <div 
-      className="min-h-screen flex items-center justify-center relative overflow-hidden py-4 sm:py-8"
-      style={{ background: 'linear-gradient(160deg, #F5F3EE 0%, #EBE9E3 30%, #E2E6DE 60%, #DCE6D9 100%)' }}
-    >
-      {/* Subtle overlay for readability */}
-      <div className="fixed inset-0 -z-10 bg-white/20" />
-
-      {/* Calming ambient animation (matching dashboard) */}
-      <div className="fixed inset-0 -z-20 pointer-events-none overflow-hidden">
-        <div className="absolute inset-0 calm-ambient-blobs" />
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden py-4 sm:py-8 bg-white">
+      <div className="fixed inset-0 -z-10 pointer-events-none">
+        <div className="absolute inset-0 bg-[radial-gradient(600px_circle_at_20%_20%,rgba(29,155,240,0.06),transparent_45%),radial-gradient(700px_circle_at_80%_30%,rgba(29,155,240,0.04),transparent_50%),radial-gradient(800px_circle_at_30%_80%,rgba(29,155,240,0.05),transparent_55%)] animate-[subtle-shift_28s_ease-in-out_infinite_alternate]" />
       </div>
 
       <style jsx global>{`
-        .calm-ambient-blobs {
-          background: radial-gradient(600px circle at 20% 20%, rgba(111, 169, 132, 0.18), transparent 45%),
-                      radial-gradient(700px circle at 80% 30%, rgba(213, 230, 217, 0.25), transparent 50%),
-                      radial-gradient(800px circle at 30% 80%, rgba(111, 169, 132, 0.15), transparent 55%);
-          animation: calm-shift 28s ease-in-out infinite alternate;
-          filter: blur(12px);
-        }
-        @keyframes calm-shift {
+        @keyframes subtle-shift {
           0% { transform: translate3d(0,0,0) scale(1); }
           50% { transform: translate3d(-1%, 1%, 0) scale(1.03); opacity: 0.9; }
           100% { transform: translate3d(1%, -1%, 0) scale(1.06); opacity: 0.85; }
@@ -301,63 +263,101 @@ export default function Onboarding() {
         @media (prefers-reduced-motion: reduce) {
           .calm-ambient-blobs { animation: none; }
         }
+        input[type="range"]::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          height: 24px;
+          width: 24px;
+          border-radius: 50%;
+          background: #1D9BF0;
+          cursor: pointer;
+          box-shadow: 0 2px 8px rgba(29,155,240,0.3);
+          border: 2px solid white;
+        }
+        input[type="range"]::-moz-range-thumb {
+          height: 24px;
+          width: 24px;
+          border-radius: 50%;
+          background: #1D9BF0;
+          cursor: pointer;
+          box-shadow: 0 2px 8px rgba(29,155,240,0.3);
+          border: 2px solid white;
+        }
       `}</style>
 
-      {/* Main onboarding card with glass morphism */}
-      <motion.div 
+      <motion.div
         className="w-full max-w-lg z-10 mx-4 sm:mx-6"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="backdrop-blur-xl bg-white/70 border border-white/40 rounded-3xl shadow-2xl shadow-black/10 px-6 sm:px-8 py-8 sm:py-10">
+        <div className="bg-white border border-[#EFF3F4] rounded-2xl shadow-[0_2px_12px_rgba(15,20,25,0.08)] px-6 sm:px-8 py-8 sm:py-10">
           {step === -2 ? (
             <AgeVerification onVerified={handleAgeVerified} />
           ) : step === -1 ? (
             <div className="flex flex-col gap-6 items-center justify-center text-center">
-              {/* Welcome Icon */}
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: "spring", bounce: 0.5, delay: 0.2 }}
-                className="w-20 h-20 rounded-full bg-gradient-to-br from-[#6FA984] to-[#8FBF9A] flex items-center justify-center shadow-lg"
+                className="w-20 h-20 rounded-full bg-[#0F1419] flex items-center justify-center shadow-lg"
               >
                 <Sparkles className="w-10 h-10 text-white" />
               </motion.div>
 
-              <div className="space-y-2">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Welcome to Prompt & Pause</h1>
-                <p className="text-gray-600 text-sm">Your personal space for daily reflection</p>
+              <div className="space-y-1">
+                <motion.h1
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.15 }}
+                  className="text-2xl sm:text-3xl font-bold text-[#0F1419]"
+                >
+                  Welcome to Prompt & Pause
+                </motion.h1>
+                <motion.p
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-[#536471] text-sm"
+                >
+                  Your personal space for daily reflection
+                </motion.p>
               </div>
-              
-              {/* Trial Information Card */}
-              <motion.div 
+
+              <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="w-full bg-gradient-to-r from-[#6FA984]/10 to-[#8FBF9A]/10 border border-[#6FA984]/20 rounded-2xl p-5"
+                className="w-full bg-[#F7F9FA] border border-[#EFF3F4] rounded-xl p-5"
               >
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="w-8 h-8 rounded-full bg-[#6FA984] flex items-center justify-center">
-                    <Sparkles className="w-4 h-4 text-white" />
+                  <div className="w-8 h-8 rounded-full bg-[#1D9BF0] flex items-center justify-center">
+                    <Zap className="w-4 h-4 text-white" />
                   </div>
-                  <p className="text-base font-semibold text-gray-900">
+                  <p className="text-base font-semibold text-[#0F1419]">
                     Start with a 7-day free trial
                   </p>
                 </div>
-                <p className="text-sm text-gray-600 ml-11">
-                  No credit card required • Full access to all features
+                <p className="text-sm text-[#536471] ml-11">
+                  No credit card required &bull; Full access to all features
                 </p>
               </motion.div>
-              
-              {/* Disclaimer */}
-              <div className="bg-white/50 rounded-xl p-4 text-xs text-gray-600 leading-relaxed border border-gray-200/50">
-                <strong className="text-gray-700">Disclaimer:</strong> Prompt & Pause is not a doctor, registered therapist, or a provider of professional medical, clinical, or crisis care. This service is for self-reflection and general wellness, not diagnosis, treatment, or urgent care. If you are in a crisis, please seek help from a qualified provider or call emergency services.
-              </div>
 
-              {/* Terms Checkbox */}
-              <label className="flex items-start gap-3 w-full cursor-pointer group">
-                <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${acceptedTerms ? 'bg-[#6FA984] border-[#6FA984]' : 'border-gray-300 group-hover:border-[#6FA984]/50'}`}>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
+                className="bg-[#F7F9FA] rounded-xl p-4 text-xs text-[#536471] leading-relaxed border border-[#EFF3F4]"
+              >
+                <strong className="text-[#0F1419]">Disclaimer:</strong> Prompt & Pause is not a doctor, registered therapist, or a provider of professional medical, clinical, or crisis care. This service is for self-reflection and general wellness, not diagnosis, treatment, or urgent care. If you are in a crisis, please seek help from a qualified provider or call emergency services.
+              </motion.div>
+
+              <motion.label
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.45 }}
+                className="flex items-start gap-3 w-full cursor-pointer group"
+              >
+                <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all shrink-0 mt-0.5 ${acceptedTerms ? 'bg-[#1D9BF0] border-[#1D9BF0]' : 'border-[#CFD9DE] group-hover:border-[#1D9BF0]/50'}`}>
                   {acceptedTerms && <Check className="w-4 h-4 text-white" />}
                 </div>
                 <input
@@ -366,36 +366,41 @@ export default function Onboarding() {
                   checked={acceptedTerms}
                   onChange={e => setAcceptedTerms(e.target.checked)}
                 />
-                <span className="text-sm text-gray-700 text-left">I accept the terms and acknowledge Prompt & Pause is not a medical/clinical provider</span>
-              </label>
+                <span className="text-sm text-[#536471] text-left">I accept the terms and acknowledge Prompt & Pause is not a medical/clinical provider</span>
+              </motion.label>
 
-              {/* Start Button */}
-              <Button
-                disabled={!acceptedTerms}
-                className="w-full bg-gradient-to-r from-[#6FA984] to-[#5A8F6E] hover:from-[#4A7A5E] hover:to-[#6FA984] text-white rounded-2xl px-8 py-4 text-lg font-semibold disabled:opacity-30 shadow-lg hover:shadow-xl transition-all duration-300 touch-manipulation"
-                onClick={() => setStep(0)}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="w-full"
               >
-                <span className="flex items-center justify-center gap-2">
-                  Get Started
-                  <ChevronRight className="w-5 h-5" />
-                </span>
-              </Button>
+                <Button
+                  disabled={!acceptedTerms}
+                  className="w-full bg-[#0F1419] hover:bg-black text-white rounded-full px-8 py-4 text-lg font-semibold disabled:opacity-30 transition-all duration-300 touch-manipulation"
+                  onClick={() => setStep(0)}
+                >
+                  <span className="flex items-center justify-center gap-2">
+                    Get Started
+                    <ArrowRight className="w-5 h-5" />
+                  </span>
+                </Button>
+              </motion.div>
             </div>
           ) : (
             <>
-              {/* Progress Bar - Enhanced */}
               <div className="mb-8">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-sm font-medium text-[#536471]">
                     Step {Math.min(step + 1, steps.length)} of {steps.length}
                   </span>
-                  <span className="text-sm text-gray-500">
-                    {Math.round(((Math.min(step + 1, steps.length)) / steps.length) * 100)}% complete
+                  <span className="text-sm text-[#536471]">
+                    {Math.round(((Math.min(step + 1, steps.length)) / steps.length) * 100)}%
                   </span>
                 </div>
-                <div className="w-full h-2 bg-gray-200/50 rounded-full overflow-hidden">
+                <div className="w-full h-1.5 bg-[#EFF3F4] rounded-full overflow-hidden">
                   <motion.div
-                    className="h-full bg-gradient-to-r from-[#6FA984] to-[#8FBF9A] rounded-full"
+                    className="h-full bg-[#1D9BF0] rounded-full"
                     initial={{ width: 0 }}
                     animate={{ width: `${((Math.min(step + 1, steps.length)) / steps.length) * 100}%` }}
                     transition={{ duration: 0.5, ease: "easeOut" }}
@@ -403,17 +408,15 @@ export default function Onboarding() {
                 </div>
               </div>
 
-              {/* Main Content */}
               <AnimatePresence mode="wait">
                 {step < steps.length ? (
                   <motion.div
                     key={step}
-                    initial={{ opacity: 0, x: 20 }}
+                    initial={{ opacity: 0, x: 24 }}
                     animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.3 }}
+                    exit={{ opacity: 0, x: -24 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
                   >
-                    {/* Question Header */}
                     <div className="mb-8 text-center">
                       {stepMeta[step] && (() => {
                         const Icon = stepMeta[step].icon
@@ -424,16 +427,16 @@ export default function Onboarding() {
                             transition={{ type: 'spring', stiffness: 220, damping: 18 }}
                             className="mb-5"
                           >
-                            <AccentOrb accent={stepMeta[step].accent} size="md">
-                              <Icon className="w-6 h-6 text-white" strokeWidth={1.75} />
-                            </AccentOrb>
+                            <div className="w-14 h-14 mx-auto rounded-full bg-[#1D9BF0]/10 flex items-center justify-center">
+                              <Icon className="w-7 h-7 text-[#1D9BF0]" strokeWidth={1.5} />
+                            </div>
                           </motion.div>
                         )
                       })()}
-                      <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 tracking-tight">
+                      <h2 className="text-xl sm:text-2xl font-bold text-[#0F1419] mb-2 tracking-tight">
                         {steps[step].question}
                       </h2>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-[#536471]">
                         {step === 0 && "Understanding your journey helps us personalize your experience"}
                         {step === 1 && "This helps us tailor prompts to where you are right now"}
                         {step === 2 && "We'll send your daily reflection prompt at this time"}
@@ -442,18 +445,23 @@ export default function Onboarding() {
                       </p>
                     </div>
 
-                    {/* Single Select Options */}
                     {steps[step].type === "single" && (
-                      <div className="flex flex-col gap-3">
+                      <motion.div
+                        variants={containerVariants}
+                        initial="hidden"
+                        animate="visible"
+                        className="flex flex-col gap-2.5"
+                      >
                         {(steps[step].options as string[]).map((opt: string) => (
                           <motion.button
                             key={opt}
+                            variants={itemVariants}
                             whileHover={{ scale: 1.01 }}
                             whileTap={{ scale: 0.99 }}
-                            className={`w-full p-4 rounded-2xl text-left font-medium transition-all duration-200 ${
-                              answers[steps[step].key as keyof typeof answers] === opt 
-                                ? "bg-gradient-to-r from-[#6FA984] to-[#5A8F6E] text-white shadow-lg" 
-                                : "bg-white/60 text-gray-700 border border-gray-200/50 hover:bg-white/80 hover:border-[#6FA984]/30"
+                            className={`w-full p-4 rounded-xl text-left font-medium transition-all duration-200 ${
+                              answers[steps[step].key as keyof typeof answers] === opt
+                                ? "bg-[#1D9BF0] text-white shadow-[0_2px_8px_rgba(29,155,240,0.25)]"
+                                : "bg-[#F7F9FA] text-[#0F1419] border border-[#EFF3F4] hover:border-[#1D9BF0]/30"
                             }`}
                             onClick={() => selectOption(opt)}
                           >
@@ -465,43 +473,51 @@ export default function Onboarding() {
                             </div>
                           </motion.button>
                         ))}
-                      </div>
+                      </motion.div>
                     )}
 
-                    {/* Mood Slider */}
                     {steps[step].type === "slider" && (
-                      <div className="space-y-8 py-4">
-                        <div className="relative">
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.4 }}
+                        className="space-y-8 py-4"
+                      >
+                        <div className="relative pt-2">
                           <input
                             type="range"
                             min={steps[step].min}
                             max={steps[step].max}
                             value={answers.mood}
-                            className="w-full h-3 bg-gray-200 rounded-full appearance-none cursor-pointer accent-[#6FA984]"
-                            style={{ 
-                              background: `linear-gradient(to right, #6FA984 0%, #6FA984 ${(answers.mood - 1) * 11.1}%, #e5e7eb ${(answers.mood - 1) * 11.1}%, #e5e7eb 100%)` 
+                            className="w-full h-1.5 bg-[#EFF3F4] rounded-full appearance-none cursor-pointer accent-[#1D9BF0]"
+                            style={{
+                              background: `linear-gradient(to right, #1D9BF0 0%, #1D9BF0 ${(answers.mood - 1) * 11.1}%, #EFF3F4 ${(answers.mood - 1) * 11.1}%, #EFF3F4 100%)`
                             }}
                             onChange={e => setAnswers(a => ({ ...a, mood: +e.target.value }))}
                           />
                         </div>
                         <div className="flex justify-between items-center">
                           <div className="text-center">
-                            <span className="text-2xl">😔</span>
-                            <p className="text-xs text-gray-500 mt-1">{steps[step].minLabel}</p>
+                            <span className="text-2xl block mb-1">&#x1F614;</span>
+                            <p className="text-xs text-[#536471]">{steps[step].minLabel}</p>
                           </div>
+                          <motion.div
+                            key={answers.mood}
+                            initial={{ scale: 1.2 }}
+                            animate={{ scale: 1 }}
+                            className="text-center"
+                          >
+                            <span className="text-4xl font-bold text-[#1D9BF0]">{answers.mood}</span>
+                            <p className="text-xs text-[#536471] mt-1">out of 10</p>
+                          </motion.div>
                           <div className="text-center">
-                            <span className="text-4xl font-bold text-[#6FA984]">{answers.mood}</span>
-                            <p className="text-xs text-gray-500 mt-1">out of 10</p>
-                          </div>
-                          <div className="text-center">
-                            <span className="text-2xl">😊</span>
-                            <p className="text-xs text-gray-500 mt-1">{steps[step].maxLabel}</p>
+                            <span className="text-2xl block mb-1">&#x1F60A;</span>
+                            <p className="text-xs text-[#536471]">{steps[step].maxLabel}</p>
                           </div>
                         </div>
-                      </div>
+                      </motion.div>
                     )}
 
-                    {/* Delivery Method Icons */}
                     {steps[step].type === "icon-single" && (
                       <div className="grid grid-cols-2 gap-4 mt-6">
                         {(steps[step].options as { label: string; icon: any }[]).map((o) => {
@@ -511,12 +527,12 @@ export default function Onboarding() {
                               key={o.label}
                               whileHover={isLocked ? {} : { scale: 1.02 }}
                               whileTap={isLocked ? {} : { scale: 0.98 }}
-                              className={`p-6 rounded-2xl flex flex-col items-center gap-3 transition-all duration-200 relative ${
+                              className={`p-6 rounded-xl flex flex-col items-center gap-3 transition-all duration-200 relative ${
                                 isLocked
-                                  ? "bg-white/40 text-gray-400 border border-gray-200/50 cursor-not-allowed opacity-60"
-                                  : answers.delivery === o.label 
-                                    ? "bg-gradient-to-br from-[#6FA984] to-[#5A8F6E] text-white shadow-lg" 
-                                    : "bg-white/60 text-gray-700 border border-gray-200/50 hover:bg-white/80"
+                                  ? "bg-[#F7F9FA] text-[#536471] border border-[#EFF3F4] cursor-not-allowed opacity-60"
+                                  : answers.delivery === o.label
+                                    ? "bg-[#1D9BF0] text-white shadow-[0_2px_8px_rgba(29,155,240,0.25)]"
+                                    : "bg-[#F7F9FA] text-[#0F1419] border border-[#EFF3F4] hover:border-[#1D9BF0]/30"
                               }`}
                               onClick={() => !isLocked && selectOption(o.label)}
                               disabled={isLocked}
@@ -524,14 +540,18 @@ export default function Onboarding() {
                               <o.icon className="w-8 h-8" />
                               <span className="font-medium">{o.label}</span>
                               {isLocked && (
-                                <span className="text-xs text-amber-600 font-medium flex items-center gap-1">
+                                <span className="text-xs text-[#536471] font-medium flex items-center gap-1">
                                   <Crown className="w-3 h-3" /> Premium
                                 </span>
                               )}
                               {!isLocked && answers.delivery === o.label && (
-                                <div className="absolute top-2 right-2">
+                                <motion.div
+                                  initial={{ scale: 0 }}
+                                  animate={{ scale: 1 }}
+                                  className="absolute top-2 right-2"
+                                >
                                   <Check className="w-5 h-5" />
-                                </div>
+                                </motion.div>
                               )}
                             </motion.button>
                           )
@@ -539,45 +559,49 @@ export default function Onboarding() {
                       </div>
                     )}
 
-                    {/* Multi Select Focus Areas */}
                     {steps[step].type === "multi" && (
-                      <div className="flex flex-col gap-3">
+                      <motion.div
+                        variants={containerVariants}
+                        initial="hidden"
+                        animate="visible"
+                        className="flex flex-col gap-2.5"
+                      >
                         {(steps[step].options as string[]).map((opt: string) => (
                           <motion.button
                             key={opt}
+                            variants={itemVariants}
                             whileHover={{ scale: 1.01 }}
                             whileTap={{ scale: 0.99 }}
-                            className={`w-full p-4 rounded-2xl text-left font-medium transition-all duration-200 ${
-                              answers.focus.includes(opt) 
-                                ? "bg-gradient-to-r from-[#6FA984] to-[#5A8F6E] text-white shadow-lg" 
-                                : "bg-white/60 text-gray-700 border border-gray-200/50 hover:bg-white/80 hover:border-[#6FA984]/30"
+                            className={`w-full p-4 rounded-xl text-left font-medium transition-all duration-200 ${
+                              answers.focus.includes(opt)
+                                ? "bg-[#1D9BF0] text-white shadow-[0_2px_8px_rgba(29,155,240,0.25)]"
+                                : "bg-[#F7F9FA] text-[#0F1419] border border-[#EFF3F4] hover:border-[#1D9BF0]/30"
                             }`}
                             onClick={() => toggleOption(opt)}
                           >
                             <div className="flex items-center justify-between">
                               <span>{opt}</span>
                               <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
-                                answers.focus.includes(opt) 
-                                  ? "bg-white border-white" 
-                                  : "border-gray-300"
+                                answers.focus.includes(opt)
+                                  ? "bg-white border-white"
+                                  : "border-[#CFD9DE]"
                               }`}>
                                 {answers.focus.includes(opt) && (
-                                  <Check className="w-4 h-4 text-[#6FA984]" />
+                                  <Check className="w-4 h-4 text-[#1D9BF0]" />
                                 )}
                               </div>
                             </div>
                           </motion.button>
                         ))}
-                      </div>
+                      </motion.div>
                     )}
 
-                    {/* Navigation Buttons */}
                     <div className="flex justify-between gap-4 mt-10">
-                      <Button 
-                        variant="ghost" 
-                        disabled={step === 0} 
-                        onClick={back} 
-                        className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+                      <Button
+                        variant="ghost"
+                        disabled={step === 0}
+                        onClick={back}
+                        className="flex items-center gap-2 text-[#536471] hover:text-[#0F1419] rounded-full"
                       >
                         <ChevronLeft className="w-4 h-4" />
                         Back
@@ -592,7 +616,7 @@ export default function Onboarding() {
                           (step === 3 && !answers.delivery) ||
                           (step === 4 && (!answers.focus || answers.focus.length === 0))
                         }
-                        className="bg-gradient-to-r from-[#6FA984] to-[#5A8F6E] hover:from-[#4A7A5E] hover:to-[#6FA984] text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+                        className="bg-[#1D9BF0] hover:bg-[#1A8CD8] text-white px-8 py-3 rounded-full font-semibold shadow-[0_2px_8px_rgba(29,155,240,0.25)] disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
                       >
                         {step === steps.length - 1 ? "See Preview" : "Continue"}
                         <ChevronRight className="w-4 h-4" />
@@ -600,7 +624,6 @@ export default function Onboarding() {
                     </div>
                   </motion.div>
                 ) : step === steps.length ? (
-                  // Preview Screen
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -612,77 +635,96 @@ export default function Onboarding() {
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         transition={{ type: "spring", bounce: 0.5, delay: 0.2 }}
-                        className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-[#6FA984] to-[#8FBF9A] flex items-center justify-center shadow-lg"
+                        className="w-16 h-16 mx-auto rounded-full bg-[#0F1419] flex items-center justify-center shadow-lg"
                       >
-                        <Sparkles className="w-8 h-8 text-white" />
+                        <Star className="w-8 h-8 text-white" />
                       </motion.div>
-                      <h2 className="text-2xl font-bold text-gray-900">
-                        Here's a preview of your first prompt
-                      </h2>
-                      <p className="text-gray-500">
+                      <motion.h2
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.15 }}
+                        className="text-2xl font-bold text-[#0F1419]"
+                      >
+                        Here&apos;s a preview of your first prompt
+                      </motion.h2>
+                      <motion.p
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="text-[#536471]"
+                      >
                         Your reflection space is ready when you are
-                      </p>
+                      </motion.p>
                     </div>
-                    
-                    {/* Preview Prompt Card */}
+
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4 }}
-                      className="bg-white/50 backdrop-blur-sm border border-white/60 rounded-2xl p-6 shadow-lg"
+                      className="bg-[#F7F9FA] border border-[#EFF3F4] rounded-xl p-6"
                     >
                       <div className="flex items-start gap-4">
-                        <div className="w-10 h-10 rounded-full bg-[#6FA984]/10 flex items-center justify-center flex-shrink-0">
-                          <Brain className="w-5 h-5 text-[#6FA984]" />
+                        <div className="w-10 h-10 rounded-full bg-[#1D9BF0]/10 flex items-center justify-center flex-shrink-0">
+                          <Feather className="w-5 h-5 text-[#1D9BF0]" />
                         </div>
                         <div className="flex-1">
-                          <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">
-                            Today's Prompt
+                          <h3 className="text-xs font-bold text-[#536471] uppercase tracking-wider mb-3">
+                            Today&apos;s Prompt
                           </h3>
-                          <blockquote className="text-lg text-gray-800 leading-relaxed italic">
+                          <blockquote className="text-lg text-[#0F1419] leading-relaxed italic">
                             {previewPrompt ? (
                               `"${previewPrompt}"`
                             ) : (
-                              <span className="flex items-center gap-2 text-gray-500 not-italic">
-                                <div className="animate-spin h-4 w-4 border-2 border-[#6FA984] border-t-transparent rounded-full"></div>
+                              <span className="flex items-center gap-2 text-[#536471] not-italic">
+                                <div className="animate-spin h-4 w-4 border-2 border-[#1D9BF0] border-t-transparent rounded-full"></div>
                                 Crafting your personalized prompt...
                               </span>
                             )}
                           </blockquote>
                         </div>
                       </div>
-                      
-                      <div className="mt-6 pt-4 border-t border-gray-200/50">
-                        <p className="text-sm text-gray-600 text-center">
-                          Personalized for: <span className="font-semibold text-[#6FA984]">{answers.focus.join(", ")}</span>
-                        </p>
-                      </div>
-                    </motion.div>
-                    
-                    {/* Action Buttons */}
-                    <div className="space-y-3 pt-4">
-                      <Button
-                        onClick={handleSubmit}
-                        disabled={isSubmitting}
-                        className="w-full bg-gradient-to-r from-[#6FA984] to-[#5A8F6E] hover:from-[#4A7A5E] hover:to-[#6FA984] text-white py-4 rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl disabled:opacity-30 transition-all duration-300"
+
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.6 }}
+                        className="mt-6 pt-4 border-t border-[#EFF3F4]"
                       >
-                        {isSubmitting ? (
-                          <span className="flex items-center justify-center gap-2">
-                            <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
-                            Setting things up...
-                          </span>
-                        ) : (
-                          <span className="flex items-center justify-center gap-2">
-                            Looks great! Let's begin
-                            <Sparkles className="w-5 h-5" />
-                          </span>
-                        )}
-                      </Button>
+                        <p className="text-sm text-[#536471] text-center">
+                          Personalized for: <span className="font-semibold text-[#1D9BF0]">{answers.focus.join(", ")}</span>
+                        </p>
+                      </motion.div>
+                    </motion.div>
+
+                    <div className="space-y-3 pt-4">
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5 }}
+                      >
+                        <Button
+                          onClick={handleSubmit}
+                          disabled={isSubmitting}
+                          className="w-full bg-[#0F1419] hover:bg-black text-white py-4 rounded-full text-lg font-semibold shadow-lg disabled:opacity-30 transition-all duration-300"
+                        >
+                          {isSubmitting ? (
+                            <span className="flex items-center justify-center gap-2">
+                              <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
+                              Setting things up...
+                            </span>
+                          ) : (
+                            <span className="flex items-center justify-center gap-2">
+                              Looks great! Let&apos;s begin
+                              <Sparkles className="w-5 h-5" />
+                            </span>
+                          )}
+                        </Button>
+                      </motion.div>
                       <Button
                         variant="ghost"
                         onClick={() => setStep(steps.length - 1)}
                         disabled={isSubmitting}
-                        className="w-full text-gray-600 hover:text-gray-900"
+                        className="w-full text-[#536471] hover:text-[#0F1419] rounded-full"
                       >
                         <ChevronLeft className="w-4 h-4 mr-1" />
                         Adjust my preferences
@@ -690,52 +732,59 @@ export default function Onboarding() {
                     </div>
                   </motion.div>
                 ) : (
-                  // Final Success Screen
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     className="text-center py-8 space-y-6"
                   >
-                    {/* Success Animation */}
-                    <div className="motion-reduce:hidden">
-                      <div className="w-[100px] h-[100px] mx-auto rounded-full bg-[#6FA984]/20 border border-[#6FA984]/30 flex items-center justify-center">
-                        <Check className="w-10 h-10 text-[#6FA984]" />
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: "spring", bounce: 0.5, delay: 0.2 }}
+                    >
+                      <div className="w-[100px] h-[100px] mx-auto rounded-full bg-[#1D9BF0]/10 border border-[#1D9BF0]/20 flex items-center justify-center">
+                        <Check className="w-10 h-10 text-[#1D9BF0]" />
                       </div>
-                    </div>
-                    
-                    {/* Static fallback */}
-                    <div className="hidden motion-reduce:flex w-20 h-20 mx-auto bg-[#6FA984]/20 rounded-full items-center justify-center">
-                      <Check className="w-10 h-10 text-[#6FA984]" />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <h2 className="text-2xl font-bold text-gray-900">All done! 🎉</h2>
-                      <p className="text-gray-600">Welcome to your reflection journey</p>
-                    </div>
-                    
-                    <div className="bg-white/50 rounded-2xl p-5 space-y-3 text-left">
+                    </motion.div>
+
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2 }}
+                      className="space-y-2"
+                    >
+                      <h2 className="text-2xl font-bold text-[#0F1419]">All done!</h2>
+                      <p className="text-[#536471]">Welcome to your reflection journey</p>
+                    </motion.div>
+
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                      className="bg-[#F7F9FA] rounded-xl p-5 space-y-3 text-left border border-[#EFF3F4]"
+                    >
                       <div className="flex items-center gap-3">
-                        <Clock className="w-5 h-5 text-[#6FA984]" />
-                        <span className="text-gray-700">
-                          Daily prompts at <span className="font-semibold text-[#6FA984]">{answers.promptTime}</span>
+                        <Clock className="w-5 h-5 text-[#1D9BF0]" />
+                        <span className="text-[#536471]">
+                          Daily prompts at <span className="font-semibold text-[#0F1419]">{answers.promptTime}</span>
                         </span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <Target className="w-5 h-5 text-[#6FA984]" />
-                        <span className="text-gray-700">
-                          Focus: <span className="font-semibold text-[#6FA984]">{answers.focus.join(", ")}</span>
+                        <Target className="w-5 h-5 text-[#1D9BF0]" />
+                        <span className="text-[#536471]">
+                          Focus: <span className="font-semibold text-[#0F1419]">{answers.focus.join(", ")}</span>
                         </span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <Mail className="w-5 h-5 text-[#6FA984]" />
-                        <span className="text-gray-700">
-                          Delivery via <span className="font-semibold text-[#6FA984]">{answers.delivery}</span>
+                        <Mail className="w-5 h-5 text-[#1D9BF0]" />
+                        <span className="text-[#536471]">
+                          Delivery via <span className="font-semibold text-[#0F1419]">{answers.delivery}</span>
                         </span>
                       </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-center gap-2 text-gray-500 pt-4">
-                      <div className="animate-spin h-5 w-5 border-2 border-[#6FA984] border-t-transparent rounded-full"></div>
+                    </motion.div>
+
+                    <div className="flex items-center justify-center gap-2 text-[#536471] pt-4">
+                      <div className="animate-spin h-5 w-5 border-2 border-[#1D9BF0] border-t-transparent rounded-full"></div>
                       <span>Redirecting to your dashboard...</span>
                     </div>
                   </motion.div>

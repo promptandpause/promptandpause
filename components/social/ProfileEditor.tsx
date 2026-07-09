@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useToast } from '@/hooks/use-toast'
-import { Check, Loader2, Palette, Music, Image } from 'lucide-react'
+import { Check, Palette, MusicNote, ImageSquare, Spinner, FloppyDisk } from 'phosphor-react'
 import { profileThemePresets, getThemeById } from '@/lib/utils/profileThemes'
 import { cn } from '@/lib/utils'
 
@@ -56,8 +56,8 @@ export function ProfileEditor() {
     setSaving(true)
     try {
       const selectedTheme = getThemeById(profile.profile_theme_id)
-      const res = await fetch('/api/user/profile', {
-        method: 'PUT',
+        const res = await fetch('/api/user/profile', {
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...profile,
@@ -77,10 +77,12 @@ export function ProfileEditor() {
       if (res.ok) {
         toast({ title: 'Profile updated', description: 'Your profile changes are live.' })
       } else {
-        const { error } = await res.json()
-        toast({ title: 'Error', description: error || 'Failed to save', variant: 'destructive' })
+        const body = await res.json().catch(() => ({}))
+        toast({ title: 'Error', description: body?.error || `Failed to save (${res.status})`, variant: 'destructive' })
       }
-    } catch {}
+    } catch (err) {
+      toast({ title: 'Error', description: 'Network error — could not save profile', variant: 'destructive' })
+    }
     setSaving(false)
   }
 
@@ -126,7 +128,7 @@ export function ProfileEditor() {
       </Section>
 
       {/* Theme Selector */}
-      <Section title="Profile Theme" isDark={isDark} icon={<Palette className="h-4 w-4" />}>
+      <Section title="Profile Theme" isDark={isDark} icon={<Palette size={16} weight="bold" />}>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {profileThemePresets.map(preset => (
             <button
@@ -146,7 +148,7 @@ export function ProfileEditor() {
             >
               {profile.profile_theme_id === preset.id && (
                 <div className="absolute top-2 right-2" style={{ color: preset.accent_color }}>
-                  <Check className="h-4 w-4" />
+                  <Check size={16} weight="bold" />
                 </div>
               )}
               <p className="text-sm font-semibold">{preset.name}</p>
@@ -157,7 +159,7 @@ export function ProfileEditor() {
       </Section>
 
       {/* Mood Song */}
-      <Section title="Mood Song" isDark={isDark} icon={<Music className="h-4 w-4" />}>
+      <Section title="Mood Song" isDark={isDark} icon={<MusicNote size={16} weight="bold" />}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <Label isDark={isDark}>Song URL (Spotify / YouTube)</Label>
@@ -222,7 +224,7 @@ export function ProfileEditor() {
           disabled={saving}
           className={`px-6 ${isDark ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-[#0F1419] text-white hover:bg-[#536471]'}`}
         >
-          {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+          {saving ? <Spinner size={16} weight="bold" className="animate-spin mr-2" /> : <FloppyDisk size={16} weight="bold" className="mr-2" />}
           Save Profile
         </Button>
       </div>

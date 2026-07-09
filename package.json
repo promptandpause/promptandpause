@@ -76,6 +76,7 @@
     "pdf-lib": "^1.17.1",
     "pdfkit": "^0.17.2",
     "pdfkit-table": "^0.1.99",
+    "phosphor-react": "^1.4.1",
     "postcss": "^8.5",
     "react": "^19",
     "react-day-picker": "9.11.1",
