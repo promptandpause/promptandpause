@@ -374,7 +374,7 @@ export default function HeroSection() {
 
             <div className="hidden lg:flex justify-center items-center">
               <img
-                src="https://res.cloudinary.com/dh1rrfpmq/image/upload/v1766460430/prompt_pause-JRsbZR3dxCXndC8YMcyX6XU3XeT2Vw_vdvqfj.svg"
+                src="https://zcuymmvrohhdocrkjufk.supabase.co/storage/v1/object/public/public-images/brand-assets/PandP_APPicon_5x_high-fidelity-4x.png"
                 alt="Prompt & Pause"
                 className="w-72 xl:w-80 h-auto opacity-90"
               />

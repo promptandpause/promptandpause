@@ -103,14 +103,15 @@ export default async function proxy(request: NextRequest) {
     return NextResponse.rewrite(request.nextUrl)
   }
 
-  // Skip proxy for static files and public assets
+  // Skip proxy for static files, profile pages, and public assets
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/static') ||
     pathname.startsWith('/favicon.ico') ||
     pathname.startsWith('/api/auth') ||
     pathname.startsWith('/api/admin/verify-access') ||
-    isStaticFile(pathname)
+    isStaticFile(pathname) ||
+    /^\/[a-zA-Z0-9_.-]+$/.test(pathname) // profile pages /[username]
   ) {
     return NextResponse.next()
   }
@@ -287,12 +288,6 @@ export default async function proxy(request: NextRequest) {
     '/auth/callback', // OAuth callback
   ]
 
-  // Allow profile pages (any /[username] route) to be public
-  const isProfilePage = /^\/[a-zA-Z0-9_-]+$/.test(pathname) && 
-    !pathname.startsWith('/_') && 
-    !publicPaths.includes(pathname) &&
-    !pathname.startsWith('/api')
-
   const isPublicPath = publicPaths.some((path) =>
     request.nextUrl.pathname === path || request.nextUrl.pathname.startsWith(`${path}/`)
   )
@@ -301,8 +296,8 @@ export default async function proxy(request: NextRequest) {
     request.nextUrl.pathname.startsWith('/api') ||
     request.nextUrl.pathname.includes('.')
 
-  // Allow access to public paths, profile pages, and static assets
-  if (isPublicPath || isProfilePage || isStaticAsset) {
+  // Allow access to public paths and static assets
+  if (isPublicPath || isStaticAsset) {
     return response
   }
 
