@@ -115,12 +115,12 @@ export function DashboardSidebar() {
         <div
           className={`rounded-3xl p-6 h-fit sticky top-6 flex flex-col gap-6 transition-all duration-200 max-h-[calc(100vh-3rem)] overflow-y-auto scrollbar-hide ${
             isDark
-              ? 'bg-[#1A1F2E] border border-white/8 shadow-lg'
-              : 'bg-[#FAFAF7] border border-[#E0DDD6] shadow-sm'
+              ? 'bg-[#161618] border border-white/8 shadow-lg'
+              : 'bg-white border border-[#EFF3F4] shadow-sm'
           }`}
         >
           {/* Logo + Tagline — centered */}
-          <div className={`text-center pb-5 border-b ${isDark ? 'border-white/8' : 'border-[#E0DDD6]'}`}>
+          <div className={`text-center pb-5 border-b ${isDark ? 'border-white/8' : 'border-[#EFF3F4]'}`}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <img
                 className={`h-10 ${isDark ? 'invert' : ''}`}
@@ -128,32 +128,32 @@ export function DashboardSidebar() {
                 src="https://res.cloudinary.com/dh1rrfpmq/image/upload/v1766460430/prompt_pause-JRsbZR3dxCXndC8YMcyX6XU3XeT2Vw_vdvqfj.svg"
               />
             </div>
-            <p className={`text-xs font-medium tracking-wide ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>
+            <p className={`text-xs font-medium tracking-wide ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
               Pause. Reflect. Grow.
             </p>
           </div>
 
           {/* User Profile */}
-          <div className={`pb-5 border-b ${isDark ? 'border-white/8' : 'border-[#E0DDD6]'}`}>
+          <div className={`pb-5 border-b ${isDark ? 'border-white/8' : 'border-[#EFF3F4]'}`}>
             {loading ? (
               <div className="flex items-center gap-3">
-                <Skeleton className={`h-12 w-12 rounded-full ${isDark ? 'bg-white/10' : 'bg-[#E8E5DE]'}`} />
+                <Skeleton className={`h-12 w-12 rounded-full ${isDark ? 'bg-white/10' : 'bg-[#EFF3F4]'}`} />
                 <div className="flex-1 space-y-1.5">
-                  <Skeleton className={`h-4 w-28 ${isDark ? 'bg-white/10' : 'bg-[#E8E5DE]'}`} />
-                  <Skeleton className={`h-3 w-16 ${isDark ? 'bg-white/10' : 'bg-[#E8E5DE]'}`} />
+                  <Skeleton className={`h-4 w-28 ${isDark ? 'bg-white/10' : 'bg-[#EFF3F4]'}`} />
+                  <Skeleton className={`h-3 w-16 ${isDark ? 'bg-white/10' : 'bg-[#EFF3F4]'}`} />
                 </div>
               </div>
             ) : userProfile ? (
               <div className="flex items-center gap-3">
                 <div className={`h-12 w-12 rounded-full flex items-center justify-center ring-2 ${
                   isDark
-                    ? 'bg-gradient-to-br from-[#2A3550] to-[#1E2A40] ring-[#B8C9E0]/30'
-                    : 'bg-gradient-to-br from-[#D4E4F7] to-[#E8D4F0] ring-[#B8C9E0]/50'
+                    ? 'bg-gradient-to-br from-[#1D3A5C] to-[#0A2E4A] ring-[#1D9BF0]/30'
+                    : 'bg-gradient-to-br from-[#E8F5FE] to-[#D4E9F7] ring-[#1D9BF0]/50'
                 }`}>
-                  <User className={`h-6 w-6 ${isDark ? 'text-[#B8C9E0]' : 'text-[#5B7FA5]'}`} />
+                  <User className={`h-6 w-6 ${isDark ? 'text-[#1D9BF0]' : 'text-[#1D9BF0]'}`} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className={`font-semibold text-sm truncate ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>
+                  <p className={`font-semibold text-sm truncate ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
                     {userProfile.full_name}
                   </p>
                   <div className="flex items-center gap-1 mt-0.5">
@@ -162,7 +162,7 @@ export function DashboardSidebar() {
                         <Crown className="h-3 w-3" /> Premium
                       </span>
                     ) : (
-                      <span className={`text-xs font-medium ${isDark ? 'text-white/40' : 'text-[#8A8A7A]'}`}>{t('settings.freeTier')}</span>
+                      <span className={`text-xs font-medium ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>{t('settings.freeTier')}</span>
                     )}
                   </div>
                 </div>
@@ -172,7 +172,7 @@ export function DashboardSidebar() {
 
           {/* Navigation */}
           <nav className="flex-1">
-            <h4 className={`text-xs font-bold uppercase tracking-wider mb-4 px-1 ${isDark ? 'text-white/30' : 'text-[#8A8A7A]'}`}>
+            <h4 className={`text-xs font-bold uppercase tracking-wider mb-4 px-1 ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
               {t('nav.dashboard')}
             </h4>
             <div className="space-y-1.5">
@@ -182,11 +182,11 @@ export function DashboardSidebar() {
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors duration-150 border border-transparent ${
                       item.active
                         ? isDark
-                          ? 'bg-[#B8C9E0]/15 text-white border-[#B8C9E0]/20'
-                          : 'bg-[#D4E4F7]/50 text-[#3D6B8E] border-[#B8C9E0]/40'
+                          ? 'bg-[#1D9BF0]/15 text-white border-[#1D9BF0]/20'
+                          : 'bg-[#E8F5FE] text-[#1D9BF0] border-[#1D9BF0]/40'
                         : isDark
                           ? 'text-white/50 hover:bg-white/5 hover:text-white'
-                          : 'text-[#6B6B5E] hover:bg-[#F0EDE6] hover:text-[#3D3D3D]'
+                          : 'text-[#536471] hover:bg-[#EFF3F4] hover:text-[#0F1419]'
                     }`}
                   >
                     <item.icon className="mr-1 h-5 w-5" />
@@ -199,28 +199,28 @@ export function DashboardSidebar() {
 
           {/* Premium Upsell (free users only) */}
           {tier !== 'premium' && (
-            <div className={`pt-5 border-t ${isDark ? 'border-white/8' : 'border-[#E0DDD6]'}`}>
+            <div className={`pt-5 border-t ${isDark ? 'border-white/8' : 'border-[#EFF3F4]'}`}>
               <div className={`rounded-2xl p-5 text-center space-y-4 ${
                 isDark
-                  ? 'bg-gradient-to-br from-[#2A2540] to-[#1E1A30] border-2 border-[#C4B5E0]/30 shadow-lg'
-                  : 'bg-gradient-to-br from-[#F5F0FF] to-[#FFF5F0] border-2 border-[#C4B5E0]/40 shadow-lg'
+                  ? 'bg-gradient-to-br from-[#0A2E4A] to-[#0A0A0A] border-2 border-[#1D9BF0]/30 shadow-lg'
+                  : 'bg-gradient-to-br from-[#E8F5FE] to-[#FFFFFF] border-2 border-[#1D9BF0]/40 shadow-lg'
               }`}>
                 <div className="flex justify-center">
-                  <div className={`p-3 rounded-full ${isDark ? 'bg-[#C4B5E0]/15' : 'bg-[#EDE7F6]'}`}>
-                    <Crown className={`h-7 w-7 ${isDark ? 'text-[#C4B5E0]' : 'text-[#7E6BA5]'}`} />
+                  <div className={`p-3 rounded-full ${isDark ? 'bg-[#1D9BF0]/15' : 'bg-[#E8F5FE]'}`}>
+                    <Crown className={`h-7 w-7 ${isDark ? 'text-[#1D9BF0]' : 'text-[#1D9BF0]'}`} />
                   </div>
                 </div>
                 <div>
-                  <h4 className={`font-bold text-base mb-1 ${isDark ? 'text-white' : 'text-[#3D3D3D]'}`}>{t('dashboard.upgrade')}</h4>
-                  <p className={`text-xs leading-relaxed ${isDark ? 'text-white/50' : 'text-[#8A8A7A]'}`}>
+                  <h4 className={`font-bold text-base mb-1 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>{t('dashboard.upgrade')}</h4>
+                  <p className={`text-xs leading-relaxed ${isDark ? 'text-white/50' : 'text-[#8B98A5]'}`}>
                     {t('dashboard.upgradeDesc')}
                   </p>
                 </div>
                 <Link href="/dashboard/settings">
                   <button className={`w-full text-sm font-semibold h-10 rounded-lg transition-all duration-200 hover:brightness-110 hover:shadow-xl shadow-lg flex items-center justify-center gap-1 ${
                     isDark
-                      ? 'bg-gradient-to-r from-[#7E6BA5] to-[#5B7FA5] text-white'
-                      : 'bg-gradient-to-r from-[#7E6BA5] to-[#5B7FA5] text-white'
+                      ? 'bg-gradient-to-r from-[#1D9BF0] to-[#0085FF] text-white'
+                      : 'bg-gradient-to-r from-[#1D9BF0] to-[#0085FF] text-white'
                   }`}>
                     {t('dashboard.upgrade')}
                     <ChevronRight className="h-4 w-4" />
@@ -231,8 +231,8 @@ export function DashboardSidebar() {
           )}
 
           {/* Support Section */}
-          <div className={`pt-5 border-t ${isDark ? 'border-white/8' : 'border-[#E0DDD6]'}`}>
-            <h4 className={`text-xs font-bold uppercase tracking-wider mb-4 px-1 ${isDark ? 'text-white/30' : 'text-[#8A8A7A]'}`}>
+          <div className={`pt-5 border-t ${isDark ? 'border-white/8' : 'border-[#EFF3F4]'}`}>
+            <h4 className={`text-xs font-bold uppercase tracking-wider mb-4 px-1 ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
               {t('nav.help')}
             </h4>
             <div className="space-y-1.5">
@@ -250,7 +250,7 @@ export function DashboardSidebar() {
                 <button className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors duration-150 ${
                   isDark
                     ? 'text-white/50 hover:bg-white/5 hover:text-white'
-                    : 'text-[#6B6B5E] hover:bg-[#F0EDE6] hover:text-[#3D3D3D]'
+                    : 'text-[#536471] hover:bg-[#EFF3F4] hover:text-[#0F1419]'
                 }`}>
                   <HelpCircle className="mr-1 h-5 w-5" />
                   {t('nav.help')}
@@ -265,7 +265,7 @@ export function DashboardSidebar() {
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors duration-150 ${
                   isDark
                     ? 'text-white/50 hover:bg-rose-500/10 hover:text-rose-400'
-                    : 'text-[#6B6B5E] hover:bg-rose-50 hover:text-rose-600'
+                    : 'text-[#536471] hover:bg-rose-50 hover:text-rose-600'
                 }`}
               >
                 <LogOut className="mr-1 h-5 w-5" />
@@ -280,8 +280,8 @@ export function DashboardSidebar() {
       <div className="md:hidden fixed top-0 left-0 right-0 z-50">
         <div className={`px-5 h-14 flex items-center justify-between mt-[env(safe-area-inset-top,0px)] ${
           isDark
-            ? 'bg-[#141820]/98 md:backdrop-blur-lg border-b border-white/5'
-            : 'bg-white/98 md:backdrop-blur-lg border-b border-[#E8E5DE]'
+            ? 'bg-[#0A0A0A]/98 md:backdrop-blur-lg border-b border-white/5'
+            : 'bg-white/98 md:backdrop-blur-lg border-b border-[#EFF3F4]'
         }`}>
           <img
             className={`h-6 ${isDark ? 'invert' : ''}`}
@@ -293,8 +293,8 @@ export function DashboardSidebar() {
               href="/dashboard/archive"
               className={`p-2.5 rounded-xl transition-colors ${
                 pathname === '/dashboard/archive'
-                  ? isDark ? 'bg-[#B8C9E0]/10 text-[#B8C9E0]' : 'bg-[#D4E4F7]/30 text-[#5B7FA5]'
-                  : isDark ? 'text-white/40 hover:text-white/60' : 'text-[#6B6B5E] hover:text-[#3D3D3D] hover:bg-[#F0EDE6]'
+                  ? isDark ? 'bg-[#1D9BF0]/10 text-[#1D9BF0]' : 'bg-[#E8F5FE] text-[#1D9BF0]'
+                  : isDark ? 'text-white/40 hover:text-white/60' : 'text-[#536471] hover:text-[#0F1419] hover:bg-[#EFF3F4]'
               }`}
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -307,8 +307,8 @@ export function DashboardSidebar() {
               href="/dashboard/settings"
               className={`p-2.5 rounded-xl transition-colors ${
                 pathname?.startsWith('/dashboard/settings')
-                  ? isDark ? 'bg-[#B8C9E0]/10 text-[#B8C9E0]' : 'bg-[#D4E4F7]/30 text-[#5B7FA5]'
-                  : isDark ? 'text-white/40 hover:text-white/60' : 'text-[#6B6B5E] hover:text-[#3D3D3D] hover:bg-[#F0EDE6]'
+                  ? isDark ? 'bg-[#1D9BF0]/10 text-[#1D9BF0]' : 'bg-[#E8F5FE] text-[#1D9BF0]'
+                  : isDark ? 'text-white/40 hover:text-white/60' : 'text-[#536471] hover:text-[#0F1419] hover:bg-[#EFF3F4]'
               }`}
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -323,23 +323,23 @@ export function DashboardSidebar() {
       {/* ─── Mobile Bottom Tab Bar — Full-width rectangle, anchored to bottom ─── */}
       <div className={`md:hidden fixed bottom-0 left-0 right-0 z-50 ${
         isDark
-          ? 'bg-[#1A1F2E] border-t border-white/[0.06]'
-          : 'bg-white border-t border-[#E0DDD6]'
+          ? 'bg-[#161618] border-t border-white/[0.06]'
+          : 'bg-white border-t border-[#EFF3F4]'
       }`}>
         <div className="flex justify-around items-center h-16 px-2">
           {mobileNav.map((item) => {
             const iconColor = item.crisis
               ? isDark ? 'text-rose-400' : 'text-rose-500'
               : item.active
-                ? isDark ? 'text-[#B8C9E0]' : 'text-[#5B7FA5]'
-                : isDark ? 'text-white/30' : 'text-[#A0A090]'
+                ? isDark ? 'text-[#1D9BF0]' : 'text-[#1D9BF0]'
+                : isDark ? 'text-white/30' : 'text-[#8B98A5]'
             return (
               <Link
                 key={item.id}
                 href={item.href}
                 className={`flex flex-col items-center justify-center gap-1 flex-1 py-2 rounded-xl transition-colors ${
                   item.active && !item.crisis
-                    ? isDark ? 'bg-[#B8C9E0]/10' : 'bg-[#D4E4F7]/30'
+                    ? isDark ? 'bg-[#1D9BF0]/10' : 'bg-[#E8F5FE]'
                     : ''
                 }`}
               >

@@ -4,159 +4,160 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* ===== WELLNESS DESIGN SYSTEM - LIGHT MODE (Purple Theme) ===== */
+  /* ===== SOCIAL PLATFORM - LIGHT MODE (Bluesky × Twitter Palette) ===== */
   
-  /* Backgrounds - Clean White / Soft Lavender */
-  --background: #F8F7FF;
-  --background-secondary: #FFFFFF;
-  --background-tertiary: #F0EEFF;
+  /* Backgrounds - Clean White */
+  --background: #FFFFFF;
+  --background-secondary: #F7F9FA;
+  --background-tertiary: #EFF3F4;
   
   /* Text Colors */
-  --foreground: #1F2937;
-  --text-secondary: #4B5563;
-  --text-tertiary: #9CA3AF;
+  --foreground: #0F1419;
+  --text-secondary: #536471;
+  --text-tertiary: #8B98A5;
   
   /* Glass Effects */
   --glass-light: rgba(255, 255, 255, 0.78);
   --glass-medium: rgba(255, 255, 255, 0.88);
   --glass-heavy: rgba(255, 255, 255, 0.96);
-  --glass-border: rgba(139, 92, 246, 0.12);
+  --glass-border: rgba(29, 155, 240, 0.12);
   
   /* Cards */
   --card: rgba(255, 255, 255, 0.82);
-  --card-foreground: #1F2937;
+  --card-foreground: #0F1419;
   
   /* Popovers */
   --popover: rgba(255, 255, 255, 0.9);
-  --popover-foreground: #1F2937;
+  --popover-foreground: #0F1419;
   
-  /* Primary Accent - Vibrant Purple */
-  --primary: #7C3AED;
+  /* Primary Accent - Twitter Blue */
+  --primary: #1D9BF0;
   --primary-foreground: #FFFFFF;
   
-  /* Secondary Accent - Soft Lavender */
-  --secondary: #A78BFA;
+  /* Secondary Accent - Bluesky Blue */
+  --secondary: #0085FF;
   --secondary-foreground: #FFFFFF;
   
   /* Muted/Disabled */
-  --muted: rgba(124, 58, 237, 0.06);
-  --muted-foreground: #9CA3AF;
+  --muted: rgba(29, 155, 240, 0.06);
+  --muted-foreground: #8B98A5;
   
-  /* Accent - Mint Green (for wellness accents) */
-  --accent: #D1FAE5;
-  --accent-foreground: #1F2937;
+  /* Accent - Light Blue Wash */
+  --accent: #E8F5FE;
+  --accent-foreground: #0F1419;
   
   /* Destructive */
   --destructive: #EF4444;
   --destructive-foreground: #FFFFFF;
   
   /* Borders & Inputs */
-  --border: rgba(124, 58, 237, 0.12);
-  --input: rgba(124, 58, 237, 0.1);
-  --ring: rgba(124, 58, 237, 0.4);
+  --border: rgba(29, 155, 240, 0.12);
+  --input: rgba(29, 155, 240, 0.1);
+  --ring: rgba(29, 155, 240, 0.4);
   
-  /* Chart Colors - Purple Wellness Palette */
-  --chart-1: #C4B5FD;
-  --chart-2: #A5B4FC;
-  --chart-3: #FDE68A;
-  --chart-4: #FCA5A5;
-  --chart-5: #D1FAE5;
+  /* Chart Colors - Blue Social Palette */
+  --chart-1: #1D9BF0;
+  --chart-2: #0085FF;
+  --chart-3: #FCD34D;
+  --chart-4: #F87171;
+  --chart-5: #6EE7B7;
   
   /* Border Radius - Rounded for modern feel */
   --radius: 1.25rem;
   
   /* Sidebar */
   --sidebar: rgba(255, 255, 255, 0.82);
-  --sidebar-foreground: #1F2937;
-  --sidebar-primary: #7C3AED;
+  --sidebar-foreground: #0F1419;
+  --sidebar-primary: #1D9BF0;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #D1FAE5;
-  --sidebar-accent-foreground: #1F2937;
-  --sidebar-border: rgba(124, 58, 237, 0.08);
-  --sidebar-ring: rgba(124, 58, 237, 0.4);
+  --sidebar-accent: #E8F5FE;
+  --sidebar-accent-foreground: #0F1419;
+  --sidebar-border: rgba(29, 155, 240, 0.08);
+  --sidebar-ring: rgba(29, 155, 240, 0.4);
   
   /* Typography */
   --font-sans: 'Geist', 'Geist Fallback';
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
+
   --font-serif: 'Source Serif 4', 'Source Serif 4 Fallback';
   
-  /* Shadows - Soft purple-tinted */
+  /* Shadows - Soft blue-tinted */
   --shadow-x: 0px;
   --shadow-y: 2px;
   --shadow-blur: 8px;
   --shadow-spread: 0px;
   --shadow-opacity: 0.06;
-  --shadow-color: #7C3AED;
+  --shadow-color: #1D9BF0;
 }
 
 .dark {
-  /* ===== WELLNESS DESIGN SYSTEM - DARK MODE (Purple Theme) ===== */
+  /* ===== SOCIAL PLATFORM - DARK MODE (Bluesky × Twitter Palette) ===== */
   
-  /* Backgrounds - Deep Purple-Tinted Dark */
-  --background: #0F0D15;
-  --background-secondary: #1A1625;
-  --background-tertiary: #241E33;
+  /* Backgrounds - Deep Dark (Bluesky-inspired) */
+  --background: #0A0A0A;
+  --background-secondary: #161618;
+  --background-tertiary: #1D1D1F;
   
   /* Text Colors */
-  --foreground: #F1F0F5;
-  --text-secondary: #C4C0D0;
-  --text-tertiary: #8B85A0;
+  --foreground: #E7E9EA;
+  --text-secondary: #8B98A5;
+  --text-tertiary: #536471;
   
   /* Glass Effects */
-  --glass-light: rgba(26, 22, 37, 0.65);
-  --glass-medium: rgba(26, 22, 37, 0.8);
-  --glass-heavy: rgba(26, 22, 37, 0.92);
-  --glass-border: rgba(139, 92, 246, 0.15);
+  --glass-light: rgba(22, 22, 24, 0.65);
+  --glass-medium: rgba(22, 22, 24, 0.8);
+  --glass-heavy: rgba(22, 22, 24, 0.92);
+  --glass-border: rgba(29, 155, 240, 0.15);
   
   /* Cards */
-  --card: rgba(26, 22, 37, 0.65);
-  --card-foreground: #F1F0F5;
+  --card: rgba(22, 22, 24, 0.65);
+  --card-foreground: #E7E9EA;
   
   /* Popovers */
-  --popover: rgba(26, 22, 37, 0.8);
-  --popover-foreground: #F1F0F5;
+  --popover: rgba(22, 22, 24, 0.8);
+  --popover-foreground: #E7E9EA;
   
-  /* Primary Accent - Purple */
-  --primary: #A78BFA;
+  /* Primary Accent - Twitter Blue */
+  --primary: #1D9BF0;
   --primary-foreground: #FFFFFF;
   
-  /* Secondary Accent - Lighter Lavender */
-  --secondary: #8B5CF6;
+  /* Secondary Accent - Bluesky Blue */
+  --secondary: #0085FF;
   --secondary-foreground: #FFFFFF;
   
   /* Muted/Disabled */
-  --muted: rgba(167, 139, 250, 0.1);
-  --muted-foreground: #8B85A0;
+  --muted: rgba(29, 155, 240, 0.1);
+  --muted-foreground: #536471;
   
-  /* Accent - Dark Mint */
-  --accent: #34D399;
-  --accent-foreground: #FFFFFF;
+  /* Accent - Dark Blue Wash */
+  --accent: #0A2E4A;
+  --accent-foreground: #E7E9EA;
   
   /* Destructive */
   --destructive: #F87171;
   --destructive-foreground: #FFFFFF;
   
   /* Borders & Inputs */
-  --border: rgba(139, 92, 246, 0.18);
-  --input: rgba(139, 92, 246, 0.15);
-  --ring: rgba(167, 139, 250, 0.5);
+  --border: rgba(29, 155, 240, 0.18);
+  --input: rgba(29, 155, 240, 0.15);
+  --ring: rgba(29, 155, 240, 0.5);
   
-  /* Chart Colors - Dark Purple Palette */
-  --chart-1: #A78BFA;
-  --chart-2: #818CF8;
+  /* Chart Colors - Dark Blue Palette */
+  --chart-1: #1D9BF0;
+  --chart-2: #0085FF;
   --chart-3: #FCD34D;
   --chart-4: #F87171;
   --chart-5: #6EE7B7;
   
   /* Sidebar */
-  --sidebar: rgba(26, 22, 37, 0.65);
-  --sidebar-foreground: #F1F0F5;
-  --sidebar-primary: #A78BFA;
+  --sidebar: rgba(22, 22, 24, 0.65);
+  --sidebar-foreground: #E7E9EA;
+  --sidebar-primary: #1D9BF0;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #34D399;
-  --sidebar-accent-foreground: #FFFFFF;
-  --sidebar-border: rgba(139, 92, 246, 0.12);
-  --sidebar-ring: rgba(167, 139, 250, 0.5);
+  --sidebar-accent: #0A2E4A;
+  --sidebar-accent-foreground: #E7E9EA;
+  --sidebar-border: rgba(29, 155, 240, 0.12);
+  --sidebar-ring: rgba(29, 155, 240, 0.5);
   
   /* Shadows - Stronger for dark mode depth */
   --shadow-x: 0px;

@@ -66,7 +66,7 @@ export default function DashboardPage() {
     <AuthGuard redirectPath="/dashboard">
       <div 
         data-dashboard
-        className={`min-h-screen ${isDark ? 'bg-[#141820]' : 'bg-[#F5F3EE]'}`}
+        className={`min-h-screen ${isDark ? 'bg-[#0A0A0A]' : 'bg-[#FFFFFF]'}`}
       >
         {/* Global Data Sync */}
         <GlobalDataSync />
@@ -104,7 +104,7 @@ export default function DashboardPage() {
 
                   {/* Quick Actions Grid — 2×2 on mobile, 4-col on desktop */}
                   <div>
-                    <h2 className={`text-base font-semibold mb-3 ${isDark ? 'text-white/70' : 'text-[#5A5A4E]'}`}>{t('dashboard.quickActions')}</h2>
+                    <h2 className={`text-base font-semibold mb-3 ${isDark ? 'text-white/70' : 'text-[#536471]'}`}>{t('dashboard.quickActions')}</h2>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                       <QuickActionCard
                         icon={<Wind className="h-6 w-6" />}
@@ -112,8 +112,8 @@ export default function DashboardPage() {
                         sublabel={t('dashboard.breatheSublabel')}
                         href="/dashboard/wellness?open=breathing"
                         isDark={isDark}
-                        iconBg={isDark ? 'bg-[#A8D5BA]/15' : 'bg-[#E8F5E9]'}
-                        iconColor={isDark ? 'text-[#A8D5BA]' : 'text-[#5A8F6E]'}
+                        iconBg={isDark ? 'bg-[#6EE7B7]/15' : 'bg-[#E8F5E9]'}
+                        iconColor={isDark ? 'text-[#6EE7B7]' : 'text-[#059669]'}
                       />
                       <QuickActionCard
                         icon={<Heart className="h-6 w-6" />}
@@ -121,8 +121,8 @@ export default function DashboardPage() {
                         sublabel={t('dashboard.checkInSublabel')}
                         href="#mood-section"
                         isDark={isDark}
-                        iconBg={isDark ? 'bg-[#C4B5E0]/15' : 'bg-[#EDE7F6]'}
-                        iconColor={isDark ? 'text-[#C4B5E0]' : 'text-[#7E6BA5]'}
+                        iconBg={isDark ? 'bg-[#F472B6]/15' : 'bg-[#FCE7F3]'}
+                        iconColor={isDark ? 'text-[#F472B6]' : 'text-[#DB2777]'}
                       />
                       <QuickActionCard
                         icon={<NotebookPen className="h-6 w-6" />}
@@ -130,8 +130,8 @@ export default function DashboardPage() {
                         sublabel={t('dashboard.reflectSublabel')}
                         href="#prompt-section"
                         isDark={isDark}
-                        iconBg={isDark ? 'bg-[#B8C9E0]/15' : 'bg-[#D4E4F7]'}
-                        iconColor={isDark ? 'text-[#B8C9E0]' : 'text-[#5B7FA5]'}
+                        iconBg={isDark ? 'bg-[#1D9BF0]/15' : 'bg-[#E8F5FE]'}
+                        iconColor={isDark ? 'text-[#1D9BF0]' : 'text-[#1D9BF0]'}
                       />
                       <QuickActionCard
                         icon={<Sparkles className="h-6 w-6" />}
@@ -263,14 +263,14 @@ function DailyQuoteCard({ isDark }: { isDark: boolean }) {
   }, [])
 
   return (
-    <div className={`rounded-2xl p-5 md:p-6 flex gap-4 relative overflow-hidden ${isDark ? 'bg-gradient-to-br from-[#A8D5BA]/10 to-[#B8C9E0]/8 border border-[#A8D5BA]/12' : 'bg-gradient-to-br from-[#F0F7F2] to-[#EEF4FB] border border-[#D5E8DA]'}`}>
-      <div className={`absolute top-3 left-4 text-4xl leading-none font-serif opacity-15 select-none ${isDark ? 'text-[#A8D5BA]' : 'text-[#8ABF9A]'}`}>&ldquo;</div>
-      <div className={`w-1 flex-shrink-0 rounded-full ${isDark ? 'bg-gradient-to-b from-[#A8D5BA]/60 to-[#A8D5BA]/10' : 'bg-gradient-to-b from-[#8ABF9A] to-[#8ABF9A]/30'}`} />
+    <div className={`rounded-2xl p-5 md:p-6 flex gap-4 relative overflow-hidden ${isDark ? 'bg-gradient-to-br from-[#1D9BF0]/10 to-[#0085FF]/8 border border-[#1D9BF0]/12' : 'bg-gradient-to-br from-[#E8F5FE] to-[#F0F7FF] border border-[#B3D9F2]'}`}>
+      <div className={`absolute top-3 left-4 text-4xl leading-none font-serif opacity-15 select-none ${isDark ? 'text-[#1D9BF0]' : 'text-[#1D9BF0]'}`}>&ldquo;</div>
+      <div className={`w-1 flex-shrink-0 rounded-full ${isDark ? 'bg-gradient-to-b from-[#1D9BF0]/60 to-[#1D9BF0]/10' : 'bg-gradient-to-b from-[#1D9BF0] to-[#1D9BF0]/30'}`} />
       <div className="relative z-10">
-        <p className={`text-base md:text-lg font-medium leading-relaxed ${isDark ? 'text-white/90' : 'text-[#3D4D3D]'}`}>
+        <p className={`text-base md:text-lg font-medium leading-relaxed ${isDark ? 'text-white/90' : 'text-[#0F1419]'}`}>
           &ldquo;{quote}&rdquo;
         </p>
-        <p className={`text-xs mt-2.5 ${isDark ? 'text-white/30' : 'text-[#8A9A8A]'}`}>{t('dashboard.dailyReminder')}</p>
+        <p className={`text-xs mt-2.5 ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>{t('dashboard.dailyReminder')}</p>
       </div>
     </div>
   )
@@ -376,12 +376,12 @@ function InfoCard({ children, isDark, accent }: { children: React.ReactNode; isD
 function HowItWorksCard({ isDark }: { isDark: boolean }) {
   const { t } = useTranslation()
   return (
-    <InfoCard isDark={isDark} accent={isDark ? 'bg-gradient-to-r from-[#B8C9E0]/40 to-transparent' : 'bg-gradient-to-r from-[#5B7FA5]/30 to-transparent'}>
+    <InfoCard isDark={isDark} accent={isDark ? 'bg-gradient-to-r from-[#1D9BF0]/40 to-transparent' : 'bg-gradient-to-r from-[#1D9BF0]/30 to-transparent'}>
       <div className="space-y-2.5">
-        <p className={`text-[10px] uppercase tracking-[0.16em] font-semibold ${isDark ? 'text-white/35' : 'text-[#8A8A7A]'}`}>
+        <p className={`text-[10px] uppercase tracking-[0.16em] font-semibold ${isDark ? 'text-white/35' : 'text-[#8B98A5]'}`}>
           {t('dashboard.howItWorks')}
         </p>
-        <div className={`text-[13px] space-y-2.5 leading-relaxed ${isDark ? 'text-white/60' : 'text-[#5A5A4E]'}`}>
+        <div className={`text-[13px] space-y-2.5 leading-relaxed ${isDark ? 'text-white/60' : 'text-[#536471]'}`}>
           <p>{t('dashboard.howItWorks1')}</p>
           <p>{t('dashboard.howItWorks2')}</p>
           <p>{t('dashboard.howItWorks3')}</p>
@@ -417,15 +417,15 @@ function FocusAreasCard({ isDark }: { isDark: boolean }) {
   }, [supabase])
 
   return (
-    <InfoCard isDark={isDark} accent={isDark ? 'bg-gradient-to-r from-[#C4B5E0]/40 to-transparent' : 'bg-gradient-to-r from-[#7E6BA5]/30 to-transparent'}>
+    <InfoCard isDark={isDark} accent={isDark ? 'bg-gradient-to-r from-[#1D9BF0]/40 to-transparent' : 'bg-gradient-to-r from-[#1D9BF0]/30 to-transparent'}>
       <div className="space-y-3">
         <div className="flex items-start justify-between gap-2">
-          <p className={`text-[10px] uppercase tracking-[0.16em] font-semibold ${isDark ? 'text-white/35' : 'text-[#8A8A7A]'}`}>
+          <p className={`text-[10px] uppercase tracking-[0.16em] font-semibold ${isDark ? 'text-white/35' : 'text-[#8B98A5]'}`}>
             {t('dashboard.yourFocusAreas')}
           </p>
           <Link
             href="/dashboard/settings"
-            className={`text-[11px] font-medium hover:underline underline-offset-4 ${isDark ? 'text-white/40 hover:text-white' : 'text-[#5B7FA5] hover:text-[#3D6B8E]'}`}
+            className={`text-[11px] font-medium hover:underline underline-offset-4 ${isDark ? 'text-white/40 hover:text-white' : 'text-[#1D9BF0] hover:text-[#1A8CD8]'}`}
           >
             {t('common.edit')}
           </Link>
@@ -435,7 +435,7 @@ function FocusAreasCard({ isDark }: { isDark: boolean }) {
             <span
               key={idx}
               className={`px-2.5 py-1 rounded-full text-[11px] font-medium ${
-                isDark ? 'bg-white/[0.06] text-white/65 border border-white/[0.08]' : 'bg-white text-[#5A5A4E] border border-[#E8E5DE]'
+                isDark ? 'bg-white/[0.06] text-white/65 border border-white/[0.08]' : 'bg-white text-[#536471] border border-[#EFF3F4]'
               }`}
             >
               {area}
@@ -451,20 +451,20 @@ function FocusAreasCard({ isDark }: { isDark: boolean }) {
 function ExpectationsCard({ isDark, tier }: { isDark: boolean; tier: string }) {
   const { t } = useTranslation()
   return (
-    <InfoCard isDark={isDark} accent={isDark ? 'bg-gradient-to-r from-[#A8D5BA]/40 to-transparent' : 'bg-gradient-to-r from-[#5A8F6E]/30 to-transparent'}>
+    <InfoCard isDark={isDark} accent={isDark ? 'bg-gradient-to-r from-[#1D9BF0]/40 to-transparent' : 'bg-gradient-to-r from-[#1D9BF0]/30 to-transparent'}>
       <div className="space-y-2.5">
-        <p className={`text-[10px] uppercase tracking-[0.16em] font-semibold ${isDark ? 'text-white/35' : 'text-[#8A8A7A]'}`}>
+        <p className={`text-[10px] uppercase tracking-[0.16em] font-semibold ${isDark ? 'text-white/35' : 'text-[#8B98A5]'}`}>
           {t('dashboard.whatToExpect')}
         </p>
-        <div className={`text-[13px] space-y-2.5 leading-relaxed ${isDark ? 'text-white/60' : 'text-[#5A5A4E]'}`}>
+        <div className={`text-[13px] space-y-2.5 leading-relaxed ${isDark ? 'text-white/60' : 'text-[#536471]'}`}>
           <p>{t('dashboard.dailyPromptExpect')}</p>
           {tier === 'premium' ? (
             <>
-              <p className={isDark ? 'text-[#A8D5BA]/70' : 'text-[#5A8F6E]'}>{t('dashboard.weeklyReflectionExpect')}</p>
-              <p className={isDark ? 'text-[#C4B5E0]/70' : 'text-[#7E6BA5]'}>{t('dashboard.monthlyReflectionExpect')}</p>
+              <p className={isDark ? 'text-[#6EE7B7]/70' : 'text-[#059669]'}>{t('dashboard.weeklyReflectionExpect')}</p>
+              <p className={isDark ? 'text-[#1D9BF0]/70' : 'text-[#1D9BF0]'}>{t('dashboard.monthlyReflectionExpect')}</p>
             </>
           ) : (
-            <p className={`italic ${isDark ? 'text-white/25' : 'text-[#A0A090]'}`}>{t('dashboard.premiumFeaturesNote')}</p>
+            <p className={`italic ${isDark ? 'text-white/25' : 'text-[#8B98A5]'}`}>{t('dashboard.premiumFeaturesNote')}</p>
           )}
         </div>
       </div>
@@ -478,10 +478,10 @@ function NeedHelpCard({ isDark }: { isDark: boolean }) {
   return (
     <InfoCard isDark={isDark}>
       <div className="space-y-2.5">
-        <p className={`text-[10px] uppercase tracking-[0.16em] font-semibold ${isDark ? 'text-white/35' : 'text-[#8A8A7A]'}`}>
+        <p className={`text-[10px] uppercase tracking-[0.16em] font-semibold ${isDark ? 'text-white/35' : 'text-[#8B98A5]'}`}>
           {t('dashboard.needHelp')}
         </p>
-        <p className={`text-[13px] leading-relaxed ${isDark ? 'text-white/60' : 'text-[#5A5A4E]'}`}>
+        <p className={`text-[13px] leading-relaxed ${isDark ? 'text-white/60' : 'text-[#536471]'}`}>
           {t('dashboard.needHelpDesc')}
         </p>
       </div>
