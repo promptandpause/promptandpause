@@ -18,6 +18,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Rss, Spinner, Wind, Heart, PencilLine, Sun, ChatCircle, Sparkle } from "phosphor-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { CommentSection } from "@/components/social/CommentSection"
 
 interface FeedItem {
   id: string
@@ -54,9 +55,21 @@ function DashboardContent() {
   const supabase = getSupabaseClient()
   const [userName, setUserName] = useState("")
   const [greetingKey, setGreetingKey] = useState<"dashboard.goodMorning" | "dashboard.goodAfternoon" | "dashboard.goodEvening">("dashboard.goodMorning")
-  const [tab, setTab] = useState<"for_you" | "following">("for_you")
+  const [tab, setTab] = useState<"for_you" | "following" | "likes">("for_you")
   const [followingFeed, setFollowingFeed] = useState<FeedItem[]>([])
   const [followingLoading, setFollowingLoading] = useState(false)
+  const [likesFeed, setLikesFeed] = useState<FeedItem[]>([])
+  const [likesLoading, setLikesLoading] = useState(false)
+  const [openComments, setOpenComments] = useState<Set<string>>(new Set())
+
+  function toggleComments(id: string) {
+    setOpenComments(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
 
   useEffect(() => {
     const hour = new Date().getHours()
@@ -99,11 +112,23 @@ function DashboardContent() {
     setFollowingLoading(false)
   }, [])
 
+  const loadLikesFeed = useCallback(async () => {
+    setLikesLoading(true)
+    try {
+      const res = await fetch("/api/social/liked-feed")
+      const { data } = await res.json()
+      setLikesFeed(data || [])
+    } catch {}
+    setLikesLoading(false)
+  }, [])
+
   useEffect(() => {
     if (tab === "following") {
       loadFollowingFeed()
+    } else if (tab === "likes") {
+      loadLikesFeed()
     }
-  }, [tab, loadFollowingFeed])
+  }, [tab, loadFollowingFeed, loadLikesFeed])
 
   return (
     <div className={`min-h-screen ${isDark ? "bg-[#0A0A0A]" : "bg-[#FFFFFF]"}`}>
@@ -120,7 +145,7 @@ function DashboardContent() {
           }`}>
             <div className="px-4 h-12 flex items-center">
               <h1 className={`text-xl font-semibold ${isDark ? "text-white" : "text-[#0F1419]"}`}>
-                {tab === "for_you" ? t(greetingKey) : "Following"}{tab === "for_you" && userName ? `, ${userName}` : ""}
+                {tab === "for_you" ? t(greetingKey) : tab === "following" ? "Following" : "Likes"}{tab === "for_you" && userName ? `, ${userName}` : ""}
               </h1>
             </div>
             <div className="flex">
@@ -143,6 +168,16 @@ function DashboardContent() {
                 onClick={() => setTab("following")}
               >
                 Following
+              </button>
+              <button
+                className={`flex-1 py-3 text-sm font-semibold text-center transition-colors ${
+                  tab === "likes"
+                    ? `border-b-2 border-[#1D9BF0] ${isDark ? "text-white" : "text-[#0F1419]"}`
+                    : `${isDark ? "text-white/40 hover:text-white/60" : "text-[#536471] hover:text-[#0F1419]"}`
+                }`}
+                onClick={() => setTab("likes")}
+              >
+                Likes
               </button>
             </div>
           </div>
@@ -190,7 +225,7 @@ function DashboardContent() {
                 <motion.div key="for_you" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                   <RandomFeed />
                 </motion.div>
-              ) : (
+              ) : tab === "following" ? (
                 <motion.div key="following" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                   {followingLoading ? (
                     <div className="flex justify-center py-12">
@@ -248,7 +283,7 @@ function DashboardContent() {
                                 </div>
                                 <div className="flex items-center gap-6 mt-2">
                                   <button className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#1D9BF0]' : 'text-[#536471] hover:text-[#1D9BF0]'}`}
-                                    onClick={e => { e.stopPropagation() }}>
+                                    onClick={e => { e.stopPropagation(); toggleComments(item.id) }}>
                                     <ChatCircle size={14} weight="bold" /> Reply
                                   </button>
                                   <button
@@ -276,10 +311,125 @@ function DashboardContent() {
                                     <Heart size={14} weight={item.is_liked_by_me ? 'fill' : 'bold'} /> {item.like_count > 0 ? item.like_count : 'Like'}
                                   </button>
                                   <button className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#1D9BF0]' : 'text-[#536471] hover:text-[#1D9BF0]'}`}
-                                    onClick={e => { e.stopPropagation() }}>
+                                    onClick={e => { e.stopPropagation(); router.push('/dashboard/reflect') }}>
                                     <Sparkle size={14} weight="bold" /> Reflect
                                   </button>
                                 </div>
+                                {openComments.has(item.id) && (
+                                  <div
+                                    className={`mt-3 -mx-4 border-t ${isDark ? 'border-white/[0.06]' : 'border-[#EFF3F4]'}`}
+                                    onClick={e => e.stopPropagation()}
+                                  >
+                                    <CommentSection reflectionId={item.id} />
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )}
+                </motion.div>
+              ) : (
+                <motion.div key="likes" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                  {likesLoading ? (
+                    <div className="flex justify-center py-12">
+                      <Spinner size={24} weight="bold" className={`animate-spin ${isDark ? "text-white/20" : "text-[#8B98A5]"}`} />
+                    </div>
+                  ) : likesFeed.length === 0 ? (
+                    <div className={`text-center py-16 px-8 ${isDark ? "text-white/30" : "text-[#8B98A5]"}`}>
+                      <Heart size={40} weight="bold" className={`mx-auto mb-4 ${isDark ? "text-white/15" : "text-[#D0CFC0]"}`} />
+                      <p className="text-sm font-medium mb-1">No likes yet</p>
+                      <p className="text-xs">Reflections you like will show up here.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-1">
+                      {likesFeed.map((item) => {
+                        const displayName = item.profile?.display_name || item.profile?.full_name || "Unknown"
+                        return (
+                          <div
+                            key={item.id}
+                            className={`px-4 py-3 cursor-pointer transition-colors ${
+                              isDark
+                                ? "hover:bg-white/[0.02] border-b border-white/[0.06]"
+                                : "hover:bg-[#F7F9FA] border-b border-[#EFF3F4]"
+                            }`}
+                            onClick={() => item.profile?.username && router.push(`/${item.profile.username}`)}
+                          >
+                            <div className="flex gap-3">
+                              <div className="shrink-0">
+                                <div className={`h-10 w-10 rounded-full flex items-center justify-center ${isDark ? "bg-[#161618]" : "bg-[#EFF3F4]"}`}>
+                                  {item.profile?.avatar_url ? (
+                                    <img src={item.profile.avatar_url} alt="" className="h-10 w-10 rounded-full object-cover" />
+                                  ) : (
+                                    <span className={`text-sm font-semibold ${isDark ? "text-white/40" : "text-[#536471]"}`}>
+                                      {displayName.charAt(0).toUpperCase()}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <span className={`text-sm font-semibold ${isDark ? "text-white" : "text-[#0F1419]"}`}>
+                                    {displayName}
+                                  </span>
+                                  <span className={`text-sm ${isDark ? "text-white/30" : "text-[#536471]"}`}>
+                                    @{item.profile?.username}
+                                  </span>
+                                </div>
+                                <p className={`text-sm leading-relaxed mt-0.5 ${isDark ? "text-white/80" : "text-[#0F1419]"}`}>
+                                  {item.reflection_text}
+                                </p>
+                                <div className="flex items-center gap-3 mt-2">
+                                  <span className="text-lg leading-none">{item.mood}</span>
+                                  {item.tags?.slice(0, 3).map((tag: string) => (
+                                    <span key={tag} className="text-xs text-[#1D9BF0]">#{tag}</span>
+                                  ))}
+                                </div>
+                                <div className="flex items-center gap-6 mt-2">
+                                  <button className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#1D9BF0]' : 'text-[#536471] hover:text-[#1D9BF0]'}`}
+                                    onClick={e => { e.stopPropagation(); toggleComments(item.id) }}>
+                                    <ChatCircle size={14} weight="bold" /> Reply
+                                  </button>
+                                  <button
+                                    onClick={async e => {
+                                      e.stopPropagation()
+                                      const res = await fetch('/api/social/likes', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ reflection_id: item.id }),
+                                      })
+                                      if (res.ok) {
+                                        // Unliking here means it should disappear from this tab entirely
+                                        setLikesFeed(prev =>
+                                          item.is_liked_by_me
+                                            ? prev.filter(f => f.id !== item.id)
+                                            : prev.map(f => f.id === item.id ? { ...f, is_liked_by_me: true, like_count: f.like_count + 1 } : f)
+                                        )
+                                      }
+                                    }}
+                                    className={`flex items-center gap-1.5 text-xs transition-colors ${
+                                      item.is_liked_by_me
+                                        ? 'text-pink-500'
+                                        : isDark ? 'text-white/30 hover:text-pink-400' : 'text-[#536471] hover:text-pink-500'
+                                    }`}
+                                  >
+                                    <Heart size={14} weight={item.is_liked_by_me ? 'fill' : 'bold'} /> {item.like_count > 0 ? item.like_count : 'Like'}
+                                  </button>
+                                  <button className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#1D9BF0]' : 'text-[#536471] hover:text-[#1D9BF0]'}`}
+                                    onClick={e => { e.stopPropagation(); router.push('/dashboard/reflect') }}>
+                                    <Sparkle size={14} weight="bold" /> Reflect
+                                  </button>
+                                </div>
+                                {openComments.has(item.id) && (
+                                  <div
+                                    className={`mt-3 -mx-4 border-t ${isDark ? 'border-white/[0.06]' : 'border-[#EFF3F4]'}`}
+                                    onClick={e => e.stopPropagation()}
+                                  >
+                                    <CommentSection reflectionId={item.id} />
+                                  </div>
+                                )}
                               </div>
                             </div>
                           </div>

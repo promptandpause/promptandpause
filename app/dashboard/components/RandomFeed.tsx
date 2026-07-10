@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Heart, ChatCircle, Sparkle, UserPlus } from 'phosphor-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { CommentSection } from '@/components/social/CommentSection'
 
 interface FeedReflection {
   id: string
@@ -35,7 +36,17 @@ export function RandomFeed() {
   const [feed, setFeed] = useState<FeedReflection[]>([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(0)
+  const [openComments, setOpenComments] = useState<Set<string>>(new Set())
   const loaderRef = useRef<HTMLDivElement>(null)
+
+  function toggleComments(id: string) {
+    setOpenComments(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
 
   useEffect(() => {
     loadFeed()
@@ -131,7 +142,7 @@ export function RandomFeed() {
                   </div>
                   <div className="flex items-center gap-6 mt-2">
                     <button className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#1D9BF0]' : 'text-[#536471] hover:text-[#1D9BF0]'}`}
-                      onClick={e => { e.stopPropagation() }}>
+                      onClick={e => { e.stopPropagation(); toggleComments(item.id) }}>
                       <ChatCircle size={14} weight="bold" /> Reply
                     </button>
                     <button
@@ -159,10 +170,18 @@ export function RandomFeed() {
                       <Heart size={14} weight={item.is_liked_by_me ? 'fill' : 'bold'} /> {item.like_count > 0 ? item.like_count : 'Like'}
                     </button>
                     <button className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#1D9BF0]' : 'text-[#536471] hover:text-[#1D9BF0]'}`}
-                      onClick={e => { e.stopPropagation() }}>
+                      onClick={e => { e.stopPropagation(); router.push('/dashboard/reflect') }}>
                       <Sparkle size={14} weight="bold" /> Reflect
                     </button>
                   </div>
+                  {openComments.has(item.id) && (
+                    <div
+                      className={`mt-3 -mx-4 border-t ${isDark ? 'border-white/[0.06]' : 'border-[#EFF3F4]'}`}
+                      onClick={e => e.stopPropagation()}
+                    >
+                      <CommentSection reflectionId={item.id} />
+                    </div>
+                  )}
                 </div>
               </div>
             </motion.div>

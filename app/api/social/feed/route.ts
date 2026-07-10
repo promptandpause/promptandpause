@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthUser, createClient } from '@/lib/supabase/server'
+import { decryptIfEncrypted } from '@/lib/utils/crypto'
 
 export async function GET(request: NextRequest) {
   try {
@@ -69,7 +70,7 @@ export async function GET(request: NextRequest) {
       reflection: {
         id: r.id,
         prompt_text: r.prompt_text,
-        reflection_text: r.reflection_text,
+        reflection_text: decryptIfEncrypted(r.reflection_text) || r.reflection_text,
         mood: r.mood,
         tags: r.tags,
         word_count: r.word_count,

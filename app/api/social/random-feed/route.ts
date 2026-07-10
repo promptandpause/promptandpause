@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getAuthUser, createClient } from '@/lib/supabase/server'
+import { decryptIfEncrypted } from '@/lib/utils/crypto'
 
 export async function GET() {
   try {
@@ -69,7 +70,7 @@ export async function GET() {
       ...r,
       profile: profileMap.get(r.user_id) || null,
       is_from_friend: friendIdSet.has(r.user_id),
-      reflection_text: r.reflection_text?.slice(0, 300),
+      reflection_text: (decryptIfEncrypted(r.reflection_text) || r.reflection_text)?.slice(0, 300),
       like_count: 0,
       is_liked_by_me: false,
     }))
