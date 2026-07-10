@@ -8,12 +8,12 @@ import { QuickShare } from "@/components/social/QuickShare"
 import YourRhythm from "./components/your-rhythm"
 import { useTheme } from "@/contexts/ThemeContext"
 import { useTranslation } from "@/hooks/useTranslation"
-import { useTier } from "@/hooks/useTier"
+
 import { useEffect, useState, useCallback } from "react"
 import { getSupabaseClient } from "@/lib/supabase/client"
 import { trackEventOncePerSession } from "@/lib/services/eventsService"
 import { motion, AnimatePresence } from "framer-motion"
-import { Sparkle, Rss, Spinner, Wind, Heart, PencilLine, Sun, Crown, Star } from "phosphor-react"
+import { Rss, Spinner, Wind, Heart, PencilLine, Sun } from "phosphor-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
@@ -48,7 +48,6 @@ function DashboardContent() {
   const { t } = useTranslation()
   const router = useRouter()
   const supabase = getSupabaseClient()
-  const { tier } = useTier()
   const [userName, setUserName] = useState("")
   const [greetingKey, setGreetingKey] = useState<"dashboard.goodMorning" | "dashboard.goodAfternoon" | "dashboard.goodEvening">("dashboard.goodMorning")
   const [tab, setTab] = useState<"for_you" | "following">("for_you")
@@ -145,37 +144,6 @@ function DashboardContent() {
           <div className={`px-4 py-3 border-b ${isDark ? "border-white/[0.06]" : "border-[#EFF3F4]"}`}>
             <QuickShare onShared={() => {}} />
           </div>
-
-          {/* Upgrade CTA for free users */}
-          {tier === "free" && (
-            <div className={`px-4 py-3 border-b ${isDark ? "border-white/[0.06]" : "border-[#EFF3F4]"}`}>
-              <Link href="/settings#subscription">
-                <div className={`rounded-2xl p-4 text-center space-y-3 ${
-                  isDark
-                    ? "bg-gradient-to-br from-[#0A2E4A] to-[#0A0A0A] border border-[#1D9BF0]/20"
-                    : "bg-gradient-to-br from-[#E8F5FE] to-[#FFFFFF] border border-[#1D9BF0]/30"
-                }`}>
-                  <div className="flex justify-center gap-1">
-                    {[Star, Crown, Star].map((Icon, i) => (
-                      <span key={i} className={`p-2 rounded-full ${isDark ? "bg-amber-400/10 text-amber-300" : "bg-amber-50 text-amber-600"}`}>
-                        <Icon size={16} weight={i === 1 ? "fill" : "bold"} />
-                      </span>
-                    ))}
-                  </div>
-                  <h4 className={`font-bold text-sm ${isDark ? "text-white" : "text-[#0F1419]"}`}>
-                    Unlock Premium Insights
-                  </h4>
-                  <p className={`text-[11px] leading-relaxed ${isDark ? "text-white/50" : "text-[#8B98A5]"}`}>
-                    Weekly insights, monthly reflections, unlimited prompts & more
-                  </p>
-                  <div className="w-full text-sm font-semibold h-9 rounded-lg bg-gradient-to-r from-[#1D9BF0] to-[#0085FF] text-white shadow-lg flex items-center justify-center gap-2">
-                    <Crown size={14} weight="fill" />
-                    Upgrade Now
-                  </div>
-                </div>
-              </Link>
-            </div>
-          )}
 
           {/* Quick Actions + Streak Row */}
           <div className={`px-4 py-3 border-b ${isDark ? "border-white/[0.06]" : "border-[#EFF3F4]"}`}>

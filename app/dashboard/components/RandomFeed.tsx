@@ -44,9 +44,14 @@ export function RandomFeed() {
   async function loadFeed() {
     try {
       const res = await fetch('/api/social/random-feed')
-      const { data } = await res.json()
-      setFeed(data || [])
-    } catch {}
+      const body = await res.json()
+      if (!res.ok) {
+        console.warn('Feed load failed:', body.error)
+      }
+      setFeed(body.data || [])
+    } catch {
+      // Offline or parse failure — leave feed empty
+    }
     setLoading(false)
   }
 

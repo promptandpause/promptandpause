@@ -152,6 +152,9 @@ export function DashboardSidebar() {
 
   return (
     <>
+      {/* ─── Mobile nav spacing: pushed down by fixed top bar / pushed up by fixed bottom bar ─── */}
+      <style>{`@media (max-width:767px){main{padding-top:56px!important;padding-bottom:64px!important}}`}</style>
+
       {/* ─── Desktop Sidebar ─── */}
       <div className="hidden md:block flex-shrink-0 w-[240px] xl:w-[275px]">
         <div className="h-screen flex flex-col overflow-y-auto scrollbar-hide px-3 py-2 fixed w-[240px] xl:w-[275px]">
