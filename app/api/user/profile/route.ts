@@ -10,6 +10,7 @@ const UpdateProfileSchema = z.object({
   language: z.string().optional(),
   display_name: z.string().max(100).optional(),
   username: z.string().max(50).regex(/^[a-zA-Z0-9_-]+$/, 'Username can only contain letters, numbers, hyphens and underscores').optional(),
+  avatar_url: z.string().max(500).optional(),
   bio: z.string().max(500).optional(),
   mood_song_url: z.string().max(500).optional(),
   mood_song_title: z.string().max(200).optional(),

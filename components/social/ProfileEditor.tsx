@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useToast } from '@/hooks/use-toast'
-import { Check, Palette, MusicNote, ImageSquare, Spinner, FloppyDisk, XCircle, CheckCircle } from 'phosphor-react'
+import { Check, Palette, MusicNote, ImageSquare, Spinner, FloppyDisk, XCircle, CheckCircle, User } from 'phosphor-react'
 import { profileThemePresets, getThemeById } from '@/lib/utils/profileThemes'
 import { cn } from '@/lib/utils'
 
@@ -26,9 +26,12 @@ export function ProfileEditor() {
   const { toast } = useToast()
   const isDark = theme === 'dark'
   const [saving, setSaving] = useState(false)
+  const [uploadingAvatar, setUploadingAvatar] = useState(false)
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
   const [profile, setProfile] = useState({
     display_name: '',
     username: '',
+    avatar_url: '',
     bio: '',
     mood_song_url: '',
     mood_song_title: '',
@@ -53,6 +56,7 @@ export function ProfileEditor() {
         setProfile({
           display_name: data.display_name || '',
           username: data.username || '',
+          avatar_url: data.avatar_url || '',
           bio: data.bio || '',
           mood_song_url: data.mood_song_url || '',
           mood_song_title: data.mood_song_title || '',
@@ -166,6 +170,63 @@ export function ProfileEditor() {
                 Your public profile: promptandpause.com/<strong>@{profile.username || 'username'}</strong>
               </p>
             )}
+          </div>
+        </div>
+      </Section>
+
+      {/* Avatar */}
+      <Section title="Avatar" isDark={isDark} icon={<User size={16} weight="bold" />}>
+        <div className="flex items-center gap-5">
+          <div className={`w-20 h-20 rounded-full overflow-hidden flex-shrink-0 ${isDark ? 'bg-white/[0.06]' : 'bg-[#EFF3F4]'}`}>
+            {(avatarPreview || profile.avatar_url) ? (
+              <img src={avatarPreview || profile.avatar_url} alt="" className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <User size={28} className={isDark ? 'text-white/20' : 'text-[#8B98A5]'} />
+              </div>
+            )}
+          </div>
+          <div className="flex-1">
+            <label className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold cursor-pointer transition-colors ${
+              isDark ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-[#0F1419] text-white hover:bg-[#536471]'
+            }`}>
+              <ImageSquare size={16} weight="bold" />
+              Choose image
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
+                className="hidden"
+                disabled={uploadingAvatar}
+                onChange={async e => {
+                  const file = e.target.files?.[0]
+                  if (!file) return
+
+                  setAvatarPreview(URL.createObjectURL(file))
+                  setUploadingAvatar(true)
+                  try {
+                    const formData = new FormData()
+                    formData.append('file', file)
+                    const res = await fetch('/api/user/avatar', { method: 'POST', body: formData })
+                    const data = await res.json()
+                    if (res.ok) {
+                      setProfile(p => ({ ...p, avatar_url: data.url }))
+                      toast({ title: 'Avatar uploaded' })
+                    } else {
+                      toast({ title: 'Upload failed', description: data.error, variant: 'destructive' })
+                      setAvatarPreview(null)
+                    }
+                  } catch {
+                    toast({ title: 'Upload failed', description: 'Network error', variant: 'destructive' })
+                    setAvatarPreview(null)
+                  }
+                  setUploadingAvatar(false)
+                }}
+              />
+            </label>
+            {uploadingAvatar && <p className={`text-xs mt-1.5 ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>Uploading...</p>}
+            <p className={`text-xs mt-1 ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`}>
+              PNG, JPEG, WebP, AVIF or GIF. Max 5MB.
+            </p>
           </div>
         </div>
       </Section>
