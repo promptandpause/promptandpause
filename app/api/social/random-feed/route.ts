@@ -31,7 +31,6 @@ export async function GET() {
         user_id,
         profile:profiles!reflections_user_id_fkey(id, full_name, display_name, username, avatar_url)
       `)
-      .neq('user_id', user.id)
       .neq('visibility', 'private')
       .order('created_at', { ascending: false })
       .limit(50)
