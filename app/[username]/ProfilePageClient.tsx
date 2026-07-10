@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { User, MessageCircle, Music, Palette, Sparkles, Lock, Pencil, Settings, Layout, Archive, House, MagnifyingGlass, Heart, Rss, ArchiveBox } from 'lucide-react'
+import { User, MessageCircle, Music, Palette, Sparkles, Lock, Pencil, Settings, Layout, Archive, House, Search, Heart, Rss } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { useTheme } from '@/contexts/ThemeContext'
@@ -178,6 +178,8 @@ export function ProfilePageClient({
               onClick={() => setActiveTab('reflections')}
               isDark={isDark}
               accentColor={accentColor}
+              loggedInUserId={loggedInUserId}
+              isActive={isActive}
             >
               Reflections
             </TabButton>
@@ -186,6 +188,8 @@ export function ProfilePageClient({
               onClick={() => setActiveTab('whiteboard')}
               isDark={isDark}
               accentColor={accentColor}
+              loggedInUserId={loggedInUserId}
+              isActive={isActive}
             >
               Whiteboard
             </TabButton>
@@ -310,6 +314,7 @@ export function ProfilePageClient({
     </div>
   </div>
 </div>
+</div>
   )
 }
 
@@ -319,12 +324,16 @@ function TabButton({
   children,
   isDark,
   accentColor,
+  loggedInUserId,
+  isActive,
 }: {
   active: boolean
   onClick: () => void
   children: React.ReactNode
   isDark: boolean
   accentColor: string
+  loggedInUserId?: string | null
+  isActive?: (path: string) => boolean
 }) {
   return (
     <button
@@ -345,18 +354,18 @@ function TabButton({
       )}
 
       {/* ─── Mobile Bottom Tab Bar (when logged in) ─── */}
-      {loggedInUserId && (
+      {loggedInUserId && isActive && (
         <div className={`md:hidden fixed bottom-0 left-0 right-0 z-40 pb-[env(safe-area-inset-bottom,0px)] ${
           isDark ? 'bg-[#0A0A0A]/90 backdrop-blur-lg border-t border-white/[0.06]' : 'bg-white/90 backdrop-blur-lg border-t border-[#EFF3F4]'
         }`}>
           <div className="flex items-center justify-around h-14">
             {[
               { id: 'home', label: 'Home', href: '/dashboard', icon: House },
-              { id: 'search', label: 'Search', href: '/dashboard/search', icon: MagnifyingGlass },
+              { id: 'search', label: 'Search', href: '/dashboard/search', icon: Search },
               { id: 'reflect', label: 'Reflect', href: '/reflect', icon: MessageCircle },
               { id: 'feed', label: 'Feed', href: '/dashboard', icon: Rss },
               { id: 'wellness', label: 'Wellness', href: '/wellness', icon: Heart },
-              { id: 'archive', label: 'Archive', href: '/archive', icon: ArchiveBox },
+              { id: 'archive', label: 'Archive', href: '/archive', icon: Archive },
             ].map((item) => (
               <Link key={item.id} href={item.href}>
                 <button className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition-colors ${
@@ -372,6 +381,6 @@ function TabButton({
           </div>
         </div>
       )}
-    </div>
+    </button>
   )
 }
