@@ -9,30 +9,22 @@ export default async function UserProfilePage({ params }: { params: Promise<{ us
 
   // Use service role client to bypass RLS for the initial profile lookup
   // Falls back to anon client if service role key isn't configured
-  // Note: subscription_tier is NOT a column in the profiles table
+  // NOTE: Many columns (avatar_url, bio, cover_image_url, etc.) were added
+  // by 20260709_social_features.sql migration — it MUST be applied to production.
   let profile: any = null
   try {
     const serviceClient = createServiceRoleClient()
     const result = await serviceClient
       .from('profiles')
-      .select(`
-        id, full_name, display_name, username, avatar_url, bio,
-        cover_image_url, profile_theme, mood_song_url, mood_song_title,
-        is_public_profile, share_default, show_in_discover
-      `)
+      .select('id, username, display_name, full_name, is_public_profile')
       .eq('username', username)
       .single()
     profile = result.data
   } catch {
-    // Fallback to anon client if service role client fails
     const anonClient = await createClient()
     const { data } = await anonClient
       .from('profiles')
-      .select(`
-        id, full_name, display_name, username, avatar_url, bio,
-        cover_image_url, profile_theme, mood_song_url, mood_song_title,
-        is_public_profile, share_default, show_in_discover
-      `)
+      .select('id, username, display_name, full_name, is_public_profile')
       .eq('username', username)
       .single()
     profile = data
@@ -43,6 +35,14 @@ export default async function UserProfilePage({ params }: { params: Promise<{ us
   }
 
   const profileWithDefaults = {
+    avatar_url: null,
+    bio: null,
+    cover_image_url: null,
+    profile_theme: null,
+    mood_song_url: null,
+    mood_song_title: null,
+    share_default: 'private' as const,
+    show_in_discover: false,
     subscription_tier: 'free',
     ...profile,
   } as ProfileWithSocial
@@ -72,7 +72,7 @@ export default async function UserProfilePage({ params }: { params: Promise<{ us
     .from('whiteboard_entries')
     .select(`
       *,
-      author:profiles(id, full_name, display_name, username, avatar_url)
+      author:profiles(id, full_name, display_name, username)
     `)
     .eq('profile_user_id', profile.id)
     .order('created_at', { ascending: false })
