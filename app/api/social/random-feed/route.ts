@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getAuthUser, createClient } from '@/lib/supabase/server'
+import { getAuthUser, createServiceRoleClient } from '@/lib/supabase/server'
 
 export async function GET() {
   try {
@@ -8,7 +8,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const supabase = await createClient()
+    const supabase = createServiceRoleClient()
 
     const { data: friendIds } = await supabase
       .from('friends')
