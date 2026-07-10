@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { ProfilePageClient } from './ProfilePageClient'
 import type { ProfileWithSocial } from '@/lib/types/social'
+import { decryptIfEncrypted } from '@/lib/utils/crypto'
 
 export default async function UserProfilePage({ params }: { params: Promise<{ username: string }> }) {
   const raw = (await params).username
@@ -78,10 +79,16 @@ export default async function UserProfilePage({ params }: { params: Promise<{ us
     .order('created_at', { ascending: false })
     .limit(20)
 
+  // Decrypt reflection_text for public viewing (stored encrypted, per encryption-at-rest)
+  const decryptedReflections = (reflections || []).map((r) => ({
+    ...r,
+    reflection_text: decryptIfEncrypted(r.reflection_text) || r.reflection_text,
+  }))
+
   return (
     <ProfilePageClient
       profile={profileWithDefaults}
-      reflections={reflections || []}
+      reflections={decryptedReflections}
       whiteboard={whiteboard || []}
     />
   )
