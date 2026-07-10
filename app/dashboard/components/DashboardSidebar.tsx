@@ -22,6 +22,7 @@ import {
   Trophy,
   X,
   List,
+  MagnifyingGlass,
 } from "phosphor-react"
 import Link from "next/link"
 import { getSupabaseClient } from "@/lib/supabase/client"
@@ -35,6 +36,8 @@ import {
 } from "@/lib/services/cacheService"
 import { cn } from "@/lib/utils"
 import { NotificationBell } from "@/components/social/NotificationBell"
+import { WhoToFollow } from "./WhoToFollow"
+import { TrendingTopics } from "./TrendingTopics"
 
 export function DashboardSidebar() {
   const router = useRouter()
@@ -56,6 +59,7 @@ export function DashboardSidebar() {
 
   const sidebarNav = [
     { icon: Layout, label: "dashboard", href: "/dashboard", active: isActive("/") },
+    { icon: MagnifyingGlass, label: "search", href: "/search", active: isActive("/search") },
     { icon: PencilLine, label: "reflect", href: "/reflect", active: isActive("/reflect") },
     { icon: Rss, label: "feed", href: "/feed", active: isActive("/feed") },
     { icon: UserPlus, label: "friends", href: "/friends", active: isActive("/friends") },
@@ -71,6 +75,7 @@ export function DashboardSidebar() {
 
   const mobileNav = [
     { id: "home", label: t("nav.dashboard"), href: "/dashboard", active: isActive("/") },
+    { id: "search", label: "Search", href: "/dashboard/search", active: isActive("/search") },
     { id: "reflect", label: t("nav.reflect"), href: "/reflect", active: isActive("/reflect") },
     { id: "feed", label: t("nav.feed"), href: "/feed", active: isActive("/feed") },
     { id: "wellness", label: t("nav.wellness"), href: "/wellness", active: isActive("/wellness") },
@@ -330,6 +335,15 @@ export function DashboardSidebar() {
                 </Link>
               ))}
             </nav>
+
+            {/* ─── Mobile Drawer: Trends & Suggestions ─── */}
+            <div className="px-3 space-y-3 pb-3">
+              <div className={`border-t pt-3 ${isDark ? "border-white/[0.06]" : "border-[#EFF3F4]"}`}>
+                <TrendingTopics />
+              </div>
+              <WhoToFollow />
+            </div>
+
             {userProfile && (
               <div className={`px-4 py-4 border-t ${isDark ? "border-white/[0.06]" : "border-[#EFF3F4]"}`}>
                 <div className="flex items-center gap-3">
@@ -372,8 +386,8 @@ export function DashboardSidebar() {
                 }`}
               >
                 {item.id === "home" && <House size={22} weight={item.active ? "fill" : "regular"} />}
+                {item.id === "search" && <MagnifyingGlass size={22} weight={item.active ? "fill" : "regular"} />}
                 {item.id === "reflect" && <PencilLine size={22} weight={item.active ? "fill" : "regular"} />}
-                {item.id === "feed" && <Rss size={22} weight={item.active ? "fill" : "regular"} />}
                 {item.id === "wellness" && <Heart size={22} weight={item.active ? "fill" : "regular"} />}
                 {item.id === "archive" && <ArchiveBox size={22} weight={item.active ? "fill" : "regular"} />}
                 <span className="text-[10px] font-medium leading-none">{item.label}</span>

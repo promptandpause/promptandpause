@@ -27,7 +27,7 @@ export async function GET() {
       .select(`
         id, prompt_text, reflection_text, mood, tags, word_count, visibility, allow_comments, created_at,
         user_id,
-        profile:profiles!reflections_user_id_fkey(id, full_name, display_name, username, avatar_url)
+        profile:profiles!inner(id, full_name, display_name, username, avatar_url)
       `)
       .neq('visibility', 'private')
       .order('created_at', { ascending: false })

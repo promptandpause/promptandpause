@@ -9,7 +9,7 @@ export function DashboardRightSidebar() {
   const isDark = theme === 'dark'
 
   return (
-    <aside className="hidden xl:block w-[350px] shrink-0 h-screen overflow-y-auto scrollbar-hide py-3 px-4 space-y-4">
+    <aside className="hidden lg:block w-[320px] xl:w-[350px] shrink-0 h-screen overflow-y-auto scrollbar-hide py-3 px-3 xl:px-4 space-y-4">
       <div className="sticky top-3 space-y-4">
         <WhoToFollow />
         <TrendingTopics />

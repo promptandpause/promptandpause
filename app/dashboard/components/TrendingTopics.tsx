@@ -66,7 +66,7 @@ export function TrendingTopics() {
             initial={{ opacity: 0, x: -5 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: i * 0.05 }}
-            onClick={() => router.push('/dashboard')}
+            onClick={() => router.push(`/dashboard/search?tag=${encodeURIComponent(item.tag)}`)}
             className={`flex items-center gap-3 px-2 py-2.5 rounded-xl cursor-pointer transition-colors ${
               isDark ? 'hover:bg-white/[0.04]' : 'hover:bg-[#F7F9FA]'
             }`}
@@ -85,7 +85,7 @@ export function TrendingTopics() {
         ))}
       </div>
       <button
-        onClick={() => router.push('/dashboard')}
+        onClick={() => router.push('/dashboard/search')}
         className={`text-sm mt-3 transition-colors ${isDark ? 'text-[#1D9BF0] hover:text-[#1A8CD8]' : 'text-[#1D9BF0] hover:text-[#1A8CD8]'}`}
       >
         Show more

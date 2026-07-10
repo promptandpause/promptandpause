@@ -6,6 +6,8 @@ import { DashboardSidebar } from "./components/DashboardSidebar"
 import { RandomFeed } from "./components/RandomFeed"
 import { QuickShare } from "@/components/social/QuickShare"
 import YourRhythm from "./components/your-rhythm"
+import { TrendingTopics } from "./components/TrendingTopics"
+import { WhoToFollow } from "./components/WhoToFollow"
 import { useTheme } from "@/contexts/ThemeContext"
 import { useTranslation } from "@/hooks/useTranslation"
 
@@ -249,6 +251,12 @@ function DashboardContent() {
                 </motion.div>
               )}
             </AnimatePresence>
+          </div>
+
+          {/* ─── Mobile inline: trends + suggestions (hidden on lg+) ─── */}
+          <div className="lg:hidden px-4 pb-4 space-y-3">
+            <TrendingTopics />
+            <WhoToFollow />
           </div>
         </main>
       </div>
