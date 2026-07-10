@@ -158,4 +158,6 @@ export interface FeedItem {
     avatar_url: string | null
   }
   comment_count: number
+  like_count: number
+  is_liked_by_me: boolean
 }

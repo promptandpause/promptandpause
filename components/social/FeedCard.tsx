@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { MessageCircle, Globe, Users, Lock } from 'lucide-react'
+import { MessageCircle, Heart, Globe, Users, Lock } from 'lucide-react'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useRouter } from 'next/navigation'
 import { CommentSection } from './CommentSection'
@@ -15,6 +15,8 @@ export function FeedCard({ item }: { item: FeedItem }) {
   const isDark = theme === 'dark'
   const router = useRouter()
   const [showComments, setShowComments] = useState(false)
+  const [liked, setLiked] = useState(item.is_liked_by_me)
+  const [likeCount, setLikeCount] = useState(item.like_count)
 
   const displayName = item.author.display_name || item.author.full_name || item.author.username || 'Someone'
   const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
@@ -85,7 +87,32 @@ export function FeedCard({ item }: { item: FeedItem }) {
       </div>
 
       {/* Actions */}
-      <div className={`px-4 py-2.5 border-t ${isDark ? 'border-white/[0.06]' : 'border-[#EFF3F4]'}`}>
+      <div className={`px-4 py-2.5 border-t ${isDark ? 'border-white/[0.06]' : 'border-[#EFF3F4]'} flex items-center gap-1`}>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={async () => {
+            const res = await fetch('/api/social/likes', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ reflection_id: item.reflection.id }),
+            })
+            if (res.ok) {
+              setLiked(!liked)
+              setLikeCount(c => liked ? c - 1 : c + 1)
+            }
+          }}
+          className={`text-xs gap-1.5 ${
+            liked
+              ? 'text-pink-500 hover:text-pink-600'
+              : isDark
+                ? 'text-white/40 hover:text-white hover:bg-white/5'
+                : 'text-[#8B98A5] hover:text-[#536471] hover:bg-[#F7F9FA]'
+          }`}
+        >
+          <Heart className="h-3.5 w-3.5" fill={liked ? 'currentColor' : 'none'} />
+          {likeCount > 0 ? likeCount : 'Like'}
+        </Button>
         <Button
           variant="ghost"
           size="sm"

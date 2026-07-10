@@ -34,6 +34,7 @@ import {
   invalidateCacheOnLogout,
 } from "@/lib/services/cacheService"
 import { cn } from "@/lib/utils"
+import { NotificationBell } from "@/components/social/NotificationBell"
 
 export function DashboardSidebar() {
   const router = useRouter()
@@ -154,8 +155,8 @@ export function DashboardSidebar() {
       {/* ─── Desktop Sidebar ─── */}
       <div className="hidden md:block flex-shrink-0 w-[240px] xl:w-[275px]">
         <div className="h-screen flex flex-col overflow-y-auto scrollbar-hide px-3 py-2 fixed w-[240px] xl:w-[275px]">
-          {/* Logo */}
-          <div className="px-3 py-3 mb-1">
+          {/* Logo + Notifications */}
+          <div className="px-3 py-3 mb-1 flex items-center justify-between">
             <Link href="/dashboard" className="inline-flex items-center gap-2">
               <img
                 className={`h-8 ${isDark ? "invert" : ""}`}
@@ -163,6 +164,7 @@ export function DashboardSidebar() {
                 src="https://res.cloudinary.com/dh1rrfpmq/image/upload/v1766460430/prompt_pause-JRsbZR3dxCXndC8YMcyX6XU3XeT2Vw_vdvqfj.svg"
               />
             </Link>
+            <NotificationBell />
           </div>
 
           {/* Navigation */}
@@ -271,11 +273,14 @@ export function DashboardSidebar() {
               src="https://res.cloudinary.com/dh1rrfpmq/image/upload/v1766460430/prompt_pause-JRsbZR3dxCXndC8YMcyX6XU3XeT2Vw_vdvqfj.svg"
             />
           </Link>
-          <Link href="/settings">
-            <button className={`p-2 -mr-2 rounded-lg transition-colors ${isDark ? "hover:bg-white/10" : "hover:bg-[#EFF3F4]"}`} aria-label="Settings">
-              <Gear size={20} weight="bold" className={isDark ? "text-white/50" : "text-[#536471]"} />
-            </button>
-          </Link>
+          <div className="flex items-center gap-1">
+            <NotificationBell />
+            <Link href="/settings">
+              <button className={`p-2 -mr-2 rounded-lg transition-colors ${isDark ? "hover:bg-white/10" : "hover:bg-[#EFF3F4]"}`} aria-label="Settings">
+                <Gear size={20} weight="bold" className={isDark ? "text-white/50" : "text-[#536471]"} />
+              </button>
+            </Link>
+          </div>
         </div>
       </div>
 

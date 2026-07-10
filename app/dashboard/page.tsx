@@ -4,6 +4,7 @@ import { AuthGuard } from "@/components/auth/AuthGuard"
 import GlobalDataSync from "./components/global-data-sync"
 import { DashboardSidebar } from "./components/DashboardSidebar"
 import { RandomFeed } from "./components/RandomFeed"
+import { QuickShare } from "@/components/social/QuickShare"
 import YourRhythm from "./components/your-rhythm"
 import { useTheme } from "@/contexts/ThemeContext"
 import { useTranslation } from "@/hooks/useTranslation"
@@ -140,19 +141,9 @@ function DashboardContent() {
             </div>
           </div>
 
-          {/* Compose box */}
+          {/* Compose / Quick Share */}
           <div className={`px-4 py-3 border-b ${isDark ? "border-white/[0.06]" : "border-[#EFF3F4]"}`}>
-            <Link
-              href="/archive"
-              className={`flex items-center gap-3 rounded-2xl px-4 py-2.5 transition-colors ${
-                isDark ? "bg-white/[0.03] hover:bg-white/[0.06]" : "bg-[#F7F9FA] hover:bg-[#EFF3F4]"
-              }`}
-            >
-              <Sparkle size={18} weight="bold" className={isDark ? "text-[#1D9BF0]" : "text-[#1D9BF0]"} />
-              <span className={`text-sm ${isDark ? "text-white/30" : "text-[#8B98A5]"}`}>
-                Share your reflection...
-              </span>
-            </Link>
+            <QuickShare onShared={() => {}} />
           </div>
 
           {/* Upgrade CTA for free users */}

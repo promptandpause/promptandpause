@@ -47,15 +47,23 @@ export async function GET(request: NextRequest) {
 
     const reflectionIds = (reflections || []).map(r => r.id)
     let commentCounts: Record<string, number> = {}
+    let likeCounts: Record<string, number> = {}
+    let userLikedSet = new Set<string>()
 
     if (reflectionIds.length > 0) {
-      const { data: counts } = await supabase
-        .from('comments')
-        .select('reflection_id')
-        .in('reflection_id', reflectionIds)
+      const [{ data: counts }] = await Promise.all([
+        supabase.from('comments').select('reflection_id').in('reflection_id', reflectionIds),
+      ])
+      ;(counts as any[])?.forEach((c: any) => { commentCounts[c.reflection_id] = (commentCounts[c.reflection_id] || 0) + 1 })
 
-      counts?.forEach(c => {
-        commentCounts[c.reflection_id] = (commentCounts[c.reflection_id] || 0) + 1
+      let likes: { reflection_id: string; user_id: string }[] | null = null
+      try {
+        const { data } = await supabase.from('reflection_likes').select('reflection_id, user_id').in('reflection_id', reflectionIds)
+        likes = data as any
+      } catch {}
+      likes?.forEach((l: any) => {
+        likeCounts[l.reflection_id] = (likeCounts[l.reflection_id] || 0) + 1
+        if (l.user_id === user.id) userLikedSet.add(l.reflection_id)
       })
     }
 
@@ -73,6 +81,8 @@ export async function GET(request: NextRequest) {
       },
       author: r.profiles,
       comment_count: commentCounts[r.id] || 0,
+      like_count: likeCounts[r.id] || 0,
+      is_liked_by_me: userLikedSet.has(r.id),
     }))
 
     return NextResponse.json({

@@ -1,0 +1,88 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { getAuthUser, createClient, createServiceRoleClient } from '@/lib/supabase/server'
+
+export async function GET(request: NextRequest) {
+  try {
+    const user = await getAuthUser()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { searchParams } = new URL(request.url)
+    const reflectionId = searchParams.get('reflection_id')
+
+    if (!reflectionId) {
+      return NextResponse.json({ error: 'reflection_id is required' }, { status: 400 })
+    }
+
+    const supabase = createServiceRoleClient()
+
+    const { count } = await supabase
+      .from('reflection_likes')
+      .select('id', { count: 'exact', head: true })
+      .eq('reflection_id', reflectionId)
+
+    const { data: userLike } = await supabase
+      .from('reflection_likes')
+      .select('id')
+      .eq('reflection_id', reflectionId)
+      .eq('user_id', user.id)
+      .maybeSingle()
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        count: count || 0,
+        is_liked_by_me: !!userLike,
+      },
+    })
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || 'Failed to fetch likes' },
+      { status: 500 }
+    )
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const user = await getAuthUser()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { reflection_id } = await request.json()
+    if (!reflection_id) {
+      return NextResponse.json({ error: 'reflection_id is required' }, { status: 400 })
+    }
+
+    const supabase = createServiceRoleClient()
+
+    const { data: existing } = await supabase
+      .from('reflection_likes')
+      .select('id')
+      .eq('reflection_id', reflection_id)
+      .eq('user_id', user.id)
+      .maybeSingle()
+
+    if (existing) {
+      await supabase
+        .from('reflection_likes')
+        .delete()
+        .eq('id', existing.id)
+
+      return NextResponse.json({ success: true, data: { liked: false } })
+    }
+
+    await supabase
+      .from('reflection_likes')
+      .insert({ reflection_id, user_id: user.id })
+
+    return NextResponse.json({ success: true, data: { liked: true } })
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || 'Failed to toggle like' },
+      { status: 500 }
+    )
+  }
+}
