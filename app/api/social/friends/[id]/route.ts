@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser, createClient } from '@/lib/supabase/server'
+import { getAuthUser, createClient, createServiceRoleClient } from '@/lib/supabase/server'
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -70,7 +70,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 
     const { id } = await params
 
-    const supabase = await createClient()
+    const supabase = await createServiceRoleClient()
 
     const { data: friend } = await supabase
       .from('friends')

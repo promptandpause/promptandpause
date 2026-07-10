@@ -22,7 +22,6 @@ import {
   Trophy,
   X,
   List,
-  MagnifyingGlass,
 } from "phosphor-react"
 import Link from "next/link"
 import { getSupabaseClient } from "@/lib/supabase/client"
@@ -66,7 +65,7 @@ export function DashboardSidebar() {
   const sidebarNav = [
     { icon: Layout, label: "dashboard", href: "/dashboard", active: isActive("/") },
     { icon: UserCircle, label: "my_profile", href: "/", active: false, isProfile: true },
-    { icon: MagnifyingGlass, label: "search", href: "/search", active: isActive("/search") },
+
     { icon: PencilLine, label: "reflect", href: "/reflect", active: isActive("/reflect") },
     { icon: Rss, label: "feed", href: "/dashboard/feed", active: isActive("/dashboard/feed") },
     { icon: UserPlus, label: "friends", href: "/friends", active: isActive("/friends") },
@@ -81,7 +80,7 @@ export function DashboardSidebar() {
 
   const mobileNav = [
     { id: "home", icon: House, label: t("nav.dashboard"), href: "/dashboard", active: isActive("/") },
-    { id: "search", icon: MagnifyingGlass, label: "Search", href: "/dashboard/search", active: isActive("/search") },
+
     { id: "reflect", icon: PencilLine, label: t("nav.reflect"), href: "/reflect", active: isActive("/reflect") },
     { id: "feed", icon: Rss, label: t("nav.feed"), href: "/dashboard/feed", active: isActive("/dashboard/feed") },
     { id: "wellness", icon: Heart, label: t("nav.wellness"), href: "/wellness", active: isActive("/wellness") },

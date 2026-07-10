@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { User, MessageCircle, Music, Palette, Sparkles, Lock, Pencil, Settings, Layout, Archive, House, Search, Heart, Rss } from 'lucide-react'
+import { User, MessageCircle, Music, Palette, Sparkles, Lock, Pencil, Settings, Layout, Archive, House, Heart, Rss } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { useTheme } from '@/contexts/ThemeContext'
@@ -10,6 +10,7 @@ import { FriendButton } from '@/components/social/FriendButton'
 import { WhiteboardSection } from '@/components/social/WhiteboardSection'
 import { WhoToFollow } from '@/app/dashboard/components/WhoToFollow'
 import { TrendingTopics } from '@/app/dashboard/components/TrendingTopics'
+import { SearchBar } from '@/app/dashboard/components/SearchBar'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import type { ProfileWithSocial, WhiteboardEntry } from '@/lib/types/social'
@@ -307,6 +308,7 @@ export function ProfilePageClient({
       {/* Right Sidebar */}
       <aside className="hidden lg:block w-[320px] xl:w-[350px] shrink-0 pt-4">
         <div className="sticky top-3 space-y-4">
+          <SearchBar />
           <WhoToFollow />
           <TrendingTopics />
         </div>
@@ -361,7 +363,6 @@ function TabButton({
           <div className="flex items-center justify-around h-14">
             {[
               { id: 'home', label: 'Home', href: '/dashboard', icon: House },
-              { id: 'search', label: 'Search', href: '/dashboard/search', icon: Search },
               { id: 'reflect', label: 'Reflect', href: '/reflect', icon: MessageCircle },
               { id: 'feed', label: 'Feed', href: '/dashboard', icon: Rss },
               { id: 'wellness', label: 'Wellness', href: '/wellness', icon: Heart },

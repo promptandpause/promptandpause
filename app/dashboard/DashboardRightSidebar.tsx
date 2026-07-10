@@ -2,6 +2,7 @@
 
 import { WhoToFollow } from './components/WhoToFollow'
 import { TrendingTopics } from './components/TrendingTopics'
+import { SearchBar } from './components/SearchBar'
 import { useTheme } from '@/contexts/ThemeContext'
 
 export function DashboardRightSidebar() {
@@ -11,6 +12,7 @@ export function DashboardRightSidebar() {
   return (
     <aside className="hidden lg:block w-[320px] xl:w-[350px] shrink-0 h-screen overflow-y-auto scrollbar-hide py-3 px-3 xl:px-4 space-y-4">
       <div className="sticky top-3 space-y-4">
+        <SearchBar />
         <WhoToFollow />
         <TrendingTopics />
         <p className={`text-xs leading-relaxed px-1 ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`}>

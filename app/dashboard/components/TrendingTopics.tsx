@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useTheme } from '@/contexts/ThemeContext'
-import { useRouter } from 'next/navigation'
-import { Hash, CaretRight } from 'phosphor-react'
+import { Hash } from 'phosphor-react'
 
 interface TrendingTag {
   tag: string
@@ -16,7 +15,6 @@ export function TrendingTopics() {
   const isDark = theme === 'dark'
   const [trending, setTrending] = useState<TrendingTag[]>([])
   const [loading, setLoading] = useState(true)
-  const router = useRouter()
 
   useEffect(() => {
     loadTrending()
@@ -66,9 +64,8 @@ export function TrendingTopics() {
             initial={{ opacity: 0, x: -5 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: i * 0.05 }}
-            onClick={() => router.push(`/dashboard/search?tag=${encodeURIComponent(item.tag)}`)}
-            className={`flex items-center gap-3 px-2 py-2.5 rounded-xl cursor-pointer transition-colors ${
-              isDark ? 'hover:bg-white/[0.04]' : 'hover:bg-[#F7F9FA]'
+            className={`flex items-center gap-3 px-2 py-2.5 rounded-xl transition-colors ${
+              isDark ? '' : ''
             }`}
           >
             <Hash size={16} weight="bold" className={`shrink-0 ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`} />
@@ -80,16 +77,10 @@ export function TrendingTopics() {
                 {item.count} {item.count === 1 ? 'reflection' : 'reflections'}
               </p>
             </div>
-            <CaretRight size={14} weight="bold" className={`shrink-0 ${isDark ? 'text-white/15' : 'text-[#CFD9DE]'}`} />
           </motion.div>
         ))}
       </div>
-      <button
-        onClick={() => router.push('/dashboard/search')}
-        className={`text-sm mt-3 transition-colors ${isDark ? 'text-[#1D9BF0] hover:text-[#1A8CD8]' : 'text-[#1D9BF0] hover:text-[#1A8CD8]'}`}
-      >
-        Show more
-      </button>
+
     </div>
   )
 }

@@ -39,10 +39,10 @@ export function WhoToFollow() {
 
   async function handleFollow(userId: string) {
     try {
-      await fetch('/api/social/friends', {
+      await fetch('/api/social/follow', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ addressee_id: userId }),
+        body: JSON.stringify({ target_id: userId }),
       })
       setFollowedIds(prev => new Set(prev).add(userId))
     } catch {}
