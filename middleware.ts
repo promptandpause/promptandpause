@@ -96,13 +96,6 @@ export default async function proxy(request: NextRequest) {
   const hostname = request.headers.get('host') || ''
   const isAdminSubdomain = hostname.startsWith('admin.')
 
-  // Rewrite /@username to /username (profile pages, Twitter-style)
-  if (pathname.startsWith('/@') && pathname.length > 2) {
-    const username = pathname.slice(2)
-    request.nextUrl.pathname = `/${username}`
-    return NextResponse.rewrite(request.nextUrl)
-  }
-
   // Skip proxy for static files, profile pages, and public assets
   if (
     pathname.startsWith('/_next') ||
@@ -111,7 +104,7 @@ export default async function proxy(request: NextRequest) {
     pathname.startsWith('/api/auth') ||
     pathname.startsWith('/api/admin/verify-access') ||
     isStaticFile(pathname) ||
-    /^\/[a-zA-Z0-9_.-]+$/.test(pathname) // profile pages /[username]
+    /^\/@?[a-zA-Z0-9_.-]+$/.test(pathname) // profile pages /[username] or /@[username]
   ) {
     return NextResponse.next()
   }
