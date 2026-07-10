@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, createElement } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -54,9 +54,13 @@ export function DashboardSidebar() {
 
   const isDark = theme === "dark"
 
-  const isActive = (cleanHref: string) => {
-    const dashboardHref = cleanHref === '/' ? '/dashboard' : `/dashboard${cleanHref}`
-    return pathname === cleanHref || pathname === dashboardHref
+  const isActive = (href: string) => {
+    if (pathname === href) return true
+    if (href === '/' && pathname === '/dashboard') return true
+    if (!href.startsWith('/dashboard')) {
+      return pathname === `/dashboard${href}`
+    }
+    return false
   }
 
   const sidebarNav = [
@@ -64,7 +68,7 @@ export function DashboardSidebar() {
     { icon: UserCircle, label: "my_profile", href: "/", active: false, isProfile: true },
     { icon: MagnifyingGlass, label: "search", href: "/search", active: isActive("/search") },
     { icon: PencilLine, label: "reflect", href: "/reflect", active: isActive("/reflect") },
-    { icon: Rss, label: "feed", href: "/feed", active: isActive("/feed") },
+    { icon: Rss, label: "feed", href: "/dashboard/feed", active: isActive("/dashboard/feed") },
     { icon: UserPlus, label: "friends", href: "/friends", active: isActive("/friends") },
     { icon: Heart, label: "wellness", href: "/wellness", active: isActive("/wellness") },
     { icon: ArchiveBox, label: "archive", href: "/archive", active: isActive("/archive") },
@@ -76,12 +80,12 @@ export function DashboardSidebar() {
   ]
 
   const mobileNav = [
-    { id: "home", label: t("nav.dashboard"), href: "/dashboard", active: isActive("/") },
-    { id: "search", label: "Search", href: "/dashboard/search", active: isActive("/search") },
-    { id: "reflect", label: t("nav.reflect"), href: "/reflect", active: isActive("/reflect") },
-    { id: "feed", label: t("nav.feed"), href: "/feed", active: isActive("/feed") },
-    { id: "wellness", label: t("nav.wellness"), href: "/wellness", active: isActive("/wellness") },
-    { id: "archive", label: t("nav.archive"), href: "/archive", active: isActive("/archive") },
+    { id: "home", icon: House, label: t("nav.dashboard"), href: "/dashboard", active: isActive("/") },
+    { id: "search", icon: MagnifyingGlass, label: "Search", href: "/dashboard/search", active: isActive("/search") },
+    { id: "reflect", icon: PencilLine, label: t("nav.reflect"), href: "/reflect", active: isActive("/reflect") },
+    { id: "feed", icon: Rss, label: t("nav.feed"), href: "/dashboard/feed", active: isActive("/dashboard/feed") },
+    { id: "wellness", icon: Heart, label: t("nav.wellness"), href: "/wellness", active: isActive("/wellness") },
+    { id: "archive", icon: ArchiveBox, label: t("nav.archive"), href: "/archive", active: isActive("/archive") },
   ]
 
   useEffect(() => {
@@ -408,12 +412,7 @@ export function DashboardSidebar() {
                       : "text-[#536471]"
                 }`}
               >
-                {item.id === "home" && <House size={22} weight={item.active ? "fill" : "regular"} />}
-                {item.id === "search" && <MagnifyingGlass size={22} weight={item.active ? "fill" : "regular"} />}
-                {item.id === "reflect" && <PencilLine size={22} weight={item.active ? "fill" : "regular"} />}
-                {item.id === "feed" && <Rss size={22} weight={item.active ? "fill" : "regular"} />}
-                {item.id === "wellness" && <Heart size={22} weight={item.active ? "fill" : "regular"} />}
-                {item.id === "archive" && <ArchiveBox size={22} weight={item.active ? "fill" : "regular"} />}
+                {createElement(item.icon, { size: 22, weight: item.active ? "fill" : "regular" })}
                 <span className="text-[10px] font-medium leading-none">{item.label}</span>
               </button>
             </Link>

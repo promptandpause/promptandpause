@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getAuthUser, createServiceRoleClient } from '@/lib/supabase/server'
+import { getAuthUser, createClient } from '@/lib/supabase/server'
 
 export async function GET() {
   try {
@@ -8,7 +8,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const supabase = createServiceRoleClient()
+    const supabase = await createClient()
 
     const { data: friendIds } = await supabase
       .from('friends')
@@ -22,7 +22,11 @@ export async function GET() {
       if (f.addressee_id !== user.id) friendIdSet.add(f.addressee_id)
     })
 
-    // Get ALL non-private reflections, then filter in-memory for friends_only visibility
+    // RLS handles visibility filtering automatically:
+    //   - public  → any authenticated user can view
+    //   - friends_only → only accepted friends can view
+    //   - private → only the owner
+    // We exclude private explicitly and rely on RLS for the rest.
     const { data, error } = await supabase
       .from('reflections')
       .select(`
@@ -31,12 +35,13 @@ export async function GET() {
         profile:profiles!inner(id, full_name, display_name, username, avatar_url)
       `)
       .neq('visibility', 'private')
+      .neq('user_id', user.id)
       .order('created_at', { ascending: false })
       .limit(50)
 
     if (error) throw error
 
-    // Filter: only public (all users) + friends_only from friends
+    // Defensive in-memory filter (RLS should already handle it)
     const visible = (data || []).filter(r =>
       r.visibility === 'public' ||
       (r.visibility === 'friends_only' && friendIdSet.has(r.user_id))
@@ -51,27 +56,30 @@ export async function GET() {
     }))
 
     // Enrich with like counts
-    try {
-      const ids = enriched.map(r => r.id)
-      if (ids.length > 0) {
-        const { data: likes } = await supabase
+    const ids = enriched.map(r => r.id)
+    if (ids.length > 0) {
+      let likes: { reflection_id: string; user_id: string }[] = []
+      try {
+        const { data } = await supabase
           .from('reflection_likes')
           .select('reflection_id, user_id')
+          .in('reflection_id', ids)
+        likes = (data || []) as any
+      } catch {}
 
-        const userLikedSet = new Set(
-          likes?.filter(l => l.user_id === user.id).map(l => l.reflection_id) || []
-        )
-        const countMap: Record<string, number> = {}
-        likes?.forEach(l => { countMap[l.reflection_id] = (countMap[l.reflection_id] || 0) + 1 })
-        ids.forEach(id => {
-          const e = enriched.find(e => e.id === id)
-          if (e) {
-            e.like_count = countMap[id] || 0
-            e.is_liked_by_me = userLikedSet.has(id)
-          }
-        })
-      }
-    } catch {}
+      const userLikedSet = new Set(
+        likes.filter(l => l.user_id === user.id).map(l => l.reflection_id)
+      )
+      const countMap: Record<string, number> = {}
+      likes.forEach(l => { countMap[l.reflection_id] = (countMap[l.reflection_id] || 0) + 1 })
+      ids.forEach(id => {
+        const e = enriched.find(e => e.id === id)
+        if (e) {
+          e.like_count = countMap[id] || 0
+          e.is_liked_by_me = userLikedSet.has(id)
+        }
+      })
+    }
 
     return NextResponse.json({ success: true, data: enriched })
   } catch (error: any) {
