@@ -90,3 +90,49 @@ export async function POST(request: NextRequest) {
     )
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const user = await getAuthUser()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { searchParams } = new URL(request.url)
+    const entryId = searchParams.get('id')
+
+    if (!entryId) {
+      return NextResponse.json({ error: 'id query param is required' }, { status: 400 })
+    }
+
+    const supabase = await createClient()
+
+    const { data: entry } = await supabase
+      .from('whiteboard_entries')
+      .select('id, author_id, profile_user_id')
+      .eq('id', entryId)
+      .single()
+
+    if (!entry) {
+      return NextResponse.json({ error: 'Entry not found' }, { status: 404 })
+    }
+
+    if (entry.author_id !== user.id && entry.profile_user_id !== user.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
+    }
+
+    const { error } = await supabase
+      .from('whiteboard_entries')
+      .delete()
+      .eq('id', entryId)
+
+    if (error) throw error
+
+    return NextResponse.json({ success: true, message: 'Entry deleted' })
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || 'Failed to delete whiteboard entry' },
+      { status: 500 }
+    )
+  }
+}

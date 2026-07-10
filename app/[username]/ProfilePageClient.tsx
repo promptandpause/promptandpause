@@ -1,14 +1,15 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { User, MessageCircle, Music, Palette, Sparkles, Lock, Pencil, Settings, Layout, Archive } from 'lucide-react'
+import { User, MessageCircle, Music, Palette, Sparkles, Lock, Pencil, Settings, Layout, Archive, House, MagnifyingGlass, Heart, Rss, ArchiveBox } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { useTheme } from '@/contexts/ThemeContext'
 import { FriendButton } from '@/components/social/FriendButton'
 import { WhiteboardSection } from '@/components/social/WhiteboardSection'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import type { ProfileWithSocial, WhiteboardEntry } from '@/lib/types/social'
 
 interface Reflection {
@@ -37,6 +38,17 @@ export function ProfilePageClient({
   const { theme } = useTheme()
   const isDark = theme === 'dark'
   const [activeTab, setActiveTab] = useState<'reflections' | 'whiteboard'>('reflections')
+  const [loggedInUserId, setLoggedInUserId] = useState<string | null>(null)
+  const pathname = usePathname()
+
+  useEffect(() => {
+    fetch('/api/user/profile')
+      .then(r => r.ok ? r.json() : Promise.resolve(null))
+      .then(d => setLoggedInUserId(d?.data?.id || null))
+      .catch(() => {})
+  }, [])
+
+  const isActive = (path: string) => pathname.startsWith(path)
 
   const accentColor = profile.profile_theme?.accent_color || (isDark ? '#1D9BF0' : '#1D9BF0')
 
@@ -173,7 +185,7 @@ export function ProfilePageClient({
         </div>
 
         {/* Tab Content */}
-        <div className="mt-4 sm:mt-6 pb-20 sm:pb-16">
+        <div className="mt-4 sm:mt-6 pb-20 sm:pb-16 md:pb-16">
           {isPrivate ? (
             <div className={`rounded-2xl p-8 sm:p-10 text-center ${isDark ? 'bg-white/[0.03] border border-white/[0.06]' : 'bg-white/60 border border-[#EFF3F4]'}`}>
               <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${isDark ? 'bg-white/[0.06]' : 'bg-[#EFF3F4]'}`}>
@@ -274,6 +286,7 @@ export function ProfilePageClient({
             <WhiteboardSection
               profileUserId={profile.id}
               entries={whiteboard}
+              isOwnProfile={isOwnProfile}
             />
           )}
         </div>
@@ -312,6 +325,35 @@ function TabButton({
           style={{ backgroundColor: accentColor }}
         />
       )}
-    </button>
+
+      {/* ─── Mobile Bottom Tab Bar (when logged in) ─── */}
+      {loggedInUserId && (
+        <div className={`md:hidden fixed bottom-0 left-0 right-0 z-40 pb-[env(safe-area-inset-bottom,0px)] ${
+          isDark ? 'bg-[#0A0A0A]/90 backdrop-blur-lg border-t border-white/[0.06]' : 'bg-white/90 backdrop-blur-lg border-t border-[#EFF3F4]'
+        }`}>
+          <div className="flex items-center justify-around h-14">
+            {[
+              { id: 'home', label: 'Home', href: '/dashboard', icon: House },
+              { id: 'search', label: 'Search', href: '/dashboard/search', icon: MagnifyingGlass },
+              { id: 'reflect', label: 'Reflect', href: '/reflect', icon: MessageCircle },
+              { id: 'feed', label: 'Feed', href: '/dashboard', icon: Rss },
+              { id: 'wellness', label: 'Wellness', href: '/wellness', icon: Heart },
+              { id: 'archive', label: 'Archive', href: '/archive', icon: ArchiveBox },
+            ].map((item) => (
+              <Link key={item.id} href={item.href}>
+                <button className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition-colors ${
+                  isActive(item.href)
+                    ? isDark ? 'text-white' : 'text-[#1D9BF0]'
+                    : isDark ? 'text-white/30' : 'text-[#8B98A5]'
+                }`}>
+                  <item.icon size={20} />
+                  <span className="text-[10px] font-medium leading-none">{item.label}</span>
+                </button>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   )
 }

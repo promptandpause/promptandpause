@@ -15,7 +15,7 @@ import { useEffect, useState, useCallback } from "react"
 import { getSupabaseClient } from "@/lib/supabase/client"
 import { trackEventOncePerSession } from "@/lib/services/eventsService"
 import { motion, AnimatePresence } from "framer-motion"
-import { Rss, Spinner, Wind, Heart, PencilLine, Sun } from "phosphor-react"
+import { Rss, Spinner, Wind, Heart, PencilLine, Sun, ChatCircle, Sparkle } from "phosphor-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
@@ -34,6 +34,8 @@ interface FeedItem {
     username: string
     avatar_url: string
   }
+  like_count: number
+  is_liked_by_me: boolean
 }
 
 export default function DashboardPage() {
@@ -89,6 +91,8 @@ function DashboardContent() {
       const items = (data || []).map((item: any) => ({
         ...item.reflection,
         profile: item.author,
+        like_count: item.like_count || 0,
+        is_liked_by_me: item.is_liked_by_me || false,
       }))
       setFollowingFeed(items)
     } catch {}
@@ -240,6 +244,40 @@ function DashboardContent() {
                                   {item.tags?.slice(0, 3).map((tag: string) => (
                                     <span key={tag} className="text-xs text-[#1D9BF0]">#{tag}</span>
                                   ))}
+                                </div>
+                                <div className="flex items-center gap-6 mt-2">
+                                  <button className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#1D9BF0]' : 'text-[#536471] hover:text-[#1D9BF0]'}`}
+                                    onClick={e => { e.stopPropagation() }}>
+                                    <ChatCircle size={14} weight="bold" /> Reply
+                                  </button>
+                                  <button
+                                    onClick={async e => {
+                                      e.stopPropagation()
+                                      const res = await fetch('/api/social/likes', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ reflection_id: item.id }),
+                                      })
+                                      if (res.ok) {
+                                        setFollowingFeed(prev => prev.map(f =>
+                                          f.id === item.id
+                                            ? { ...f, is_liked_by_me: !f.is_liked_by_me, like_count: f.like_count + (f.is_liked_by_me ? -1 : 1) }
+                                            : f
+                                        ))
+                                      }
+                                    }}
+                                    className={`flex items-center gap-1.5 text-xs transition-colors ${
+                                      item.is_liked_by_me
+                                        ? 'text-pink-500'
+                                        : isDark ? 'text-white/30 hover:text-pink-400' : 'text-[#536471] hover:text-pink-500'
+                                    }`}
+                                  >
+                                    <Heart size={14} weight={item.is_liked_by_me ? 'fill' : 'bold'} /> {item.like_count > 0 ? item.like_count : 'Like'}
+                                  </button>
+                                  <button className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#1D9BF0]' : 'text-[#536471] hover:text-[#1D9BF0]'}`}
+                                    onClick={e => { e.stopPropagation() }}>
+                                    <Sparkle size={14} weight="bold" /> Reflect
+                                  </button>
                                 </div>
                               </div>
                             </div>

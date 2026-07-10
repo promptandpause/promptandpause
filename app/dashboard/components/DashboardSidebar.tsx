@@ -48,6 +48,8 @@ export function DashboardSidebar() {
   const { tier, isLoading: tierLoading } = useTier()
   const [userProfile, setUserProfile] = useState<{ full_name: string; username: string; avatar_url: string; subscription_tier: string } | null>(null)
   const [friendCount, setFriendCount] = useState(0)
+  const [followerCount, setFollowerCount] = useState(0)
+  const [followingCount, setFollowingCount] = useState(0)
   const [loading, setLoading] = useState(true)
 
   const isDark = theme === "dark"
@@ -101,9 +103,10 @@ export function DashboardSidebar() {
           setLoading(false)
         }
 
-        const [profileRes, friendsRes] = await Promise.all([
+        const [profileRes, friendsRes, followRes] = await Promise.all([
           fetch("/api/user/profile"),
           fetch("/api/social/friends"),
+          fetch("/api/social/follow"),
         ])
 
         if (isMounted) {
@@ -131,6 +134,14 @@ export function DashboardSidebar() {
             const { data: friends } = await friendsRes.json()
             if (friends) {
               setFriendCount(friends.filter((f: any) => f.status === "accepted").length)
+            }
+          }
+
+          if (followRes.ok) {
+            const { data: followData } = await followRes.json()
+            if (followData) {
+              setFollowingCount(followData.following_count || 0)
+              setFollowerCount(followData.follower_count || 0)
             }
           }
         }
@@ -245,10 +256,10 @@ export function DashboardSidebar() {
                 </div>
                 <div className="flex items-center gap-4 text-sm mb-3">
                   <span className={`${isDark ? "text-white/30" : "text-[#536471]"}`}>
-                    <span className={`font-semibold ${isDark ? "text-white" : "text-[#0F1419]"}`}>{friendCount}</span> Following
+                    <span className={`font-semibold ${isDark ? "text-white" : "text-[#0F1419]"}`}>{followingCount}</span> Following
                   </span>
                   <span className={`${isDark ? "text-white/30" : "text-[#536471]"}`}>
-                    <span className={`font-semibold ${isDark ? "text-white" : "text-[#0F1419]"}`}>{friendCount}</span> Followers
+                    <span className={`font-semibold ${isDark ? "text-white" : "text-[#0F1419]"}`}>{followerCount}</span> Followers
                   </span>
                 </div>
                 <Link
@@ -400,6 +411,7 @@ export function DashboardSidebar() {
                 {item.id === "home" && <House size={22} weight={item.active ? "fill" : "regular"} />}
                 {item.id === "search" && <MagnifyingGlass size={22} weight={item.active ? "fill" : "regular"} />}
                 {item.id === "reflect" && <PencilLine size={22} weight={item.active ? "fill" : "regular"} />}
+                {item.id === "feed" && <Rss size={22} weight={item.active ? "fill" : "regular"} />}
                 {item.id === "wellness" && <Heart size={22} weight={item.active ? "fill" : "regular"} />}
                 {item.id === "archive" && <ArchiveBox size={22} weight={item.active ? "fill" : "regular"} />}
                 <span className="text-[10px] font-medium leading-none">{item.label}</span>
