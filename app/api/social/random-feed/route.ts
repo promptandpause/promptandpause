@@ -27,12 +27,16 @@ export async function GET() {
     //   - friends_only → only accepted friends can view
     //   - private → only the owner
     // We exclude private explicitly and rely on RLS for the rest.
+    //
+    // NOTE: we intentionally do NOT embed `profiles` here via `profiles!inner(...)`.
+    // reflections.user_id has a foreign key to `users`, not `profiles`, so PostgREST
+    // cannot auto-detect a reflections -> profiles relationship and the embed
+    // fails with a 400. We fetch profiles separately instead.
     const { data, error } = await supabase
       .from('reflections')
       .select(`
         id, prompt_text, reflection_text, mood, tags, word_count, visibility, allow_comments, created_at,
-        user_id,
-        profile:profiles!inner(id, full_name, display_name, username, avatar_url)
+        user_id
       `)
       .neq('visibility', 'private')
       .neq('user_id', user.id)
@@ -47,8 +51,23 @@ export async function GET() {
       (r.visibility === 'friends_only' && friendIdSet.has(r.user_id))
     )
 
+    // Fetch profiles for the authors of the visible reflections (separate query,
+    // since there's no direct FK from reflections to profiles to embed on)
+    const authorIds = [...new Set(visible.map(r => r.user_id))]
+    const profileMap = new Map<string, any>()
+    if (authorIds.length > 0) {
+      const { data: profiles, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, full_name, display_name, username, avatar_url')
+        .in('id', authorIds)
+
+      if (profilesError) throw profilesError
+      profiles?.forEach(p => profileMap.set(p.id, p))
+    }
+
     const enriched = visible.map(r => ({
       ...r,
+      profile: profileMap.get(r.user_id) || null,
       is_from_friend: friendIdSet.has(r.user_id),
       reflection_text: r.reflection_text?.slice(0, 300),
       like_count: 0,
