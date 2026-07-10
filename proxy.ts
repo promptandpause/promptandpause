@@ -106,6 +106,11 @@ export default async function proxy(request: NextRequest) {
     isStaticFile(pathname) ||
     /^\/@?[a-zA-Z0-9_.-]+$/.test(pathname) // profile pages /[username] or /@[username]
   ) {
+    // Rewrite /@username to /username so the `@` doesn't interfere with Next.js routing
+    if (pathname.startsWith('/@')) {
+      const cleanPath = '/' + pathname.slice(2)
+      return NextResponse.rewrite(new URL(cleanPath, request.url))
+    }
     return NextResponse.next()
   }
 
