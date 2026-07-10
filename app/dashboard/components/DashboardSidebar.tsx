@@ -68,8 +68,8 @@ export function DashboardSidebar() {
     { icon: BookmarkSimple, label: "saved", href: "/saved", active: isActive("/saved") },
     { icon: Notebook, label: "my_journals", href: "/journals", active: isActive("/journals") },
     { icon: ChartBar, label: "insights", href: "/insights", active: isActive("/insights") },
+    { icon: UserCircle, label: "my_profile", href: "/", active: false, isProfile: true },
     { icon: Gear, label: "settings", href: "/settings", active: isActive("/settings") },
-    { icon: UserCircle, label: "profile", href: "/settings/profile", active: isActive("/settings/profile") },
     { icon: Trophy, label: "achievements", href: "/achievements", active: isActive("/achievements") },
   ]
 
@@ -177,28 +177,34 @@ export function DashboardSidebar() {
 
           {/* Navigation */}
           <nav className="flex-1 space-y-0.5">
-            {sidebarNav.map((item) => (
-              <Link key={item.label} href={item.href}>
-                <button
-                  className={`w-full flex items-center gap-4 px-3 py-2.5 rounded-xl text-[15px] font-medium transition-colors duration-150 ${
-                    item.active
-                      ? isDark
-                        ? "text-white font-semibold"
-                        : "text-[#0F1419] font-semibold"
-                      : isDark
-                        ? "text-white/50 hover:bg-white/[0.06] hover:text-white"
-                        : "text-[#536471] hover:bg-[#EFF3F4] hover:text-[#0F1419]"
-                  }`}
-                >
-                  <item.icon
-                    size={24}
-                    weight={item.active ? "fill" : "regular"}
-                    className={item.active ? (isDark ? "text-white" : "text-[#1D9BF0]") : ""}
-                  />
-                  <span>{t(`nav.${item.label}` as any)}</span>
-                </button>
-              </Link>
-            ))}
+            {sidebarNav.map((item) => {
+              const href = (item as any).isProfile ? `/${userProfile?.username || ''}` : item.href
+              const active = (item as any).isProfile
+                ? pathname === `/${userProfile?.username || ''}`
+                : item.active
+              return (
+                <Link key={item.label} href={href}>
+                  <button
+                    className={`w-full flex items-center gap-4 px-3 py-2.5 rounded-xl text-[15px] font-medium transition-colors duration-150 ${
+                      active
+                        ? isDark
+                          ? "text-white font-semibold"
+                          : "text-[#0F1419] font-semibold"
+                        : isDark
+                          ? "text-white/50 hover:bg-white/[0.06] hover:text-white"
+                          : "text-[#536471] hover:bg-[#EFF3F4] hover:text-[#0F1419]"
+                    }`}
+                  >
+                    <item.icon
+                      size={24}
+                      weight={active ? "fill" : "regular"}
+                      className={active ? (isDark ? "text-white" : "text-[#1D9BF0]") : ""}
+                    />
+                    <span>{item.label === "my_profile" ? "My Profile" : t(`nav.${item.label}` as any)}</span>
+                  </button>
+                </Link>
+              )
+            })}
           </nav>
 
           {/* Profile Card */}
@@ -308,32 +314,38 @@ export function DashboardSidebar() {
               <X size={20} weight="bold" className={isDark ? "text-white/50" : "text-[#536471]"} />
             </button>
             <nav className="flex-1 px-3 py-2 space-y-0.5">
-              {sidebarNav.map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  onClick={() => setDrawerOpen(false)}
-                >
-                  <button
-                    className={`w-full flex items-center gap-4 px-3 py-3 rounded-xl text-[15px] font-medium transition-colors duration-150 ${
-                      item.active
-                        ? isDark
-                          ? "text-white font-semibold"
-                          : "text-[#0F1419] font-semibold"
-                        : isDark
-                          ? "text-white/50 hover:bg-white/[0.06] hover:text-white"
-                          : "text-[#536471] hover:bg-[#EFF3F4] hover:text-[#0F1419]"
-                    }`}
+              {sidebarNav.map((item) => {
+                const href = (item as any).isProfile ? `/${userProfile?.username || ''}` : item.href
+                const active = (item as any).isProfile
+                  ? pathname === `/${userProfile?.username || ''}`
+                  : item.active
+                return (
+                  <Link
+                    key={item.label}
+                    href={href}
+                    onClick={() => setDrawerOpen(false)}
                   >
-                    <item.icon
-                      size={22}
-                      weight={item.active ? "fill" : "regular"}
-                      className={item.active ? (isDark ? "text-white" : "text-[#1D9BF0]") : ""}
-                    />
-                    <span>{t(`nav.${item.label}` as any)}</span>
-                  </button>
-                </Link>
-              ))}
+                    <button
+                      className={`w-full flex items-center gap-4 px-3 py-3 rounded-xl text-[15px] font-medium transition-colors duration-150 ${
+                        active
+                          ? isDark
+                            ? "text-white font-semibold"
+                            : "text-[#0F1419] font-semibold"
+                          : isDark
+                            ? "text-white/50 hover:bg-white/[0.06] hover:text-white"
+                            : "text-[#536471] hover:bg-[#EFF3F4] hover:text-[#0F1419]"
+                      }`}
+                    >
+                      <item.icon
+                        size={22}
+                        weight={active ? "fill" : "regular"}
+                        className={active ? (isDark ? "text-white" : "text-[#1D9BF0]") : ""}
+                      />
+                      <span>{item.label === "my_profile" ? "My Profile" : t(`nav.${item.label}` as any)}</span>
+                    </button>
+                  </Link>
+                )
+              })}
             </nav>
 
             {/* ─── Mobile Drawer: Trends & Suggestions ─── */}

@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
+import { createClient, createServiceRoleClient, getAuthUser } from '@/lib/supabase/server'
 import { ProfilePageClient } from './ProfilePageClient'
 import type { ProfileWithSocial } from '@/lib/types/social'
 import { decryptIfEncrypted } from '@/lib/utils/crypto'
@@ -8,10 +8,6 @@ export default async function UserProfilePage({ params }: { params: Promise<{ us
   const raw = (await params).username
   const username = raw.replace(/^@/, '')
 
-  // Use service role client to bypass RLS for the initial profile lookup
-  // Falls back to anon client if service role key isn't configured
-  // NOTE: Many columns (avatar_url, bio, cover_image_url, etc.) were added
-  // by 20260709_social_features.sql migration — it MUST be applied to production.
   let profile: any = null
   try {
     const serviceClient = createServiceRoleClient()
@@ -48,18 +44,22 @@ export default async function UserProfilePage({ params }: { params: Promise<{ us
     ...profile,
   } as ProfileWithSocial
 
-  if (!profile.is_public_profile) {
+  // Check if the viewer is the profile owner
+  const currentUser = await getAuthUser()
+  const isOwnProfile = currentUser?.id === profile.id
+
+  if (!profile.is_public_profile && !isOwnProfile) {
     return (
       <ProfilePageClient
         profile={profileWithDefaults}
         reflections={[]}
         whiteboard={[]}
         isPrivate
+        isOwnProfile={false}
       />
     )
   }
 
-  // Fetch reflections using the anon-key client so RLS filters private reflections
   const anonClient = await createClient()
   const { data: reflections } = await anonClient
     .from('reflections')
@@ -79,7 +79,6 @@ export default async function UserProfilePage({ params }: { params: Promise<{ us
     .order('created_at', { ascending: false })
     .limit(20)
 
-  // Decrypt reflection_text for public viewing (stored encrypted, per encryption-at-rest)
   const decryptedReflections = (reflections || []).map((r) => ({
     ...r,
     reflection_text: decryptIfEncrypted(r.reflection_text) || r.reflection_text,
@@ -90,6 +89,7 @@ export default async function UserProfilePage({ params }: { params: Promise<{ us
       profile={profileWithDefaults}
       reflections={decryptedReflections}
       whiteboard={whiteboard || []}
+      isOwnProfile={isOwnProfile}
     />
   )
 }

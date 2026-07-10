@@ -2,12 +2,13 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { User, MessageCircle, Music, Palette, Sparkles, Lock } from 'lucide-react'
+import { User, MessageCircle, Music, Palette, Sparkles, Lock, Pencil, Settings, Layout, Archive } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { useTheme } from '@/contexts/ThemeContext'
 import { FriendButton } from '@/components/social/FriendButton'
 import { WhiteboardSection } from '@/components/social/WhiteboardSection'
+import Link from 'next/link'
 import type { ProfileWithSocial, WhiteboardEntry } from '@/lib/types/social'
 
 interface Reflection {
@@ -25,17 +26,18 @@ export function ProfilePageClient({
   reflections,
   whiteboard,
   isPrivate,
+  isOwnProfile,
 }: {
   profile: ProfileWithSocial
   reflections: Reflection[]
   whiteboard: WhiteboardEntry[]
   isPrivate?: boolean
+  isOwnProfile?: boolean
 }) {
   const { theme } = useTheme()
   const isDark = theme === 'dark'
   const [activeTab, setActiveTab] = useState<'reflections' | 'whiteboard'>('reflections')
 
-  const themePreset = profile.profile_theme?.preset || 'default'
   const accentColor = profile.profile_theme?.accent_color || (isDark ? '#1D9BF0' : '#1D9BF0')
 
   const displayName = profile.display_name || profile.full_name || profile.username
@@ -45,7 +47,7 @@ export function ProfilePageClient({
     <div className={`min-h-screen ${isDark ? 'bg-[#0A0A0A]' : 'bg-[#FFFFFF]'}`}>
       {/* Cover Image */}
       <div
-        className="h-48 md:h-64 w-full relative overflow-hidden"
+        className="h-32 sm:h-48 md:h-64 w-full relative overflow-hidden"
         style={{
           background: profile.cover_image_url
             ? `url(${profile.cover_image_url}) center/cover`
@@ -54,51 +56,93 @@ export function ProfilePageClient({
       />
 
       {/* Profile Header */}
-      <div className="max-w-4xl mx-auto px-4 md:px-8 -mt-16 relative z-10">
-        <div className="flex flex-col md:flex-row md:items-end gap-4 md:gap-6">
+      <div className="max-w-4xl mx-auto px-4 md:px-8 -mt-[40px] sm:-mt-16 relative z-10">
+        <div className="flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-6">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+            className="self-start"
           >
-            <Avatar className="h-32 w-32 md:h-40 md:w-40 border-4 border-white dark:border-[#0A0A0A] ring-2 ring-black/5">
+            <Avatar className="h-24 w-24 sm:h-32 sm:w-32 md:h-40 md:w-40 border-4 border-white dark:border-[#0A0A0A] ring-2 ring-black/5">
               <AvatarImage src={profile.avatar_url || undefined} />
-              <AvatarFallback className={`text-4xl font-light ${isDark ? 'bg-[#161618] text-white/60' : 'bg-white text-[#536471]'}`}>
+              <AvatarFallback className={`text-2xl sm:text-4xl font-light ${isDark ? 'bg-[#161618] text-white/60' : 'bg-white text-[#536471]'}`}>
                 {initials}
               </AvatarFallback>
             </Avatar>
           </motion.div>
 
-          <div className="flex-1 pb-2">
-            <div className="flex flex-col md:flex-row md:items-center gap-3">
-              <div>
-                <h1 className={`text-2xl md:text-3xl font-bold ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+          <div className="flex-1 pb-1 sm:pb-2">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+              <div className="min-w-0">
+                <h1 className={`text-xl sm:text-2xl md:text-3xl font-bold truncate ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
                   {displayName}
                 </h1>
                 {profile.username && (
-                  <p className={`text-sm ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
+                  <p className={`text-xs sm:text-sm ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
                     @{profile.username}
                   </p>
                 )}
               </div>
-              <div className="md:ml-auto">
-                <FriendButton profileUserId={profile.id} />
+              <div className="sm:ml-auto flex items-center gap-2 flex-wrap">
+                {isOwnProfile ? (
+                  <>
+                    <Link href="/settings/profile">
+                      <Button variant="outline" size="sm" className={`rounded-full text-xs font-semibold gap-1.5 ${
+                        isDark
+                          ? 'border-white/20 text-white hover:bg-white/10'
+                          : 'border-[#CFD9DE] text-[#0F1419] hover:bg-[#EFF3F4]'
+                      }`}>
+                        <Pencil className="h-3.5 w-3.5" />
+                        Edit Profile
+                      </Button>
+                    </Link>
+                    <Link href="/settings">
+                      <Button variant="outline" size="sm" className={`rounded-full text-xs font-semibold gap-1.5 ${
+                        isDark
+                          ? 'border-white/20 text-white/60 hover:bg-white/10'
+                          : 'border-[#CFD9DE] text-[#536471] hover:bg-[#EFF3F4]'
+                      }`}>
+                        <Settings className="h-3.5 w-3.5" />
+                      </Button>
+                    </Link>
+                  </>
+                ) : (
+                  <FriendButton profileUserId={profile.id} />
+                )}
               </div>
             </div>
+
+            {/* Quick links for own profile */}
+            {isOwnProfile && (
+              <div className="flex items-center gap-3 mt-3">
+                <Link href="/dashboard" className={`flex items-center gap-1.5 text-xs font-medium transition-colors ${
+                  isDark ? 'text-[#1D9BF0] hover:text-[#1A8CD8]' : 'text-[#1D9BF0] hover:text-[#1A8CD8]'
+                }`}>
+                  <Layout className="h-3.5 w-3.5" />
+                  Dashboard
+                </Link>
+                <Link href="/archive" className={`flex items-center gap-1.5 text-xs font-medium transition-colors ${
+                  isDark ? 'text-white/40 hover:text-white/60' : 'text-[#536471] hover:text-[#0F1419]'
+                }`}>
+                  <Archive className="h-3.5 w-3.5" />
+                  Archive
+                </Link>
+              </div>
+            )}
 
             {profile.bio && (
               <motion.p
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`mt-3 text-sm leading-relaxed max-w-xl ${isDark ? 'text-white/60' : 'text-[#536471]'}`}
+                className={`mt-2 sm:mt-3 text-xs sm:text-sm leading-relaxed max-w-xl ${isDark ? 'text-white/60' : 'text-[#536471]'}`}
               >
                 {profile.bio}
               </motion.p>
             )}
 
-            {/* Mood Song */}
             {profile.mood_song_url && (
-              <div className={`mt-3 flex items-center gap-2 text-xs ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
+              <div className={`mt-2 flex items-center gap-2 text-xs ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
                 <Music className="h-3.5 w-3.5" />
                 <span>Current vibe: {profile.mood_song_title || '🎵'}</span>
               </div>
@@ -107,8 +151,8 @@ export function ProfilePageClient({
         </div>
 
         {/* Navigation Tabs */}
-        <div className={`mt-8 border-b ${isDark ? 'border-white/10' : 'border-[#EFF3F4]'}`}>
-          <div className="flex gap-6">
+        <div className={`mt-6 sm:mt-8 border-b ${isDark ? 'border-white/10' : 'border-[#EFF3F4]'}`}>
+          <div className="flex gap-6 -mb-px">
             <TabButton
               active={activeTab === 'reflections'}
               onClick={() => setActiveTab('reflections')}
@@ -129,47 +173,57 @@ export function ProfilePageClient({
         </div>
 
         {/* Tab Content */}
-        <div className="mt-6 pb-16">
+        <div className="mt-4 sm:mt-6 pb-20 sm:pb-16">
           {isPrivate ? (
-            <div className={`rounded-2xl p-10 text-center ${isDark ? 'bg-white/[0.03] border border-white/[0.06]' : 'bg-white/60 border border-[#EFF3F4]'}`}>
-              <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${isDark ? 'bg-white/[0.06]' : 'bg-[#EFF3F4]'}`}>
+            <div className={`rounded-2xl p-8 sm:p-10 text-center ${isDark ? 'bg-white/[0.03] border border-white/[0.06]' : 'bg-white/60 border border-[#EFF3F4]'}`}>
+              <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${isDark ? 'bg-white/[0.06]' : 'bg-[#EFF3F4]'}`}>
                 <Lock size={28} className={isDark ? 'text-white/20' : 'text-[#8B98A5]'} />
               </div>
-              <h2 className={`text-xl font-semibold mb-2 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
-                This account&apos;s profile is private
+              <h2 className={`text-lg sm:text-xl font-semibold mb-2 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+                {isOwnProfile ? 'Your profile is private' : "This account's profile is private"}
               </h2>
-              <p className={`text-sm mb-6 max-w-md mx-auto ${isDark ? 'text-white/40' : 'text-[#536471]'}`}>
-                @{profile.username} has marked their profile as private. Reflections and activity are not visible to others.
+              <p className={`text-xs sm:text-sm mb-6 max-w-md mx-auto ${isDark ? 'text-white/40' : 'text-[#536471]'}`}>
+                {isOwnProfile
+                  ? 'Your reflections are currently hidden. Go to settings to make your profile public.'
+                  : `@{profile.username} has marked their profile as private.`}
               </p>
               <div className="flex items-center justify-center gap-3">
-                <button
-                  onClick={() => window.history.back()}
-                  className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-colors border ${
-                    isDark
-                      ? 'border-white/20 text-white hover:bg-white/[0.06]'
-                      : 'border-[#CFD9DE] text-[#0F1419] hover:bg-[#EFF3F4]'
-                  }`}
-                >
-                  Go Back
-                </button>
-                <a
-                  href="/"
-                  className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-colors ${
+                {isOwnProfile ? (
+                  <Link href="/settings/profile" className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-colors ${
                     isDark
                       ? 'bg-[#1D9BF0] text-white hover:bg-[#1A8CD8]'
                       : 'bg-[#1D9BF0] text-white hover:bg-[#1A8CD8]'
-                  }`}
-                >
-                  Go to Dashboard
-                </a>
+                  }`}>
+                    Edit Settings
+                  </Link>
+                ) : (
+                  <>
+                    <button onClick={() => window.history.back()} className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-colors border ${
+                      isDark
+                        ? 'border-white/20 text-white hover:bg-white/[0.06]'
+                        : 'border-[#CFD9DE] text-[#0F1419] hover:bg-[#EFF3F4]'
+                    }`}>Go Back</button>
+                    <a href="/" className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-colors ${
+                      isDark
+                        ? 'bg-[#1D9BF0] text-white hover:bg-[#1A8CD8]'
+                        : 'bg-[#1D9BF0] text-white hover:bg-[#1A8CD8]'
+                    }`}>Go to Dashboard</a>
+                  </>
+                )}
               </div>
             </div>
           ) : activeTab === 'reflections' && (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {reflections.length === 0 ? (
-                <p className={`text-sm ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
-                  No shared reflections yet.
-                </p>
+                <div className={`text-center py-12 sm:py-16 ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
+                  <Sparkles className="h-10 w-10 mx-auto mb-3 opacity-30" />
+                  <p className="text-sm font-medium mb-1">
+                    {isOwnProfile ? 'No shared reflections yet' : 'No shared reflections yet.'}
+                  </p>
+                  <p className="text-xs">
+                    {isOwnProfile ? 'Reflections you share publicly will appear here.' : ''}
+                  </p>
+                </div>
               ) : (
                 reflections.map((ref, i) => (
                   <motion.div
@@ -177,31 +231,38 @@ export function ProfilePageClient({
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05 }}
-                    className={`rounded-2xl p-5 ${
+                    className={`rounded-xl sm:rounded-2xl p-4 sm:p-5 ${
                       isDark
                         ? 'bg-white/[0.04] border border-white/[0.06]'
                         : 'bg-white/80 border border-[#EFF3F4]'
                     }`}
                   >
-                    <p className={`text-sm font-medium mb-2 ${isDark ? 'text-white/50' : 'text-[#8B98A5]'}`}>
-                      {ref.prompt_text}
-                    </p>
+                    {ref.prompt_text && (
+                      <p className={`text-xs sm:text-sm font-medium mb-2 ${isDark ? 'text-white/50' : 'text-[#8B98A5]'}`}>
+                        {ref.prompt_text}
+                      </p>
+                    )}
                     <p className={`text-sm leading-relaxed ${isDark ? 'text-white/80' : 'text-[#0F1419]'}`}>
                       {ref.reflection_text.slice(0, 300)}
                       {ref.reflection_text.length > 300 ? '...' : ''}
                     </p>
-                    <div className="flex items-center gap-3 mt-3">
-                      <span className="text-lg">{ref.mood}</span>
-                      {ref.tags?.slice(0, 3).map(tag => (
+                    <div className="flex items-center gap-2 sm:gap-3 mt-3 flex-wrap">
+                      <span className="text-lg leading-none">{ref.mood}</span>
+                      {ref.tags?.slice(0, 4).map(tag => (
                         <span
                           key={tag}
                           className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${
                             isDark ? 'bg-white/[0.06] text-white/40' : 'bg-[#F7F9FA] text-[#8B98A5]'
                           }`}
                         >
-                          {tag}
+                          #{tag}
                         </span>
                       ))}
+                      {ref.visibility && ref.visibility !== 'public' && (
+                        <span className={`text-[10px] ${isDark ? 'text-white/20' : 'text-[#CFD9DE]'}`}>
+                          {ref.visibility === 'friends_only' ? 'Friends' : 'Private'}
+                        </span>
+                      )}
                     </div>
                   </motion.div>
                 ))
