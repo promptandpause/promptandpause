@@ -503,56 +503,43 @@ function ArchivePageContent() {
                                         <Lock size={12} weight="bold" /> Private
                                       </span>
                                     )}
-                                    <div className="relative">
-                                      <Button
-                                        size="sm"
-                                        variant="ghost"
-                                        disabled={updatingVisibility === item.id}
-                                        onClick={(e) => { e.stopPropagation(); setSharingReflectionId(sharingReflectionId === item.id ? null : item.id) }}
-                                        className={`text-xs gap-1.5 h-7 px-2 rounded-full ${theme === 'dark' ? 'text-white/50 hover:text-white hover:bg-white/10' : 'text-[#536471] hover:text-[#0F1419] hover:bg-[#EFF3F4]'}`}
-                                      >
-                                        <ShareNetwork size={14} weight="bold" />
-                                        {updatingVisibility === item.id ? '...' : 'Share'}
-                                      </Button>
-                                      {sharingReflectionId === item.id && (
-                                        <>
-                                          <div className="fixed inset-0 z-40" onClick={() => setSharingReflectionId(null)} />
-                                          <div className={`absolute left-0 top-full mt-1 z-50 w-48 rounded-xl shadow-lg border py-1 ${theme === 'dark' ? 'bg-[#1A1F2E] border-white/10' : 'bg-white border-[#EFF3F4]'}`}>
-                                            <button
-                                              onClick={() => updateVisibility(item.id, 'public')}
-                                              className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${theme === 'dark' ? 'text-white hover:bg-white/8' : 'text-[#0F1419] hover:bg-[#F7F9FA]'}`}
-                                            >
-                                              <Globe size={16} weight="bold" className="text-[#1D9BF0]" />
-                                              <div className="text-left">
-                                                <p className="font-medium">Share publicly</p>
-                                                <p className={`text-xs ${theme === 'dark' ? 'text-white/40' : 'text-[#536471]'}`}>Everyone can see</p>
-                                              </div>
-                                            </button>
-                                            <button
-                                              onClick={() => updateVisibility(item.id, 'friends_only')}
-                                              className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${theme === 'dark' ? 'text-white hover:bg-white/8' : 'text-[#0F1419] hover:bg-[#F7F9FA]'}`}
-                                            >
-                                              <Users size={16} weight="bold" className="text-emerald-500" />
-                                              <div className="text-left">
-                                                <p className="font-medium">Share with friends</p>
-                                                <p className={`text-xs ${theme === 'dark' ? 'text-white/40' : 'text-[#536471]'}`}>Only your friends</p>
-                                              </div>
-                                            </button>
-                                            <div className={`h-px mx-3 ${theme === 'dark' ? 'bg-white/10' : 'bg-[#EFF3F4]'}`} />
-                                            <button
-                                              onClick={() => updateVisibility(item.id, 'private')}
-                                              className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${theme === 'dark' ? 'text-white/50 hover:text-white hover:bg-white/8' : 'text-[#536471] hover:text-[#0F1419] hover:bg-[#F7F9FA]'}`}
-                                            >
-                                              <Lock size={16} weight="bold" />
-                                              <div className="text-left">
-                                                <p className="font-medium">Make private</p>
-                                                <p className={`text-xs ${theme === 'dark' ? 'text-white/40' : 'text-[#536471]'}`}>Only you</p>
-                                              </div>
-                                            </button>
+                                    <DropdownMenu>
+                                      <DropdownMenuTrigger asChild>
+                                        <Button
+                                          size="sm"
+                                          variant="ghost"
+                                          disabled={updatingVisibility === item.id}
+                                          className={`text-xs gap-1.5 h-7 px-2 rounded-full ${theme === 'dark' ? 'text-white/50 hover:text-white hover:bg-white/10' : 'text-[#536471] hover:text-[#0F1419] hover:bg-[#EFF3F4]'}`}
+                                        >
+                                          <ShareNetwork size={14} weight="bold" />
+                                          {updatingVisibility === item.id ? '...' : 'Share'}
+                                        </Button>
+                                      </DropdownMenuTrigger>
+                                      <DropdownMenuContent className={`w-56 ${theme === 'dark' ? 'bg-[#1A1F2E] border-white/10' : 'bg-white border-[#EFF3F4]'}`}>
+                                        <DropdownMenuItem onClick={() => updateVisibility(item.id, 'public')} className={`cursor-pointer ${theme === 'dark' ? 'text-white hover:bg-white/8' : 'text-[#0F1419] hover:bg-[#F7F9FA]'}`}>
+                                          <Globe size={16} weight="bold" className="text-[#1D9BF0] mr-3" />
+                                          <div className="text-left">
+                                            <p className="font-medium text-sm">Share publicly</p>
+                                            <p className={`text-xs ${theme === 'dark' ? 'text-white/40' : 'text-[#536471]'}`}>Everyone can see</p>
                                           </div>
-                                        </>
-                                      )}
-                                    </div>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => updateVisibility(item.id, 'friends_only')} className={`cursor-pointer ${theme === 'dark' ? 'text-white hover:bg-white/8' : 'text-[#0F1419] hover:bg-[#F7F9FA]'}`}>
+                                          <Users size={16} weight="bold" className="text-emerald-500 mr-3" />
+                                          <div className="text-left">
+                                            <p className="font-medium text-sm">Share with friends</p>
+                                            <p className={`text-xs ${theme === 'dark' ? 'text-white/40' : 'text-[#536471]'}`}>Only your friends</p>
+                                          </div>
+                                        </DropdownMenuItem>
+                                        <div className={`h-px mx-3 ${theme === 'dark' ? 'bg-white/10' : 'bg-[#EFF3F4]'}`} />
+                                        <DropdownMenuItem onClick={() => updateVisibility(item.id, 'private')} className={`cursor-pointer ${theme === 'dark' ? 'text-white/50 hover:text-white hover:bg-white/8' : 'text-[#536471] hover:text-[#0F1419] hover:bg-[#F7F9FA]'}`}>
+                                          <Lock size={16} weight="bold" className="mr-3" />
+                                          <div className="text-left">
+                                            <p className="font-medium text-sm">Make private</p>
+                                            <p className={`text-xs ${theme === 'dark' ? 'text-white/40' : 'text-[#536471]'}`}>Only you</p>
+                                          </div>
+                                        </DropdownMenuItem>
+                                      </DropdownMenuContent>
+                                    </DropdownMenu>
                                   </div>
                                 </div>
                               </motion.div>

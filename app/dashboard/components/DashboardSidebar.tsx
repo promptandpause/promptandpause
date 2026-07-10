@@ -20,6 +20,8 @@ import {
   PencilLine,
   ChartBar,
   Trophy,
+  X,
+  List,
 } from "phosphor-react"
 import Link from "next/link"
 import { getSupabaseClient } from "@/lib/supabase/client"
@@ -31,6 +33,7 @@ import {
   cacheUserProfile,
   invalidateCacheOnLogout,
 } from "@/lib/services/cacheService"
+import { cn } from "@/lib/utils"
 
 export function DashboardSidebar() {
   const router = useRouter()
@@ -66,10 +69,11 @@ export function DashboardSidebar() {
   ]
 
   const mobileNav = [
-    { id: "home", label: t("nav.dashboard"), href: "/dashboard", active: isActive("/"), crisis: false },
-    { id: "wellness", label: t("nav.wellness"), href: "/wellness", active: isActive("/wellness"), crisis: false },
-    { id: "journal", label: t("nav.my_journals"), href: "/journals", active: isActive("/journals"), crisis: false },
-    { id: "crisis", label: t("nav.crisis_resources"), href: "/crisis-resources", active: isActive("/crisis-resources"), crisis: true },
+    { id: "home", label: t("nav.dashboard"), href: "/dashboard", active: isActive("/") },
+    { id: "reflect", label: t("nav.reflect"), href: "/reflect", active: isActive("/reflect") },
+    { id: "feed", label: t("nav.feed"), href: "/feed", active: isActive("/feed") },
+    { id: "wellness", label: t("nav.wellness"), href: "/wellness", active: isActive("/wellness") },
+    { id: "archive", label: t("nav.archive"), href: "/archive", active: isActive("/archive") },
   ]
 
   useEffect(() => {
@@ -142,6 +146,8 @@ export function DashboardSidebar() {
     loadData()
     return () => { isMounted = false }
   }, [supabase, tier])
+
+  const [drawerOpen, setDrawerOpen] = useState(false)
 
   return (
     <>
@@ -246,10 +252,18 @@ export function DashboardSidebar() {
       </div>
 
       {/* ─── Mobile Top Nav Bar ─── */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-50">
-        <div className={`px-5 h-14 flex items-center justify-between mt-[env(safe-area-inset-top,0px)] ${
+      <div className="md:hidden fixed top-0 left-0 right-0 z-40">
+        <div className={cn(
+          "px-4 h-14 flex items-center justify-between",
           isDark ? "bg-[#0A0A0A]/90 backdrop-blur-lg border-b border-white/[0.06]" : "bg-white/90 backdrop-blur-lg border-b border-[#EFF3F4]"
-        }`}>
+        )}>
+          <button
+            onClick={() => setDrawerOpen(true)}
+            className={`p-2 -ml-2 rounded-lg transition-colors ${isDark ? "hover:bg-white/10" : "hover:bg-[#EFF3F4]"}`}
+            aria-label="Open navigation menu"
+          >
+            <List size={22} weight="bold" className={isDark ? "text-white" : "text-[#0F1419]"} />
+          </button>
           <Link href="/dashboard">
             <img
               className={`h-7 ${isDark ? "invert" : ""}`}
@@ -257,43 +271,103 @@ export function DashboardSidebar() {
               src="https://res.cloudinary.com/dh1rrfpmq/image/upload/v1766460430/prompt_pause-JRsbZR3dxCXndC8YMcyX6XU3XeT2Vw_vdvqfj.svg"
             />
           </Link>
-          <div className="flex items-center gap-2">
-            <Link href="/archive">
-              <button className={`p-2 rounded-lg transition-colors ${isDark ? "hover:bg-white/10" : "hover:bg-[#EFF3F4]"}`}>
-                <ArchiveBox size={20} weight="bold" className={isDark ? "text-white/50" : "text-[#536471]"} />
-              </button>
-            </Link>
-            <Link href="/settings">
-              <button className={`p-2 rounded-lg transition-colors ${isDark ? "hover:bg-white/10" : "hover:bg-[#EFF3F4]"}`}>
-                <Gear size={20} weight="bold" className={isDark ? "text-white/50" : "text-[#536471]"} />
-              </button>
-            </Link>
-          </div>
+          <Link href="/settings">
+            <button className={`p-2 -mr-2 rounded-lg transition-colors ${isDark ? "hover:bg-white/10" : "hover:bg-[#EFF3F4]"}`} aria-label="Settings">
+              <Gear size={20} weight="bold" className={isDark ? "text-white/50" : "text-[#536471]"} />
+            </button>
+          </Link>
         </div>
       </div>
 
+      {/* ─── Mobile Nav Drawer ─── */}
+      {drawerOpen && (
+        <div className="md:hidden fixed inset-0 z-50">
+          <div className="fixed inset-0 bg-black/50" onClick={() => setDrawerOpen(false)} />
+          <div className={cn(
+            "fixed left-0 top-0 bottom-0 w-[280px] flex flex-col pt-14 overflow-y-auto",
+            isDark ? "bg-[#0A0A0A] border-r border-white/[0.06]" : "bg-white border-r border-[#EFF3F4]"
+          )}>
+            <button
+              onClick={() => setDrawerOpen(false)}
+              className={`absolute top-3 right-3 p-2 rounded-lg transition-colors ${isDark ? "hover:bg-white/10" : "hover:bg-[#EFF3F4]"}`}
+              aria-label="Close navigation menu"
+            >
+              <X size={20} weight="bold" className={isDark ? "text-white/50" : "text-[#536471]"} />
+            </button>
+            <nav className="flex-1 px-3 py-2 space-y-0.5">
+              {sidebarNav.map((item) => (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  onClick={() => setDrawerOpen(false)}
+                >
+                  <button
+                    className={`w-full flex items-center gap-4 px-3 py-3 rounded-xl text-[15px] font-medium transition-colors duration-150 ${
+                      item.active
+                        ? isDark
+                          ? "text-white font-semibold"
+                          : "text-[#0F1419] font-semibold"
+                        : isDark
+                          ? "text-white/50 hover:bg-white/[0.06] hover:text-white"
+                          : "text-[#536471] hover:bg-[#EFF3F4] hover:text-[#0F1419]"
+                    }`}
+                  >
+                    <item.icon
+                      size={22}
+                      weight={item.active ? "fill" : "regular"}
+                      className={item.active ? (isDark ? "text-white" : "text-[#1D9BF0]") : ""}
+                    />
+                    <span>{t(`nav.${item.label}` as any)}</span>
+                  </button>
+                </Link>
+              ))}
+            </nav>
+            {userProfile && (
+              <div className={`px-4 py-4 border-t ${isDark ? "border-white/[0.06]" : "border-[#EFF3F4]"}`}>
+                <div className="flex items-center gap-3">
+                  <Link href={`/${userProfile.username}`} className="shrink-0" onClick={() => setDrawerOpen(false)}>
+                    <div className={`h-9 w-9 rounded-full flex items-center justify-center ${isDark ? "bg-[#161618]" : "bg-[#EFF3F4]"}`}>
+                      {userProfile.avatar_url ? (
+                        <img src={userProfile.avatar_url} alt="" className="h-9 w-9 rounded-full object-cover" />
+                      ) : (
+                        <UserCircle size={20} weight="bold" className={isDark ? "text-white/40" : "text-[#536471]"} />
+                      )}
+                    </div>
+                  </Link>
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-sm font-semibold truncate ${isDark ? "text-white" : "text-[#0F1419]"}`}>{userProfile.full_name}</p>
+                    <p className={`text-xs truncate ${isDark ? "text-white/40" : "text-[#536471]"}`}>@{userProfile.username}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* ─── Mobile Bottom Tab Bar ─── */}
-      <div className={`md:hidden fixed bottom-0 left-0 right-0 z-50 pb-[env(safe-area-inset-bottom,0px)] ${
+      <div className={`md:hidden fixed bottom-0 left-0 right-0 z-40 pb-[env(safe-area-inset-bottom,0px)] ${
         isDark ? "bg-[#0A0A0A]/90 backdrop-blur-lg border-t border-white/[0.06]" : "bg-white/90 backdrop-blur-lg border-t border-[#EFF3F4]"
       }`}>
         <div className="flex items-center justify-around h-14">
           {mobileNav.map((item) => (
             <Link key={item.id} href={item.href}>
               <button
-                className={`flex flex-col items-center gap-0.5 px-4 py-1 rounded-lg transition-colors ${
+                className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition-colors ${
                   item.active
                     ? isDark
                       ? "text-white"
                       : "text-[#1D9BF0]"
                     : isDark
-                      ? "text-white/30"
+                      ? "text-white/40"
                       : "text-[#536471]"
-                } ${item.crisis ? (isDark ? "text-rose-400" : "text-rose-500") : ""}`}
+                }`}
               >
                 {item.id === "home" && <House size={22} weight={item.active ? "fill" : "regular"} />}
+                {item.id === "reflect" && <PencilLine size={22} weight={item.active ? "fill" : "regular"} />}
+                {item.id === "feed" && <Rss size={22} weight={item.active ? "fill" : "regular"} />}
                 {item.id === "wellness" && <Heart size={22} weight={item.active ? "fill" : "regular"} />}
-                {item.id === "journal" && <BookOpen size={22} weight={item.active ? "fill" : "regular"} />}
-                {item.id === "crisis" && <Lifebuoy size={22} weight="fill" />}
+                {item.id === "archive" && <ArchiveBox size={22} weight={item.active ? "fill" : "regular"} />}
                 <span className="text-[10px] font-medium leading-none">{item.label}</span>
               </button>
             </Link>

@@ -4,7 +4,8 @@ import { ProfilePageClient } from './ProfilePageClient'
 import type { ProfileWithSocial } from '@/lib/types/social'
 
 export default async function UserProfilePage({ params }: { params: Promise<{ username: string }> }) {
-  const { username } = await params
+  const raw = (await params).username
+  const username = raw.replace(/^@/, '')
 
   // Use service role client to bypass RLS for the initial profile lookup
   // This avoids any cookie/auth issues blocking public profile reads

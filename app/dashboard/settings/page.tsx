@@ -1174,18 +1174,28 @@ function SettingsPageContent() {
               <div 
                 className={`animate-in slide-in-from-${slideDirection === 'right' ? 'right' : 'left'}-full duration-300`}
               >
-                {/* Back Button */}
+                {/* Breadcrumb Header */}
                 <div className="mb-3">
                   <button
                     onClick={goBack}
-                    className={`flex items-center gap-2 transition-colors font-medium ${
+                    className={`flex items-center gap-2 transition-colors ${
                       theme === 'dark'
                         ? 'text-blue-400 active:text-blue-300'
                         : 'text-blue-600 active:text-blue-800'
                     }`}
                   >
-                    <CaretLeft size={20} weight="bold" />
-                    <span className="font-medium">Settings</span>
+                    <CaretLeft size={18} weight="bold" />
+                    <span className="text-sm font-medium">Settings</span>
+                    <span className={`text-sm ${theme === 'dark' ? 'text-white/30' : 'text-[#8B98A5]'}`}>/</span>
+                    <span className={`text-sm ${theme === 'dark' ? 'text-white/70' : 'text-[#536471]'}`}>
+                      {currentView === 'profile' && 'Profile'}
+                      {currentView === 'notifications' && 'Notifications'}
+                      {currentView === 'security' && 'Security'}
+                      {currentView === 'preferences' && 'Preferences'}
+                      {currentView === 'subscription' && 'Subscription'}
+                      {currentView === 'integrations' && 'Integrations'}
+                      {currentView === 'danger' && 'Danger Zone'}
+                    </span>
                   </button>
                 </div>
 
