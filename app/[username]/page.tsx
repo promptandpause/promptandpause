@@ -17,7 +17,7 @@ export default async function UserProfilePage({ params }: { params: Promise<{ us
     const serviceClient = createServiceRoleClient()
     const result = await serviceClient
       .from('profiles')
-      .select('id, username, display_name, full_name, is_public_profile')
+      .select('id, username, display_name, full_name, avatar_url, is_public_profile')
       .eq('username', username)
       .single()
     profile = result.data
@@ -25,7 +25,7 @@ export default async function UserProfilePage({ params }: { params: Promise<{ us
     const anonClient = await createClient()
     const { data } = await anonClient
       .from('profiles')
-      .select('id, username, display_name, full_name, is_public_profile')
+      .select('id, username, display_name, full_name, avatar_url, is_public_profile')
       .eq('username', username)
       .single()
     profile = data
@@ -73,7 +73,7 @@ export default async function UserProfilePage({ params }: { params: Promise<{ us
     .from('whiteboard_entries')
     .select(`
       *,
-      author:profiles(id, full_name, display_name, username)
+      author:profiles(id, full_name, display_name, username, avatar_url)
     `)
     .eq('profile_user_id', profile.id)
     .order('created_at', { ascending: false })
