@@ -1,13 +1,26 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { PenLine, Loader2, Trash2 } from 'lucide-react'
+import { PenLine, Loader2, Trash2, AlertCircle } from 'lucide-react'
 import { useTheme } from '@/contexts/ThemeContext'
+import { useAuth } from '@/hooks/useAuth'
 import type { WhiteboardEntry } from '@/lib/types/social'
+
+function timeAgo(date: string): string {
+  const diff = Date.now() - new Date(date).getTime()
+  const mins = Math.floor(diff / 60000)
+  if (mins < 1) return 'just now'
+  if (mins < 60) return `${mins}m`
+  const hours = Math.floor(mins / 60)
+  if (hours < 24) return `${hours}h`
+  const days = Math.floor(hours / 24)
+  if (days < 7) return `${days}d`
+  return new Date(date).toLocaleDateString()
+}
 
 interface WhiteboardSectionProps {
   profileUserId: string
@@ -18,24 +31,22 @@ interface WhiteboardSectionProps {
 export function WhiteboardSection({ profileUserId, entries: initialEntries, isOwnProfile }: WhiteboardSectionProps) {
   const { theme } = useTheme()
   const isDark = theme === 'dark'
+  const { user } = useAuth()
   const [entries, setEntries] = useState(initialEntries)
   const [text, setText] = useState('')
   const [posting, setPosting] = useState(false)
+  const [error, setError] = useState('')
   const [deletingId, setDeletingId] = useState<string | null>(null)
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
-  const [authLoading, setAuthLoading] = useState(true)
+  const currentUserId = user?.id || null
 
   useEffect(() => {
-    fetch('/api/social/friends', { method: 'HEAD' })
-      .then(() => fetch('/api/user/profile'))
-      .then(r => r.ok ? r.json() : Promise.resolve(null))
-      .then(d => { setCurrentUserId(d?.data?.id || null); setAuthLoading(false) })
-      .catch(() => setAuthLoading(false))
-  }, [])
+    setEntries(initialEntries)
+  }, [initialEntries])
 
   async function handlePost() {
-    if (!text.trim()) return
+    if (!text.trim() || posting) return
     setPosting(true)
+    setError('')
     try {
       const res = await fetch('/api/social/whiteboard', {
         method: 'POST',
@@ -50,8 +61,13 @@ export function WhiteboardSection({ profileUserId, entries: initialEntries, isOw
         const { data } = await res.json()
         setEntries(prev => [data, ...prev])
         setText('')
+      } else {
+        const { error: msg } = await res.json()
+        setError(msg || 'Failed to post')
       }
-    } catch {}
+    } catch {
+      setError('Network error')
+    }
     setPosting(false)
   }
 
@@ -66,32 +82,49 @@ export function WhiteboardSection({ profileUserId, entries: initialEntries, isOw
     setDeletingId(null)
   }
 
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault()
+      handlePost()
+    }
+  }
+
   return (
-    <div className="space-y-4">
-      {/* Post to whiteboard — only for logged-in users */}
-      {!authLoading && currentUserId && (
-        <div className={`rounded-2xl p-4 ${isDark ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-white/80 border border-[#EFF3F4]'}`}>
+    <div className="space-y-3 sm:space-y-4">
+      {/* Post to whiteboard */}
+      {currentUserId && (
+        <div className={`rounded-2xl p-3 sm:p-4 ${isDark ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-white/80 border border-[#EFF3F4]'}`}>
           <Textarea
             value={text}
             onChange={e => setText(e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder={
               currentUserId === profileUserId
-                ? 'Write something on your own whiteboard...'
-                : 'Leave something on their whiteboard...'
+                ? 'Write something on your whiteboard...'
+                : 'Leave a note...'
             }
-            className={`min-h-[80px] resize-none text-sm border-0 bg-transparent p-0 ${
+            className={`min-h-[72px] sm:min-h-[80px] resize-none text-sm border-0 bg-transparent p-0 ${
               isDark ? 'text-white/80 placeholder:text-white/20' : 'text-[#0F1419] placeholder:text-[#8B98A5]'
             } focus:ring-0`}
           />
-          <div className="flex justify-end mt-2">
+          {error && (
+            <p className={`flex items-center gap-1.5 text-xs mt-2 ${isDark ? 'text-red-400' : 'text-red-500'}`}>
+              <AlertCircle size={12} />
+              {error}
+            </p>
+          )}
+          <div className="flex items-center justify-between mt-2 sm:mt-3">
+            <span className={`text-xs ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`}>
+              {text.length > 0 && `${text.length} characters`}
+            </span>
             <Button
               size="sm"
               onClick={handlePost}
               disabled={!text.trim() || posting}
               className={`text-xs ${
                 isDark
-                ? 'bg-white/10 text-white hover:bg-white/20'
-                : 'bg-[#1D9BF0] text-white hover:bg-[#1A8CD8]'
+                  ? 'bg-white/10 text-white hover:bg-white/20'
+                  : 'bg-[#1D9BF0] text-white hover:bg-[#1A8CD8]'
               }`}
             >
               {posting ? <Loader2 className="h-3 w-3 animate-spin mr-1.5" /> : <PenLine className="h-3 w-3 mr-1.5" />}
@@ -101,52 +134,75 @@ export function WhiteboardSection({ profileUserId, entries: initialEntries, isOw
         </div>
       )}
 
-      {/* Whiteboard entries */}
+      {/* Entries */}
       {entries.length === 0 ? (
-        <p className={`text-sm text-center py-8 ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`}>
-          Whiteboard is empty. Be the first to write something!
-        </p>
+        <div className={`text-center py-10 sm:py-12 rounded-2xl ${isDark ? 'bg-white/[0.02]' : 'bg-[#F7F9FA]'}`}>
+          <PenLine size={24} className={`mx-auto mb-2 ${isDark ? 'text-white/15' : 'text-[#CFD9DE]'}`} />
+          <p className={`text-sm ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
+            No notes yet
+          </p>
+          {currentUserId && (
+            <p className={`text-xs mt-1 ${isDark ? 'text-white/15' : 'text-[#CFD9DE]'}`}>
+              Be the first to leave a note
+            </p>
+          )}
+        </div>
       ) : (
-        entries.map((entry, i) => {
-          const canDelete = currentUserId && (currentUserId === entry.author_id || isOwnProfile)
-          return (
-            <motion.div
-              key={entry.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.03 }}
-              className={`rounded-2xl p-4 flex gap-3 group ${
-                isDark ? 'bg-white/[0.03] border border-white/[0.06]' : 'bg-white/60 border border-[#EFF3F4]'
-              }`}
-            >
-              <Avatar className="h-8 w-8 flex-shrink-0">
-                <AvatarImage src={entry.author?.avatar_url || undefined} />
-                <AvatarFallback className={`text-[10px] ${isDark ? 'bg-[#161618] text-white/40' : 'bg-[#EFF3F4] text-[#8B98A5]'}`}>
-                  {entry.author?.full_name?.[0] || '?'}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <p className={`text-xs font-medium ${isDark ? 'text-white/50' : 'text-[#8B98A5]'}`}>
-                  {entry.author?.display_name || entry.author?.full_name || 'Someone'}
-                </p>
-                <p className={`text-sm mt-1 ${isDark ? 'text-white/70' : 'text-[#536471]'}`}>
-                  {entry.content?.text}
-                </p>
-              </div>
-              {canDelete && (
-                <button
-                  onClick={() => handleDelete(entry.id)}
-                  disabled={deletingId === entry.id}
-                  className={`shrink-0 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded ${
-                    isDark ? 'hover:bg-white/10 text-white/30 hover:text-red-400' : 'hover:bg-[#EFF3F4] text-[#8B98A5] hover:text-red-500'
-                  }`}
-                >
-                  {deletingId === entry.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
-                </button>
-              )}
-            </motion.div>
-          )
-        })
+        <AnimatePresence mode="popLayout">
+          {entries.map((entry, i) => {
+            const canDelete = currentUserId && (currentUserId === entry.author_id || isOwnProfile)
+            return (
+              <motion.div
+                key={entry.id}
+                layout
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.2, delay: i * 0.02 }}
+                className={`rounded-2xl p-3 sm:p-4 flex gap-3 group ${
+                  isDark
+                    ? 'bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.05]'
+                    : 'bg-white/60 border border-[#EFF3F4] hover:bg-white/90 hover:shadow-sm'
+                } transition-all duration-200`}
+              >
+                <Avatar className="h-8 w-8 sm:h-9 sm:w-9 flex-shrink-0 mt-0.5">
+                  <AvatarImage src={entry.author?.avatar_url || undefined} />
+                  <AvatarFallback className={`text-[10px] ${isDark ? 'bg-[#161618] text-white/40' : 'bg-[#EFF3F4] text-[#8B98A5]'}`}>
+                    {(entry.author?.full_name || '?')[0]}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className={`text-xs font-medium truncate ${isDark ? 'text-white/60' : 'text-[#536471]'}`}>
+                      {entry.author?.display_name || entry.author?.full_name || 'Someone'}
+                    </p>
+                    <span className={`text-[10px] ${isDark ? 'text-white/20' : 'text-[#CFD9DE]'}`}>
+                      {timeAgo(entry.created_at)}
+                    </span>
+                  </div>
+                  <p className={`text-sm mt-1 leading-relaxed whitespace-pre-wrap break-words ${
+                    isDark ? 'text-white/80' : 'text-[#0F1419]'
+                  }`}>
+                    {entry.content?.text}
+                  </p>
+                </div>
+                {canDelete && (
+                  <button
+                    onClick={() => handleDelete(entry.id)}
+                    disabled={deletingId === entry.id}
+                    className={`shrink-0 opacity-0 group-hover:opacity-100 transition-all p-1.5 self-start rounded-lg ${
+                      isDark
+                        ? 'text-white/20 hover:bg-white/10 hover:text-red-400'
+                        : 'text-[#8B98A5] hover:bg-[#EFF3F4] hover:text-red-500'
+                    }`}
+                  >
+                    {deletingId === entry.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 size={14} />}
+                  </button>
+                )}
+              </motion.div>
+            )
+          })}
+        </AnimatePresence>
       )}
     </div>
   )

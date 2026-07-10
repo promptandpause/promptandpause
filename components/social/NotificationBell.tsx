@@ -72,7 +72,7 @@ export function NotificationBell() {
       const mobile = window.innerWidth < 768
       setPos({
         top: rect.bottom + 8,
-        left: mobile ? window.innerWidth / 2 : rect.right - 320,
+        left: mobile ? 0 : rect.left + rect.width / 2,
         isMobile: mobile,
       })
     }
@@ -133,11 +133,13 @@ export function NotificationBell() {
             style={{
               position: 'fixed',
               top: pos.top,
-              left: pos.isMobile ? '50%' : pos.left,
-              transform: pos.isMobile ? 'translateX(-50%)' : 'none',
+              left: pos.isMobile ? '8px' : pos.left,
+              right: pos.isMobile ? '8px' : 'auto',
+              width: pos.isMobile ? 'auto' : 320,
+              transform: pos.isMobile ? 'none' : 'translateX(-50%)',
               zIndex: 9999,
             }}
-            className="w-80 max-w-[calc(100vw-16px)] rounded-2xl shadow-xl border overflow-hidden"
+            className="rounded-2xl shadow-xl border overflow-hidden"
           >
             <div className={`relative ${isDark ? 'bg-[#161618] border-white/[0.08]' : 'bg-white border-[#EFF3F4]'}`}>
               {/* Close button */}

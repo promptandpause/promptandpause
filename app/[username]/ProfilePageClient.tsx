@@ -171,6 +171,11 @@ export function ProfilePageClient({
           </div>
         </div>
 
+        {/* Mobile Search Bar */}
+        <div className="md:hidden mt-4">
+          <SearchBar />
+        </div>
+
         {/* Navigation Tabs */}
         <div className={`mt-6 sm:mt-8 border-b ${isDark ? 'border-white/10' : 'border-[#EFF3F4]'}`}>
           <div className="flex gap-6 -mb-px">

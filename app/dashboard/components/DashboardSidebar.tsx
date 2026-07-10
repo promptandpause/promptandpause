@@ -284,24 +284,24 @@ export function DashboardSidebar() {
       {/* ─── Mobile Top Nav Bar ─── */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-40">
         <div className={cn(
-          "px-4 h-14 flex items-center justify-between",
+          "px-4 h-14 grid grid-cols-3 items-center",
           isDark ? "bg-[#0A0A0A]/90 backdrop-blur-lg border-b border-white/[0.06]" : "bg-white/90 backdrop-blur-lg border-b border-[#EFF3F4]"
         )}>
           <button
             onClick={() => setDrawerOpen(true)}
-            className={`p-2 -ml-2 rounded-lg transition-colors ${isDark ? "hover:bg-white/10" : "hover:bg-[#EFF3F4]"}`}
+            className={`justify-self-start p-2 -ml-2 rounded-lg transition-colors ${isDark ? "hover:bg-white/10" : "hover:bg-[#EFF3F4]"}`}
             aria-label="Open navigation menu"
           >
             <List size={22} weight="bold" className={isDark ? "text-white" : "text-[#0F1419]"} />
           </button>
-          <Link href="/dashboard">
+          <Link href="/dashboard" className="justify-self-center">
             <img
               className={`h-7 ${isDark ? "invert" : ""}`}
               alt="Prompt & Pause"
               src="https://res.cloudinary.com/dh1rrfpmq/image/upload/v1766460430/prompt_pause-JRsbZR3dxCXndC8YMcyX6XU3XeT2Vw_vdvqfj.svg"
             />
           </Link>
-          <div className="flex items-center gap-1">
+          <div className="justify-self-end flex items-center gap-1">
             <NotificationBell />
             <Link href="/settings">
               <button className={`p-2 -mr-2 rounded-lg transition-colors ${isDark ? "hover:bg-white/10" : "hover:bg-[#EFF3F4]"}`} aria-label="Settings">
