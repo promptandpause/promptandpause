@@ -8,27 +8,49 @@ export default async function UserProfilePage({ params }: { params: Promise<{ us
   const username = raw.replace(/^@/, '')
 
   // Use service role client to bypass RLS for the initial profile lookup
-  // This avoids any cookie/auth issues blocking public profile reads
-  const serviceClient = createServiceRoleClient()
+  // Falls back to anon client if service role key isn't configured
+  // Note: subscription_tier is NOT a column in the profiles table
+  let profile: any = null
+  try {
+    const serviceClient = createServiceRoleClient()
+    const result = await serviceClient
+      .from('profiles')
+      .select(`
+        id, full_name, display_name, username, avatar_url, bio,
+        cover_image_url, profile_theme, mood_song_url, mood_song_title,
+        is_public_profile, share_default, show_in_discover
+      `)
+      .eq('username', username)
+      .single()
+    profile = result.data
+  } catch {
+    // Fallback to anon client if service role client fails
+    const anonClient = await createClient()
+    const { data } = await anonClient
+      .from('profiles')
+      .select(`
+        id, full_name, display_name, username, avatar_url, bio,
+        cover_image_url, profile_theme, mood_song_url, mood_song_title,
+        is_public_profile, share_default, show_in_discover
+      `)
+      .eq('username', username)
+      .single()
+    profile = data
+  }
 
-  const { data: profile, error } = await serviceClient
-    .from('profiles')
-    .select(`
-      id, full_name, display_name, username, avatar_url, bio,
-      cover_image_url, profile_theme, mood_song_url, mood_song_title,
-      is_public_profile, share_default, show_in_discover, subscription_tier
-    `)
-    .eq('username', username)
-    .single()
-
-  if (!profile || error) {
+  if (!profile) {
     notFound()
   }
+
+  const profileWithDefaults = {
+    subscription_tier: 'free',
+    ...profile,
+  } as ProfileWithSocial
 
   if (!profile.is_public_profile) {
     return (
       <ProfilePageClient
-        profile={profile as unknown as ProfileWithSocial}
+        profile={profileWithDefaults}
         reflections={[]}
         whiteboard={[]}
         isPrivate
@@ -58,7 +80,7 @@ export default async function UserProfilePage({ params }: { params: Promise<{ us
 
   return (
     <ProfilePageClient
-      profile={profile as unknown as ProfileWithSocial}
+      profile={profileWithDefaults}
       reflections={reflections || []}
       whiteboard={whiteboard || []}
     />
