@@ -163,7 +163,7 @@ export default function FriendsPage() {
                         }`}
                       >
                         <button
-                          onClick={() => router.push(`/${friend.profile?.username}`)}
+                          onClick={() => friend.profile?.username && router.push(`/${friend.profile.username}`)}
                           className="flex items-center gap-3 flex-1 min-w-0 text-left"
                         >
                           <Avatar className="h-10 w-10">

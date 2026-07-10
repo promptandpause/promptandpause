@@ -18,7 +18,8 @@ export function FeedCard({ item }: { item: FeedItem }) {
   const [liked, setLiked] = useState(item.is_liked_by_me)
   const [likeCount, setLikeCount] = useState(item.like_count)
 
-  const displayName = item.author.display_name || item.author.full_name || item.author.username || 'Someone'
+  const profile = item.author
+  const displayName = profile?.display_name || profile?.full_name || profile?.username || 'Someone'
   const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
   const timeAgo = getTimeAgo(item.reflection.created_at)
 
@@ -41,9 +42,9 @@ export function FeedCard({ item }: { item: FeedItem }) {
     >
       {/* Header */}
       <div className="p-4 pb-0 flex items-center gap-3">
-        <button onClick={() => router.push(`/${item.author.username}`)} className="flex items-center gap-3 flex-1 min-w-0 text-left">
+        <button onClick={() => profile?.username && router.push(`/${profile.username}`)} className="flex items-center gap-3 flex-1 min-w-0 text-left">
           <Avatar className="h-9 w-9">
-            <AvatarImage src={item.author.avatar_url || undefined} />
+            <AvatarImage src={profile?.avatar_url || undefined} />
             <AvatarFallback className={`text-xs ${isDark ? 'bg-[#161618] text-white/50' : 'bg-[#F7F9FA] text-[#8B98A5]'}`}>
               {initials}
             </AvatarFallback>

@@ -92,7 +92,7 @@ export function RandomFeed() {
                   ? 'hover:bg-white/[0.02] border-b border-white/[0.06]'
                   : 'hover:bg-[#F7F9FA] border-b border-[#EFF3F4]'
               }`}
-              onClick={() => router.push(`/${item.profile?.username}`)}
+              onClick={() => item.profile?.username && router.push(`/${item.profile.username}`)}
             >
               <div className="flex gap-3">
                 <Link href={`/${item.profile?.username}`} onClick={e => e.stopPropagation()} className="shrink-0">

@@ -246,10 +246,10 @@ function SearchContent() {
                             ? 'hover:bg-white/[0.02] border-b border-white/[0.06]'
                             : 'hover:bg-[#F7F9FA] border-b border-[#EFF3F4]'
                         }`}
-                        onClick={() => router.push(`/${r.profile?.username}`)}
+                        onClick={() => r.profile?.username && router.push(`/${r.profile.username}`)}
                       >
                         <div className="flex gap-3">
-                          <Link href={`/${r.profile?.username}`} onClick={e => e.stopPropagation()} className="shrink-0">
+                          <Link href={r.profile?.username ? `/${r.profile.username}` : '#'} onClick={e => e.stopPropagation()} className="shrink-0">
                             <Avatar className="h-10 w-10">
                               <AvatarImage src={r.profile?.avatar_url || undefined} />
                               <AvatarFallback className={`text-xs ${isDark ? 'bg-[#161618] text-white/40' : 'bg-[#EFF3F4] text-[#536471]'}`}>

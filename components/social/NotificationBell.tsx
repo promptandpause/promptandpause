@@ -170,7 +170,7 @@ export function NotificationBell() {
                       key={n.id}
                       onClick={() => {
                         setOpen(false)
-                        if (n.actor?.username) router.push(`/${n.actor.username}`)
+                        if (n.actor?.username && n.actor.username !== 'null') router.push(`/${n.actor.username}`)
                       }}
                       className={`w-full text-left px-4 py-3 flex items-start gap-3 transition-colors ${
                         !n.is_read

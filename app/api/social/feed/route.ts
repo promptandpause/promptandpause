@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
       .select(`
         id, prompt_text, reflection_text, mood, tags, word_count,
         visibility, created_at, allow_comments, user_id,
-        profiles!inner(id, full_name, display_name, username, avatar_url)
+        profile:profiles(id, full_name, display_name, username, avatar_url)
       `, { count: 'exact' })
       .in('user_id', friendIdArray)
       .neq('visibility', 'private')
@@ -51,20 +51,18 @@ export async function GET(request: NextRequest) {
     let userLikedSet = new Set<string>()
 
     if (reflectionIds.length > 0) {
-      const [{ data: counts }] = await Promise.all([
-        supabase.from('comments').select('reflection_id').in('reflection_id', reflectionIds),
-      ])
-      ;(counts as any[])?.forEach((c: any) => { commentCounts[c.reflection_id] = (commentCounts[c.reflection_id] || 0) + 1 })
-
-      let likes: { reflection_id: string; user_id: string }[] | null = null
       try {
-        const { data } = await supabase.from('reflection_likes').select('reflection_id, user_id').in('reflection_id', reflectionIds)
-        likes = (data || []) as any
-      } catch { likes = [] }
-      likes?.forEach((l: any) => {
-        likeCounts[l.reflection_id] = (likeCounts[l.reflection_id] || 0) + 1
-        if (l.user_id === user.id) userLikedSet.add(l.reflection_id)
-      })
+        const { data: counts } = await supabase.from('comments').select('reflection_id').in('reflection_id', reflectionIds)
+        ;(counts as any[])?.forEach((c: any) => { commentCounts[c.reflection_id] = (commentCounts[c.reflection_id] || 0) + 1 })
+      } catch {}
+
+      try {
+        const { data: likes } = await supabase.from('reflection_likes').select('reflection_id, user_id').in('reflection_id', reflectionIds)
+        ;(likes as any[])?.forEach((l: any) => {
+          likeCounts[l.reflection_id] = (likeCounts[l.reflection_id] || 0) + 1
+          if (l.user_id === user.id) userLikedSet.add(l.reflection_id)
+        })
+      } catch {}
     }
 
     const feed = (reflections || []).map(r => ({
@@ -79,7 +77,7 @@ export async function GET(request: NextRequest) {
         created_at: r.created_at,
         allow_comments: r.allow_comments,
       },
-      author: r.profiles,
+      author: r.profile,
       comment_count: commentCounts[r.id] || 0,
       like_count: likeCounts[r.id] || 0,
       is_liked_by_me: userLikedSet.has(r.id),

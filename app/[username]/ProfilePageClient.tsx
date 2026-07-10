@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button'
 import { useTheme } from '@/contexts/ThemeContext'
 import { FriendButton } from '@/components/social/FriendButton'
 import { WhiteboardSection } from '@/components/social/WhiteboardSection'
+import { WhoToFollow } from '@/app/dashboard/components/WhoToFollow'
+import { TrendingTopics } from '@/app/dashboard/components/TrendingTopics'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import type { ProfileWithSocial, WhiteboardEntry } from '@/lib/types/social'
@@ -67,8 +69,14 @@ export function ProfilePageClient({
         }}
       />
 
+      {/* Main Content + Sidebar */}
+      <div className="max-w-6xl mx-auto px-4 md:px-8">
+        <div className="flex gap-6">
+          {/* Left Column */}
+          <div className="flex-1 min-w-0">
+
       {/* Profile Header */}
-      <div className="max-w-4xl mx-auto px-4 md:px-8 -mt-[40px] sm:-mt-16 relative z-10">
+      <div className="-mt-[40px] sm:-mt-16 relative z-10">
         <div className="flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-6">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
@@ -291,7 +299,17 @@ export function ProfilePageClient({
           )}
         </div>
       </div>
+
+      {/* Right Sidebar */}
+      <aside className="hidden lg:block w-[320px] xl:w-[350px] shrink-0 pt-4">
+        <div className="sticky top-3 space-y-4">
+          <WhoToFollow />
+          <TrendingTopics />
+        </div>
+      </aside>
     </div>
+  </div>
+</div>
   )
 }
 

@@ -14,6 +14,7 @@ export async function GET() {
       .from('friends')
       .select('requester_id, addressee_id')
       .or(`requester_id.eq.${user.id},addressee_id.eq.${user.id}`)
+      .eq('status', 'accepted')
 
     const excludeIds = new Set<string>([user.id])
     friendIds?.forEach(f => {
@@ -26,6 +27,7 @@ export async function GET() {
     const { data, error } = await supabase
       .from('profiles')
       .select('id, full_name, display_name, username, avatar_url, bio')
+      .not('username', 'is', null)
       .not('id', 'in', `(${excludeArray.join(',')})`)
       .limit(5)
 
