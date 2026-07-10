@@ -61,6 +61,7 @@ export function DashboardSidebar() {
 
   const sidebarNav = [
     { icon: Layout, label: "dashboard", href: "/dashboard", active: isActive("/") },
+    { icon: UserCircle, label: "my_profile", href: "/", active: false, isProfile: true },
     { icon: MagnifyingGlass, label: "search", href: "/search", active: isActive("/search") },
     { icon: PencilLine, label: "reflect", href: "/reflect", active: isActive("/reflect") },
     { icon: Rss, label: "feed", href: "/feed", active: isActive("/feed") },
@@ -70,7 +71,6 @@ export function DashboardSidebar() {
     { icon: BookmarkSimple, label: "saved", href: "/saved", active: isActive("/saved") },
     { icon: Notebook, label: "my_journals", href: "/journals", active: isActive("/journals") },
     { icon: ChartBar, label: "insights", href: "/insights", active: isActive("/insights") },
-    { icon: UserCircle, label: "my_profile", href: "/", active: false, isProfile: true },
     { icon: Gear, label: "settings", href: "/settings", active: isActive("/settings") },
     { icon: Trophy, label: "achievements", href: "/achievements", active: isActive("/achievements") },
   ]

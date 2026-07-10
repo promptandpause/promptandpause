@@ -112,7 +112,8 @@ function DashboardContent() {
       <div className="flex h-screen overflow-hidden">
         <DashboardSidebar />
 
-        <main className="flex-1 overflow-y-auto scrollbar-thin border-r border-[#EFF3F4] dark:border-white/[0.06] max-w-[600px]">
+        <main className="flex-1 overflow-y-auto scrollbar-thin border-r border-[#EFF3F4] dark:border-white/[0.06]">
+          <div className="max-w-[600px] xl:max-w-[680px] mx-auto">
           {/* Twitter-style header */}
           <div className={`sticky top-0 z-10 backdrop-blur-md ${
             isDark ? "bg-[#0A0A0A]/80 border-b border-white/[0.06]" : "bg-white/80 border-b border-[#EFF3F4]"
@@ -295,6 +296,7 @@ function DashboardContent() {
           <div className="lg:hidden px-4 pb-4 space-y-3">
             <TrendingTopics />
             <WhoToFollow />
+          </div>
           </div>
         </main>
       </div>

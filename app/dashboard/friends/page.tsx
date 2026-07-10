@@ -23,6 +23,7 @@ export default function FriendsPage() {
   const [search, setSearch] = useState('')
   const [tab, setTab] = useState<'all' | 'pending' | 'requests'>('all')
   const [actionLoading, setActionLoading] = useState<string | null>(null)
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
 
   useEffect(() => { loadFriends() }, [])
 
@@ -31,6 +32,12 @@ export default function FriendsPage() {
       const res = await fetch('/api/social/friends')
       const { data } = await res.json()
       setFriends(data || [])
+      // Get current user id from the first friend record's requester/addressee that matches
+      const userRes = await fetch('/api/user/profile')
+      if (userRes.ok) {
+        const { data: profile } = await userRes.json()
+        setCurrentUserId(profile?.id || null)
+      }
     } catch {}
     setLoading(false)
   }
@@ -53,11 +60,8 @@ export default function FriendsPage() {
   }
 
   const accepted = friends.filter(f => f.status === 'accepted')
-  const pending = friends.filter(f => f.status === 'pending' && f.profile?.id !== undefined)
-  const incoming = friends.filter(f => f.status === 'pending')
-  // Determine which pending are sent by us vs received
-  const sentRequests = pending
-  const receivedRequests = friends.filter(f => f.status === 'pending')
+  const sentRequests = currentUserId ? friends.filter(f => f.status === 'pending' && f.requester_id === currentUserId) : []
+  const receivedRequests = currentUserId ? friends.filter(f => f.status === 'pending' && f.addressee_id === currentUserId) : []
 
   const filtered = tab === 'all' ? accepted : tab === 'pending' ? sentRequests : receivedRequests
 
@@ -198,7 +202,7 @@ export default function FriendsPage() {
                           )}
                           {friend.status === 'pending' && (
                             <>
-                              {friend.requester_id !== friend.profile?.id && (
+                              {friend.addressee_id === currentUserId && (
                                 <Button
                                   variant="outline"
                                   size="sm"
@@ -225,7 +229,7 @@ export default function FriendsPage() {
                                 disabled={actionLoading === friend.id}
                                 className={`h-8 text-xs ${isDark ? 'text-white/30 hover:text-red-400' : 'text-[#8B98A5] hover:text-red-500'}`}
                               >
-                                {actionLoading === friend.id && friend.requester_id !== friend.profile?.id ? (
+                                {actionLoading === friend.id ? (
                                   <Spinner size={12} weight="bold" className="animate-spin" />
                                 ) : (
                                   <X size={12} weight="bold" />

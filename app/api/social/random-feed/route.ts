@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getAuthUser, createClient } from '@/lib/supabase/server'
+import { getAuthUser, createServiceRoleClient } from '@/lib/supabase/server'
 
 export async function GET() {
   try {
@@ -8,7 +8,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const supabase = await createClient()
+    const supabase = createServiceRoleClient()
 
     const { data: friendIds } = await supabase
       .from('friends')
@@ -22,6 +22,7 @@ export async function GET() {
       if (f.addressee_id !== user.id) friendIdSet.add(f.addressee_id)
     })
 
+    // Get ALL non-private reflections, then filter in-memory for friends_only visibility
     const { data, error } = await supabase
       .from('reflections')
       .select(`
@@ -35,7 +36,13 @@ export async function GET() {
 
     if (error) throw error
 
-    const enriched = (data || []).map(r => ({
+    // Filter: only public (all users) + friends_only from friends
+    const visible = (data || []).filter(r =>
+      r.visibility === 'public' ||
+      (r.visibility === 'friends_only' && friendIdSet.has(r.user_id))
+    )
+
+    const enriched = visible.map(r => ({
       ...r,
       is_from_friend: friendIdSet.has(r.user_id),
       reflection_text: r.reflection_text?.slice(0, 300),
@@ -43,7 +50,7 @@ export async function GET() {
       is_liked_by_me: false,
     }))
 
-    // Enrich with like counts — gracefully skip if reflection_likes table doesn't exist
+    // Enrich with like counts
     try {
       const ids = enriched.map(r => r.id)
       if (ids.length > 0) {

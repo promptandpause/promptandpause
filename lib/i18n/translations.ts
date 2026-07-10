@@ -23,6 +23,7 @@ export const en = {
   
   // Navigation
   'nav.dashboard': 'Dashboard',
+  'nav.search': 'Search',
   'nav.achievements': 'Achievements',
   'nav.feed': 'Feed',
   'nav.reflect': 'Reflect',
@@ -181,6 +182,7 @@ export const es: Record<TranslationKey, string> = {
   
   // Navigation
   'nav.dashboard': 'Panel',
+  'nav.search': 'Buscar',
   'nav.achievements': 'Logros',
   'nav.feed': 'Feed',
   'nav.reflect': 'Reflexionar',
@@ -339,6 +341,7 @@ export const fr: Record<TranslationKey, string> = {
   
   // Navigation
   'nav.dashboard': 'Tableau de Bord',
+  'nav.search': 'Rechercher',
   'nav.achievements': 'Réalisations',
   'nav.feed': 'Fil d\'actualité',
   'nav.reflect': 'Réfléchir',
@@ -497,6 +500,7 @@ export const nl: Record<TranslationKey, string> = {
   
   // Navigation
   'nav.dashboard': 'Dashboard',
+  'nav.search': 'Zoeken',
   'nav.achievements': 'Prestaties',
   'nav.feed': 'Feed',
   'nav.reflect': 'Reflecteren',
