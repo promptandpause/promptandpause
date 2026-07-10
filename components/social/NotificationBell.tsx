@@ -115,7 +115,7 @@ export function NotificationBell() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -4 }}
             transition={{ duration: 0.15 }}
-            className={`absolute right-0 mt-2 w-80 rounded-2xl shadow-xl border overflow-hidden ${
+            className={`absolute left-1/2 -translate-x-1/2 md:left-0 md:translate-x-0 mt-2 w-80 max-w-[calc(100vw-16px)] rounded-2xl shadow-xl border overflow-hidden ${
               isDark ? 'bg-[#161618] border-white/[0.08]' : 'bg-white border-[#EFF3F4]'
             }`}
             style={{ maxHeight: '70vh' }}

@@ -59,8 +59,8 @@ export async function GET(request: NextRequest) {
       let likes: { reflection_id: string; user_id: string }[] | null = null
       try {
         const { data } = await supabase.from('reflection_likes').select('reflection_id, user_id').in('reflection_id', reflectionIds)
-        likes = data as any
-      } catch {}
+        likes = (data || []) as any
+      } catch { likes = [] }
       likes?.forEach((l: any) => {
         likeCounts[l.reflection_id] = (likeCounts[l.reflection_id] || 0) + 1
         if (l.user_id === user.id) userLikedSet.add(l.reflection_id)
