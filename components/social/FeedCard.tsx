@@ -138,7 +138,7 @@ export function FeedCard({ item }: { item: FeedItem }) {
             exit={{ height: 0, opacity: 0 }}
             className={`border-t ${isDark ? 'border-white/[0.04]' : 'border-[#F7F9FA]'}`}
           >
-            <CommentSection reflectionId={item.reflection.id} />
+            <CommentSection reflectionId={item.reflection.id} reflectionOwnerId={item.author.id} />
           </motion.div>
         )}
       </AnimatePresence>

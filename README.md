@@ -3,7 +3,7 @@
 ![Prompt & Pause Logo](https://res.cloudinary.com/dh1rrfpmq/image/upload/v1766460430/prompt_pause-png-xr9SralsTsOhMfuwfo1LJKxqmeaJA5_ibt3kc.png)
 
 
-**Transform Your Mental Wellness Journey with Daily Reflection**
+**Prompt & Pause combines AI-powered daily reflection prompts with a supportive community — think Headspace meets Twitter for personal growth.**
 
 <a href="https://www.promptandpause.com" target="_blank">Visit Our Website</a> | <a href="https://www.promptandpause.com/signup" target="_blank">Start Your Free Trial</a> | <a href="mailto:support@promptandpause.com" target="_blank">Contact Us</a>
 
@@ -13,9 +13,7 @@
 
 ## About Prompt & Pause
 
-**Prompt & Pause** is a UK/US-based mental wellness platform that helps you build a sustainable reflection practice through personalized daily prompts. We combine AI-powered personalization with evidence-based reflection techniques to support your journey toward better mental health, self-awareness, and personal growth.
-
-Unlike generic journaling apps, Prompt & Pause delivers **deeply personalized prompts** tailored to your unique goals, emotional state, and life circumstances—helping you explore what truly matters to you.
+**Prompt & Pause** is a daily reflection companion that helps you slow down, check in with yourself, and grow. Every day, you get a personalized prompt — written just for you based on your goals, mood, and focus areas. You can reflect privately in your journal, or share publicly and connect with a community doing the same work. Track your mood over time, build habits, practice gratitude, and see how far you've come. Free to start, premium for deeper insights.
 
 ### Why Choose Prompt & Pause?
 

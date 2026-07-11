@@ -1,6 +1,6 @@
 # Prompt & Pause 🧘‍♀️
 
-A mindfulness and reflection platform that helps users pause, reflect, and grow through daily prompts and journaling.
+A daily reflection companion that delivers AI-powered prompts personalized to your goals, mood, and focus areas. Write privately or share with a supportive community. Free to start, premium for deeper insights.
 
 ## 🚀 Quick Start
 

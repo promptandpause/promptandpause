@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { getAuthUser, createClient } from '@/lib/supabase/server'
-import { DashboardRightSidebar } from './DashboardRightSidebar'
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -33,7 +32,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
       <div className="flex-1 min-w-0">
         {children}
       </div>
-      <DashboardRightSidebar />
     </div>
   )
 }

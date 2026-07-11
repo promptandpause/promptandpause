@@ -23,11 +23,13 @@ export async function DELETE(request: NextRequest) {
 
     const supabase = await createClient()
 
-    // Only the comment's author can delete it (RLS also enforces this,
-    // but we check explicitly for a clean 403 vs a generic RLS-denied error)
+    // Either the comment's author OR the owner of the reflection it's on
+    // can delete it (RLS also enforces this via two additive DELETE
+    // policies, but we check explicitly here for a clean 403 vs a
+    // generic RLS-denied error, and to know which case we're in)
     const { data: comment } = await supabase
       .from('comments')
-      .select('id, author_id')
+      .select('id, author_id, reflection_id')
       .eq('id', commentId)
       .single()
 
@@ -35,7 +37,18 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Comment not found' }, { status: 404 })
     }
 
-    if (comment.author_id !== user.id) {
+    let isAuthorized = comment.author_id === user.id
+
+    if (!isAuthorized) {
+      const { data: reflection } = await supabase
+        .from('reflections')
+        .select('user_id')
+        .eq('id', comment.reflection_id)
+        .single()
+      isAuthorized = reflection?.user_id === user.id
+    }
+
+    if (!isAuthorized) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 

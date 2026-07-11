@@ -6,7 +6,7 @@ export function organizationJsonLd() {
     alternateName: "Prompt and Pause",
     url: "https://promptandpause.com",
     logo: "https://promptandpause.com/icon.png",
-    description: "A calm reflection practice with one thoughtful prompt at a time—private, quiet, and without pressure or performance.",
+    description: "Prompt & Pause is a daily reflection companion that delivers AI-powered prompts personalized to your goals, mood, and focus areas. Write privately or share with a supportive community.",
     foundingDate: "2024",
     contactPoint: {
       "@type": "ContactPoint",
@@ -29,7 +29,7 @@ export function websiteJsonLd() {
     name: "Prompt & Pause",
     alternateName: "Prompt and Pause",
     url: "https://promptandpause.com",
-    description: "Five quiet minutes a day to make sense of your life. One thoughtful prompt at a time—private, calm, and without pressure or performance.",
+    description: "AI-powered daily reflection prompts personalized to your goals, mood, and focus areas. Write privately or share with a supportive community. Free to start.",
     inLanguage: "en-GB",
     publisher: {
       "@type": "Organization",

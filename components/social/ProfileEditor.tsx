@@ -21,7 +21,7 @@ const RESERVED_USERNAMES = new Set([
   'terms-of-service', 'home', 'discover', 'explore',
 ])
 
-export function ProfileEditor() {
+export function ProfileEditor({ onSaved }: { onSaved?: () => void } = {}) {
   const { theme } = useTheme()
   const { toast } = useToast()
   const isDark = theme === 'dark'
@@ -99,6 +99,7 @@ export function ProfileEditor() {
       })
       if (res.ok) {
         toast({ title: 'Profile updated', description: 'Your profile changes are live.' })
+        onSaved?.()
       } else {
         const body = await res.json().catch(() => ({}))
         toast({ title: 'Error', description: body?.error || `Failed to save (${res.status})`, variant: 'destructive' })

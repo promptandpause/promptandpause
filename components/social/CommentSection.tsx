@@ -10,9 +10,10 @@ import type { Comment } from '@/lib/types/social'
 
 interface CommentSectionProps {
   reflectionId: string
+  reflectionOwnerId?: string
 }
 
-export function CommentSection({ reflectionId }: CommentSectionProps) {
+export function CommentSection({ reflectionId, reflectionOwnerId }: CommentSectionProps) {
   const { theme } = useTheme()
   const isDark = theme === 'dark'
   const [comments, setComments] = useState<Comment[]>([])
@@ -122,9 +123,10 @@ export function CommentSection({ reflectionId }: CommentSectionProps) {
                   <span className={`text-[10px] ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`}>
                     {getTimeAgo(comment.created_at)}
                   </span>
-                  {myId && (comment as any).author_id === myId && (
+                  {myId && ((comment as any).author_id === myId || reflectionOwnerId === myId) && (
                     <button
                       onClick={() => handleDelete(comment.id)}
+                      title={(comment as any).author_id === myId ? 'Delete your comment' : 'Remove comment from your reflection'}
                       className={`ml-auto text-[10px] flex items-center gap-1 transition-colors ${isDark ? 'text-white/20 hover:text-red-400' : 'text-[#8B98A5] hover:text-red-500'}`}
                     >
                       <Trash2 className="h-3 w-3" />

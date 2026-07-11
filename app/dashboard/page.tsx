@@ -320,7 +320,7 @@ function DashboardContent() {
                                     className={`mt-3 -mx-4 border-t ${isDark ? 'border-white/[0.06]' : 'border-[#EFF3F4]'}`}
                                     onClick={e => e.stopPropagation()}
                                   >
-                                    <CommentSection reflectionId={item.id} />
+                                    <CommentSection reflectionId={item.id} reflectionOwnerId={item.user_id} />
                                   </div>
                                 )}
                               </div>
@@ -427,7 +427,7 @@ function DashboardContent() {
                                     className={`mt-3 -mx-4 border-t ${isDark ? 'border-white/[0.06]' : 'border-[#EFF3F4]'}`}
                                     onClick={e => e.stopPropagation()}
                                   >
-                                    <CommentSection reflectionId={item.id} />
+                                    <CommentSection reflectionId={item.id} reflectionOwnerId={item.user_id} />
                                   </div>
                                 )}
                               </div>

@@ -1,19 +1,20 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { User, MessageCircle, Music, Palette, Sparkles, Lock, Pencil, Settings, Layout, Archive, House, Heart, Rss, Trash2 } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { User, MessageCircle, Music, Palette, Sparkles, Lock, Pencil, Settings, Layout, Archive, House, Heart, Rss, Trash2, X } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { useTheme } from '@/contexts/ThemeContext'
 import { FriendButton } from '@/components/social/FriendButton'
 import { WhiteboardSection } from '@/components/social/WhiteboardSection'
 import { CommentSection } from '@/components/social/CommentSection'
+import { ProfileEditor } from '@/components/social/ProfileEditor'
 import { WhoToFollow } from '@/app/dashboard/components/WhoToFollow'
 import { TrendingTopics } from '@/app/dashboard/components/TrendingTopics'
 import { SearchBar } from '@/app/dashboard/components/SearchBar'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import type { ProfileWithSocial, WhiteboardEntry } from '@/lib/types/social'
 
 interface Reflection {
@@ -63,7 +64,9 @@ export function ProfilePageClient({
   const [likesFeed, setLikesFeed] = useState<LikedReflection[]>([])
   const [likesLoading, setLikesLoading] = useState(false)
   const [likesLoaded, setLikesLoaded] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
   const pathname = usePathname()
+  const router = useRouter()
 
   useEffect(() => {
     fetch('/api/user/profile')
@@ -175,16 +178,19 @@ export function ProfilePageClient({
               <div className="sm:ml-auto flex items-center gap-2 flex-wrap">
                 {isOwnProfile ? (
                   <>
-                    <Link href="/settings/profile">
-                      <Button variant="outline" size="sm" className={`rounded-full text-xs font-semibold gap-1.5 ${
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowEditModal(true)}
+                      className={`rounded-full text-xs font-semibold gap-1.5 ${
                         isDark
                           ? 'border-white/20 text-white hover:bg-white/10'
                           : 'border-[#CFD9DE] text-[#0F1419] hover:bg-[#EFF3F4]'
-                      }`}>
-                        <Pencil className="h-3.5 w-3.5" />
-                        Edit Profile
-                      </Button>
-                    </Link>
+                      }`}
+                    >
+                      <Pencil className="h-3.5 w-3.5" />
+                      Edit Profile
+                    </Button>
                     <Link href="/settings">
                       <Button variant="outline" size="sm" className={`rounded-full text-xs font-semibold gap-1.5 ${
                         isDark
@@ -296,13 +302,13 @@ export function ProfilePageClient({
               </p>
               <div className="flex items-center justify-center gap-3">
                 {isOwnProfile ? (
-                  <Link href="/settings/profile" className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-colors ${
+                  <button onClick={() => setShowEditModal(true)} className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-colors ${
                     isDark
                       ? 'bg-[#1D9BF0] text-white hover:bg-[#1A8CD8]'
                       : 'bg-[#1D9BF0] text-white hover:bg-[#1A8CD8]'
                   }`}>
                     Edit Settings
-                  </Link>
+                  </button>
                 ) : (
                   <>
                     <button onClick={() => window.history.back()} className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-colors border ${
@@ -397,7 +403,7 @@ export function ProfilePageClient({
                     </div>
                     {openComments.has(ref.id) && (
                       <div className={`mt-3 -mx-4 sm:-mx-5 border-t ${isDark ? 'border-white/[0.06]' : 'border-[#EFF3F4]'}`}>
-                        <CommentSection reflectionId={ref.id} />
+                        <CommentSection reflectionId={ref.id} reflectionOwnerId={profile.id} />
                       </div>
                     )}
                   </motion.div>
@@ -468,7 +474,7 @@ export function ProfilePageClient({
                       </div>
                       {openComments.has(ref.id) && (
                         <div className={`mt-3 -mx-4 sm:-mx-5 border-t ${isDark ? 'border-white/[0.06]' : 'border-[#EFF3F4]'}`}>
-                          <CommentSection reflectionId={ref.id} />
+                          <CommentSection reflectionId={ref.id} reflectionOwnerId={ref.user_id} />
                         </div>
                       )}
                     </motion.div>
@@ -491,6 +497,57 @@ export function ProfilePageClient({
     </div>
   </div>
 </div>
+
+      {/* Edit Profile Modal (Twitter-style: same page, overlay, no navigation) */}
+      <AnimatePresence>
+        {showEditModal && isOwnProfile && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-start sm:items-center justify-center overflow-y-auto"
+          >
+            <div
+              className="absolute inset-0 bg-black/60"
+              onClick={() => setShowEditModal(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, y: 20, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.98 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+              className={`relative w-full sm:max-w-2xl sm:my-8 sm:rounded-2xl overflow-hidden ${
+                isDark ? 'bg-[#0A0A0A]' : 'bg-white'
+              }`}
+            >
+              <div className={`sticky top-0 z-10 flex items-center justify-between px-4 sm:px-6 py-3 border-b backdrop-blur-md ${
+                isDark ? 'bg-[#0A0A0A]/90 border-white/[0.08]' : 'bg-white/90 border-[#EFF3F4]'
+              }`}>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setShowEditModal(false)}
+                    className={`p-1.5 rounded-full transition-colors ${isDark ? 'hover:bg-white/10 text-white' : 'hover:bg-[#EFF3F4] text-[#0F1419]'}`}
+                    aria-label="Close"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                  <h2 className={`text-base font-semibold ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+                    Edit profile
+                  </h2>
+                </div>
+              </div>
+              <div className="px-4 sm:px-6 py-5 max-h-[80vh] overflow-y-auto">
+                <ProfileEditor
+                  onSaved={() => {
+                    setShowEditModal(false)
+                    router.refresh()
+                  }}
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 </div>
   )
 }

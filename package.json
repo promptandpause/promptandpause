@@ -1,5 +1,6 @@
 {
   "name": "prompt-and-pause",
+  "description": "AI-powered daily reflection prompts personalized to your goals and mood. Write privately or share with a supportive community. Free to start.",
   "version": "1.0.0",
   "private": true,
   "scripts": {

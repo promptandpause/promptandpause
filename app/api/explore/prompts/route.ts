@@ -21,7 +21,6 @@ export async function GET(request: NextRequest) {
       .from('community_prompts')
       .select(`
         *,
-        author:profiles(id, full_name, display_name, username),
         user_vote:prompt_votes!left(vote_type)
       `, { count: 'exact' })
       .eq('status', 'approved')
@@ -36,8 +35,22 @@ export async function GET(request: NextRequest) {
 
     if (error) throw error
 
+    // author:profiles(...) can't be embedded directly here -- community_prompts.author_id
+    // references public.users, not profiles, so there's no direct FK for PostgREST to
+    // follow. Fetch author profiles separately instead, same fix as reflections/random-feed.
+    const authorIds = [...new Set((data || []).map((p: any) => p.author_id).filter(Boolean))]
+    const authorMap = new Map<string, any>()
+    if (authorIds.length > 0) {
+      const { data: authors } = await supabase
+        .from('profiles')
+        .select('id, full_name, display_name, username')
+        .in('id', authorIds)
+      authors?.forEach((a: any) => authorMap.set(a.id, a))
+    }
+
     const prompts = (data || []).map(p => ({
       ...p,
+      author: authorMap.get(p.author_id) || null,
       user_vote: p.user_vote?.[0]?.vote_type || null,
     }))
 
