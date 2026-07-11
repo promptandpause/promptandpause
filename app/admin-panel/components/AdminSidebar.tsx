@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { 
+import {
   LayoutDashboard, 
   Users, 
   BarChart3, 
@@ -13,7 +13,6 @@ import {
   CreditCard,
   Clock,
   Mail,
-  MessageSquare,
   BookOpen,
   FileText,
   Wrench,
@@ -21,7 +20,8 @@ import {
   UserCircle,
   Tag,
   Gift,
-  Crown
+  Crown,
+  ExternalLink
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
@@ -94,12 +94,6 @@ const navigationItems = [
     description: 'Admin utilities'
   },
   {
-    title: 'Support Tickets',
-    href: '/admin-panel/support',
-    icon: MessageSquare,
-    description: 'User support'
-  },
-  {
     title: 'Prompt Library',
     href: '/admin-panel/prompts',
     icon: BookOpen,
@@ -128,6 +122,13 @@ const navigationItems = [
     href: '/admin-panel/profile',
     icon: UserCircle,
     description: 'Your admin account'
+  },
+  {
+    title: 'Helpdesk',
+    href: process.env.NEXT_PUBLIC_NOCOBASE_URL || 'https://helpdesk.promptandpause.com',
+    icon: ExternalLink,
+    description: 'Support tickets (NocoBase)',
+    external: true
   },
   {
     title: 'Settings',
@@ -197,6 +198,23 @@ export default function AdminSidebar({ userEmail, userRole }: AdminSidebarProps)
           const isActive = pathname === item.href || 
             (item.href !== '/admin-panel' && pathname.startsWith(item.href))
           const Icon = item.icon
+
+          if (item.external) {
+            return (
+              <a key={item.href} href={item.href} target="_blank" rel="noopener noreferrer">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start gap-3 h-auto py-3 px-3 rounded-lg text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                >
+                  <Icon className="h-5 w-5 flex-shrink-0" />
+                  <div className="flex-1 text-left">
+                    <div className="font-medium">{item.title}</div>
+                    <div className="text-xs opacity-60">{item.description}</div>
+                  </div>
+                </Button>
+              </a>
+            )
+          }
 
           return (
             <Link key={item.href} href={item.href}>

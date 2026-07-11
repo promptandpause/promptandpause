@@ -35,8 +35,7 @@ const ACTION_TYPES = [
   { value: 'admin_password_updated', label: 'Admin Password Updated' },
   { value: 'admin_email_updated', label: 'Admin Email Updated' },
   { value: 'email_template_updated', label: 'Email Template Updated' },
-  { value: 'support_ticket_updated', label: 'Support Ticket Updated' },
-  { value: 'support_response_added', label: 'Support Response Added' },
+
   { value: 'prompt_created', label: 'Prompt Created' },
   { value: 'prompt_updated', label: 'Prompt Updated' },
   { value: 'prompt_deleted', label: 'Prompt Deleted' },
@@ -59,8 +58,7 @@ const ACTION_COLORS: Record<string, string> = {
   admin_password_updated: 'bg-amber-50 text-amber-700 border-amber-200',
   admin_email_updated: 'bg-amber-50 text-amber-700 border-amber-200',
   email_template_updated: 'bg-purple-50 text-purple-700 border-purple-200',
-  support_ticket_updated: 'bg-blue-50 text-blue-700 border-blue-200',
-  support_response_added: 'bg-blue-50 text-blue-700 border-blue-200',
+
   prompt_created: 'bg-emerald-50 text-emerald-700 border-emerald-200',
   prompt_updated: 'bg-amber-50 text-amber-700 border-amber-200',
   prompt_deleted: 'bg-red-50 text-red-700 border-red-200',

@@ -1646,238 +1646,223 @@ export async function updateEmailTemplate(
 /**
  * Get support tickets with filtering and pagination
  */
-export async function getSupportTickets(params: {
+// ============================================================================
+// CONTENT MODERATION (REPORTS & BLOCKS)
+// ============================================================================
+
+/**
+ * Get content reports with filtering and pagination. Reports are polymorphic
+ * (target_type: 'reflection' | 'comment' | 'user'), so the reported content
+ * itself is fetched separately per type and merged in, same pattern used
+ * throughout the social API routes for profile embeds.
+ */
+export async function getContentReports(params: {
   limit?: number
   offset?: number
   status?: string
-  priority?: string
-  search?: string
+  target_type?: string
+  reason?: string
 }) {
   try {
     const supabase = createServiceRoleClient()
-    const { 
-      limit = 50, 
-      offset = 0, 
-      status,
-      priority,
-      search
-    } = params
+    const { limit = 50, offset = 0, status, target_type, reason } = params
 
     let query = supabase
-      .from('support_tickets')
-      .select(`
-        *,
-        profiles(email, full_name)
-      `, { count: 'exact' })
+      .from('content_reports')
+      .select('*', { count: 'exact' })
+      // Self-harm reports surface first regardless of recency -- these need
+      // the fastest human eyes on them
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1)
 
-    if (status) {
-      query = query.eq('status', status)
-    }
+    if (status) query = query.eq('status', status)
+    if (target_type) query = query.eq('target_type', target_type)
+    if (reason) query = query.eq('reason', reason)
 
-    if (priority) {
-      query = query.eq('priority', priority)
-    }
-
-    if (search) {
-      query = query.or(`subject.ilike.%${search}%,description.ilike.%${search}%`)
-    }
-
-    const { data, error, count } = await query
-
-    if (error) {
-      throw error
-    }
-
-    return {
-      tickets: data || [],
-      total: count || 0,
-      success: true,
-    }
-  } catch (error: any) {
-    logger.error('get_support_tickets_error', { error })
-    return {
-      tickets: [],
-      total: 0,
-      success: false,
-      error: error.message,
-    }
-  }
-}
-
-/**
- * Get single support ticket with responses
- */
-export async function getSupportTicketById(ticketId: string) {
-  try {
-    const supabase = createServiceRoleClient()
-
-    // Get ticket
-    const { data: ticket, error: ticketError } = await supabase
-      .from('support_tickets')
-      .select(`
-        *,
-        profiles(email, full_name)
-      `)
-      .eq('id', ticketId)
-      .single()
-
-    if (ticketError) throw ticketError
-
-    // Get responses
-    const { data: responses, error: responsesError } = await supabase
-      .from('support_responses')
-      .select('*')
-      .eq('ticket_id', ticketId)
-      .order('created_at', { ascending: true })
-
-    if (responsesError) throw responsesError
-
-    return {
-      ticket,
-      responses: responses || [],
-      success: true,
-    }
-  } catch (error: any) {
-    logger.error('get_support_ticket_error', { error, ticketId })
-    return {
-      ticket: null,
-      responses: [],
-      success: false,
-      error: error.message,
-    }
-  }
-}
-
-/**
- * Get support ticket statistics
- */
-export async function getSupportStats() {
-  try {
-    const supabase = createServiceRoleClient()
-
-    // Get stats using the helper function
-    const { data: stats, error } = await supabase.rpc('get_support_stats')
-
+    const { data: reports, error, count } = await query
     if (error) throw error
 
-    return {
-      stats: stats?.[0] || {
-        total_tickets: 0,
-        open_tickets: 0,
-        in_progress_tickets: 0,
-        resolved_tickets: 0,
-        avg_response_time_hours: 0
-      },
-      success: true,
+    const rows = reports || []
+    // Self-harm first, then pending, then everything else newest-first
+    rows.sort((a: any, b: any) => {
+      if (a.reason === 'self_harm' && b.reason !== 'self_harm') return -1
+      if (b.reason === 'self_harm' && a.reason !== 'self_harm') return 1
+      if (a.status === 'pending' && b.status !== 'pending') return -1
+      if (b.status === 'pending' && a.status !== 'pending') return 1
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    })
+
+    // Reporters
+    const reporterIds = [...new Set(rows.map((r: any) => r.reporter_id))]
+    const reporterMap = new Map<string, any>()
+    if (reporterIds.length > 0) {
+      const { data: reporters } = await supabase
+        .from('profiles')
+        .select('id, email, full_name, username')
+        .in('id', reporterIds)
+      reporters?.forEach(p => reporterMap.set(p.id, p))
     }
+
+    // Reported content, grouped by type
+    const reflectionIds = rows.filter((r: any) => r.target_type === 'reflection').map((r: any) => r.target_id)
+    const commentIds = rows.filter((r: any) => r.target_type === 'comment').map((r: any) => r.target_id)
+    const userIds = rows.filter((r: any) => r.target_type === 'user').map((r: any) => r.target_id)
+
+    const [reflectionsRes, commentsRes, usersRes] = await Promise.all([
+      reflectionIds.length
+        ? supabase.from('reflections').select('id, reflection_text, prompt_text, user_id, visibility, created_at').in('id', reflectionIds)
+        : Promise.resolve({ data: [] as any[] }),
+      commentIds.length
+        ? supabase.from('comments').select('id, body, author_id, reflection_id, created_at').in('id', commentIds)
+        : Promise.resolve({ data: [] as any[] }),
+      userIds.length
+        ? supabase.from('profiles').select('id, email, full_name, username').in('id', userIds)
+        : Promise.resolve({ data: [] as any[] }),
+    ])
+
+    const reflectionMap = new Map((reflectionsRes.data || []).map((r: any) => [r.id, r]))
+    const commentMap = new Map((commentsRes.data || []).map((c: any) => [c.id, c]))
+    const userMap = new Map((usersRes.data || []).map((u: any) => [u.id, u]))
+
+    // Content authors need profiles too (reflection.user_id / comment.author_id)
+    const authorIds = [
+      ...(reflectionsRes.data || []).map((r: any) => r.user_id),
+      ...(commentsRes.data || []).map((c: any) => c.author_id),
+    ].filter(Boolean)
+    const authorMap = new Map<string, any>()
+    if (authorIds.length > 0) {
+      const { data: authors } = await supabase
+        .from('profiles')
+        .select('id, email, full_name, username')
+        .in('id', [...new Set(authorIds)])
+      authors?.forEach(p => authorMap.set(p.id, p))
+    }
+
+    const enriched = rows.map((r: any) => {
+      let target: any = null
+      let targetAuthor: any = null
+
+      if (r.target_type === 'reflection') {
+        const reflection = reflectionMap.get(r.target_id)
+        target = reflection
+          ? { id: reflection.id, text: reflection.reflection_text, prompt: reflection.prompt_text, visibility: reflection.visibility }
+          : null
+        targetAuthor = reflection ? authorMap.get(reflection.user_id) : null
+      } else if (r.target_type === 'comment') {
+        const comment = commentMap.get(r.target_id)
+        target = comment ? { id: comment.id, text: comment.body, reflection_id: comment.reflection_id } : null
+        targetAuthor = comment ? authorMap.get(comment.author_id) : null
+      } else if (r.target_type === 'user') {
+        const u = userMap.get(r.target_id)
+        target = u
+        targetAuthor = u
+      }
+
+      return {
+        ...r,
+        reporter: reporterMap.get(r.reporter_id) || null,
+        target,
+        target_deleted: target === null,
+        target_author: targetAuthor || null,
+      }
+    })
+
+    return { reports: enriched, total: count || 0, success: true }
   } catch (error: any) {
-    return {
-      stats: null,
-      success: false,
-      error: error.message,
-    }
+    logger.error('get_content_reports_error', { error })
+    return { reports: [], total: 0, success: false, error: error.message }
   }
 }
 
 /**
- * Update support ticket status
+ * Get content moderation queue stats for the admin dashboard header
  */
-export async function updateSupportTicket(
-  ticketId: string,
-  updates: {
-    status?: string
-    priority?: string
-    assigned_to?: string
-  },
+export async function getContentReportStats() {
+  try {
+    const supabase = createServiceRoleClient()
+    const { data } = await supabase.from('content_reports').select('status, reason')
+
+    const stats = {
+      total: data?.length || 0,
+      pending: data?.filter((r: any) => r.status === 'pending').length || 0,
+      self_harm_pending: data?.filter((r: any) => r.status === 'pending' && r.reason === 'self_harm').length || 0,
+      actioned: data?.filter((r: any) => r.status === 'actioned').length || 0,
+    }
+
+    return { stats, success: true }
+  } catch (error: any) {
+    logger.error('get_content_report_stats_error', { error })
+    return { stats: null, success: false, error: error.message }
+  }
+}
+
+/**
+ * Update a report's review status (pending -> reviewed / dismissed / actioned)
+ */
+export async function updateContentReportStatus(
+  reportId: string,
+  status: 'pending' | 'reviewed' | 'dismissed' | 'actioned',
   adminEmail: string
 ) {
   try {
     const supabase = createServiceRoleClient()
 
     const { data, error } = await supabase
-      .from('support_tickets')
-      .update({
-        ...updates,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', ticketId)
+      .from('content_reports')
+      .update({ status })
+      .eq('id', reportId)
       .select()
       .single()
 
     if (error) throw error
 
-    // Log the activity
     await logAdminActivity({
       admin_email: adminEmail,
-      action_type: 'support_ticket_updated',
-      details: { ticket_id: ticketId, updates },
+      action_type: 'content_report_status_updated',
+      details: { report_id: reportId, status },
     })
 
-    return {
-      ticket: data,
-      success: true,
-    }
+    return { report: data, success: true }
   } catch (error: any) {
-    logger.error('update_support_ticket_error', { error, ticketId, updates })
-    return {
-      ticket: null,
-      success: false,
-      error: error.message,
-    }
+    logger.error('update_content_report_error', { error, reportId })
+    return { report: null, success: false, error: error.message }
   }
 }
 
 /**
- * Add response to support ticket
+ * Admin removes the reported content itself (reflection or comment) and
+ * marks every report against that content as 'actioned'. Uses the service
+ * role client, so this bypasses RLS deliberately -- admin moderation should
+ * work regardless of who owns the content.
  */
-export async function addSupportResponse(
-  ticketId: string,
-  message: string,
-  adminEmail: string,
-  isInternal: boolean = false
+export async function removeReportedContent(
+  targetType: 'reflection' | 'comment',
+  targetId: string,
+  adminEmail: string
 ) {
   try {
     const supabase = createServiceRoleClient()
+    const table = targetType === 'reflection' ? 'reflections' : 'comments'
 
-    const { data, error } = await supabase
-      .from('support_responses')
-      .insert({
-        ticket_id: ticketId,
-        responder_email: adminEmail,
-        message,
-        is_internal: isInternal,
-      })
-      .select()
-      .single()
+    const { error: deleteError } = await supabase.from(table).delete().eq('id', targetId)
+    if (deleteError) throw deleteError
 
-    if (error) throw error
-
-    // Update ticket's updated_at timestamp
     await supabase
-      .from('support_tickets')
-      .update({ updated_at: new Date().toISOString() })
-      .eq('id', ticketId)
+      .from('content_reports')
+      .update({ status: 'actioned' })
+      .eq('target_type', targetType)
+      .eq('target_id', targetId)
 
-    // Log the activity
     await logAdminActivity({
       admin_email: adminEmail,
-      action_type: 'support_response_added',
-      details: { ticket_id: ticketId, is_internal: isInternal },
+      action_type: 'reported_content_removed',
+      details: { target_type: targetType, target_id: targetId },
     })
 
-    return {
-      response: data,
-      success: true,
-    }
+    return { success: true }
   } catch (error: any) {
-    logger.error('add_support_response_error', { error, ticketId })
-    return {
-      response: null,
-      success: false,
-      error: error.message,
-    }
+    logger.error('remove_reported_content_error', { error, targetType, targetId })
+    return { success: false, error: error.message }
   }
 }
 

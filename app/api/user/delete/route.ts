@@ -58,8 +58,6 @@ export async function POST(request: NextRequest) {
     // Order: child tables first, then parent tables
     const tablesToDelete = [
       'push_subscriptions',
-      'support_ticket_messages',
-      'support_tickets',
       'email_queue',
       'email_delivery_log',
       'email_logs',

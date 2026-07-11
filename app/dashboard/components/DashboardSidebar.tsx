@@ -9,7 +9,6 @@ import {
   Gear,
   House,
   UserCircle,
-  Lifebuoy,
   Notebook,
   Heart,
   BookOpen,

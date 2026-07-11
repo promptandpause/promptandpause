@@ -1,0 +1,36 @@
+version: "3"
+services:
+  nocobase:
+    image: nocobase/nocobase:beta-full
+    ports:
+      - "13000:13000"
+    environment:
+      APP_KEY: your-secret-key-change-this
+      DB_DIALECT: postgres
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_DATABASE: nocobase
+      DB_USER: nocobase
+      DB_PASSWORD: nocobase
+      DB_UNDERSCORED: "false"
+    volumes:
+      - ./storage:/app/nocobase/storage
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: always
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: nocobase
+      POSTGRES_PASSWORD: nocobase
+      POSTGRES_DB: nocobase
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nocobase"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
