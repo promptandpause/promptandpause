@@ -63,17 +63,43 @@ export default async function UserProfilePage({ params }: { params: Promise<{ us
   const anonClient = await createClient()
   const { data: reflections } = await anonClient
     .from('reflections')
-    .select('id, prompt_text, reflection_text, mood, tags, word_count, visibility, created_at')
+    .select('id, prompt_text, reflection_text, mood, tags, word_count, visibility, allow_comments, created_at, user_id')
     .eq('user_id', profile.id)
     .neq('visibility', 'private')
     .order('created_at', { ascending: false })
     .limit(20)
 
+  const reflectionIds = (reflections || []).map(r => r.id)
+  const likeCountMap: Record<string, number> = {}
+  const commentCountMap: Record<string, number> = {}
+  const viewerLikedSet = new Set<string>()
+
+  if (reflectionIds.length > 0) {
+    const [{ data: allLikes }, { data: allComments }] = await Promise.all([
+      anonClient.from('reflection_likes').select('reflection_id').in('reflection_id', reflectionIds),
+      anonClient.from('comments').select('reflection_id').in('reflection_id', reflectionIds),
+    ])
+    allLikes?.forEach((l: any) => {
+      likeCountMap[l.reflection_id] = (likeCountMap[l.reflection_id] || 0) + 1
+    })
+    allComments?.forEach((c: any) => {
+      commentCountMap[c.reflection_id] = (commentCountMap[c.reflection_id] || 0) + 1
+    })
+    if (currentUser) {
+      const { data: viewerLikes } = await anonClient
+        .from('reflection_likes')
+        .select('reflection_id')
+        .eq('user_id', currentUser.id)
+        .in('reflection_id', reflectionIds)
+      viewerLikes?.forEach((l: any) => viewerLikedSet.add(l.reflection_id))
+    }
+  }
+
   const { data: whiteboard } = await anonClient
     .from('whiteboard_entries')
     .select(`
       *,
-      author:profiles(id, full_name, display_name, username, avatar_url)
+      author:profiles!author_id(id, full_name, display_name, username, avatar_url)
     `)
     .eq('profile_user_id', profile.id)
     .order('created_at', { ascending: false })
@@ -82,6 +108,9 @@ export default async function UserProfilePage({ params }: { params: Promise<{ us
   const decryptedReflections = (reflections || []).map((r) => ({
     ...r,
     reflection_text: decryptIfEncrypted(r.reflection_text) || r.reflection_text,
+    like_count: likeCountMap[r.id] || 0,
+    comment_count: commentCountMap[r.id] || 0,
+    is_liked_by_me: viewerLikedSet.has(r.id),
   }))
 
   return (

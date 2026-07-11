@@ -78,6 +78,25 @@ export async function POST(request: NextRequest) {
       .from('reflection_likes')
       .insert({ reflection_id, user_id: user.id })
 
+    // Notify the reflection's author (skip if liking your own post)
+    const { data: reflection } = await supabase
+      .from('reflections')
+      .select('user_id')
+      .eq('id', reflection_id)
+      .maybeSingle()
+
+    if (reflection && reflection.user_id !== user.id) {
+      await supabase
+        .from('social_notifications')
+        .insert({
+          user_id: reflection.user_id,
+          type: 'like',
+          actor_id: user.id,
+          reflection_id,
+        })
+        .maybeSingle()
+    }
+
     return NextResponse.json({ success: true, data: { liked: true } })
   } catch (error: any) {
     return NextResponse.json(

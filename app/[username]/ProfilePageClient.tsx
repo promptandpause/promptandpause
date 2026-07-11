@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { User, MessageCircle, Music, Palette, Sparkles, Lock, Pencil, Settings, Layout, Archive, House, Heart, Rss } from 'lucide-react'
+import { User, MessageCircle, Music, Palette, Sparkles, Lock, Pencil, Settings, Layout, Archive, House, Heart, Rss, Trash2 } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { useTheme } from '@/contexts/ThemeContext'
 import { FriendButton } from '@/components/social/FriendButton'
 import { WhiteboardSection } from '@/components/social/WhiteboardSection'
+import { CommentSection } from '@/components/social/CommentSection'
 import { WhoToFollow } from '@/app/dashboard/components/WhoToFollow'
 import { TrendingTopics } from '@/app/dashboard/components/TrendingTopics'
 import { SearchBar } from '@/app/dashboard/components/SearchBar'
@@ -22,7 +23,22 @@ interface Reflection {
   mood: string
   tags: string[]
   visibility: string
+  allow_comments?: boolean
   created_at: string
+  user_id?: string
+  like_count?: number
+  comment_count?: number
+  is_liked_by_me?: boolean
+}
+
+interface LikedReflection extends Reflection {
+  profile?: {
+    id: string
+    full_name: string | null
+    display_name: string | null
+    username: string | null
+    avatar_url: string | null
+  } | null
 }
 
 export function ProfilePageClient({
@@ -40,8 +56,13 @@ export function ProfilePageClient({
 }) {
   const { theme } = useTheme()
   const isDark = theme === 'dark'
-  const [activeTab, setActiveTab] = useState<'reflections' | 'whiteboard'>('reflections')
+  const [activeTab, setActiveTab] = useState<'reflections' | 'whiteboard' | 'likes'>('reflections')
   const [loggedInUserId, setLoggedInUserId] = useState<string | null>(null)
+  const [myReflections, setMyReflections] = useState<Reflection[]>(reflections)
+  const [openComments, setOpenComments] = useState<Set<string>>(new Set())
+  const [likesFeed, setLikesFeed] = useState<LikedReflection[]>([])
+  const [likesLoading, setLikesLoading] = useState(false)
+  const [likesLoaded, setLikesLoaded] = useState(false)
   const pathname = usePathname()
 
   useEffect(() => {
@@ -50,6 +71,52 @@ export function ProfilePageClient({
       .then(d => setLoggedInUserId(d?.data?.id || null))
       .catch(() => {})
   }, [])
+
+  useEffect(() => {
+    if (activeTab === 'likes' && !likesLoaded) {
+      setLikesLoading(true)
+      fetch(`/api/social/liked-feed?user_id=${profile.id}`)
+        .then(r => r.ok ? r.json() : Promise.resolve({ data: [] }))
+        .then(({ data }) => { setLikesFeed(data || []); setLikesLoaded(true) })
+        .catch(() => {})
+        .finally(() => setLikesLoading(false))
+    }
+  }, [activeTab, likesLoaded, profile.id])
+
+  function toggleComments(id: string) {
+    setOpenComments(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  async function toggleLike(item: Reflection, list: 'reflections' | 'likes') {
+    const res = await fetch('/api/social/likes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reflection_id: item.id }),
+    })
+    if (!res.ok) return
+    const update = (r: Reflection) =>
+      r.id === item.id
+        ? { ...r, is_liked_by_me: !r.is_liked_by_me, like_count: (r.like_count || 0) + (r.is_liked_by_me ? -1 : 1) }
+        : r
+    if (list === 'reflections') {
+      setMyReflections(prev => prev.map(update))
+    } else {
+      setLikesFeed(prev => prev.map(update))
+    }
+  }
+
+  async function deleteReflection(id: string) {
+    if (!confirm('Delete this reflection? This cannot be undone.')) return
+    const res = await fetch(`/api/reflections/${id}`, { method: 'DELETE' })
+    if (res.ok) {
+      setMyReflections(prev => prev.filter(r => r.id !== id))
+    }
+  }
 
   const isActive = (path: string) => pathname.startsWith(path)
 
@@ -199,6 +266,16 @@ export function ProfilePageClient({
             >
               Whiteboard
             </TabButton>
+            <TabButton
+              active={activeTab === 'likes'}
+              onClick={() => setActiveTab('likes')}
+              isDark={isDark}
+              accentColor={accentColor}
+              loggedInUserId={loggedInUserId}
+              isActive={isActive}
+            >
+              Likes
+            </TabButton>
           </div>
         </div>
 
@@ -244,7 +321,7 @@ export function ProfilePageClient({
             </div>
           ) : activeTab === 'reflections' && (
             <div className="space-y-3 sm:space-y-4">
-              {reflections.length === 0 ? (
+              {myReflections.length === 0 ? (
                 <div className={`text-center py-12 sm:py-16 ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
                   <Sparkles className="h-10 w-10 mx-auto mb-3 opacity-30" />
                   <p className="text-sm font-medium mb-1">
@@ -255,7 +332,7 @@ export function ProfilePageClient({
                   </p>
                 </div>
               ) : (
-                reflections.map((ref, i) => (
+                myReflections.map((ref, i) => (
                   <motion.div
                     key={ref.id}
                     initial={{ opacity: 0, y: 20 }}
@@ -294,6 +371,35 @@ export function ProfilePageClient({
                         </span>
                       )}
                     </div>
+                    <div className="flex items-center gap-6 mt-3">
+                      <button
+                        onClick={() => toggleComments(ref.id)}
+                        className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#1D9BF0]' : 'text-[#536471] hover:text-[#1D9BF0]'}`}
+                      >
+                        <MessageCircle size={14} /> {ref.comment_count ? ref.comment_count : 'Reply'}
+                      </button>
+                      <button
+                        onClick={() => toggleLike(ref, 'reflections')}
+                        className={`flex items-center gap-1.5 text-xs transition-colors ${
+                          ref.is_liked_by_me ? 'text-pink-500' : isDark ? 'text-white/30 hover:text-pink-400' : 'text-[#536471] hover:text-pink-500'
+                        }`}
+                      >
+                        <Heart size={14} fill={ref.is_liked_by_me ? 'currentColor' : 'none'} /> {ref.like_count ? ref.like_count : 'Like'}
+                      </button>
+                      {isOwnProfile && (
+                        <button
+                          onClick={() => deleteReflection(ref.id)}
+                          className={`flex items-center gap-1.5 text-xs transition-colors ml-auto ${isDark ? 'text-white/30 hover:text-red-400' : 'text-[#536471] hover:text-red-500'}`}
+                        >
+                          <Trash2 size={14} /> Delete
+                        </button>
+                      )}
+                    </div>
+                    {openComments.has(ref.id) && (
+                      <div className={`mt-3 -mx-4 sm:-mx-5 border-t ${isDark ? 'border-white/[0.06]' : 'border-[#EFF3F4]'}`}>
+                        <CommentSection reflectionId={ref.id} />
+                      </div>
+                    )}
                   </motion.div>
                 ))
               )}
@@ -306,6 +412,70 @@ export function ProfilePageClient({
               entries={whiteboard}
               isOwnProfile={isOwnProfile}
             />
+          )}
+
+          {!isPrivate && activeTab === 'likes' && (
+            <div className="space-y-3 sm:space-y-4">
+              {likesLoading ? (
+                <div className={`text-center py-12 ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>Loading...</div>
+              ) : likesFeed.length === 0 ? (
+                <div className={`text-center py-12 sm:py-16 ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
+                  <Heart className="h-10 w-10 mx-auto mb-3 opacity-30" />
+                  <p className="text-sm font-medium mb-1">No likes yet</p>
+                  <p className="text-xs">
+                    {isOwnProfile ? 'Reflections you like will show up here.' : `Reflections ${displayName} likes will show up here.`}
+                  </p>
+                </div>
+              ) : (
+                likesFeed.map((ref, i) => {
+                  const authorName = ref.profile?.display_name || ref.profile?.full_name || ref.profile?.username || 'Unknown'
+                  return (
+                    <motion.div
+                      key={ref.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.05 }}
+                      className={`rounded-xl sm:rounded-2xl p-4 sm:p-5 ${
+                        isDark ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-white/80 border border-[#EFF3F4]'
+                      }`}
+                    >
+                      <Link href={ref.profile?.username ? `/${ref.profile.username}` : '#'} className={`text-xs font-semibold mb-1 inline-block ${isDark ? 'text-white/60 hover:text-white' : 'text-[#536471] hover:text-[#0F1419]'}`}>
+                        {authorName}
+                      </Link>
+                      {ref.prompt_text && (
+                        <p className={`text-xs sm:text-sm font-medium mb-2 ${isDark ? 'text-white/50' : 'text-[#8B98A5]'}`}>
+                          {ref.prompt_text}
+                        </p>
+                      )}
+                      <p className={`text-sm leading-relaxed ${isDark ? 'text-white/80' : 'text-[#0F1419]'}`}>
+                        {ref.reflection_text}
+                      </p>
+                      <div className="flex items-center gap-6 mt-3">
+                        <button
+                          onClick={() => toggleComments(ref.id)}
+                          className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#1D9BF0]' : 'text-[#536471] hover:text-[#1D9BF0]'}`}
+                        >
+                          <MessageCircle size={14} /> {ref.comment_count ? ref.comment_count : 'Reply'}
+                        </button>
+                        <button
+                          onClick={() => toggleLike(ref, 'likes')}
+                          className={`flex items-center gap-1.5 text-xs transition-colors ${
+                            ref.is_liked_by_me ? 'text-pink-500' : isDark ? 'text-white/30 hover:text-pink-400' : 'text-[#536471] hover:text-pink-500'
+                          }`}
+                        >
+                          <Heart size={14} fill={ref.is_liked_by_me ? 'currentColor' : 'none'} /> {ref.like_count ? ref.like_count : 'Like'}
+                        </button>
+                      </div>
+                      {openComments.has(ref.id) && (
+                        <div className={`mt-3 -mx-4 sm:-mx-5 border-t ${isDark ? 'border-white/[0.06]' : 'border-[#EFF3F4]'}`}>
+                          <CommentSection reflectionId={ref.id} />
+                        </div>
+                      )}
+                    </motion.div>
+                  )
+                })
+              )}
+            </div>
           )}
         </div>
       </div>

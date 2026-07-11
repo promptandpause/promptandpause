@@ -7,6 +7,54 @@ const CreateCommentSchema = z.object({
   body: z.string().min(1).max(2000),
 })
 
+export async function DELETE(request: NextRequest) {
+  try {
+    const user = await getAuthUser()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { searchParams } = new URL(request.url)
+    const commentId = searchParams.get('id')
+
+    if (!commentId) {
+      return NextResponse.json({ error: 'id query param is required' }, { status: 400 })
+    }
+
+    const supabase = await createClient()
+
+    // Only the comment's author can delete it (RLS also enforces this,
+    // but we check explicitly for a clean 403 vs a generic RLS-denied error)
+    const { data: comment } = await supabase
+      .from('comments')
+      .select('id, author_id')
+      .eq('id', commentId)
+      .single()
+
+    if (!comment) {
+      return NextResponse.json({ error: 'Comment not found' }, { status: 404 })
+    }
+
+    if (comment.author_id !== user.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
+    }
+
+    const { error } = await supabase
+      .from('comments')
+      .delete()
+      .eq('id', commentId)
+
+    if (error) throw error
+
+    return NextResponse.json({ success: true, message: 'Comment deleted' })
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || 'Failed to delete comment' },
+      { status: 500 }
+    )
+  }
+}
+
 export async function GET(request: NextRequest) {
   try {
     const user = await getAuthUser()

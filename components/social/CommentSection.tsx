@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { Loader2, Send } from 'lucide-react'
+import { Loader2, Send, Trash2 } from 'lucide-react'
 import { useTheme } from '@/contexts/ThemeContext'
 import type { Comment } from '@/lib/types/social'
 
@@ -19,9 +19,14 @@ export function CommentSection({ reflectionId }: CommentSectionProps) {
   const [loading, setLoading] = useState(true)
   const [text, setText] = useState('')
   const [posting, setPosting] = useState(false)
+  const [myId, setMyId] = useState<string | null>(null)
 
   useEffect(() => {
     loadComments()
+    fetch('/api/user/profile')
+      .then(r => r.ok ? r.json() : Promise.resolve(null))
+      .then(d => setMyId(d?.data?.id || null))
+      .catch(() => {})
   }, [reflectionId])
 
   async function loadComments() {
@@ -49,6 +54,14 @@ export function CommentSection({ reflectionId }: CommentSectionProps) {
       }
     } catch {}
     setPosting(false)
+  }
+
+  async function handleDelete(commentId: string) {
+    if (!confirm('Delete this comment?')) return
+    const res = await fetch(`/api/social/comments?id=${commentId}`, { method: 'DELETE' })
+    if (res.ok) {
+      setComments(prev => prev.filter(c => c.id !== commentId))
+    }
   }
 
   return (
@@ -109,6 +122,14 @@ export function CommentSection({ reflectionId }: CommentSectionProps) {
                   <span className={`text-[10px] ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`}>
                     {getTimeAgo(comment.created_at)}
                   </span>
+                  {myId && (comment as any).author_id === myId && (
+                    <button
+                      onClick={() => handleDelete(comment.id)}
+                      className={`ml-auto text-[10px] flex items-center gap-1 transition-colors ${isDark ? 'text-white/20 hover:text-red-400' : 'text-[#8B98A5] hover:text-red-500'}`}
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </button>
+                  )}
                 </div>
                 <p className={`text-sm mt-0.5 ${isDark ? 'text-white/70' : 'text-[#0F1419]'}`}>
                   {comment.body}

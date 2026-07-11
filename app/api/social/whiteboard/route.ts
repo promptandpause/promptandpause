@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
       .from('whiteboard_entries')
       .select(`
         *,
-        author:profiles(id, full_name, display_name, username, avatar_url)
+        author:profiles!author_id(id, full_name, display_name, username, avatar_url)
       `)
       .eq('profile_user_id', profileId)
       .order('created_at', { ascending: false })
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
       })
       .select(`
         *,
-        author:profiles(id, full_name, display_name, username, avatar_url)
+        author:profiles!author_id(id, full_name, display_name, username, avatar_url)
       `)
       .single()
 

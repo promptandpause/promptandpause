@@ -14,7 +14,7 @@ export async function GET() {
       .from('social_notifications')
       .select(`
         *,
-        actor:profiles(id, full_name, display_name, username, avatar_url)
+        actor:profiles!actor_id(id, full_name, display_name, username, avatar_url)
       `)
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })

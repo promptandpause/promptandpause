@@ -81,6 +81,16 @@ export async function POST(request: NextRequest) {
         .insert({ follower_id: user.id, following_id: target_id })
 
       if (insError) throw insError
+
+      await supabase
+        .from('social_notifications')
+        .insert({
+          user_id: target_id,
+          type: 'follow',
+          actor_id: user.id,
+        })
+        .maybeSingle()
+
       return NextResponse.json({ success: true, data: { following: true } })
     }
   } catch (error: any) {

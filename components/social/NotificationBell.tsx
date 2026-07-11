@@ -5,11 +5,11 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useRouter } from 'next/navigation'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Bell, UserPlus, MessageCircle, MessageSquare, Share2, Sparkle, Check, X } from 'lucide-react'
+import { Bell, UserPlus, MessageCircle, MessageSquare, Share2, Sparkle, Heart, Check, X } from 'lucide-react'
 
 interface Notification {
   id: string
-  type: 'friend_request' | 'friend_accepted' | 'new_comment' | 'whiteboard' | 'share'
+  type: 'friend_request' | 'friend_accepted' | 'new_comment' | 'whiteboard' | 'share' | 'like' | 'follow'
   actor_id: string | null
   reflection_id: string | null
   body: string | null
@@ -51,7 +51,7 @@ export function NotificationBell() {
 
   useEffect(() => {
     load()
-    const interval = setInterval(load, 30000)
+    const interval = setInterval(load, 15000)
     return () => clearInterval(interval)
   }, [load])
 
@@ -91,6 +91,8 @@ export function NotificationBell() {
       case 'new_comment': return <MessageCircle className="h-4 w-4 text-[#1D9BF0]" />
       case 'whiteboard': return <MessageSquare className="h-4 w-4 text-amber-500" />
       case 'share': return <Share2 className="h-4 w-4 text-[#1D9BF0]" />
+      case 'like': return <Heart className="h-4 w-4 text-pink-500" />
+      case 'follow': return <UserPlus className="h-4 w-4 text-[#1D9BF0]" />
       default: return <Sparkle className="h-4 w-4 text-[#1D9BF0]" />
     }
   }
@@ -103,6 +105,8 @@ export function NotificationBell() {
       case 'new_comment': return `${name} commented on your reflection`
       case 'whiteboard': return `${name} wrote on your whiteboard`
       case 'share': return `${name} shared a reflection with you`
+      case 'like': return `${name} liked your reflection`
+      case 'follow': return `${name} started following you`
       default: return n.body || 'New notification'
     }
   }
