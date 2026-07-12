@@ -24,7 +24,8 @@ import {
   Flag,
   ChevronLeft,
   Search,
-  Megaphone
+  Megaphone,
+  Headphones
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
@@ -54,7 +55,7 @@ const navigationItems = [
   { title: 'Admin Users', href: '/admin-panel/admin-users', icon: UserCog, description: 'Manage admin access' },
   { title: 'My Profile', href: '/admin-panel/profile', icon: UserCircle, description: 'Your admin account' },
   { title: 'Content Reports', href: '/admin-panel/reports', icon: Flag, description: 'Moderation queue' },
-  { title: 'Helpdesk', href: process.env.NEXT_PUBLIC_NOCOBASE_URL || 'https://helpdesk.promptandpause.com', icon: ExternalLink, description: 'Support tickets', external: true },
+  { title: 'Tickets', href: '/admin-panel/tickets', icon: Headphones, description: 'Support tickets & replies' },
   { title: 'Settings', href: '/admin-panel/settings', icon: Settings, description: 'System configuration' },
 ]
 
