@@ -6,13 +6,9 @@ import { logger } from '@/lib/utils/logger'
 export async function POST(request: NextRequest) {
   try {
     const authHeader = request.headers.get('authorization')
-    logger.info('nocobase_webhook_debug', {
-      hasAuthHeader: !!authHeader,
-      authHeaderPrefix: authHeader ? authHeader.slice(0, 20) : 'none',
-      cronSecretMatch: authHeader ? authHeader.slice(7) === process.env.CRON_SECRET : false,
-      cronSecretLength: process.env.CRON_SECRET?.length,
-    })
-    if (!authHeader || !authHeader.startsWith('Bearer ') || authHeader.slice(7) !== process.env.CRON_SECRET) {
+    const apiKey = request.headers.get('x-webhook-secret')
+    const isAuthValid = (authHeader && authHeader.startsWith('Bearer ') && authHeader.slice(7) === process.env.CRON_SECRET) || apiKey === process.env.CRON_SECRET
+    if (!isAuthValid) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
 
