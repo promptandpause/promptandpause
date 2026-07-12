@@ -2,6 +2,19 @@ import { NextRequest, NextResponse } from 'next/server'
 import { sendTicketReplyNotification } from '@/lib/services/emailService'
 import { logger } from '@/lib/utils/logger'
 
+function parseQueryString(text: string): Record<string, string> {
+  const params: Record<string, string> = {}
+  for (const part of text.split('&')) {
+    const eq = part.indexOf('=')
+    if (eq === -1) {
+      params[decodeURIComponent(part)] = ''
+    } else {
+      params[decodeURIComponent(part.slice(0, eq))] = decodeURIComponent(part.slice(eq + 1))
+    }
+  }
+  return params
+}
+
 export async function POST(request: NextRequest) {
   try {
     const contentType = request.headers.get('content-type') || ''
@@ -12,7 +25,10 @@ export async function POST(request: NextRequest) {
       } catch {
         return NextResponse.json({ success: false, error: 'Invalid JSON body' }, { status: 400 })
       }
-    } else if (contentType.includes('application/x-www-form-urlencoded') || contentType.includes('multipart/form-data')) {
+    } else if (contentType.includes('application/x-www-form-urlencoded')) {
+      const text = await request.text()
+      body = parseQueryString(text)
+    } else if (contentType.includes('multipart/form-data')) {
       const formData = await request.formData()
       for (const [key, val] of formData.entries()) {
         body[key] = val
