@@ -5,6 +5,7 @@ const NOCOBASE_URL = process.env.NEXT_PUBLIC_NOCOBASE_URL || 'https://promptandp
 const NOCOBASE_EMAIL = process.env.NOCOBASE_EMAIL || 'admin@nocobase.com'
 const NOCOBASE_PASSWORD = process.env.NOCOBASE_PASSWORD || 'admin123'
 const ROLE_HEADER = { 'X-Role': 'root' }
+const RESEND_API_KEY = process.env.RESEND_API_KEY
 
 let authToken: string | null = null
 let tokenExpiry = 0
@@ -30,8 +31,7 @@ function extractTicketNo(subject: string): string | null {
   return match?.[1] || null
 }
 
-function extractReplyText(body: any): string {
-  const text = body?.plain || body?.text || ''
+function extractReplyText(text: string): string {
   const lines = text.split('\n')
   const clean: string[] = []
   for (const line of lines) {
@@ -63,23 +63,42 @@ function extractSenderName(from: any): string | null {
   return from?.name || null
 }
 
-function extractToAddress(payload: any): string | null {
-  const to = payload.to
-  if (Array.isArray(to) && to.length) {
-    const addr = to[0]
-    return typeof addr === 'string' ? addr : addr?.email || addr?.address || null
-  }
-  return null
-}
-
 export async function POST(request: NextRequest) {
   try {
     const payload = await request.json()
-    const subject = payload.subject || 'No subject'
-    const fromEmail = extractSenderEmail(payload.from)
-    const fromName = extractSenderName(payload.from)
-    const bodyText = extractReplyText(payload.body)
-    const toAddress = extractToAddress(payload)
+    let email_id: string | undefined
+    let subject: string
+    let fromEmail: string | null
+    let fromName: string | null
+    let bodyText: string
+
+    if (payload.type === 'email.received' && payload.data?.email_id) {
+      email_id = payload.data.email_id
+      subject = payload.data.subject || 'No subject'
+      fromEmail = extractSenderEmail(payload.data.from)
+      fromName = extractSenderName(payload.data.from)
+
+      if (email_id && RESEND_API_KEY) {
+        const res = await fetch(`https://api.resend.com/emails/receiving/${email_id}`, {
+          headers: { Authorization: `Bearer ${RESEND_API_KEY}` },
+        })
+        if (res.ok) {
+          const emailData = await res.json()
+          const rawText = emailData.text || ''
+          bodyText = extractReplyText(rawText)
+        } else {
+          bodyText = ''
+        }
+      } else {
+        bodyText = ''
+      }
+    } else {
+      subject = payload.subject || 'No subject'
+      fromEmail = extractSenderEmail(payload.from)
+      fromName = extractSenderName(payload.from)
+      const rawText = payload.body?.plain || payload.body?.text || payload.text || ''
+      bodyText = extractReplyText(rawText)
+    }
 
     if (!fromEmail || !bodyText) {
       return NextResponse.json({ success: false, error: 'Missing sender or body' }, { status: 400 })
@@ -120,18 +139,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true })
     }
 
-    const isInternal = toAddress?.includes('servicedesk')
-    const prefix = isInternal ? '[Internal]' : '[Email]'
-
-    const ticketTitle = `${prefix} ${subject}`.slice(0, 200)
-
     const createRes = await fetch(`${NOCOBASE_URL}/api/tickets:create`, {
       method: 'POST',
       headers: { ...headers, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        ticket_title: ticketTitle,
+        ticket_title: `[Email] ${subject}`.slice(0, 200),
         description_text: `${bodyText}\n\n---\nFrom: ${fromName || fromEmail}\nEmail: ${fromEmail}`,
-        priority_level: isInternal ? 'medium' : 'medium',
+        priority_level: 'medium',
         ticket_status: 'new',
         submitted_at: new Date().toISOString(),
       }),
@@ -142,7 +156,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { data: newTicket } = await createRes.json()
-    logger.info('inbound_email_ticket_created', { ticketNo: newTicket?.ticket_no, fromEmail, isInternal })
+    logger.info('inbound_email_ticket_created', { ticketNo: newTicket?.ticket_no, fromEmail })
     return NextResponse.json({ success: true, ticketNo: newTicket?.ticket_no })
   } catch (error: any) {
     logger.error('inbound_email_error', { error: error.message })
