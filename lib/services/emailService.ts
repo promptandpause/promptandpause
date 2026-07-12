@@ -5,7 +5,7 @@ import { logger } from '@/lib/utils/logger'
 import { getTemplateByKey } from '@/lib/services/emailTemplateService'
 import { EmailTemplateCustomization, DEFAULT_EMAIL_CUSTOMIZATION } from '@/lib/types/emailTemplate'
 // Import professional email template system
-import { BRAND_COLORS, emailWrapper, contentSection, h1, h2, h3, paragraph, ctaButton, infoBox } from '@/lib/services/emailTemplates'
+import { BRAND_COLORS, emailWrapper, contentSection, h1, h2, h3, paragraph, ctaButton, infoBox, alertBox } from '@/lib/services/emailTemplates'
 
 /**
  * Email Service for Prompt & Pause
@@ -15,30 +15,32 @@ import { BRAND_COLORS, emailWrapper, contentSection, h1, h2, h3, paragraph, ctaB
  * 
  * Environment Variables Required:
  * - RESEND_API_KEY: API key from Resend
- * - RESEND_FROM_EMAIL: Verified sender email address
+ * - NOREPLY_EMAIL: Verified sender email address
  */
 
 // Initialize Resend client
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 // Email configuration
-const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'prompts@promptandpause.com'
+const FROM_EMAIL = process.env.NOREPLY_EMAIL || 'noreply@promptandpause.com'
+const PROMPTS_EMAIL = process.env.RESEND_FROM_EMAIL || 'prompts@promptandpause.com'
+const BILLING_EMAIL = process.env.BILLING_EMAIL || 'billing@promptandpause.com'
 const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || 'support@promptandpause.com'
+const NOREPLY_EMAIL = process.env.NOREPLY_EMAIL || 'noreply@promptandpause.com'
 const APP_NAME = 'Prompt & Pause'
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://promptandpause.com'
 
 
-// Brand colors from professional template system - Dashboard matching theme
-const BG_CREAM = BRAND_COLORS.backgroundLight   // #f4f0eb - Warm cream
+// Brand colors from professional template system - Twitter-like white/blue/black theme
+const BG_CREAM = BRAND_COLORS.backgroundLight   // #f7f8fa - Light gray
 const BG_WHITE = BRAND_COLORS.backgroundPure    // #ffffff - Pure white
-const BG_LIGHT = BRAND_COLORS.backgroundSection // #f8f6f3 - Soft cream sections
-const BORDER_COLOR = BRAND_COLORS.border        // #e2e8f0 - Slate border
-const TEXT_DARK = BRAND_COLORS.textDark         // #1e293b - Slate dark
-const TEXT_GRAY = BRAND_COLORS.textGray         // #475569 - Slate gray
-const TEXT_MUTED = BRAND_COLORS.textMuted       // #94a3b8 - Slate muted
-const PRIMARY_ACCENT = BRAND_COLORS.primary     // #384c37 - Forest green
-const SECONDARY_ACCENT = BRAND_COLORS.primaryLight // #4a6349 - Light forest
-const GOLD_ACCENT = '#c9a227'                   // Warm gold for special CTAs
+const BG_LIGHT = BRAND_COLORS.backgroundSection // #f0f1f3 - Section gray
+const BORDER_COLOR = BRAND_COLORS.border        // #eff3f4 - Border gray
+const TEXT_DARK = BRAND_COLORS.textDark         // #0f1419 - Near black
+const TEXT_GRAY = BRAND_COLORS.textGray         // #536471 - Secondary text
+const TEXT_MUTED = BRAND_COLORS.textMuted       // #8b98a5 - Muted text
+const PRIMARY_ACCENT = BRAND_COLORS.primary     // #1d9bf0 - Twitter blue
+const SECONDARY_ACCENT = BRAND_COLORS.primaryLight // #4ab3f4 - Light blue
 
 // Brand CDN Logo URL - Links to homepage
 const LOGO_URL = 'https://res.cloudinary.com/dh1rrfpmq/image/upload/v1766460430/prompt_pause-JRsbZR3dxCXndC8YMcyX6XU3XeT2Vw_vdvqfj.svg'
@@ -301,7 +303,7 @@ function applyCustomization(html: string, customization: EmailTemplateCustomizat
  */
 function getLogoImgTag(onDarkBackground: boolean = false): string {
   const filterStyle = onDarkBackground ? 'filter: brightness(0) invert(1);' : ''
-  return `<img src="${LOGO_URL}" alt="${APP_NAME}" style="height: 50px; width: auto; ${filterStyle}" />`
+  return `<img src="${LOGO_URL}" alt="${APP_NAME}" style="height: 44px; width: auto; display: block; ${filterStyle}" />`
 }
 
 /**
@@ -529,7 +531,7 @@ export async function sendTrialStartedEmail(
       `Your ${APP_NAME} trial is on — until ${formatTrialDate(trialEndDate)}`
 
     const { data, error } = await resend.emails.send({
-      from: `${APP_NAME} <${FROM_EMAIL}>`,
+      from: `${APP_NAME} Billing <${BILLING_EMAIL}>`,
       to: email,
       subject,
       html,
@@ -594,7 +596,7 @@ export async function sendTrialEndingSoonEmail(
       `Your trial ends ${formatTrialDate(trialEndDate)}`
 
     const { data, error } = await resend.emails.send({
-      from: `${APP_NAME} <${FROM_EMAIL}>`,
+      from: `${APP_NAME} Billing <${BILLING_EMAIL}>`,
       to: email,
       subject,
       html,
@@ -739,7 +741,7 @@ export async function sendPaymentFailedEmail(
       `We couldn't process your ${APP_NAME} payment`
 
     const { data, error } = await resend.emails.send({
-      from: `${APP_NAME} <${FROM_EMAIL}>`,
+      from: `${APP_NAME} Billing <${BILLING_EMAIL}>`,
       to: email,
       subject,
       html,
@@ -810,7 +812,7 @@ export async function sendMonthlyReflectionEmail(
       })) || `Your ${reflection.monthLabel} reflection`
 
     const { data, error } = await resend.emails.send({
-      from: `${APP_NAME} <${FROM_EMAIL}>`,
+      from: `${APP_NAME} <${PROMPTS_EMAIL}>`,
       to: email,
       subject,
       html,
@@ -897,7 +899,7 @@ export async function sendDailyPromptEmail(
 
     for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
       const { data, error } = await resend.emails.send({
-        from: `${APP_NAME} <${FROM_EMAIL}>`,
+        from: `${APP_NAME} <${PROMPTS_EMAIL}>`,
         to: email,
         subject,
         html,
@@ -1004,7 +1006,7 @@ export async function sendBatchDailyPromptEmails(
       userId: payload.userId,
       email: payload.email,
       resendPayload: {
-        from: `${APP_NAME} <${FROM_EMAIL}>`,
+        from: `${APP_NAME} <${PROMPTS_EMAIL}>`,
         to: payload.email,
         subject: userSubject || subject,
         html,
@@ -1140,7 +1142,7 @@ export async function sendWeeklyDigestEmail(
     })
 
     const { data, error } = await resend.emails.send({
-      from: `${APP_NAME} <${FROM_EMAIL}>`,
+      from: `${APP_NAME} <${PROMPTS_EMAIL}>`,
       to: email,
       subject,
       html,
@@ -1230,7 +1232,7 @@ export async function sendTrialExpiredEmail(
     const subject = await getSubjectForTemplate('trial_expired', { userName: displayName })
 
     const { data, error } = await resend.emails.send({
-      from: `${APP_NAME} <${FROM_EMAIL}>`,
+      from: `${APP_NAME} Billing <${BILLING_EMAIL}>`,
       to: email,
       subject,
       html,
@@ -1310,7 +1312,7 @@ export async function sendSubscriptionEmail(
     )
 
     const { data, error } = await resend.emails.send({
-      from: `${APP_NAME} <${FROM_EMAIL}>`,
+      from: `${APP_NAME} Billing <${BILLING_EMAIL}>`,
       to: email,
       subject,
       html,
@@ -1957,7 +1959,7 @@ function generateDailyPromptEmailHTML(name: string, prompt: string): string {
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
       <tr>
         <td align="center" style="padding: 20px 0;">
-          <span class="email-text-primary email-section-bg" style="display: inline-block; font-size: 11px; color: ${PRIMARY_ACCENT}; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; background: rgba(56, 76, 55, 0.08); padding: 8px 18px; border-radius: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+          <span class="email-text-primary email-section-bg" style="display: inline-block; font-size: 11px; color: ${PRIMARY_ACCENT}; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; background: ${BG_LIGHT}; padding: 8px 18px; border-radius: 999px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
             ${today}
           </span>
         </td>
@@ -1970,19 +1972,19 @@ function generateDailyPromptEmailHTML(name: string, prompt: string): string {
     
     ${paragraph('Take a moment to pause and reflect on today\'s question:', { align: 'center', fontSize: '15px' })}
     
-    <!-- Prompt Card with soft reflection styling - Dark mode compatible -->
+    <!-- Prompt Card -->
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 32px 0;">
       <tr>
-        <td class="email-prompt-card" style="background-color: #ffffff; padding: 32px 28px; border-radius: 16px; border: 1px solid ${BORDER_COLOR}; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);">
+        <td class="email-prompt-card" style="background-color: ${BG_LIGHT}; padding: 28px 24px; border-radius: 16px; border: 1px solid ${BORDER_COLOR};">
           <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
             <tr>
-              <td align="center" style="padding-bottom: 16px;">
-                <p class="email-prompt-label" style="font-size: 11px; color: #384c37; text-transform: uppercase; letter-spacing: 1.5px; margin: 0; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Today's Prompt</p>
+              <td align="center" style="padding-bottom: 12px;">
+                <p class="email-prompt-label" style="font-size: 11px; color: ${PRIMARY_ACCENT}; text-transform: uppercase; letter-spacing: 1.5px; margin: 0; font-weight: 700; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Today's Prompt</p>
               </td>
             </tr>
             <tr>
               <td align="center">
-                <p class="email-prompt-text" style="font-size: 19px; color: #1a1a1a; line-height: 1.6; margin: 0; font-weight: 500; font-style: italic; font-family: Georgia, 'Times New Roman', serif;">
+                <p class="email-prompt-text" style="font-size: 20px; color: ${TEXT_DARK}; line-height: 1.5; margin: 0; font-weight: 500; font-style: italic; font-family: Georgia, 'Times New Roman', serif;">
                   "${prompt}"
                 </p>
               </td>
@@ -2036,7 +2038,7 @@ function generateWeeklyDigestEmailHTML(name: string, digest: WeeklyDigest): stri
   const topTagsHTML = digest.topTags
     .map(
       ({ tag, count }) =>
-        `<span class="email-text-primary email-section-bg" style="display: inline-block; background: rgba(56, 76, 55, 0.08); color: ${PRIMARY_ACCENT}; padding: 6px 14px; border-radius: 20px; margin: 4px; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">${tag} (${count})</span>`,
+        `<span class="email-text-primary email-section-bg" style="display: inline-block; background: ${BG_LIGHT}; color: ${PRIMARY_ACCENT}; padding: 6px 14px; border-radius: 999px; margin: 4px; font-size: 13px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">${tag} (${count})</span>`,
     )
     .join('')
 
@@ -2092,18 +2094,18 @@ function generateSubscriptionConfirmationHTML(name: string, planName: string): s
     
     ${paragraph(`Your ${planName} subscription is now active. Thank you for joining us on this journey of mindful reflection.`, { align: 'center' })}
     
-    <!-- Premium Features Card with dark mode support -->
-    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 32px 0;">
+    <!-- Premium Features Card -->
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 28px 0;">
       <tr>
-        <td class="email-premium-card" style="background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%); padding: 28px; border-radius: 16px; border-left: 4px solid #384c37; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);">
-          <h3 class="email-premium-title" style="color: #384c37; font-size: 17px; margin: 0 0 16px 0; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">What's Included</h3>
-          <ul class="email-premium-list" style="color: #1a1a1a; line-height: 1.9; margin: 0; padding-left: 20px; font-size: 15px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-            <li class="email-premium-item" style="margin-bottom: 10px; color: #1a1a1a;"><strong>Daily prompts</strong> — 7 days a week</li>
-            <li class="email-premium-item" style="margin-bottom: 10px; color: #1a1a1a;"><strong>Weekly & monthly reflections</strong> — AI-powered insights</li>
-            <li class="email-premium-item" style="margin-bottom: 10px; color: #1a1a1a;"><strong>From Your Past</strong> — Meaningful resurfacing</li>
-            <li class="email-premium-item" style="margin-bottom: 10px; color: #1a1a1a;"><strong>Unlimited archive</strong> — All your reflections, always</li>
-            <li class="email-premium-item" style="margin-bottom: 10px; color: #1a1a1a;"><strong>Export reflections</strong> — PDF & TXT formats</li>
-            <li class="email-premium-item" style="color: #1a1a1a;"><strong>Email + Slack delivery</strong> — Your choice</li>
+        <td class="email-premium-card" style="background-color: ${BG_LIGHT}; padding: 24px; border-radius: 12px; border: 1px solid ${BORDER_COLOR};">
+          <h3 class="email-premium-title" style="color: ${PRIMARY_ACCENT}; font-size: 15px; margin: 0 0 12px 0; font-weight: 700; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">What's Included</h3>
+          <ul class="email-premium-list" style="color: ${TEXT_DARK}; line-height: 1.8; margin: 0; padding-left: 20px; font-size: 15px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <li class="email-premium-item" style="margin-bottom: 8px;"><strong>Daily prompts</strong> — 7 days a week</li>
+            <li class="email-premium-item" style="margin-bottom: 8px;"><strong>Weekly & monthly reflections</strong> — AI-powered insights</li>
+            <li class="email-premium-item" style="margin-bottom: 8px;"><strong>From Your Past</strong> — Meaningful resurfacing</li>
+            <li class="email-premium-item" style="margin-bottom: 8px;"><strong>Unlimited archive</strong> — All your reflections, always</li>
+            <li class="email-premium-item" style="margin-bottom: 8px;"><strong>Export reflections</strong> — PDF & TXT formats</li>
+            <li class="email-premium-item"><strong>Email + Slack delivery</strong> — Your choice</li>
           </ul>
         </td>
       </tr>
@@ -2113,7 +2115,7 @@ function generateSubscriptionConfirmationHTML(name: string, planName: string): s
       ${standardButton({ href: 'https://promptandpause.com/dashboard', label: 'Start Reflecting' })}
     </div>
     
-    ${paragraph(`Manage your subscription anytime in <a href="https://promptandpause.com/dashboard/settings" target="_blank" rel="noopener noreferrer" class="email-link" style="color: #384c37; text-decoration: underline; font-weight: 500;">Settings</a>.`, { align: 'center', fontSize: '14px' })}
+    ${paragraph(`Manage your subscription anytime in <a href="https://promptandpause.com/dashboard/settings" target="_blank" rel="noopener noreferrer" class="email-text-primary" style="color: ${PRIMARY_ACCENT}; text-decoration: none; font-weight: 600;">Settings</a>.`, { align: 'center', fontSize: '14px' })}
   `
 
   return buildBaseEmail({
@@ -2155,29 +2157,19 @@ function generateTrialExpiredEmailHTML(name: string): string {
     </div>
     
     <!-- Premium Features Card -->
-    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 32px 0;">
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 28px 0;">
       <tr>
-        <td class="email-section-bg" style="background: linear-gradient(135deg, ${BG_LIGHT} 0%, ${BG_WHITE} 100%); padding: 28px; border-radius: 16px; border-left: 3px solid ${PRIMARY_ACCENT}; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);">
-          ${h3('Premium includes', { align: 'left' })}
-          <ul class="email-text-gray" style="color: ${TEXT_GRAY}; line-height: 1.9; margin: 16px 0 0 0; padding-left: 20px; font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-            <li class="email-text-gray" style="margin-bottom: 8px;"><strong class="email-text-dark">Daily personalized prompts</strong> (7 days/week)</li>
-            <li class="email-text-gray" style="margin-bottom: 8px;"><strong class="email-text-dark">Unlimited reflection archive</strong></li>
-            <li class="email-text-gray" style="margin-bottom: 8px;"><strong class="email-text-dark">Weekly reflection</strong></li>
-            <li class="email-text-gray" style="margin-bottom: 8px;"><strong class="email-text-dark">Monthly reflection</strong></li>
-            <li class="email-text-gray" style="margin-bottom: 8px;"><strong class="email-text-dark">Export reflections</strong> (PDF/TXT)</li>
-            <li class="email-text-gray" style="margin-bottom: 8px;"><strong class="email-text-dark">Custom focus areas</strong> (unlimited)</li>
-            <li class="email-text-gray"><strong class="email-text-dark">Priority email support</strong> (24hr response)</li>
+        <td class="email-premium-card" style="background-color: ${BG_LIGHT}; padding: 24px; border-radius: 12px; border: 1px solid ${BORDER_COLOR};">
+          <h3 class="email-premium-title" style="color: ${PRIMARY_ACCENT}; font-size: 15px; margin: 0 0 12px 0; font-weight: 700; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Premium includes</h3>
+          <ul style="color: ${TEXT_DARK}; line-height: 1.8; margin: 0; padding-left: 20px; font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <li style="margin-bottom: 8px;"><strong>Daily personalized prompts</strong> (7 days/week)</li>
+            <li style="margin-bottom: 8px;"><strong>Unlimited reflection archive</strong></li>
+            <li style="margin-bottom: 8px;"><strong>Weekly reflection</strong></li>
+            <li style="margin-bottom: 8px;"><strong>Monthly reflection</strong></li>
+            <li style="margin-bottom: 8px;"><strong>Export reflections</strong> (PDF/TXT)</li>
+            <li style="margin-bottom: 8px;"><strong>Custom focus areas</strong> (unlimited)</li>
+            <li style="margin-bottom: 8px;"><strong>Priority email support</strong> (24hr response)</li>
           </ul>
-          
-          <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin-top: 24px;">
-            <tr>
-              <td style="text-align: center; padding: 16px 0; border-top: 1px solid ${BORDER_COLOR};">
-                <p class="email-text-dark" style="margin: 0; color: ${TEXT_DARK}; font-size: 14px; font-weight: 500; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-                  View pricing for current plans.
-                </p>
-              </td>
-            </tr>
-          </table>
         </td>
       </tr>
     </table>
@@ -2247,16 +2239,7 @@ function generateDataExportEmailHTML(name: string): string {
       </ul>
     `)}
     
-    <!-- Warning box -->
-    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 24px 0;">
-      <tr>
-        <td style="background: #fffbeb; border-left: 3px solid #f59e0b; padding: 16px 20px; border-radius: 0 8px 8px 0;">
-          <p style="margin: 0; color: #92400e; font-size: 14px; line-height: 1.6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-            <strong style="font-weight: 600;">Important:</strong> This file contains sensitive personal information. Please store it securely and don't share it with anyone.
-          </p>
-        </td>
-      </tr>
-    </table>
+    ${alertBox('<strong>Important:</strong> This file contains sensitive personal information. Please store it securely and don\'t share it with anyone.', 'warning')}
     
     ${paragraph('If you have any questions about your data or need assistance, please don\'t hesitate to reply to this email.')}
     
@@ -2490,58 +2473,37 @@ function generateMaintenanceStartEmailHTML(
     .join('')
 
   const bodyHTML = `
-    <h1 style="color: ${PRIMARY_ACCENT}; font-size: 28px; margin: 0 0 24px 0; font-weight: 600; text-align: center;">Scheduled Maintenance Notice</h1>
+    ${h1('Scheduled Maintenance Notice')}
     
-    <p style="color: ${TEXT_GRAY}; font-size: 16px; line-height: 1.8; margin: 0 0 16px 0;">
-      Hi ${name},
-    </p>
+    ${paragraph(`Hi ${name},`)}
     
-    <p style="color: ${TEXT_GRAY}; font-size: 16px; line-height: 1.8; margin: 0 0 32px 0;">
-      We're writing to let you know about planned maintenance on ${APP_NAME}.
-    </p>
+    ${paragraph(`We're writing to let you know about planned maintenance on ${APP_NAME}.`)}
     
-    <!-- Maintenance Window Card -->
-    <div style="background: #FEF3C7; padding: 24px; margin: 32px 0; border-left: 4px solid #F59E0B; border-radius: 8px;">
-      <h3 style="margin-top: 0; color: #78350F; font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Maintenance Window</h3>
-      <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
-        <tr>
-          <td style="color: #92400E; font-size: 14px; padding: 8px 0;"><strong>Date:</strong></td>
-          <td style="color: #78350F; font-size: 15px; font-weight: 500; padding: 8px 0;">${scheduledDate}</td>
-        </tr>
-        <tr>
-          <td style="color: #92400E; font-size: 14px; padding: 8px 0;"><strong>Time:</strong></td>
-          <td style="color: #78350F; font-size: 15px; font-weight: 500; padding: 8px 0;">${startTime} - ${endTime} UTC</td>
-        </tr>
-      </table>
-    </div>
-    
-    ${affectedServices.length > 0 ? `
-    <div style="background: ${BG_LIGHT}; padding: 24px; margin: 32px 0; border-left: 4px solid ${PRIMARY_ACCENT}; border-radius: 8px;">
-      <h3 style="margin-top: 0; color: ${TEXT_DARK}; font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Affected Services</h3>
-      <ul style="color: ${TEXT_GRAY}; line-height: 1.8; margin: 16px 0 0 0; padding-left: 20px; font-size: 15px;">
-        ${servicesHTML}
-      </ul>
-    </div>
-    ` : ''}
-    
-    ${description ? `
-    <p style="color: ${TEXT_GRAY}; font-size: 16px; line-height: 1.8; margin: 32px 0;">
-      ${description}
-    </p>
-    ` : ''}
-    
-    <div style="background: #E0E7FF; border-left: 4px solid ${PRIMARY_ACCENT}; padding: 16px 20px; margin: 32px 0; border-radius: 0 8px 8px 0;">
-      <p style="margin: 0; color: #3730A3; font-size: 14px; line-height: 1.6;">
-        <strong style="color: ${PRIMARY_ACCENT}; font-weight: 600;">Your data:</strong> Your reflections and personal information remain secure during maintenance.
-      </p>
-    </div>
+      ${alertBox(`
+        <strong>Maintenance Window</strong><br/>
+        Date: ${scheduledDate}<br/>
+        Time: ${startTime} - ${endTime} UTC
+      `, 'warning')}
+      
+      ${affectedServices.length > 0 ? `
+      <div class="email-premium-card" style="background-color: ${BG_LIGHT}; padding: 20px 24px; border-radius: 12px; border: 1px solid ${BORDER_COLOR}; margin: 20px 0;">
+        <h3 class="email-premium-title" style="color: ${PRIMARY_ACCENT}; font-size: 15px; margin: 0 0 12px 0; font-weight: 700; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Affected Services</h3>
+        <ul style="color: ${TEXT_DARK}; line-height: 1.8; margin: 0; padding-left: 20px; font-size: 14px;">
+          ${servicesHTML}
+        </ul>
+      </div>
+      ` : ''}
+      
+      ${description ? paragraph(description) : ''}
+      
+      ${infoBox('<strong>Your data:</strong> Your reflections and personal information remain secure during maintenance.')}
     
     <p style="color: ${TEXT_GRAY}; font-size: 16px; line-height: 1.8; margin: 32px 0;">
       We apologize for any inconvenience this may cause and appreciate your patience as we work to improve ${APP_NAME}.
     </p>
     
     <p style="color: ${TEXT_GRAY}; font-size: 15px; line-height: 1.8; margin: 32px 0 0 0; text-align: center;">
-      Questions? Contact us at <a href="mailto:support@promptandpause.com" style="color: ${PRIMARY_ACCENT}; text-decoration: none;">support@promptandpause.com</a>
+      Questions? Contact us at <a href="mailto:support@promptandpause.com" class="email-text-primary" style="color: ${PRIMARY_ACCENT}; text-decoration: none; font-weight: 600;">support@promptandpause.com</a>
     </p>
   `
 
@@ -2566,40 +2528,25 @@ function generateMaintenanceCompleteEmailHTML(
   const { completedAt, improvements, notes } = details
 
   const bodyHTML = `
-    <h1 style="color: ${SECONDARY_ACCENT}; font-size: 28px; margin: 0 0 24px 0; font-weight: 600; text-align: center;">Maintenance complete</h1>
+    ${h1('Maintenance complete')}
     
-    <p style="color: ${TEXT_GRAY}; font-size: 16px; line-height: 1.8; margin: 0 0 16px 0;">
-      Hi ${name},
-    </p>
+    ${paragraph(`Hi ${name},`)}
     
-    <p style="color: ${TEXT_GRAY}; font-size: 16px; line-height: 1.8; margin: 0 0 32px 0;">
-      Maintenance has been completed. ${APP_NAME} is available again.
-    </p>
+    ${paragraph(`Maintenance has been completed. ${APP_NAME} is available again.`)}
     
-    <!-- Status Card -->
-    <div style="background: #DCFCE7; padding: 24px; margin: 32px 0; border-left: 4px solid #22C55E; border-radius: 8px; text-align: center;">
-      <p style="color: #14532D; font-size: 18px; font-weight: 600; margin: 0;">
-        All Systems Operational
-      </p>
-      <p style="color: #15803D; font-size: 14px; margin: 8px 0 0 0;">
-        Completed at ${completedAt}
-      </p>
-    </div>
+    ${alertBox(`
+      <strong>All Systems Operational</strong><br/>
+      Completed at ${completedAt}
+    `, 'success')}
     
     ${improvements ? `
-    <div style="background: ${BG_LIGHT}; padding: 24px; margin: 32px 0; border-left: 4px solid ${PRIMARY_ACCENT}; border-radius: 8px;">
-      <h3 style="margin-top: 0; color: ${TEXT_DARK}; font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">What's Improved</h3>
-      <p style="color: ${TEXT_GRAY}; font-size: 15px; line-height: 1.8; margin: 16px 0 0 0;">
-        ${improvements}
-      </p>
+    <div class="email-premium-card" style="background-color: ${BG_LIGHT}; padding: 20px 24px; border-radius: 12px; border: 1px solid ${BORDER_COLOR}; margin: 20px 0;">
+      <h3 class="email-premium-title" style="color: ${PRIMARY_ACCENT}; font-size: 15px; margin: 0 0 12px 0; font-weight: 700; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">What's Improved</h3>
+      <p style="color: ${TEXT_DARK}; font-size: 15px; line-height: 1.6; margin: 0;">${improvements}</p>
     </div>
     ` : ''}
     
-    ${notes ? `
-    <p style="color: ${TEXT_GRAY}; font-size: 16px; line-height: 1.8; margin: 32px 0;">
-      ${notes}
-    </p>
-    ` : ''}
+    ${notes ? paragraph(notes) : ''}
     
     <div style="text-align: center; margin: 40px 0;">
       ${standardButton({ href: 'https://promptandpause.com/dashboard', label: 'Open dashboard' })}
@@ -2667,17 +2614,17 @@ export async function sendAdminCredentialsEmail(
       
       ${infoBox(`
         <div style="margin-bottom: 12px;">
-          <strong style="color: ${TEXT_DARK}; display: block; margin-bottom: 4px;">Your Login Credentials</strong>
+          <strong style="color: ${TEXT_DARK}; display: block; margin-bottom: 4px; font-size: 15px;">Your Login Credentials</strong>
         </div>
         <div style="margin-bottom: 8px;">
           <span style="color: ${TEXT_GRAY}; font-size: 14px;">Email:</span><br>
-          <strong style="color: ${TEXT_DARK}; font-size: 16px;">${email}</strong>
+          <strong style="color: ${TEXT_DARK}; font-size: 15px;">${email}</strong>
         </div>
         <div>
           <span style="color: ${TEXT_GRAY}; font-size: 14px;">Temporary Password:</span><br>
-          <strong style="color: ${TEXT_DARK}; font-size: 16px; font-family: 'Courier New', monospace; background: ${BG_LIGHT}; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-top: 4px;">${password}</strong>
+          <strong style="color: ${TEXT_DARK}; font-size: 15px; font-family: 'Courier New', monospace; background: ${BG_WHITE}; padding: 4px 10px; border: 1px solid ${BORDER_COLOR}; border-radius: 6px; display: inline-block; margin-top: 4px;">${password}</strong>
         </div>
-      `, 'info')}
+      `)}
       
       ${paragraph('⚠️ <strong>Important Security Steps:</strong>')}
       ${paragraph(`
@@ -2797,7 +2744,7 @@ export async function sendTrialExpirationEmail(
     `)
 
     const { data, error } = await resend.emails.send({
-      from: `${APP_NAME} <${FROM_EMAIL}>`,
+      from: `${APP_NAME} Billing <${BILLING_EMAIL}>`,
       to: email,
       subject,
       html,
@@ -2886,7 +2833,7 @@ export async function sendDiscountInvitationEmail(
     `)
 
     const { data, error } = await resend.emails.send({
-      from: `${APP_NAME} <${FROM_EMAIL}>`,
+      from: `${APP_NAME} Billing <${BILLING_EMAIL}>`,
       to: email,
       subject: `Your ${discountLabel} discount is ready`,
       html,
@@ -2967,7 +2914,7 @@ export async function sendGiftActivatedEmail(
     `)
 
     const { data, error } = await resend.emails.send({
-      from: `${APP_NAME} <${FROM_EMAIL}>`,
+      from: `${APP_NAME} Billing <${BILLING_EMAIL}>`,
       to: email,
       subject: 'Gift subscription activated',
       html,
@@ -3054,7 +3001,7 @@ export async function sendGiftRecipientEmail(params: {
     `)
 
     const { data, error } = await resend.emails.send({
-      from: `${APP_NAME} <${FROM_EMAIL}>`,
+      from: `${APP_NAME} Billing <${BILLING_EMAIL}>`,
       to: recipientEmail,
       subject: 'You’ve received a gift subscription',
       html,
@@ -3120,7 +3067,7 @@ export async function sendGiftBuyerConfirmationEmail(params: {
     `)
 
     const { data, error } = await resend.emails.send({
-      from: `${APP_NAME} <${FROM_EMAIL}>`,
+      from: `${APP_NAME} Billing <${BILLING_EMAIL}>`,
       to: buyerEmail,
       subject: 'Gift subscription purchased',
       html,
@@ -3174,7 +3121,7 @@ export async function sendGiftRedeemedBuyerEmail(params: {
     `)
 
     const { data, error } = await resend.emails.send({
-      from: `${APP_NAME} <${FROM_EMAIL}>`,
+      from: `${APP_NAME} Billing <${BILLING_EMAIL}>`,
       to: buyerEmail,
       subject: 'Your gift was redeemed',
       html,
@@ -3235,7 +3182,7 @@ export async function sendGiftExpiringSoonEmail(params: {
     `)
 
     const { data, error } = await resend.emails.send({
-      from: `${APP_NAME} <${FROM_EMAIL}>`,
+      from: `${APP_NAME} Billing <${BILLING_EMAIL}>`,
       to: email,
       subject: 'Your gift subscription ends soon',
       html,
@@ -3281,7 +3228,7 @@ export async function sendTicketConfirmation(params: {
 <tr><td style="padding:8px 0;color:${TEXT_GRAY};font-size:14px;border-bottom:1px solid ${BORDER_COLOR};">Ticket No</td><td style="padding:8px 0;font-size:14px;font-weight:600;text-align:right;border-bottom:1px solid ${BORDER_COLOR};">#${ticketNo}</td></tr>
 <tr><td style="padding:8px 0;color:${TEXT_GRAY};font-size:14px;border-bottom:1px solid ${BORDER_COLOR};">Subject</td><td style="padding:8px 0;font-size:14px;font-weight:600;text-align:right;border-bottom:1px solid ${BORDER_COLOR};">${ticketTitle}</td></tr>
 <tr><td style="padding:8px 0;color:${TEXT_GRAY};font-size:14px;border-bottom:1px solid ${BORDER_COLOR};">Priority</td><td style="padding:8px 0;font-size:14px;font-weight:600;text-align:right;border-bottom:1px solid ${BORDER_COLOR};">${priority.charAt(0).toUpperCase() + priority.slice(1)}</td></tr>
-<tr><td style="padding:8px 0;color:${TEXT_GRAY};font-size:14px;">Status</td><td style="padding:8px 0;font-size:14px;font-weight:600;text-align:right;"><span style="display:inline-block;padding:4px 12px;border-radius:12px;background:#e8f5e9;color:#2e7d32;font-size:12px;">New</span></td></tr>
+<tr><td style="padding:8px 0;color:${TEXT_GRAY};font-size:14px;">Status</td><td style="padding:8px 0;font-size:14px;font-weight:600;text-align:right;"><span style="display:inline-block;padding:4px 12px;border-radius:999px;background:${PRIMARY_ACCENT};color:#ffffff;font-size:12px;">New</span></td></tr>
 </table>`,
         ],
         true,
@@ -3297,7 +3244,7 @@ export async function sendTicketConfirmation(params: {
 
   try {
     const { data, error } = await resend.emails.send({
-      from: `Prompt & Pause <${FROM_EMAIL}>`,
+      from: `Prompt & Pause <${NOREPLY_EMAIL}>`,
       to: email,
       subject: `[Ticket #${ticketNo}] We've received your request`,
       html,
@@ -3388,9 +3335,9 @@ export function validateEmailConfig(): {
   hasFromEmail: boolean
 } {
   return {
-    configured: !!(process.env.RESEND_API_KEY && process.env.RESEND_FROM_EMAIL),
+    configured: !!(process.env.RESEND_API_KEY && process.env.NOREPLY_EMAIL),
     hasApiKey: !!process.env.RESEND_API_KEY,
-    hasFromEmail: !!process.env.RESEND_FROM_EMAIL,
+    hasFromEmail: !!process.env.NOREPLY_EMAIL,
   }
 }
 

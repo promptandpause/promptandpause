@@ -148,7 +148,7 @@ export async function POST(
 
     const resend = new Resend(process.env.RESEND_API_KEY)
     const { data, error } = await resend.emails.send({
-      from: `Prompt & Pause <${process.env.RESEND_FROM_EMAIL || 'prompts@promptandpause.com'}>`,
+      from: `Prompt & Pause <${process.env.NOREPLY_EMAIL || 'noreply@promptandpause.com'}>`,
       to: recipientEmail,
       subject: `[TEST] ${subject}`,
       html: testHTML,

@@ -5,7 +5,7 @@ import { withRateLimit } from '@/lib/security/rateLimit'
 import crypto from 'crypto'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
-const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'admin@promptandpause.com'
+const FROM_EMAIL = process.env.NOREPLY_EMAIL || 'noreply@promptandpause.com'
 
 // OTP expires in 10 minutes
 const OTP_EXPIRY_MINUTES = 10

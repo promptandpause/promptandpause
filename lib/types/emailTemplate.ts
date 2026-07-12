@@ -90,11 +90,11 @@ export interface EmailTemplateServiceResponse<T> {
   error?: string
 }
 
-// Default customization values - Forest Green theme matching dashboard
+// Default customization values - Twitter-like white/blue/black theme
 export const DEFAULT_EMAIL_CUSTOMIZATION = {
   logo_url: 'https://res.cloudinary.com/dh1rrfpmq/image/upload/v1766460430/prompt_pause-JRsbZR3dxCXndC8YMcyX6XU3XeT2Vw_vdvqfj.svg',
-  primary_color: '#384c37', // Forest green (main accent)
-  secondary_color: '#4a6349', // Lighter forest
-  background_color: '#f4f0eb', // Warm cream background
+  primary_color: '#1d9bf0', // Twitter blue (main accent)
+  secondary_color: '#4ab3f4', // Light blue
+  background_color: '#f7f8fa', // Light gray background
   button_text_color: '#ffffff', // White text on buttons
 } as const

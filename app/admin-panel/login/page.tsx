@@ -140,114 +140,69 @@ function AdminLoginContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-50 border border-blue-200 mb-4">
-            <Shield className="h-8 w-8 text-blue-600" />
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-500/20 mb-5">
+            <Shield className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-2xl font-semibold text-neutral-900 mb-2">Admin Panel</h1>
-          <p className="text-sm text-neutral-500">Sign in to access the admin dashboard</p>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight mb-1">Admin Panel</h1>
+          <p className="text-sm text-slate-500">Sign in to access the admin dashboard</p>
         </div>
 
-        {/* Login Card */}
-        <Card className="bg-white border-neutral-200">
-          <CardHeader>
-            <CardTitle className="text-neutral-900 flex items-center gap-2">
-              <Lock className="h-5 w-5" />
-              Admin Authentication
-            </CardTitle>
-            <CardDescription className="text-neutral-500">
-              Restricted to @promptandpause.com accounts
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleLogin} className="space-y-4">
+        <div className="bg-white border border-slate-200 rounded-2xl shadow-xl">
+          <div className="p-7">
+            <div className="mb-6">
+              <h2 className="text-lg font-semibold text-slate-900">Sign in</h2>
+              <p className="text-sm text-slate-500 mt-1">Restricted to @promptandpause.com accounts</p>
+            </div>
+
+            <form onSubmit={handleLogin} className="space-y-5">
               {error && (
-                <Alert variant="destructive" className="bg-red-50 border-red-200 text-red-700">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
+                <div className="p-3 rounded-xl bg-red-50 border border-red-200 flex items-start gap-3">
+                  <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-red-700">{error}</p>
+                </div>
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-neutral-900">
-                  Email Address
-                </Label>
+                <Label htmlFor="email" className="text-sm font-medium text-slate-700">Email Address</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-500" />
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="admin@promptandpause.com"
-                    value={email}
+                  <Mail className="absolute left-3.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                  <Input id="email" type="email" placeholder="admin@promptandpause.com" value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10 bg-white border-neutral-200 text-neutral-900 placeholder:text-neutral-400"
-                    required
-                    disabled={loading}
-                  />
+                    className="h-11 pl-10 bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                    required disabled={loading} />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-neutral-900">
-                  Password
-                </Label>
+                <Label htmlFor="password" className="text-sm font-medium text-slate-700">Password</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-500" />
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="Enter your password"
-                    value={password}
+                  <Lock className="absolute left-3.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                  <Input id="password" type="password" placeholder="Enter your password" value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 bg-white border-neutral-200 text-neutral-900 placeholder:text-neutral-400"
-                    required
-                    disabled={loading}
-                  />
+                    className="h-11 pl-10 bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                    required disabled={loading} />
                 </div>
               </div>
 
-              <Button
-                type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700"
-                disabled={loading}
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Signing in...
-                  </>
-                ) : (
-                  <>
-                    <Shield className="h-4 w-4 mr-2" />
-                    Sign In to Admin Panel
-                  </>
-                )}
+              <Button type="submit" disabled={loading}
+                className="w-full h-11 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium shadow-lg shadow-blue-500/20 transition-all">
+                {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Signing in...</> : 'Sign In to Admin Panel'}
               </Button>
             </form>
+          </div>
 
-            <div className="mt-6 pt-6 border-t border-neutral-200">
-              <div className="text-sm text-neutral-600 space-y-2">
-                <p className="flex items-center gap-2">
-                  <AlertCircle className="h-4 w-4 flex-shrink-0" />
-                  <span>Admin access is restricted to authorized personnel only</span>
-                </p>
-                <p className="text-xs text-neutral-500">
-                  If you need admin access, contact your system administrator
-                </p>
-              </div>
+          <div className="px-7 py-4 bg-slate-50 border-t border-slate-100 rounded-b-2xl">
+            <div className="flex items-start gap-2.5">
+              <AlertCircle className="h-3.5 w-3.5 text-slate-400 mt-0.5 flex-shrink-0" />
+              <p className="text-xs text-slate-500">Admin access is restricted to authorized personnel only.</p>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Footer */}
-        <div className="mt-6 text-center">
-          <p className="text-sm text-neutral-500">
-            Prompt & Pause Admin Panel
-          </p>
+          </div>
         </div>
+
+        <p className="text-center text-xs text-slate-400 mt-6">Prompt & Pause Admin Panel</p>
       </div>
     </div>
   )
@@ -256,10 +211,10 @@ function AdminLoginContent() {
 export default function AdminLoginPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="flex items-center gap-2 text-neutral-600">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 flex items-center justify-center">
+        <div className="flex items-center gap-3 text-slate-500">
           <Loader2 className="h-5 w-5 animate-spin" />
-          <span>Loading...</span>
+          <span className="text-sm">Loading...</span>
         </div>
       </div>
     }>

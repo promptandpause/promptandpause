@@ -1,150 +1,92 @@
-/**
- * Professional Email Template System
- * Modern, sophisticated email templates matching the Prompt & Pause dashboard
- * Features soft reflection tones with calming sage/forest green palette
- */
-
 const APP_URL = 'https://promptandpause.com'
 const APP_NAME = 'Prompt & Pause'
 
-// Brand Colors - Matching Dashboard Theme
-// Light mode gradient: #f4f0eb (cream) → #a1a79e (sage) → #384c37 (forest)
 export const BRAND_COLORS = {
-  // Primary accent - Sage/Forest green tones
-  primary: '#384c37',        // Forest green (main accent)
-  primaryLight: '#4a6349',   // Lighter forest
-  primaryDark: '#2a3a29',    // Darker forest
-  
-  // Secondary accent - Warm gold for CTAs
-  accent: '#c9a227',         // Warm gold
-  accentLight: '#d4b44a',    // Light gold
-  
-  // Background colors - Soft, calming tones
-  backgroundDark: '#1e293b', // Slate dark (footer)
-  backgroundAccent: '#0f172a', // Deep slate
-  backgroundLight: '#f4f0eb', // Warm cream (main bg)
-  backgroundPure: '#ffffff',  // Pure white (cards)
-  backgroundSection: '#f8f6f3', // Soft cream (sections)
-  backgroundMuted: '#a1a79e', // Sage muted
-  
-  // Text colors
-  textDark: '#1e293b',       // Slate dark
-  textGray: '#475569',       // Slate gray
-  textLight: '#ffffff',      // White
-  textMuted: '#94a3b8',      // Slate muted
-  
-  // Borders - Soft, subtle
-  border: '#e2e8f0',         // Slate border
-  borderLight: '#f1f5f9',    // Light slate
-  borderAccent: '#384c37',   // Forest accent border
+  primary: '#1d9bf0',
+  primaryLight: '#4ab3f4',
+  primaryDark: '#1a8cd8',
+  accent: '#1d9bf0',
+  accentLight: '#4ab3f4',
+  backgroundDark: '#0f1419',
+  backgroundAccent: '#1a1f25',
+  backgroundLight: '#f7f8fa',
+  backgroundPure: '#ffffff',
+  backgroundSection: '#f0f1f3',
+  backgroundMuted: '#e0e4e8',
+  textDark: '#0f1419',
+  textGray: '#536471',
+  textLight: '#ffffff',
+  textMuted: '#8b98a5',
+  border: '#eff3f4',
+  borderLight: '#f0f1f3',
+  borderAccent: '#1d9bf0',
 }
 
-// Dark Mode Colors - Auto-detected based on user device settings
 export const DARK_MODE_COLORS = {
-  // Primary accent - Lighter forest for dark backgrounds
-  primary: '#5a8a58',        // Lighter forest green
-  primaryLight: '#6b9b69',   // Even lighter forest
-  primaryDark: '#4a7a48',    // Mid forest
-  
-  // Secondary accent - Brighter gold for visibility
-  accent: '#d4b44a',         // Brighter gold
-  accentLight: '#e0c56b',    // Light gold
-  
-  // Background colors - Dark, calming tones
-  backgroundDark: '#0f172a', // Deep slate (footer)
-  backgroundAccent: '#1e293b', // Slate accent
-  backgroundLight: '#1a202c', // Dark charcoal (main bg)
-  backgroundPure: '#1e293b',  // Slate dark (cards)
-  backgroundSection: '#2d3748', // Dark gray (sections)
-  backgroundMuted: '#4a5568', // Gray muted
-  
-  // Text colors - Light for dark backgrounds
-  textDark: '#f7fafc',       // Near white
-  textGray: '#e2e8f0',       // Light gray
-  textLight: '#ffffff',      // White
-  textMuted: '#a0aec0',      // Muted gray
-  
-  // Borders - Subtle on dark
-  border: '#4a5568',         // Gray border
-  borderLight: '#2d3748',    // Dark border
-  borderAccent: '#5a8a58',   // Forest accent border
+  primary: '#1d9bf0',
+  primaryLight: '#4ab3f4',
+  primaryDark: '#1a8cd8',
+  accent: '#1d9bf0',
+  accentLight: '#4ab3f4',
+  backgroundDark: '#000000',
+  backgroundAccent: '#0f1114',
+  backgroundLight: '#15202b',
+  backgroundPure: '#1e2732',
+  backgroundSection: '#26323f',
+  backgroundMuted: '#38444d',
+  textDark: '#e7e9ea',
+  textGray: '#8b98a5',
+  textLight: '#ffffff',
+  textMuted: '#6b7885',
+  border: '#2f3336',
+  borderLight: '#38444d',
+  borderAccent: '#1d9bf0',
 }
 
-// Brand CDN Logo URL - Links to homepage
 export const LOGO_URL = 'https://res.cloudinary.com/dh1rrfpmq/image/upload/v1766460430/prompt_pause-JRsbZR3dxCXndC8YMcyX6XU3XeT2Vw_vdvqfj.svg'
 
-/**
- * Professional Email Header with Logo - Links to homepage
- * Features soft gradient reflection effect
- */
 export function emailHeader(): string {
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
       <tr>
-        <td class="email-header-bg" align="center" style="padding: 32px 20px 24px 20px; background: linear-gradient(180deg, ${BRAND_COLORS.backgroundPure} 0%, ${BRAND_COLORS.backgroundLight} 100%);">
+        <td class="email-header-bg" align="center" style="padding: 32px 20px 24px 20px; background-color: ${BRAND_COLORS.backgroundPure};">
           <a href="${APP_URL}" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
-            <img class="email-logo" src="${LOGO_URL}" alt="${APP_NAME}" style="height: 48px; width: auto; display: block;" />
+            <img class="email-logo" src="${LOGO_URL}" alt="${APP_NAME}" style="height: 44px; width: auto; display: block; border: 0; outline: none;" />
           </a>
-          <!-- Subtle reflection line -->
-          <div class="email-text-primary" style="width: 80px; height: 2px; background: linear-gradient(90deg, transparent, ${BRAND_COLORS.primary}, transparent); margin: 16px auto 0; opacity: 0.6;"></div>
         </td>
       </tr>
     </table>
   `
 }
 
-/**
- * Professional Email Footer with soft reflection styling
- * All links point to promptandpause.com
- */
 export function emailFooter(): string {
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
-      <!-- Soft gradient transition -->
       <tr>
-        <td style="height: 4px; background: linear-gradient(180deg, ${BRAND_COLORS.backgroundLight} 0%, ${BRAND_COLORS.backgroundDark} 100%);"></td>
-      </tr>
-      <tr>
-        <td class="email-footer-bg" align="center" style="background: ${BRAND_COLORS.backgroundDark}; padding: 40px 20px;">
-          <!-- Logo in footer -->
-          <a href="${APP_URL}" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
-            <img class="email-logo" src="${LOGO_URL}" alt="${APP_NAME}" style="height: 32px; width: auto; display: block; margin: 0 auto 20px; filter: brightness(0) invert(1); opacity: 0.9;" />
-          </a>
-          
-          <!-- Navigation Links -->
-          <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto 24px;">
+        <td align="center" style="border-top: 1px solid ${BRAND_COLORS.border}; padding: 28px 20px 32px;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto 16px;">
             <tr>
               <td style="padding: 0 12px;">
-                <a href="${APP_URL}/dashboard" target="_blank" rel="noopener noreferrer" class="email-text-muted" style="color: ${BRAND_COLORS.textMuted}; text-decoration: none; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Dashboard</a>
+                <a href="${APP_URL}" target="_blank" rel="noopener noreferrer" class="email-text-gray" style="color: ${BRAND_COLORS.textGray}; text-decoration: none; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Home</a>
               </td>
-              <td class="email-text-muted" style="color: ${BRAND_COLORS.textMuted}; opacity: 0.4;">•</td>
+              <td class="email-text-muted" style="color: ${BRAND_COLORS.textMuted}; font-size: 12px;">·</td>
               <td style="padding: 0 12px;">
-                <a href="${APP_URL}/pricing" target="_blank" rel="noopener noreferrer" class="email-text-muted" style="color: ${BRAND_COLORS.textMuted}; text-decoration: none; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Pricing</a>
+                <a href="${APP_URL}/dashboard" target="_blank" rel="noopener noreferrer" class="email-text-gray" style="color: ${BRAND_COLORS.textGray}; text-decoration: none; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Dashboard</a>
               </td>
-              <td class="email-text-muted" style="color: ${BRAND_COLORS.textMuted}; opacity: 0.4;">•</td>
+              <td class="email-text-muted" style="color: ${BRAND_COLORS.textMuted}; font-size: 12px;">·</td>
               <td style="padding: 0 12px;">
-                <a href="${APP_URL}/privacy" target="_blank" rel="noopener noreferrer" class="email-text-muted" style="color: ${BRAND_COLORS.textMuted}; text-decoration: none; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Privacy</a>
-              </td>
-              <td class="email-text-muted" style="color: ${BRAND_COLORS.textMuted}; opacity: 0.4;">•</td>
-              <td style="padding: 0 12px;">
-                <a href="${APP_URL}/contact" target="_blank" rel="noopener noreferrer" class="email-text-muted" style="color: ${BRAND_COLORS.textMuted}; text-decoration: none; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Contact</a>
+                <a href="${APP_URL}/privacy" target="_blank" rel="noopener noreferrer" class="email-text-gray" style="color: ${BRAND_COLORS.textGray}; text-decoration: none; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Privacy</a>
               </td>
             </tr>
           </table>
-          
-          <!-- Tagline -->
-          <p style="color: ${BRAND_COLORS.textLight}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; margin: 0 0 8px 0; opacity: 0.9;">
+          <p class="email-text-muted" style="color: ${BRAND_COLORS.textMuted}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; margin: 0 0 4px;">
             Pause. Reflect. Grow.
           </p>
-          
-          <!-- Copyright -->
-          <p class="email-text-muted" style="color: ${BRAND_COLORS.textMuted}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; margin: 0; opacity: 0.7;">
+          <p class="email-text-muted" style="color: ${BRAND_COLORS.textMuted}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; margin: 0;">
             © 2026 ${APP_NAME} from DC REGENT GROUP
           </p>
-          
-          <!-- Unsubscribe hint -->
-          <p class="email-text-muted" style="color: ${BRAND_COLORS.textMuted}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; margin: 16px 0 0 0; opacity: 0.5;">
-            Manage your email preferences in your <a href="${APP_URL}/dashboard/settings" target="_blank" rel="noopener noreferrer" class="email-text-muted" style="color: ${BRAND_COLORS.textMuted}; text-decoration: underline;">account settings</a>
+          <p class="email-text-muted" style="color: ${BRAND_COLORS.textMuted}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; margin: 12px 0 0 0;">
+            <a href="${APP_URL}/dashboard/settings" target="_blank" rel="noopener noreferrer" class="email-text-muted" style="color: ${BRAND_COLORS.textMuted}; text-decoration: underline;">Manage email preferences</a>
           </p>
         </td>
       </tr>
@@ -152,16 +94,12 @@ export function emailFooter(): string {
   `
 }
 
-/**
- * Professional CTA Button with soft shadow and hover-ready styling
- * Uses warm gold accent for high visibility
- */
 export function ctaButton(text: string, url: string): string {
   return `
-    <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 32px auto;">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 28px auto;">
       <tr>
-        <td class="email-btn-primary" style="border-radius: 10px; background: linear-gradient(135deg, ${BRAND_COLORS.primary} 0%, ${BRAND_COLORS.primaryLight} 100%); box-shadow: 0 4px 14px rgba(56, 76, 55, 0.25);">
-          <a href="${url}" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 16px 44px; color: ${BRAND_COLORS.textLight}; text-decoration: none; font-weight: 600; font-size: 15px; letter-spacing: 0.02em; border-radius: 10px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <td class="email-btn-primary" style="border-radius: 999px; background-color: ${BRAND_COLORS.primary};">
+          <a href="${url}" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 14px 32px; color: ${BRAND_COLORS.textLight}; text-decoration: none; font-weight: 600; font-size: 15px; border-radius: 999px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
             ${text}
           </a>
         </td>
@@ -170,15 +108,25 @@ export function ctaButton(text: string, url: string): string {
   `
 }
 
-/**
- * Professional Info Box with soft reflection styling
- * Features subtle gradient and forest green accent border
- */
-export function infoBox(content: string, bgColor: string = BRAND_COLORS.backgroundSection): string {
+export function textButton(text: string, url: string): string {
   return `
-    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 24px 0;">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 20px auto;">
       <tr>
-        <td class="email-info-box email-section-bg" style="background: linear-gradient(135deg, ${bgColor} 0%, ${BRAND_COLORS.backgroundPure} 100%); padding: 24px 28px; border-left: 3px solid ${BRAND_COLORS.primary}; border-radius: 0 12px 12px 0; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);">
+        <td align="center">
+          <a href="${url}" target="_blank" rel="noopener noreferrer" class="email-text-primary" style="color: ${BRAND_COLORS.primary}; text-decoration: none; font-weight: 600; font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            ${text} →
+          </a>
+        </td>
+      </tr>
+    </table>
+  `
+}
+
+export function infoBox(content: string, _bgColor?: string): string {
+  return `
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 20px 0;">
+      <tr>
+        <td class="email-info-box" style="background-color: ${BRAND_COLORS.backgroundSection}; padding: 20px 24px; border-radius: 12px;">
           ${content}
         </td>
       </tr>
@@ -186,234 +134,101 @@ export function infoBox(content: string, bgColor: string = BRAND_COLORS.backgrou
   `
 }
 
-/**
- * Professional Email Template Wrapper
- * Modern, clean design with soft reflection tones
- */
 export function emailWrapper(content: string, options: {
   preheader?: string
   title?: string
 } = {}): string {
   const { preheader, title = APP_NAME } = options
-  
+
+  const darkModeCss = `
+    @media (prefers-color-scheme: dark) {
+      .email-body-bg { background-color: ${DARK_MODE_COLORS.backgroundLight} !important; }
+      .email-card-bg { background-color: ${DARK_MODE_COLORS.backgroundPure} !important; }
+      .email-section-bg { background-color: ${DARK_MODE_COLORS.backgroundSection} !important; }
+      .email-header-bg { background-color: ${BRAND_COLORS.backgroundPure} !important; }
+      .email-text-dark { color: ${DARK_MODE_COLORS.textDark} !important; }
+      .email-text-gray { color: ${DARK_MODE_COLORS.textGray} !important; }
+      .email-text-muted { color: ${DARK_MODE_COLORS.textMuted} !important; }
+      .email-text-primary { color: ${DARK_MODE_COLORS.primary} !important; }
+      .email-btn-primary { background-color: ${DARK_MODE_COLORS.primary} !important; }
+      .email-info-box { background-color: ${DARK_MODE_COLORS.backgroundSection} !important; }
+      .email-logo { filter: none !important; }
+      .email-border-bottom { border-bottom-color: ${DARK_MODE_COLORS.border} !important; }
+      .email-badge { background-color: ${DARK_MODE_COLORS.backgroundMuted} !important; }
+      .email-alert-info { background-color: #0a2a3f !important; }
+      .email-alert-warning { background-color: #2a2010 !important; }
+      .email-alert-success { background-color: #0a281a !important; }
+      .email-premium-card { background-color: #0a2a3f !important; }
+      .email-premium-title { color: ${DARK_MODE_COLORS.primary} !important; }
+      .email-premium-item { color: ${DARK_MODE_COLORS.textDark} !important; }
+      .email-prompt-card { background-color: ${DARK_MODE_COLORS.backgroundSection} !important; border-color: ${DARK_MODE_COLORS.border} !important; }
+      .email-prompt-label { color: ${DARK_MODE_COLORS.primary} !important; }
+      .email-prompt-text { color: ${DARK_MODE_COLORS.textDark} !important; }
+    }
+    [data-ogsc] .email-body-bg { background-color: ${DARK_MODE_COLORS.backgroundLight} !important; }
+    [data-ogsc] .email-card-bg { background-color: ${DARK_MODE_COLORS.backgroundPure} !important; }
+    [data-ogsc] .email-text-dark { color: ${DARK_MODE_COLORS.textDark} !important; }
+    [data-ogsc] .email-text-gray { color: ${DARK_MODE_COLORS.textGray} !important; }
+    [data-ogsc] .email-text-primary { color: ${DARK_MODE_COLORS.primary} !important; }
+    [data-ogsc] .email-logo { filter: none !important; }
+    [data-ogsc] .email-header-bg { background-color: ${BRAND_COLORS.backgroundPure} !important; }
+  `
+
   return `
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
     <head>
-      <!--[if gte mso 9]>
-      <xml>
-        <o:OfficeDocumentSettings>
-          <o:AllowPNG/>
-          <o:PixelsPerInch>96</o:PixelsPerInch>
-        </o:OfficeDocumentSettings>
-      </xml>
-      <![endif]-->
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="x-apple-disable-message-reformatting">
-      <!--[if !mso]><!--><meta http-equiv="X-UA-Compatible" content="IE=edge"><!--<![endif]-->
       <title>${title}</title>
-      
-      <!-- System Fonts Stack -->
       <style type="text/css">
-        /* Reset and base styles */
-        body, table, td, tr { border-collapse: collapse; vertical-align: top; }
-        * { line-height: inherit; }
+        body, table, td, tr { border-collapse: collapse; }
         a[x-apple-data-detectors=true] { color: inherit !important; text-decoration: none !important; }
-        table, td { color: ${BRAND_COLORS.textDark}; }
-        
-        /* CSS Variables for theming */
-        :root {
-          --color-primary: ${BRAND_COLORS.primary};
-          --color-primary-light: ${BRAND_COLORS.primaryLight};
-          --color-bg-light: ${BRAND_COLORS.backgroundLight};
-          --color-bg-pure: ${BRAND_COLORS.backgroundPure};
-          --color-bg-section: ${BRAND_COLORS.backgroundSection};
-          --color-bg-dark: ${BRAND_COLORS.backgroundDark};
-          --color-text-dark: ${BRAND_COLORS.textDark};
-          --color-text-gray: ${BRAND_COLORS.textGray};
-          --color-text-muted: ${BRAND_COLORS.textMuted};
-          --color-border: ${BRAND_COLORS.border};
-        }
-        
-        /* Responsive styles */
-        @media only screen and (min-width: 620px) {
-          .u-row { width: 600px !important; }
-          .u-row .u-col { vertical-align: top; }
-          .u-row .u-col-100 { width: 600px !important; }
-        }
+        @media only screen and (min-width: 620px) { .u-row { width: 600px !important; } }
         @media only screen and (max-width: 620px) {
-          .u-row-container { max-width: 100% !important; padding-left: 0 !important; padding-right: 0 !important; }
           .u-row { width: 100% !important; }
-          .u-row .u-col { display: block !important; width: 100% !important; min-width: 320px !important; max-width: 100% !important; }
-          .u-row .u-col > div { margin: 0 auto; }
-          .u-row .u-col img { max-width: 100% !important; }
+          img { max-width: 100% !important; height: auto !important; }
         }
         @media (max-width: 480px) {
-          .hide-mobile { max-height: 0; overflow: hidden; display: none !important; }
-          .mobile-center { text-align: center !important; }
           .mobile-padding { padding-left: 16px !important; padding-right: 16px !important; }
         }
-        
-        /* Dark Mode - Auto-detects user device preference */
-        @media (prefers-color-scheme: dark) {
-          :root {
-            --color-primary: ${DARK_MODE_COLORS.primary};
-            --color-primary-light: ${DARK_MODE_COLORS.primaryLight};
-            --color-bg-light: ${DARK_MODE_COLORS.backgroundLight};
-            --color-bg-pure: ${DARK_MODE_COLORS.backgroundPure};
-            --color-bg-section: ${DARK_MODE_COLORS.backgroundSection};
-            --color-bg-dark: ${DARK_MODE_COLORS.backgroundDark};
-            --color-text-dark: ${DARK_MODE_COLORS.textDark};
-            --color-text-gray: ${DARK_MODE_COLORS.textGray};
-            --color-text-muted: ${DARK_MODE_COLORS.textMuted};
-            --color-border: ${DARK_MODE_COLORS.border};
-          }
-          
-          /* Dark mode background overrides */
-          .email-body-bg { background-color: ${DARK_MODE_COLORS.backgroundLight} !important; }
-          .email-card-bg { background-color: ${DARK_MODE_COLORS.backgroundPure} !important; }
-          .email-section-bg { background-color: ${DARK_MODE_COLORS.backgroundSection} !important; }
-          .email-footer-bg { background-color: ${DARK_MODE_COLORS.backgroundDark} !important; }
-          
-          /* Dark mode text overrides */
-          .email-text-dark { color: ${DARK_MODE_COLORS.textDark} !important; }
-          .email-text-gray { color: ${DARK_MODE_COLORS.textGray} !important; }
-          .email-text-muted { color: ${DARK_MODE_COLORS.textMuted} !important; }
-          .email-text-primary { color: ${DARK_MODE_COLORS.primary} !important; }
-          
-          /* Dark mode button overrides */
-          .email-btn-primary { 
-            background: linear-gradient(135deg, ${DARK_MODE_COLORS.primary} 0%, ${DARK_MODE_COLORS.primaryLight} 100%) !important;
-          }
-          
-          /* Dark mode info box */
-          .email-info-box {
-            background: linear-gradient(135deg, ${DARK_MODE_COLORS.backgroundSection} 0%, ${DARK_MODE_COLORS.backgroundPure} 100%) !important;
-            border-left-color: ${DARK_MODE_COLORS.primary} !important;
-          }
-          
-          /* Dark mode header gradient */
-          .email-header-bg {
-            background: linear-gradient(180deg, ${DARK_MODE_COLORS.backgroundPure} 0%, ${DARK_MODE_COLORS.backgroundLight} 100%) !important;
-          }
-          
-          /* Fix logo visibility in dark mode */
-          .email-logo { filter: brightness(1.2) !important; }
-          
-          /* Dark mode alert boxes */
-          .email-alert-info { background: #1e3a5f !important; }
-          .email-alert-info p { color: #e2e8f0 !important; }
-          .email-alert-warning { background: #4a3728 !important; }
-          .email-alert-warning p { color: #fcd34d !important; }
-          .email-alert-success { background: #1a3a2a !important; }
-          .email-alert-success p { color: #86efac !important; }
-          
-          /* Dark mode prompt card - CRITICAL for readability */
-          .email-prompt-card { 
-            background-color: #2d3748 !important; 
-            border-color: #4a5568 !important;
-          }
-          .email-prompt-label { color: #86efac !important; }
-          .email-prompt-text { color: #f7fafc !important; }
-          
-          /* Dark mode premium welcome card */
-          .email-premium-card {
-            background: linear-gradient(135deg, #1a3a2a 0%, #2d3748 100%) !important;
-            border-left-color: #86efac !important;
-          }
-          .email-premium-title { color: #86efac !important; }
-          .email-premium-list { color: #f7fafc !important; }
-          .email-premium-item { color: #f7fafc !important; }
-          .email-premium-item strong { color: #ffffff !important; }
-          .email-link { color: #86efac !important; }
-        }
-        
-        /* Gmail Dark Mode Support */
-        [data-ogsc] .email-body-bg { background-color: ${DARK_MODE_COLORS.backgroundLight} !important; }
-        [data-ogsc] .email-card-bg { background-color: ${DARK_MODE_COLORS.backgroundPure} !important; }
-        [data-ogsc] .email-text-dark { color: ${DARK_MODE_COLORS.textDark} !important; }
-        [data-ogsc] .email-text-gray { color: ${DARK_MODE_COLORS.textGray} !important; }
-        [data-ogsc] .email-prompt-card { background-color: #2d3748 !important; }
-        [data-ogsc] .email-prompt-label { color: #86efac !important; }
-        [data-ogsc] .email-prompt-text { color: #f7fafc !important; }
-        [data-ogsc] .email-premium-card { background: #1a3a2a !important; }
-        [data-ogsc] .email-premium-title { color: #86efac !important; }
-        [data-ogsc] .email-premium-list { color: #f7fafc !important; }
-        [data-ogsc] .email-premium-item { color: #f7fafc !important; }
-        [data-ogsc] .email-link { color: #86efac !important; }
-        
-        /* Outlook Dark Mode Support */
-        [data-ogsb] .email-body-bg { background-color: ${DARK_MODE_COLORS.backgroundLight} !important; }
-        [data-ogsb] .email-card-bg { background-color: ${DARK_MODE_COLORS.backgroundPure} !important; }
-        [data-ogsb] .email-text-dark { color: ${DARK_MODE_COLORS.textDark} !important; }
-        [data-ogsb] .email-prompt-card { background-color: #2d3748 !important; }
-        [data-ogsb] .email-prompt-text { color: #f7fafc !important; }
-        [data-ogsb] .email-premium-card { background: #1a3a2a !important; }
-        [data-ogsb] .email-premium-title { color: #86efac !important; }
-        [data-ogsb] .email-premium-item { color: #f7fafc !important; }
+        ${darkModeCss}
       </style>
     </head>
-    
     <body class="email-body-bg" style="margin: 0; padding: 0; -webkit-text-size-adjust: 100%; background-color: ${BRAND_COLORS.backgroundLight}; color: ${BRAND_COLORS.textDark}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
-      ${preheader ? `
-        <!-- Preheader text (hidden) -->
-        <div style="display: none; max-height: 0; overflow: hidden; mso-hide: all;">${preheader}</div>
-        <div style="display: none; max-height: 0; overflow: hidden; mso-hide: all;">&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;</div>
-      ` : ''}
-      
-      <!--[if IE]><div class="ie-container"><![endif]-->
-      <!--[if mso]><div class="mso-container"><![endif]-->
-      
-      <!-- Outer wrapper with soft cream background -->
-      <table role="presentation" class="email-body-bg" style="border-collapse: collapse; table-layout: fixed; border-spacing: 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; vertical-align: top; min-width: 320px; margin: 0 auto; background-color: ${BRAND_COLORS.backgroundLight}; width: 100%;" cellpadding="0" cellspacing="0">
+      ${preheader ? `<div style="display: none; max-height: 0; overflow: hidden; mso-hide: all;">${preheader}</div>` : ''}
+      <table role="presentation" class="email-body-bg" style="border-collapse: collapse; table-layout: fixed; min-width: 320px; margin: 0 auto; background-color: ${BRAND_COLORS.backgroundLight}; width: 100%;" cellpadding="0" cellspacing="0">
         <tbody>
-          <tr style="vertical-align: top">
-            <td class="email-body-bg" style="word-break: break-word; border-collapse: collapse !important; vertical-align: top; padding: 20px 0; background-color: ${BRAND_COLORS.backgroundLight};">
-              <!--[if (mso)|(IE)]><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" style="background-color: ${BRAND_COLORS.backgroundLight};"><![endif]-->
-              
-              <!-- Email container with max-width -->
-              <table role="presentation" class="email-card-bg" align="center" style="max-width: 600px; margin: 0 auto; background-color: ${BRAND_COLORS.backgroundPure}; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td class="email-body-bg" style="word-break: break-word; padding: 20px 0; background-color: ${BRAND_COLORS.backgroundLight};">
+              <table role="presentation" class="email-card-bg" align="center" style="max-width: 600px; margin: 0 auto; background-color: ${BRAND_COLORS.backgroundPure}; border-radius: 12px; overflow: hidden;" cellpadding="0" cellspacing="0" width="100%">
                 <tbody>
                   <tr>
                     <td>
-                      <!-- Header -->
                       ${emailHeader()}
-                      
-                      <!-- Main Content -->
                       ${content}
-                      
-                      <!-- Footer -->
                       ${emailFooter()}
                     </td>
                   </tr>
                 </tbody>
               </table>
-              
-              <!--[if (mso)|(IE)]></td></tr></table><![endif]-->
             </td>
           </tr>
         </tbody>
       </table>
-      
-      <!--[if mso]></div><![endif]-->
-      <!--[if IE]></div><![endif]-->
     </body>
     </html>
   `
 }
 
-/**
- * Professional Typography - Clean, modern system fonts
- */
 export function h1(text: string, options: { color?: string; align?: string } = {}): string {
-  const { color = BRAND_COLORS.primary, align = 'center' } = options
-  const colorClass = color === BRAND_COLORS.primary ? 'email-text-primary' : 'email-text-dark'
+  const { color = BRAND_COLORS.textDark, align = 'center' } = options
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
       <tr>
-        <td align="${align}" style="padding: 12px 0;">
-          <h1 class="${colorClass}" style="color: ${color}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 26px; line-height: 1.3; margin: 0; font-weight: 700; letter-spacing: -0.02em;">${text}</h1>
+        <td align="${align}" style="padding: 8px 0;">
+          <h1 class="email-text-dark" style="color: ${color}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 24px; line-height: 1.3; margin: 0; font-weight: 700; letter-spacing: -0.02em;">${text}</h1>
         </td>
       </tr>
     </table>
@@ -425,8 +240,8 @@ export function h2(text: string, options: { color?: string; align?: string } = {
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
       <tr>
-        <td align="${align}" style="padding: 10px 0;">
-          <h2 class="email-text-dark" style="color: ${color}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 22px; line-height: 1.35; margin: 0; font-weight: 600;">${text}</h2>
+        <td align="${align}" style="padding: 6px 0;">
+          <h2 class="email-text-dark" style="color: ${color}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 20px; line-height: 1.35; margin: 0; font-weight: 700;">${text}</h2>
         </td>
       </tr>
     </table>
@@ -434,43 +249,36 @@ export function h2(text: string, options: { color?: string; align?: string } = {
 }
 
 export function h3(text: string, options: { color?: string; align?: string } = {}): string {
-  const { color = BRAND_COLORS.primary, align = 'left' } = options
+  const { color = BRAND_COLORS.textDark, align = 'left' } = options
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
       <tr>
-        <td align="${align}" style="padding: 8px 0;">
-          <h3 class="email-text-primary" style="color: ${color}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 17px; line-height: 1.4; margin: 0; font-weight: 600;">${text}</h3>
+        <td align="${align}" style="padding: 4px 0;">
+          <h3 class="email-text-dark" style="color: ${color}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; line-height: 1.4; margin: 0; font-weight: 700;">${text}</h3>
         </td>
       </tr>
     </table>
   `
 }
 
-/**
- * Professional Paragraph - Clean, readable text
- */
 export function paragraph(text: string, options: { color?: string; align?: string; fontSize?: string } = {}): string {
   const { color = BRAND_COLORS.textGray, align = 'left', fontSize = '15px' } = options
-  const colorClass = color === BRAND_COLORS.textMuted ? 'email-text-muted' : 'email-text-gray'
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
       <tr>
-        <td align="${align}" style="padding: 6px 0;">
-          <p class="${colorClass}" style="color: ${color}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: ${fontSize}; line-height: 1.65; margin: 0;">${text}</p>
+        <td align="${align}" style="padding: 4px 0;">
+          <p class="${color === BRAND_COLORS.textMuted ? 'email-text-muted' : 'email-text-gray'}" style="color: ${color}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: ${fontSize}; line-height: 1.6; margin: 0;">${text}</p>
         </td>
       </tr>
     </table>
   `
 }
 
-/**
- * Professional Content Section - Clean card-style layout
- */
-export function contentSection(content: string, backgroundColor: string = BRAND_COLORS.backgroundPure): string {
+export function contentSection(content: string, _backgroundColor?: string): string {
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
       <tr>
-        <td class="email-card-bg mobile-padding" style="background-color: ${backgroundColor}; padding: 32px 28px;">
+        <td class="email-card-bg mobile-padding" style="padding: 28px 28px;">
           ${content}
         </td>
       </tr>
@@ -478,33 +286,31 @@ export function contentSection(content: string, backgroundColor: string = BRAND_
   `
 }
 
-/**
- * Professional List - Clean, readable bullet points
- */
 export function list(items: string[]): string {
-  const listItems = items.map(item => `<li class="email-text-gray" style="color: ${BRAND_COLORS.textGray}; margin-bottom: 10px; font-size: 15px; line-height: 1.5;">${item}</li>`).join('')
-  return `<ul class="email-text-gray" style="color: ${BRAND_COLORS.textGray}; line-height: 1.6; padding-left: 20px; margin: 16px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">${listItems}</ul>`
+  const listItems = items.map(item => `
+    <li style="color: ${BRAND_COLORS.textGray}; margin-bottom: 8px; font-size: 15px; line-height: 1.5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">${item}</li>
+  `).join('')
+  return `
+    <ul style="line-height: 1.6; padding-left: 20px; margin: 12px 0;">
+      ${listItems}
+    </ul>
+  `
 }
 
-/**
- * Alert Box - Soft, modern styling for notices
- */
 export function alertBox(content: string, type: 'info' | 'warning' | 'success' = 'info'): string {
   const colors = {
-    info: { bg: '#f0f9ff', border: BRAND_COLORS.primary, text: BRAND_COLORS.textDark, darkBg: '#1e3a5f', darkText: '#e2e8f0' },
-    warning: { bg: '#fffbeb', border: '#f59e0b', text: '#92400e', darkBg: '#4a3728', darkText: '#fcd34d' },
-    success: { bg: '#f0fdf4', border: '#22c55e', text: '#166534', darkBg: '#1a3a2a', darkText: '#86efac' }
+    info: { bg: '#e8f4fd', border: '#1d9bf0', text: '#0f1419', darkClass: 'email-alert-info' },
+    warning: { bg: '#fef3cd', border: '#ffad1f', text: '#0f1419', darkClass: 'email-alert-warning' },
+    success: { bg: '#e6f7e6', border: '#00ba7c', text: '#0f1419', darkClass: 'email-alert-success' }
   }
-  const color = colors[type]
-  
+  const c = colors[type]
   return `
-    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 20px 0;">
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 16px 0;">
       <tr>
-        <td class="email-alert-${type}" style="background: ${color.bg}; border-left: 3px solid ${color.border}; padding: 16px 20px; border-radius: 0 8px 8px 0;">
-          <p class="email-text-dark" style="margin: 0; color: ${color.text}; font-size: 14px; line-height: 1.5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">${content}</p>
+        <td class="${c.darkClass}" style="background: ${c.bg}; border-left: 3px solid ${c.border}; padding: 14px 18px; border-radius: 8px;">
+          <p style="margin: 0; color: ${c.text}; font-size: 14px; line-height: 1.5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">${content}</p>
         </td>
       </tr>
     </table>
   `
 }
-

@@ -305,6 +305,7 @@ export async function GET(request: NextRequest) {
     const envCheck = {
       RESEND_API_KEY: !!process.env.RESEND_API_KEY,
       RESEND_FROM_EMAIL: process.env.RESEND_FROM_EMAIL || 'not set',
+      NOREPLY_EMAIL: process.env.NOREPLY_EMAIL || 'not set',
       CRON_SECRET: !!process.env.CRON_SECRET,
     }
 

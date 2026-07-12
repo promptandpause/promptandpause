@@ -61,13 +61,10 @@ export default async function AdminLayout({
     const adminUser = otpSession.admin_users
     
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-slate-950">
         <div className="flex h-screen overflow-hidden">
-          {/* Sidebar */}
           <AdminSidebar userEmail={adminUser.email || ''} userRole={adminUser.role || 'employee'} />
-          
-          {/* Main content area */}
-          <main className="flex-1 overflow-y-auto bg-gray-50">
+          <main className="flex-1 overflow-y-auto bg-gradient-to-br from-slate-50 to-gray-50">
             <div className="w-full">
               {children}
             </div>
@@ -113,13 +110,10 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-slate-950">
       <div className="flex h-screen overflow-hidden">
-        {/* Sidebar */}
         <AdminSidebar userEmail={user.email || ''} userRole={adminRole || 'employee'} />
-        
-        {/* Main content area */}
-        <main className="flex-1 overflow-y-auto bg-gray-50">
+        <main className="flex-1 overflow-y-auto bg-gradient-to-br from-slate-50 to-gray-50">
           <div className="w-full">
             {children}
           </div>
