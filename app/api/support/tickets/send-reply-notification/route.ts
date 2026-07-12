@@ -4,7 +4,8 @@ import { logger } from '@/lib/utils/logger'
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
+    const rawBody = await request.text()
+    const body = rawBody ? JSON.parse(rawBody) : {}
     const { email, ticket_no, ticket_title, comment } = body
 
     if (!email || !ticket_no || !comment) {
