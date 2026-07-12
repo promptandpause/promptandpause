@@ -17,28 +17,21 @@ function parseQueryString(text: string): Record<string, string> {
 
 export async function POST(request: NextRequest) {
   try {
-    const contentType = request.headers.get('content-type') || ''
     let body: any = {}
-    if (contentType.includes('application/json')) {
-      try {
-        body = await request.json()
-      } catch {
-        return NextResponse.json({ success: false, error: 'Invalid JSON body' }, { status: 400 })
+    let rawText = ''
+    try {
+      rawText = await request.text()
+      if (rawText) {
+        try {
+          body = JSON.parse(rawText)
+        } catch {
+          if (rawText.includes('=')) {
+            body = parseQueryString(rawText)
+          }
+        }
       }
-    } else if (contentType.includes('application/x-www-form-urlencoded')) {
-      const text = await request.text()
-      body = parseQueryString(text)
-    } else if (contentType.includes('multipart/form-data')) {
-      const formData = await request.formData()
-      for (const [key, val] of formData.entries()) {
-        body[key] = val
-      }
-    } else {
-      try {
-        body = await request.json()
-      } catch {
-        return NextResponse.json({ success: false, error: 'Unsupported content type' }, { status: 400 })
-      }
+    } catch {
+      // body is empty or not readable
     }
 
     const authHeader = request.headers.get('authorization')
