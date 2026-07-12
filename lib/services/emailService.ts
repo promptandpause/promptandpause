@@ -23,7 +23,7 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 
 // Email configuration
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'prompts@promptandpause.com'
-const SUPPORT_EMAIL = 'support@promptandpause.com'
+const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || 'support@promptandpause.com'
 const APP_NAME = 'Prompt & Pause'
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://promptandpause.com'
 
