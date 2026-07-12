@@ -23,6 +23,7 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 
 // Email configuration
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'prompts@promptandpause.com'
+const SUPPORT_EMAIL = 'support@promptandpause.com'
 const APP_NAME = 'Prompt & Pause'
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://promptandpause.com'
 
@@ -3296,7 +3297,8 @@ export async function sendTicketConfirmation(params: {
 
   try {
     const { data, error } = await resend.emails.send({
-      from: `Prompt & Pause Support <${FROM_EMAIL}>`,
+      from: `Prompt & Pause Support <${SUPPORT_EMAIL}>`,
+      replyTo: SUPPORT_EMAIL,
       to: email,
       subject: `[Ticket #${ticketNo}] We've received your request`,
       html,
@@ -3347,7 +3349,7 @@ export async function sendTicketReplyNotification(params: {
         true,
       ),
       ctaButton(`${APP_URL}/dashboard/support`, 'View Reply'),
-      paragraph(`Please do not reply to this email. Log in to your dashboard to continue the conversation.`),
+      paragraph(`Reply to this email to add a comment to your ticket.`),
     ].join(''),
     {
       previewText: `New reply on ticket #${ticketNo}`,
@@ -3356,7 +3358,8 @@ export async function sendTicketReplyNotification(params: {
 
   try {
     const { data, error } = await resend.emails.send({
-      from: `Prompt & Pause Support <${FROM_EMAIL}>`,
+      from: `Prompt & Pause Support <${SUPPORT_EMAIL}>`,
+      replyTo: SUPPORT_EMAIL,
       to: email,
       subject: `[Ticket #${ticketNo}] New reply — ${ticketTitle}`,
       html,
