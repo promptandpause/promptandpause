@@ -1,18 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { headers } from 'next/headers'
 import { sendTicketReplyNotification } from '@/lib/services/emailService'
 import { logger } from '@/lib/utils/logger'
 
 export async function POST(request: NextRequest) {
   try {
+    const body = await request.json()
     const authHeader = request.headers.get('authorization')
-    const apiKey = request.headers.get('x-webhook-secret')
-    const isAuthValid = (authHeader && authHeader.startsWith('Bearer ') && authHeader.slice(7) === process.env.CRON_SECRET) || apiKey === process.env.CRON_SECRET
-    if (!isAuthValid) {
+    const headerValid = authHeader?.startsWith('Bearer ') && authHeader.slice(7) === process.env.CRON_SECRET
+    if (!headerValid && body.webhook_secret !== process.env.CRON_SECRET) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
 
-    const body = await request.json()
     const { email, ticket_no, ticket_title, comment } = body
 
     if (!email || !ticket_no || !comment) {
