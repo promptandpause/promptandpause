@@ -1,7 +1,7 @@
 "use client"
 
 import { motion, useScroll, useTransform } from "framer-motion"
-import { FileText, AlertTriangle, Scale, UserCheck } from "lucide-react"
+import { FileText, AlertTriangle, Scale, UserCheck, Users } from "lucide-react"
 import Navigation from "../Navigation"
 import Footer from "../footer"
 import { useRef } from "react"
@@ -25,6 +25,7 @@ export default function TermsOfServicePage() {
     { id: "user-accounts", title: "User Accounts" },
     { id: "subscription", title: "Subscription & Payment" },
     { id: "user-conduct", title: "User Conduct" },
+    { id: "community-content", title: "Community Content & Moderation" },
     { id: "intellectual-property", title: "Intellectual Property" },
     { id: "disclaimer", title: "Medical Disclaimer" },
     { id: "limitation", title: "Limitation of Liability" },
@@ -76,7 +77,7 @@ export default function TermsOfServicePage() {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="text-sm text-[#8B98A5]"
           >
-            Effective Date: January 2026
+            Effective Date: July 2026
           </motion.p>
         </motion.div>
       </section>
@@ -141,6 +142,11 @@ export default function TermsOfServicePage() {
                 <li>A private reflection archive and search</li>
                 <li>Premium features including weekly/monthly perspective, custom focus areas, and additional prompts</li>
                 <li>Self-journaling features for private reflection</li>
+                <li>
+                  Optional social and community features: a public community feed, following other users,
+                  friends-only sharing, comments, likes, and profile pages -- all governed by the visibility
+                  settings you choose for each reflection
+                </li>
               </ul>
               <p className="mt-6">
                 We reserve the right to modify, suspend, or discontinue any aspect of the Service at any time, with or
@@ -247,9 +253,52 @@ export default function TermsOfServicePage() {
                 <li>Impersonate others or provide false information</li>
                 <li>Harass, abuse, or harm others</li>
                 <li>Use the Service to provide therapy or medical advice to others</li>
+                <li>
+                  Post content that is hateful, sexually explicit, violent, or that promotes self-harm, in any
+                  reflection, comment, whiteboard entry, or profile visible to other users
+                </li>
+                <li>Submit false or bad-faith reports about other users' content in order to harass them</li>
+                <li>Create multiple accounts to evade a block or a suspension</li>
               </ul>
               <p className="mt-6 p-4 bg-[#E8F5FE] border border-[#B3D9F2] rounded-lg">
                 Violation of these terms may result in immediate account termination and legal action.
+              </p>
+            </div>
+          </div>
+
+          {/* Community Content & Moderation */}
+          <div id="community-content" className="scroll-mt-20">
+            <h2 className="text-4xl font-bold mb-6 uppercase flex items-center gap-3">
+              <Users className="w-8 h-8" />
+              Community Content & Moderation
+            </h2>
+            <div className="space-y-4 text-[#536471] leading-relaxed">
+              <p>
+                When you set a reflection to "Public" or "Friends Only," or post a comment or whiteboard entry,
+                you are choosing to share that content with other users. You are solely responsible for anything
+                you post.
+              </p>
+              <p>
+                <strong>Reporting and blocking.</strong> We provide tools for you to report content or accounts
+                that violate these Terms, and to block other users. Blocking removes visibility between accounts
+                in both directions and ends any existing follow or friend connection, but does not retroactively
+                delete content that was already posted.
+              </p>
+              <p>
+                <strong>Our right to remove content.</strong> We may review reported content and, at our
+                discretion, remove any reflection, comment, whiteboard entry, or profile that violates these
+                Terms, restrict a user's access to social features, or suspend or terminate an account, without
+                prior notice.
+              </p>
+              <p>
+                <strong>No expectation of confidentiality for shared content.</strong> Content you mark Public is
+                visible to any signed-in user and may be viewed, and in limited cases copied or screenshotted, by
+                others outside our control. Content marked Friends Only is visible to your accepted friend
+                connections. Only content you keep Private is visible solely to you.
+              </p>
+              <p>
+                We are not obligated to monitor all user content, and we do not endorse any user-generated content
+                shared through the Service.
               </p>
             </div>
           </div>
@@ -273,6 +322,11 @@ export default function TermsOfServicePage() {
               <ul className="space-y-2 list-disc list-inside ml-4">
                 <li>Store and process your reflections to provide the Service</li>
                 <li>Use anonymized, aggregated data for service improvement and research</li>
+                <li>
+                  Display and distribute content you mark Public or Friends Only to the corresponding audience,
+                  exactly as directed by your visibility settings, for as long as that content or your account
+                  exists
+                </li>
               </ul>
               <p className="mt-4">
                 We will never sell your personal reflections or use them for AI training without explicit consent.
@@ -427,7 +481,7 @@ export default function TermsOfServicePage() {
                 Continued use of the Service after changes constitutes acceptance of the new Terms. If you do not agree
                 to the changes, you must stop using the Service and terminate your account.
               </p>
-              <p className="text-sm text-[#8B98A5] mt-6">Last updated: January 2026</p>
+              <p className="text-sm text-[#8B98A5] mt-6">Last updated: July 2026</p>
             </div>
           </div>
 

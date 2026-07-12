@@ -22,6 +22,9 @@ export function CommentSection({ reflectionId, reflectionOwnerId }: CommentSecti
   const [text, setText] = useState('')
   const [posting, setPosting] = useState(false)
   const [myId, setMyId] = useState<string | null>(null)
+  const [cursor, setCursor] = useState<string | null>(null)
+  const [hasMore, setHasMore] = useState(false)
+  const [loadingMore, setLoadingMore] = useState(false)
 
   useEffect(() => {
     loadComments()
@@ -34,10 +37,25 @@ export function CommentSection({ reflectionId, reflectionOwnerId }: CommentSecti
   async function loadComments() {
     try {
       const res = await fetch(`/api/social/comments?reflection_id=${reflectionId}`)
-      const { data } = await res.json()
+      const { data, nextCursor, hasMore: more } = await res.json()
       setComments(data || [])
+      setCursor(nextCursor || null)
+      setHasMore(!!more)
     } catch {}
     setLoading(false)
+  }
+
+  async function loadEarlier() {
+    if (loadingMore || !hasMore || !cursor) return
+    setLoadingMore(true)
+    try {
+      const res = await fetch(`/api/social/comments?reflection_id=${reflectionId}&before=${encodeURIComponent(cursor)}`)
+      const { data, nextCursor, hasMore: more } = await res.json()
+      setComments(prev => [...(data || []), ...prev])
+      setCursor(nextCursor || null)
+      setHasMore(!!more)
+    } catch {}
+    setLoadingMore(false)
   }
 
   async function handlePost() {
@@ -102,7 +120,19 @@ export function CommentSection({ reflectionId, reflectionOwnerId }: CommentSecti
           No comments yet
         </p>
       ) : (
-        <AnimatePresence>
+        <>
+          {hasMore && (
+            <button
+              onClick={loadEarlier}
+              disabled={loadingMore}
+              className={`w-full text-center text-xs font-medium py-1.5 transition-colors ${
+                isDark ? 'text-[#1D9BF0] hover:text-white' : 'text-[#1D9BF0] hover:text-[#0F1419]'
+              }`}
+            >
+              {loadingMore ? 'Loading…' : 'Load earlier comments'}
+            </button>
+          )}
+          <AnimatePresence>
           {comments.map(comment => (
             <motion.div
               key={comment.id}
@@ -151,7 +181,8 @@ export function CommentSection({ reflectionId, reflectionOwnerId }: CommentSecti
               </div>
             </motion.div>
           ))}
-        </AnimatePresence>
+          </AnimatePresence>
+        </>
       )}
     </div>
   )

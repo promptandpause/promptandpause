@@ -138,7 +138,7 @@ export default function CookiePolicyPage() {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="text-sm text-[#8B98A5]"
           >
-            Last Updated: January 2026
+            Last Updated: July 2026
           </motion.p>
         </motion.div>
       </section>

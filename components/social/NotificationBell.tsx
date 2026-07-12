@@ -33,6 +33,9 @@ export function NotificationBell() {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [cursor, setCursor] = useState<string | null>(null)
+  const [hasMore, setHasMore] = useState(false)
+  const [loadingMore, setLoadingMore] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const bellRef = useRef<HTMLButtonElement>(null)
   const [pos, setPos] = useState({ top: 0, left: 0, isMobile: false })
@@ -41,14 +44,31 @@ export function NotificationBell() {
     try {
       const res = await fetch('/api/social/notifications')
       if (res.ok) {
-        const { data, unread_count } = await res.json()
+        const { data, unread_count, nextCursor, hasMore: more } = await res.json()
         setNotifications(data || [])
         setUnreadCount(unread_count || 0)
+        setCursor(nextCursor || null)
+        setHasMore(!!more)
       }
     } catch {} finally {
       setLoading(false)
     }
   }, [])
+
+  async function loadMore() {
+    if (loadingMore || !hasMore || !cursor) return
+    setLoadingMore(true)
+    try {
+      const res = await fetch(`/api/social/notifications?before=${encodeURIComponent(cursor)}`)
+      if (res.ok) {
+        const { data, nextCursor, hasMore: more } = await res.json()
+        setNotifications(prev => [...prev, ...(data || [])])
+        setCursor(nextCursor || null)
+        setHasMore(!!more)
+      }
+    } catch {}
+    setLoadingMore(false)
+  }
 
   // Real-time: subscribe to new notification rows for this user via Supabase
   // Realtime, instead of relying purely on polling. Requires the table to be
@@ -252,6 +272,17 @@ export function NotificationBell() {
                       )}
                     </button>
                   ))
+                )}
+                {hasMore && (
+                  <button
+                    onClick={loadMore}
+                    disabled={loadingMore}
+                    className={`w-full text-center py-2.5 text-xs font-semibold transition-colors ${
+                      isDark ? 'text-[#1D9BF0] hover:bg-white/[0.03]' : 'text-[#1D9BF0] hover:bg-[#F7F9FA]'
+                    }`}
+                  >
+                    {loadingMore ? 'Loading…' : 'Load more'}
+                  </button>
                 )}
               </div>
             </div>

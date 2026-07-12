@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react"
 import Image from "next/image"
 import Lenis from "lenis"
 import { useScroll, useTransform, motion } from "framer-motion"
-import { Sparkles, Clock, Brain, Lock, Archive, Flame, Mail, MessageSquare, Check, X, Heart, Wind, Target, BarChart3 } from "lucide-react"
+import { Sparkles, Clock, Brain, Lock, Archive, Flame, Mail, MessageSquare, Check, X, Heart, Wind, Target, BarChart3, Users, ThumbsUp, PenSquare } from "lucide-react"
 import Navigation from "../Navigation"
 import Footer from "../footer"
 
@@ -50,6 +50,7 @@ export default function FeaturesPage() {
       <main className="bg-[#EFF3F4] text-[#0F1419]">
       <HeroSection />
       <CoreFeaturesSection />
+      <CommunityFeaturesSection />
       <PremiumFeaturesSection />
       <DeliveryOptionsSection />
       <UKFeaturesSection />
@@ -164,6 +165,64 @@ function CoreFeaturesSection() {
               </div>
               <h3 className="text-2xl md:text-3xl font-bold mb-4 leading-tight">{feature.title}</h3>
               <p className="text-[#536471] leading-relaxed text-lg">{feature.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function CommunityFeaturesSection() {
+  const features = [
+    {
+      icon: Users,
+      title: "Optional community feed",
+      description:
+        "See reflections other people have chosen to share publicly, or just from the people you follow. Entirely opt-in — nothing is shared unless you choose to share it.",
+    },
+    {
+      icon: ThumbsUp,
+      title: "Likes & comments",
+      description:
+        "Respond to reflections that resonate with you. You control who can comment on your own reflections, and can remove any comment from your own posts at any time.",
+    },
+    {
+      icon: PenSquare,
+      title: "Personal profile & whiteboard",
+      description:
+        "A customizable profile page with its own theme, colors, and font — plus a whiteboard where friends can leave you a note.",
+    },
+    {
+      icon: Lock,
+      title: "Private by default",
+      description:
+        "Every reflection starts private. You choose, per entry, whether to keep it to yourself, share with friends only, or make it public — and you can change your mind anytime.",
+    },
+  ]
+
+  return (
+    <div className="min-h-screen flex items-center px-6 py-32 bg-[#EFF3F4]">
+      <div className="max-w-7xl mx-auto w-full">
+        <div className="inline-block px-6 py-2 bg-[#1D9BF0]/10 backdrop-blur-md border border-[#1D9BF0]/20 rounded-full mb-8 text-sm font-medium tracking-wide">
+          OPTIONAL & OPT-IN
+        </div>
+        <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">Connect, if you want to</h2>
+        <p className="text-lg md:text-xl leading-relaxed text-[#536471] mb-16 max-w-3xl">
+          Reflection can be solitary or shared — that's up to you. Every social feature is off by default and stays
+          that way unless you turn it on.
+        </p>
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
+          {features.map((feature, index) => (
+            <div
+              key={index}
+              className="group backdrop-blur-md bg-[#F7F9FA]/80 border border-[#B3D9F2] p-10 rounded-3xl hover:bg-white hover:shadow-2xl hover:scale-[1.02] transition-all duration-500"
+            >
+              <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-[#1D9BF0] mb-6 group-hover:scale-110 transition-transform duration-300">
+                <feature.icon className="w-7 h-7 text-white" />
+              </div>
+              <h3 className="text-xl md:text-2xl font-bold mb-4 leading-tight">{feature.title}</h3>
+              <p className="text-[#536471] leading-relaxed">{feature.description}</p>
             </div>
           ))}
         </div>
@@ -405,7 +464,7 @@ function WhatWeDontDoSection() {
           </div>
           <div className="flex items-start gap-4">
             <X className="w-6 h-6 text-[#1D9BF0] mt-1 flex-shrink-0" />
-            <p>Social feeds or communities</p>
+            <p>Forced social pressure, public leaderboards, or streak shaming</p>
           </div>
           <div className="flex items-start gap-4">
             <X className="w-6 h-6 text-[#1D9BF0] mt-1 flex-shrink-0" />

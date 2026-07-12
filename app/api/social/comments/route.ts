@@ -79,6 +79,7 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url)
     const reflectionId = searchParams.get('reflection_id')
+    const before = searchParams.get('before') // ISO cursor -- comments older than this
 
     if (!reflectionId) {
       return NextResponse.json({ error: 'reflection_id is required' }, { status: 400 })
@@ -103,16 +104,27 @@ export async function GET(request: NextRequest) {
     // NOTE: author:profiles(...) can't be embedded directly on comments if
     // comments.author_id references public.users rather than profiles (same
     // situation as reflections.user_id) -- fetch separately to be safe either way.
-    const { data: comments, error } = await supabase
+    //
+    // Fetched newest-first with a limit so a heavily-commented reflection
+    // doesn't pull an unbounded thread every time someone opens it, then
+    // reversed below for normal chronological display.
+    let query = supabase
       .from('comments')
       .select('*')
       .eq('reflection_id', reflectionId)
-      .order('created_at', { ascending: true })
+      .order('created_at', { ascending: false })
+      .limit(20)
+
+    if (before) query = query.lt('created_at', before)
+
+    const { data: newestFirst, error } = await query
 
     if (error) throw error
 
+    const comments = [...(newestFirst || [])].reverse()
+
     const excludedIds = await getExcludedUserIds(supabase, user.id)
-    const visible = (comments || []).filter(c => !excludedIds.includes(c.author_id))
+    const visible = comments.filter(c => !excludedIds.includes(c.author_id))
 
     const authorIds = [...new Set(visible.map(c => c.author_id))]
     const profileMap = new Map<string, any>()
@@ -126,7 +138,13 @@ export async function GET(request: NextRequest) {
 
     const data = visible.map(c => ({ ...c, author: profileMap.get(c.author_id) || null }))
 
-    return NextResponse.json({ success: true, data })
+    return NextResponse.json({
+      success: true,
+      data,
+      // Oldest comment in this batch -- pass back as `before` to load the ones before it
+      nextCursor: comments.length > 0 ? comments[0].created_at : null,
+      hasMore: (newestFirst?.length || 0) === 20,
+    })
   } catch (error: any) {
     return NextResponse.json(
       { error: error.message || 'Failed to fetch comments' },

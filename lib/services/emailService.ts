@@ -3341,3 +3341,50 @@ export function validateEmailConfig(): {
   }
 }
 
+export async function sendAnnouncementEmail(params: {
+  templateKey: string
+  subject: string
+  contentHtml: string
+  recipients: { email: string; userId?: string; name?: string }[]
+  senderEmail?: string
+}): Promise<{ sent: number; failed: number; errors: { email: string; error: string }[] }> {
+  const { templateKey, subject, contentHtml, recipients, senderEmail } = params
+  const sender = senderEmail || NOREPLY_EMAIL
+  const errors: { email: string; error: string }[] = []
+  let sent = 0
+
+  for (const recipient of recipients) {
+    try {
+      const displayName = recipient.name || recipient.email.split('@')[0]
+      const html = await generateWithCustomization(templateKey, () =>
+        emailWrapper(contentHtml, {
+          preheader: subject,
+          title: `Prompt & Pause - ${subject}`,
+        })
+      )
+
+      const { error } = await resend.emails.send({
+        from: `${APP_NAME} <${sender}>`,
+        to: recipient.email,
+        subject,
+        html,
+      })
+
+      if (error) {
+        errors.push({ email: recipient.email, error: error.message })
+        continue
+      }
+
+      sent++
+
+      if (recipient.userId) {
+        await logEmailDelivery(recipient.userId, templateKey, recipient.email, 'sent')
+      }
+    } catch (err: any) {
+      errors.push({ email: recipient.email, error: err.message || 'Unknown error' })
+    }
+  }
+
+  return { sent, failed: errors.length, errors }
+}
+

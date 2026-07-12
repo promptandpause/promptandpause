@@ -1,16 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthUser, createClient } from '@/lib/supabase/server'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const user = await getAuthUser()
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { searchParams } = new URL(request.url)
+    const before = searchParams.get('before') // ISO timestamp cursor
+
     const supabase = await createClient()
 
-    const { data, error } = await supabase
+    let query = supabase
       .from('social_notifications')
       .select(`
         *,
@@ -18,7 +21,11 @@ export async function GET() {
       `)
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
-      .limit(50)
+      .limit(20)
+
+    if (before) query = query.lt('created_at', before)
+
+    const { data, error } = await query
 
     if (error) throw error
 
@@ -32,6 +39,8 @@ export async function GET() {
       success: true,
       data,
       unread_count: unread_count || 0,
+      nextCursor: data && data.length > 0 ? data[data.length - 1].created_at : null,
+      hasMore: (data?.length || 0) === 20,
     })
   } catch (error: any) {
     return NextResponse.json(

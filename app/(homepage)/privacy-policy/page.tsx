@@ -1,7 +1,7 @@
 "use client"
 
 import { motion, useScroll, useTransform } from "framer-motion"
-import { Shield, Lock, Database, CreditCard, Server, MessageSquare } from "lucide-react"
+import { Shield, Lock, Database, CreditCard, Server, MessageSquare, Users, Flag } from "lucide-react"
 import Navigation from "../Navigation"
 import Footer from "../footer"
 import { useRef } from "react"
@@ -23,6 +23,8 @@ export default function PrivacyPolicyPage() {
     { id: "introduction", title: "Introduction" },
     { id: "data-collection", title: "Data We Collect" },
     { id: "how-we-use", title: "How We Use Your Data" },
+    { id: "social-features", title: "Social Features & Public Content" },
+    { id: "content-moderation", title: "Content Moderation & Reporting" },
     { id: "third-party", title: "Third-Party Services" },
     { id: "data-security", title: "Data Security" },
     { id: "your-rights", title: "Your Rights (GDPR)" },
@@ -76,7 +78,7 @@ export default function PrivacyPolicyPage() {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="text-sm text-[#8B98A5]"
           >
-            Last Updated: January 2026
+            Last Updated: July 2026
           </motion.p>
         </motion.div>
       </section>
@@ -162,6 +164,21 @@ export default function PrivacyPolicyPage() {
 
               <div className="p-6 bg-[#F7F9FA] border border-[#B3D9F2] rounded-lg">
                 <h3 className="text-2xl font-bold mb-4 flex items-center gap-3">
+                  <Users className="w-6 h-6" />
+                  Social & Community Data
+                </h3>
+                <ul className="space-y-2 text-[#536471] list-disc list-inside">
+                  <li>Profile information you choose to add (display name, username, bio, avatar, cover photo, theme preferences)</li>
+                  <li>Reflections you mark as "Public" or "Friends Only," and who can see them based on that setting</li>
+                  <li>Likes, comments, and whiteboard messages you post or receive</li>
+                  <li>Follow and friend connections between accounts</li>
+                  <li>Users you block, and users who block you</li>
+                  <li>Reports you submit about other users' content, and reports submitted about your content</li>
+                </ul>
+              </div>
+
+              <div className="p-6 bg-[#F7F9FA] border border-[#B3D9F2] rounded-lg">
+                <h3 className="text-2xl font-bold mb-4 flex items-center gap-3">
                   <CreditCard className="w-6 h-6" />
                   Payment Information
                 </h3>
@@ -223,6 +240,77 @@ export default function PrivacyPolicyPage() {
               <p className="mt-6 p-4 bg-[#E8F5FE] border border-[#B3D9F2] rounded-lg">
                 <strong>Legal Basis (GDPR):</strong> We process your data based on (1) your consent, (2) contractual
                 necessity, (3) legitimate interests, and (4) legal obligations.
+              </p>
+            </div>
+          </div>
+
+          {/* Social Features & Public Content */}
+          <div id="social-features" className="scroll-mt-20">
+            <h2 className="text-4xl font-bold mb-6 uppercase flex items-center gap-3">
+              <Users className="w-8 h-8" />
+              Social Features & Public Content
+            </h2>
+            <div className="space-y-4 text-[#536471] leading-relaxed">
+              <p>
+                Prompt & Pause includes optional social features: a public community feed, following other users,
+                friends-only sharing, comments, likes, and a profile whiteboard. These features are entirely opt-in --
+                by default, your reflections are private and visible only to you.
+              </p>
+              <p>
+                <strong>You control visibility per-reflection.</strong> Each reflection you write can be set to
+                Private (only you), Friends Only (accepted friend connections), or Public (visible to any signed-in
+                user, including in the community "For You" feed). Changing a reflection's visibility takes effect
+                immediately, but we cannot guarantee removal from another user's device cache or from anyone who
+                already viewed or screenshotted it before you changed the setting.
+              </p>
+              <p>
+                <strong>Your profile.</strong> If you set your profile to public, your display name, username,
+                avatar, bio, and any reflections you've marked Public or Friends Only (to the relevant audience) are
+                visible to other users of the service. Your profile is not indexed for public web search by us, but
+                we cannot control third-party search engines or archival services.
+              </p>
+              <p>
+                <strong>Comments and likes.</strong> When you comment on or like another user's public or
+                friends-only reflection, your name, profile, and the content of your comment are visible to that
+                user and, depending on the reflection's visibility, to other users who can see that reflection.
+                Reflection owners can remove comments from their own reflections; you can always delete your own
+                comments.
+              </p>
+              <p>
+                <strong>Blocking.</strong> If you block another user, neither of you will see the other's public
+                content, comments, or likes, and any existing follow or friend connection between you is
+                automatically removed. Blocking does not delete content that already existed before the block, and
+                does not notify the blocked user.
+              </p>
+            </div>
+          </div>
+
+          {/* Content Moderation & Reporting */}
+          <div id="content-moderation" className="scroll-mt-20">
+            <h2 className="text-4xl font-bold mb-6 uppercase flex items-center gap-3">
+              <Flag className="w-8 h-8" />
+              Content Moderation & Reporting
+            </h2>
+            <div className="space-y-4 text-[#536471] leading-relaxed">
+              <p>
+                Users can report reflections, comments, or other users for reasons including spam, harassment,
+                hate speech, inappropriate content, or content indicating risk of self-harm. When you submit a
+                report, we collect the reported content, your account identifier as the reporter, the reason
+                selected, and any additional details you provide.
+              </p>
+              <p>
+                Reports are reviewed by our moderation team. We may remove reported content, restrict an account,
+                or take no action if a report does not violate our guidelines. We do not disclose the identity of
+                the reporter to the reported user.
+              </p>
+              <p className="p-4 bg-[#E8F5FE] border border-[#B3D9F2] rounded-lg">
+                <strong>Self-harm and safety reports:</strong> If a report indicates a user may be at risk of
+                self-harm, we prioritize that report for review. Prompt & Pause is not a crisis service; if you or
+                someone else is in immediate danger, contact local emergency services. Our in-app{" "}
+                <Link href="/crisis-resources" className="text-[#1D9BF0] underline hover:text-[#0F1419]">
+                  Crisis Resources
+                </Link>{" "}
+                page lists further support options.
               </p>
             </div>
           </div>
@@ -409,6 +497,16 @@ export default function PrivacyPolicyPage() {
                 </li>
                 <li>
                   <strong>Backup Data:</strong> Retained for 90 days in encrypted backups
+                </li>
+                <li>
+                  <strong>Public/Friends-Only Reflections, Comments, Likes, Whiteboard Entries:</strong> Retained
+                  while the content or your account exists, or until you delete the specific item or change its
+                  visibility. Deleting your account removes this content going forward, subject to our backup
+                  retention above.
+                </li>
+                <li>
+                  <strong>Content Reports:</strong> Retained for as long as necessary for moderation, safety, and
+                  legal purposes, typically up to 2 years after resolution.
                 </li>
               </ul>
             </div>

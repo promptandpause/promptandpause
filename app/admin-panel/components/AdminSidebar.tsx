@@ -23,7 +23,8 @@ import {
   ExternalLink,
   Flag,
   ChevronLeft,
-  Search
+  Search,
+  Megaphone
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
@@ -44,6 +45,7 @@ const navigationItems = [
   { title: 'Cron Jobs', href: '/admin-panel/cron-jobs', icon: Clock, description: 'Job monitoring' },
   { title: 'Email Tracking', href: '/admin-panel/emails', icon: Mail, description: 'Email delivery logs' },
   { title: 'Email Templates', href: '/admin-panel/email-templates', icon: FileText, description: 'Template management' },
+  { title: 'Broadcasts', href: '/admin-panel/broadcasts', icon: Megaphone, description: 'Send announcements' },
   { title: 'Maintenance', href: '/admin-panel/maintenance', icon: Wrench, description: 'Maintenance windows' },
   { title: 'Tools', href: '/admin-panel/tools', icon: Settings, description: 'Admin utilities' },
   { title: 'Prompt Library', href: '/admin-panel/prompts', icon: BookOpen, description: 'Prompt management' },
