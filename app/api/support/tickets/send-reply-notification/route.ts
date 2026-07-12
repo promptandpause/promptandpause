@@ -4,18 +4,14 @@ import { logger } from '@/lib/utils/logger'
 
 export async function POST(request: NextRequest) {
   try {
-    const rawBody = await request.text()
-    const body = rawBody ? JSON.parse(rawBody) : {}
+    const body = await request.json()
     const { email, ticket_no, ticket_title, comment } = body
 
-    // Debug: log what we receive
-    logger.info('send_reply_notification_debug', { rawBody, email, ticket_no, ticket_title, comment })
-
     if (!email || !ticket_no || !comment) {
-      return NextResponse.json({
-        success: false, error: 'Missing required fields',
-        debug: { rawBody, email, ticket_no, ticket_title, comment }
-      }, { status: 400 })
+      return NextResponse.json(
+        { success: false, error: 'Missing required fields: email, ticket_no, comment' },
+        { status: 400 },
+      )
     }
 
     const result = await sendTicketReplyNotification({
