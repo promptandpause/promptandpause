@@ -43,7 +43,7 @@ async function handlePoll(request: NextRequest) {
     const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString()
 
     const cRes = await fetch(
-      `${NOCOBASE_URL}/api/ticket_comments:list?filter[createdAt][$gt]=${encodeURIComponent(fiveMinAgo)}&sort=createdAt&pageSize=10&appends=createdBy`,
+      `${NOCOBASE_URL}/api/ticket_comments:list?filter[createdAt][$gt]=${encodeURIComponent(fiveMinAgo)}&filter[reply_notified][$ne]=true&sort=createdAt&pageSize=10&appends=createdBy`,
       { headers },
     )
 
@@ -90,6 +90,16 @@ async function handlePoll(request: NextRequest) {
         ticketTitle: ticket.ticket_title,
         replyText: comment.content || comment.description || '',
       })
+
+      await fetch(
+        `${NOCOBASE_URL}/api/ticket_comments:update?filterByTk=${comment.id}`,
+        {
+          method: 'POST',
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reply_notified: true }),
+        },
+      )
+
       sent++
     }
 
