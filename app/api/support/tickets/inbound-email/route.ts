@@ -55,54 +55,95 @@ function extractSenderEmail(from: any): string | null {
   return from?.email || from?.address || null
 }
 
+function extractSenderName(from: any): string | null {
+  if (typeof from === 'string') {
+    const m = from.match(/^"?([^"<]+)"?\s*</)
+    return m?.[1]?.trim() || null
+  }
+  return from?.name || null
+}
+
+function extractToAddress(payload: any): string | null {
+  const to = payload.to
+  if (Array.isArray(to) && to.length) {
+    const addr = to[0]
+    return typeof addr === 'string' ? addr : addr?.email || addr?.address || null
+  }
+  return null
+}
+
 export async function POST(request: NextRequest) {
   try {
     const payload = await request.json()
-    const subject = payload.subject || ''
+    const subject = payload.subject || 'No subject'
     const fromEmail = extractSenderEmail(payload.from)
-    const replyText = extractReplyText(payload.body)
+    const fromName = extractSenderName(payload.from)
+    const bodyText = extractReplyText(payload.body)
+    const toAddress = extractToAddress(payload)
 
-    if (!fromEmail || !replyText) {
+    if (!fromEmail || !bodyText) {
       return NextResponse.json({ success: false, error: 'Missing sender or body' }, { status: 400 })
     }
 
-    const ticketNo = extractTicketNo(subject)
-    if (!ticketNo) {
-      logger.warn('inbound_email_no_ticket_no', { subject, fromEmail })
-      return NextResponse.json({ success: false, error: 'No ticket number in subject' })
-    }
-
     const headers = await authenticate()
+    const ticketNo = extractTicketNo(subject)
 
-    const listRes = await fetch(
-      `${NOCOBASE_URL}/api/tickets:list?filter[ticket_no][$eq]=${ticketNo}&pageSize=1`,
-      { headers },
-    )
-    if (!listRes.ok) {
-      return NextResponse.json({ success: false, error: 'Failed to find ticket' }, { status: 502 })
+    if (ticketNo) {
+      const listRes = await fetch(
+        `${NOCOBASE_URL}/api/tickets:list?filter[ticket_no][$eq]=${ticketNo}&pageSize=1`,
+        { headers },
+      )
+      if (!listRes.ok) {
+        return NextResponse.json({ success: false, error: 'Failed to find ticket' }, { status: 502 })
+      }
+      const { data: tickets } = await listRes.json()
+      if (!tickets?.length) {
+        return NextResponse.json({ success: false, error: 'Ticket not found' })
+      }
+
+      const ticket = tickets[0]
+
+      const commentRes = await fetch(`${NOCOBASE_URL}/api/ticket_comments:create`, {
+        method: 'POST',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ticket_id: ticket.id,
+          content: `[Customer replied via email]\n\n${bodyText}`,
+        }),
+      })
+
+      if (!commentRes.ok) {
+        return NextResponse.json({ success: false, error: 'Failed to create comment' }, { status: 502 })
+      }
+
+      logger.info('inbound_email_comment_created', { ticketNo, fromEmail })
+      return NextResponse.json({ success: true })
     }
-    const { data: tickets } = await listRes.json()
-    if (!tickets?.length) {
-      return NextResponse.json({ success: false, error: 'Ticket not found' })
-    }
 
-    const ticket = tickets[0]
+    const isInternal = toAddress?.includes('servicedesk')
+    const prefix = isInternal ? '[Internal]' : '[Email]'
 
-    const commentRes = await fetch(`${NOCOBASE_URL}/api/ticket_comments:create`, {
+    const ticketTitle = `${prefix} ${subject}`.slice(0, 200)
+
+    const createRes = await fetch(`${NOCOBASE_URL}/api/tickets:create`, {
       method: 'POST',
       headers: { ...headers, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        ticket_id: ticket.id,
-        content: `[Customer replied via email]\n\n${replyText}`,
+        ticket_title: ticketTitle,
+        description_text: `${bodyText}\n\n---\nFrom: ${fromName || fromEmail}\nEmail: ${fromEmail}`,
+        priority_level: isInternal ? 'medium' : 'medium',
+        ticket_status: 'new',
+        submitted_at: new Date().toISOString(),
       }),
     })
 
-    if (!commentRes.ok) {
-      return NextResponse.json({ success: false, error: 'Failed to create comment' }, { status: 502 })
+    if (!createRes.ok) {
+      return NextResponse.json({ success: false, error: 'Failed to create ticket' }, { status: 502 })
     }
 
-    logger.info('inbound_email_comment_created', { ticketNo, fromEmail })
-    return NextResponse.json({ success: true })
+    const { data: newTicket } = await createRes.json()
+    logger.info('inbound_email_ticket_created', { ticketNo: newTicket?.ticket_no, fromEmail, isInternal })
+    return NextResponse.json({ success: true, ticketNo: newTicket?.ticket_no })
   } catch (error: any) {
     logger.error('inbound_email_error', { error: error.message })
     return NextResponse.json({ success: false, error: error.message }, { status: 500 })
