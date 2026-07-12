@@ -23,7 +23,15 @@ async function authenticate(): Promise<{ token: string; headers: Record<string, 
   return { token: authToken, headers: { Authorization: `Bearer ${authToken}`, ...ROLE_HEADER } }
 }
 
+export async function GET(request: NextRequest) {
+  return handlePoll(request)
+}
+
 export async function POST(request: NextRequest) {
+  return handlePoll(request)
+}
+
+async function handlePoll(request: NextRequest) {
   try {
     const authHeader = request.headers.get('authorization')
     if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
