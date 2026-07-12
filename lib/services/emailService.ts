@@ -3307,7 +3307,7 @@ export async function sendTicketReplyNotification(params: {
   try {
     const { data, error } = await resend.emails.send({
       from: `Prompt & Pause Support <${SUPPORT_EMAIL}>`,
-      replyTo: SUPPORT_EMAIL,
+      replyTo: INBOUND_EMAIL,
       to: email,
       subject: `[Ticket #${ticketNo}] New reply — ${ticketTitle}`,
       html,

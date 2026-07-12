@@ -50,6 +50,7 @@ export async function createTicket(params: CreateTicketParams): Promise<TicketRe
     priority_level: params.priority_level || 'medium',
     ticket_status: 'new',
     submitted_at: new Date().toISOString(),
+    submitter_email: params.submitter_email || '',
   }
 
   if (params.submitter_name || params.submitter_email) {
