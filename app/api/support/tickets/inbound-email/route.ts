@@ -5,7 +5,7 @@ const NOCOBASE_URL = process.env.NEXT_PUBLIC_NOCOBASE_URL || 'https://promptandp
 const NOCOBASE_EMAIL = process.env.NOCOBASE_EMAIL || 'admin@nocobase.com'
 const NOCOBASE_PASSWORD = process.env.NOCOBASE_PASSWORD || 'admin123'
 const ROLE_HEADER = { 'X-Role': 'root' }
-const RESEND_API_KEY = process.env.RESEND_API_KEY
+const RESEND_API_KEY = process.env.RESEND_INBOUND_API_KEY || process.env.RESEND_API_KEY
 
 let authToken: string | null = null
 let tokenExpiry = 0
@@ -50,7 +50,7 @@ function extractReplyText(text: string): string {
 function extractSenderEmail(from: any): string | null {
   if (typeof from === 'string') {
     const m = from.match(/<(.+@.+)>/)
-    return m?.[1] || null
+    return m?.[1] || from || null
   }
   return from?.email || from?.address || null
 }
