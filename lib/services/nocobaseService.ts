@@ -1,12 +1,13 @@
-const NOCOBASE_URL = process.env.NEXT_PUBLIC_NOCOBASE_URL || 'https://helpdesk.promptandpause.com'
+const NOCOBASE_URL = process.env.NEXT_PUBLIC_NOCOBASE_URL || 'https://promptandpause-helpdesk.up.railway.app'
 const NOCOBASE_EMAIL = process.env.NOCOBASE_EMAIL || 'admin@nocobase.com'
 const NOCOBASE_PASSWORD = process.env.NOCOBASE_PASSWORD || 'admin123'
+const ROLE_HEADER = { 'X-Role': 'root' }
 
 let authToken: string | null = null
 let tokenExpiry = 0
 
-async function authenticate(): Promise<string> {
-  if (authToken && Date.now() < tokenExpiry) return authToken
+async function authenticate(): Promise<{ token: string; headers: Record<string, string> }> {
+  if (authToken && Date.now() < tokenExpiry) return { token: authToken, headers: { Authorization: `Bearer ${authToken}`, ...ROLE_HEADER } }
 
   const res = await fetch(`${NOCOBASE_URL}/api/auth:signIn`, {
     method: 'POST',
@@ -20,7 +21,7 @@ async function authenticate(): Promise<string> {
   authToken = data.data?.token || null
   if (!authToken) throw new Error('No token received from helpdesk')
   tokenExpiry = Date.now() + 50 * 60 * 1000
-  return authToken
+  return { token: authToken, headers: { Authorization: `Bearer ${authToken}`, ...ROLE_HEADER } }
 }
 
 export interface CreateTicketParams {
@@ -41,7 +42,7 @@ export interface TicketResult {
 }
 
 export async function createTicket(params: CreateTicketParams): Promise<TicketResult> {
-  const token = await authenticate()
+  const { headers } = await authenticate()
 
   const body: Record<string, any> = {
     ticket_title: params.ticket_title,
@@ -65,10 +66,7 @@ export async function createTicket(params: CreateTicketParams): Promise<TicketRe
 
   const res = await fetch(`${NOCOBASE_URL}/api/tickets:create`, {
     method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
+    headers: { ...headers, 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   })
 
@@ -82,13 +80,11 @@ export async function createTicket(params: CreateTicketParams): Promise<TicketRe
 }
 
 export async function listUserTickets(email: string): Promise<TicketResult[]> {
-  const token = await authenticate()
+  const { headers } = await authenticate()
 
   const res = await fetch(
     `${NOCOBASE_URL}/api/tickets:list?filter[description_text][$contains]=${encodeURIComponent(email)}&sort=-createdAt&pageSize=20`,
-    {
-      headers: { 'Authorization': `Bearer ${token}` },
-    },
+    { headers },
   )
 
   if (!res.ok) return []
@@ -98,11 +94,9 @@ export async function listUserTickets(email: string): Promise<TicketResult[]> {
 }
 
 export async function getTicketStatus(taskId: string): Promise<any> {
-  const token = await authenticate()
+  const { headers } = await authenticate()
 
-  const res = await fetch(`${NOCOBASE_URL}/api/backups:restoreStatus?task=${taskId}`, {
-    headers: { 'Authorization': `Bearer ${token}` },
-  })
+  const res = await fetch(`${NOCOBASE_URL}/api/backups:restoreStatus?task=${taskId}`, { headers })
 
   if (!res.ok) return null
   return res.json()

@@ -4,12 +4,13 @@ import { sendTicketReplyNotification } from '@/lib/services/emailService'
 const NOCOBASE_URL = process.env.NEXT_PUBLIC_NOCOBASE_URL || 'https://promptandpause-helpdesk.up.railway.app'
 const NOCOBASE_EMAIL = process.env.NOCOBASE_EMAIL || 'admin@nocobase.com'
 const NOCOBASE_PASSWORD = process.env.NOCOBASE_PASSWORD || 'admin123'
+const ROLE_HEADER = { 'X-Role': 'root' }
 
 let authToken: string | null = null
 let tokenExpiry = 0
 
-async function authenticate(): Promise<string> {
-  if (authToken && Date.now() < tokenExpiry) return authToken
+async function authenticate(): Promise<{ token: string; headers: Record<string, string> }> {
+  if (authToken && Date.now() < tokenExpiry) return { token: authToken, headers: { Authorization: `Bearer ${authToken}`, ...ROLE_HEADER } }
   const res = await fetch(`${NOCOBASE_URL}/api/auth:signIn`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -19,7 +20,7 @@ async function authenticate(): Promise<string> {
   const data = await res.json()
   authToken = data.data?.token
   tokenExpiry = Date.now() + 50 * 60 * 1000
-  return authToken
+  return { token: authToken, headers: { Authorization: `Bearer ${authToken}`, ...ROLE_HEADER } }
 }
 
 export async function POST(request: NextRequest) {
@@ -29,61 +30,48 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
 
-    const token = await authenticate()
+    const { headers } = await authenticate()
 
     const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString()
 
-    const res = await fetch(
-      `${NOCOBASE_URL}/api/tickets:list?filter[updatedAt][$gt]=${encodeURIComponent(fiveMinAgo)}&sort=updatedAt&pageSize=20`,
-      { headers: { Authorization: `Bearer ${token}` } },
+    const cRes = await fetch(
+      `${NOCOBASE_URL}/api/ticket_comments:list?filter[createdAt][$gt]=${encodeURIComponent(fiveMinAgo)}&sort=createdAt&pageSize=10&appends=createdBy`,
+      { headers },
     )
 
-    if (!res.ok) {
-      return NextResponse.json({ success: false, error: 'Failed to fetch tickets' }, { status: 502 })
+    if (!cRes.ok) {
+      return NextResponse.json({ success: false, error: 'Failed to fetch comments' }, { status: 502 })
     }
 
-    const { data: tickets } = await res.json()
-    if (!tickets?.length) {
+    const { data: comments } = await cRes.json()
+    if (!comments?.length) {
       return NextResponse.json({ success: true, checked: 0 })
     }
 
     let sent = 0
-    for (const ticket of tickets) {
-      if (!ticket.submitter_email) continue
+    for (const comment of comments) {
+      if (!comment.ticket_id) continue
 
-      let commentText = 'An agent has replied to your ticket.'
-      let shouldNotify = false
-
-      const cRes = await fetch(
-        `${NOCOBASE_URL}/api/ticket_comments:list?filter[ticket_id][$eq]=${ticket.id}&sort=createdAt&pageSize=1`,
-        { headers: { Authorization: `Bearer ${token}` } },
+      const tRes = await fetch(
+        `${NOCOBASE_URL}/api/tickets:get/${comment.ticket_id}`,
+        { headers },
       )
-      if (cRes.ok) {
-        const { data: comments } = await cRes.json()
-        if (comments?.length) {
-          const latest = comments[comments.length - 1]
-          if (latest.createdById !== ticket.submitter_id) {
-            commentText = latest.content || latest.description || commentText
-            shouldNotify = true
-          }
-        }
-      } else {
-        shouldNotify = true
-      }
-
-      if (!shouldNotify && !ticket.ticket_status) continue
+      if (!tRes.ok) continue
+      const { data: ticket } = await tRes.json()
+      if (!ticket?.submitter_email) continue
+      if (comment.createdById === ticket.submitter_id) continue
 
       await sendTicketReplyNotification({
         email: ticket.submitter_email,
         name: ticket.submitter_name || ticket.submitter_email,
         ticketNo: ticket.ticket_no,
         ticketTitle: ticket.ticket_title,
-        replyText: commentText,
+        replyText: comment.content || comment.description || '',
       })
       sent++
     }
 
-    return NextResponse.json({ success: true, checked: tickets.length, sent })
+    return NextResponse.json({ success: true, checked: comments.length, sent })
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 })
   }
