@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { createClient } from '@/lib/supabase/server'
 import { createTicket } from '@/lib/services/nocobaseService'
+import { sendTicketConfirmation } from '@/lib/services/emailService'
 import { withRateLimit } from '@/lib/security/rateLimit'
 
 const TicketSchema = z.object({
@@ -45,6 +46,14 @@ export async function POST(request: NextRequest) {
       submitter_name: user.user_metadata?.full_name || user.email,
       submitter_email: user.email,
     })
+
+    sendTicketConfirmation({
+      email: user.email,
+      name: user.user_metadata?.full_name || user.email,
+      ticketNo: ticket.ticket_no,
+      ticketTitle: ticket.ticket_title,
+      priority: ticket.priority_level,
+    }).catch(() => {})
 
     return NextResponse.json({
       success: true,

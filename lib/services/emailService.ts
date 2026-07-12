@@ -3257,6 +3257,125 @@ export async function sendGiftExpiringSoonEmail(params: {
 }
 
 /**
+ * Send a ticket confirmation email to the user who submitted a support ticket
+ */
+export async function sendTicketConfirmation(params: {
+  email: string
+  name: string
+  ticketNo: string
+  ticketTitle: string
+  priority: string
+}): Promise<{ success: boolean; error?: string }> {
+  const { email, name, ticketNo, ticketTitle, priority } = params
+
+  const html = emailWrapper(
+    [
+      h1(`Ticket #${ticketNo} — Received`),
+      paragraph(`Hi ${name},`),
+      paragraph(`We've received your support ticket and will get back to you within 24–48 hours.`),
+      contentSection(
+        [
+          h3('Ticket Details'),
+          `<table style="width:100%;border-collapse:collapse;">
+<tr><td style="padding:8px 0;color:${TEXT_GRAY};font-size:14px;border-bottom:1px solid ${BORDER_COLOR};">Ticket No</td><td style="padding:8px 0;font-size:14px;font-weight:600;text-align:right;border-bottom:1px solid ${BORDER_COLOR};">#${ticketNo}</td></tr>
+<tr><td style="padding:8px 0;color:${TEXT_GRAY};font-size:14px;border-bottom:1px solid ${BORDER_COLOR};">Subject</td><td style="padding:8px 0;font-size:14px;font-weight:600;text-align:right;border-bottom:1px solid ${BORDER_COLOR};">${ticketTitle}</td></tr>
+<tr><td style="padding:8px 0;color:${TEXT_GRAY};font-size:14px;border-bottom:1px solid ${BORDER_COLOR};">Priority</td><td style="padding:8px 0;font-size:14px;font-weight:600;text-align:right;border-bottom:1px solid ${BORDER_COLOR};">${priority.charAt(0).toUpperCase() + priority.slice(1)}</td></tr>
+<tr><td style="padding:8px 0;color:${TEXT_GRAY};font-size:14px;">Status</td><td style="padding:8px 0;font-size:14px;font-weight:600;text-align:right;"><span style="display:inline-block;padding:4px 12px;border-radius:12px;background:#e8f5e9;color:#2e7d32;font-size:12px;">New</span></td></tr>
+</table>`,
+        ],
+        true,
+      ),
+      paragraph(`You can track the status of your ticket by replying to this email. Our team will notify you when there's an update.`),
+      ctaButton(`${APP_URL}/dashboard/support`, 'View Your Tickets'),
+      paragraph(`If you have any additional information to add, simply reply to this email.`),
+    ].join(''),
+    {
+      previewText: `Your ticket #${ticketNo} has been received`,
+    },
+  )
+
+  try {
+    const { data, error } = await resend.emails.send({
+      from: `Prompt & Pause Support <${FROM_EMAIL}>`,
+      to: email,
+      subject: `[Ticket #${ticketNo}] We've received your request`,
+      html,
+    })
+
+    if (error) {
+      logger.error('email_ticket_confirmation_send_failed', { error, email, ticketNo })
+      return { success: false, error: error.message }
+    }
+
+    logger.info('email_ticket_confirmation_sent', { email, ticketNo, emailId: data?.id })
+    return { success: true, emailId: data?.id }
+  } catch (error) {
+    logger.error('email_ticket_confirmation_unexpected_error', { error, email, ticketNo })
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
+  }
+}
+
+/**
+ * Send a reply notification email when an agent responds to a ticket
+ */
+export async function sendTicketReplyNotification(params: {
+  email: string
+  name: string
+  ticketNo: string
+  ticketTitle: string
+  replyText: string
+}): Promise<{ success: boolean; error?: string }> {
+  const { email, name, ticketNo, ticketTitle, replyText } = params
+
+  const html = emailWrapper(
+    [
+      h1(`New reply on ticket #${ticketNo}`),
+      paragraph(`Hi ${name},`),
+      paragraph(`Your support ticket has received a new reply.`),
+      contentSection(
+        [
+          h3('Ticket'),
+          `<p style="color:${TEXT_GRAY};font-size:14px;margin:0;">#${ticketNo} — ${ticketTitle}</p>`,
+        ],
+        true,
+      ),
+      contentSection(
+        [
+          h3('Reply'),
+          `<p style="color:${TEXT_DARK};font-size:15px;line-height:1.6;white-space:pre-wrap;">${replyText}</p>`,
+        ],
+        true,
+      ),
+      ctaButton(`${APP_URL}/dashboard/support`, 'View Reply'),
+      paragraph(`Please do not reply to this email. Log in to your dashboard to continue the conversation.`),
+    ].join(''),
+    {
+      previewText: `New reply on ticket #${ticketNo}`,
+    },
+  )
+
+  try {
+    const { data, error } = await resend.emails.send({
+      from: `Prompt & Pause Support <${FROM_EMAIL}>`,
+      to: email,
+      subject: `[Ticket #${ticketNo}] New reply — ${ticketTitle}`,
+      html,
+    })
+
+    if (error) {
+      logger.error('email_ticket_reply_notification_send_failed', { error, email, ticketNo })
+      return { success: false, error: error.message }
+    }
+
+    logger.info('email_ticket_reply_notification_sent', { email, ticketNo, emailId: data?.id })
+    return { success: true, emailId: data?.id }
+  } catch (error) {
+    logger.error('email_ticket_reply_notification_unexpected_error', { error, email, ticketNo })
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
+  }
+}
+
+/**
  * Validate email service configuration
  * 
  * @returns Object with configuration status
