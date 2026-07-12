@@ -1528,7 +1528,7 @@ export async function sendAccountDeletionEmail(
  */
 export async function logEmailDelivery(
   userId: string,
-  emailType: 'daily_prompt' | 'weekly_digest' | 'welcome' | 'subscription_confirm' | 'subscription_cancelled' | 'data_export' | 'trial_expired' | 'discount_invitation' | 'gift_recipient' | 'gift_buyer_confirm' | 'gift_activated' | 'gift_redeemed_buyer' | 'gift_expiring_soon',
+  emailType: string,
   recipientEmail: string,
   status: 'sent' | 'delivered' | 'opened' | 'clicked' | 'bounced' | 'failed',
   resendEmailId: string | null,
@@ -1569,30 +1569,69 @@ export async function logEmailDelivery(
  */
 function generateWelcomeEmailHTML(name: string): string {
   const dashboardUrl = `${APP_URL.replace(/\/$/, '')}/dashboard`
+
   const bodyHTML = contentSection(`
+    <div style="text-align:center;margin-bottom:8px;">
+      <span style="display:inline-block;background:${PRIMARY_ACCENT}15;color:${PRIMARY_ACCENT};font-size:13px;font-weight:600;padding:4px 14px;border-radius:999px;">🎉 Welcome</span>
+    </div>
+    
     ${h1(`Welcome to ${APP_NAME}`)}
     
-    ${paragraph(`Hi ${name},`)}
+    ${paragraph(`Hi ${name},`, { fontSize: '16px' })}
     
-    ${paragraph(`Welcome to ${APP_NAME}. This is a private space designed to help you pause and reflect — at your own pace.`)}
+    ${paragraph(`Welcome to ${APP_NAME} — a private space designed to help you pause and reflect, at your own pace. There's no rush, no right way, and no pressure.`)}
     
-    ${paragraph(`Here\'s how most people use ${APP_NAME}:`)}
+    ${paragraph(`Here's what to expect:`, { fontSize: '15px' })}
     
-    ${infoBox(`
-      <ul class="email-text-gray" style="color: ${TEXT_GRAY}; line-height: 1.8; margin: 0; padding-left: 20px; font-size: 15px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-        <li class="email-text-gray" style="margin-bottom: 10px;">Each day, you\'ll see one thoughtful question. You can write a little or a lot — there\'s no right length.</li>
-        <li class="email-text-gray" style="margin-bottom: 10px;">Over time, you may receive gentle weekly or monthly reflections that offer perspective on your entries. These are optional.</li>
-        <li class="email-text-gray">Occasionally, something you wrote in the past may resurface — only when it feels relevant.</li>
-      </ul>
-    `)}
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 24px 0;">
+      <tr>
+        <td style="padding:16px;background:${BG_LIGHT};border-radius:12px 12px 0 0;border-bottom:1px solid ${BORDER_COLOR};">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td style="vertical-align:top;width:28px;font-size:18px;line-height:1.6;">💭</td>
+              <td style="padding-left:12px;">
+                <p style="margin:0;color:${TEXT_DARK};font-size:15px;font-weight:600;line-height:1.5;">Daily prompts</p>
+                <p style="margin:2px 0 0 0;color:${TEXT_GRAY};font-size:14px;line-height:1.5;">One thoughtful question each day. Write a little or a lot — there's no right length.</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:16px;background:${BG_LIGHT};border-bottom:1px solid ${BORDER_COLOR};">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td style="vertical-align:top;width:28px;font-size:18px;line-height:1.6;">📊</td>
+              <td style="padding-left:12px;">
+                <p style="margin:0;color:${TEXT_DARK};font-size:15px;font-weight:600;line-height:1.5;">Gentle reflections</p>
+                <p style="margin:2px 0 0 0;color:${TEXT_GRAY};font-size:14px;line-height:1.5;">Weekly and monthly summaries that offer quiet perspective on your entries.</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:16px;background:${BG_LIGHT};border-radius:0 0 12px 12px;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td style="vertical-align:top;width:28px;font-size:18px;line-height:1.6;">🕰️</td>
+              <td style="padding-left:12px;">
+                <p style="margin:0;color:${TEXT_DARK};font-size:15px;font-weight:600;line-height:1.5;">From Your Past</p>
+                <p style="margin:2px 0 0 0;color:${TEXT_GRAY};font-size:14px;line-height:1.5;">Occasionally, something you wrote before may resurface — only when it feels relevant.</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
     
-    ${paragraph('You can adjust when your daily prompt arrives, or update your focus areas, anytime in Settings.')}
+    ${paragraph(`You can adjust your delivery time, focus areas, or reminders anytime in your dashboard settings.`)}
     
     <div style="text-align: center; margin: 40px 0;">
       ${standardButton({ href: dashboardUrl, label: 'Open your dashboard' })}
     </div>
     
-    ${paragraph('If you ever have questions, just reply to this email — we read every message.', { align: 'center', fontSize: '14px', color: TEXT_MUTED })}
+    ${paragraph('If you ever have questions, just reply to this email — a real person reads every message.', { align: 'center', fontSize: '14px', color: TEXT_MUTED })}
   `)
 
   return buildBaseEmail({
@@ -1604,30 +1643,45 @@ function generateWelcomeEmailHTML(name: string): string {
 
 /**
  * Generate "getting started" email HTML — sent once onboarding completes.
- *
- * Tone: quiet, specific, action-oriented (Apple HIG + Stripe dashboard clarity
- * + Headspace warmth). Unlike `welcome`, this email assumes the user has
- * already confirmed and onboarded, and gives them three concrete first steps
- * plus an honest promise of restraint.
  */
 function generateGettingStartedEmailHTML(name: string): string {
   const dashboardUrl = `${APP_URL.replace(/\/$/, '')}/dashboard`
   const settingsUrl = `${APP_URL.replace(/\/$/, '')}/dashboard/settings`
 
   const bodyHTML = contentSection(`
-    ${h1("You're set up")}
+    <div style="text-align:center;margin-bottom:8px;">
+      <span style="display:inline-block;background:${PRIMARY_ACCENT}15;color:${PRIMARY_ACCENT};font-size:13px;font-weight:600;padding:4px 14px;border-radius:999px;">🚀 All set</span>
+    </div>
+    
+    ${h1("You're all set")}
 
-    ${paragraph(`Hi ${name},`)}
+    ${paragraph(`Hi ${name},`, { fontSize: '16px' })}
 
-    ${paragraph(`Your reflection space is ready. ${APP_NAME} is designed to be quiet — one prompt a day, nothing that nags. Here's how to make it yours in a few minutes.`)}
-
-    ${infoBox(`
-      <ol class="email-text-gray" style="color: ${TEXT_GRAY}; line-height: 1.8; margin: 0; padding-left: 20px; font-size: 15px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-        <li class="email-text-gray" style="margin-bottom: 10px;"><strong>Answer today's prompt.</strong> Two sentences is plenty. You're building a habit, not a résumé.</li>
-        <li class="email-text-gray" style="margin-bottom: 10px;"><strong>Pick a time that's yours.</strong> Most people choose early morning or the end of the workday. You can change this anytime in Settings.</li>
-        <li class="email-text-gray"><strong>Come back tomorrow.</strong> That's the whole practice. We'll surface gentle patterns over time — never before they're useful.</li>
-      </ol>
-    `)}
+    ${paragraph(`Your reflection space is ready. ${APP_NAME} is designed to be quiet — one prompt a day, nothing that nags. Here are three steps to make it yours:`)}
+    
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 24px 0;">
+      <tr>
+        <td style="padding:16px 16px 16px 0;vertical-align:top;width:32px;font-size:20px;font-weight:700;color:${PRIMARY_ACCENT};line-height:1.5;">1</td>
+        <td style="padding:16px 0;border-bottom:1px solid ${BORDER_COLOR};">
+          <p style="margin:0;color:${TEXT_DARK};font-size:15px;font-weight:600;line-height:1.5;">Answer today's prompt</p>
+          <p style="margin:2px 0 0 0;color:${TEXT_GRAY};font-size:14px;line-height:1.5;">Two sentences is plenty. You're building a habit, not a résumé.</p>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:16px 16px 16px 0;vertical-align:top;width:32px;font-size:20px;font-weight:700;color:${PRIMARY_ACCENT};line-height:1.5;">2</td>
+        <td style="padding:16px 0;border-bottom:1px solid ${BORDER_COLOR};">
+          <p style="margin:0;color:${TEXT_DARK};font-size:15px;font-weight:600;line-height:1.5;">Pick a time that's yours</p>
+          <p style="margin:2px 0 0 0;color:${TEXT_GRAY};font-size:14px;line-height:1.5;">Most people choose early morning or the end of the workday. You can change this anytime in Settings.</p>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:16px 16px 16px 0;vertical-align:top;width:32px;font-size:20px;font-weight:700;color:${PRIMARY_ACCENT};line-height:1.5;">3</td>
+        <td style="padding:16px 0;">
+          <p style="margin:0;color:${TEXT_DARK};font-size:15px;font-weight:600;line-height:1.5;">Come back tomorrow</p>
+          <p style="margin:2px 0 0 0;color:${TEXT_GRAY};font-size:14px;line-height:1.5;">That's the whole practice. We'll surface gentle patterns over time — never before they're useful.</p>
+        </td>
+      </tr>
+    </table>
 
     <div style="text-align: center; margin: 40px 0;">
       ${standardButton({ href: dashboardUrl, label: "Open today's prompt" })}
@@ -1647,7 +1701,6 @@ function generateGettingStartedEmailHTML(name: string): string {
 
 /**
  * Generate "trial started" email HTML — confirms the 7-day premium trial.
- * Mirrors the lifecycle tone: specific dates, clear about what ends, no urgency.
  */
 function generateTrialStartedEmailHTML(name: string, trialEndDate: string): string {
   const dashboardUrl = `${APP_URL.replace(/\/$/, '')}/dashboard`
@@ -1655,20 +1708,46 @@ function generateTrialStartedEmailHTML(name: string, trialEndDate: string): stri
   const prettyEnd = formatTrialDate(trialEndDate)
 
   const bodyHTML = contentSection(`
+    <div style="text-align:center;margin-bottom:8px;">
+      <span style="display:inline-block;background:${BG_LIGHT};color:#00ba7c;font-size:13px;font-weight:600;padding:4px 14px;border-radius:999px;">✨ Premium trial</span>
+    </div>
+    
     ${h1('Your trial is on')}
 
-    ${paragraph(`Hi ${name},`)}
+    ${paragraph(`Hi ${name},`, { fontSize: '16px' })}
 
-    ${paragraph(`You're on Premium until <strong>${prettyEnd}</strong>. Nothing to do — all features are active. Here's what's included:`)}
-
-    ${infoBox(`
-      <ul class="email-text-gray" style="color: ${TEXT_GRAY}; line-height: 1.8; margin: 0; padding-left: 20px; font-size: 15px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-        <li class="email-text-gray" style="margin-bottom: 10px;"><strong>Daily personalised prompts</strong>, seven days a week.</li>
-        <li class="email-text-gray" style="margin-bottom: 10px;"><strong>Unlimited archive</strong> of everything you write.</li>
-        <li class="email-text-gray" style="margin-bottom: 10px;"><strong>Weekly &amp; monthly reflections</strong> — gentle pattern summaries.</li>
-        <li class="email-text-gray"><strong>Custom focus areas</strong> and export (PDF / TXT).</li>
-      </ul>
-    `)}
+    ${paragraph(`You're on <strong>Premium until ${prettyEnd}</strong>. Nothing to do — all features are active. Here's what's included:`)}
+    
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 24px 0;">
+      <tr>
+        <td style="padding:14px;background:${BG_LIGHT};border-radius:12px 12px 0 0;border-bottom:1px solid ${BORDER_COLOR};">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+            <tr><td style="vertical-align:top;width:24px;font-size:16px;">📅</td><td style="padding-left:10px;"><p style="margin:0;color:${TEXT_DARK};font-size:15px;font-weight:600;">Daily personalised prompts</p><p style="margin:2px 0 0 0;color:${TEXT_GRAY};font-size:14px;">Seven days a week</p></td></tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:14px;background:${BG_LIGHT};border-bottom:1px solid ${BORDER_COLOR};">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+            <tr><td style="vertical-align:top;width:24px;font-size:16px;">📚</td><td style="padding-left:10px;"><p style="margin:0;color:${TEXT_DARK};font-size:15px;font-weight:600;">Unlimited archive</p><p style="margin:2px 0 0 0;color:${TEXT_GRAY};font-size:14px;">Everything you write, always accessible</p></td></tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:14px;background:${BG_LIGHT};border-bottom:1px solid ${BORDER_COLOR};">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+            <tr><td style="vertical-align:top;width:24px;font-size:16px;">📊</td><td style="padding-left:10px;"><p style="margin:0;color:${TEXT_DARK};font-size:15px;font-weight:600;">Weekly &amp; monthly reflections</p><p style="margin:2px 0 0 0;color:${TEXT_GRAY};font-size:14px;">Gentle pattern summaries of your entries</p></td></tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:14px;background:${BG_LIGHT};border-radius:0 0 12px 12px;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+            <tr><td style="vertical-align:top;width:24px;font-size:16px;">🎯</td><td style="padding-left:10px;"><p style="margin:0;color:${TEXT_DARK};font-size:15px;font-weight:600;">Custom focus areas &amp; export</p><p style="margin:2px 0 0 0;color:${TEXT_GRAY};font-size:14px;">PDF and TXT export</p></td></tr>
+          </table>
+        </td>
+      </tr>
+    </table>
 
     ${paragraph(`We'll email you once, 48 hours before your trial ends, so there are no surprises. After that you can stay on the free tier or continue on Premium — your choice.`)}
 
@@ -1695,20 +1774,30 @@ function generateTrialEndingSoonEmailHTML(name: string, trialEndDate: string): s
   const prettyEnd = formatTrialDate(trialEndDate)
 
   const bodyHTML = contentSection(`
+    <div style="text-align:center;margin-bottom:8px;">
+      <span style="display:inline-block;background:#fef3cd;color:#9a7b1f;font-size:13px;font-weight:600;padding:4px 14px;border-radius:999px;">⏳ Trial ending soon</span>
+    </div>
+    
     ${h1('Your trial ends in two days')}
 
-    ${paragraph(`Hi ${name},`)}
+    ${paragraph(`Hi ${name},`, { fontSize: '16px' })}
 
     ${paragraph(`Just a heads-up: your Premium trial ends on <strong>${prettyEnd}</strong>. No action needed — we'll move you to the free tier automatically when the trial finishes.`)}
-
-    ${infoBox(`
-      <p class="email-text-gray" style="margin: 0 0 12px 0; color: ${TEXT_GRAY}; font-size: 15px; line-height: 1.7; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-        <strong class="email-text-dark" style="color: ${TEXT_DARK}; font-weight: 600;">What stays on Free:</strong> three prompts a week, optional check-ins, your last 50 reflections.
-      </p>
-      <p class="email-text-gray" style="margin: 0; color: ${TEXT_GRAY}; font-size: 15px; line-height: 1.7; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-        <strong class="email-text-dark" style="color: ${TEXT_DARK}; font-weight: 600;">What Premium keeps:</strong> daily prompts, unlimited archive, weekly &amp; monthly reflections, export.
-      </p>
-    `)}
+    
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin:24px 0;">
+      <tr>
+        <td style="padding:16px;background:${BG_LIGHT};border-radius:12px 12px 0 0;border-bottom:1px solid ${BORDER_COLOR};">
+          <p style="margin:0 0 4px 0;color:${TEXT_GRAY};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">What stays on Free</p>
+          <p style="margin:0;color:${TEXT_DARK};font-size:15px;">Three prompts a week, optional check-ins, your last 50 reflections.</p>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:16px;background:${BG_LIGHT};border-radius:0 0 12px 12px;">
+          <p style="margin:0 0 4px 0;color:${TEXT_GRAY};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">What Premium keeps</p>
+          <p style="margin:0;color:${TEXT_DARK};font-size:15px;">Daily prompts, unlimited archive, weekly &amp; monthly reflections, export.</p>
+        </td>
+      </tr>
+    </table>
 
     <div style="text-align: center; margin: 40px 0;">
       ${standardButton({ href: pricingUrl, label: 'Continue on Premium' })}
@@ -1770,23 +1859,36 @@ function generateNewDeviceSignInEmailHTML(
     : 'just now'
 
   const bodyHTML = contentSection(`
+    <div style="text-align:center;margin-bottom:8px;">
+      <span style="display:inline-block;background:#fef3cd;color:#9a7b1f;font-size:13px;font-weight:600;padding:4px 14px;border-radius:999px;">🔐 New sign-in</span>
+    </div>
+    
     ${h1('New sign-in to your account')}
 
-    ${paragraph(`Hi ${name},`)}
+    ${paragraph(`Hi ${name},`, { fontSize: '16px' })}
 
     ${paragraph(`We noticed a sign-in to your ${APP_NAME} account from a device or location we haven't seen before.`)}
 
-    ${infoBox(`
-      <p class="email-text-gray" style="margin:0 0 8px 0;color:${TEXT_GRAY};font-size:15px;line-height:1.7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-        <strong class="email-text-dark" style="color:${TEXT_DARK};font-weight:600;">When:</strong> ${when}
-      </p>
-      <p class="email-text-gray" style="margin:0 0 8px 0;color:${TEXT_GRAY};font-size:15px;line-height:1.7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-        <strong class="email-text-dark" style="color:${TEXT_DARK};font-weight:600;">Where:</strong> ${locationLabel}
-      </p>
-      <p class="email-text-gray" style="margin:0;color:${TEXT_GRAY};font-size:15px;line-height:1.7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-        <strong class="email-text-dark" style="color:${TEXT_DARK};font-weight:600;">Device:</strong> ${uaLabel}
-      </p>
-    `)}
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 24px 0;">
+      <tr>
+        <td style="padding:16px;background:${BG_LIGHT};border-radius:12px 12px 0 0;border-bottom:1px solid ${BORDER_COLOR};">
+          <p style="margin:0;color:${TEXT_GRAY};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">When</p>
+          <p style="margin:4px 0 0 0;color:${TEXT_DARK};font-size:15px;">${when}</p>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:16px;background:${BG_LIGHT};border-bottom:1px solid ${BORDER_COLOR};">
+          <p style="margin:0;color:${TEXT_GRAY};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Where</p>
+          <p style="margin:4px 0 0 0;color:${TEXT_DARK};font-size:15px;">${locationLabel}</p>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:16px;background:${BG_LIGHT};border-radius:0 0 12px 12px;">
+          <p style="margin:0;color:${TEXT_GRAY};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Device</p>
+          <p style="margin:4px 0 0 0;color:${TEXT_DARK};font-size:15px;">${uaLabel}</p>
+        </td>
+      </tr>
+    </table>
 
     ${paragraph(`If this was you, you can ignore this email — we'll stop sending it for this device.`)}
 
@@ -1833,22 +1935,30 @@ function generatePaymentFailedEmailHTML(
     : null
 
   const bodyHTML = contentSection(`
+    <div style="text-align:center;margin-bottom:8px;">
+      <span style="display:inline-block;background:#fef3cd;color:#9a7b1f;font-size:13px;font-weight:600;padding:4px 14px;border-radius:999px;">⚠️ Payment failed</span>
+    </div>
+    
     ${h1("We couldn't process your payment")}
 
-    ${paragraph(`Hi ${name},`)}
+    ${paragraph(`Hi ${name},`, { fontSize: '16px' })}
 
-    ${paragraph(`Your card was declined when we tried to charge ${amountLabel} for ${APP_NAME} Premium. Your account stays on Premium for now — this is just a heads-up so nothing lapses unexpectedly.`)}
+    ${paragraph(`Your card was declined when we tried to charge <strong>${amountLabel}</strong> for ${APP_NAME} Premium. Your account stays on Premium for now — this is just a heads-up so nothing lapses unexpectedly.`)}
 
-    ${infoBox(`
-      <p class="email-text-gray" style="margin:0 0 8px 0;color:${TEXT_GRAY};font-size:15px;line-height:1.7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-        <strong class="email-text-dark" style="color:${TEXT_DARK};font-weight:600;">Most common fix:</strong> update your card details — expired cards are the usual cause.
-      </p>
-      ${
-        nextAttempt
-          ? `<p class="email-text-gray" style="margin:0;color:${TEXT_GRAY};font-size:15px;line-height:1.7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;"><strong class="email-text-dark" style="color:${TEXT_DARK};font-weight:600;">We'll retry automatically</strong> on ${nextAttempt}.</p>`
-          : ''
-      }
-    `)}
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 24px 0;">
+      <tr>
+        <td style="padding:16px;background:#fef3cd;border-left:3px solid #ffad1f;border-radius:8px;">
+          <p style="margin:0;color:${TEXT_DARK};font-size:15px;line-height:1.6;">
+            <strong>Most common fix:</strong> update your card details — expired cards are the usual cause.
+          </p>
+          ${
+            nextAttempt
+              ? `<p style="margin:8px 0 0 0;color:${TEXT_DARK};font-size:15px;line-height:1.6;"><strong>We'll retry automatically</strong> on ${nextAttempt}.</p>`
+              : ''
+          }
+        </td>
+      </tr>
+    </table>
 
     <div style="text-align: center; margin: 40px 0;">
       ${standardButton({ href: billingUrl, label: 'Update payment method' })}
@@ -1878,43 +1988,49 @@ function generatePaymentFailedEmailHTML(
 function generateMonthlyReflectionEmailHTML(name: string, reflection: MonthlyReflection): string {
   const summaryUrl = `${APP_URL.replace(/\/$/, '')}/dashboard/archive?view=monthly`
 
-  // Observations render as a calm bulleted list — we own the spacing/colour
-  // directly so the email client can't reflow it into something loud.
   const observationsHTML = (reflection.observations ?? [])
     .filter((line) => line && line.trim().length > 0)
     .map(
       (line) => `
-      <li class="email-text-gray" style="margin:0 0 10px 0;padding:0;color:${TEXT_GRAY};font-size:15px;line-height:1.7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+      <li style="margin:0 0 10px 0;padding:0;color:${TEXT_GRAY};font-size:15px;line-height:1.7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
         ${line.replace(/^[-•]\s*/, '')}
       </li>`,
     )
     .join('')
 
   const bodyHTML = contentSection(`
+    <div style="text-align:center;margin-bottom:8px;">
+      <span style="display:inline-block;background:${PRIMARY_ACCENT}15;color:${PRIMARY_ACCENT};font-size:13px;font-weight:600;padding:4px 14px;border-radius:999px;">📊 Monthly reflection</span>
+    </div>
+    
     ${h1(`Your ${reflection.monthLabel} reflection`)}
 
     ${paragraph(reflection.monthLabel, { align: 'center', fontSize: '13px', color: TEXT_MUTED })}
 
-    ${paragraph(`Hi ${name},`)}
+    ${paragraph(`Hi ${name},`, { fontSize: '16px' })}
 
     ${reflection.overviewText ? paragraph(reflection.overviewText) : ''}
 
     ${
       observationsHTML
         ? `
-    <div style="margin:32px 0;">
-      ${h3('A few things we noticed')}
-      <ul style="margin:0;padding:0 0 0 20px;">
-        ${observationsHTML}
-      </ul>
-    </div>`
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin:32px 0;">
+      <tr>
+        <td style="padding:20px 24px;background:${BG_LIGHT};border-radius:12px;">
+          ${h3('A few things we noticed')}
+          <ul style="margin:12px 0 0 0;padding:0 0 0 20px;">
+            ${observationsHTML}
+          </ul>
+        </td>
+      </tr>
+    </table>`
         : ''
     }
 
     ${
       reflection.themeReflection
         ? infoBox(`
-      <p class="email-text-gray" style="margin:0;color:${TEXT_GRAY};font-size:15px;line-height:1.7;font-style:italic;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+      <p style="margin:0;color:${TEXT_GRAY};font-size:15px;line-height:1.7;font-style:italic;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
         ${reflection.themeReflection}
       </p>
     `)
@@ -1924,7 +2040,7 @@ function generateMonthlyReflectionEmailHTML(name: string, reflection: MonthlyRef
     ${
       reflection.closingQuestion
         ? paragraph(
-            `<strong class="email-text-dark" style="color:${TEXT_DARK};font-weight:600;">Something to sit with:</strong> ${reflection.closingQuestion}`,
+            `<strong>Something to sit with:</strong> ${reflection.closingQuestion}`,
             { fontSize: '15px' },
           )
         : ''
@@ -1948,24 +2064,17 @@ function generateMonthlyReflectionEmailHTML(name: string, reflection: MonthlyRef
  * Generate daily prompt email HTML using professional template system
  */
 function generateDailyPromptEmailHTML(name: string, prompt: string): string {
-  const today = new Date().toLocaleDateString('en-GB', { 
-    weekday: 'long', 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
+  const today = new Date().toLocaleDateString('en-GB', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
   })
 
   const promptContent = `
-    <!-- Date Badge -->
-    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
-      <tr>
-        <td align="center" style="padding: 20px 0;">
-          <span class="email-text-primary email-section-bg" style="display: inline-block; font-size: 11px; color: ${PRIMARY_ACCENT}; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; background: ${BG_LIGHT}; padding: 8px 18px; border-radius: 999px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-            ${today}
-          </span>
-        </td>
-      </tr>
-    </table>
+    <div style="text-align:center;padding: 20px 0 8px;">
+      <span style="display:inline-block;font-size:11px;color:${PRIMARY_ACCENT};text-transform:uppercase;letter-spacing:1.5px;font-weight:700;background:${BG_LIGHT};padding:8px 18px;border-radius:999px;">${today}</span>
+    </div>
     
     ${h1('Your Daily Reflection Prompt')}
     
@@ -1973,19 +2082,18 @@ function generateDailyPromptEmailHTML(name: string, prompt: string): string {
     
     ${paragraph('Take a moment to pause and reflect on today\'s question:', { align: 'center', fontSize: '15px' })}
     
-    <!-- Prompt Card -->
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 32px 0;">
       <tr>
-        <td class="email-prompt-card" style="background-color: ${BG_LIGHT}; padding: 28px 24px; border-radius: 16px; border: 1px solid ${BORDER_COLOR};">
+        <td style="background-color: ${BG_LIGHT}; padding: 32px 28px; border-radius: 16px; border: 1px solid ${BORDER_COLOR};">
           <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
             <tr>
-              <td align="center" style="padding-bottom: 12px;">
-                <p class="email-prompt-label" style="font-size: 11px; color: ${PRIMARY_ACCENT}; text-transform: uppercase; letter-spacing: 1.5px; margin: 0; font-weight: 700; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Today's Prompt</p>
+              <td align="center" style="padding-bottom: 16px;">
+                <span style="display:inline-block;background:${PRIMARY_ACCENT}15;color:${PRIMARY_ACCENT};font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;padding:5px 14px;border-radius:999px;">Today's Prompt</span>
               </td>
             </tr>
             <tr>
               <td align="center">
-                <p class="email-prompt-text" style="font-size: 20px; color: ${TEXT_DARK}; line-height: 1.5; margin: 0; font-weight: 500; font-style: italic; font-family: Georgia, 'Times New Roman', serif;">
+                <p style="font-size: 22px; color: ${TEXT_DARK}; line-height: 1.5; margin: 0; font-weight: 500; font-style: italic; font-family: Georgia, 'Times New Roman', serif;">
                   "${prompt}"
                 </p>
               </td>
@@ -1995,23 +2103,17 @@ function generateDailyPromptEmailHTML(name: string, prompt: string): string {
       </tr>
     </table>
     
-    ${paragraph('Set aside a few minutes today to explore this question. There are no right or wrong answers - just your authentic thoughts and feelings.', { align: 'center', fontSize: '14px' })}
+    ${paragraph('Set aside a few minutes today to explore this question. There are no right or wrong answers — just your authentic thoughts and feelings.', { align: 'center', fontSize: '14px' })}
     
     <div style="text-align: center; margin: 40px 0;">
       ${standardButton({ href: 'https://promptandpause.com/dashboard', label: 'Start Reflecting' })}
     </div>
     
     ${infoBox(`
-      <p class="email-text-gray" style="margin: 0; color: ${TEXT_GRAY}; font-size: 14px; line-height: 1.6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-        <strong class="email-text-dark" style="color: ${TEXT_DARK}; font-weight: 600;">Tip:</strong> Try writing for at least 3-5 minutes without overthinking. Let your thoughts flow naturally.
-      </p>
+      💡 <strong>Tip:</strong> Try writing for at least 3-5 minutes without overthinking. Let your thoughts flow naturally.
     `)}
   `
 
-  // Wrap through buildBaseEmail so daily prompts ship with the same document
-  // wrapper (dark-mode CSS, header, footer, preheader) that welcome /
-  // getting-started / weekly-digest use. Visual + tonal parity across the
-  // entire lifecycle.
   return buildBaseEmail({
     preheader: "Today's reflection prompt is ready",
     title: "Today's Reflection Prompt",
@@ -2039,31 +2141,38 @@ function generateWeeklyDigestEmailHTML(name: string, digest: WeeklyDigest): stri
   const topTagsHTML = digest.topTags
     .map(
       ({ tag, count }) =>
-        `<span class="email-text-primary email-section-bg" style="display: inline-block; background: ${BG_LIGHT}; color: ${PRIMARY_ACCENT}; padding: 6px 14px; border-radius: 999px; margin: 4px; font-size: 13px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">${tag} (${count})</span>`,
+        `<span style="display: inline-block; background: ${BG_LIGHT}; color: ${PRIMARY_ACCENT}; padding: 6px 14px; border-radius: 999px; margin: 4px; font-size: 13px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">${tag} (${count})</span>`,
     )
     .join('')
 
   const bodyHTML = contentSection(`
+    <div style="text-align:center;margin-bottom:8px;">
+      <span style="display:inline-block;background:${BG_LIGHT};color:${PRIMARY_ACCENT};font-size:12px;font-weight:600;padding:4px 14px;border-radius:999px;">📋 Weekly recap</span>
+    </div>
+    
     ${h1('Your weekly recap')}
 
     ${paragraph(dateRange, { align: 'center', fontSize: '13px', color: TEXT_MUTED })}
 
-    ${paragraph(`Hi ${name},`)}
+    ${paragraph(`Hi ${name},`, { fontSize: '16px' })}
 
     ${paragraph('A small recap from your reflections this week — nothing to act on, just something to notice.')}
 
-    ${infoBox(`
-      <p class="email-text-gray" style="margin: 0; color: ${TEXT_GRAY}; font-size: 15px; line-height: 1.7; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-        <strong class="email-text-dark" style="color: ${TEXT_DARK}; font-weight: 600;">Reflections this week:</strong> ${digest.totalReflections}
-      </p>
-    `)}
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 24px 0;">
+      <tr>
+        <td style="padding:20px;background:${BG_LIGHT};border-radius:12px;text-align:center;">
+          <p style="margin:0;color:${TEXT_GRAY};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Reflections this week</p>
+          <p style="margin:4px 0 0 0;color:${PRIMARY_ACCENT};font-size:36px;font-weight:700;line-height:1;">${digest.totalReflections}</p>
+        </td>
+      </tr>
+    </table>
 
     ${
       digest.topTags.length > 0
         ? `
     <div style="margin: 32px 0;">
       ${h3('Themes you touched on')}
-      <div style="text-align: center;">${topTagsHTML}</div>
+      <div style="text-align: center;margin-top:12px;">${topTagsHTML}</div>
     </div>`
         : ''
     }
@@ -2088,26 +2197,51 @@ function generateWeeklyDigestEmailHTML(name: string, digest: WeeklyDigest): stri
  * Includes proper dark mode CSS classes for email client compatibility
  */
 function generateSubscriptionConfirmationHTML(name: string, planName: string): string {
-  const bodyHTML = `
+  const bodyHTML = contentSection(`
+    <div style="text-align:center;margin-bottom:8px;">
+      <span style="display:inline-block;background:#e6f7e6;color:#007a4d;font-size:13px;font-weight:600;padding:4px 14px;border-radius:999px;">✅ Premium active</span>
+    </div>
+    
     ${h1('Welcome to Premium')}
     
-    ${paragraph(`Hi ${name},`, { align: 'center' })}
+    ${paragraph(`Hi ${name},`, { fontSize: '16px' })}
     
-    ${paragraph(`Your ${planName} subscription is now active. Thank you for joining us on this journey of mindful reflection.`, { align: 'center' })}
+    ${paragraph(`Your <strong>${planName}</strong> subscription is now active. Thank you for joining us on this journey of mindful reflection.`)}
     
-    <!-- Premium Features Card -->
-    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 28px 0;">
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 24px 0;">
       <tr>
-        <td class="email-premium-card" style="background-color: ${BG_LIGHT}; padding: 24px; border-radius: 12px; border: 1px solid ${BORDER_COLOR};">
-          <h3 class="email-premium-title" style="color: ${PRIMARY_ACCENT}; font-size: 15px; margin: 0 0 12px 0; font-weight: 700; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">What's Included</h3>
-          <ul class="email-premium-list" style="color: ${TEXT_DARK}; line-height: 1.8; margin: 0; padding-left: 20px; font-size: 15px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-            <li class="email-premium-item" style="margin-bottom: 8px;"><strong>Daily prompts</strong> — 7 days a week</li>
-            <li class="email-premium-item" style="margin-bottom: 8px;"><strong>Weekly & monthly reflections</strong> — AI-powered insights</li>
-            <li class="email-premium-item" style="margin-bottom: 8px;"><strong>From Your Past</strong> — Meaningful resurfacing</li>
-            <li class="email-premium-item" style="margin-bottom: 8px;"><strong>Unlimited archive</strong> — All your reflections, always</li>
-            <li class="email-premium-item" style="margin-bottom: 8px;"><strong>Export reflections</strong> — PDF & TXT formats</li>
-            <li class="email-premium-item"><strong>Email + Slack delivery</strong> — Your choice</li>
-          </ul>
+        <td style="padding:14px;background:${BG_LIGHT};border-radius:12px 12px 0 0;border-bottom:1px solid ${BORDER_COLOR};">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+            <tr><td style="vertical-align:top;width:24px;font-size:16px;">📅</td><td style="padding-left:10px;"><p style="margin:0;color:${TEXT_DARK};font-size:15px;font-weight:600;">Daily prompts</p><p style="margin:2px 0 0 0;color:${TEXT_GRAY};font-size:14px;">7 days a week</p></td></tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:14px;background:${BG_LIGHT};border-bottom:1px solid ${BORDER_COLOR};">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+            <tr><td style="vertical-align:top;width:24px;font-size:16px;">📊</td><td style="padding-left:10px;"><p style="margin:0;color:${TEXT_DARK};font-size:15px;font-weight:600;">Weekly &amp; monthly reflections</p><p style="margin:2px 0 0 0;color:${TEXT_GRAY};font-size:14px;">AI-powered insights</p></td></tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:14px;background:${BG_LIGHT};border-bottom:1px solid ${BORDER_COLOR};">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+            <tr><td style="vertical-align:top;width:24px;font-size:16px;">🕰️</td><td style="padding-left:10px;"><p style="margin:0;color:${TEXT_DARK};font-size:15px;font-weight:600;">From Your Past</p><p style="margin:2px 0 0 0;color:${TEXT_GRAY};font-size:14px;">Meaningful resurfacing</p></td></tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:14px;background:${BG_LIGHT};border-bottom:1px solid ${BORDER_COLOR};">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+            <tr><td style="vertical-align:top;width:24px;font-size:16px;">📚</td><td style="padding-left:10px;"><p style="margin:0;color:${TEXT_DARK};font-size:15px;font-weight:600;">Unlimited archive &amp; export</p><p style="margin:2px 0 0 0;color:${TEXT_GRAY};font-size:14px;">PDF &amp; TXT formats</p></td></tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:14px;background:${BG_LIGHT};border-radius:0 0 12px 12px;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+            <tr><td style="vertical-align:top;width:24px;font-size:16px;">📬</td><td style="padding-left:10px;"><p style="margin:0;color:${TEXT_DARK};font-size:15px;font-weight:600;">Email delivery</p><p style="margin:2px 0 0 0;color:${TEXT_GRAY};font-size:14px;">At your chosen time</p></td></tr>
+          </table>
         </td>
       </tr>
     </table>
@@ -2117,7 +2251,7 @@ function generateSubscriptionConfirmationHTML(name: string, planName: string): s
     </div>
     
     ${paragraph(`Manage your subscription anytime in <a href="https://promptandpause.com/dashboard/settings" target="_blank" rel="noopener noreferrer" class="email-text-primary" style="color: ${PRIMARY_ACCENT}; text-decoration: none; font-weight: 600;">Settings</a>.`, { align: 'center', fontSize: '14px' })}
-  `
+  `)
 
   return buildBaseEmail({
     preheader: `Welcome to ${planName}! Your premium features are now active`,
@@ -2130,62 +2264,70 @@ function generateSubscriptionConfirmationHTML(name: string, planName: string): s
  * Generate trial expired email HTML
  */
 function generateTrialExpiredEmailHTML(name: string): string {
-  const bodyHTML = `
+  const bodyHTML = contentSection(`
+    <div style="text-align:center;margin-bottom:8px;">
+      <span style="display:inline-block;background:${BG_LIGHT};color:${TEXT_GRAY};font-size:13px;font-weight:600;padding:4px 14px;border-radius:999px;">📋 Trial ended</span>
+    </div>
+    
     ${h1('Your trial has ended')}
     
-    ${paragraph(`Hi ${name},`)}
+    ${paragraph(`Hi ${name},`, { fontSize: '16px' })}
     
-    ${paragraph('Your trial has come to an end.')}
+    ${paragraph('Your Premium trial has ended, and you\'ve been moved to our <strong>Free tier</strong>. Your reflections and data are all still here — nothing has been lost.')}
     
-    ${infoBox(`
-      ${h3('What happens now?', { align: 'left', color: TEXT_DARK })}
-      ${paragraph(
-        'You\'ve been moved to our <strong>Free tier</strong>, which still gives you access to core features:',
-        { align: 'left', color: TEXT_GRAY }
-      )}
-      <ul class="email-text-gray" style="color: ${TEXT_GRAY}; line-height: 1.8; margin: 16px 0 0 0; padding-left: 20px; font-size: 15px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-        <li class="email-text-gray" style="margin-bottom: 8px;">3 personalized prompts per week</li>
-        <li class="email-text-gray" style="margin-bottom: 8px;">Optional check-in</li>
-        <li class="email-text-gray" style="margin-bottom: 8px;">Access to last 50 reflections</li>
-        <li class="email-text-gray">Email delivery at your chosen time</li>
-      </ul>
-    `)}
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 24px 0;">
+      <tr>
+        <td style="padding:16px;background:${BG_LIGHT};border-radius:12px;border-bottom:1px solid ${BORDER_COLOR};">
+          <p style="margin:0 0 4px 0;color:${TEXT_GRAY};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Free tier includes</p>
+          <p style="margin:0;color:${TEXT_DARK};font-size:15px;">3 personalised prompts per week, optional check-in, access to last 50 reflections, email delivery at your chosen time.</p>
+        </td>
+      </tr>
+    </table>
+
+    ${paragraph('If you\'d like to continue with Premium features, you can upgrade at any time:')}
     
-    ${paragraph('If you want to continue with Premium features, you can upgrade at any time.', { align: 'center' })}
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 24px 0;">
+      <tr>
+        <td style="padding:14px;background:${BG_LIGHT};border-radius:12px 12px 0 0;border-bottom:1px solid ${BORDER_COLOR};">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+            <tr><td style="vertical-align:top;width:24px;font-size:16px;">📅</td><td style="padding-left:10px;"><p style="margin:0;color:${TEXT_DARK};font-size:15px;font-weight:600;">Daily prompts</p><p style="margin:2px 0 0 0;color:${TEXT_GRAY};font-size:14px;">7 days a week</p></td></tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:14px;background:${BG_LIGHT};border-bottom:1px solid ${BORDER_COLOR};">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+            <tr><td style="vertical-align:top;width:24px;font-size:16px;">📚</td><td style="padding-left:10px;"><p style="margin:0;color:${TEXT_DARK};font-size:15px;font-weight:600;">Unlimited archive</p><p style="margin:2px 0 0 0;color:${TEXT_GRAY};font-size:14px;">All your reflections, always</p></td></tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:14px;background:${BG_LIGHT};border-bottom:1px solid ${BORDER_COLOR};">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+            <tr><td style="vertical-align:top;width:24px;font-size:16px;">📊</td><td style="padding-left:10px;"><p style="margin:0;color:${TEXT_DARK};font-size:15px;font-weight:600;">Weekly &amp; monthly reflections</p><p style="margin:2px 0 0 0;color:${TEXT_GRAY};font-size:14px;">Gentle pattern summaries</p></td></tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:14px;background:${BG_LIGHT};border-radius:0 0 12px 12px;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+            <tr><td style="vertical-align:top;width:24px;font-size:16px;">🎯</td><td style="padding-left:10px;"><p style="margin:0;color:${TEXT_DARK};font-size:15px;font-weight:600;">Export &amp; focus areas</p><p style="margin:2px 0 0 0;color:${TEXT_GRAY};font-size:14px;">PDF/TXT export, unlimited focus areas</p></td></tr>
+          </table>
+        </td>
+      </tr>
+    </table>
     
     <div style="text-align: center; margin: 40px 0;">
       ${ctaButton('View pricing', `${APP_URL}/pricing`)}
     </div>
     
-    <!-- Premium Features Card -->
-    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 28px 0;">
-      <tr>
-        <td class="email-premium-card" style="background-color: ${BG_LIGHT}; padding: 24px; border-radius: 12px; border: 1px solid ${BORDER_COLOR};">
-          <h3 class="email-premium-title" style="color: ${PRIMARY_ACCENT}; font-size: 15px; margin: 0 0 12px 0; font-weight: 700; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Premium includes</h3>
-          <ul style="color: ${TEXT_DARK}; line-height: 1.8; margin: 0; padding-left: 20px; font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-            <li style="margin-bottom: 8px;"><strong>Daily personalized prompts</strong> (7 days/week)</li>
-            <li style="margin-bottom: 8px;"><strong>Unlimited reflection archive</strong></li>
-            <li style="margin-bottom: 8px;"><strong>Weekly reflection</strong></li>
-            <li style="margin-bottom: 8px;"><strong>Monthly reflection</strong></li>
-            <li style="margin-bottom: 8px;"><strong>Export reflections</strong> (PDF/TXT)</li>
-            <li style="margin-bottom: 8px;"><strong>Custom focus areas</strong> (unlimited)</li>
-            <li style="margin-bottom: 8px;"><strong>Priority email support</strong> (24hr response)</li>
-          </ul>
-        </td>
-      </tr>
-    </table>
-    
-    ${paragraph('You can continue using Prompt & Pause with the free tier, or upgrade anytime from your dashboard settings.', { align: 'center', fontSize: '14px', color: TEXT_MUTED })}
-    
-    ${paragraph('You can keep using Prompt & Pause on the free tier, or return to Premium later.', { align: 'center' })}
-  `
+    ${paragraph('Your reflections stay either way. Upgrade anytime from your dashboard settings.', { align: 'center', fontSize: '14px', color: TEXT_MUTED })}
+  `)
 
-  // Wrap through buildBaseEmail for the same document shell every other
-  // lifecycle email ships with (dark-mode CSS, header, footer, preheader).
   return buildBaseEmail({
     preheader: 'Your Prompt & Pause trial has ended',
     title: 'Your trial has ended',
-    bodyHTML: contentSection(bodyHTML),
+    bodyHTML,
   })
 }
 
@@ -2193,18 +2335,25 @@ function generateTrialExpiredEmailHTML(name: string): string {
  * Generate subscription cancellation email HTML
  */
 function generateSubscriptionCancellationHTML(name: string, planName: string): string {
-  const bodyHTML = `
+  const bodyHTML = contentSection(`
+    <div style="text-align:center;margin-bottom:8px;">
+      <span style="display:inline-block;background:${BG_LIGHT};color:${TEXT_GRAY};font-size:13px;font-weight:600;padding:4px 14px;border-radius:999px;">↩️ Cancelled</span>
+    </div>
+    
     ${h1('Subscription Cancelled', { color: TEXT_DARK })}
     
-    ${paragraph(`Hi ${name},`)}
+    ${paragraph(`Hi ${name},`, { fontSize: '16px' })}
     
-    ${paragraph(`We've received your request to cancel your ${planName} subscription. We're sorry to see you go.`)}
-    
-    ${infoBox(`
-      <p class="email-text-gray" style="margin: 0; color: ${TEXT_GRAY}; font-size: 15px; line-height: 1.7; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-        <strong class="email-text-dark" style="color: ${TEXT_DARK}; font-weight: 600;">Your premium access will continue until the end of your current billing period.</strong> After that, you'll be switched to our free tier, but all your reflections and data will remain safe.
-      </p>
-    `)}
+    ${paragraph(`We've received your request to cancel your <strong>${planName}</strong> subscription. We're sorry to see you go.`)}
+
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 24px 0;">
+      <tr>
+        <td style="padding:16px;background:${BG_LIGHT};border-radius:12px;">
+          <p style="margin:0;color:${TEXT_GRAY};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">What happens next</p>
+          <p style="margin:8px 0 0 0;color:${TEXT_DARK};font-size:15px;line-height:1.6;">Your premium access will continue until the end of your current billing period. After that, you'll be switched to our free tier. All your reflections and data will remain safe.</p>
+        </td>
+      </tr>
+    </table>
     
     ${paragraph('If you change your mind, you can resubscribe anytime from your settings page. We\'d love to have you back.')}
     
@@ -2213,7 +2362,7 @@ function generateSubscriptionCancellationHTML(name: string, planName: string): s
     </div>
     
     ${paragraph('We\'d love to hear your feedback. Reply to this email to let us know how we can improve.', { align: 'center', fontSize: '14px', color: TEXT_MUTED })}
-  `
+  `)
 
   return buildBaseEmail({
     preheader: `Your ${planName} subscription has been cancelled`,
@@ -2226,21 +2375,26 @@ function generateSubscriptionCancellationHTML(name: string, planName: string): s
  */
 function generateDataExportEmailHTML(name: string): string {
   const bodyHTML = contentSection(`
+    <div style="text-align:center;margin-bottom:8px;">
+      <span style="display:inline-block;background:${PRIMARY_ACCENT}15;color:${PRIMARY_ACCENT};font-size:13px;font-weight:600;padding:4px 14px;border-radius:999px;">📄 Export ready</span>
+    </div>
+    
     ${h1('Your Data Export is Ready')}
     
-    ${paragraph(`Hi ${name},`)}
+    ${paragraph(`Hi ${name},`, { fontSize: '16px' })}
     
     ${paragraph(`We've compiled all your data from ${APP_NAME} into a comprehensive PDF document. You'll find it attached to this email.`)}
     
-    ${infoBox(`
-      ${h3('Your export includes:', { align: 'left' })}
-      <ul style="margin: 16px 0; padding-left: 20px; color: ${TEXT_GRAY};">
-        <li style="margin-bottom: 8px;">All your reflections and journal entries</li>
-        <li style="margin-bottom: 8px;">Account preferences and settings</li>
-      </ul>
-    `)}
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 24px 0;">
+      <tr>
+        <td style="padding:16px;background:${BG_LIGHT};border-radius:12px;">
+          <p style="margin:0 0 8px 0;color:${TEXT_GRAY};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Your export includes</p>
+          <p style="margin:0;color:${TEXT_DARK};font-size:15px;line-height:1.6;">All your reflections and journal entries, account preferences and settings.</p>
+        </td>
+      </tr>
+    </table>
     
-    ${alertBox('<strong>Important:</strong> This file contains sensitive personal information. Please store it securely and don\'t share it with anyone.', 'warning')}
+    ${alertBox('🔒 <strong>Keep this file safe.</strong> It contains sensitive personal information. Please store it securely and don\'t share it with anyone.', 'warning')}
     
     ${paragraph('If you have any questions about your data or need assistance, please don\'t hesitate to reply to this email.')}
     
@@ -2261,21 +2415,24 @@ function generateDataExportEmailHTML(name: string): string {
  */
 function generateAccountDeletionEmailHTML(name: string): string {
   const bodyHTML = contentSection(`
+    <div style="text-align:center;margin-bottom:8px;">
+      <span style="display:inline-block;background:${BG_LIGHT};color:${TEXT_GRAY};font-size:13px;font-weight:600;padding:4px 14px;border-radius:999px;">🗑️ Account deleted</span>
+    </div>
+    
     ${h1('Account Deleted')}
     
-    ${paragraph(`Hi ${name},`)}
+    ${paragraph(`Hi ${name},`, { fontSize: '16px' })}
     
     ${paragraph(`This email confirms that your ${APP_NAME} account and all associated data have been permanently deleted.`)}
-    
-    ${infoBox(`
-      ${h3('What was removed:', { align: 'left' })}
-      <ul style="margin: 16px 0; padding-left: 20px; color: ${TEXT_GRAY};">
-        <li style="margin-bottom: 8px;">Your profile and account credentials</li>
-        <li style="margin-bottom: 8px;">All reflections and journal entries</li>
-        <li style="margin-bottom: 8px;">Prompt history and preferences</li>
-        <li style="margin-bottom: 8px;">Any connected integrations</li>
-      </ul>
-    `)}
+
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 24px 0;">
+      <tr>
+        <td style="padding:16px;background:${BG_LIGHT};border-radius:12px;">
+          <p style="margin:0 0 8px 0;color:${TEXT_GRAY};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">What was removed</p>
+          <p style="margin:0;color:${TEXT_DARK};font-size:15px;line-height:1.6;">Your profile and account credentials, all reflections and journal entries, prompt history and preferences, and any connected integrations.</p>
+        </td>
+      </tr>
+    </table>
     
     ${paragraph('This action is irreversible. If you ever wish to use Prompt & Pause again, you\'re welcome to create a new account at any time.')}
     
@@ -2470,43 +2627,50 @@ function generateMaintenanceStartEmailHTML(
   const { scheduledDate, startTime, endTime, affectedServices, description } = details
   
   const servicesHTML = affectedServices
-    .map(service => `<li style="margin-bottom: 8px;">${service}</li>`)
+    .map(service => `<li style="margin-bottom:8px;color:${TEXT_DARK};font-size:14px;line-height:1.6;">${service}</li>`)
     .join('')
 
-  const bodyHTML = `
-    ${h1('Scheduled Maintenance Notice')}
+  const bodyHTML = contentSection(`
+    <div style="text-align:center;margin-bottom:8px;">
+      <span style="display:inline-block;background:#fef3cd;color:#9a7b1f;font-size:13px;font-weight:600;padding:4px 14px;border-radius:999px;">🔧 Scheduled maintenance</span>
+    </div>
     
-    ${paragraph(`Hi ${name},`)}
+    ${h1('Scheduled Maintenance')}
+    
+    ${paragraph(`Hi ${name},`, { fontSize: '16px' })}
     
     ${paragraph(`We're writing to let you know about planned maintenance on ${APP_NAME}.`)}
     
-      ${alertBox(`
-        <strong>Maintenance Window</strong><br/>
-        Date: ${scheduledDate}<br/>
-        Time: ${startTime} - ${endTime} UTC
-      `, 'warning')}
-      
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 24px 0;">
+      <tr>
+        <td style="padding:16px;background:${BG_LIGHT};border-radius:12px 12px 0 0;border-bottom:1px solid ${BORDER_COLOR};">
+          <p style="margin:0;color:${TEXT_GRAY};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Date</p>
+          <p style="margin:4px 0 0 0;color:${TEXT_DARK};font-size:15px;">${scheduledDate}</p>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:16px;background:${BG_LIGHT};border-radius:0 0 12px 12px;${affectedServices.length > 0 ? `border-bottom:1px solid ${BORDER_COLOR};` : ''}">
+          <p style="margin:0;color:${TEXT_GRAY};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Time</p>
+          <p style="margin:4px 0 0 0;color:${TEXT_DARK};font-size:15px;">${startTime} – ${endTime} UTC</p>
+        </td>
+      </tr>
       ${affectedServices.length > 0 ? `
-      <div class="email-premium-card" style="background-color: ${BG_LIGHT}; padding: 20px 24px; border-radius: 12px; border: 1px solid ${BORDER_COLOR}; margin: 20px 0;">
-        <h3 class="email-premium-title" style="color: ${PRIMARY_ACCENT}; font-size: 15px; margin: 0 0 12px 0; font-weight: 700; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Affected Services</h3>
-        <ul style="color: ${TEXT_DARK}; line-height: 1.8; margin: 0; padding-left: 20px; font-size: 14px;">
-          ${servicesHTML}
-        </ul>
-      </div>
-      ` : ''}
-      
-      ${description ? paragraph(description) : ''}
-      
-      ${infoBox('<strong>Your data:</strong> Your reflections and personal information remain secure during maintenance.')}
+      <tr>
+        <td style="padding:16px;background:${BG_LIGHT};border-radius:0 0 12px 12px;">
+          <p style="margin:0 0 8px 0;color:${TEXT_GRAY};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Affected Services</p>
+          <ul style="margin:0;padding-left:20px;">${servicesHTML}</ul>
+        </td>
+      </tr>` : ''}
+    </table>
     
-    <p style="color: ${TEXT_GRAY}; font-size: 16px; line-height: 1.8; margin: 32px 0;">
-      We apologize for any inconvenience this may cause and appreciate your patience as we work to improve ${APP_NAME}.
-    </p>
+    ${description ? paragraph(description) : ''}
     
-    <p style="color: ${TEXT_GRAY}; font-size: 15px; line-height: 1.8; margin: 32px 0 0 0; text-align: center;">
-      Questions? Contact us at <a href="mailto:support@promptandpause.com" class="email-text-primary" style="color: ${PRIMARY_ACCENT}; text-decoration: none; font-weight: 600;">support@promptandpause.com</a>
-    </p>
-  `
+    ${infoBox('🔒 <strong>Your data:</strong> Your reflections and personal information remain secure during maintenance.')}
+    
+    ${paragraph('We apologise for any inconvenience and appreciate your patience as we work to improve Prompt & Pause.', { align: 'center', fontSize: '14px', color: TEXT_MUTED })}
+    
+    ${paragraph(`Questions? <a href="mailto:support@promptandpause.com" style="color:${PRIMARY_ACCENT};text-decoration:underline;">Contact us</a>.`, { align: 'center', fontSize: '14px' })}
+  `)
 
   return buildBaseEmail({
     preheader: `Scheduled maintenance on ${scheduledDate} from ${startTime} to ${endTime} UTC`,
@@ -2528,24 +2692,35 @@ function generateMaintenanceCompleteEmailHTML(
 ): string {
   const { completedAt, improvements, notes } = details
 
-  const bodyHTML = `
+  const bodyHTML = contentSection(`
+    <div style="text-align:center;margin-bottom:8px;">
+      <span style="display:inline-block;background:#e6f7e6;color:#007a4d;font-size:13px;font-weight:600;padding:4px 14px;border-radius:999px;">✅ Maintenance complete</span>
+    </div>
+    
     ${h1('Maintenance complete')}
     
-    ${paragraph(`Hi ${name},`)}
+    ${paragraph(`Hi ${name},`, { fontSize: '16px' })}
     
-    ${paragraph(`Maintenance has been completed. ${APP_NAME} is available again.`)}
+    ${paragraph(`${APP_NAME} is fully available again after maintenance.`)}
     
-    ${alertBox(`
-      <strong>All Systems Operational</strong><br/>
-      Completed at ${completedAt}
-    `, 'success')}
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin:24px 0;">
+      <tr>
+        <td style="padding:16px;background:#e6f7e6;border-left:3px solid #00ba7c;border-radius:8px;">
+          <p style="margin:0;color:${TEXT_DARK};font-size:15px;font-weight:600;">All Systems Operational</p>
+          <p style="margin:4px 0 0 0;color:${TEXT_GRAY};font-size:14px;">Completed at ${completedAt}</p>
+        </td>
+      </tr>
+    </table>
     
     ${improvements ? `
-    <div class="email-premium-card" style="background-color: ${BG_LIGHT}; padding: 20px 24px; border-radius: 12px; border: 1px solid ${BORDER_COLOR}; margin: 20px 0;">
-      <h3 class="email-premium-title" style="color: ${PRIMARY_ACCENT}; font-size: 15px; margin: 0 0 12px 0; font-weight: 700; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">What's Improved</h3>
-      <p style="color: ${TEXT_DARK}; font-size: 15px; line-height: 1.6; margin: 0;">${improvements}</p>
-    </div>
-    ` : ''}
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin:24px 0;">
+      <tr>
+        <td style="padding:20px 24px;background:${BG_LIGHT};border-radius:12px;">
+          <p style="margin:0 0 8px 0;color:${TEXT_GRAY};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">What's Improved</p>
+          <p style="margin:0;color:${TEXT_DARK};font-size:15px;line-height:1.6;">${improvements}</p>
+        </td>
+      </tr>
+    </table>` : ''}
     
     ${notes ? paragraph(notes) : ''}
     
@@ -2553,10 +2728,8 @@ function generateMaintenanceCompleteEmailHTML(
       ${standardButton({ href: 'https://promptandpause.com/dashboard', label: 'Open dashboard' })}
     </div>
     
-    <p style="color: ${TEXT_GRAY}; font-size: 16px; line-height: 1.8; margin: 32px 0 0 0; text-align: center;">
-      Thank you for your patience.
-    </p>
-  `
+    ${paragraph('Thank you for your patience.', { align: 'center', fontSize: '14px', color: TEXT_MUTED })}
+  `)
 
   return buildBaseEmail({
     preheader: `Maintenance complete - All ${APP_NAME} services are now operational`,
@@ -2606,61 +2779,84 @@ export async function sendAdminCredentialsEmail(
     const roleDisplay = role === 'super_admin' ? 'Super Admin' : role === 'admin' ? 'Admin' : 'Employee'
     const loginUrl = `${APP_URL}/admin-login`
 
-    const html = emailWrapper(`
-      ${h1('Admin account created')}
-      
-      ${paragraph(`Hi ${name},`)}
-      
-      ${paragraph(`Your admin account has been created for ${APP_NAME}. You now have ${roleDisplay} access to the admin panel.`)}
-      
-      ${infoBox(`
-        <div style="margin-bottom: 12px;">
-          <strong style="color: ${TEXT_DARK}; display: block; margin-bottom: 4px; font-size: 15px;">Your Login Credentials</strong>
+    const html = buildBaseEmail({
+      preheader: `Your ${APP_NAME} admin account has been created`,
+      title: 'Admin account created',
+      bodyHTML: contentSection(`
+        <div style="text-align:center;margin-bottom:8px;">
+          <span style="display:inline-block;background:${PRIMARY_ACCENT}15;color:${PRIMARY_ACCENT};font-size:13px;font-weight:600;padding:4px 14px;border-radius:999px;">🔑 Admin account</span>
         </div>
-        <div style="margin-bottom: 8px;">
-          <span style="color: ${TEXT_GRAY}; font-size: 14px;">Email:</span><br>
-          <strong style="color: ${TEXT_DARK}; font-size: 15px;">${email}</strong>
-        </div>
-        <div>
-          <span style="color: ${TEXT_GRAY}; font-size: 14px;">Temporary Password:</span><br>
-          <strong style="color: ${TEXT_DARK}; font-size: 15px; font-family: 'Courier New', monospace; background: ${BG_WHITE}; padding: 4px 10px; border: 1px solid ${BORDER_COLOR}; border-radius: 6px; display: inline-block; margin-top: 4px;">${password}</strong>
-        </div>
-      `)}
-      
-      ${paragraph('⚠️ <strong>Important Security Steps:</strong>')}
-      ${paragraph(`
-        <ol style="margin: 0; padding-left: 20px; color: ${TEXT_GRAY};">
-          <li style="margin-bottom: 8px;">Sign in using the credentials above</li>
-          <li style="margin-bottom: 8px;">Change your password immediately in your profile settings</li>
-          <li style="margin-bottom: 8px;">Do not share your credentials with anyone</li>
-          <li>Enable two-factor authentication if available</li>
-        </ol>
-      `)}
-      
-      ${paragraph(`Your role as <strong>${roleDisplay}</strong> gives you access to:`)}
-      ${paragraph(`
-        <ul style="margin: 0; padding-left: 20px; color: ${TEXT_GRAY};">
-          ${role === 'super_admin' ? `
-            <li style="margin-bottom: 8px;">Full system administration</li>
-            <li style="margin-bottom: 8px;">API and backend management</li>
-            <li style="margin-bottom: 8px;">Create and manage all admin users</li>
-            <li>Access to all admin panel features</li>
-          ` : role === 'admin' ? `
-            <li style="margin-bottom: 8px;">Create and manage admin users</li>
-            <li style="margin-bottom: 8px;">Access to admin panel features</li>
-            <li>User support and management</li>
-          ` : `
-            <li style="margin-bottom: 8px;">Access to assigned admin panel features</li>
-            <li>User support tools</li>
-          `}
-        </ul>
-      `)}
-      
-      ${ctaButton('Sign In to Admin Panel', loginUrl)}
-      
-      ${paragraph(`If you have any questions or need assistance, please contact your administrator.`)}
-      
-    `)
+        
+        ${h1('Admin account created')}
+        
+        ${paragraph(`Hi ${name},`, { fontSize: '16px' })}
+        
+        ${paragraph(`Your admin account has been created for ${APP_NAME}. You now have <strong>${roleDisplay}</strong> access to the admin panel.`)}
+        
+        <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin: 24px 0;">
+          <tr>
+            <td style="padding:20px 24px;background:${BG_LIGHT};border-radius:12px;">
+              <p style="margin:0 0 12px 0;color:${TEXT_DARK};font-size:15px;font-weight:600;">Your Login Credentials</p>
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="padding-bottom:8px;">
+                    <p style="margin:0;color:${TEXT_GRAY};font-size:13px;">Email</p>
+                    <p style="margin:2px 0 0 0;color:${TEXT_DARK};font-size:15px;font-weight:600;">${email}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <p style="margin:0;color:${TEXT_GRAY};font-size:13px;">Temporary Password</p>
+                    <code style="display:inline-block;margin-top:4px;padding:6px 12px;background:${BG_WHITE};border:1px solid ${BORDER_COLOR};border-radius:6px;color:${TEXT_DARK};font-size:14px;font-family:'Courier New',monospace;font-weight:600;">${password}</code>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+        
+        ${paragraph('<strong>Important Security Steps:</strong>')}
+        <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin:16px 0;">
+          <tr>
+            <td style="padding:12px 16px;background:#fef3cd;border-left:3px solid #ffad1f;border-radius:8px;">
+              <ol style="margin:0;padding-left:18px;color:${TEXT_DARK};font-size:14px;line-height:1.8;">
+                <li>Sign in using the credentials above</li>
+                <li>Change your password immediately in your profile settings</li>
+                <li>Do not share your credentials with anyone</li>
+                <li>Enable two-factor authentication if available</li>
+              </ol>
+            </td>
+          </tr>
+        </table>
+        
+        ${paragraph(`Your role as <strong>${roleDisplay}</strong> gives you access to:`)}
+        <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin:12px 0 24px;">
+          <tr>
+            <td style="padding:16px;background:${BG_LIGHT};border-radius:12px;">
+              <ul style="margin:0;padding-left:18px;color:${TEXT_DARK};font-size:14px;line-height:1.8;">
+                ${role === 'super_admin' ? `
+                  <li>Full system administration</li>
+                  <li>API and backend management</li>
+                  <li>Create and manage all admin users</li>
+                  <li>Access to all admin panel features</li>
+                ` : role === 'admin' ? `
+                  <li>Create and manage admin users</li>
+                  <li>Access to admin panel features</li>
+                  <li>User support and management</li>
+                ` : `
+                  <li>Access to assigned admin panel features</li>
+                  <li>User support tools</li>
+                `}
+              </ul>
+            </td>
+          </tr>
+        </table>
+        
+        ${ctaButton('Sign In to Admin Panel', loginUrl)}
+        
+        ${paragraph(`If you have any questions or need assistance, please contact your administrator.`)}
+      `),
+    })
 
     const subject = `Your ${APP_NAME} admin account` 
 
@@ -2728,21 +2924,29 @@ export async function sendTrialExpirationEmail(
 
     const subject = await getSubjectForTemplate('trial_expired', { userName: displayName })
 
-    const html = emailWrapper(`
-      ${h1('Your trial has ended')}
-      
-      ${paragraph('Hi ' + displayName + ',')}
-      
-      ${paragraph('Your trial has come to an end.')}
-      
-      ${infoBox('<strong>What happens now?</strong><br/>• Your account has moved to the Free tier<br/>• You can keep using the core features<br/>• You can upgrade at any time if you want the Premium features')}
-      
-      ${ctaButton('View pricing', upgradeUrl)}
-      
-      ${paragraph('If you choose to return to Premium later, you can do that from your account settings.')}
-      
-      ${paragraph('If you have any questions, just reply to this email.')}
-    `)
+    const html = buildBaseEmail({
+      preheader: 'Your Prompt & Pause trial has ended',
+      title: 'Your trial has ended',
+      bodyHTML: contentSection(`
+        <div style="text-align:center;margin-bottom:8px;">
+          <span style="display:inline-block;background:${BG_LIGHT};color:${TEXT_GRAY};font-size:13px;font-weight:600;padding:4px 14px;border-radius:999px;">📋 Trial ended</span>
+        </div>
+        
+        ${h1('Your trial has ended')}
+        
+        ${paragraph(`Hi ${displayName},`, { fontSize: '16px' })}
+        
+        ${paragraph('Your trial has come to an end. Your account has been moved to the Free tier — you can keep using the core features, and your reflections remain safe.')}
+        
+        ${paragraph('If you\'d like to continue with Premium features, you can upgrade at any time from your account settings.')}
+        
+        <div style="text-align: center; margin: 40px 0;">
+          ${ctaButton('View pricing', upgradeUrl)}
+        </div>
+        
+        ${paragraph('If you have any questions, just reply to this email.', { align: 'center', fontSize: '14px', color: TEXT_MUTED })}
+      `),
+    })
 
     const { data, error } = await resend.emails.send({
       from: `${APP_NAME} Billing <${BILLING_EMAIL}>`,
@@ -2805,33 +3009,47 @@ export async function sendDiscountInvitationEmail(
       year: 'numeric' 
     })
 
-    const html = emailWrapper(`
-      ${h1(`Your ${discountLabel} discount is ready`)}
-      
-      ${paragraph(`Hi ${name},`)}
-      
-      ${paragraph(`Good news! You've been approved for ${discountLabel} discount pricing on Prompt & Pause Premium.`)}
-      
-      ${infoBox(`
-        <strong>Your discount:</strong><br/>
-        • 40% off Premium<br/>
-        • ${pricing} (${billingCycle})<br/>
-        • Full Premium features<br/>
-        • Valid until ${expiryDate}
-      `)}
-      
-      ${paragraph('To activate your discount, click the button below and complete payment. This link is unique to you and expires in 7 days.')}
-      
-      <div style="text-align: center; margin: 40px 0;">
-        ${ctaButton('Activate my discount', checkoutUrl)}
-      </div>
-      
-      ${paragraph('Once activated, you\'ll have full access to Premium features including weekly insights, monthly summaries, and unlimited reflections.')}
-      
-      ${paragraph('If you have any questions, just reply to this email.')}
-      
-      ${paragraph('– The Prompt & Pause team', { fontSize: '14px', color: TEXT_MUTED })}
-    `)
+    const html = buildBaseEmail({
+      preheader: `Your ${discountLabel} discount is ready`,
+      title: `Your ${discountLabel} discount is ready`,
+      bodyHTML: contentSection(`
+        <div style="text-align:center;margin-bottom:8px;">
+          <span style="display:inline-block;background:${PRIMARY_ACCENT}15;color:${PRIMARY_ACCENT};font-size:13px;font-weight:600;padding:4px 14px;border-radius:999px;">🎉 Discount approved</span>
+        </div>
+        
+        ${h1(`Your ${discountLabel} discount is ready`)}
+        
+        ${paragraph(`Hi ${name},`, { fontSize: '16px' })}
+        
+        ${paragraph(`Good news! You've been approved for <strong>${discountLabel} discount</strong> pricing on Prompt & Pause Premium.`)}
+        
+        <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin:24px 0;">
+          <tr>
+            <td style="padding:20px 24px;background:${BG_LIGHT};border-radius:12px;">
+              <p style="margin:0 0 12px 0;color:${TEXT_DARK};font-size:15px;font-weight:600;">Your discount</p>
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr><td style="padding:4px 0;"><span style="color:${TEXT_GRAY};">40% off Premium</span></td></tr>
+                <tr><td style="padding:4px 0;"><span style="color:${TEXT_DARK};font-weight:600;">${pricing}</span> <span style="color:${TEXT_GRAY};">(${billingCycle})</span></td></tr>
+                <tr><td style="padding:4px 0;"><span style="color:${TEXT_GRAY};">Full Premium features included</span></td></tr>
+                <tr><td style="padding:4px 0;"><span style="color:${TEXT_GRAY};">Valid until <strong>${expiryDate}</strong></span></td></tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+        
+        ${paragraph('To activate your discount, click the button below and complete payment. This link is unique to you and expires in 7 days.')}
+        
+        <div style="text-align: center; margin: 40px 0;">
+          ${ctaButton('Activate my discount', checkoutUrl)}
+        </div>
+        
+        ${paragraph('Once activated, you\'ll have full access to Premium features including weekly insights, monthly summaries, and unlimited reflections.')}
+        
+        ${paragraph('If you have any questions, just reply to this email.', { align: 'center', fontSize: '14px', color: TEXT_MUTED })}
+        
+        ${paragraph('– The Prompt & Pause team', { fontSize: '14px', color: TEXT_MUTED })}
+      `),
+    })
 
     const { data, error } = await resend.emails.send({
       from: `${APP_NAME} Billing <${BILLING_EMAIL}>`,
@@ -2876,43 +3094,76 @@ export async function sendGiftActivatedEmail(
       year: 'numeric' 
     })
 
-    const html = emailWrapper(`
-      ${h1('Gift subscription activated!')}
-      
-      ${paragraph(`Hi ${name},`)}
-      
-      ${paragraph(`Great news! Your gift subscription has been activated successfully.`)}
-      
-      ${infoBox(`
-        <strong>Your gift subscription:</strong><br/>
-        • ${durationMonths} month${durationMonths > 1 ? 's' : ''} of Premium<br/>
-        • Active until ${endDateStr}<br/>
-        • Full access to all Premium features<br/>
-        • No billing until gift expires
-      `)}
-      
-      ${paragraph('You now have access to:')}
-      
-      ${paragraph(`
-        <ul style="color: ${TEXT_GRAY}; line-height: 1.8; margin: 0; padding-left: 20px;">
-          <li>Unlimited daily reflections</li>
-          <li>Weekly insights and digests</li>
-          <li>Monthly reflection summaries</li>
-          <li>Advanced analytics and patterns</li>
-          <li>"From your past" resurfacing</li>
-        </ul>
-      `)}
-      
-      <div style="text-align: center; margin: 40px 0;">
-        ${ctaButton('Start reflecting', `${APP_URL}/dashboard`)}
-      </div>
-      
-      ${paragraph(`Your subscription will automatically downgrade to the Free tier on ${endDateStr}. If you'd like to continue with Premium features after that, you can subscribe from your account settings.`)}
-      
-      ${paragraph('Enjoy your gift subscription!')}
-      
-      ${paragraph('– The Prompt & Pause team', { fontSize: '14px', color: TEXT_MUTED })}
-    `)
+    const html = buildBaseEmail({
+      preheader: 'Gift subscription activated',
+      title: 'Gift subscription activated',
+      bodyHTML: contentSection(`
+        <div style="text-align:center;margin-bottom:8px;">
+          <span style="display:inline-block;background:#e6f7e6;color:#007a4d;font-size:13px;font-weight:600;padding:4px 14px;border-radius:999px;">🎁 Gift activated</span>
+        </div>
+        
+        ${h1('Gift subscription activated')}
+        
+        ${paragraph(`Hi ${name},`, { fontSize: '16px' })}
+        
+        ${paragraph('Great news! Your gift subscription has been activated successfully.')}
+        
+        <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin:24px 0;">
+          <tr>
+            <td style="padding:20px 24px;background:${BG_LIGHT};border-radius:12px;">
+              <p style="margin:0 0 12px 0;color:${TEXT_DARK};font-size:15px;font-weight:600;">Your gift subscription</p>
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr><td style="padding:4px 0;"><span style="color:${TEXT_GRAY};">Duration: <strong>${durationMonths} month${durationMonths > 1 ? 's' : ''}</strong> of Premium</span></td></tr>
+                <tr><td style="padding:4px 0;"><span style="color:${TEXT_GRAY};">Active until <strong>${endDateStr}</strong></span></td></tr>
+                <tr><td style="padding:4px 0;"><span style="color:${TEXT_GRAY};">Full access to all Premium features</span></td></tr>
+                <tr><td style="padding:4px 0;"><span style="color:${TEXT_GRAY};">No billing until gift expires</span></td></tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+        
+        <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin:24px 0;">
+          <tr>
+            <td style="padding:14px;background:${BG_LIGHT};border-radius:12px 12px 0 0;border-bottom:1px solid ${BORDER_COLOR};">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr><td style="vertical-align:top;width:24px;font-size:16px;">📝</td><td style="padding-left:10px;"><p style="margin:0;color:${TEXT_DARK};font-size:15px;font-weight:600;">Unlimited daily reflections</p></td></tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:14px;background:${BG_LIGHT};border-bottom:1px solid ${BORDER_COLOR};">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr><td style="vertical-align:top;width:24px;font-size:16px;">📊</td><td style="padding-left:10px;"><p style="margin:0;color:${TEXT_DARK};font-size:15px;font-weight:600;">Weekly insights &amp; digests</p></td></tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:14px;background:${BG_LIGHT};border-bottom:1px solid ${BORDER_COLOR};">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr><td style="vertical-align:top;width:24px;font-size:16px;">📅</td><td style="padding-left:10px;"><p style="margin:0;color:${TEXT_DARK};font-size:15px;font-weight:600;">Monthly reflection summaries</p></td></tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:14px;background:${BG_LIGHT};border-radius:0 0 12px 12px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr><td style="vertical-align:top;width:24px;font-size:16px;">🕰️</td><td style="padding-left:10px;"><p style="margin:0;color:${TEXT_DARK};font-size:15px;font-weight:600;">"From your past" resurfacing</p></td></tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+        
+        <div style="text-align: center; margin: 40px 0;">
+          ${ctaButton('Start reflecting', `${APP_URL}/dashboard`)}
+        </div>
+        
+        ${paragraph(`Your subscription will automatically downgrade to the Free tier on ${endDateStr}. If you'd like to continue with Premium features after that, you can subscribe from your account settings.`)}
+        
+        ${paragraph('Enjoy your gift subscription!')}
+        
+        ${paragraph('– The Prompt & Pause team', { fontSize: '14px', color: TEXT_MUTED })}
+      `),
+    })
 
     const { data, error } = await resend.emails.send({
       from: `${APP_NAME} Billing <${BILLING_EMAIL}>`,
@@ -2974,32 +3225,46 @@ export async function sendGiftRecipientEmail(params: {
     const redeemUrl = `${APP_URL.replace(/\/$/, '')}/gifts/redeem`
     const fromLine = purchaserName ? `from ${purchaserName}` : 'from someone who cares about you'
 
-    const html = emailWrapper(`
-      ${h1('You’ve received a gift subscription')}
+    const html = buildBaseEmail({
+      preheader: 'You\'ve received a gift subscription',
+      title: 'You\'ve received a gift subscription',
+      bodyHTML: contentSection(`
+        <div style="text-align:center;margin-bottom:8px;">
+          <span style="display:inline-block;background:${PRIMARY_ACCENT}15;color:${PRIMARY_ACCENT};font-size:13px;font-weight:600;padding:4px 14px;border-radius:999px;">🎁 Gift for you</span>
+        </div>
+        
+        ${h1('You\'ve received a gift')}
 
-      ${paragraph(`Hi ${displayName},`)}
+        ${paragraph(`Hi ${displayName},`, { fontSize: '16px' })}
 
-      ${paragraph(`You’ve received a ${durationMonths}-month Premium gift subscription ${fromLine}.`)}
+        ${paragraph(`You've received a <strong>${durationMonths}-month Premium</strong> gift subscription ${fromLine}.`)}
 
-      ${giftMessage ? paragraph(`Message: “${giftMessage}”`) : ''}
+        ${giftMessage ? paragraph(`💬 "${giftMessage}"`) : ''}
 
-      ${infoBox(`
-        <strong>Gift details</strong><br/>
-        • Duration: ${durationMonths} month${durationMonths > 1 ? 's' : ''}<br/>
-        • Gift code: <strong>${redemptionToken}</strong><br/>
-        • Expires: ${expiryDate}
-      `)}
+        <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin:24px 0;">
+          <tr>
+            <td style="padding:20px 24px;background:${BG_LIGHT};border-radius:12px;">
+              <p style="margin:0 0 12px 0;color:${TEXT_DARK};font-size:15px;font-weight:600;">Gift details</p>
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr><td style="padding:4px 0;"><span style="color:${TEXT_GRAY};">Duration: <strong>${durationMonths} month${durationMonths > 1 ? 's' : ''}</strong></span></td></tr>
+                <tr><td style="padding:4px 0;"><span style="color:${TEXT_GRAY};">Gift code: <code style="background:${BG_WHITE};padding:2px 8px;border:1px solid ${BORDER_COLOR};border-radius:4px;font-weight:600;">${redemptionToken}</code></span></td></tr>
+                <tr><td style="padding:4px 0;"><span style="color:${TEXT_GRAY};">Expires: <strong>${expiryDate}</strong></span></td></tr>
+              </table>
+            </td>
+          </tr>
+        </table>
 
-      ${paragraph('To redeem: sign in (or create an account), then enter your gift code on the redemption page.')}
+        ${paragraph('To redeem: sign in (or create an account), then enter your gift code on the redemption page.')}
 
-      <div style="text-align: center; margin: 40px 0;">
-        ${ctaButton('Redeem gift', redeemUrl)}
-      </div>
+        <div style="text-align: center; margin: 40px 0;">
+          ${ctaButton('Redeem gift', redeemUrl)}
+        </div>
 
-      ${paragraph('If you have any trouble redeeming, reply to this email and we’ll help.')}
+        ${paragraph('If you have any trouble redeeming, reply to this email and we\'ll help.', { align: 'center', fontSize: '14px', color: TEXT_MUTED })}
 
-      ${paragraph('– The Prompt & Pause team', { fontSize: '14px', color: TEXT_MUTED })}
-    `)
+        ${paragraph('– The Prompt & Pause team', { fontSize: '14px', color: TEXT_MUTED })}
+      `),
+    })
 
     const { data, error } = await resend.emails.send({
       from: `${APP_NAME} Billing <${BILLING_EMAIL}>`,
@@ -3045,27 +3310,41 @@ export async function sendGiftBuyerConfirmationEmail(params: {
       year: 'numeric',
     })
 
-    const html = emailWrapper(`
-      ${h1('Gift subscription purchased')}
+    const html = buildBaseEmail({
+      preheader: 'Gift subscription purchased',
+      title: 'Gift subscription purchased',
+      bodyHTML: contentSection(`
+        <div style="text-align:center;margin-bottom:8px;">
+          <span style="display:inline-block;background:#e6f7e6;color:#007a4d;font-size:13px;font-weight:600;padding:4px 14px;border-radius:999px;">✅ Purchase confirmed</span>
+        </div>
+        
+        ${h1('Gift subscription purchased')}
 
-      ${paragraph(`Hi ${displayName},`)}
+        ${paragraph(`Hi ${displayName},`, { fontSize: '16px' })}
 
-      ${paragraph(`Thanks — your ${durationMonths}-month gift subscription purchase is confirmed.`)}
+        ${paragraph(`Thanks — your <strong>${durationMonths}-month gift subscription</strong> purchase is confirmed.`)}
+        
+        <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin:24px 0;">
+          <tr>
+            <td style="padding:20px 24px;background:${BG_LIGHT};border-radius:12px;">
+              <p style="margin:0 0 12px 0;color:${TEXT_DARK};font-size:15px;font-weight:600;">Gift details</p>
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr><td style="padding:4px 0;"><span style="color:${TEXT_GRAY};">Duration: <strong>${durationMonths} month${durationMonths > 1 ? 's' : ''}</strong></span></td></tr>
+                <tr><td style="padding:4px 0;"><span style="color:${TEXT_GRAY};">Gift code: <code style="background:${BG_WHITE};padding:2px 8px;border:1px solid ${BORDER_COLOR};border-radius:4px;font-weight:600;">${redemptionToken}</code></span></td></tr>
+                <tr><td style="padding:4px 0;"><span style="color:${TEXT_GRAY};">Expires: <strong>${expiryDate}</strong></span></td></tr>
+                ${recipientEmail ? `<tr><td style="padding:4px 0;"><span style="color:${TEXT_GRAY};">Recipient: <strong>${recipientEmail}</strong></span></td></tr>` : ''}
+              </table>
+            </td>
+          </tr>
+        </table>
 
-      ${infoBox(`
-        <strong>Gift details</strong><br/>
-        • Duration: ${durationMonths} month${durationMonths > 1 ? 's' : ''}<br/>
-        • Gift code: <strong>${redemptionToken}</strong><br/>
-        • Expires: ${expiryDate}
-        ${recipientEmail ? `<br/>• Recipient: ${recipientEmail}` : ''}
-      `)}
+        ${paragraph('If your recipient can\'t find the gift email, you can forward them the gift code above. They\'ll need an account to redeem.')}
 
-      ${paragraph('If your recipient can’t find the gift email, you can forward them the gift code above. They’ll need an account to redeem.')}
+        ${paragraph('If you have any questions, reply to this email.', { align: 'center', fontSize: '14px', color: TEXT_MUTED })}
 
-      ${paragraph('If you have any questions, reply to this email.')}
-
-      ${paragraph('– The Prompt & Pause team', { fontSize: '14px', color: TEXT_MUTED })}
-    `)
+        ${paragraph('– The Prompt & Pause team', { fontSize: '14px', color: TEXT_MUTED })}
+      `),
+    })
 
     const { data, error } = await resend.emails.send({
       from: `${APP_NAME} Billing <${BILLING_EMAIL}>`,
@@ -3109,17 +3388,25 @@ export async function sendGiftRedeemedBuyerEmail(params: {
       year: 'numeric',
     })
 
-    const html = emailWrapper(`
-      ${h1('Your gift was redeemed')}
+    const html = buildBaseEmail({
+      preheader: 'Your gift was redeemed',
+      title: 'Your gift was redeemed',
+      bodyHTML: contentSection(`
+        <div style="text-align:center;margin-bottom:8px;">
+          <span style="display:inline-block;background:${PRIMARY_ACCENT}15;color:${PRIMARY_ACCENT};font-size:13px;font-weight:600;padding:4px 14px;border-radius:999px;">🎉 Gift redeemed</span>
+        </div>
+        
+        ${h1('Your gift was redeemed')}
 
-      ${paragraph(`Hi ${displayName},`)}
+        ${paragraph(`Hi ${displayName},`, { fontSize: '16px' })}
 
-      ${paragraph(`Just a quick note — your ${durationMonths}-month gift subscription was redeemed on ${redeemedDate}.`)}
+        ${paragraph(`Just a quick note — your <strong>${durationMonths}-month gift subscription</strong> was redeemed on ${redeemedDate}.`)}
+        
+        ${infoBox('💛 Thanks for giving a little space for reflection.')}
 
-      ${paragraph('Thanks for giving a little space for reflection.')}
-
-      ${paragraph('– The Prompt & Pause team', { fontSize: '14px', color: TEXT_MUTED })}
-    `)
+        ${paragraph('– The Prompt & Pause team', { fontSize: '14px', color: TEXT_MUTED })}
+      `),
+    })
 
     const { data, error } = await resend.emails.send({
       from: `${APP_NAME} Billing <${BILLING_EMAIL}>`,
@@ -3164,23 +3451,31 @@ export async function sendGiftExpiringSoonEmail(params: {
 
     const settingsUrl = `${APP_URL.replace(/\/$/, '')}/dashboard/settings`
 
-    const html = emailWrapper(`
-      ${h1('Your gift subscription ends soon')}
+    const html = buildBaseEmail({
+      preheader: 'Your gift subscription ends soon',
+      title: 'Your gift subscription ends soon',
+      bodyHTML: contentSection(`
+        <div style="text-align:center;margin-bottom:8px;">
+          <span style="display:inline-block;background:#fef3cd;color:#9a7b1f;font-size:13px;font-weight:600;padding:4px 14px;border-radius:999px;">⏳ Gift ending soon</span>
+        </div>
+        
+        ${h1('Your gift subscription ends soon')}
 
-      ${paragraph(`Hi ${displayName},`)}
+        ${paragraph(`Hi ${displayName},`, { fontSize: '16px' })}
 
-      ${paragraph(`A quick reminder: your gift subscription is set to end on ${endDateStr}.`)}
+        ${paragraph(`A quick reminder: your gift subscription is set to end on <strong>${endDateStr}</strong>.`)}
 
-      ${paragraph('Nothing is required from you. When it ends, your account will move back to the Free tier.')}
+        ${paragraph('Nothing is required from you. When it ends, your account will move back to the Free tier.')}
 
-      <div style="text-align: center; margin: 40px 0;">
-        ${ctaButton('View your settings', settingsUrl)}
-      </div>
+        <div style="text-align: center; margin: 40px 0;">
+          ${ctaButton('View your settings', settingsUrl)}
+        </div>
 
-      ${paragraph('If you’d like to continue with Premium features after that, you can choose a plan in Settings.')}
+        ${paragraph('If you\'d like to continue with Premium features after that, you can choose a plan in Settings.', { align: 'center', fontSize: '14px', color: TEXT_MUTED })}
 
-      ${paragraph('– The Prompt & Pause team', { fontSize: '14px', color: TEXT_MUTED })}
-    `)
+        ${paragraph('– The Prompt & Pause team', { fontSize: '14px', color: TEXT_MUTED })}
+      `),
+    })
 
     const { data, error } = await resend.emails.send({
       from: `${APP_NAME} Billing <${BILLING_EMAIL}>`,
@@ -3214,32 +3509,40 @@ export async function sendTicketConfirmation(params: {
   ticketNo: string
   ticketTitle: string
   priority: string
-}): Promise<{ success: boolean; error?: string }> {
+}): Promise<{ success: boolean; error?: string; emailId?: string }> {
   const { email, name, ticketNo, ticketTitle, priority } = params
+
+  const priorityBadge = priority === 'high' ? '🔴' : priority === 'urgent' ? '⚠️' : '🟢'
+  const priorityLabel = priority.charAt(0).toUpperCase() + priority.slice(1)
 
   const html = emailWrapper(
     [
-      h1(`Ticket #${ticketNo} — Received`),
-      paragraph(`Hi ${name},`),
+      h1(`✅ Ticket Received`),
+      paragraph(`Hi ${name},`, { fontSize: '16px' }),
       paragraph(`We've received your support ticket and will get back to you within 24–48 hours.`),
-      contentSection(
-        [
-          h3('Ticket Details'),
-          `<table style="width:100%;border-collapse:collapse;">
-<tr><td style="padding:8px 0;color:${TEXT_GRAY};font-size:14px;border-bottom:1px solid ${BORDER_COLOR};">Ticket No</td><td style="padding:8px 0;font-size:14px;font-weight:600;text-align:right;border-bottom:1px solid ${BORDER_COLOR};">#${ticketNo}</td></tr>
-<tr><td style="padding:8px 0;color:${TEXT_GRAY};font-size:14px;border-bottom:1px solid ${BORDER_COLOR};">Subject</td><td style="padding:8px 0;font-size:14px;font-weight:600;text-align:right;border-bottom:1px solid ${BORDER_COLOR};">${ticketTitle}</td></tr>
-<tr><td style="padding:8px 0;color:${TEXT_GRAY};font-size:14px;border-bottom:1px solid ${BORDER_COLOR};">Priority</td><td style="padding:8px 0;font-size:14px;font-weight:600;text-align:right;border-bottom:1px solid ${BORDER_COLOR};">${priority.charAt(0).toUpperCase() + priority.slice(1)}</td></tr>
-<tr><td style="padding:8px 0;color:${TEXT_GRAY};font-size:14px;">Status</td><td style="padding:8px 0;font-size:14px;font-weight:600;text-align:right;"><span style="display:inline-block;padding:4px 12px;border-radius:999px;background:${PRIMARY_ACCENT};color:#ffffff;font-size:12px;">New</span></td></tr>
-</table>`,
-        ],
-        true,
-      ),
-      paragraph(`You can track the status of your ticket by replying to this email. Our team will notify you when there's an update.`),
-      ctaButton(`${APP_URL}/dashboard/support`, 'View Your Tickets'),
-      paragraph(`If you have any additional information to add, simply reply to this email.`),
+      contentSection(`
+        <div style="text-align:center;margin-bottom:16px;">
+          <span style="display:inline-block;background:${PRIMARY_ACCENT}15;color:${PRIMARY_ACCENT};font-size:13px;font-weight:600;padding:4px 14px;border-radius:999px;">#${ticketNo}</span>
+        </div>
+        ${h2(ticketTitle, { align: 'center', color: TEXT_DARK })}
+        <table style="width:100%;border-collapse:separate;border-spacing:0;margin-top:16px;">
+          <tr>
+            <td style="padding:12px 16px;background:${BG_LIGHT};border-radius:8px 0 0 8px;width:50%;">
+              <p style="margin:0;color:${TEXT_GRAY};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Priority</p>
+              <p style="margin:2px 0 0 0;color:${TEXT_DARK};font-size:15px;font-weight:600;">${priorityBadge} ${priorityLabel}</p>
+            </td>
+            <td style="padding:12px 16px;background:${BG_LIGHT};border-radius:0 8px 8px 0;width:50%;">
+              <p style="margin:0;color:${TEXT_GRAY};font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Status</p>
+              <p style="margin:2px 0 0 0;"><span style="display:inline-block;padding:2px 10px;border-radius:999px;background:${PRIMARY_ACCENT};color:#ffffff;font-size:13px;font-weight:600;">New</span></p>
+            </td>
+          </tr>
+        </table>
+      `),
+      infoBox(`📌 You can track your ticket and add more information by replying directly to this email — your replies will be linked automatically.`),
+      ctaButton(`${APP_URL}/dashboard/support`, 'View Your Ticket'),
     ].join(''),
     {
-      previewText: `Your ticket #${ticketNo} has been received`,
+      preheader: `Your ticket #${ticketNo} has been received`,
     },
   )
 
@@ -3274,33 +3577,47 @@ export async function sendTicketReplyNotification(params: {
   ticketNo: string
   ticketTitle: string
   replyText: string
-}): Promise<{ success: boolean; error?: string }> {
+}): Promise<{ success: boolean; error?: string; emailId?: string }> {
   const { email, name, ticketNo, ticketTitle, replyText } = params
 
   const html = emailWrapper(
     [
-      h1(`New reply on ticket #${ticketNo}`),
-      paragraph(`Hi ${name},`),
-      paragraph(`Your support ticket has received a new reply.`),
-      contentSection(
-        [
-          h3('Ticket'),
-          `<p style="color:${TEXT_GRAY};font-size:14px;margin:0;">#${ticketNo} — ${ticketTitle}</p>`,
-        ],
-        true,
-      ),
-      contentSection(
-        [
-          h3('Reply'),
-          `<p style="color:${TEXT_DARK};font-size:15px;line-height:1.6;white-space:pre-wrap;">${replyText}</p>`,
-        ],
-        true,
-      ),
+      h1(`💬 New Reply`),
+      paragraph(`Hi ${name},`, { fontSize: '16px' }),
+      paragraph(`Your support ticket has received a new reply from our team.`),
+      contentSection(`
+        <div style="text-align:center;margin-bottom:8px;">
+          <span style="display:inline-block;background:${BG_LIGHT};color:${TEXT_GRAY};font-size:13px;font-weight:600;padding:4px 14px;border-radius:999px;">#${ticketNo} — ${ticketTitle}</span>
+        </div>
+      `),
+      `<table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin:0;">
+        <tr>
+          <td style="padding:0 28px;">
+            <div style="background:${BG_LIGHT};border-radius:12px;padding:20px;border-left:3px solid ${PRIMARY_ACCENT};">
+              <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin-bottom:8px;">
+                <tr>
+                  <td style="vertical-align:middle;">
+                    <span style="display:inline-block;width:32px;height:32px;border-radius:999px;background:${PRIMARY_ACCENT};color:#ffffff;font-size:14px;font-weight:700;text-align:center;line-height:32px;margin-right:8px;">S</span>
+                    <span style="color:${TEXT_DARK};font-size:14px;font-weight:600;">Support Team</span>
+                  </td>
+                </tr>
+              </table>
+              <p style="margin:0;color:${TEXT_DARK};font-size:15px;line-height:1.7;white-space:pre-wrap;">${replyText}</p>
+            </div>
+          </td>
+        </tr>
+      </table>`,
+      `<table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="margin:0;">
+        <tr>
+          <td style="padding:16px 28px 0;">
+            <p style="margin:0;color:${TEXT_MUTED};font-size:12px;text-align:center;font-style:italic;">💡 Reply to this email to continue the conversation</p>
+          </td>
+        </tr>
+      </table>`,
       ctaButton(`${APP_URL}/dashboard/support`, 'View Reply'),
-      paragraph(`Reply to this email to add a comment to your ticket.`),
     ].join(''),
     {
-      previewText: `New reply on ticket #${ticketNo}`,
+      preheader: `New reply on ticket #${ticketNo}`,
     },
   )
 
@@ -3380,7 +3697,7 @@ export async function sendAnnouncementEmail(params: {
       sent++
 
       if (recipient.userId) {
-        await logEmailDelivery(recipient.userId, templateKey, recipient.email, 'sent')
+        await logEmailDelivery(recipient.userId, templateKey, recipient.email, 'sent', null)
       }
     } catch (err: any) {
       errors.push({ email: recipient.email, error: err.message || 'Unknown error' })

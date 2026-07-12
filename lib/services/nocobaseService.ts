@@ -44,6 +44,8 @@ export interface TicketResult {
 export async function createTicket(params: CreateTicketParams): Promise<TicketResult> {
   const { headers } = await authenticate()
 
+  const contactName = params.submitter_name || params.submitter_email || 'Anonymous'
+
   const body: Record<string, any> = {
     ticket_title: params.ticket_title,
     description_text: params.description_text || '',
@@ -51,6 +53,7 @@ export async function createTicket(params: CreateTicketParams): Promise<TicketRe
     ticket_status: 'new',
     submitted_at: new Date().toISOString(),
     submitter_email: params.submitter_email || '',
+    submitter_name: contactName,
   }
 
   if (params.submitter_name || params.submitter_email) {
@@ -77,7 +80,55 @@ export async function createTicket(params: CreateTicketParams): Promise<TicketRe
   }
 
   const data = await res.json()
-  return data.data as TicketResult
+  const ticket = data.data as TicketResult
+
+  // Auto-create or update contact linked to this ticket
+  if (params.submitter_email) {
+    try {
+      const existing = await fetch(
+        `${NOCOBASE_URL}/api/contacts:list?filter[email][$eq]=${encodeURIComponent(params.submitter_email)}&pageSize=1`,
+        { headers },
+      )
+      const existingData = await existing.json()
+      const contactId = existingData.data?.[0]?.id
+
+      if (!contactId) {
+        const createRes = await fetch(`${NOCOBASE_URL}/api/contacts:create`, {
+          method: 'POST',
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            full_name: contactName,
+            email: params.submitter_email,
+            status: 'active',
+          }),
+        })
+        if (createRes.ok) {
+          const newContact = await createRes.json()
+          await fetch(
+            `${NOCOBASE_URL}/api/tickets:update?filterByTk=${ticket.id}`,
+            {
+              method: 'POST',
+              headers: { ...headers, 'Content-Type': 'application/json' },
+              body: JSON.stringify({ contact_id: newContact.data.id }),
+            },
+          )
+        }
+      } else {
+        await fetch(
+          `${NOCOBASE_URL}/api/tickets:update?filterByTk=${ticket.id}`,
+          {
+            method: 'POST',
+            headers: { ...headers, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contact_id: contactId }),
+          },
+        )
+      }
+    } catch {
+      // Non-blocking — ticket was created regardless
+    }
+  }
+
+  return ticket
 }
 
 export async function listUserTickets(email: string): Promise<TicketResult[]> {

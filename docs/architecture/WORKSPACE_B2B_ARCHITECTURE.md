@@ -1,7 +1,33 @@
 # Workspace / B2B Architecture — Design Doc
 
-**Status:** Design proposal, not yet implemented. Pending decisions (see bottom) before build starts.
-**Author:** Designed with Claude, [date of this session]
+**Status:** Decisions finalized, implementation starting.
+**Author:** Designed with Claude, informed by industry research (Headspace for Work / Calm
+for Business privacy models, B2B SaaS pricing conventions), [date of this session].
+
+## Finalized Decisions
+
+1. **Per-member visibility:** Admins see the roster only -- name, email, join date, last
+   active date -- for seat management. This matches the Headspace for Work / Calm for
+   Business precedent exactly (confirmed via research: both show registration/last-active
+   info to employers, never content). Reflection content, mood data, and any wellbeing
+   signal remain aggregate-only, never per-member, with the k-anonymity floor described
+   below.
+2. **Pricing:** Per-seat, monthly, with a 20% annual discount option. Simple allocated-seat
+   billing for MVP (not active-user metering) -- metering is real infrastructure not worth
+   building speculatively before a single org customer exists. Straightforward to tighten
+   later.
+   **Final numbers (set via `scripts/setup-org-stripe-prices.js`):** £7.50/seat/month,
+   £72/seat/year (£6/mo equivalent). £7.50/mo matches the "Starting at £75/month for 10
+   users" already published on the pricing page, and sits inside the £5-15/employee/month
+   range found for comparable SME wellbeing tools (Headspace for Work, Calm Business) --
+   not their heavily-negotiated 100+ seat enterprise floor, which isn't a realistic
+   comparison without a sales team.
+3. **Self-serve:** The product supports self-serve org creation for any team size. The
+   marketing site's "Contact Sales" positioning for 10+ seats is a business/positioning
+   choice layered on top, not a technical restriction.
+4. **Org defaults:** Cosmetic and opt-in only (e.g. a branded focus area or theme an org can
+   offer). Never auto-applied to a member's personal reflections without their explicit
+   choice -- consistent with the personal product's existing visibility-control principle.
 
 ## Core Principle
 
@@ -136,12 +162,4 @@ Screens: Members (roster/invite/roles), Billing (seats, Stripe customer portal),
 
 ## Open Decisions (blocking implementation start)
 
-1. Does an org admin need *any* per-member visibility (e.g. "these people haven't reflected
-   this week") or is it strictly aggregate-only with no exceptions? This is the single
-   biggest decision in the design -- the schema changes if the answer is "some per-member
-   data."
-2. Seat pricing model -- flat per-seat vs. tiered by team size? Monthly and/or annual?
-3. Self-serve org creation, or "Contact Sales" / manually approved, matching how the pricing
-   page currently positions Team plans?
-4. Do org-level defaults (branding, focus areas) apply to a member's personal prompts, or
-   stay fully separate from their individual experience?
+Resolved -- see "Finalized Decisions" at the top of this document.

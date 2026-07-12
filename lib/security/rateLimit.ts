@@ -19,9 +19,10 @@ const LIMIT_CONFIGS: Record<string, { limit: number; windowMs: number }> = {
   cron: { limit: 5, windowMs: 60 * 1000 },
   export: { limit: 3, windowMs: 60 * 60 * 1000 },
   api: { limit: 100, windowMs: 60 * 1000 },
+  admin: { limit: 10, windowMs: 5 * 60 * 1000 },
 }
 
-export type RateLimitType = 'auth' | 'promptGeneration' | 'cron' | 'export' | 'api'
+export type RateLimitType = 'auth' | 'promptGeneration' | 'cron' | 'export' | 'api' | 'admin'
 
 export async function checkRateLimit(
   identifier: string,

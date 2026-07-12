@@ -37,7 +37,15 @@ interface AdminSidebarProps {
   userRole: 'super_admin' | 'admin' | 'employee'
 }
 
-const navigationItems = [
+interface NavItem {
+  title: string
+  href: string
+  icon: React.ComponentType<{ className?: string }>
+  description: string
+  external?: boolean
+}
+
+const navigationItems: NavItem[] = [
   { title: 'Dashboard', href: '/admin-panel', icon: LayoutDashboard, description: 'Overview & key metrics' },
   { title: 'Users', href: '/admin-panel/users', icon: Users, description: 'User management' },
   { title: 'Subscriptions', href: '/admin-panel/subscriptions', icon: CreditCard, description: 'Billing & subscriptions' },

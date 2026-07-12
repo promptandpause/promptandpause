@@ -39,17 +39,27 @@ export async function POST(request: NextRequest) {
 
     const { ticket_title, description_text, priority_level } = parsed.data
 
+    let displayName = user.user_metadata?.full_name
+    if (!displayName) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', user.id)
+        .maybeSingle()
+      displayName = profile?.full_name || user.email
+    }
+
     const ticket = await createTicket({
       ticket_title,
       description_text,
       priority_level,
-      submitter_name: user.user_metadata?.full_name || user.email,
+      submitter_name: displayName,
       submitter_email: user.email,
     })
 
     sendTicketConfirmation({
       email: user.email,
-      name: user.user_metadata?.full_name || user.email,
+      name: displayName,
       ticketNo: ticket.ticket_no,
       ticketTitle: ticket.ticket_title,
       priority: ticket.priority_level,

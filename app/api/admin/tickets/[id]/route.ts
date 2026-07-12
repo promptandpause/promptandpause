@@ -13,13 +13,14 @@ async function getAuthHeaders() {
   return { Authorization: `Bearer ${data.data?.token}`, 'X-Role': 'root' }
 }
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const headers = await getAuthHeaders()
 
     const [ticketRes, commentsRes] = await Promise.all([
-      fetch(`${NOCOBASE_URL}/api/tickets:get/${params.id}`, { headers }),
-      fetch(`${NOCOBASE_URL}/api/ticket_comments:list?filter[ticket_id][$eq]=${params.id}&sort=createdAt&pageSize=100&appends=createdBy`, { headers }),
+      fetch(`${NOCOBASE_URL}/api/tickets:get/${id}`, { headers }),
+      fetch(`${NOCOBASE_URL}/api/ticket_comments:list?filter[ticket_id][$eq]=${id}&sort=createdAt&pageSize=100&appends=createdBy`, { headers }),
     ])
 
     if (!ticketRes.ok) return NextResponse.json({ error: 'Ticket not found' }, { status: 404 })
@@ -41,8 +42,9 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const { content } = await request.json()
     if (!content?.trim()) return NextResponse.json({ error: 'Content is required' }, { status: 400 })
 
@@ -52,7 +54,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       method: 'POST',
       headers: { ...headers, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        ticket_id: parseInt(params.id),
+        ticket_id: parseInt(id),
         content: `[Staff reply]\n\n${content}`,
       }),
     })

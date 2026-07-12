@@ -22,6 +22,7 @@ import {
   Lifebuoy,
   X,
   List,
+  Buildings,
 } from "phosphor-react"
 import Link from "next/link"
 import { getSupabaseClient } from "@/lib/supabase/client"
@@ -75,6 +76,7 @@ export function DashboardSidebar() {
     { icon: Notebook, label: "my_journals", href: "/journals", active: isActive("/journals") },
     { icon: ChartBar, label: "insights", href: "/insights", active: isActive("/insights") },
     { icon: Gear, label: "settings", href: "/settings", active: isActive("/settings") },
+    { icon: Buildings, label: "workspaces", href: "/workspace", active: isActive("/workspace") },
     { icon: Lifebuoy, label: "support", href: "/dashboard/support", active: isActive("/dashboard/support") },
     { icon: Trophy, label: "achievements", href: "/achievements", active: isActive("/achievements") },
   ]
@@ -215,7 +217,7 @@ export function DashboardSidebar() {
                       weight={active ? "fill" : "regular"}
                       className={active ? (isDark ? "text-white" : "text-[#1D9BF0]") : ""}
                     />
-                    <span>{item.label === "my_profile" ? "My Profile" : t(`nav.${item.label}` as any)}</span>
+                    <span>{item.label === "my_profile" ? "My Profile" : item.label === "workspaces" ? "Workspaces" : t(`nav.${item.label}` as any)}</span>
                   </button>
                 </Link>
               )
@@ -356,7 +358,7 @@ export function DashboardSidebar() {
                         weight={active ? "fill" : "regular"}
                         className={active ? (isDark ? "text-white" : "text-[#1D9BF0]") : ""}
                       />
-                      <span>{item.label === "my_profile" ? "My Profile" : t(`nav.${item.label}` as any)}</span>
+                      <span>{item.label === "my_profile" ? "My Profile" : item.label === "workspaces" ? "Workspaces" : t(`nav.${item.label}` as any)}</span>
                     </button>
                   </Link>
                 )

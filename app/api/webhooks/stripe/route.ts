@@ -8,6 +8,7 @@ import {
   sendPaymentFailedEmail,
   sendSubscriptionEmail,
 } from '@/lib/services/emailService'
+import { handleOrgCheckoutCompleted } from '@/lib/services/orgService'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-10-29.clover',
@@ -95,6 +96,14 @@ export async function POST(req: NextRequest) {
 }
 
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
+  // Organization (workspace) checkout -- fully separate flow from individual
+  // subscriptions and gifts below. Returns early; nothing past this branch
+  // executes for an org session, and this branch never touches `profiles`.
+  if (session.metadata?.type === 'organization') {
+    await handleOrgCheckoutCompleted(session)
+    return
+  }
+
   // Handle gift purchases (mode: 'payment' with gift metadata)
   if (session.mode === 'payment' && session.metadata?.gift_type === 'subscription') {
     const { data: gift } = await supabaseAdmin
@@ -157,6 +166,21 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 }
 
 async function handleSubscriptionUpdate(subscription: Stripe.Subscription, session?: Stripe.Checkout.Session) {
+  // Organization seat subscriptions never touch `profiles` -- update the
+  // organizations row instead and return early, same isolation pattern as
+  // the checkout branch above.
+  if (subscription.metadata?.type === 'organization') {
+    await supabaseAdmin
+      .from('organizations')
+      .update({
+        seat_count: subscription.items.data[0]?.quantity || undefined,
+        status: ['active', 'trialing'].includes(subscription.status) ? 'active' : 'past_due',
+        updated_at: new Date().toISOString(),
+      })
+      .eq('stripe_subscription_id', subscription.id)
+    return
+  }
+
   const customerId = subscription.customer as string
   
   const { data: profile, error: profileError } = await supabaseAdmin
@@ -273,6 +297,14 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription, sessi
 }
 
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
+  if (subscription.metadata?.type === 'organization') {
+    await supabaseAdmin
+      .from('organizations')
+      .update({ status: 'canceled', updated_at: new Date().toISOString() })
+      .eq('stripe_subscription_id', subscription.id)
+    return
+  }
+
   const customerId = subscription.customer as string
   
   const { data: profile, error: profileError } = await supabaseAdmin

@@ -20,7 +20,7 @@ async function authenticate(): Promise<{ token: string; headers: Record<string, 
   const data = await res.json()
   authToken = data.data?.token
   tokenExpiry = Date.now() + 50 * 60 * 1000
-  return { token: authToken, headers: { Authorization: `Bearer ${authToken}`, ...ROLE_HEADER } }
+  return { token: authToken!, headers: { Authorization: `Bearer ${authToken!}`, ...ROLE_HEADER } }
 }
 
 export async function GET(request: NextRequest) {
