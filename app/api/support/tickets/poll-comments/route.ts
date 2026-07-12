@@ -24,8 +24,8 @@ async function authenticate(): Promise<string> {
 
 export async function POST(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url)
-    if (searchParams.get('key') !== process.env.CRON_SECRET) {
+    const authHeader = request.headers.get('authorization')
+    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -34,44 +34,56 @@ export async function POST(request: NextRequest) {
     const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString()
 
     const res = await fetch(
-      `${NOCOBASE_URL}/api/ticket_comments:list?filter[createdAt][$gt]=${encodeURIComponent(fiveMinAgo)}&sort=createdAt&pageSize=10&appends=createdBy`,
+      `${NOCOBASE_URL}/api/tickets:list?filter[updatedAt][$gt]=${encodeURIComponent(fiveMinAgo)}&sort=updatedAt&pageSize=20`,
       { headers: { Authorization: `Bearer ${token}` } },
     )
 
     if (!res.ok) {
-      return NextResponse.json({ success: false, error: 'Failed to fetch comments' }, { status: 502 })
+      return NextResponse.json({ success: false, error: 'Failed to fetch tickets' }, { status: 502 })
     }
 
-    const { data: comments } = await res.json()
-    if (!comments?.length) {
+    const { data: tickets } = await res.json()
+    if (!tickets?.length) {
       return NextResponse.json({ success: true, checked: 0 })
     }
 
     let sent = 0
-    for (const comment of comments) {
-      if (!comment.ticket_id) continue
+    for (const ticket of tickets) {
+      if (!ticket.submitter_email) continue
 
-      const tRes = await fetch(
-        `${NOCOBASE_URL}/api/tickets:get/${comment.ticket_id}`,
+      let commentText = 'An agent has replied to your ticket.'
+      let shouldNotify = false
+
+      const cRes = await fetch(
+        `${NOCOBASE_URL}/api/ticket_comments:list?filter[ticket_id][$eq]=${ticket.id}&sort=createdAt&pageSize=1`,
         { headers: { Authorization: `Bearer ${token}` } },
       )
-      if (!tRes.ok) continue
-      const { data: ticket } = await tRes.json()
-      if (!ticket?.submitter_email) continue
+      if (cRes.ok) {
+        const { data: comments } = await cRes.json()
+        if (comments?.length) {
+          const latest = comments[comments.length - 1]
+          if (latest.createdById !== ticket.submitter_id) {
+            commentText = latest.content || latest.description || commentText
+            shouldNotify = true
+          }
+        }
+      } else {
+        shouldNotify = true
+      }
 
-      if (comment.createdById === ticket.submitter_id) continue
+      if (!shouldNotify && !ticket.ticket_status) continue
 
       await sendTicketReplyNotification({
         email: ticket.submitter_email,
         name: ticket.submitter_name || ticket.submitter_email,
         ticketNo: ticket.ticket_no,
         ticketTitle: ticket.ticket_title,
-        replyText: comment.content || comment.description || '',
+        replyText: commentText,
       })
       sent++
     }
 
-    return NextResponse.json({ success: true, checked: comments.length, sent })
+    return NextResponse.json({ success: true, checked: tickets.length, sent })
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 })
   }
