@@ -21,7 +21,8 @@ import {
   Tag,
   Gift,
   Crown,
-  ExternalLink
+  ExternalLink,
+  Flag
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
@@ -122,6 +123,12 @@ const navigationItems = [
     href: '/admin-panel/profile',
     icon: UserCircle,
     description: 'Your admin account'
+  },
+  {
+    title: 'Content Reports',
+    href: '/admin-panel/reports',
+    icon: Flag,
+    description: 'Moderation queue'
   },
   {
     title: 'Helpdesk',

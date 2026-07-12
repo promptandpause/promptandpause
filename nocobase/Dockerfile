@@ -1,4 +1,4 @@
-FROM nocobase/nocobase:beta-full
+FROM nocobase/nocobase:alpha-full
 
 ENV APP_PORT=13000
 

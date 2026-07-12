@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthUser, createClient } from '@/lib/supabase/server'
 import { decryptIfEncrypted } from '@/lib/utils/crypto'
+import { getExcludedUserIds } from '@/lib/utils/blocks'
 
 // GET /api/social/liked-feed?user_id=<uuid>
 // Returns reflections liked by `user_id` (defaults to the current viewer),
@@ -18,20 +19,25 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url)
     const targetUserId = searchParams.get('user_id') || viewer.id
+    const before = searchParams.get('before') // ISO timestamp cursor on reflection_likes.created_at
 
     const supabase = await createClient()
 
     // 1. Which reflections has the target user liked, most recent first
-    const { data: likes, error: likesError } = await supabase
+    let likesQuery = supabase
       .from('reflection_likes')
       .select('reflection_id, created_at')
       .eq('user_id', targetUserId)
       .order('created_at', { ascending: false })
-      .limit(50)
+      .limit(20)
+
+    if (before) likesQuery = likesQuery.lt('created_at', before)
+
+    const { data: likes, error: likesError } = await likesQuery
 
     if (likesError) throw likesError
     if (!likes || likes.length === 0) {
-      return NextResponse.json({ success: true, data: [] })
+      return NextResponse.json({ success: true, data: [], nextCursor: null, hasMore: false })
     }
 
     const likedOrder = likes.map(l => l.reflection_id)
@@ -47,6 +53,9 @@ export async function GET(request: NextRequest) {
 
     if (reflectionsError) throw reflectionsError
 
+    const excludedIds = await getExcludedUserIds(supabase, viewer.id)
+    const filteredReflections = (reflections || []).filter(r => !excludedIds.includes(r.user_id))
+
     // 3. Friend set, for the "from a friend" badge
     const { data: friendRows } = await supabase
       .from('friends')
@@ -61,7 +70,7 @@ export async function GET(request: NextRequest) {
     })
 
     // 4. Profiles fetched separately (reflections.user_id -> public.users, not profiles directly)
-    const authorIds = [...new Set((reflections || []).map(r => r.user_id))]
+    const authorIds = [...new Set(filteredReflections.map(r => r.user_id))]
     const profileMap = new Map<string, any>()
     if (authorIds.length > 0) {
       const { data: profiles, error: profilesError } = await supabase
@@ -76,7 +85,7 @@ export async function GET(request: NextRequest) {
     // 5. Like counts + comment counts for each reflection, and whether the
     // current viewer (not necessarily the profile whose likes we're showing)
     // has liked each one
-    const reflectionIds = (reflections || []).map(r => r.id)
+    const reflectionIds = filteredReflections.map(r => r.id)
     const countMap: Record<string, number> = {}
     const commentCountMap: Record<string, number> = {}
     const viewerLikedSet = new Set<string>()
@@ -96,7 +105,7 @@ export async function GET(request: NextRequest) {
     }
 
     // 6. Build response, preserving "most recently liked" order
-    const byId = new Map((reflections || []).map(r => [r.id, r]))
+    const byId = new Map(filteredReflections.map(r => [r.id, r]))
     const enriched = likedOrder
       .map(id => byId.get(id))
       .filter((r): r is NonNullable<typeof r> => !!r)
@@ -110,7 +119,12 @@ export async function GET(request: NextRequest) {
         is_liked_by_me: viewerLikedSet.has(r.id),
       }))
 
-    return NextResponse.json({ success: true, data: enriched })
+    return NextResponse.json({
+      success: true,
+      data: enriched,
+      nextCursor: likes.length > 0 ? likes[likes.length - 1].created_at : null,
+      hasMore: likes.length === 20,
+    })
   } catch (error: any) {
     return NextResponse.json(
       { error: error.message || 'Failed to fetch liked reflections' },

@@ -1,15 +1,21 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { getAuthUser, createClient } from '@/lib/supabase/server'
 import { decryptIfEncrypted } from '@/lib/utils/crypto'
+import { getExcludedUserIds } from '@/lib/utils/blocks'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const user = await getAuthUser()
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { searchParams } = new URL(request.url)
+    const before = searchParams.get('before') // ISO timestamp cursor -- fetch reflections older than this
+
     const supabase = await createClient()
+
+    const excludedIds = await getExcludedUserIds(supabase, user.id)
 
     const { data: friendIds } = await supabase
       .from('friends')
@@ -41,15 +47,17 @@ export async function GET() {
       `)
       .neq('visibility', 'private')
       .neq('user_id', user.id)
+      .lt('created_at', before || new Date().toISOString())
       .order('created_at', { ascending: false })
-      .limit(50)
+      .limit(20)
 
     if (error) throw error
 
-    // Defensive in-memory filter (RLS should already handle it)
+    // Defensive in-memory filter (RLS should already handle it) + drop blocked/blocking users
     const visible = (data || []).filter(r =>
-      r.visibility === 'public' ||
-      (r.visibility === 'friends_only' && friendIdSet.has(r.user_id))
+      !excludedIds.includes(r.user_id) &&
+      (r.visibility === 'public' ||
+      (r.visibility === 'friends_only' && friendIdSet.has(r.user_id)))
     )
 
     // Fetch profiles for the authors of the visible reflections (separate query,
@@ -101,7 +109,12 @@ export async function GET() {
       })
     }
 
-    return NextResponse.json({ success: true, data: enriched })
+    return NextResponse.json({
+      success: true,
+      data: enriched,
+      nextCursor: enriched.length > 0 ? enriched[enriched.length - 1].created_at : null,
+      hasMore: enriched.length === 20,
+    })
   } catch (error: any) {
     return NextResponse.json(
       { error: error.message || 'Failed to fetch feed' },

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthUser, createClient } from '@/lib/supabase/server'
+import { getExcludedUserIds } from '@/lib/utils/blocks'
+import { rateLimitOr429 } from '@/lib/utils/rateLimitResponse'
 import { z } from 'zod'
 
 const CreateCommentSchema = z.object({
@@ -98,16 +100,31 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 
-    const { data, error } = await supabase
+    // NOTE: author:profiles(...) can't be embedded directly on comments if
+    // comments.author_id references public.users rather than profiles (same
+    // situation as reflections.user_id) -- fetch separately to be safe either way.
+    const { data: comments, error } = await supabase
       .from('comments')
-      .select(`
-        *,
-        author:profiles(id, full_name, display_name, username, avatar_url)
-      `)
+      .select('*')
       .eq('reflection_id', reflectionId)
       .order('created_at', { ascending: true })
 
     if (error) throw error
+
+    const excludedIds = await getExcludedUserIds(supabase, user.id)
+    const visible = (comments || []).filter(c => !excludedIds.includes(c.author_id))
+
+    const authorIds = [...new Set(visible.map(c => c.author_id))]
+    const profileMap = new Map<string, any>()
+    if (authorIds.length > 0) {
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, full_name, display_name, username, avatar_url')
+        .in('id', authorIds)
+      profiles?.forEach(p => profileMap.set(p.id, p))
+    }
+
+    const data = visible.map(c => ({ ...c, author: profileMap.get(c.author_id) || null }))
 
     return NextResponse.json({ success: true, data })
   } catch (error: any) {
@@ -124,6 +141,9 @@ export async function POST(request: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
+    const limited = await rateLimitOr429(`comments:${user.id}`, { limit: 10, windowMs: 60_000 })
+    if (limited) return limited
 
     const body = await request.json()
     const parsed = CreateCommentSchema.safeParse(body)
@@ -148,16 +168,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Comments are disabled on this reflection' }, { status: 403 })
     }
 
-    const { data, error } = await supabase
+    const { data: insertedComment, error } = await supabase
       .from('comments')
       .insert({ reflection_id, author_id: user.id, body: commentBody })
-      .select(`
-        *,
-        author:profiles(id, full_name, display_name, username, avatar_url)
-      `)
+      .select('*')
       .single()
 
     if (error) throw error
+
+    const { data: authorProfile } = await supabase
+      .from('profiles')
+      .select('id, full_name, display_name, username, avatar_url')
+      .eq('id', user.id)
+      .maybeSingle()
+
+    const data = { ...insertedComment, author: authorProfile || null }
 
     if (reflection.user_id !== user.id) {
       await supabase

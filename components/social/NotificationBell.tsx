@@ -6,6 +6,7 @@ import { useTheme } from '@/contexts/ThemeContext'
 import { useRouter } from 'next/navigation'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Bell, UserPlus, MessageCircle, MessageSquare, Share2, Sparkle, Heart, Check, X } from 'lucide-react'
+import { getSupabaseClient } from '@/lib/supabase/client'
 
 interface Notification {
   id: string
@@ -49,9 +50,47 @@ export function NotificationBell() {
     }
   }, [])
 
+  // Real-time: subscribe to new notification rows for this user via Supabase
+  // Realtime, instead of relying purely on polling. Requires the table to be
+  // added to the supabase_realtime publication (see Sql scripts/enable_realtime_notifications.sql).
+  useEffect(() => {
+    let channel: ReturnType<ReturnType<typeof getSupabaseClient>['channel']> | null = null
+
+    async function subscribe() {
+      try {
+        const supabase = getSupabaseClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return
+
+        channel = supabase
+          .channel(`notifications:${user.id}`)
+          .on(
+            'postgres_changes',
+            { event: 'INSERT', schema: 'public', table: 'social_notifications', filter: `user_id=eq.${user.id}` },
+            () => {
+              // Refetch through the existing API route rather than hand-assembling the
+              // row client-side, so the actor profile join / decryption stay in one place
+              load()
+            }
+          )
+          .subscribe()
+      } catch {
+        // Realtime unavailable (e.g. table not added to the publication yet) --
+        // polling below still covers us
+      }
+    }
+    subscribe()
+
+    return () => {
+      if (channel) getSupabaseClient().removeChannel(channel)
+    }
+  }, [load])
+
   useEffect(() => {
     load()
-    const interval = setInterval(load, 15000)
+    // Realtime is now the primary update path; this is just a safety net in
+    // case a channel drops or the browser tab was backgrounded.
+    const interval = setInterval(load, 45000)
     return () => clearInterval(interval)
   }, [load])
 

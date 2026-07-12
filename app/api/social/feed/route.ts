@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthUser, createClient } from '@/lib/supabase/server'
 import { decryptIfEncrypted } from '@/lib/utils/crypto'
+import { getExcludedUserIds } from '@/lib/utils/blocks'
 
 export async function GET(request: NextRequest) {
   try {
@@ -30,14 +31,18 @@ export async function GET(request: NextRequest) {
     })
     friendIds.add(user.id)
 
-    const friendIdArray = Array.from(friendIds)
+    const excludedIds = await getExcludedUserIds(supabase, user.id)
+    const friendIdArray = Array.from(friendIds).filter(id => !excludedIds.includes(id))
 
+    // NOTE: profile:profiles(...) can't be embedded directly on reflections --
+    // reflections.user_id references public.users, not profiles, so there's no
+    // direct FK for PostgREST to follow. Fetch profiles separately, same fix as
+    // random-feed / community-prompts / circles.
     const { data: reflections, error: reflectionsError, count } = await supabase
       .from('reflections')
       .select(`
         id, prompt_text, reflection_text, mood, tags, word_count,
-        visibility, created_at, allow_comments, user_id,
-        profile:profiles(id, full_name, display_name, username, avatar_url)
+        visibility, created_at, allow_comments, user_id
       `, { count: 'exact' })
       .in('user_id', friendIdArray)
       .neq('visibility', 'private')
@@ -45,6 +50,16 @@ export async function GET(request: NextRequest) {
       .range(offset, offset + limit - 1)
 
     if (reflectionsError) throw reflectionsError
+
+    const authorIds = [...new Set((reflections || []).map(r => r.user_id))]
+    const profileMap = new Map<string, any>()
+    if (authorIds.length > 0) {
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, full_name, display_name, username, avatar_url')
+        .in('id', authorIds)
+      profiles?.forEach(p => profileMap.set(p.id, p))
+    }
 
     const reflectionIds = (reflections || []).map(r => r.id)
     let commentCounts: Record<string, number> = {}
@@ -78,7 +93,7 @@ export async function GET(request: NextRequest) {
         created_at: r.created_at,
         allow_comments: r.allow_comments,
       },
-      author: r.profile,
+      author: profileMap.get(r.user_id) || null,
       comment_count: commentCounts[r.id] || 0,
       like_count: likeCounts[r.id] || 0,
       is_liked_by_me: userLikedSet.has(r.id),

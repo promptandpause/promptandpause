@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { Resend } from 'resend'
 import { withRateLimit } from '@/lib/security/rateLimit'
+import { createTicket } from '@/lib/services/nocobaseService'
 
 const HomepageContactSchema = z.object({
   name: z.string().min(2).max(100),
@@ -72,6 +73,19 @@ export async function POST(request: NextRequest) {
       if (error) {
         return NextResponse.json({ success: false, error: 'Failed to send email' }, { status: 500 })
       }
+
+      try {
+        await createTicket({
+          ticket_title: `[Contact Form] ${subject.charAt(0).toUpperCase() + subject.slice(1)} - ${name}`,
+          description_text: message,
+          priority_level: isPremium ? 'high' : 'medium',
+          submitter_name: name,
+          submitter_email: email,
+        })
+      } catch {
+        // ticket creation is optional - email was already sent
+      }
+
       return NextResponse.json({ success: true, message: 'Email sent successfully' })
     } catch (emailError) {
       return NextResponse.json({ success: false, error: 'Failed to send email' }, { status: 500 })

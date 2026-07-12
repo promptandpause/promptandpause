@@ -19,6 +19,7 @@ import {
   PencilLine,
   ChartBar,
   Trophy,
+  Lifebuoy,
   X,
   List,
 } from "phosphor-react"
@@ -74,6 +75,7 @@ export function DashboardSidebar() {
     { icon: Notebook, label: "my_journals", href: "/journals", active: isActive("/journals") },
     { icon: ChartBar, label: "insights", href: "/insights", active: isActive("/insights") },
     { icon: Gear, label: "settings", href: "/settings", active: isActive("/settings") },
+    { icon: Lifebuoy, label: "support", href: "/dashboard/support", active: isActive("/dashboard/support") },
     { icon: Trophy, label: "achievements", href: "/achievements", active: isActive("/achievements") },
   ]
 

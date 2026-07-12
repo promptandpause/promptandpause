@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthUser, createClient } from '@/lib/supabase/server'
+import { rateLimitOr429 } from '@/lib/utils/rateLimitResponse'
 
 export async function GET(request: NextRequest) {
   try {
@@ -46,6 +47,9 @@ export async function POST(request: NextRequest) {
   try {
     const user = await getAuthUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    const limited = await rateLimitOr429(`follow:${user.id}`, { limit: 20, windowMs: 60_000 })
+    if (limited) return limited
 
     const supabase = await createClient()
     const { target_id } = await request.json()

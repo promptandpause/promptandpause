@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { User, MessageCircle, Music, Palette, Sparkles, Lock, Pencil, Settings, Layout, Archive, House, Heart, Rss, Trash2, X } from 'lucide-react'
+import { User, MessageCircle, Music, Palette, Sparkles, Lock, Pencil, Settings, Layout, Archive, House, Heart, Rss, Trash2, X, ArrowLeft } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { useTheme } from '@/contexts/ThemeContext'
@@ -10,6 +10,8 @@ import { FriendButton } from '@/components/social/FriendButton'
 import { WhiteboardSection } from '@/components/social/WhiteboardSection'
 import { CommentSection } from '@/components/social/CommentSection'
 import { ProfileEditor } from '@/components/social/ProfileEditor'
+import { ReportBlockMenu } from '@/components/social/ReportBlockMenu'
+import { CursorTrail } from '@/components/social/CursorTrail'
 import { WhoToFollow } from '@/app/dashboard/components/WhoToFollow'
 import { TrendingTopics } from '@/app/dashboard/components/TrendingTopics'
 import { SearchBar } from '@/app/dashboard/components/SearchBar'
@@ -64,6 +66,9 @@ export function ProfilePageClient({
   const [likesFeed, setLikesFeed] = useState<LikedReflection[]>([])
   const [likesLoading, setLikesLoading] = useState(false)
   const [likesLoaded, setLikesLoaded] = useState(false)
+  const [likesCursor, setLikesCursor] = useState<string | null>(null)
+  const [likesHasMore, setLikesHasMore] = useState(false)
+  const [likesLoadingMore, setLikesLoadingMore] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
@@ -80,11 +85,29 @@ export function ProfilePageClient({
       setLikesLoading(true)
       fetch(`/api/social/liked-feed?user_id=${profile.id}`)
         .then(r => r.ok ? r.json() : Promise.resolve({ data: [] }))
-        .then(({ data }) => { setLikesFeed(data || []); setLikesLoaded(true) })
+        .then(({ data, nextCursor, hasMore }) => {
+          setLikesFeed(data || [])
+          setLikesCursor(nextCursor || null)
+          setLikesHasMore(!!hasMore)
+          setLikesLoaded(true)
+        })
         .catch(() => {})
         .finally(() => setLikesLoading(false))
     }
   }, [activeTab, likesLoaded, profile.id])
+
+  async function loadMoreLikes() {
+    if (likesLoadingMore || !likesHasMore || !likesCursor) return
+    setLikesLoadingMore(true)
+    try {
+      const res = await fetch(`/api/social/liked-feed?user_id=${profile.id}&before=${encodeURIComponent(likesCursor)}`)
+      const { data, nextCursor, hasMore } = await res.json()
+      setLikesFeed(prev => [...prev, ...(data || [])])
+      setLikesCursor(nextCursor || null)
+      setLikesHasMore(!!hasMore)
+    } catch {}
+    setLikesLoadingMore(false)
+  }
 
   function toggleComments(id: string) {
     setOpenComments(prev => {
@@ -123,22 +146,46 @@ export function ProfilePageClient({
 
   const isActive = (path: string) => pathname.startsWith(path)
 
-  const accentColor = profile.profile_theme?.accent_color || (isDark ? '#1D9BF0' : '#1D9BF0')
+  const accentColor = profile.profile_theme?.accent_color || '#1D9BF0'
+  const coverStart = profile.profile_theme?.bg_gradient_start || `${accentColor}22`
+  const coverEnd = profile.profile_theme?.bg_gradient_end || `${accentColor}44`
+  const headingFont = profile.profile_theme?.font_heading || undefined
+  const bodyFont = profile.profile_theme?.font_body || undefined
+  const showSparkles = !!profile.profile_theme?.show_sparkles
+  const showCursorTrail = !!profile.profile_theme?.show_cursor_trail
+  const cardRadius = profile.profile_theme?.border_style === 'squared'
+    ? '4px'
+    : profile.profile_theme?.border_style === 'retro'
+    ? '8px'
+    : '16px'
+  const cardBorderWidth = profile.profile_theme?.border_style === 'retro' ? '2px' : '1px'
+  const cardStyle = { borderRadius: cardRadius, borderWidth: cardBorderWidth } as const
 
   const displayName = profile.display_name || profile.full_name || profile.username
   const initials = displayName?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || '?'
 
   return (
     <div className={`min-h-screen ${isDark ? 'bg-[#0A0A0A]' : 'bg-[#FFFFFF]'}`}>
+      {showCursorTrail && <CursorTrail color={accentColor} />}
       {/* Cover Image */}
       <div
         className="h-32 sm:h-48 md:h-64 w-full relative overflow-hidden"
         style={{
           background: profile.cover_image_url
             ? `url(${profile.cover_image_url}) center/cover`
-            : `linear-gradient(135deg, ${accentColor}22, ${accentColor}44)`,
+            : `linear-gradient(135deg, ${coverStart}, ${coverEnd})`,
         }}
-      />
+      >
+        {showSparkles && <SparkleField color={accentColor} />}
+        {/* Back to Dashboard -- always visible, own profile or someone else's */}
+        <Link
+          href="/dashboard"
+          className="absolute top-3 left-3 sm:top-4 sm:left-4 z-20 flex items-center gap-2 pl-2.5 pr-3.5 py-2 rounded-full bg-black/40 hover:bg-black/55 backdrop-blur-md text-white transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          <span className="text-xs font-semibold hidden sm:inline">Dashboard</span>
+        </Link>
+      </div>
 
       {/* Main Content + Sidebar */}
       <div className="max-w-6xl mx-auto px-4 md:px-8">
@@ -166,7 +213,10 @@ export function ProfilePageClient({
           <div className="flex-1 pb-1 sm:pb-2">
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
               <div className="min-w-0">
-                <h1 className={`text-xl sm:text-2xl md:text-3xl font-bold truncate ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+                <h1
+                  className={`text-xl sm:text-2xl md:text-3xl font-bold truncate ${isDark ? 'text-white' : 'text-[#0F1419]'}`}
+                  style={headingFont ? { fontFamily: `var(--font-${headingFont.toLowerCase().replace(/\s+/g, '-')}, ${headingFont}, inherit)` } : undefined}
+                >
                   {displayName}
                 </h1>
                 {profile.username && (
@@ -230,6 +280,7 @@ export function ProfilePageClient({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 className={`mt-2 sm:mt-3 text-xs sm:text-sm leading-relaxed max-w-xl ${isDark ? 'text-white/60' : 'text-[#536471]'}`}
+                style={bodyFont ? { fontFamily: `var(--font-${bodyFont.toLowerCase().replace(/\s+/g, '-')}, ${bodyFont}, inherit)` } : undefined}
               >
                 {profile.bio}
               </motion.p>
@@ -344,11 +395,12 @@ export function ProfilePageClient({
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05 }}
-                    className={`rounded-xl sm:rounded-2xl p-4 sm:p-5 ${
+                    className={`p-4 sm:p-5 ${
                       isDark
                         ? 'bg-white/[0.04] border border-white/[0.06]'
                         : 'bg-white/80 border border-[#EFF3F4]'
                     }`}
+                    style={cardStyle}
                   >
                     {ref.prompt_text && (
                       <p className={`text-xs sm:text-sm font-medium mb-2 ${isDark ? 'text-white/50' : 'text-[#8B98A5]'}`}>
@@ -441,13 +493,25 @@ export function ProfilePageClient({
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.05 }}
-                      className={`rounded-xl sm:rounded-2xl p-4 sm:p-5 ${
+                      className={`p-4 sm:p-5 ${
                         isDark ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-white/80 border border-[#EFF3F4]'
                       }`}
+                      style={cardStyle}
                     >
                       <Link href={ref.profile?.username ? `/${ref.profile.username}` : '#'} className={`text-xs font-semibold mb-1 inline-block ${isDark ? 'text-white/60 hover:text-white' : 'text-[#536471] hover:text-[#0F1419]'}`}>
                         {authorName}
                       </Link>
+                      {ref.user_id && (
+                        <div className="float-right -mt-1">
+                          <ReportBlockMenu
+                            targetType="reflection"
+                            targetId={ref.id}
+                            authorId={ref.user_id}
+                            authorName={authorName}
+                            onBlocked={() => setLikesFeed(prev => prev.filter(f => f.user_id !== ref.user_id))}
+                          />
+                        </div>
+                      )}
                       {ref.prompt_text && (
                         <p className={`text-xs sm:text-sm font-medium mb-2 ${isDark ? 'text-white/50' : 'text-[#8B98A5]'}`}>
                           {ref.prompt_text}
@@ -480,6 +544,19 @@ export function ProfilePageClient({
                     </motion.div>
                   )
                 })
+              )}
+              {likesHasMore && (
+                <div className="flex justify-center py-4">
+                  <button
+                    onClick={loadMoreLikes}
+                    disabled={likesLoadingMore}
+                    className={`text-xs font-semibold px-4 py-2 rounded-full transition-colors ${
+                      isDark ? 'text-[#1D9BF0] hover:bg-white/[0.06]' : 'text-[#1D9BF0] hover:bg-[#EFF3F4]'
+                    }`}
+                  >
+                    {likesLoadingMore ? 'Loading…' : 'Load more'}
+                  </button>
+                </div>
               )}
             </div>
           )}
@@ -549,6 +626,33 @@ export function ProfilePageClient({
         )}
       </AnimatePresence>
 </div>
+  )
+}
+
+function SparkleField({ color }: { color: string }) {
+  const sparkles = [
+    { top: '15%', left: '8%', size: 14, delay: 0 },
+    { top: '60%', left: '18%', size: 10, delay: 0.6 },
+    { top: '25%', left: '85%', size: 12, delay: 1.1 },
+    { top: '70%', left: '92%', size: 16, delay: 0.3 },
+    { top: '40%', left: '50%', size: 10, delay: 1.6 },
+    { top: '80%', left: '55%', size: 12, delay: 0.9 },
+  ]
+
+  return (
+    <div className="absolute inset-0 pointer-events-none" aria-hidden>
+      {sparkles.map((s, i) => (
+        <motion.div
+          key={i}
+          className="absolute"
+          style={{ top: s.top, left: s.left, color }}
+          animate={{ opacity: [0, 1, 0], scale: [0.5, 1, 0.5], rotate: [0, 90] }}
+          transition={{ duration: 2.4, repeat: Infinity, delay: s.delay, ease: 'easeInOut' }}
+        >
+          <Sparkles size={s.size} fill="currentColor" strokeWidth={0} />
+        </motion.div>
+      ))}
+    </div>
   )
 }
 

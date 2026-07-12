@@ -19,6 +19,7 @@ import { Rss, Spinner, Wind, Heart, PencilLine, Sun, ChatCircle, Sparkle } from 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { CommentSection } from "@/components/social/CommentSection"
+import { ReportBlockMenu } from "@/components/social/ReportBlockMenu"
 
 interface FeedItem {
   id: string
@@ -58,8 +59,14 @@ function DashboardContent() {
   const [tab, setTab] = useState<"for_you" | "following" | "likes">("for_you")
   const [followingFeed, setFollowingFeed] = useState<FeedItem[]>([])
   const [followingLoading, setFollowingLoading] = useState(false)
+  const [followingPage, setFollowingPage] = useState(1)
+  const [followingHasMore, setFollowingHasMore] = useState(false)
+  const [followingLoadingMore, setFollowingLoadingMore] = useState(false)
   const [likesFeed, setLikesFeed] = useState<FeedItem[]>([])
   const [likesLoading, setLikesLoading] = useState(false)
+  const [likesCursor, setLikesCursor] = useState<string | null>(null)
+  const [likesHasMore, setLikesHasMore] = useState(false)
+  const [likesLoadingMore, setLikesLoadingMore] = useState(false)
   const [openComments, setOpenComments] = useState<Set<string>>(new Set())
 
   function toggleComments(id: string) {
@@ -100,7 +107,7 @@ function DashboardContent() {
     setFollowingLoading(true)
     try {
       const res = await fetch("/api/social/feed?page=1&limit=20")
-      const { data } = await res.json()
+      const { data, pagination } = await res.json()
       const items = (data || []).map((item: any) => ({
         ...item.reflection,
         profile: item.author,
@@ -108,19 +115,56 @@ function DashboardContent() {
         is_liked_by_me: item.is_liked_by_me || false,
       }))
       setFollowingFeed(items)
+      setFollowingPage(1)
+      setFollowingHasMore(!!pagination?.hasMore)
     } catch {}
     setFollowingLoading(false)
   }, [])
+
+  async function loadMoreFollowing() {
+    if (followingLoadingMore || !followingHasMore) return
+    setFollowingLoadingMore(true)
+    try {
+      const nextPage = followingPage + 1
+      const res = await fetch(`/api/social/feed?page=${nextPage}&limit=20`)
+      const { data, pagination } = await res.json()
+      const items = (data || []).map((item: any) => ({
+        ...item.reflection,
+        profile: item.author,
+        like_count: item.like_count || 0,
+        is_liked_by_me: item.is_liked_by_me || false,
+      }))
+      setFollowingFeed(prev => [...prev, ...items])
+      setFollowingPage(nextPage)
+      setFollowingHasMore(!!pagination?.hasMore)
+    } catch {}
+    setFollowingLoadingMore(false)
+  }
 
   const loadLikesFeed = useCallback(async () => {
     setLikesLoading(true)
     try {
       const res = await fetch("/api/social/liked-feed")
-      const { data } = await res.json()
+      const { data, nextCursor, hasMore } = await res.json()
       setLikesFeed(data || [])
+      setLikesCursor(nextCursor || null)
+      setLikesHasMore(!!hasMore)
     } catch {}
     setLikesLoading(false)
   }, [])
+
+  async function loadMoreLikes() {
+    if (likesLoadingMore || !likesHasMore || !likesCursor) return
+    setLikesLoadingMore(true)
+    try {
+      const res = await fetch(`/api/social/liked-feed?before=${encodeURIComponent(likesCursor)}`)
+      const { data, nextCursor, hasMore } = await res.json()
+      setLikesFeed(prev => [...prev, ...(data || [])])
+      setLikesCursor(nextCursor || null)
+      setLikesHasMore(!!hasMore)
+    } catch {}
+    setLikesLoadingMore(false)
+  }
 
   useEffect(() => {
     if (tab === "following") {
@@ -264,13 +308,22 @@ function DashboardContent() {
                                 </div>
                               </div>
                               <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-1.5 flex-wrap">
-                                  <span className={`text-sm font-semibold ${isDark ? "text-white" : "text-[#0F1419]"}`}>
-                                    {displayName}
-                                  </span>
-                                  <span className={`text-sm ${isDark ? "text-white/30" : "text-[#536471]"}`}>
-                                    @{item.profile?.username}
-                                  </span>
+                                <div className="flex items-center justify-between gap-2">
+                                  <div className="flex items-center gap-1.5 flex-wrap">
+                                    <span className={`text-sm font-semibold ${isDark ? "text-white" : "text-[#0F1419]"}`}>
+                                      {displayName}
+                                    </span>
+                                    <span className={`text-sm ${isDark ? "text-white/30" : "text-[#536471]"}`}>
+                                      @{item.profile?.username}
+                                    </span>
+                                  </div>
+                                  <ReportBlockMenu
+                                    targetType="reflection"
+                                    targetId={item.id}
+                                    authorId={item.user_id}
+                                    authorName={displayName}
+                                    onBlocked={() => setFollowingFeed(prev => prev.filter(f => f.user_id !== item.user_id))}
+                                  />
                                 </div>
                                 <p className={`text-sm leading-relaxed mt-0.5 ${isDark ? "text-white/80" : "text-[#0F1419]"}`}>
                                   {item.reflection_text}
@@ -330,6 +383,19 @@ function DashboardContent() {
                       })}
                     </div>
                   )}
+                  {followingHasMore && (
+                    <div className="flex justify-center py-6">
+                      <button
+                        onClick={loadMoreFollowing}
+                        disabled={followingLoadingMore}
+                        className={`text-xs font-semibold px-4 py-2 rounded-full transition-colors ${
+                          isDark ? 'text-[#1D9BF0] hover:bg-white/[0.06]' : 'text-[#1D9BF0] hover:bg-[#EFF3F4]'
+                        }`}
+                      >
+                        {followingLoadingMore ? 'Loading…' : 'Load more'}
+                      </button>
+                    </div>
+                  )}
                 </motion.div>
               ) : (
                 <motion.div key="likes" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
@@ -370,13 +436,22 @@ function DashboardContent() {
                                 </div>
                               </div>
                               <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-1.5 flex-wrap">
-                                  <span className={`text-sm font-semibold ${isDark ? "text-white" : "text-[#0F1419]"}`}>
-                                    {displayName}
-                                  </span>
-                                  <span className={`text-sm ${isDark ? "text-white/30" : "text-[#536471]"}`}>
-                                    @{item.profile?.username}
-                                  </span>
+                                <div className="flex items-center justify-between gap-2">
+                                  <div className="flex items-center gap-1.5 flex-wrap">
+                                    <span className={`text-sm font-semibold ${isDark ? "text-white" : "text-[#0F1419]"}`}>
+                                      {displayName}
+                                    </span>
+                                    <span className={`text-sm ${isDark ? "text-white/30" : "text-[#536471]"}`}>
+                                      @{item.profile?.username}
+                                    </span>
+                                  </div>
+                                  <ReportBlockMenu
+                                    targetType="reflection"
+                                    targetId={item.id}
+                                    authorId={item.user_id}
+                                    authorName={displayName}
+                                    onBlocked={() => setLikesFeed(prev => prev.filter(f => f.user_id !== item.user_id))}
+                                  />
                                 </div>
                                 <p className={`text-sm leading-relaxed mt-0.5 ${isDark ? "text-white/80" : "text-[#0F1419]"}`}>
                                   {item.reflection_text}
@@ -435,6 +510,19 @@ function DashboardContent() {
                           </div>
                         )
                       })}
+                    </div>
+                  )}
+                  {likesHasMore && (
+                    <div className="flex justify-center py-6">
+                      <button
+                        onClick={loadMoreLikes}
+                        disabled={likesLoadingMore}
+                        className={`text-xs font-semibold px-4 py-2 rounded-full transition-colors ${
+                          isDark ? 'text-[#1D9BF0] hover:bg-white/[0.06]' : 'text-[#1D9BF0] hover:bg-[#EFF3F4]'
+                        }`}
+                      >
+                        {likesLoadingMore ? 'Loading…' : 'Load more'}
+                      </button>
                     </div>
                   )}
                 </motion.div>

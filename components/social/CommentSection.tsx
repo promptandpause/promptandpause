@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Loader2, Send, Trash2 } from 'lucide-react'
 import { useTheme } from '@/contexts/ThemeContext'
+import { ReportBlockMenu } from '@/components/social/ReportBlockMenu'
 import type { Comment } from '@/lib/types/social'
 
 interface CommentSectionProps {
@@ -131,6 +132,17 @@ export function CommentSection({ reflectionId, reflectionOwnerId }: CommentSecti
                     >
                       <Trash2 className="h-3 w-3" />
                     </button>
+                  )}
+                  {myId && (comment as any).author_id !== myId && (
+                    <div className="ml-auto">
+                      <ReportBlockMenu
+                        targetType="comment"
+                        targetId={comment.id}
+                        authorId={(comment as any).author_id}
+                        authorName={comment.author?.display_name || comment.author?.full_name || undefined}
+                        onBlocked={() => setComments(prev => prev.filter(c => (c as any).author_id !== (comment as any).author_id))}
+                      />
+                    </div>
                   )}
                 </div>
                 <p className={`text-sm mt-0.5 ${isDark ? 'text-white/70' : 'text-[#0F1419]'}`}>

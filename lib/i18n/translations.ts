@@ -37,6 +37,7 @@ export const en = {
   'nav.wellness': 'Wellness',
   'nav.logout': 'Logout',
   'nav.insights': 'Insights',
+  'nav.support': 'Support',
   'nav.help': 'Contact Support',
   
   // Dashboard
@@ -195,6 +196,7 @@ export const es: Record<TranslationKey, string> = {
   'nav.crisis_resources': 'Recursos de Crisis',
   'nav.wellness': 'Bienestar',
   'nav.logout': 'Cerrar sesión',
+  'nav.support': 'Soporte',
   'nav.help': 'Contactar Soporte',
   'nav.insights': 'Perspectivas',
   
@@ -355,6 +357,7 @@ export const fr: Record<TranslationKey, string> = {
   'nav.wellness': 'Bien-être',
   'nav.logout': 'Déconnexion',
   'nav.insights': 'Aperçus',
+  'nav.support': 'Support',
   'nav.help': 'Contacter le Support',
   
   // Dashboard
@@ -514,6 +517,7 @@ export const nl: Record<TranslationKey, string> = {
   'nav.wellness': 'Welzijn',
   'nav.logout': 'Uitloggen',
   'nav.insights': 'Inzichten',
+  'nav.support': 'Ondersteuning',
   'nav.help': 'Contact Ondersteuning',
   
   // Dashboard

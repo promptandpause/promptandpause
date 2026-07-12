@@ -8,6 +8,7 @@ import { Heart, ChatCircle, Sparkle, UserPlus } from 'phosphor-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { CommentSection } from '@/components/social/CommentSection'
+import { ReportBlockMenu } from '@/components/social/ReportBlockMenu'
 
 interface FeedReflection {
   id: string
@@ -35,7 +36,9 @@ export function RandomFeed() {
   const router = useRouter()
   const [feed, setFeed] = useState<FeedReflection[]>([])
   const [loading, setLoading] = useState(true)
-  const [page, setPage] = useState(0)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [cursor, setCursor] = useState<string | null>(null)
+  const [hasMore, setHasMore] = useState(true)
   const [openComments, setOpenComments] = useState<Set<string>>(new Set())
   const loaderRef = useRef<HTMLDivElement>(null)
 
@@ -60,11 +63,40 @@ export function RandomFeed() {
         console.warn('Feed load failed:', body.error)
       }
       setFeed(body.data || [])
+      setCursor(body.nextCursor || null)
+      setHasMore(!!body.hasMore)
     } catch {
       // Offline or parse failure — leave feed empty
     }
     setLoading(false)
   }
+
+  async function loadMore() {
+    if (loadingMore || !hasMore || !cursor) return
+    setLoadingMore(true)
+    try {
+      const res = await fetch(`/api/social/random-feed?before=${encodeURIComponent(cursor)}`)
+      const body = await res.json()
+      if (res.ok) {
+        setFeed(prev => [...prev, ...(body.data || [])])
+        setCursor(body.nextCursor || null)
+        setHasMore(!!body.hasMore)
+      }
+    } catch {}
+    setLoadingMore(false)
+  }
+
+  useEffect(() => {
+    if (!loaderRef.current || loading) return
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting) loadMore()
+      },
+      { rootMargin: '400px' }
+    )
+    observer.observe(loaderRef.current)
+    return () => observer.disconnect()
+  }, [loaderRef.current, loading, cursor, hasMore, loadingMore])
 
   if (loading) {
     return (
@@ -115,16 +147,25 @@ export function RandomFeed() {
                   </Avatar>
                 </Link>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
-                      {displayName}
-                    </span>
-                    <span className={`text-sm ${isDark ? 'text-white/30' : 'text-[#536471]'}`}>
-                      @{item.profile?.username}
-                    </span>
-                    <span className={`text-[10px] ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`}>
-                      · {timeAgo(item.created_at)}
-                    </span>
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+                        {displayName}
+                      </span>
+                      <span className={`text-sm ${isDark ? 'text-white/30' : 'text-[#536471]'}`}>
+                        @{item.profile?.username}
+                      </span>
+                      <span className={`text-[10px] ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`}>
+                        · {timeAgo(item.created_at)}
+                      </span>
+                    </div>
+                    <ReportBlockMenu
+                      targetType="reflection"
+                      targetId={item.id}
+                      authorId={item.user_id}
+                      authorName={displayName}
+                      onBlocked={() => setFeed(prev => prev.filter(f => f.user_id !== item.user_id))}
+                    />
                   </div>
                   <p className={`text-sm leading-relaxed mt-0.5 ${isDark ? 'text-white/80' : 'text-[#0F1419]'}`}>
                     {item.reflection_text}
@@ -188,12 +229,18 @@ export function RandomFeed() {
           )
         })}
       </AnimatePresence>
-      {feed.length === 0 && (
+      {feed.length === 0 && !loading && (
         <div className={`text-center py-16 ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
           <p className="text-sm">No reflections yet from the community.</p>
         </div>
       )}
-      <div ref={loaderRef} />
+      {hasMore && feed.length > 0 && (
+        <div ref={loaderRef} className="flex justify-center py-6">
+          {loadingMore && (
+            <div className={`h-5 w-5 rounded-full border-2 border-t-transparent animate-spin ${isDark ? 'border-white/20' : 'border-[#8B98A5]/40'}`} />
+          )}
+        </div>
+      )}
     </div>
   )
 }

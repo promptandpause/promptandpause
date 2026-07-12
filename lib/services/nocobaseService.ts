@@ -1,0 +1,109 @@
+const NOCOBASE_URL = process.env.NEXT_PUBLIC_NOCOBASE_URL || 'https://helpdesk.promptandpause.com'
+const NOCOBASE_EMAIL = process.env.NOCOBASE_EMAIL || 'admin@nocobase.com'
+const NOCOBASE_PASSWORD = process.env.NOCOBASE_PASSWORD || 'admin123'
+
+let authToken: string | null = null
+let tokenExpiry = 0
+
+async function authenticate(): Promise<string> {
+  if (authToken && Date.now() < tokenExpiry) return authToken
+
+  const res = await fetch(`${NOCOBASE_URL}/api/auth:signIn`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: NOCOBASE_EMAIL, password: NOCOBASE_PASSWORD }),
+  })
+
+  if (!res.ok) throw new Error('Failed to authenticate with helpdesk')
+
+  const data = await res.json()
+  authToken = data.data?.token || null
+  if (!authToken) throw new Error('No token received from helpdesk')
+  tokenExpiry = Date.now() + 50 * 60 * 1000
+  return authToken
+}
+
+export interface CreateTicketParams {
+  ticket_title: string
+  description_text?: string
+  priority_level?: 'low' | 'medium' | 'high' | 'urgent'
+  submitter_name?: string
+  submitter_email?: string
+}
+
+export interface TicketResult {
+  id: number
+  ticket_no: string
+  ticket_title: string
+  ticket_status: string
+  priority_level: string
+  createdAt: string
+}
+
+export async function createTicket(params: CreateTicketParams): Promise<TicketResult> {
+  const token = await authenticate()
+
+  const body: Record<string, any> = {
+    ticket_title: params.ticket_title,
+    description_text: params.description_text || '',
+    priority_level: params.priority_level || 'medium',
+    ticket_status: 'new',
+    submitted_at: new Date().toISOString(),
+  }
+
+  if (params.submitter_name || params.submitter_email) {
+    body.description_text = [
+      params.description_text,
+      '',
+      '---',
+      `From: ${params.submitter_name || 'Anonymous'}`,
+      params.submitter_email ? `Email: ${params.submitter_email}` : '',
+    ]
+      .filter(Boolean)
+      .join('\n')
+  }
+
+  const res = await fetch(`${NOCOBASE_URL}/api/tickets:create`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  })
+
+  if (!res.ok) {
+    const err = await res.text()
+    throw new Error(`Failed to create ticket: ${err}`)
+  }
+
+  const data = await res.json()
+  return data.data as TicketResult
+}
+
+export async function listUserTickets(email: string): Promise<TicketResult[]> {
+  const token = await authenticate()
+
+  const res = await fetch(
+    `${NOCOBASE_URL}/api/tickets:list?filter[description_text][$contains]=${encodeURIComponent(email)}&sort=-createdAt&pageSize=20`,
+    {
+      headers: { 'Authorization': `Bearer ${token}` },
+    },
+  )
+
+  if (!res.ok) return []
+
+  const data = await res.json()
+  return (data.data || []) as TicketResult[]
+}
+
+export async function getTicketStatus(taskId: string): Promise<any> {
+  const token = await authenticate()
+
+  const res = await fetch(`${NOCOBASE_URL}/api/backups:restoreStatus?task=${taskId}`, {
+    headers: { 'Authorization': `Bearer ${token}` },
+  })
+
+  if (!res.ok) return null
+  return res.json()
+}
