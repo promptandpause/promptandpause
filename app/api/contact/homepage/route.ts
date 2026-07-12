@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { Resend } from 'resend'
 import { withRateLimit } from '@/lib/security/rateLimit'
 import { createTicket } from '@/lib/services/nocobaseService'
+import { sendTicketConfirmation } from '@/lib/services/emailService'
 
 const HomepageContactSchema = z.object({
   name: z.string().min(2).max(100),
@@ -75,13 +76,21 @@ export async function POST(request: NextRequest) {
       }
 
       try {
-        await createTicket({
+        const contactTicket = await createTicket({
           ticket_title: `[Contact Form] ${subject.charAt(0).toUpperCase() + subject.slice(1)} - ${name}`,
           description_text: message,
           priority_level: isPremium ? 'high' : 'medium',
           submitter_name: name,
           submitter_email: email,
         })
+
+        sendTicketConfirmation({
+          email,
+          name,
+          ticketNo: contactTicket.ticket_no,
+          ticketTitle: contactTicket.ticket_title,
+          priority: contactTicket.priority_level,
+        }).catch(() => {})
       } catch {
         // ticket creation is optional - email was already sent
       }
