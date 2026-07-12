@@ -5,7 +5,7 @@ const NOCOBASE_URL = process.env.NEXT_PUBLIC_NOCOBASE_URL || 'https://promptandp
 const NOCOBASE_EMAIL = process.env.NOCOBASE_EMAIL || 'admin@nocobase.com'
 const NOCOBASE_PASSWORD = process.env.NOCOBASE_PASSWORD || 'admin123'
 const ROLE_HEADER = { 'X-Role': 'root' }
-const RESEND_API_KEY = process.env.RESEND_INBOUND_API_KEY || process.env.RESEND_API_KEY
+const RESEND_INBOUND_API_KEY = process.env.RESEND_INBOUND_API_KEY
 
 let authToken: string | null = null
 let tokenExpiry = 0
@@ -78,9 +78,9 @@ export async function POST(request: NextRequest) {
       fromEmail = extractSenderEmail(payload.data.from)
       fromName = extractSenderName(payload.data.from)
 
-      if (email_id && RESEND_API_KEY) {
+      if (email_id && RESEND_INBOUND_API_KEY) {
         const res = await fetch(`https://api.resend.com/emails/receiving/${email_id}`, {
-          headers: { Authorization: `Bearer ${RESEND_API_KEY}` },
+          headers: { Authorization: `Bearer ${RESEND_INBOUND_API_KEY}` },
         })
         if (res.ok) {
           const emailData = await res.json()
