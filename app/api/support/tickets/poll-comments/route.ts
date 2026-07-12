@@ -80,7 +80,8 @@ async function handlePoll(request: NextRequest) {
 
       const { email, name } = extractSubmitterInfo(ticket.description_text)
       if (!email) continue
-      if (comment.createdById === ticket.createdById) continue
+      const commentContent = comment.content || comment.description || ''
+      if (comment.createdById === ticket.createdById && commentContent.includes('[Customer replied')) continue
 
       await sendTicketReplyNotification({
         email,
