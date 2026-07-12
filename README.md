@@ -21,7 +21,7 @@
 📧 **Flexible Delivery** - Get prompts via email, Slack, or directly in your dashboard  
 📊 **Insightful Analytics** - Track your progress with mood trends, streak tracking, and reflection patterns  
 🎯 **Custom Focus Areas** - Premium users can create unlimited custom focus areas for targeted growth  
-🔒 **Privacy First** - Your reflections are private, secure, and never shared  
+🔒 **Private by Default** - Every reflection starts private and encrypted. Sharing is entirely opt-in, per reflection  
 🌍 **Accessible Anywhere** - Web-based platform works on any device
 
 ---
@@ -35,6 +35,9 @@
 - Basic mood tracking
 - Activity calendar
 - Predefined focus areas
+- Optional community feed, following, likes & comments
+- Personal profile page with customizable theming and a whiteboard
+- Block and report tools for a safe community
 
 ### Premium Features
 - **Unlimited custom focus areas** - Create personalized growth areas
@@ -93,7 +96,9 @@ Your privacy is our priority. We use industry-standard encryption and security p
 
 - 🔒 All data encrypted in transit and at rest
 - 🛡️ SOC 2 compliant infrastructure (Supabase)
-- 🚫 We never sell or share your personal data
+- 🚫 We never sell your personal data or use it for advertising
+- 👤 Reflections are private by default; you control what, if anything, you share and with whom
+- 🚩 Built-in reporting and blocking tools for community safety
 - ✅ GDPR compliant
 - 📥 Export your data anytime
 

@@ -187,6 +187,10 @@ function PricingCardsSection() {
                 <Check className="w-6 h-6 flex-shrink-0 mt-1 text-[#1D9BF0]" />
                 <span className="text-lg">Choose your delivery time</span>
               </div>
+              <div className="flex items-start gap-3">
+                <Check className="w-6 h-6 flex-shrink-0 mt-1 text-[#1D9BF0]" />
+                <span className="text-lg">Optional community feed, profile & sharing</span>
+              </div>
             </div>
 
             <div className="border-t border-[#B3D9F2] pt-8 mb-10">
@@ -398,6 +402,15 @@ function ComparisonTableSection() {
                 <td className="py-6 px-4 font-medium">Voice note prompts</td>
                 <td className="py-6 px-4 text-center">
                   <X className="w-6 h-6 text-[#B3D9F2] mx-auto" />
+                </td>
+                <td className="py-6 px-4 text-center bg-[#EFF3F4]">
+                  <Check className="w-6 h-6 text-[#1D9BF0] mx-auto" />
+                </td>
+              </tr>
+              <tr className="border-b border-[#B3D9F2]">
+                <td className="py-6 px-4 font-medium">Community feed, profile & sharing</td>
+                <td className="py-6 px-4 text-center">
+                  <Check className="w-6 h-6 text-[#1D9BF0] mx-auto" />
                 </td>
                 <td className="py-6 px-4 text-center bg-[#EFF3F4]">
                   <Check className="w-6 h-6 text-[#1D9BF0] mx-auto" />

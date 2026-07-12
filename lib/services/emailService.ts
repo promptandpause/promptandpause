@@ -3244,7 +3244,8 @@ export async function sendTicketConfirmation(params: {
 
   try {
     const { data, error } = await resend.emails.send({
-      from: `Prompt & Pause <${NOREPLY_EMAIL}>`,
+      from: `Prompt & Pause Support <${SUPPORT_EMAIL}>`,
+      replyTo: SUPPORT_EMAIL,
       to: email,
       subject: `[Ticket #${ticketNo}] We've received your request`,
       html,

@@ -77,6 +77,10 @@ export function emailFooter(): string {
               <td style="padding: 0 12px;">
                 <a href="${APP_URL}/privacy" target="_blank" rel="noopener noreferrer" class="email-text-gray" style="color: ${BRAND_COLORS.textGray}; text-decoration: none; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Privacy</a>
               </td>
+              <td class="email-text-muted" style="color: ${BRAND_COLORS.textMuted}; font-size: 12px;">·</td>
+              <td style="padding: 0 12px;">
+                <a href="${APP_URL}/contact" target="_blank" rel="noopener noreferrer" class="email-text-gray" style="color: ${BRAND_COLORS.textGray}; text-decoration: none; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Contact</a>
+              </td>
             </tr>
           </table>
           <p class="email-text-muted" style="color: ${BRAND_COLORS.textMuted}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; margin: 0 0 4px;">

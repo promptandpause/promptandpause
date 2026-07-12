@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
     try {
       const resend = getResendClient()
       const { data, error } = await resend.emails.send({
-        from: `Prompt & Pause <noreply@promptandpause.com>`,
+        from: `Prompt & Pause Support <${process.env.SUPPORT_EMAIL || 'support@promptandpause.com'}>`,
         to: contactEmail,
         replyTo: email,
         subject: `[Website] ${subject.charAt(0).toUpperCase() + subject.slice(1)} - From ${name}`,

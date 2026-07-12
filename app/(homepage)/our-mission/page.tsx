@@ -265,7 +265,8 @@ function ValuesSection() {
             <div>
               <h3 className="text-2xl md:text-3xl font-bold mb-4">Privacy-First</h3>
               <p className="text-[#536471] leading-relaxed text-lg">
-                Your reflections are encrypted, never sold, never shared
+                Your reflections are encrypted and never sold. Private by default — shared only if and when you
+                choose to.
               </p>
             </div>
           </div>
