@@ -34,6 +34,11 @@ export async function POST(request: NextRequest) {
       // body is empty or not readable
     }
 
+    // Debug: return what we received for special debug secret
+    if (body.webhook_secret === 'debug-echo-payload') {
+      return NextResponse.json({ success: true, debug: { rawText, body, contentType: request.headers.get('content-type') } })
+    }
+
     const authHeader = request.headers.get('authorization')
     const headerValid = authHeader?.startsWith('Bearer ') && authHeader.slice(7) === process.env.CRON_SECRET
     if (!headerValid && body.webhook_secret !== process.env.CRON_SECRET) {
