@@ -56,9 +56,19 @@ async function handlePoll(request: NextRequest) {
       return NextResponse.json({ success: true, checked: 0 })
     }
 
+    function extractSubmitterInfo(desc: string): { email?: string; name?: string } {
+      const emailMatch = desc.match(/Email:\s*(\S+@\S+)/)
+      const nameMatch = desc.match(/From:\s*(.+)/)
+      return {
+        email: emailMatch?.[1],
+        name: nameMatch?.[1]?.trim(),
+      }
+    }
+
     let sent = 0
     for (const comment of comments) {
       if (!comment.ticket_id) continue
+      if (!comment.createdById) continue
 
       const tRes = await fetch(
         `${NOCOBASE_URL}/api/tickets:get/${comment.ticket_id}`,
@@ -66,12 +76,15 @@ async function handlePoll(request: NextRequest) {
       )
       if (!tRes.ok) continue
       const { data: ticket } = await tRes.json()
-      if (!ticket?.submitter_email) continue
-      if (comment.createdById === ticket.submitter_id) continue
+      if (!ticket?.description_text) continue
+
+      const { email, name } = extractSubmitterInfo(ticket.description_text)
+      if (!email) continue
+      if (comment.createdById === ticket.createdById) continue
 
       await sendTicketReplyNotification({
-        email: ticket.submitter_email,
-        name: ticket.submitter_name || ticket.submitter_email,
+        email,
+        name: name || email,
         ticketNo: ticket.ticket_no,
         ticketTitle: ticket.ticket_title,
         replyText: comment.content || comment.description || '',
