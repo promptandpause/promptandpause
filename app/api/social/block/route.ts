@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthUser, createClient } from '@/lib/supabase/server'
+import { rateLimitOr429 } from '@/lib/utils/rateLimitResponse'
 import { z } from 'zod'
 
 const BlockSchema = z.object({
@@ -36,6 +37,9 @@ export async function POST(request: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
+    const limited = await rateLimitOr429(`block:${user.id}`, { limit: 20, windowMs: 60_000 })
+    if (limited) return limited
 
     const body = await request.json()
     const parsed = BlockSchema.safeParse(body)

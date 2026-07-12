@@ -47,7 +47,8 @@ function SupportContent() {
       const data = await res.json()
 
       if (!res.ok || !data.success) {
-        throw new Error(data.error || "Failed to submit ticket")
+        const detail = data.details?.fieldErrors ? Object.entries(data.details.fieldErrors).map(([k, v]) => `${k}: ${(v as string[]).join(', ')}`).join('; ') : ''
+        throw new Error(data.error + (detail ? ` — ${detail}` : ''))
       }
 
       setCreatedTicket(data.ticket)

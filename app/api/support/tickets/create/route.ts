@@ -6,7 +6,7 @@ import { withRateLimit } from '@/lib/security/rateLimit'
 
 const TicketSchema = z.object({
   ticket_title: z.string().min(2).max(200),
-  description_text: z.string().min(10).max(5000),
+  description_text: z.string().min(5).max(5000),
   priority_level: z.enum(['low', 'medium', 'high', 'urgent']).optional().default('medium'),
 })
 
