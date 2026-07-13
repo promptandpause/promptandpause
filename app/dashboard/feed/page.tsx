@@ -46,7 +46,7 @@ export default function FeedPage() {
         <div className="flex h-screen overflow-hidden">
           <DashboardSidebar />
           <main className="flex-1 pb-32 md:pb-10 overflow-y-auto scrollbar-thin">
-            <div className="max-w-[800px] mx-auto px-4 md:px-8 pt-16 md:pt-10 pb-6">
+            <div className="max-w-[1100px] mx-auto px-4 md:px-8 pt-16 md:pt-10 pb-6">
               {/* Header */}
               <motion.div
                 initial={{ opacity: 0, y: -8 }}

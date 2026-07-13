@@ -101,7 +101,7 @@ function InsightsContent() {
         <DashboardSidebar />
 
         <main className="flex-1 overflow-y-auto scrollbar-thin">
-          <div className="max-w-[680px] mx-auto px-4 md:px-8 pt-16 md:pt-10 pb-10 space-y-6">
+          <div className="max-w-[1100px] mx-auto px-4 md:px-8 pt-16 md:pt-10 pb-10 space-y-6">
             <motion.div
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
@@ -119,7 +119,7 @@ function InsightsContent() {
 
             <ActivityCalendar />
 
-            <div className="space-y-6">
+            <div className="grid gap-6 lg:grid-cols-2">
               <TierGate feature="mood-analytics">
                 <MoodAnalytics />
               </TierGate>

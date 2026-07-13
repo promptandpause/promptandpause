@@ -86,7 +86,7 @@ export default function SavedPage() {
           <DashboardSidebar />
 
           <main className="flex-1 pb-32 md:pb-10 overflow-y-auto scrollbar-thin">
-            <div className="max-w-[900px] mx-auto px-4 md:px-8 pt-16 md:pt-10 pb-6">
+            <div className="max-w-[1100px] mx-auto px-4 md:px-8 pt-16 md:pt-10 pb-6">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}

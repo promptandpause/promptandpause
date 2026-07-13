@@ -81,6 +81,13 @@ export function DashboardSidebar() {
     { icon: Trophy, label: "achievements", href: "/achievements", active: isActive("/achievements") },
   ]
 
+  // Desktop nav keeps Settings pinned at the bottom of the list, separate
+  // from the mobile drawer order (which stays as originally designed).
+  const desktopSidebarNav = [
+    ...sidebarNav.filter((item) => item.label !== "settings"),
+    ...sidebarNav.filter((item) => item.label === "settings"),
+  ]
+
   const mobileNav = [
     { id: "home", icon: House, label: t("nav.dashboard"), href: "/dashboard", active: isActive("/") },
 
@@ -194,7 +201,7 @@ export function DashboardSidebar() {
 
           {/* Navigation */}
           <nav className="flex-1 space-y-0.5">
-            {sidebarNav.map((item) => {
+            {desktopSidebarNav.map((item) => {
               const href = (item as any).isProfile ? `/${userProfile?.username || ''}` : item.href
               const active = (item as any).isProfile
                 ? pathname === `/${userProfile?.username || ''}`

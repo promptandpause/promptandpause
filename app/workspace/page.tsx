@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { useTheme } from '@/contexts/ThemeContext'
 import { Users, ArrowLeft, Plus, Loader2 } from 'lucide-react'
 import Link from 'next/link'
+import { DashboardSidebar } from '@/app/dashboard/components/DashboardSidebar'
 
 interface OrgSummary {
   id: string
@@ -69,10 +70,13 @@ export default function WorkspaceLandingPage() {
 
   return (
     <div className={`min-h-screen ${isDark ? 'bg-[#0A0A0A]' : 'bg-[#FFFFFF]'}`}>
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+      <div className="flex h-screen overflow-hidden">
+        <DashboardSidebar />
+        <main className="flex-1 pb-32 md:pb-10 overflow-y-auto scrollbar-thin">
+        <div className="max-w-[900px] mx-auto px-4 sm:px-6 pt-16 md:pt-10 pb-8">
         <Link
           href="/dashboard"
-          className={`inline-flex items-center gap-2 text-sm mb-8 transition-colors ${
+          className={`hidden md:inline-flex items-center gap-2 text-sm mb-8 transition-colors ${
             isDark ? 'text-white/50 hover:text-white' : 'text-[#536471] hover:text-[#0F1419]'
           }`}
         >
@@ -218,6 +222,8 @@ export default function WorkspaceLandingPage() {
             )}
           </>
         )}
+        </div>
+        </main>
       </div>
     </div>
   )
