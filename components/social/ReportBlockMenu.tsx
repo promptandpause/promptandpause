@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useRef, useEffect } from 'react'
-import { MoreHorizontal, Flag, UserX } from 'lucide-react'
+import { MoreHorizontal, Flag, UserX, UserCheck } from 'lucide-react'
+import { toast } from 'sonner'
 import { useTheme } from '@/contexts/ThemeContext'
 
 const REASONS: { value: string; label: string }[] = [
@@ -14,14 +15,16 @@ const REASONS: { value: string; label: string }[] = [
 ]
 
 interface ReportBlockMenuProps {
-  targetType: 'reflection' | 'comment'
+  targetType: 'reflection' | 'comment' | 'user'
   targetId: string
   authorId: string
   authorName?: string
+  isBlocked?: boolean
   onBlocked?: () => void
+  onUnblock?: () => void
 }
 
-export function ReportBlockMenu({ targetType, targetId, authorId, authorName, onBlocked }: ReportBlockMenuProps) {
+export function ReportBlockMenu({ targetType, targetId, authorId, authorName, isBlocked, onBlocked, onUnblock }: ReportBlockMenuProps) {
   const { theme } = useTheme()
   const isDark = theme === 'dark'
   const [open, setOpen] = useState(false)
@@ -43,21 +46,25 @@ export function ReportBlockMenu({ targetType, targetId, authorId, authorName, on
 
   async function submitReport(reason: string) {
     try {
-      await fetch('/api/social/report', {
+      const res = await fetch('/api/social/report', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ target_type: targetType, target_id: targetId, reason }),
       })
+      if (res.ok) {
+        toast.success('Report submitted. Our team will review it.')
+      } else {
+        toast.error('Failed to submit report')
+      }
       setReported(true)
-    } catch {}
+    } catch {
+      toast.error('Failed to submit report')
+    }
     setShowReasons(false)
     setTimeout(() => setOpen(false), 1200)
   }
 
   async function blockUser() {
-    if (!confirm(`Block ${authorName || 'this person'}? You won't see each other's reflections, comments, or profiles, and any friend/follow connection will be removed.`)) {
-      return
-    }
     setBlocking(true)
     try {
       const res = await fetch('/api/social/block', {
@@ -66,9 +73,33 @@ export function ReportBlockMenu({ targetType, targetId, authorId, authorName, on
         body: JSON.stringify({ target_id: authorId }),
       })
       if (res.ok) {
+        toast.success(`Blocked ${authorName || 'user'}`)
         onBlocked?.()
+      } else {
+        toast.error('Failed to block user')
       }
-    } catch {}
+    } catch {
+      toast.error('Failed to block user')
+    }
+    setBlocking(false)
+    setOpen(false)
+  }
+
+  async function unblockUser() {
+    setBlocking(true)
+    try {
+      const res = await fetch(`/api/social/block?target_id=${authorId}`, {
+        method: 'DELETE',
+      })
+      if (res.ok) {
+        toast.success(`Unblocked ${authorName || 'user'}`)
+        onUnblock?.()
+      } else {
+        toast.error('Failed to unblock user')
+      }
+    } catch {
+      toast.error('Failed to unblock user')
+    }
     setBlocking(false)
     setOpen(false)
   }
@@ -103,14 +134,14 @@ export function ReportBlockMenu({ targetType, targetId, authorId, authorName, on
                 {reported ? 'Reported' : `Report ${targetType}`}
               </button>
               <button
-                onClick={blockUser}
+                onClick={isBlocked ? unblockUser : blockUser}
                 disabled={blocking}
                 className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 text-sm text-left transition-colors border-t ${
                   isDark ? 'text-red-400 hover:bg-white/5 border-white/[0.06]' : 'text-red-500 hover:bg-[#F7F9FA] border-[#EFF3F4]'
                 }`}
               >
-                <UserX size={15} />
-                {blocking ? 'Blocking…' : `Block ${authorName || 'user'}`}
+                {isBlocked ? <UserCheck size={15} /> : <UserX size={15} />}
+                {blocking ? 'Processing…' : isBlocked ? `Unblock ${authorName || 'user'}` : `Block ${authorName || 'user'}`}
               </button>
             </>
           ) : (

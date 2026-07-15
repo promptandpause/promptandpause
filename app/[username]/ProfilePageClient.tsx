@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { User, MessageCircle, Music, Palette, Sparkles, Lock, Pencil, Settings, Layout, Archive, House, Heart, Rss, Trash2, X, ArrowLeft } from 'lucide-react'
+import { User, MessageCircle, Music, Palette, Sparkles, Lock, Pencil, Settings, Layout, Archive, House, Heart, Rss, Trash2, X, ArrowLeft, Ban } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { useTheme } from '@/contexts/ThemeContext'
+import { toast } from 'sonner'
 import { FriendButton } from '@/components/social/FriendButton'
 import { WhiteboardSection } from '@/components/social/WhiteboardSection'
 import { CommentSection } from '@/components/social/CommentSection'
@@ -70,6 +71,8 @@ export function ProfilePageClient({
   const [likesHasMore, setLikesHasMore] = useState(false)
   const [likesLoadingMore, setLikesLoadingMore] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
+  const [blockedUsers, setBlockedUsers] = useState<string[]>([])
+  const isBlocked = !isOwnProfile && blockedUsers.includes(profile.id)
   const pathname = usePathname()
   const router = useRouter()
 
@@ -79,6 +82,14 @@ export function ProfilePageClient({
       .then(d => setLoggedInUserId(d?.data?.id || null))
       .catch(() => {})
   }, [])
+
+  useEffect(() => {
+    fetch('/api/social/block')
+      .then(r => r.ok ? r.json() : Promise.resolve({ data: [] }))
+      .then(d => setBlockedUsers((d?.data || []).map((b: { blocked_id: string }) => b.blocked_id)))
+      .catch(() => {})
+  }, [])
+
 
   useEffect(() => {
     if (activeTab === 'likes' && !likesLoaded) {
@@ -224,6 +235,11 @@ export function ProfilePageClient({
                     @{profile.username}
                   </p>
                 )}
+                {isBlocked && (
+                  <span className={`mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold ${isDark ? 'bg-red-500/15 text-red-400' : 'bg-red-50 text-red-600'}`}>
+                    <Ban size={12} /> Blocked
+                  </span>
+                )}
               </div>
               <div className="sm:ml-auto flex items-center gap-2 flex-wrap">
                 {isOwnProfile ? (
@@ -252,7 +268,18 @@ export function ProfilePageClient({
                     </Link>
                   </>
                 ) : (
-                  <FriendButton profileUserId={profile.id} />
+                  <div className="flex items-center gap-2">
+                    <FriendButton profileUserId={profile.id} />
+                    <ReportBlockMenu
+                      targetType="user"
+                      targetId={profile.id}
+                      authorId={profile.id}
+                      authorName={displayName ?? undefined}
+                      isBlocked={isBlocked}
+                      onBlocked={() => setBlockedUsers(prev => prev.includes(profile.id) ? prev : [...prev, profile.id])}
+                      onUnblock={() => setBlockedUsers(prev => prev.filter(id => id !== profile.id))}
+                    />
+                  </div>
                 )}
               </div>
             </div>
@@ -508,7 +535,9 @@ export function ProfilePageClient({
                             targetId={ref.id}
                             authorId={ref.user_id}
                             authorName={authorName}
+                            isBlocked={blockedUsers.includes(ref.user_id)}
                             onBlocked={() => setLikesFeed(prev => prev.filter(f => f.user_id !== ref.user_id))}
+                            onUnblock={() => setBlockedUsers(prev => prev.filter(id => id !== ref.user_id))}
                           />
                         </div>
                       )}

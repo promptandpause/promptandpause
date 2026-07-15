@@ -6,6 +6,7 @@ import { useTheme } from '@/contexts/ThemeContext'
 import { useRouter } from 'next/navigation'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Bell, UserPlus, MessageCircle, MessageSquare, Share2, Sparkle, Heart, Check, X } from 'lucide-react'
+import { toast } from 'sonner'
 import { getSupabaseClient } from '@/lib/supabase/client'
 
 interface Notification {
@@ -138,9 +139,18 @@ export function NotificationBell() {
   }, [open])
 
   async function markAllRead() {
-    await fetch('/api/social/notifications', { method: 'PUT' })
-    setNotifications(prev => prev.map(n => ({ ...n, is_read: true })))
-    setUnreadCount(0)
+    try {
+      const res = await fetch('/api/social/notifications', { method: 'PUT' })
+      if (res.ok) {
+        setNotifications(prev => prev.map(n => ({ ...n, is_read: true })))
+        setUnreadCount(0)
+        toast.success('All notifications marked as read')
+      } else {
+        toast.error('Failed to mark notifications as read')
+      }
+    } catch {
+      toast.error('Failed to mark notifications as read')
+    }
   }
 
   const typeIcon = (type: string) => {
@@ -233,8 +243,15 @@ export function NotificationBell() {
                   notifications.map(n => (
                     <button
                       key={n.id}
-                      onClick={() => {
+                      onClick={async () => {
                         setOpen(false)
+                        if (!n.is_read) {
+                          try {
+                            await fetch(`/api/social/notifications?id=${n.id}`, { method: 'PATCH' })
+                            setNotifications(prev => prev.map(item => item.id === n.id ? { ...item, is_read: true } : item))
+                            setUnreadCount(prev => Math.max(0, prev - 1))
+                          } catch {}
+                        }
                         if (n.actor?.username && n.actor.username !== 'null') router.push(`/${n.actor.username}`)
                       }}
                       className={`w-full text-left px-4 py-3 flex items-start gap-3 transition-colors ${

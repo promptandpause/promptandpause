@@ -9,12 +9,12 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import {
-  Bell, CaretLeft, CaretRight, Question, Lock, Palette,
-  Shield, Trash, Upload, User, Lightning, CreditCard,
-  GlobeHemisphereWest, Spinner, CheckCircle, XCircle, Gear, BatteryCharging,
-  ArrowRight, Envelope, Key, Eye, EyeSlash, Copy, Check, ArrowSquareOut, Notebook,
-  Layout, ArchiveBox, Crown, Calendar, DeviceMobile
-} from "phosphor-react"
+  Bell, ChevronLeft as CaretLeft, ChevronRight as CaretRight, HelpCircle as Question, Lock, Palette,
+  Shield, Trash2 as Trash, Upload, User, Zap as Lightning, CreditCard,
+  Globe as GlobeHemisphereWest, Loader2 as Spinner, CheckCircle2 as CheckCircle, XCircle, Settings as Gear, BatteryCharging,
+  ArrowRight, Mail as Envelope, Key, Eye, EyeOff as EyeSlash, Copy, Check, ExternalLink as ArrowSquareOut, BookOpen as Notebook,
+  LayoutGrid as Layout, Archive as ArchiveBox, Crown, Calendar, Smartphone as DeviceMobile
+} from "lucide-react"
 import { SlackIcon } from "@/components/icons/SlackIcon"
 import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon"
 import { TeamsIcon } from "@/components/icons/TeamsIcon"
@@ -950,225 +950,148 @@ function SettingsPageContent() {
           {/* Mobile: Apple iOS-style Settings List */}
           <div className="md:hidden">
             {currentView === 'main' ? (
-              <div className="space-y-6">
-                {/* Header - Large title like iOS */}
-                <div className="px-1 pt-2">
-                  <h1 className={`text-[34px] font-bold leading-tight ${
+              <div className="space-y-1">
+                {/* Header */}
+                <div className="px-1 pt-2 pb-3">
+                  <h1 className={`text-[28px] font-bold leading-tight ${
                     theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                   }`}>Settings</h1>
                 </div>
 
-                {/* Profile Card - Apple style prominent user card */}
-                <div 
+                {/* Profile row */}
+                <button
                   onClick={() => navigateToView('profile')}
-                  className={`rounded-xl p-4 active:opacity-70 transition-opacity cursor-pointer ${
-                    theme === 'dark'
-                      ? 'bg-white/10 backdrop-blur-xl'
-                      : 'bg-white shadow-sm'
+                  className={`w-full flex items-center gap-3 px-1 py-3 text-left transition-colors ${
+                    theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#F7F9FA]'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className={`w-14 h-14 rounded-full flex items-center justify-center ${
-                      theme === 'dark'
-                        ? 'bg-gradient-to-br from-blue-400 to-blue-600'
-                        : 'bg-gradient-to-br from-blue-400 to-blue-600'
-                    }`}>
-                      <User size={28} weight="bold" className="text-white" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className={`font-semibold text-lg ${
-                        theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
-                      }`}>{fullName || 'Your Profile'}</p>
-                      <p className={`text-sm ${
-                        theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
-                      }`}>Manage your profile</p>
-                    </div>
-                    <CaretRight size={20} weight="bold" className={`flex-shrink-0 ${
-                      theme === 'dark' ? 'text-white/30' : 'text-gray-300'
-                    }`} />
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
+                    theme === 'dark' ? 'bg-white/10' : 'bg-[#EFF3F4]'
+                  }`}>
+                    <User size={18} className={theme === 'dark' ? 'text-white/70' : 'text-[#536471]'} />
                   </div>
-                </div>
-
-                {/* Group 1: Core Settings */}
-                <div className={`rounded-xl overflow-hidden ${
-                  theme === 'dark' ? 'bg-white/10 backdrop-blur-xl' : 'bg-white shadow-sm'
-                }`}>
-                  {/* Notifications */}
-                  <div 
-                    onClick={() => navigateToView('notifications')}
-                    className={`flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity cursor-pointer ${
-                      theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#EFF3F4]'
-                    }`}
-                  >
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-red-400 to-red-600">
-                      <Bell size={16} weight="bold" className="text-white" />
-                    </div>
-                    <span className={`flex-1 text-[17px] ${
+                  <div className="flex-1 min-w-0">
+                    <p className={`font-semibold text-[15px] truncate ${
                       theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
-                    }`}>Notifications</span>
-                    <CaretRight size={20} weight="bold" className={`${
-                      theme === 'dark' ? 'text-white/30' : 'text-gray-300'
-                    }`} />
-                  </div>
-                  
-                  {/* Divider */}
-                  <div className={`ml-[60px] h-px ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-200'}`} />
-                  
-                  {/* Security */}
-                  <div 
-                    onClick={() => navigateToView('security')}
-                    className={`flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity cursor-pointer ${
-                      theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#EFF3F4]'
-                    }`}
-                  >
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-gray-500 to-gray-700">
-                      <Lock size={16} weight="bold" className="text-white" />
-                    </div>
-                    <span className={`flex-1 text-[17px] ${
-                      theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
-                    }`}>Security</span>
-                    <CaretRight size={20} weight="bold" className={`${
-                      theme === 'dark' ? 'text-white/30' : 'text-gray-300'
-                    }`} />
-                  </div>
-                  
-                  {/* Divider */}
-                  <div className={`ml-[60px] h-px ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-200'}`} />
-                  
-                  {/* Preferences */}
-                  <div 
-                    onClick={() => navigateToView('preferences')}
-                    className={`flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity cursor-pointer ${
-                      theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#EFF3F4]'
-                    }`}
-                  >
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-purple-400 to-purple-600">
-                      <Palette size={16} weight="bold" className="text-white" />
-                    </div>
-                    <span className={`flex-1 text-[17px] ${
-                      theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
-                    }`}>Preferences</span>
-                    <CaretRight size={20} weight="bold" className={`${
-                      theme === 'dark' ? 'text-white/30' : 'text-gray-300'
-                    }`} />
-                  </div>
-                </div>
-
-                {/* Group 2: Subscription & Integrations */}
-                <div className={`rounded-xl overflow-hidden ${
-                  theme === 'dark' ? 'bg-white/10 backdrop-blur-xl' : 'bg-white shadow-sm'
-                }`}>
-                  {/* Subscription */}
-                  <div 
-                    onClick={() => navigateToView('subscription')}
-                    className={`flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity cursor-pointer ${
-                      theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#EFF3F4]'
-                    }`}
-                  >
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-green-400 to-green-600">
-                      <CreditCard size={16} weight="bold" className="text-white" />
-                    </div>
-                    <span className={`flex-1 text-[17px] ${
-                      theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
-                    }`}>Subscription</span>
-                    <span className={`text-[15px] mr-1 ${
+                    }`}>{fullName || 'Your Profile'}</p>
+                    <p className={`text-[13px] ${
                       theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
-                    }`}>
-                      {tier === 'premium' && isTrial ? 'Trial' : tier === 'premium' ? 'Premium' : 'Free'}
-                    </span>
-                    <CaretRight size={20} weight="bold" className={`${
-                      theme === 'dark' ? 'text-white/30' : 'text-gray-300'
-                    }`} />
+                    }`}>Name, email, timezone</p>
                   </div>
-                  
-                  {/* Divider */}
-                  <div className={`ml-[60px] h-px ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-200'}`} />
-                  
-                  {/* Integrations */}
-                  <div 
-                    onClick={() => navigateToView('integrations')}
-                    className={`flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity cursor-pointer ${
-                      theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#EFF3F4]'
+                  <CaretRight size={18} className={theme === 'dark' ? 'text-white/25' : 'text-[#CFD9DE]'} />
+                </button>
+
+                <div className={`h-px my-2 ${theme === 'dark' ? 'bg-white/[0.08]' : 'bg-[#EFF3F4]'}`} />
+
+                {/* Account section */}
+                <p className={`px-1 pt-2 pb-1 text-[12px] font-semibold uppercase tracking-wide ${
+                  theme === 'dark' ? 'text-white/30' : 'text-[#8B98A5]'
+                }`}>Account</p>
+
+                {[
+                  { view: 'notifications' as SettingsView, icon: Bell, label: 'Notifications' },
+                  { view: 'security' as SettingsView, icon: Lock, label: 'Security' },
+                  { view: 'preferences' as SettingsView, icon: Palette, label: 'Preferences' },
+                ].map((item, i) => (
+                  <button
+                    key={item.view}
+                    onClick={() => navigateToView(item.view)}
+                    className={`w-full flex items-center gap-3 px-1 py-3 text-left transition-colors ${
+                      theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#F7F9FA]'
                     }`}
                   >
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-indigo-400 to-indigo-600">
-                      <Lightning size={16} weight="bold" className="text-white" />
-                    </div>
-                    <span className={`flex-1 text-[17px] ${
+                    <item.icon size={18} className={theme === 'dark' ? 'text-white/50' : 'text-[#536471]'} />
+                    <span className={`flex-1 text-[15px] ${
                       theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
-                    }`}>Integrations</span>
-                    <CaretRight size={20} weight="bold" className={`${
-                      theme === 'dark' ? 'text-white/30' : 'text-gray-300'
-                    }`} />
-                  </div>
-                </div>
-
-                {/* Group 3: Support */}
-                <div className={`rounded-xl overflow-hidden ${
-                  theme === 'dark' ? 'bg-white/10 backdrop-blur-xl' : 'bg-white shadow-sm'
-                }`}>
-                  <Link href="/support" className="block">
-                    <div 
-                      className={`flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity cursor-pointer ${
-                        theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#EFF3F4]'
-                      }`}
-                    >
-                      <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-blue-400 to-blue-600">
-                        <Question size={16} weight="bold" className="text-white" />
-                      </div>
-                      <span className={`flex-1 text-[17px] ${
-                        theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
-                      }`}>Contact Support</span>
-                      <CaretRight size={20} weight="bold" className={`${
-                        theme === 'dark' ? 'text-white/30' : 'text-gray-300'
-                      }`} />
-                    </div>
-                  </Link>
-                </div>
-
-                {/* Group 4: Account Management */}
-                <div className={`rounded-xl overflow-hidden ${
-                  theme === 'dark' ? 'bg-white/10 backdrop-blur-xl' : 'bg-white shadow-sm'
-                }`}>
-                  {/* Sign Out */}
-                  <button 
-                    onClick={async () => {
-                      await supabase.auth.signOut()
-                      router.push('/auth')
-                    }}
-                    className={`w-full flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity cursor-pointer ${
-                      theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#EFF3F4]'
-                    }`}
-                  >
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-gray-400 to-gray-600">
-                      <ArrowRight size={16} weight="bold" className="text-white" />
-                    </div>
-                    <span className={`flex-1 text-left text-[17px] ${
-                      theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
-                    }`}>Sign Out</span>
+                    }`}>{item.label}</span>
+                    <CaretRight size={18} className={theme === 'dark' ? 'text-white/25' : 'text-[#CFD9DE]'} />
                   </button>
-                  
-                  {/* Divider */}
-                  <div className={`ml-[60px] h-px ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-200'}`} />
-                  
-                  {/* Account Management */}
-                  <div 
-                    onClick={() => navigateToView('danger')}
-                    className={`flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity cursor-pointer ${
-                      theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#EFF3F4]'
-                    }`}
-                  >
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-red-500 to-red-700">
-                      <Shield size={16} weight="bold" className="text-white" />
-                    </div>
-                    <span className={`flex-1 text-[17px] ${
-                      theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
-                    }`}>Account Management</span>
-                    <CaretRight size={20} weight="bold" className={`${
-                      theme === 'dark' ? 'text-white/30' : 'text-gray-300'
-                    }`} />
-                  </div>
-                </div>
+                ))}
+
+                <div className={`h-px my-2 ${theme === 'dark' ? 'bg-white/[0.08]' : 'bg-[#EFF3F4]'}`} />
+
+                {/* Billing section */}
+                <p className={`px-1 pt-2 pb-1 text-[12px] font-semibold uppercase tracking-wide ${
+                  theme === 'dark' ? 'text-white/30' : 'text-[#8B98A5]'
+                }`}>Billing & Connections</p>
+
+                <button
+                  onClick={() => navigateToView('subscription')}
+                  className={`w-full flex items-center gap-3 px-1 py-3 text-left transition-colors ${
+                    theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#F7F9FA]'
+                  }`}
+                >
+                  <CreditCard size={18} className={theme === 'dark' ? 'text-white/50' : 'text-[#536471]'} />
+                  <span className={`flex-1 text-[15px] ${
+                    theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
+                  }`}>Subscription</span>
+                  <span className={`text-[13px] mr-1 ${
+                    theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
+                  }`}>
+                    {tier === 'premium' && isTrial ? 'Trial' : tier === 'premium' ? 'Premium' : 'Free'}
+                  </span>
+                  <CaretRight size={18} className={theme === 'dark' ? 'text-white/25' : 'text-[#CFD9DE]'} />
+                </button>
+
+                <button
+                  onClick={() => navigateToView('integrations')}
+                  className={`w-full flex items-center gap-3 px-1 py-3 text-left transition-colors ${
+                    theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#F7F9FA]'
+                  }`}
+                >
+                  <Lightning size={18} className={theme === 'dark' ? 'text-white/50' : 'text-[#536471]'} />
+                  <span className={`flex-1 text-[15px] ${
+                    theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
+                  }`}>Integrations</span>
+                  <CaretRight size={18} className={theme === 'dark' ? 'text-white/25' : 'text-[#CFD9DE]'} />
+                </button>
+
+                <div className={`h-px my-2 ${theme === 'dark' ? 'bg-white/[0.08]' : 'bg-[#EFF3F4]'}`} />
+
+                {/* Support section */}
+                <p className={`px-1 pt-2 pb-1 text-[12px] font-semibold uppercase tracking-wide ${
+                  theme === 'dark' ? 'text-white/30' : 'text-[#8B98A5]'
+                }`}>Support</p>
+
+                <Link
+                  href="/support"
+                  className={`w-full flex items-center gap-3 px-1 py-3 text-left transition-colors ${
+                    theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#F7F9FA]'
+                  }`}
+                >
+                  <Question size={18} className={theme === 'dark' ? 'text-white/50' : 'text-[#536471]'} />
+                  <span className={`flex-1 text-[15px] ${
+                    theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
+                  }`}>Contact Support</span>
+                  <CaretRight size={18} className={theme === 'dark' ? 'text-white/25' : 'text-[#CFD9DE]'} />
+                </Link>
+
+                <div className={`h-px my-2 ${theme === 'dark' ? 'bg-white/[0.08]' : 'bg-[#EFF3F4]'}`} />
+
+                {/* Danger / sign out */}
+                <button
+                  onClick={async () => {
+                    await supabase.auth.signOut()
+                    router.push('/auth')
+                  }}
+                  className={`w-full flex items-center gap-3 px-1 py-3 text-left transition-colors ${
+                    theme === 'dark' ? 'active:bg-white/5' : 'active:bg-[#F7F9FA]'
+                  }`}
+                >
+                  <ArrowRight size={18} className={theme === 'dark' ? 'text-white/50' : 'text-[#536471]'} />
+                  <span className={`flex-1 text-[15px] ${
+                    theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
+                  }`}>Sign Out</span>
+                </button>
+
+                <button
+                  onClick={() => navigateToView('danger')}
+                  className="w-full flex items-center gap-3 px-1 py-3 text-left transition-colors active:bg-red-500/5"
+                >
+                  <Shield size={18} className="text-red-500" />
+                  <span className="flex-1 text-[15px] text-red-500 font-medium">Account Management</span>
+                  <CaretRight size={18} className="text-red-500/40" />
+                </button>
               </div>
             ) : (
               <div 
@@ -1184,7 +1107,7 @@ function SettingsPageContent() {
                         : 'text-blue-600 active:text-blue-800'
                     }`}
                   >
-                    <CaretLeft size={18} weight="bold" />
+                    <CaretLeft size={18} strokeWidth={2.5} />
                     <span className="text-sm font-medium">Settings</span>
                     <span className={`text-sm ${theme === 'dark' ? 'text-white/30' : 'text-[#8B98A5]'}`}>/</span>
                     <span className={`text-sm ${theme === 'dark' ? 'text-white/70' : 'text-[#536471]'}`}>
@@ -1207,7 +1130,7 @@ function SettingsPageContent() {
                       : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
                   }`}>
                     <div className="flex items-center gap-2 mb-4">
-                      <User size={20} weight="bold" className="text-blue-600" />
+                      <User size={20} strokeWidth={2.5} className="text-blue-600" />
                       <h3 className={`text-xl font-semibold ${
                         theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                       }`}>Profile</h3>
@@ -1305,7 +1228,7 @@ function SettingsPageContent() {
                         : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
                     }`}>
                       <div className="flex items-center gap-2 mb-3">
-                        <DeviceMobile size={16} weight="bold" className="text-blue-500" />
+                        <DeviceMobile size={16} strokeWidth={2.5} className="text-blue-500" />
                         <h4 className={`text-sm font-semibold uppercase tracking-wide ${
                           theme === 'dark' ? 'text-white/50' : 'text-[#8B98A5]'
                         }`}>Device</h4>
@@ -1320,7 +1243,7 @@ function SettingsPageContent() {
                         : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
                     }`}>
                       <div className="flex items-center gap-2 mb-3">
-                        <Envelope size={16} weight="bold" className="text-green-500" />
+                        <Envelope size={16} strokeWidth={2.5} className="text-green-500" />
                         <h4 className={`text-sm font-semibold uppercase tracking-wide ${
                           theme === 'dark' ? 'text-white/50' : 'text-[#8B98A5]'
                         }`}>Email</h4>
@@ -1375,7 +1298,7 @@ function SettingsPageContent() {
                         : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
                     }`}>
                       <div className="flex items-center gap-2 mb-3">
-                        <Calendar size={16} weight="bold" className="text-purple-500" />
+                        <Calendar size={16} strokeWidth={2.5} className="text-purple-500" />
                         <h4 className={`text-sm font-semibold uppercase tracking-wide ${
                           theme === 'dark' ? 'text-white/50' : 'text-[#8B98A5]'
                         }`}>Schedule</h4>
@@ -1409,7 +1332,7 @@ function SettingsPageContent() {
                             <div className={`absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none ${
                               theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'
                             }`}>
-                              <CaretRight size={20} weight="bold" className="rotate-90" />
+                              <CaretRight size={20} strokeWidth={2.5} className="rotate-90" />
                             </div>
                           </div>
                           <p className={`text-xs ${
@@ -1427,7 +1350,7 @@ function SettingsPageContent() {
                               <Link href="/settings" onClick={() => navigateToView('subscription')} className={`text-xs px-2 py-1 rounded-full flex items-center gap-1 ${
                                 theme === 'dark' ? 'bg-purple-500/20 text-purple-300 hover:bg-purple-500/30' : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
                               }`}>
-                                <Crown size={12} weight="bold" />
+                                <Crown size={12} strokeWidth={2.5} />
                                 3 included
                               </Link>
                             )}
@@ -1493,7 +1416,7 @@ function SettingsPageContent() {
                       : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
                   }`}>
                     <div className="flex items-center gap-2 mb-4">
-                      <Lock size={20} weight="bold" className="text-[#8B98A5]" />
+                      <Lock size={20} strokeWidth={2.5} className="text-[#8B98A5]" />
                       <h3 className={`text-xl font-semibold ${
                         theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                       }`}>Security</h3>
@@ -1505,7 +1428,7 @@ function SettingsPageContent() {
                           : 'bg-green-50'
                       }`}>
                         <div className="flex items-center gap-2">
-                          <CheckCircle size={16} weight="bold" className={`${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`} />
+                          <CheckCircle size={16} strokeWidth={2.5} className={`${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`} />
                           <p className={`text-sm font-medium ${
                             theme === 'dark' ? 'text-green-300' : 'text-green-700'
                           }`}>Signed in with Google</p>
@@ -1544,7 +1467,7 @@ function SettingsPageContent() {
                                 theme === 'dark' ? 'text-white/40 hover:text-white/50' : 'text-[#8B98A5] hover:text-[#8B98A5]'
                               }`}
                             >
-                              {showPasswordFields ? <EyeSlash size={20} weight="bold" /> : <Eye size={20} weight="bold" />}
+                              {showPasswordFields ? <EyeSlash size={20} strokeWidth={2.5} /> : <Eye size={20} strokeWidth={2.5} />}
                             </button>
                           </div>
                         </div>
@@ -1572,7 +1495,7 @@ function SettingsPageContent() {
                               theme === 'dark' ? 'text-white/40 hover:text-white/50' : 'text-[#8B98A5] hover:text-[#8B98A5]'
                             }`}
                           >
-                            {showPasswordFields ? <EyeSlash size={20} weight="bold" /> : <Eye size={20} weight="bold" />}
+                            {showPasswordFields ? <EyeSlash size={20} strokeWidth={2.5} /> : <Eye size={20} strokeWidth={2.5} />}
                           </button>
                         </div>
                       </div>
@@ -1599,7 +1522,7 @@ function SettingsPageContent() {
                               theme === 'dark' ? 'text-white/40 hover:text-white/50' : 'text-[#8B98A5] hover:text-[#8B98A5]'
                             }`}
                           >
-                            {showPasswordFields ? <EyeSlash size={20} weight="bold" /> : <Eye size={20} weight="bold" />}
+                            {showPasswordFields ? <EyeSlash size={20} strokeWidth={2.5} /> : <Eye size={20} strokeWidth={2.5} />}
                           </button>
                         </div>
                       </div>
@@ -1623,7 +1546,7 @@ function SettingsPageContent() {
                       : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
                   }`}>
                     <div className="flex items-center gap-2 mb-4">
-                      <Palette size={20} weight="bold" className="text-purple-600" />
+                      <Palette size={20} strokeWidth={2.5} className="text-purple-600" />
                       <h3 className={`text-xl font-semibold ${
                         theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                       }`}>Preferences</h3>
@@ -1795,7 +1718,7 @@ function SettingsPageContent() {
                       : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
                   }`}>
                     <div className="flex items-center gap-2 mb-4">
-                      <CreditCard size={20} weight="bold" className="text-green-600" />
+                      <CreditCard size={20} strokeWidth={2.5} className="text-green-600" />
                       <h3 className={`text-xl font-semibold ${
                         theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                       }`}>Subscription</h3>
@@ -1845,7 +1768,7 @@ function SettingsPageContent() {
                                 ? 'bg-yellow-500/20 border border-yellow-400/40 text-yellow-300'
                                 : 'bg-yellow-100 border-2 border-yellow-300 text-yellow-700'
                             }`}>
-                              <Crown size={12} weight="bold" /> Active
+                              <Crown size={12} strokeWidth={2.5} /> Active
                             </span>
                           )}
                           {currentPlan === "premium" && isTrial && (
@@ -1854,7 +1777,7 @@ function SettingsPageContent() {
                                 ? 'bg-purple-500/20 border border-purple-400/40 text-purple-300'
                                 : 'bg-purple-100 border-2 border-purple-300 text-purple-700'
                             }`}>
-                              <Lightning size={12} weight="bold" /> Trial
+                              <Lightning size={12} strokeWidth={2.5} /> Trial
                             </span>
                           )}
                           {currentPlan === "free" && (
@@ -1878,7 +1801,7 @@ function SettingsPageContent() {
                               : 'bg-gradient-to-br from-yellow-100 to-purple-100 border-2 border-yellow-300'
                           }`}>
                             <div className="flex items-center gap-2 mb-3">
-                              <Crown size={20} weight="bold" className={`${
+                              <Crown size={20} strokeWidth={2.5} className={`${
                                 theme === 'dark' ? 'text-yellow-400' : 'text-yellow-700'
                               }`} />
                               <h4 className={`font-semibold ${
@@ -1944,7 +1867,7 @@ function SettingsPageContent() {
                                 <div key={index} className={`flex items-center gap-2 text-xs ${
                                   theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                                 }`}>
-                                  <Check size={12} weight="bold" className="text-green-600 flex-shrink-0" />
+                                  <Check size={12} strokeWidth={2.5} className="text-green-600 flex-shrink-0" />
                                   <span>{feature}</span>
                                 </div>
                               ))}
@@ -1954,7 +1877,7 @@ function SettingsPageContent() {
                               onClick={handleUpgradeToPremium} 
                               className="w-full bg-gradient-to-r from-yellow-500 to-purple-500 hover:from-yellow-600 hover:to-purple-600 text-white font-semibold h-10"
                             >
-                              <Crown size={16} weight="bold" className="mr-2" /> 
+                              <Crown size={16} strokeWidth={2.5} className="mr-2" /> 
                               Upgrade to Premium
                             </Button>
                           </div>
@@ -1971,7 +1894,7 @@ function SettingsPageContent() {
                               : 'bg-gradient-to-br from-yellow-100 to-purple-100 border-2 border-yellow-300'
                           }`}>
                             <div className="flex items-center gap-2 mb-2">
-                              <Crown size={16} weight="bold" className={`${
+                              <Crown size={16} strokeWidth={2.5} className={`${
                                 theme === 'dark' ? 'text-yellow-400' : 'text-yellow-700'
                               }`} />
                               <p className={`text-sm font-semibold ${
@@ -1990,7 +1913,7 @@ function SettingsPageContent() {
                                 "Slack integration",
                               ].map((feature, index) => (
                                 <div key={index} className="flex items-center gap-1.5">
-                                  <Check size={12} weight="bold" className="text-green-600 flex-shrink-0" />
+                                  <Check size={12} strokeWidth={2.5} className="text-green-600 flex-shrink-0" />
                                   <span>{feature}</span>
                                 </div>
                               ))}
@@ -2030,7 +1953,7 @@ function SettingsPageContent() {
                                 <div key={index} className={`flex items-start gap-2 text-xs ${
                                   theme === 'dark' ? 'text-white/80' : 'text-[#536471]'
                                 }`}>
-                                  <Check size={12} weight="bold" className="text-blue-600 flex-shrink-0 mt-0.5" />
+                                  <Check size={12} strokeWidth={2.5} className="text-blue-600 flex-shrink-0 mt-0.5" />
                                   <span>{feature}</span>
                                 </div>
                               ))}
@@ -2084,7 +2007,7 @@ function SettingsPageContent() {
                       : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
                   }`}>
                     <div className="flex items-center gap-2 mb-4">
-                      <Lightning size={20} weight="bold" className="text-purple-600" />
+                      <Lightning size={20} strokeWidth={2.5} className="text-purple-600" />
                       <h3 className={`text-xl font-semibold ${
                         theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                       }`}>Integrations</h3>
@@ -2104,7 +2027,7 @@ function SettingsPageContent() {
                             {currentPlan !== 'premium' ? (
                               <p className={`text-xs flex items-center gap-1 ${
                                 theme === 'dark' ? 'text-amber-400' : 'text-amber-600'
-                              }`}><Crown size={12} weight="bold" /> Premium Feature</p>
+                              }`}><Crown size={12} strokeWidth={2.5} /> Premium Feature</p>
                             ) : slackConnected ? (
                               <p className={`text-xs ${
                                 theme === 'dark' ? 'text-green-400' : 'text-green-600'
@@ -2167,7 +2090,7 @@ function SettingsPageContent() {
                       : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
                   }`}>
                     <div className="flex items-center gap-2 mb-4">
-                      <Gear size={20} weight="bold" className="text-[#8B98A5]" />
+                      <Gear size={20} strokeWidth={2.5} className="text-[#8B98A5]" />
                       <h3 className={`text-xl font-semibold ${
                         theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                       }`}>Account Management</h3>
@@ -2219,29 +2142,23 @@ function SettingsPageContent() {
           </div>
 
           {/* Desktop: Original Grid Layout */}
-          <div className="hidden md:block space-y-4 md:space-y-6">
-          {/* Header Card */}
-          <Card className={`rounded-2xl p-3 md:p-6 shadow-lg ${
-            theme === 'dark'
-              ? 'bg-white/5 border-white/8'
-              : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
-          }`}>
-            <div className="flex items-center gap-3">
-              <IconOrb accent="violet" size="md">
-                <Gear size={20} weight="bold" className="text-white" />
-              </IconOrb>
-              <div>
-                <h2 className={`text-xl md:text-3xl font-bold tracking-tight ${
-                  theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
-                }`}>Settings</h2>
-                <p className={`text-xs md:text-base ${
-                  theme === 'dark' ? 'text-white/50' : 'text-[#8B98A5]'
-                }`}>Manage your account and preferences</p>
-              </div>
-            </div>
-          </Card>
+          <div className="hidden md:flex gap-10 items-start">
+          <div className="w-[260px] shrink-0 sticky top-10">
+            <h1 className={`text-2xl font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-[#0F1419]'}`}>Settings</h1>
+            <p className={`text-sm mb-6 ${theme === 'dark' ? 'text-white/50' : 'text-[#8B98A5]'}`}>Manage your account and preferences</p>
+            <nav className="space-y-0.5">
+              <button onClick={() => navigateToView('profile')} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors ${(currentView === 'profile' || currentView === 'main') ? (theme === 'dark' ? 'bg-white/10 text-white font-semibold' : 'bg-[#EFF3F4] text-[#0F1419] font-semibold') : (theme === 'dark' ? 'text-white/60 hover:bg-white/5' : 'text-[#536471] hover:bg-[#F7F9FA]')}`}><User size={18} /><span>Profile</span></button>
+              <button onClick={() => navigateToView('notifications')} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors ${currentView === 'notifications' ? (theme === 'dark' ? 'bg-white/10 text-white font-semibold' : 'bg-[#EFF3F4] text-[#0F1419] font-semibold') : (theme === 'dark' ? 'text-white/60 hover:bg-white/5' : 'text-[#536471] hover:bg-[#F7F9FA]')}`}><Bell size={18} /><span>Notifications</span></button>
+              <button onClick={() => navigateToView('security')} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors ${currentView === 'security' ? (theme === 'dark' ? 'bg-white/10 text-white font-semibold' : 'bg-[#EFF3F4] text-[#0F1419] font-semibold') : (theme === 'dark' ? 'text-white/60 hover:bg-white/5' : 'text-[#536471] hover:bg-[#F7F9FA]')}`}><Lock size={18} /><span>Security</span></button>
+              <button onClick={() => navigateToView('preferences')} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors ${currentView === 'preferences' ? (theme === 'dark' ? 'bg-white/10 text-white font-semibold' : 'bg-[#EFF3F4] text-[#0F1419] font-semibold') : (theme === 'dark' ? 'text-white/60 hover:bg-white/5' : 'text-[#536471] hover:bg-[#F7F9FA]')}`}><Palette size={18} /><span>Preferences</span></button>
+              <button onClick={() => navigateToView('subscription')} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors ${currentView === 'subscription' ? (theme === 'dark' ? 'bg-white/10 text-white font-semibold' : 'bg-[#EFF3F4] text-[#0F1419] font-semibold') : (theme === 'dark' ? 'text-white/60 hover:bg-white/5' : 'text-[#536471] hover:bg-[#F7F9FA]')}`}><CreditCard size={18} /><span>Subscription</span></button>
+              <button onClick={() => navigateToView('integrations')} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors ${currentView === 'integrations' ? (theme === 'dark' ? 'bg-white/10 text-white font-semibold' : 'bg-[#EFF3F4] text-[#0F1419] font-semibold') : (theme === 'dark' ? 'text-white/60 hover:bg-white/5' : 'text-[#536471] hover:bg-[#F7F9FA]')}`}><Lightning size={18} /><span>Integrations</span></button>
+              <button onClick={() => navigateToView('danger')} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors text-red-500 ${currentView === 'danger' ? (theme === 'dark' ? 'bg-red-500/10' : 'bg-red-50') : 'hover:bg-red-500/5'}`}><Shield size={18} /><span>Account Management</span></button>
+            </nav>
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+          <div className="flex-1 min-w-0 max-w-2xl">
+            {(currentView === 'main' || currentView === 'profile') && (
             {/* Profile Settings */}
             <Card className={`backdrop-blur-xl rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg hover:shadow-xl transition-shadow ${
               theme === 'dark'
@@ -2249,7 +2166,7 @@ function SettingsPageContent() {
                 : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
             }`}>
               <div className="flex items-center gap-2 mb-4">
-                <User size={20} weight="bold" className="text-blue-600" />
+                <User size={20} strokeWidth={2.5} className="text-blue-600" />
                 <h3 className={`text-base md:text-xl font-semibold ${
                   theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                 }`}>Profile Information</h3>
@@ -2354,7 +2271,8 @@ function SettingsPageContent() {
                 </Button>
               </div>
             </Card>
-
+            )}
+            {currentView === 'notifications' && (
             {/* Notification Settings */}
             <Card className={`backdrop-blur-xl rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg hover:shadow-xl transition-shadow ${
               theme === 'dark'
@@ -2362,7 +2280,7 @@ function SettingsPageContent() {
                 : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
             }`}>
               <div className="flex items-center gap-2 mb-4">
-                <Bell size={20} weight="bold" className="text-yellow-600" />
+                <Bell size={20} strokeWidth={2.5} className="text-yellow-600" />
                 <h3 className={`text-base md:text-xl font-semibold ${
                   theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                 }`}>Notifications</h3>
@@ -2499,9 +2417,8 @@ function SettingsPageContent() {
                 </Button>
               </div>
             </Card>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            )}
+            {currentView === 'security' && (
             {/* Security Settings */}
             <Card className={`backdrop-blur-xl rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg hover:shadow-xl transition-shadow ${
               theme === 'dark'
@@ -2509,7 +2426,7 @@ function SettingsPageContent() {
                 : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
             }`}>
               <div className="flex items-center gap-2 mb-4">
-                <Lock size={20} weight="bold" className="text-red-600" />
+                <Lock size={20} strokeWidth={2.5} className="text-red-600" />
                 <h3 className={`text-base md:text-xl font-semibold ${
                   theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                 }`}>Security</h3>
@@ -2608,7 +2525,8 @@ function SettingsPageContent() {
                 </Button>
               </div>
             </Card>
-
+            )}
+            {currentView === 'preferences' && (
             {/* Preferences */}
             <Card className={`backdrop-blur-xl rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg hover:shadow-xl transition-shadow ${
               theme === 'dark'
@@ -2616,7 +2534,7 @@ function SettingsPageContent() {
                 : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
             }`}>
               <div className="flex items-center gap-2 mb-4">
-                <Palette size={20} weight="bold" className="text-purple-600" />
+                <Palette size={20} strokeWidth={2.5} className="text-purple-600" />
                 <h3 className={`text-base md:text-xl font-semibold ${
                   theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                 }`}>Preferences</h3>
@@ -2754,7 +2672,7 @@ function SettingsPageContent() {
                   }`}>
                     <div className="flex items-center justify-between gap-2 mb-2">
                       <div className="flex items-center gap-2">
-                        <Calendar size={16} weight="bold" className="text-purple-600" />
+                        <Calendar size={16} strokeWidth={2.5} className="text-purple-600" />
                         <Label className={`font-medium ${
                           theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                         }`}>Select Days for Prompts</Label>
@@ -2853,16 +2771,16 @@ function SettingsPageContent() {
                 )}
               </div>
             </Card>
-          </div>
-
-          {/* Subscription Section */}
-          <Card className={`rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow ${
+            )}
+            {currentView === 'subscription' && (
+            {/* Subscription Section */}
+            <Card className={`rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow ${
             theme === 'dark'
               ? 'bg-white/5 border-white/8'
               : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
           }`}>
             <div className="flex items-center gap-3 mb-6">
-              <CreditCard size={24} weight="bold" className="text-green-600" />
+              <CreditCard size={24} strokeWidth={2.5} className="text-green-600" />
               <h3 className={`text-xl font-semibold ${
                 theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
               }`}>Subscription</h3>
@@ -2894,7 +2812,7 @@ function SettingsPageContent() {
                         ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-400/30'
                         : 'bg-yellow-100 text-yellow-700 border-2 border-yellow-400'
                     }`}>
-                      <Crown size={12} weight="bold" />
+                      <Crown size={12} strokeWidth={2.5} />
                       Premium
                     </span>
                   )}
@@ -2934,7 +2852,7 @@ function SettingsPageContent() {
                     : 'bg-gradient-to-br from-yellow-50 to-purple-50 border-2 border-yellow-300'
                 }`}>
                   <div className="flex items-center gap-3 mb-4">
-                    <Crown size={32} weight="bold" className="text-yellow-600 flex-shrink-0" />
+                    <Crown size={32} strokeWidth={2.5} className="text-yellow-600 flex-shrink-0" />
                     <h4 className={`text-xl font-bold ${
                       theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
                     }`}>Premium Tier</h4>
@@ -3002,7 +2920,7 @@ function SettingsPageContent() {
                       <div key={index} className={`flex items-start gap-2 text-sm ${
                         theme === 'dark' ? 'text-white/80' : 'text-gray-800'
                       }`}>
-                        <Check size={16} weight="bold" className="text-green-600 flex-shrink-0 mt-0.5" />
+                        <Check size={16} strokeWidth={2.5} className="text-green-600 flex-shrink-0 mt-0.5" />
                         <span>{feature}</span>
                       </div>
                     ))}
@@ -3012,7 +2930,7 @@ function SettingsPageContent() {
                     onClick={handleUpgradeToPremium}
                     className="w-full bg-gradient-to-r from-yellow-500 to-purple-500 hover:from-yellow-600 hover:to-purple-600 text-white font-semibold text-base transition-all duration-700 ease-out hover:scale-[1.02] h-12"
                   >
-                    <Crown size={20} weight="bold" className="mr-2" />
+                    <Crown size={20} strokeWidth={2.5} className="mr-2" />
                     Upgrade to Premium
                   </Button>
                 </div>
@@ -3066,7 +2984,7 @@ function SettingsPageContent() {
                         <div key={index} className={`flex items-start gap-2 text-sm ${
                           theme === 'dark' ? 'text-white/50' : 'text-[#536471]'
                         }`}>
-                          <Check size={16} weight="bold" className="text-blue-600 flex-shrink-0 mt-0.5" />
+                          <Check size={16} strokeWidth={2.5} className="text-blue-600 flex-shrink-0 mt-0.5" />
                           <span>{feature}</span>
                         </div>
                       ))}
@@ -3104,15 +3022,16 @@ function SettingsPageContent() {
               )}
             </div>
           </Card>
-
-          {/* Integrations Section */}
-          <Card className={`rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow ${
+            )}
+            {currentView === 'integrations' && (
+            {/* Integrations Section */}
+            <Card className={`rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow ${
             theme === 'dark'
               ? 'bg-white/5 border-white/8'
               : 'bg-[#F7F9FA] border-2 border-[#EFF3F4]'
           }`}>
             <div className="flex items-center gap-3 mb-6">
-              <Lightning size={24} weight="bold" className="text-purple-600" />
+              <Lightning size={24} strokeWidth={2.5} className="text-purple-600" />
               <h3 className={`text-xl font-semibold ${
                 theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
               }`}>Integrations</h3>
@@ -3152,7 +3071,7 @@ function SettingsPageContent() {
                             ? 'bg-amber-500/10 border border-amber-400/30 text-amber-400'
                             : 'bg-amber-100 border-2 border-amber-300 text-amber-700'
                         }`}>
-                          <Crown size={12} weight="bold" />
+                          <Crown size={12} strokeWidth={2.5} />
                           Premium
                         </span>
                       ) : slackConnected ? (
@@ -3182,7 +3101,7 @@ function SettingsPageContent() {
                           size="sm"
                           className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white transition-all duration-300"
                         >
-                          <Crown size={16} weight="bold" className="mr-2" />
+                          <Crown size={16} strokeWidth={2.5} className="mr-2" />
                           Upgrade to Premium
                         </Button>
                       </Link>
@@ -3334,15 +3253,16 @@ function SettingsPageContent() {
               </div>
             </div>
           </Card>
-
-          {/* Danger Zone */}
-          <Card className={`rounded-2xl p-6 shadow-lg ${
+            )}
+            {currentView === 'danger' && (
+            {/* Danger Zone */}
+            <Card className={`rounded-2xl p-6 shadow-lg ${
             theme === 'dark'
               ? 'bg-red-500/10 border border-red-400/30'
               : 'bg-red-50 border-2 border-red-300'
           }`}>
             <div className="flex items-center gap-3 mb-4">
-              <Shield size={24} weight="bold" className="text-red-600" />
+              <Shield size={24} strokeWidth={2.5} className="text-red-600" />
               <h3 className={`text-xl font-semibold ${
                 theme === 'dark' ? 'text-red-200' : 'text-[#0F1419]'
               }`}>Danger Zone</h3>
@@ -3393,6 +3313,8 @@ function SettingsPageContent() {
               </div>
             </div>
           </Card>
+            )}
+          </div>
           </div>
         </div>
         </div>
@@ -3529,7 +3451,7 @@ function SettingsPageContent() {
               >
                 {isDeleting ? (
                   <span className="flex items-center gap-2">
-                    <Spinner size={16} weight="bold" className="animate-spin" />
+                    <Spinner size={16} strokeWidth={2.5} className="animate-spin" />
                     Deleting...
                   </span>
                 ) : (

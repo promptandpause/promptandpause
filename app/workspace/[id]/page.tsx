@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { useTheme } from '@/contexts/ThemeContext'
 import { Users, ArrowLeft, UserPlus, Trash2, Loader2, Mail, Crown, ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
+import { DashboardSidebar } from '@/app/dashboard/components/DashboardSidebar'
 
 interface Member {
   id: string
@@ -149,10 +150,13 @@ export default function WorkspaceDashboardPage() {
 
   return (
     <div className={`min-h-screen ${isDark ? 'bg-[#0A0A0A]' : 'bg-[#FFFFFF]'}`}>
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+      <div className="flex h-screen overflow-hidden">
+        <DashboardSidebar />
+        <main className="flex-1 pb-32 md:pb-10 overflow-y-auto scrollbar-thin">
+        <div className="max-w-[1100px] mx-auto px-4 sm:px-6 pt-16 md:pt-10 pb-8">
         <Link
           href="/workspace"
-          className={`inline-flex items-center gap-2 text-sm mb-8 transition-colors ${
+          className={`hidden md:inline-flex items-center gap-2 text-sm mb-8 transition-colors ${
             isDark ? 'text-white/50 hover:text-white' : 'text-[#536471] hover:text-[#0F1419]'
           }`}
         >
@@ -172,129 +176,143 @@ export default function WorkspaceDashboardPage() {
           </div>
         </div>
 
-        {canManage && (
-          <div className={`mt-8 p-4 rounded-xl border ${isDark ? 'bg-white/[0.04] border-white/[0.08]' : 'bg-[#F7F9FA] border-[#EFF3F4]'}`}>
-            <h2 className={`text-sm font-semibold mb-3 flex items-center gap-2 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
-              <UserPlus className="h-4 w-4" /> Invite someone
-            </h2>
-            <div className="flex gap-2">
-              <input
-                value={inviteEmail}
-                onChange={e => setInviteEmail(e.target.value)}
-                placeholder="name@company.com"
-                className={`flex-1 px-3.5 py-2 rounded-lg text-sm border outline-none focus:border-[#1D9BF0] ${
-                  isDark ? 'bg-white/[0.04] border-white/10 text-white placeholder:text-white/30' : 'bg-white border-[#CFD9DE] text-[#0F1419]'
-                }`}
-              />
-              <button
-                onClick={sendInvite}
-                disabled={inviting}
-                className="px-4 py-2 rounded-lg text-sm font-semibold bg-[#1D9BF0] text-white hover:bg-[#1A8CD8] transition-colors disabled:opacity-60 shrink-0"
-              >
-                {inviting ? 'Sending\u2026' : 'Invite'}
-              </button>
-            </div>
-            {inviteError && <p className="text-xs text-red-500 mt-2">{inviteError}</p>}
-          </div>
-        )}
-
-        {pendingInvites.length > 0 && (
-          <div className="mt-8">
-            <h2 className={`text-sm font-semibold mb-3 ${isDark ? 'text-white/70' : 'text-[#536471]'}`}>
-              Pending invites
-            </h2>
-            <div className="space-y-2">
-              {pendingInvites.map(invite => (
-                <div
-                  key={invite.id}
-                  className={`flex items-center justify-between p-3 rounded-lg border ${isDark ? 'border-white/[0.06]' : 'border-[#EFF3F4]'}`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Mail className={`h-4 w-4 ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`} />
-                    <span className={`text-sm ${isDark ? 'text-white/70' : 'text-[#0F1419]'}`}>{invite.email}</span>
-                  </div>
-                  {canManage && (
-                    <button
-                      onClick={() => revokeInvite(invite.id)}
-                      className={`text-xs font-medium ${isDark ? 'text-white/30 hover:text-red-400' : 'text-[#8B98A5] hover:text-red-500'}`}
-                    >
-                      Revoke
-                    </button>
-                  )}
+        <div className="grid gap-6 lg:grid-cols-[1fr_320px] mt-8 items-start">
+          <div className="space-y-8">
+            {canManage && (
+              <div className={`p-4 rounded-xl border ${isDark ? 'bg-white/[0.04] border-white/[0.08]' : 'bg-[#F7F9FA] border-[#EFF3F4]'}`}>
+                <h2 className={`text-sm font-semibold mb-3 flex items-center gap-2 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+                  <UserPlus className="h-4 w-4" /> Invite someone
+                </h2>
+                <div className="flex gap-2">
+                  <input
+                    value={inviteEmail}
+                    onChange={e => setInviteEmail(e.target.value)}
+                    placeholder="name@company.com"
+                    className={`flex-1 px-3.5 py-2 rounded-lg text-sm border outline-none focus:border-[#1D9BF0] ${
+                      isDark ? 'bg-white/[0.04] border-white/10 text-white placeholder:text-white/30' : 'bg-white border-[#CFD9DE] text-[#0F1419]'
+                    }`}
+                  />
+                  <button
+                    onClick={sendInvite}
+                    disabled={inviting}
+                    className="px-4 py-2 rounded-lg text-sm font-semibold bg-[#1D9BF0] text-white hover:bg-[#1A8CD8] transition-colors disabled:opacity-60 shrink-0"
+                  >
+                    {inviting ? 'Sending...' : 'Invite'}
+                  </button>
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
+                {inviteError && <p className="text-xs text-red-500 mt-2">{inviteError}</p>}
+              </div>
+            )}
 
-        <div className="mt-8">
-          <h2 className={`text-sm font-semibold mb-3 ${isDark ? 'text-white/70' : 'text-[#536471]'}`}>
-            Members
-          </h2>
-          <div className="space-y-2">
-            {members.map(member => {
-              const name = member.profile?.display_name || member.profile?.full_name || member.profile?.username || member.profile?.email || 'Unknown'
-              const isSelf = member.user_id === myUserId
-              return (
-                <div
-                  key={member.id}
-                  className={`flex items-center justify-between p-3 rounded-lg border ${isDark ? 'border-white/[0.06]' : 'border-[#EFF3F4]'}`}
-                >
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <div className={`h-8 w-8 rounded-full flex items-center justify-center shrink-0 ${isDark ? 'bg-white/[0.06]' : 'bg-[#EFF3F4]'}`}>
-                      {member.profile?.avatar_url ? (
-                        <img src={member.profile.avatar_url} alt="" className="h-8 w-8 rounded-full object-cover" />
-                      ) : (
-                        <span className={`text-xs font-semibold ${isDark ? 'text-white/50' : 'text-[#536471]'}`}>
-                          {name.charAt(0).toUpperCase()}
-                        </span>
+            {pendingInvites.length > 0 && (
+              <div>
+                <h2 className={`text-sm font-semibold mb-3 ${isDark ? 'text-white/70' : 'text-[#536471]'}`}>
+                  Pending invites
+                </h2>
+                <div className="space-y-2">
+                  {pendingInvites.map(invite => (
+                    <div
+                      key={invite.id}
+                      className={`flex items-center justify-between p-3 rounded-lg border ${isDark ? 'border-white/[0.06]' : 'border-[#EFF3F4]'}`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <Mail className={`h-4 w-4 ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`} />
+                        <span className={`text-sm ${isDark ? 'text-white/70' : 'text-[#0F1419]'}`}>{invite.email}</span>
+                      </div>
+                      {canManage && (
+                        <button
+                          onClick={() => revokeInvite(invite.id)}
+                          className={`text-xs font-medium ${isDark ? 'text-white/30 hover:text-red-400' : 'text-[#8B98A5] hover:text-red-500'}`}
+                        >
+                          Revoke
+                        </button>
                       )}
                     </div>
-                    <div className="min-w-0">
-                      <div className={`text-sm font-medium truncate flex items-center gap-1.5 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
-                        {name} {isSelf && <span className={isDark ? 'text-white/30' : 'text-[#8B98A5]'}>(you)</span>}
-                        {member.role === 'owner' && <Crown className="h-3 w-3 text-amber-500" />}
-                        {member.role === 'admin' && <ShieldCheck className="h-3 w-3 text-[#1D9BF0]" />}
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div>
+              <h2 className={`text-sm font-semibold mb-3 ${isDark ? 'text-white/70' : 'text-[#536471]'}`}>
+                Members
+              </h2>
+              <div className="space-y-2">
+                {members.map(member => {
+                  const name = member.profile?.display_name || member.profile?.full_name || member.profile?.username || member.profile?.email || 'Unknown'
+                  const isSelf = member.user_id === myUserId
+                  return (
+                    <div
+                      key={member.id}
+                      className={`flex items-center justify-between p-3 rounded-lg border ${isDark ? 'border-white/[0.06]' : 'border-[#EFF3F4]'}`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className={`h-8 w-8 rounded-full flex items-center justify-center shrink-0 ${isDark ? 'bg-white/[0.06]' : 'bg-[#EFF3F4]'}`}>
+                          {member.profile?.avatar_url ? (
+                            <img src={member.profile.avatar_url} alt="" className="h-8 w-8 rounded-full object-cover" />
+                          ) : (
+                            <span className={`text-xs font-semibold ${isDark ? 'text-white/50' : 'text-[#536471]'}`}>
+                              {name.charAt(0).toUpperCase()}
+                            </span>
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <div className={`text-sm font-medium truncate flex items-center gap-1.5 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+                            {name} {isSelf && <span className={isDark ? 'text-white/30' : 'text-[#8B98A5]'}>(you)</span>}
+                            {member.role === 'owner' && <Crown className="h-3 w-3 text-amber-500" />}
+                            {member.role === 'admin' && <ShieldCheck className="h-3 w-3 text-[#1D9BF0]" />}
+                          </div>
+                          <div className={`text-xs ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
+                            {member.last_active_at
+                              ? `Active ${new Date(member.last_active_at).toLocaleDateString()}`
+                              : 'Not active yet'}
+                          </div>
+                        </div>
                       </div>
-                      <div className={`text-xs ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
-                        {member.last_active_at
-                          ? `Active ${new Date(member.last_active_at).toLocaleDateString()}`
-                          : 'Not active yet'}
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        {canManage && member.role !== 'owner' && !isSelf && (
+                          <select
+                            value={member.role}
+                            onChange={e => changeRole(member.user_id, e.target.value as 'admin' | 'member')}
+                            className={`text-xs rounded-md px-2 py-1 border ${isDark ? 'bg-white/[0.04] border-white/10 text-white/70' : 'bg-white border-[#CFD9DE] text-[#536471]'}`}
+                          >
+                            <option value="member">Member</option>
+                            <option value="admin">Admin</option>
+                          </select>
+                        )}
+                        {(isSelf || (canManage && member.role !== 'owner')) && (
+                          <button
+                            onClick={() => removeMember(member.user_id, isSelf)}
+                            className={`p-1.5 rounded-full transition-colors ${isDark ? 'text-white/30 hover:text-red-400 hover:bg-white/5' : 'text-[#8B98A5] hover:text-red-500 hover:bg-[#F7F9FA]'}`}
+                            title={isSelf ? 'Leave workspace' : 'Remove member'}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        )}
                       </div>
                     </div>
-                  </div>
+                  )
+                })}
+              </div>
+            </div>
+          </div>
 
-                  <div className="flex items-center gap-2 shrink-0">
-                    {canManage && member.role !== 'owner' && !isSelf && (
-                      <select
-                        value={member.role}
-                        onChange={e => changeRole(member.user_id, e.target.value as 'admin' | 'member')}
-                        className={`text-xs rounded-md px-2 py-1 border ${isDark ? 'bg-white/[0.04] border-white/10 text-white/70' : 'bg-white border-[#CFD9DE] text-[#536471]'}`}
-                      >
-                        <option value="member">Member</option>
-                        <option value="admin">Admin</option>
-                      </select>
-                    )}
-                    {(isSelf || (canManage && member.role !== 'owner')) && (
-                      <button
-                        onClick={() => removeMember(member.user_id, isSelf)}
-                        className={`p-1.5 rounded-full transition-colors ${isDark ? 'text-white/30 hover:text-red-400 hover:bg-white/5' : 'text-[#8B98A5] hover:text-red-500 hover:bg-[#F7F9FA]'}`}
-                        title={isSelf ? 'Leave workspace' : 'Remove member'}
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              )
-            })}
+          {/* Right column: privacy note, desktop only -- persistent alongside the roster on wide screens */}
+          <div className={`hidden lg:block sticky top-6 p-4 rounded-xl border text-xs leading-relaxed ${
+            isDark ? 'bg-white/[0.03] border-white/[0.06] text-white/40' : 'bg-[#F7F9FA] border-[#EFF3F4] text-[#8B98A5]'
+          }`}>
+            Workspace admins only ever see this roster -- name, role, and activity presence. Reflection content is
+            never visible to anyone but the person who wrote it.
           </div>
         </div>
 
-        <p className={`text-xs mt-8 text-center ${isDark ? 'text-white/25' : 'text-[#8B98A5]'}`}>
-          Workspace admins only ever see this roster \u2014 name, role, and activity presence. Reflection content is
+        <p className={`lg:hidden text-xs mt-8 text-center ${isDark ? 'text-white/25' : 'text-[#8B98A5]'}`}>
+          Workspace admins only ever see this roster -- name, role, and activity presence. Reflection content is
           never visible to anyone but the person who wrote it.
         </p>
+        </div>
+        </main>
       </div>
     </div>
   )
