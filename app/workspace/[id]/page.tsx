@@ -45,6 +45,17 @@ export default function WorkspaceDashboardPage() {
   const [inviteError, setInviteError] = useState<string | null>(null)
 
   const canManage = myRole === 'owner' || myRole === 'admin'
+  const [tab, setTab] = useState<'members' | 'analytics'>('members')
+  const [hasConsented, setHasConsented] = useState<boolean | null>(null)
+
+  useEffect(() => {
+    if (myRole === 'member') {
+      fetch(`/api/org/${orgId}/consent/me`)
+        .then(r => r.ok ? r.json() : Promise.resolve({ consented: false }))
+        .then(body => setHasConsented(body.consented))
+        .catch(() => setHasConsented(false))
+    }
+  }, [orgId, myRole])
 
   const load = useCallback(async () => {
     try {
@@ -176,6 +187,32 @@ export default function WorkspaceDashboardPage() {
           </div>
         </div>
 
+        <div className="flex gap-2 mt-6 mb-4">
+          <button
+            onClick={() => setTab('members')}
+            className={`px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
+              tab === 'members'
+                ? 'bg-[#1D9BF0] border-[#1D9BF0] text-white'
+                : isDark ? 'border-white/10 text-white/60 hover:text-white' : 'border-[#CFD9DE] text-[#536471] hover:text-[#0F1419]'
+            }`}
+          >
+            Members
+          </button>
+          {(myRole === 'owner' || myRole === 'admin') && (
+            <button
+              onClick={() => setTab('analytics')}
+              className={`px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
+                tab === 'analytics'
+                  ? 'bg-[#1D9BF0] border-[#1D9BF0] text-white'
+                  : isDark ? 'border-white/10 text-white/60 hover:text-white' : 'border-[#CFD9DE] text-[#536471] hover:text-[#0F1419]'
+              }`}
+            >
+              Analytics
+            </button>
+          )}
+        </div>
+
+        {tab === 'members' && (
         <div className="grid gap-6 lg:grid-cols-[1fr_320px] mt-8 items-start">
           <div className="space-y-8">
             {canManage && (
@@ -297,8 +334,8 @@ export default function WorkspaceDashboardPage() {
               </div>
             </div>
           </div>
-
-          {/* Right column: privacy note, desktop only -- persistent alongside the roster on wide screens */}
+        )}
+        {/* Right column: privacy note, desktop only -- persistent alongside the roster on wide screens */}
           <div className={`hidden lg:block sticky top-6 p-4 rounded-xl border text-xs leading-relaxed ${
             isDark ? 'bg-white/[0.03] border-white/[0.06] text-white/40' : 'bg-[#F7F9FA] border-[#EFF3F4] text-[#8B98A5]'
           }`}>
@@ -306,6 +343,16 @@ export default function WorkspaceDashboardPage() {
             never visible to anyone but the person who wrote it.
           </div>
         </div>
+
+        {tab === 'analytics' && (
+          <div className="min-h-[300px]">
+            <iframe
+              src={`/workspace/${orgId}/analytics`}
+              className="w-full min-h-[600px] border-0"
+              title="Workspace Analytics"
+            />
+          </div>
+        )}
 
         <p className={`lg:hidden text-xs mt-8 text-center ${isDark ? 'text-white/25' : 'text-[#8B98A5]'}`}>
           Workspace admins only ever see this roster -- name, role, and activity presence. Reflection content is
