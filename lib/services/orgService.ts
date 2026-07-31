@@ -48,6 +48,9 @@ export async function createOrgCheckoutSession(params: {
   orgName: string
   seatCount: number
   billingInterval: 'monthly' | 'annual'
+  metaConsent?: boolean
+  metaFbp?: string
+  metaFbc?: string
 }): Promise<{ success: boolean; checkoutUrl?: string; error?: string }> {
   try {
     const { userId, userEmail, orgName, seatCount, billingInterval } = params
@@ -76,6 +79,14 @@ export async function createOrgCheckoutSession(params: {
         org_name: orgName,
         seat_count: String(seatCount),
         billing_interval: billingInterval,
+        // Attribution is only ever recorded for consenting visitors.
+        ...(params.metaConsent
+          ? {
+              meta_consent: '1',
+              meta_fbp: params.metaFbp || '',
+              meta_fbc: params.metaFbc || '',
+            }
+          : {}),
       },
       subscription_data: {
         metadata: {

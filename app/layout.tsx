@@ -8,6 +8,7 @@ import { LanguageProvider } from '@/contexts/LanguageContext'
 import { ThemeProvider } from '@/contexts/ThemeContext'
 import { GlobalSyncProvider } from '@/lib/context/GlobalSyncContext'
 import { PWARegistration } from '@/components/PWARegistration'
+import MetaPixel from '@/components/MetaPixel'
 import './globals.css'
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://promptandpause.com'
@@ -114,6 +115,7 @@ export default function RootLayout({
         <PWARegistration />
         <Analytics />
         <SpeedInsights />
+        <MetaPixel />
       </body>
     </html>
   )

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceRoleClient } from '@/lib/supabase/server'
+import { getMetaAttribution, sendMetaEvent } from '@/lib/meta/metaEventService'
 import Stripe from 'stripe'
 import { z } from 'zod'
 import { withRateLimit } from '@/lib/security/rateLimit'
@@ -14,6 +15,7 @@ const GiftCheckoutSchema = z.object({
   gift_message: z.string().max(500).optional(),
   purchaser_name: z.string().min(2).max(100),
   purchaser_email: z.string().email(),
+  metaEventId: z.string().optional(),
 })
 
 const GIFT_PRICES = {
@@ -40,7 +42,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { duration_months, recipient_email, gift_message, purchaser_name, purchaser_email } = parsed.data
+    const { duration_months, recipient_email, gift_message, purchaser_name, purchaser_email, metaEventId } = parsed.data
 
     // Verify the price ID is configured
     const giftConfig = GIFT_PRICES[duration_months as keyof typeof GIFT_PRICES]
@@ -50,6 +52,8 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       )
     }
+
+    const attribution = getMetaAttribution(request)
 
     const supabase = createServiceRoleClient()
 
@@ -77,8 +81,33 @@ export async function POST(request: NextRequest) {
         purchaser_name,
         recipient_email: recipient_email || '',
         redemption_token,
+        // Attribution is only ever recorded for consenting visitors.
+        ...(attribution.consented
+          ? {
+              meta_consent: '1',
+              meta_fbp: attribution.fbp || '',
+              meta_fbc: attribution.fbc || '',
+            }
+          : {}),
       },
     })
+
+    // Consent-gated CAPI InitiateCheckout (fire-and-forget, never blocks checkout).
+    if (attribution.consented) {
+      await sendMetaEvent({
+        eventName: 'InitiateCheckout',
+        eventId: metaEventId || `ic-${session.id}`,
+        email: purchaser_email,
+        fbp: attribution.fbp,
+        fbc: attribution.fbc,
+        value: giftConfig.amount / 100,
+        currency: 'GBP',
+        contentName: `Gift ${duration_months} month${duration_months > 1 ? 's' : ''}`,
+        eventSourceUrl: `${process.env.NEXT_PUBLIC_APP_URL}/gifts`,
+        ipAddress: request.headers.get('x-forwarded-for')?.split(',')[0]?.trim(),
+        userAgent: request.headers.get('user-agent') || undefined,
+      })
+    }
 
     // Create pending gift subscription record
     const { data: gift, error: giftError } = await supabase

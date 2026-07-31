@@ -22,7 +22,7 @@ export async function GET(
     const from = searchParams.get('from') || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
     const to = searchParams.get('to') || new Date().toISOString().split('T')[0]
 
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data, error } = await supabase
       .from('organization_engagement_daily')
       .select('*')

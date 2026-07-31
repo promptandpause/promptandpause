@@ -40,6 +40,8 @@ export default function CookieConsent() {
       localStorage.setItem(COOKIE_CONSENT_VERSION_KEY, COOKIE_CONSENT_VERSION)
       // Set cookie with 1 year expiration
       document.cookie = "cookieConsent=accepted; max-age=31536000; path=/; SameSite=Lax"
+      // Signal consent-gated trackers (Meta Pixel, etc.) that they may load.
+      window.dispatchEvent(new Event("analytics-consent-granted"))
       closePopup()
     } catch (error) {
       closePopup()

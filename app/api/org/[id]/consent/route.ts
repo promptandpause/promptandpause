@@ -20,7 +20,7 @@ export async function POST(
       return NextResponse.json({ error: 'Consent must be true' }, { status: 400 })
     }
 
-    const supabase = createClient()
+    const supabase = await createClient()
     const { error } = await supabase
       .from('organization_consent')
       .upsert(
@@ -54,7 +54,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   }
 
   const { id: orgId } = await params
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data } = await supabase
     .from('organization_consent')
     .select('user_id')

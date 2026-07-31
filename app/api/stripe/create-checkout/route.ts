@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthUser, createClient } from '@/lib/supabase/server'
+import { getMetaAttribution, sendMetaEvent } from '@/lib/meta/metaEventService'
 import Stripe from 'stripe'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -17,7 +18,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { priceId, billingCycle } = await request.json()
+    const { priceId, billingCycle, metaEventId } = await request.json()
 
     // Determine price ID from billing cycle or use provided priceId
     let finalPriceId = priceId
@@ -64,6 +65,9 @@ export async function POST(request: NextRequest) {
         .eq('id', user.id)
     }
 
+    const isYearly = billingCycle === 'yearly'
+    const attribution = getMetaAttribution(request)
+
     // Create checkout session
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
@@ -79,10 +83,34 @@ export async function POST(request: NextRequest) {
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/settings?canceled=true`,
       metadata: {
         supabase_user_id: user.id,
+        // Attribution is only ever recorded for consenting visitors.
+        ...(attribution.consented
+          ? {
+              meta_consent: '1',
+              meta_fbp: attribution.fbp || '',
+              meta_fbc: attribution.fbc || '',
+            }
+          : {}),
       },
       allow_promotion_codes: true,
       billing_address_collection: 'auto',
     })
+
+    // Consent-gated CAPI InitiateCheckout. Shares the browser event's id so
+    // Meta dedupes the pixel + server copies of the same event.
+    if (attribution.consented) {
+      await sendMetaEvent({
+        eventName: 'InitiateCheckout',
+        eventId: metaEventId || `ic-${session.id}`,
+        email: user.email || undefined,
+        fbp: attribution.fbp,
+        fbc: attribution.fbc,
+        contentName: isYearly ? 'Premium Annual' : 'Premium Monthly',
+        eventSourceUrl: `${process.env.NEXT_PUBLIC_APP_URL}/pricing`,
+        ipAddress: request.headers.get('x-forwarded-for')?.split(',')[0]?.trim(),
+        userAgent: request.headers.get('user-agent') || undefined,
+      })
+    }
 
     return NextResponse.json({ checkoutUrl: session.url })
   } catch (error: any) {

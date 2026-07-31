@@ -1,0 +1,22 @@
+{
+  "adAccountId": "act_000000000000000",
+  "pageId": "809313114863023",
+  "pixelId": "1749422223044255",
+  "campaignName": "Prompt & Pause - Launch - Traffic (GB)",
+  "adSetName": "GB Broad - GBP 7/day - LPV",
+  "adName": "Launch - Daily reflection prompts",
+  "objective": "OUTCOME_TRAFFIC",
+  "dailyBudgetMinor": 700,
+  "landingUrl": "https://promptandpause.com/pricing",
+  "imagePath": "./scripts/assets/meta-launch-creative.jpg",
+  "primaryText": "Life moves fast. Prompt & Pause gives you two quiet minutes a day to reflect, write and reset. Get a gentle, personalised prompt every morning - no pressure, no judgment. Start your daily pause today.",
+  "headline": "Your daily moment to pause",
+  "description": "Daily reflection prompts to slow down, think and write.",
+  "callToAction": "LEARN_MORE",
+  "targeting": {
+    "countries": ["GB"],
+    "ageMin": 18,
+    "ageMax": 65,
+    "interests": []
+  }
+}

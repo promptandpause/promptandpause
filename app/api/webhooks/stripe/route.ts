@@ -9,6 +9,7 @@ import {
   sendSubscriptionEmail,
 } from '@/lib/services/emailService'
 import { handleOrgCheckoutCompleted } from '@/lib/services/orgService'
+import { sendMetaEvent } from '@/lib/meta/metaEventService'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-10-29.clover',
@@ -101,6 +102,10 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   // executes for an org session, and this branch never touches `profiles`.
   if (session.metadata?.type === 'organization') {
     await handleOrgCheckoutCompleted(session)
+    sendMetaPurchase(session, {
+      email: session.customer_details?.email || session.customer_email,
+      contentName: 'Workspace subscription',
+    })
     return
   }
 
@@ -151,6 +156,13 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
           purchaserName: gift.purchaser_name,
         }).catch(() => {})
       }
+
+      sendMetaPurchase(session, {
+        email: gift.purchaser_email,
+        value: (session.amount_total ?? 0) / 100,
+        currency: session.currency || undefined,
+        contentName: `Gift ${gift.duration_months} month${gift.duration_months > 1 ? 's' : ''}`,
+      })
     }
     return
   }
@@ -294,6 +306,16 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription, sessi
       userProfile.full_name
     ).catch(() => {})
   }
+
+  if (session) {
+    const price = subscription.items.data[0]?.price
+    sendMetaPurchase(session, {
+      email: userProfile?.email,
+      value: price?.unit_amount ? (price.unit_amount * (subscription.items.data[0]?.quantity ?? 1)) / 100 : undefined,
+      currency: price?.currency || undefined,
+      contentName: planName,
+    })
+  }
 }
 
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
@@ -431,4 +453,24 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
       profile.id,
     ).catch(() => {})
   }
+}
+
+// Consent-gated Meta CAPI Purchase. Only fires when the visitor consented at
+// checkout time (recorded in session metadata); the `_fbp`/`_fbc` ids are
+// replayed from the same metadata so the webhook needs no browser cookies.
+function sendMetaPurchase(
+  session: Stripe.Checkout.Session,
+  opts: { email?: string | null; value?: number; currency?: string; contentName?: string }
+) {
+  if (session.metadata?.meta_consent !== '1') return
+  sendMetaEvent({
+    eventName: 'Purchase',
+    eventId: `purchase-${session.id}`,
+    email: opts.email || undefined,
+    fbp: session.metadata.meta_fbp,
+    fbc: session.metadata.meta_fbc,
+    value: opts.value,
+    currency: opts.currency,
+    contentName: opts.contentName,
+  }).catch(() => {})
 }
