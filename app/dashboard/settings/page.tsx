@@ -2159,7 +2159,7 @@ function SettingsPageContent() {
 
           <div className="flex-1 min-w-0 max-w-2xl">
             {(currentView === 'main' || currentView === 'profile') && (
-            {/* Profile Settings */}
+            // Profile Settings
             <Card className={`backdrop-blur-xl rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg hover:shadow-xl transition-shadow ${
               theme === 'dark'
                 ? 'bg-white/5 border-white/8'
@@ -2273,7 +2273,7 @@ function SettingsPageContent() {
             </Card>
             )}
             {currentView === 'notifications' && (
-            {/* Notification Settings */}
+            // Notification Settings
             <Card className={`backdrop-blur-xl rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg hover:shadow-xl transition-shadow ${
               theme === 'dark'
                 ? 'bg-white/5 border-white/8'
@@ -2419,7 +2419,7 @@ function SettingsPageContent() {
             </Card>
             )}
             {currentView === 'security' && (
-            {/* Security Settings */}
+            // Security Settings
             <Card className={`backdrop-blur-xl rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg hover:shadow-xl transition-shadow ${
               theme === 'dark'
                 ? 'bg-white/5 border-white/8'
@@ -2527,7 +2527,7 @@ function SettingsPageContent() {
             </Card>
             )}
             {currentView === 'preferences' && (
-            {/* Preferences */}
+            // Preferences
             <Card className={`backdrop-blur-xl rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg hover:shadow-xl transition-shadow ${
               theme === 'dark'
                 ? 'bg-white/5 border-white/8'
@@ -2773,7 +2773,7 @@ function SettingsPageContent() {
             </Card>
             )}
             {currentView === 'subscription' && (
-            {/* Subscription Section */}
+            // Subscription Section
             <Card className={`rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow ${
             theme === 'dark'
               ? 'bg-white/5 border-white/8'
@@ -3024,7 +3024,7 @@ function SettingsPageContent() {
           </Card>
             )}
             {currentView === 'integrations' && (
-            {/* Integrations Section */}
+            // Integrations Section
             <Card className={`rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow ${
             theme === 'dark'
               ? 'bg-white/5 border-white/8'
@@ -3255,7 +3255,7 @@ function SettingsPageContent() {
           </Card>
             )}
             {currentView === 'danger' && (
-            {/* Danger Zone */}
+            // Danger Zone
             <Card className={`rounded-2xl p-6 shadow-lg ${
             theme === 'dark'
               ? 'bg-red-500/10 border border-red-400/30'

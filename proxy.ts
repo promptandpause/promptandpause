@@ -397,6 +397,14 @@ export default async function proxy(request: NextRequest) {
     return response
   }
 
+  // Protect workspace invite links - unauthenticated users sign in first,
+  // then return to the invite page to accept. The invite page shows the
+  // sign-in/sign-up call-to-action for any user whose email is not registered.
+  if (request.nextUrl.pathname.startsWith('/workspace/invite/') && !user) {
+    const next = encodeURIComponent(request.nextUrl.pathname)
+    return redirectNoStore(new URL(`/?next=${next}#mode=signin`, request.url), request)
+  }
+
   // Redirect authenticated users away from auth landing pages
   if (request.nextUrl.pathname === '/auth' && user) {
     const { data: preferences } = await supabase

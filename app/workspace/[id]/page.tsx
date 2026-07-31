@@ -1,9 +1,9 @@
 "use client"
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useTheme } from '@/contexts/ThemeContext'
-import { Users, ArrowLeft, UserPlus, Trash2, Loader2, Mail, Crown, ShieldCheck } from 'lucide-react'
+import { Users, ArrowLeft, UserPlus, Trash2, Loader2, Mail, Crown, ShieldCheck, Settings, RefreshCw, ExternalLink, CheckCircle2, LinkIcon } from 'lucide-react'
 import Link from 'next/link'
 import { DashboardSidebar } from '@/app/dashboard/components/DashboardSidebar'
 
@@ -14,6 +14,7 @@ interface Member {
   status: string
   joined_at: string | null
   last_active_at: string | null
+  consent_status: boolean
   profile: { id: string; email: string; full_name: string; display_name: string; username: string; avatar_url: string } | null
 }
 
@@ -41,18 +42,36 @@ export default function WorkspaceDashboardPage() {
   const [error, setError] = useState<string | null>(null)
 
   const [inviteEmail, setInviteEmail] = useState('')
+  const [inviteRole, setInviteRole] = useState<'admin' | 'member'>('member')
   const [inviting, setInviting] = useState(false)
   const [inviteError, setInviteError] = useState<string | null>(null)
+  const [inviteSuccess, setInviteSuccess] = useState<string | null>(null)
+  const [lookup, setLookup] = useState<{ exists: boolean; name: string | null; alreadyMember: boolean; pendingInvite: boolean } | null>(null)
+  const [resending, setResending] = useState<string | null>(null)
 
   const canManage = myRole === 'owner' || myRole === 'admin'
-  const [tab, setTab] = useState<'members' | 'analytics'>('members')
+  const isOwner = myRole === 'owner'
+  const [tab, setTab] = useState<'members' | 'analytics' | 'settings'>('members')
   const [hasConsented, setHasConsented] = useState<boolean | null>(null)
 
+  // Settings state
+  const [newName, setNewName] = useState('')
+  const [renaming, setRenaming] = useState(false)
+  const [renameError, setRenameError] = useState<string | null>(null)
+  const [renameSuccess, setRenameSuccess] = useState<string | null>(null)
+  const [seatCountInput, setSeatCountInput] = useState(0)
+  const [updatingSeats, setUpdatingSeats] = useState(false)
+  const [seatsError, setSeatsError] = useState<string | null>(null)
+  const [portalLoading, setPortalLoading] = useState(false)
+  const [transferUserId, setTransferUserId] = useState('')
+  const [transferring, setTransferring] = useState(false)
+  const [transferError, setTransferError] = useState<string | null>(null)
+
   useEffect(() => {
-    if (myRole === 'member') {
-      fetch(`/api/org/${orgId}/consent/me`)
-        .then(r => r.ok ? r.json() : Promise.resolve({ consented: false }))
-        .then(body => setHasConsented(body.consented))
+    if (myRole === 'member' && orgId) {
+      fetch(`/api/org/${orgId}/consent`)
+        .then(r => (r.ok ? r.json() : Promise.resolve({ consented: false })))
+        .then(body => setHasConsented(!!body.consented))
         .catch(() => setHasConsented(false))
     }
   }, [orgId, myRole])
@@ -81,6 +100,8 @@ export default function WorkspaceDashboardPage() {
       setMembers(membersBody.members || [])
       setPendingInvites(membersBody.pendingInvites || [])
       setMyUserId(meBody?.data?.id || null)
+      setNewName(orgBody.organization?.name || '')
+      setSeatCountInput(orgBody.organization?.seat_count || 0)
     } catch {
       setError('Failed to load workspace')
     }
@@ -89,32 +110,70 @@ export default function WorkspaceDashboardPage() {
 
   useEffect(() => { load() }, [load])
 
+  // Debounced lookup so the admin sees add-vs-invite copy while typing.
+  useEffect(() => {
+    if (!canManage) return
+    if (!inviteEmail || inviteEmail.length < 3 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inviteEmail)) {
+      setLookup(null)
+      return
+    }
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/org/${orgId}/members/lookup?email=${encodeURIComponent(inviteEmail)}`)
+        const body = await res.json()
+        if (res.ok && body.success) {
+          setLookup({
+            exists: !!body.exists,
+            name: body.name || null,
+            alreadyMember: !!body.alreadyMember,
+            pendingInvite: !!body.pendingInvite,
+          })
+        }
+      } catch {}
+    }, 350)
+    return () => clearTimeout(timer)
+  }, [inviteEmail, orgId, canManage])
+
   async function sendInvite() {
     if (!inviteEmail.trim()) return
     setInviting(true)
     setInviteError(null)
+    setInviteSuccess(null)
     try {
       const res = await fetch(`/api/org/${orgId}/members`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: inviteEmail.trim(), role: 'member' }),
+        body: JSON.stringify({ email: inviteEmail.trim(), role: inviteRole }),
       })
       const body = await res.json()
       if (!res.ok) {
-        setInviteError(body.error || 'Failed to send invite')
+        setInviteError(body.error || 'Failed to add this person')
         setInviting(false)
         return
       }
       setInviteEmail('')
+      setLookup(null)
+      setInviteSuccess(
+        body.added
+          ? 'Added to the workspace. They can sign in and start immediately.'
+          : `Invite emailed to ${inviteEmail.trim()}. They'll need to accept it within 7 days.`
+      )
       await load()
     } catch {
-      setInviteError('Failed to send invite')
+      setInviteError('Failed to add this person')
     }
     setInviting(false)
   }
 
   async function revokeInvite(inviteId: string) {
     await fetch(`/api/org/${orgId}/invite/${inviteId}`, { method: 'DELETE' })
+    await load()
+  }
+
+  async function resendInvite(inviteId: string) {
+    setResending(inviteId)
+    await fetch(`/api/org/${orgId}/invite/${inviteId}/resend`, { method: 'POST' })
+    setResending(null)
     await load()
   }
 
@@ -138,6 +197,100 @@ export default function WorkspaceDashboardPage() {
     }
   }
 
+  async function handleRename() {
+    if (!newName.trim()) return
+    setRenaming(true)
+    setRenameError(null)
+    setRenameSuccess(null)
+    try {
+      const res = await fetch(`/api/org/${orgId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: newName.trim() }),
+      })
+      const body = await res.json()
+      if (!res.ok) {
+        setRenameError(body.error || 'Failed to rename workspace')
+        setRenaming(false)
+        return
+      }
+      setOrg((prev: any) => ({ ...prev, name: body.organization?.name || prev?.name }))
+      setRenameSuccess('Workspace renamed.')
+      setRenaming(false)
+    } catch {
+      setRenameError('Failed to rename workspace')
+      setRenaming(false)
+    }
+  }
+
+  async function handleUpdateSeats() {
+    const count = Math.max(1, Math.min(1000, seatCountInput || 1))
+    setUpdatingSeats(true)
+    setSeatsError(null)
+    try {
+      const res = await fetch(`/api/org/${orgId}/billing/seats`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ seatCount: count }),
+      })
+      const body = await res.json()
+      if (!res.ok) {
+        setSeatsError(body.error || 'Failed to update seats')
+        setUpdatingSeats(false)
+        return
+      }
+      setSeatCountInput(body.seatCount)
+      setOrg((prev: any) => ({ ...prev, seat_count: body.seatCount }))
+      setUpdatingSeats(false)
+    } catch {
+      setSeatsError('Failed to update seats')
+      setUpdatingSeats(false)
+    }
+  }
+
+  async function openPortal() {
+    setPortalLoading(true)
+    try {
+      const res = await fetch(`/api/org/${orgId}/billing/portal`, { method: 'POST' })
+      const body = await res.json()
+      if (!res.ok) {
+        alert(body.error || 'Failed to open billing portal')
+        setPortalLoading(false)
+        return
+      }
+      window.location.href = body.url
+    } catch {
+      alert('Failed to open billing portal')
+      setPortalLoading(false)
+    }
+  }
+
+  async function handleTransferOwnership() {
+    if (!transferUserId) return
+    if (!confirm('Transfer ownership to this member? You will be downgraded to admin.')) return
+    setTransferring(true)
+    setTransferError(null)
+    try {
+      const res = await fetch(`/api/org/${orgId}/ownership`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: transferUserId }),
+      })
+      const body = await res.json()
+      if (!res.ok) {
+        setTransferError(body.error || 'Failed to transfer ownership')
+        setTransferring(false)
+        return
+      }
+      setTransferUserId('')
+      await load()
+      setTransferring(false)
+    } catch {
+      setTransferError('Failed to transfer ownership')
+      setTransferring(false)
+    }
+  }
+
   const activeSeatsUsed = members.filter(m => m.status === 'active').length + pendingInvites.length
 
   if (loading) {
@@ -158,6 +311,13 @@ export default function WorkspaceDashboardPage() {
       </div>
     )
   }
+
+  const cardBorder = isDark ? 'border-white/[0.08]' : 'border-[#EFF3F4]'
+  const cardBg = isDark ? 'bg-white/[0.04]' : 'bg-[#F7F9FA]'
+  const inputCls = (disabled?: boolean) =>
+    `flex-1 px-3.5 py-2 rounded-lg text-sm border outline-none focus:border-[#1D9BF0] ${
+      isDark ? 'bg-white/[0.04] border-white/10 text-white placeholder:text-white/30' : 'bg-white border-[#CFD9DE] text-[#0F1419]'
+    } ${disabled ? 'opacity-60 cursor-not-allowed' : ''}`
 
   return (
     <div className={`min-h-screen ${isDark ? 'bg-[#0A0A0A]' : 'bg-[#FFFFFF]'}`}>
@@ -198,7 +358,7 @@ export default function WorkspaceDashboardPage() {
           >
             Members
           </button>
-          {(myRole === 'owner' || myRole === 'admin') && (
+          {canManage && (
             <button
               onClick={() => setTab('analytics')}
               className={`px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
@@ -210,33 +370,90 @@ export default function WorkspaceDashboardPage() {
               Analytics
             </button>
           )}
+          {canManage && (
+            <button
+              onClick={() => setTab('settings')}
+              className={`px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
+                tab === 'settings'
+                  ? 'bg-[#1D9BF0] border-[#1D9BF0] text-white'
+                  : isDark ? 'border-white/10 text-white/60 hover:text-white' : 'border-[#CFD9DE] text-[#536471] hover:text-[#0F1419]'
+              }`}
+            >
+              Settings
+            </button>
+          )}
         </div>
 
         {tab === 'members' && (
         <div className="grid gap-6 lg:grid-cols-[1fr_320px] mt-8 items-start">
           <div className="space-y-8">
+            {myRole === 'member' && hasConsented === false && (
+              <div className={`p-4 rounded-xl border ${cardBg} ${cardBorder}`}>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div>
+                    <h2 className={`text-sm font-semibold mb-0.5 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+                      Workspace analytics opt-in
+                    </h2>
+                    <p className={`text-xs ${isDark ? 'text-white/50' : 'text-[#536471]'}`}>
+                      Your activity can contribute to anonymous team aggregates once you opt in.
+                    </p>
+                  </div>
+                  <Link
+                    href={`/workspace/${orgId}/consent`}
+                    className="shrink-0 px-4 py-2 rounded-full text-sm font-semibold bg-[#1D9BF0] text-white hover:bg-[#1A8CD8] transition-colors text-center"
+                  >
+                    Review & opt in
+                  </Link>
+                </div>
+              </div>
+            )}
+
             {canManage && (
-              <div className={`p-4 rounded-xl border ${isDark ? 'bg-white/[0.04] border-white/[0.08]' : 'bg-[#F7F9FA] border-[#EFF3F4]'}`}>
+              <div className={`p-4 rounded-xl border ${cardBg} ${cardBorder}`}>
                 <h2 className={`text-sm font-semibold mb-3 flex items-center gap-2 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
-                  <UserPlus className="h-4 w-4" /> Invite someone
+                  <UserPlus className="h-4 w-4" /> Add someone
                 </h2>
                 <div className="flex gap-2">
                   <input
                     value={inviteEmail}
                     onChange={e => setInviteEmail(e.target.value)}
                     placeholder="name@company.com"
-                    className={`flex-1 px-3.5 py-2 rounded-lg text-sm border outline-none focus:border-[#1D9BF0] ${
-                      isDark ? 'bg-white/[0.04] border-white/10 text-white placeholder:text-white/30' : 'bg-white border-[#CFD9DE] text-[#0F1419]'
-                    }`}
+                    className={inputCls()}
                   />
+                  <select
+                    value={inviteRole}
+                    onChange={e => setInviteRole(e.target.value as 'admin' | 'member')}
+                    className={`shrink-0 px-3 py-2 rounded-lg text-sm border outline-none ${isDark ? 'bg-white/[0.04] border-white/10 text-white/70' : 'bg-white border-[#CFD9DE] text-[#536471]'}`}
+                  >
+                    <option value="member">Member</option>
+                    <option value="admin">Admin</option>
+                  </select>
                   <button
                     onClick={sendInvite}
                     disabled={inviting}
                     className="px-4 py-2 rounded-lg text-sm font-semibold bg-[#1D9BF0] text-white hover:bg-[#1A8CD8] transition-colors disabled:opacity-60 shrink-0"
                   >
-                    {inviting ? 'Sending...' : 'Invite'}
+                    {inviting ? 'Adding...' : 'Add'}
                   </button>
                 </div>
+
+                {lookup && !inviteError && !inviteSuccess && (
+                  <p className={`text-xs mt-2 flex items-center gap-1.5 ${
+                    lookup.alreadyMember ? 'text-amber-500' : isDark ? 'text-white/50' : 'text-[#536471]'
+                  }`}>
+                    <LinkIcon className="h-3 w-3 shrink-0" />
+                    {lookup.alreadyMember
+                      ? 'Already a member of this workspace.'
+                      : lookup.exists
+                        ? `${lookup.name || 'This person'} already has an account — they'll be added instantly.`
+                        : 'No account yet — we\'ll email an invite they can accept after signing up.'}
+                  </p>
+                )}
+                {inviteSuccess && (
+                  <p className="text-xs text-emerald-500 mt-2 flex items-center gap-1.5">
+                    <CheckCircle2 className="h-3 w-3 shrink-0" /> {inviteSuccess}
+                  </p>
+                )}
                 {inviteError && <p className="text-xs text-red-500 mt-2">{inviteError}</p>}
               </div>
             )}
@@ -252,17 +469,30 @@ export default function WorkspaceDashboardPage() {
                       key={invite.id}
                       className={`flex items-center justify-between p-3 rounded-lg border ${isDark ? 'border-white/[0.06]' : 'border-[#EFF3F4]'}`}
                     >
-                      <div className="flex items-center gap-2.5">
-                        <Mail className={`h-4 w-4 ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`} />
-                        <span className={`text-sm ${isDark ? 'text-white/70' : 'text-[#0F1419]'}`}>{invite.email}</span>
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <Mail className={`h-4 w-4 shrink-0 ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`} />
+                        <span className={`text-sm truncate ${isDark ? 'text-white/70' : 'text-[#0F1419]'}`}>{invite.email}</span>
+                        <span className={`text-[10px] uppercase tracking-wide shrink-0 ${isDark ? 'text-white/25' : 'text-[#8B98A5]'}`}>
+                          {invite.role === 'admin' ? 'Admin' : 'Member'}
+                        </span>
                       </div>
                       {canManage && (
-                        <button
-                          onClick={() => revokeInvite(invite.id)}
-                          className={`text-xs font-medium ${isDark ? 'text-white/30 hover:text-red-400' : 'text-[#8B98A5] hover:text-red-500'}`}
-                        >
-                          Revoke
-                        </button>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <button
+                            onClick={() => resendInvite(invite.id)}
+                            disabled={resending === invite.id}
+                            className={`text-xs font-medium flex items-center gap-1 ${isDark ? 'text-white/40 hover:text-white' : 'text-[#8B98A5] hover:text-[#0F1419]'}`}
+                          >
+                            {resending === invite.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
+                            Resend
+                          </button>
+                          <button
+                            onClick={() => revokeInvite(invite.id)}
+                            className={`text-xs font-medium ${isDark ? 'text-white/30 hover:text-red-400' : 'text-[#8B98A5] hover:text-red-500'}`}
+                          >
+                            Revoke
+                          </button>
+                        </div>
                       )}
                     </div>
                   ))}
@@ -303,6 +533,8 @@ export default function WorkspaceDashboardPage() {
                             {member.last_active_at
                               ? `Active ${new Date(member.last_active_at).toLocaleDateString()}`
                               : 'Not active yet'}
+                            {member.profile?.email ? ` · ${member.profile.email}` : ''}
+                            {canManage && (member.consent_status ? ' · opted into analytics' : ' · analytics opt-out')}
                           </div>
                         </div>
                       </div>
@@ -334,15 +566,16 @@ export default function WorkspaceDashboardPage() {
               </div>
             </div>
           </div>
-        )}
-        {/* Right column: privacy note, desktop only -- persistent alongside the roster on wide screens */}
-          <div className={`hidden lg:block sticky top-6 p-4 rounded-xl border text-xs leading-relaxed ${
-            isDark ? 'bg-white/[0.03] border-white/[0.06] text-white/40' : 'bg-[#F7F9FA] border-[#EFF3F4] text-[#8B98A5]'
-          }`}>
-            Workspace admins only ever see this roster -- name, role, and activity presence. Reflection content is
-            never visible to anyone but the person who wrote it.
+            {/* Right column: privacy note, desktop only -- persistent alongside the roster on wide screens */}
+            <div className={`hidden lg:block sticky top-6 p-4 rounded-xl border text-xs leading-relaxed ${
+              isDark ? 'bg-white/[0.03] border-white/[0.06] text-white/40' : 'bg-[#F7F9FA] border-[#EFF3F4] text-[#8B98A5]'
+            }`}>
+              Workspace admins only ever see this roster -- name, role, and activity presence. Reflection content is
+              never visible to anyone but the person who wrote it. Analytics are aggregate-only and members opt in
+              separately before any of their activity contributes.
+            </div>
           </div>
-        </div>
+        )}
 
         {tab === 'analytics' && (
           <div className="min-h-[300px]">
@@ -351,6 +584,103 @@ export default function WorkspaceDashboardPage() {
               className="w-full min-h-[600px] border-0"
               title="Workspace Analytics"
             />
+          </div>
+        )}
+
+        {tab === 'settings' && (
+          <div className="max-w-[560px] mt-8 space-y-6">
+            <div className={`p-5 rounded-xl border ${cardBg} ${cardBorder}`}>
+              <h2 className={`text-sm font-semibold mb-3 flex items-center gap-2 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+                <Settings className="h-4 w-4" /> Workspace name
+              </h2>
+              <input
+                value={newName}
+                onChange={e => setNewName(e.target.value)}
+                className={inputCls()}
+              />
+              {renameError && <p className="text-xs text-red-500 mt-2">{renameError}</p>}
+              {renameSuccess && <p className="text-xs text-emerald-500 mt-2">{renameSuccess}</p>}
+              <div className="flex justify-end mt-3">
+                <button
+                  onClick={handleRename}
+                  disabled={renaming || !newName.trim() || newName.trim() === org.name}
+                  className="px-4 py-2 rounded-full text-sm font-semibold bg-[#1D9BF0] text-white hover:bg-[#1A8CD8] transition-colors disabled:opacity-60"
+                >
+                  {renaming ? 'Saving...' : 'Save name'}
+                </button>
+              </div>
+            </div>
+
+            {isOwner && (
+              <>
+                <div className={`p-5 rounded-xl border ${cardBg} ${cardBorder}`}>
+                  <h2 className={`text-sm font-semibold mb-1 flex items-center gap-2 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+                    <Users className="h-4 w-4" /> Seats & billing
+                  </h2>
+                  <p className={`text-xs mb-4 ${isDark ? 'text-white/50' : 'text-[#536471]'}`}>
+                    {activeSeatsUsed} of {org.seat_count} seats in use. Changing the seat count updates your subscription
+                    immediately, billed by Stripe.
+                  </p>
+                  <div className="flex gap-2 mb-4">
+                    <input
+                      type="number"
+                      min={1}
+                      max={1000}
+                      value={seatCountInput || ''}
+                      onChange={e => setSeatCountInput(parseInt(e.target.value) || 0)}
+                      className={inputCls()}
+                    />
+                    <button
+                      onClick={handleUpdateSeats}
+                      disabled={updatingSeats || seatCountInput === org.seat_count}
+                      className="px-4 py-2 rounded-lg text-sm font-semibold bg-[#1D9BF0] text-white hover:bg-[#1A8CD8] transition-colors disabled:opacity-60 shrink-0"
+                    >
+                      {updatingSeats ? 'Updating...' : 'Update seats'}
+                    </button>
+                  </div>
+                  {seatsError && <p className="text-xs text-red-500 mb-3">{seatsError}</p>}
+                  <button
+                    onClick={openPortal}
+                    disabled={portalLoading}
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-[#1D9BF0] hover:underline disabled:opacity-60"
+                  >
+                    {portalLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ExternalLink className="h-4 w-4" />}
+                    Manage billing, payment methods & invoices
+                  </button>
+                </div>
+
+                <div className={`p-5 rounded-xl border ${cardBg} ${cardBorder}`}>
+                  <h2 className={`text-sm font-semibold mb-1 flex items-center gap-2 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+                    <Crown className="h-4 w-4 text-amber-500" /> Transfer ownership
+                  </h2>
+                  <p className={`text-xs mb-3 ${isDark ? 'text-white/50' : 'text-[#536471]'}`}>
+                    Hand this workspace to another member. You'll become an admin.
+                  </p>
+                  <select
+                    value={transferUserId}
+                    onChange={e => setTransferUserId(e.target.value)}
+                    className={`w-full px-3.5 py-2 rounded-lg text-sm border outline-none mb-3 ${isDark ? 'bg-white/[0.04] border-white/10 text-white' : 'bg-white border-[#CFD9DE] text-[#0F1419]'}`}
+                  >
+                    <option value="">Choose a member...</option>
+                    {members.filter(m => m.status === 'active' && m.user_id !== myUserId).map(m => (
+                      <option key={m.user_id} value={m.user_id}>
+                        {m.profile?.display_name || m.profile?.full_name || m.profile?.email || m.user_id}
+                      </option>
+                    ))}
+                  </select>
+                  {transferError && <p className="text-xs text-red-500 mb-2">{transferError}</p>}
+                  <div className="flex justify-end">
+                    <button
+                      onClick={handleTransferOwnership}
+                      disabled={transferring || !transferUserId}
+                      className="px-4 py-2 rounded-full text-sm font-semibold border border-red-500/50 text-red-500 hover:bg-red-500/10 transition-colors disabled:opacity-60"
+                    >
+                      {transferring ? 'Transferring...' : 'Transfer ownership'}
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         )}
 

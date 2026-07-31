@@ -219,6 +219,19 @@ export async function getOrgMembers(organizationId: string) {
     profiles?.forEach((p) => profileMap.set(p.id, p))
   }
 
+  // Per-member analytics opt-in status, so admins can see who has (and hasn't)
+  // consented to contributing aggregate numbers. Roster metadata only -- never
+  // reflection content.
+  const consentedUserIds = new Set<string>()
+  if (userIds.length > 0) {
+    const { data: consents } = await supabase
+      .from('organization_consent')
+      .select('user_id')
+      .eq('organization_id', organizationId)
+      .in('user_id', userIds)
+    consents?.forEach((c) => consentedUserIds.add(c.user_id))
+  }
+
   const { data: pendingInvites } = await supabase
     .from('organization_invites')
     .select('id, email, role, created_at, expires_at')
@@ -227,7 +240,11 @@ export async function getOrgMembers(organizationId: string) {
     .gt('expires_at', new Date().toISOString())
 
   return {
-    members: (members || []).map((m) => ({ ...m, profile: profileMap.get(m.user_id) || null })),
+    members: (members || []).map((m) => ({
+      ...m,
+      profile: profileMap.get(m.user_id) || null,
+      consent_status: consentedUserIds.has(m.user_id),
+    })),
     pendingInvites: pendingInvites || [],
   }
 }
@@ -287,6 +304,171 @@ export async function removeOrgMember(organizationId: string, targetUserId: stri
 // =============================================================================
 // INVITES
 // =============================================================================
+
+/**
+ * Best-support add-user flow. If the email already has a Prompt & Pause
+ * account they are added as a workspace member instantly (no invite round
+ * trip). If it doesn't, a token invite is emailed so they can create an
+ * account and accept. Enterprise convention (Slack, Notion, Headspace for
+ * Work, Calm for Business): every member has one individual identity, and
+ * workspace membership is layered on top of it.
+ */
+export async function addOrgMemberByEmail(params: {
+  organizationId: string
+  email: string
+  role: 'admin' | 'member'
+  addedBy: string
+}): Promise<{
+  success: boolean
+  error?: string
+  added?: boolean
+  invited?: boolean
+  invite?: any
+  member?: any
+}> {
+  const { organizationId, email, role, addedBy } = params
+
+  const canManage = await isOrgAdminOrOwner(organizationId, addedBy)
+  if (!canManage) return { success: false, error: 'Not authorized' }
+
+  const supabase = createServiceRoleClient()
+  const normalized = email.toLowerCase().trim()
+
+  // Seat check -- direct adds and pending invites both consume a seat.
+  const { data: org } = await supabase
+    .from('organizations')
+    .select('name, seat_count')
+    .eq('id', organizationId)
+    .single()
+
+  const { count: activeCount } = await supabase
+    .from('organization_members')
+    .select('*', { count: 'exact', head: true })
+    .eq('organization_id', organizationId)
+    .eq('status', 'active')
+
+  const { count: pendingCount } = await supabase
+    .from('organization_invites')
+    .select('*', { count: 'exact', head: true })
+    .eq('organization_id', organizationId)
+    .is('accepted_at', null)
+    .gt('expires_at', new Date().toISOString())
+
+  if (org && (activeCount || 0) + (pendingCount || 0) >= org.seat_count) {
+    return { success: false, error: 'No seats available -- add more seats or remove an inactive member' }
+  }
+
+  const profile = await findUserByEmail(normalized)
+
+  // Existing account -> add directly, no invite email needed.
+  if (profile) {
+    const { data: existing } = await supabase
+      .from('organization_members')
+      .select('id, role, status')
+      .eq('organization_id', organizationId)
+      .eq('user_id', profile.id)
+      .maybeSingle()
+
+    if (existing?.status === 'active') {
+      return { success: false, error: `${normalized} is already a member of this workspace` }
+    }
+
+    // Re-adding a previously removed member (or a fresh member) -- upsert so
+    // a stale `removed` row is resurrected rather than throwing a unique
+    // constraint error.
+    const { error: memberError } = await supabase
+      .from('organization_members')
+      .upsert(
+        {
+          organization_id: organizationId,
+          user_id: profile.id,
+          role,
+          status: 'active',
+          joined_at: new Date().toISOString(),
+          last_active_at: new Date().toISOString(),
+        },
+        { onConflict: 'organization_id,user_id' }
+      )
+
+    if (memberError) return { success: false, error: memberError.message }
+
+    // Any stale pending invite for this email is now moot -- consume it so it
+    // doesn't keep eating a seat or allow a double-join.
+    await supabase
+      .from('organization_invites')
+      .update({ accepted_at: new Date().toISOString() })
+      .eq('organization_id', organizationId)
+      .ilike('email', normalized)
+      .is('accepted_at', null)
+
+    return { success: true, added: true, member: { user_id: profile.id, role, status: 'active' } }
+  }
+
+  // No account yet -> classic token invite.
+  const inviteResult = await createOrgInvite({ organizationId, email: normalized, role, invitedBy: addedBy })
+  if (!inviteResult.success) return inviteResult
+
+  return { success: true, invited: true, invite: inviteResult.invite }
+}
+
+export async function lookupOrgMemberCandidate(
+  organizationId: string,
+  email: string,
+  actingUserId: string
+): Promise<{
+  success: boolean
+  error?: string
+  exists?: boolean
+  name?: string | null
+  alreadyMember?: boolean
+  pendingInvite?: boolean
+}> {
+  const canManage = await isOrgAdminOrOwner(organizationId, actingUserId)
+  if (!canManage) return { success: false, error: 'Not authorized' }
+
+  const supabase = createServiceRoleClient()
+  const normalized = email.toLowerCase().trim()
+  const profile = await findUserByEmail(normalized)
+
+  let alreadyMember = false
+  if (profile) {
+    const { data: membership } = await supabase
+      .from('organization_members')
+      .select('status')
+      .eq('organization_id', organizationId)
+      .eq('user_id', profile.id)
+      .maybeSingle()
+    alreadyMember = membership?.status === 'active'
+  }
+
+  const { data: invite } = await supabase
+    .from('organization_invites')
+    .select('id')
+    .eq('organization_id', organizationId)
+    .ilike('email', normalized)
+    .is('accepted_at', null)
+    .gt('expires_at', new Date().toISOString())
+    .maybeSingle()
+
+  return {
+    success: true,
+    exists: !!profile,
+    name: profile?.display_name || profile?.full_name || null,
+    alreadyMember,
+    pendingInvite: !!invite,
+  }
+}
+
+async function findUserByEmail(email: string) {
+  const supabase = createServiceRoleClient()
+  const { data } = await supabase
+    .from('profiles')
+    .select('id, email, full_name, display_name, username, avatar_url')
+    .ilike('email', email.toLowerCase().trim())
+    .limit(1)
+    .maybeSingle()
+  return data
+}
 
 export async function createOrgInvite(params: {
   organizationId: string
@@ -408,6 +590,190 @@ export async function revokeOrgInvite(organizationId: string, inviteId: string, 
     .eq('organization_id', organizationId)
 
   if (error) return { success: false, error: error.message }
+  return { success: true }
+}
+
+/**
+ * Re-sends an invite email with a fresh token and a new 7-day expiry. Useful
+ * when the original email was lost, landed in spam, or the invite lapsed.
+ */
+export async function resendOrgInvite(organizationId: string, inviteId: string, actingUserId: string) {
+  const canManage = await isOrgAdminOrOwner(organizationId, actingUserId)
+  if (!canManage) return { success: false, error: 'Not authorized' }
+
+  const supabase = createServiceRoleClient()
+  const { data: invite } = await supabase
+    .from('organization_invites')
+    .select('*')
+    .eq('id', inviteId)
+    .eq('organization_id', organizationId)
+    .is('accepted_at', null)
+    .maybeSingle()
+
+  if (!invite) return { success: false, error: 'Invite not found or already accepted' }
+
+  const { data: org } = await supabase
+    .from('organizations')
+    .select('name')
+    .eq('id', organizationId)
+    .single()
+
+  const token = crypto.randomBytes(24).toString('hex')
+  const expiresAt = new Date(Date.now() + INVITE_EXPIRY_DAYS * 24 * 60 * 60 * 1000).toISOString()
+
+  const { error } = await supabase
+    .from('organization_invites')
+    .update({ token, expires_at: expiresAt })
+    .eq('id', inviteId)
+
+  if (error) return { success: false, error: error.message }
+
+  await sendOrgInviteEmail({ email: invite.email, orgName: org?.name || 'a workspace', token })
+
+  return { success: true }
+}
+
+// =============================================================================
+// ORG SETTINGS
+// =============================================================================
+
+export async function renameOrganization(organizationId: string, name: string, actingUserId: string) {
+  const canManage = await isOrgAdminOrOwner(organizationId, actingUserId)
+  if (!canManage) return { success: false, error: 'Not authorized' }
+
+  const supabase = createServiceRoleClient()
+  const { data, error } = await supabase
+    .from('organizations')
+    .update({ name: name.trim() })
+    .eq('id', organizationId)
+    .select('id, name, slug, seat_count, plan, billing_interval, status, settings, created_at')
+    .single()
+
+  if (error) return { success: false, error: error.message }
+  return { success: true, organization: data }
+}
+
+// =============================================================================
+// BILLING / SEATS
+// =============================================================================
+
+/**
+ * Changes the number of paid seats. Updates the Stripe subscription quantity
+ * so billing stays correct, then writes the new seat_count to the org row so
+ * the roster UI reflects it immediately (the webhook confirms it later).
+ * Owner only -- billing touches money.
+ */
+export async function updateOrgSeats(organizationId: string, seatCount: number, actingUserId: string) {
+  const membership = await getOrgMembership(organizationId, actingUserId)
+  if (!membership || membership.role !== 'owner') {
+    return { success: false, error: 'Only the workspace owner can change seats' }
+  }
+
+  const supabase = createServiceRoleClient()
+  const { data: org } = await supabase
+    .from('organizations')
+    .select('stripe_subscription_id, seat_count')
+    .eq('id', organizationId)
+    .single()
+
+  if (!org?.stripe_subscription_id) {
+    return { success: false, error: 'No subscription on this workspace' }
+  }
+
+  const subscription = await stripe.subscriptions.retrieve(org.stripe_subscription_id)
+  const item = subscription.items.data[0]
+  if (!item) {
+    return { success: false, error: 'Subscription has no billable item' }
+  }
+
+  await stripe.subscriptions.update(subscription.id, {
+    items: [{ id: item.id, quantity: seatCount }],
+  })
+
+  const { error } = await supabase
+    .from('organizations')
+    .update({ seat_count: seatCount, updated_at: new Date().toISOString() })
+    .eq('id', organizationId)
+
+  if (error) return { success: false, error: error.message }
+
+  return { success: true, seatCount }
+}
+
+export async function getOrgBillingPortalUrl(organizationId: string, actingUserId: string) {
+  const membership = await getOrgMembership(organizationId, actingUserId)
+  if (!membership || membership.role !== 'owner') {
+    return { success: false, error: 'Only the workspace owner can manage billing' }
+  }
+
+  const supabase = createServiceRoleClient()
+  const { data: org } = await supabase
+    .from('organizations')
+    .select('stripe_customer_id')
+    .eq('id', organizationId)
+    .single()
+
+  if (!org?.stripe_customer_id) {
+    return { success: false, error: 'No billing details on this workspace' }
+  }
+
+  const session = await stripe.billingPortal.sessions.create({
+    customer: org.stripe_customer_id,
+    return_url: `${APP_URL.replace(/\/$/, '')}/workspace/${organizationId}`,
+  })
+
+  return { success: true, url: session.url }
+}
+
+// =============================================================================
+// OWNERSHIP
+// =============================================================================
+
+/**
+ * Transfers workspace ownership to another member. The new owner becomes
+ * `owner`, the previous owner is downgraded to `admin` so they keep manage
+ * rights but can no longer bill/transfer. Owner only.
+ */
+export async function transferOrgOwnership(organizationId: string, newOwnerUserId: string, actingUserId: string) {
+  const membership = await getOrgMembership(organizationId, actingUserId)
+  if (!membership || membership.role !== 'owner') {
+    return { success: false, error: 'Only the workspace owner can transfer ownership' }
+  }
+
+  if (newOwnerUserId === actingUserId) {
+    return { success: false, error: 'You already own this workspace' }
+  }
+
+  const target = await getOrgMembership(organizationId, newOwnerUserId)
+  if (!target || target.status !== 'active') {
+    return { success: false, error: 'That person is not an active member of this workspace' }
+  }
+
+  const supabase = createServiceRoleClient()
+
+  const { error: oldOwnerError } = await supabase
+    .from('organization_members')
+    .update({ role: 'admin', updated_at: new Date().toISOString() })
+    .eq('organization_id', organizationId)
+    .eq('user_id', actingUserId)
+
+  if (oldOwnerError) return { success: false, error: oldOwnerError.message }
+
+  const { error: newOwnerError } = await supabase
+    .from('organization_members')
+    .update({ role: 'owner', updated_at: new Date().toISOString() })
+    .eq('organization_id', organizationId)
+    .eq('user_id', newOwnerUserId)
+
+  if (newOwnerError) return { success: false, error: newOwnerError.message }
+
+  const { error: orgError } = await supabase
+    .from('organizations')
+    .update({ owner_id: newOwnerUserId, updated_at: new Date().toISOString() })
+    .eq('id', organizationId)
+
+  if (orgError) return { success: false, error: orgError.message }
+
   return { success: true }
 }
 

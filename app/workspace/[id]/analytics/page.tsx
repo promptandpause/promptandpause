@@ -18,7 +18,7 @@ export default function WorkspaceAnalyticsPage() {
   const isDark = theme === 'dark'
   const params = useParams()
   const orgId = params.id as string
-  const [searchParams] = useSearchParams()
+  const searchParams = useSearchParams()
   const from = searchParams.get('from') || ''
   const to = searchParams.get('to') || ''
 

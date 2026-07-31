@@ -97,7 +97,11 @@ export default function HeroSection() {
           .select("id")
           .eq("user_id", data.user.id)
           .single()
-        window.location.href = preferences ? "/" : "/onboarding"
+        const next = new URL(window.location.href).searchParams.get("next")
+        const returnPath = next && next.startsWith("/") && !next.startsWith("//") ? next : null
+        window.location.href = returnPath && preferences
+          ? returnPath
+          : preferences ? "/" : "/onboarding"
       }
     } catch (error: any) {
       toast({
