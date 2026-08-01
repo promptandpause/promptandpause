@@ -23,6 +23,7 @@ const path = require('path')
 const GRAPH = 'https://graph.facebook.com/v23.0'
 const TOKEN = process.env.META_ADS_TOKEN
 const cfgPath = path.join(__dirname, 'meta-ad-config.json')
+const cfg = require(cfgPath)
 
 if (!TOKEN) {
   console.error('Missing META_ADS_TOKEN env var.')
@@ -74,8 +75,8 @@ async function snapshot() {
 
   log('--- account ---')
   try {
-    const acct = await api(`/${adAccount}?fields=name,account_status,currency,amount_spent,daily_spend_limit`)
-    log(`${acct.name} | status ${acct.account_status} | spent ${money(acct.amount_spent, currency)} | daily limit ${money(acct.daily_spend_limit, currency)}`)
+    const acct = await api(`/${adAccount}?fields=name,account_status,currency,amount_spent`)
+    log(`${acct.name} | status ${acct.account_status} | spent ${money(acct.amount_spent, currency)}`)
   } catch { /* accounted in error tally */ }
 
   log('--- campaigns ---')

@@ -1,16 +1,12 @@
 "use client"
 
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import { Menu, X } from "lucide-react"
 
-function scrollToAuth(e: React.MouseEvent) {
-  e.preventDefault()
-  const el = document.getElementById("auth-section")
-  if (el) el.scrollIntoView({ behavior: "smooth" })
-}
-
 export default function Navigation() {
+  const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
@@ -23,6 +19,17 @@ export default function Navigation() {
   }, [])
 
   const closeMenu = () => setIsOpen(false)
+
+  const handleLogin = (e: React.MouseEvent) => {
+    e.preventDefault()
+    if (window.location.pathname === "/") {
+      const el = document.getElementById("auth-section")
+      if (el) el.scrollIntoView({ behavior: "smooth" })
+    } else {
+      router.push("/#auth-section")
+    }
+    closeMenu()
+  }
 
   useEffect(() => {
     if (isOpen) {
@@ -68,8 +75,8 @@ export default function Navigation() {
               Resources
             </Link>
             <a
-              href="#auth-section"
-              onClick={scrollToAuth}
+              href="/#auth-section"
+              onClick={handleLogin}
               className="px-5 py-2 bg-[#0F1419] hover:bg-black text-white font-semibold rounded-full transition-colors duration-200 inline-block cursor-pointer"
             >
               Log in
@@ -123,8 +130,8 @@ export default function Navigation() {
             Resources
           </Link>
           <a
-            href="#auth-section"
-            onClick={(e) => { scrollToAuth(e); closeMenu() }}
+            href="/#auth-section"
+            onClick={handleLogin}
             className="mt-4 px-8 py-4 bg-[#0F1419] text-white text-xl font-semibold rounded-full hover:bg-black transition-colors duration-200 min-h-[52px] flex items-center touch-manipulation cursor-pointer"
           >
             Log in

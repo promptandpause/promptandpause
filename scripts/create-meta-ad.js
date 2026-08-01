@@ -76,8 +76,10 @@ async function createWithFallback(pathname, body, variants) {
 async function uploadImage() {
   const buf = fs.readFileSync(cfg.imagePath)
   const filename = path.basename(cfg.imagePath)
+  const ext = path.extname(filename).toLowerCase()
+  const mime = ext === '.png' ? 'image/png' : ext === '.gif' ? 'image/gif' : 'image/jpeg'
   const fd = new FormData()
-  fd.append('filename', new Blob([buf], { type: 'image/jpeg' }), filename)
+  fd.append('filename', new Blob([buf], { type: mime }), filename)
   const json = await api(`/${AD_ACCOUNT}/adimages`, { method: 'POST', body: fd })
   const hash = json.images?.[filename]?.hash
   if (!hash) throw new Error('Image upload failed: ' + JSON.stringify(json))
@@ -105,6 +107,7 @@ async function main() {
     name: cfg.campaignName,
     status: 'PAUSED',
     special_ad_categories: [],
+    is_adset_budget_sharing_enabled: false,
   }, [
     { objective: cfg.objective },
     ...(cfg.objective === 'OUTCOME_TRAFFIC' ? [{ objective: 'TRAFFIC' }] : []),
@@ -152,8 +155,8 @@ async function main() {
           message: cfg.primaryText,
           name: cfg.headline,
           description: cfg.description,
-          picture: imageHash,
-          call_to_action_type: cfg.callToAction,
+          image_hash: imageHash,
+          call_to_action: { type: cfg.callToAction },
         },
       },
     }),
