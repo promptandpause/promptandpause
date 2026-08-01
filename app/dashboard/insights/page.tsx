@@ -12,7 +12,8 @@ import { Hash, BookOpen, CalendarBlank, ChartBar, Brain, ClockClockwise, Calenda
 import QuickStats from "../components/quick-stats"
 import ActivityCalendar from "../components/activity-calendar"
 import { calculateWritingMetrics } from "@/lib/services/analyticsService"
-import { TierGate } from "@/components/tier/TierGate"
+import { TierGate, UpgradePrompt } from "@/components/tier/TierGate"
+import { useTier } from "@/hooks/useTier"
 import dynamic from "next/dynamic"
 
 const MoodAnalytics = dynamic(() => import("../components/mood-analytics"), { ssr: false })
@@ -36,6 +37,8 @@ export default function InsightsPage() {
 function InsightsContent() {
   const { theme } = useTheme()
   const isDark = theme === "dark"
+  const { tier, isLoading } = useTier()
+  const isFree = !isLoading && tier === "free"
   const supabase = getSupabaseClient()
   const [userId, setUserId] = useState<string | null>(null)
   const [topTags, setTopTags] = useState<TagCount[]>([])
@@ -120,21 +123,29 @@ function InsightsContent() {
             <ActivityCalendar />
 
             <div className="grid gap-6 lg:grid-cols-2">
-              <TierGate feature="mood-analytics">
-                <MoodAnalytics />
-              </TierGate>
+              {isFree ? (
+                <div className="lg:col-span-2">
+                  <UpgradePrompt feature="insights" />
+                </div>
+              ) : (
+                <>
+                  <TierGate feature="mood-analytics">
+                    <MoodAnalytics />
+                  </TierGate>
 
-              <TierGate feature="weekly-insights">
-                <WeeklyInsights />
-              </TierGate>
+                  <TierGate feature="weekly-insights">
+                    <WeeklyInsights />
+                  </TierGate>
 
-              <TierGate feature="from-your-past">
-                <FromYourPastCard />
-              </TierGate>
+                  <TierGate feature="from-your-past">
+                    <FromYourPastCard />
+                  </TierGate>
 
-              <TierGate feature="monthly-summary">
-                <MonthlyReflectionCard />
-              </TierGate>
+                  <TierGate feature="monthly-summary">
+                    <MonthlyReflectionCard />
+                  </TierGate>
+                </>
+              )}
             </div>
 
             {writingMetrics && writingMetrics.averageWordCount > 0 && (

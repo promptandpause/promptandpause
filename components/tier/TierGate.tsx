@@ -83,6 +83,8 @@ interface UpgradePromptProps {
 
 export function UpgradePrompt({ feature, size = 'md' }: UpgradePromptProps) {
   const message = feature ? getUpgradeMessage(feature) : undefined
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
 
   const sizeClasses = {
     sm: 'p-4',
@@ -91,7 +93,7 @@ export function UpgradePrompt({ feature, size = 'md' }: UpgradePromptProps) {
   }
 
   return (
-    <Card className={`backdrop-blur-xl bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border border-yellow-400/30 ${sizeClasses[size]}`}>
+    <Card className={`backdrop-blur-xl bg-gradient-to-br ${isDark ? 'from-yellow-500/10 to-orange-500/10 border border-yellow-400/30' : 'from-yellow-50 to-orange-50 border border-yellow-300/60'} ${sizeClasses[size]}`}>
       <div className="flex items-start gap-4">
         {/* Icon */}
         <div className="flex-shrink-0">
@@ -103,15 +105,15 @@ export function UpgradePrompt({ feature, size = 'md' }: UpgradePromptProps) {
         {/* Content */}
         <div className="flex-1 space-y-3">
           <div className="flex items-center gap-2">
-            <h3 className="font-semibold text-white text-lg">
+            <h3 className={`font-semibold text-lg ${isDark ? 'text-white' : 'text-gray-900'}`}>
               Premium Feature
             </h3>
-            <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-400/30">
+            <Badge className={`${isDark ? 'bg-yellow-500/20 text-yellow-400 border-yellow-400/30' : 'bg-yellow-100 text-yellow-700 border-yellow-300'}`}>
               Upgrade Required
             </Badge>
           </div>
 
-          <p className="text-white/70 text-sm leading-relaxed">
+          <p className={`text-sm leading-relaxed ${isDark ? 'text-white/70' : 'text-gray-600'}`}>
             {message || 'This feature is available with Premium. Upgrade to unlock daily prompts, unlimited archive, AI insights, and more.'}
           </p>
 
@@ -130,7 +132,7 @@ export function UpgradePrompt({ feature, size = 'md' }: UpgradePromptProps) {
               <Button
                 size="sm"
                 variant="ghost"
-                className="text-white/70 hover:text-white hover:bg-white/10"
+                className={isDark ? 'text-white/70 hover:text-white hover:bg-white/10' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'}
               >
                 See Plans
               </Button>
@@ -154,9 +156,12 @@ interface FeatureBadgeProps {
 }
 
 export function FeatureBadge({ premium = false, className = '' }: FeatureBadgeProps) {
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
+
   if (premium) {
     return (
-      <Badge className={`bg-yellow-500/20 text-yellow-400 border-yellow-400/30 ${className}`}>
+      <Badge className={`${isDark ? 'bg-yellow-500/20 text-yellow-400 border-yellow-400/30' : 'bg-yellow-100 text-yellow-700 border-yellow-300'} ${className}`}>
         <Crown className="mr-1 h-3 w-3" />
         Premium
       </Badge>
@@ -164,7 +169,7 @@ export function FeatureBadge({ premium = false, className = '' }: FeatureBadgePr
   }
 
   return (
-    <Badge variant="outline" className={`text-white/60 border-white/20 ${className}`}>
+    <Badge variant="outline" className={`${isDark ? 'text-white/60 border-white/20' : 'text-gray-500 border-gray-300'} ${className}`}>
       Free
     </Badge>
   )
