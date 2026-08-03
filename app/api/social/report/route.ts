@@ -29,6 +29,31 @@ export async function POST(request: NextRequest) {
 
     const supabase = await createClient()
 
+    // Users can't report their own content.
+    if (parsed.data.target_type === 'user') {
+      if (parsed.data.target_id === user.id) {
+        return NextResponse.json({ error: "You can't report yourself" }, { status: 400 })
+      }
+    } else if (parsed.data.target_type === 'reflection') {
+      const { data: reflection } = await supabase
+        .from('reflections')
+        .select('user_id')
+        .eq('id', parsed.data.target_id)
+        .maybeSingle()
+      if (reflection && reflection.user_id === user.id) {
+        return NextResponse.json({ error: "You can't report your own reflection" }, { status: 400 })
+      }
+    } else if (parsed.data.target_type === 'comment') {
+      const { data: comment } = await supabase
+        .from('comments')
+        .select('author_id')
+        .eq('id', parsed.data.target_id)
+        .maybeSingle()
+      if (comment && comment.author_id === user.id) {
+        return NextResponse.json({ error: "You can't report your own comment" }, { status: 400 })
+      }
+    }
+
     const { error } = await supabase
       .from('content_reports')
       .insert({

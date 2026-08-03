@@ -20,11 +20,12 @@ interface ReportBlockMenuProps {
   authorId: string
   authorName?: string
   isBlocked?: boolean
+  currentUserId?: string | null
   onBlocked?: () => void
   onUnblock?: () => void
 }
 
-export function ReportBlockMenu({ targetType, targetId, authorId, authorName, isBlocked, onBlocked, onUnblock }: ReportBlockMenuProps) {
+export function ReportBlockMenu({ targetType, targetId, authorId, authorName, isBlocked, currentUserId, onBlocked, onUnblock }: ReportBlockMenuProps) {
   const { theme } = useTheme()
   const isDark = theme === 'dark'
   const [open, setOpen] = useState(false)
@@ -43,6 +44,11 @@ export function ReportBlockMenu({ targetType, targetId, authorId, authorName, is
     document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
+
+  // Never surface report/block on your own content.
+  if (currentUserId && authorId === currentUserId) {
+    return null
+  }
 
   async function submitReport(reason: string) {
     try {

@@ -40,6 +40,7 @@ export function RandomFeed() {
   const [cursor, setCursor] = useState<string | null>(null)
   const [hasMore, setHasMore] = useState(true)
   const [openComments, setOpenComments] = useState<Set<string>>(new Set())
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
   const loaderRef = useRef<HTMLDivElement>(null)
 
   function toggleComments(id: string) {
@@ -53,6 +54,10 @@ export function RandomFeed() {
 
   useEffect(() => {
     loadFeed()
+    fetch('/api/user/profile')
+      .then(r => r.ok ? r.json() : Promise.resolve(null))
+      .then(d => setCurrentUserId(d?.data?.id || null))
+      .catch(() => {})
   }, [])
 
   async function loadFeed() {
@@ -164,6 +169,7 @@ export function RandomFeed() {
                       targetId={item.id}
                       authorId={item.user_id}
                       authorName={displayName}
+                      currentUserId={currentUserId}
                       onBlocked={() => setFeed(prev => prev.filter(f => f.user_id !== item.user_id))}
                     />
                   </div>

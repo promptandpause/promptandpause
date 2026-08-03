@@ -275,6 +275,7 @@ export function ProfilePageClient({
                       targetId={profile.id}
                       authorId={profile.id}
                       authorName={displayName ?? undefined}
+                      currentUserId={loggedInUserId}
                       isBlocked={isBlocked}
                       onBlocked={() => setBlockedUsers(prev => prev.includes(profile.id) ? prev : [...prev, profile.id])}
                       onUnblock={() => setBlockedUsers(prev => prev.filter(id => id !== profile.id))}
@@ -535,6 +536,7 @@ export function ProfilePageClient({
                             targetId={ref.id}
                             authorId={ref.user_id}
                             authorName={authorName}
+                            currentUserId={loggedInUserId}
                             isBlocked={blockedUsers.includes(ref.user_id)}
                             onBlocked={() => setLikesFeed(prev => prev.filter(f => f.user_id !== ref.user_id))}
                             onUnblock={() => setBlockedUsers(prev => prev.filter(id => id !== ref.user_id))}

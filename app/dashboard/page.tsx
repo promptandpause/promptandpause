@@ -55,6 +55,7 @@ function DashboardContent() {
   const router = useRouter()
   const supabase = getSupabaseClient()
   const [userName, setUserName] = useState("")
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
   const [greetingKey, setGreetingKey] = useState<"dashboard.goodMorning" | "dashboard.goodAfternoon" | "dashboard.goodEvening">("dashboard.goodMorning")
   const [tab, setTab] = useState<"for_you" | "following" | "likes">("for_you")
   const [followingFeed, setFollowingFeed] = useState<FeedItem[]>([])
@@ -93,6 +94,7 @@ function DashboardContent() {
       try {
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) return
+        setCurrentUserId(user.id)
         const res = await fetch("/api/user/profile")
         if (res.ok) {
           const { data } = await res.json()
@@ -323,6 +325,7 @@ function DashboardContent() {
                                     targetId={item.id}
                                     authorId={item.user_id}
                                     authorName={displayName}
+                                    currentUserId={currentUserId}
                                     onBlocked={() => setFollowingFeed(prev => prev.filter(f => f.user_id !== item.user_id))}
                                   />
                                 </div>
@@ -451,6 +454,7 @@ function DashboardContent() {
                                     targetId={item.id}
                                     authorId={item.user_id}
                                     authorName={displayName}
+                                    currentUserId={currentUserId}
                                     onBlocked={() => setLikesFeed(prev => prev.filter(f => f.user_id !== item.user_id))}
                                   />
                                 </div>
