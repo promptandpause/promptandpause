@@ -1,4 +1,4 @@
-export type Visibility = 'private' | 'friends_only' | 'public'
+export type Visibility = 'private' | 'friends_only' | 'public' | 'workspace'
 
 export interface Friend {
   id: string

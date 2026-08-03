@@ -6,6 +6,8 @@ import { useTheme } from '@/contexts/ThemeContext'
 import { Users, ArrowLeft, UserPlus, Trash2, Loader2, Mail, Crown, ShieldCheck, Settings, RefreshCw, ExternalLink, CheckCircle2, LinkIcon } from 'lucide-react'
 import Link from 'next/link'
 import { DashboardSidebar } from '@/app/dashboard/components/DashboardSidebar'
+import { FeedCard } from '@/components/social/FeedCard'
+import type { FeedItem } from '@/lib/types/social'
 
 interface Member {
   id: string
@@ -51,8 +53,44 @@ export default function WorkspaceDashboardPage() {
 
   const canManage = myRole === 'owner' || myRole === 'admin'
   const isOwner = myRole === 'owner'
-  const [tab, setTab] = useState<'members' | 'analytics' | 'settings'>('members')
+  const [tab, setTab] = useState<'members' | 'feed' | 'analytics' | 'settings'>('members')
   const [hasConsented, setHasConsented] = useState<boolean | null>(null)
+
+  // Team feed state
+  const [feed, setFeed] = useState<FeedItem[]>([])
+  const [feedLoading, setFeedLoading] = useState(false)
+  const [feedLoaded, setFeedLoaded] = useState(false)
+  const [feedHasMore, setFeedHasMore] = useState(false)
+  const [feedPage, setFeedPage] = useState(1)
+  const [feedLoadingMore, setFeedLoadingMore] = useState(false)
+
+  const loadFeed = useCallback(async (pageNum: number, append = false) => {
+    if (append) setFeedLoadingMore(true)
+    else setFeedLoading(true)
+    try {
+      const res = await fetch(`/api/org/${orgId}/feed?page=${pageNum}&limit=20`)
+      if (!res.ok) throw new Error('feed_failed')
+      const body = await res.json()
+      if (append) {
+        setFeed(prev => [...prev, ...(body?.data || [])])
+      } else {
+        setFeed(body?.data || [])
+      }
+      setFeedHasMore(body?.pagination?.hasMore || false)
+    } catch {
+      if (!append) setFeed([])
+    }
+    setFeedLoading(false)
+    setFeedLoadingMore(false)
+    if (!append) setFeedLoaded(true)
+  }, [orgId])
+
+  useEffect(() => {
+    if (tab === 'feed' && !feedLoading && !feedLoaded) {
+      setFeedPage(1)
+      loadFeed(1)
+    }
+  }, [tab, loadFeed, feedLoading, feedLoaded])
 
   // Settings state
   const [newName, setNewName] = useState('')
@@ -358,6 +396,16 @@ export default function WorkspaceDashboardPage() {
           >
             Members
           </button>
+          <button
+            onClick={() => setTab('feed')}
+            className={`px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
+              tab === 'feed'
+                ? 'bg-[#1D9BF0] border-[#1D9BF0] text-white'
+                : isDark ? 'border-white/10 text-white/60 hover:text-white' : 'border-[#CFD9DE] text-[#536471] hover:text-[#0F1419]'
+            }`}
+          >
+            Team feed
+          </button>
           {canManage && (
             <button
               onClick={() => setTab('analytics')}
@@ -574,6 +622,60 @@ export default function WorkspaceDashboardPage() {
               never visible to anyone but the person who wrote it. Analytics are aggregate-only and members opt in
               separately before any of their activity contributes.
             </div>
+          </div>
+        )}
+
+        {tab === 'feed' && (
+          <div className="max-w-[680px] mt-8">
+            <p className={`text-xs mb-4 ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
+              Reflections your teammates chose to share with this workspace only. Nothing here appears on the public feed.
+            </p>
+            {feedLoading ? (
+              <div className="flex justify-center py-16">
+                <Loader2 className={`h-5 w-5 animate-spin ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`} />
+              </div>
+            ) : feed.length === 0 ? (
+              <div className={`rounded-2xl p-10 text-center ${cardBg} ${cardBorder}`}>
+                <Users className={`h-8 w-8 mx-auto mb-3 ${isDark ? 'text-white/15' : 'text-[#8B98A5]'}`} />
+                <h3 className={`text-sm font-semibold mb-1 ${isDark ? 'text-white/70' : 'text-[#0F1419]'}`}>
+                  No workspace shares yet
+                </h3>
+                <p className={`text-xs ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
+                  Share something with your workspace and it will appear here for the whole team.
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="space-y-4">
+                  {feed.map((item, i) => (
+                    <FeedCard key={`${item.reflection.id}-${i}`} item={item} />
+                  ))}
+                </div>
+                {feedHasMore && (
+                  <div className="flex justify-center pt-4">
+                    <button
+                      onClick={() => {
+                        const nextPage = feedPage + 1
+                        setFeedPage(nextPage)
+                        loadFeed(nextPage, true)
+                      }}
+                      disabled={feedLoadingMore}
+                      className={`text-sm px-6 py-2 rounded-xl transition-all ${
+                        isDark
+                          ? 'bg-white/[0.06] text-white/50 hover:bg-white/10 hover:text-white'
+                          : 'bg-white/80 text-[#536471] hover:bg-white border border-[#EFF3F4]'
+                      }`}
+                    >
+                      {feedLoadingMore ? (
+                        <Loader2 className={`h-4 w-4 animate-spin mx-auto ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`} />
+                      ) : (
+                        'Load more'
+                      )}
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
           </div>
         )}
 

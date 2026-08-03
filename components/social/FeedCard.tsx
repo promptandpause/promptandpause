@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { MessageCircle, Heart, Globe, Users, Lock } from 'lucide-react'
+import { MessageCircle, Heart, Globe, Users, Lock, Building2 } from 'lucide-react'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useRouter } from 'next/navigation'
 import { CommentSection } from './CommentSection'
@@ -27,6 +27,7 @@ export function FeedCard({ item }: { item: FeedItem }) {
     public: <Globe className="h-3 w-3" />,
     friends_only: <Users className="h-3 w-3" />,
     private: <Lock className="h-3 w-3" />,
+    workspace: <Building2 className="h-3 w-3" />,
   }
 
   return (

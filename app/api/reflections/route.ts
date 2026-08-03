@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthUser, createClient } from '@/lib/supabase/server'
 import { canCreateReflection, getWeeklyPromptAllowance } from '@/lib/utils/tierManagement'
+import { getOrgMembership } from '@/lib/services/orgService'
 import { decryptIfEncrypted, encryptIfPossible } from '@/lib/utils/crypto'
 import { z } from 'zod'
 
@@ -11,9 +12,14 @@ const CreateReflectionSchema = z.object({
   mood: z.string().max(50, 'Mood too long').optional().default('😊'),
   tags: z.array(z.string().max(50, 'Tag too long')).max(10, 'Too many tags').optional().default([]),
   word_count: z.number().int().min(0).optional(),
-  visibility: z.enum(['private', 'friends_only', 'public']).optional().default('private'),
+  visibility: z.enum(['private', 'friends_only', 'public', 'workspace']).optional().default('private'),
   allow_comments: z.boolean().optional().default(true),
+  workspace_id: z.string().uuid().optional().nullable(),
 })
+
+// Max public reflections a user can create per day (anti-spam on the public
+// feed). Applies to every public post -- prompt reflections AND Quick Shares.
+const MAX_PUBLIC_SHARES_PER_DAY = 10
 
 /**
  * GET /api/reflections
@@ -114,7 +120,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { prompt_text, reflection_text, mood, tags, word_count, visibility, allow_comments } = parsed.data
+    const { prompt_text, reflection_text, mood, tags, word_count, visibility, allow_comments, workspace_id } = parsed.data
 
     // CHECK TIER LIMITS: Enforce weekly reflection limit for free users
     // Fetch user's subscription tier
@@ -124,43 +130,92 @@ export async function POST(request: NextRequest) {
       .eq('id', user.id)
       .single()
 
-    // Get start of current week (Monday 00:00)
-    const now = new Date()
-    const dayOfWeek = now.getDay() // 0 = Sunday, 1 = Monday, etc.
-    const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1 // If Sunday, go back 6 days; else go back to Monday
-    const startOfWeek = new Date(now)
-    startOfWeek.setDate(now.getDate() - daysToMonday)
-    startOfWeek.setHours(0, 0, 0, 0)
+    // Anti-spam: cap public posts at 10 per day. Quick Shares are decoupled
+    // from the weekly prompt allowance, but the public feed still needs a
+    // daily ceiling so one person can't flood it.
+    if (visibility === 'public') {
+      const startOfDay = new Date()
+      startOfDay.setHours(0, 0, 0, 0)
 
-    // Count reflections created this week
-    const { count: weeklyCount } = await supabase
-      .from('reflections')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', user.id)
-      .gte('created_at', startOfWeek.toISOString())
+      const { count: publicToday } = await supabase
+        .from('reflections')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .eq('visibility', 'public')
+        .gte('created_at', startOfDay.toISOString())
 
-    // Check if user can create more reflections this week
-    const canCreate = canCreateReflection(
-      weeklyCount || 0,
-      profile?.subscription_status,
-      profile?.subscription_tier
-    )
+      if ((publicToday || 0) >= MAX_PUBLIC_SHARES_PER_DAY) {
+        return NextResponse.json(
+          {
+            error: 'Daily public share limit reached',
+            message: `You've shared ${MAX_PUBLIC_SHARES_PER_DAY} reflections publicly today — that's the daily limit. Come back tomorrow.`,
+            publicSharesToday: publicToday,
+            dailyLimit: MAX_PUBLIC_SHARES_PER_DAY,
+          },
+          { status: 429 }
+        )
+      }
+    }
 
-    if (!canCreate) {
-      const allowance = getWeeklyPromptAllowance(
+    // Workspace visibility requires an active membership in that workspace.
+    if (visibility === 'workspace') {
+      if (!workspace_id) {
+        return NextResponse.json(
+          { error: 'workspace_id is required when visibility is workspace' },
+          { status: 400 }
+        )
+      }
+      const membership = await getOrgMembership(workspace_id, user.id)
+      if (!membership) {
+        return NextResponse.json(
+          { error: 'You are not an active member of this workspace' },
+          { status: 403 }
+        )
+      }
+    }
+
+    // Weekly prompt allowance only applies to prompt-driven reflections.
+    // Quick Shares (prompt_text 'Quick Share') are unlimited.
+    if (prompt_text !== 'Quick Share') {
+      // Get start of current week (Monday 00:00)
+      const now = new Date()
+      const dayOfWeek = now.getDay() // 0 = Sunday, 1 = Monday, etc.
+      const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1 // If Sunday, go back 6 days; else go back to Monday
+      const startOfWeek = new Date(now)
+      startOfWeek.setDate(now.getDate() - daysToMonday)
+      startOfWeek.setHours(0, 0, 0, 0)
+
+      // Count reflections created this week (excluding Quick Shares)
+      const { count: weeklyCount } = await supabase
+        .from('reflections')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .neq('prompt_text', 'Quick Share')
+        .gte('created_at', startOfWeek.toISOString())
+
+      // Check if user can create more reflections this week
+      const canCreate = canCreateReflection(
+        weeklyCount || 0,
         profile?.subscription_status,
         profile?.subscription_tier
       )
-      return NextResponse.json(
-        {
-          error: 'Weekly limit reached',
-          message: `You've used all ${allowance} prompts this week. Upgrade to Premium for daily prompts!`,
-          weeklyCount,
-          weeklyLimit: allowance,
-          upgradeUrl: '/dashboard/settings'
-        },
-        { status: 403 }
-      )
+
+      if (!canCreate) {
+        const allowance = getWeeklyPromptAllowance(
+          profile?.subscription_status,
+          profile?.subscription_tier
+        )
+        return NextResponse.json(
+          {
+            error: 'Weekly limit reached',
+            message: `You've used all ${allowance} prompts this week. Upgrade to Premium for daily prompts!`,
+            weeklyCount,
+            weeklyLimit: allowance,
+            upgradeUrl: '/dashboard/settings'
+          },
+          { status: 403 }
+        )
+      }
     }
 
     // Calculate word count if not provided
@@ -182,6 +237,7 @@ export async function POST(request: NextRequest) {
         date: todayStr,
         visibility: visibility || 'private',
         allow_comments,
+        workspace_id: visibility === 'workspace' ? workspace_id : null,
       })
       .select()
       .single()

@@ -1,13 +1,19 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useToast } from '@/hooks/use-toast'
 import { Button } from '@/components/ui/button'
-import { Sparkle, Spinner, Globe, Users, Lock, Check } from 'phosphor-react'
+import { Sparkle, Spinner, Globe, Users, Lock, Check, Buildings } from 'phosphor-react'
 
-type Visibility = 'private' | 'friends_only' | 'public'
+type Visibility = 'private' | 'friends_only' | 'public' | 'workspace'
+
+interface WorkspaceSummary {
+  id: string
+  name: string
+  slug: string
+}
 
 export function QuickShare({ onShared }: { onShared?: () => void }) {
   const { theme } = useTheme()
@@ -18,8 +24,26 @@ export function QuickShare({ onShared }: { onShared?: () => void }) {
   const [visibility, setVisibility] = useState<Visibility>('public')
   const [submitting, setSubmitting] = useState(false)
 
+  const [workspaces, setWorkspaces] = useState<WorkspaceSummary[]>([])
+  const [workspaceId, setWorkspaceId] = useState('')
+
+  useEffect(() => {
+    fetch('/api/org/mine')
+      .then(r => (r.ok ? r.json() : Promise.resolve({ organizations: [] })))
+      .then(({ organizations }) => {
+        const orgs = (organizations || []) as WorkspaceSummary[]
+        setWorkspaces(orgs)
+        if (orgs.length > 0) setWorkspaceId(orgs[0].id)
+      })
+      .catch(() => {})
+  }, [])
+
   async function handleShare() {
     if (!text.trim()) return
+    if (visibility === 'workspace' && !workspaceId) {
+      toast({ title: 'Pick a workspace', description: 'Choose which workspace to share this to.', variant: 'destructive' })
+      return
+    }
     setSubmitting(true)
     try {
       const res = await fetch('/api/reflections', {
@@ -32,17 +56,20 @@ export function QuickShare({ onShared }: { onShared?: () => void }) {
           tags: [],
           word_count: text.trim().split(/\s+/).length,
           visibility,
+          workspace_id: visibility === 'workspace' ? workspaceId : null,
           allow_comments: true,
         }),
       })
       if (res.ok) {
-        toast({ title: 'Shared to your feed' })
+        toast({
+          title: visibility === 'workspace' ? 'Shared to your workspace' : 'Shared to your feed',
+        })
         setText('')
         setOpen(false)
         onShared?.()
       } else {
         const body = await res.json().catch(() => ({}))
-        toast({ title: 'Error', description: body?.error || 'Failed to share', variant: 'destructive' })
+        toast({ title: 'Error', description: body?.message || body?.error || 'Failed to share', variant: 'destructive' })
       }
     } catch {
       toast({ title: 'Error', description: 'Network error', variant: 'destructive' })
@@ -50,10 +77,13 @@ export function QuickShare({ onShared }: { onShared?: () => void }) {
     setSubmitting(false)
   }
 
+  const isWorkspaceMember = workspaces.length > 0
+
   const visOptions: { value: Visibility; icon: React.ReactNode; label: string }[] = [
     { value: 'public', icon: <Globe size={14} weight="bold" />, label: 'Public' },
     { value: 'friends_only', icon: <Users size={14} weight="bold" />, label: 'Friends' },
     { value: 'private', icon: <Lock size={14} weight="bold" />, label: 'Private' },
+    ...(isWorkspaceMember ? [{ value: 'workspace' as Visibility, icon: <Buildings size={14} weight="bold" />, label: 'Workspace' }] : []),
   ]
 
   return (
@@ -124,6 +154,34 @@ export function QuickShare({ onShared }: { onShared?: () => void }) {
                   {submitting ? 'Sharing...' : 'Share'}
                 </Button>
               </div>
+
+              {visibility === 'workspace' && (
+                <select
+                  value={workspaceId}
+                  onChange={e => setWorkspaceId(e.target.value)}
+                  className={`w-full px-3 py-2 rounded-lg text-sm border outline-none focus:border-[#1D9BF0] ${
+                    isDark
+                      ? 'bg-white/[0.06] border-white/[0.1] text-white'
+                      : 'bg-white border-[#CFD9DE] text-[#0F1419]'
+                  }`}
+                >
+                  {workspaces.map(ws => (
+                    <option key={ws.id} value={ws.id}>{ws.name}</option>
+                  ))}
+                </select>
+              )}
+
+              {visibility === 'public' && isWorkspaceMember && (
+                <p className={`text-xs ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
+                  This posts to your personal public feed — visible to everyone, not just your workspace.
+                </p>
+              )}
+
+              {visibility === 'workspace' && (
+                <p className={`text-xs ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
+                  Only members of this workspace can see it.
+                </p>
+              )}
             </div>
           </motion.div>
         )}
