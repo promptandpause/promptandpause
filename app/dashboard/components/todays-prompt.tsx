@@ -333,7 +333,14 @@ export default function TodaysPrompt() {
           <blockquote className={`italic text-base md:text-xl mb-0 font-medium leading-relaxed ${theme === 'dark' ? 'text-white/90' : 'text-gray-900'}`}>
             "{todaysPrompt}"
           </blockquote>
-          
+
+          <div className={`flex items-center gap-2 text-[11px] md:text-xs ${theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'}`}>
+            <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-medium border ${theme === 'dark' ? 'bg-white/[0.05] border-white/[0.08] text-white/60' : 'bg-white/60 border-[#EFF3F4] text-[#536471]'}`}>
+              <Sparkle size={11} weight="bold" className={theme === 'dark' ? 'text-[#1D9BF0]' : 'text-[#1D9BF0]'} />
+              {focusAreaUsed ? `Focus preference: ${focusAreaUsed}` : 'General reflection'}
+            </span>
+          </div>
+
           {/* Voice Prompt Player - Premium Feature */}
           {tier === 'premium' && (
             <div className="mb-3 md:mb-4">
@@ -361,6 +368,9 @@ export default function TodaysPrompt() {
                   const result = await generatePromptAsync()
                   if (result) {
                     setTodaysPrompt(result.prompt_text)
+                    setFocusAreaUsed(result.focus_area_used || null)
+                    setPromptProvider(result.ai_provider || null)
+                    setPromptModel(result.ai_model || null)
                     toast({ title: 'Prompt generated', description: `${result.focus_area_used ? 'Focus area: ' + result.focus_area_used : 'General reflection'}` })
                   } else {
                     toast({ title: 'Error', description: 'Failed to generate prompt', variant: 'destructive' })

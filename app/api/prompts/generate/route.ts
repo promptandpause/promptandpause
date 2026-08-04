@@ -60,6 +60,7 @@ export async function POST(request: NextRequest) {
           prompt_text: existingPrompt.prompt_text,
           ai_provider: existingPrompt.ai_provider,
           ai_model: existingPrompt.ai_model,
+          focus_area_used: existingPrompt.focus_area_used || null,
           prompt_type: existingPrompt.personalization_context?.prompt_type || undefined,
           date_generated: existingPrompt.date_generated,
           message: 'Using existing prompt for today',

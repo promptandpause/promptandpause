@@ -59,6 +59,7 @@ export async function GET(request: NextRequest) {
         prompt_text: prompt.prompt_text,
         ai_provider: prompt.ai_provider,
         ai_model: prompt.ai_model,
+        focus_area_used: prompt.focus_area_used || null,
         date_generated: prompt.date_generated,
         used: prompt.used,
       },
