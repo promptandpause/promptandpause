@@ -15,12 +15,52 @@ import VoicePromptPlayer from "./voice-prompt-player";
 import { useTheme } from "@/contexts/ThemeContext";
 import { PromptLimitBanner } from "@/components/tier/TierGate";
 import { trackEvent } from "@/lib/services/eventsService";
-import { Leaf, BookmarkSimple, Bell, Sparkle } from "phosphor-react";
-import { IconOrb } from "@/components/ui/accent-card";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faWandMagicSparkles,
+  faTags,
+  faThumbsUp,
+  faThumbsDown,
+  faLeaf,
+  faBookmark,
+  faFaceFrownOpen,
+  faFaceMeh,
+  faFaceSmile,
+  faFaceGrin,
+  faCircleQuestion,
+  faFaceSmileWink,
+  faHandsPraying,
+  faHandFist,
+  faPenNib,
+} from "@fortawesome/free-solid-svg-icons";
+import { faBell } from "@fortawesome/free-regular-svg-icons";
+import type { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { VisibilitySelector } from "@/components/social/VisibilitySelector";
 
 const moods: MoodType[] = ["😔", "😐", "😊", "😄", "🤔", "😌", "🙏", "💪"]
 const availableTags = ["Gratitude", "Relationships", "Career", "Self-care", "Personal Growth", "Health", "Achievement", "Nature", "Creativity", "Family"]
+
+const moodIcons: Record<MoodType, IconProp> = {
+  "😔": faFaceFrownOpen,
+  "😐": faFaceMeh,
+  "😊": faFaceSmile,
+  "😄": faFaceGrin,
+  "🤔": faCircleQuestion,
+  "😌": faFaceSmileWink,
+  "🙏": faHandsPraying,
+  "💪": faHandFist,
+}
+
+const moodNames: Record<MoodType, string> = {
+  "😔": "Sad",
+  "😐": "Neutral",
+  "😊": "Happy",
+  "😄": "Joyful",
+  "🤔": "Thoughtful",
+  "😌": "Calm",
+  "🙏": "Grateful",
+  "💪": "Strong",
+}
 
 export default function TodaysPrompt() {
   const { toast } = useToast()
@@ -315,16 +355,16 @@ export default function TodaysPrompt() {
       {/* Prompt limit banner for free users */}
       {tier === 'free' && <PromptLimitBanner />}
       
-      <section className={`relative overflow-hidden rounded-3xl p-5 md:p-7 flex flex-col gap-4 md:gap-5 transition-all duration-300 backdrop-blur-xl ${theme === 'dark' ? 'bg-gradient-to-br from-white/[0.05] via-white/[0.03] to-transparent border border-white/[0.08] shadow-[0_20px_60px_-20px_rgba(0,0,0,0.5)]' : 'bg-white/70 border border-slate-100 shadow-soft-card'}`} style={{ pointerEvents: 'auto' }}>
+      <section className={`relative overflow-hidden rounded-3xl p-5 md:p-7 flex flex-col gap-4 md:gap-5 transition-all duration-300 animate-fade-up ${theme === 'dark' ? 'bg-gradient-to-br from-white/[0.05] via-white/[0.03] to-transparent border border-white/[0.08] shadow-[0_20px_60px_-20px_rgba(0,0,0,0.5)]' : 'glass border-slate-100 soft-shadow'}`} style={{ pointerEvents: 'auto' }}>
         <span aria-hidden className={`pointer-events-none absolute -top-16 -right-16 h-56 w-56 rounded-full blur-3xl ${theme === 'dark' ? 'bg-[#6366F1]/10' : 'bg-[#6366F1]/15'}`} />
         <div className="relative flex items-center justify-between gap-3 mb-1">
           <div className="flex items-center gap-3">
-            <IconOrb accent="indigo" size="sm">
-              <Sparkle size={16} weight="bold" className="text-white" />
-            </IconOrb>
+            <span className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
+              <FontAwesomeIcon icon={faWandMagicSparkles} className="text-sm" />
+            </span>
             <div>
-              <h3 className={`text-lg md:text-xl font-semibold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>Today</h3>
-              <p className={`text-[11px] md:text-xs ${theme === 'dark' ? 'text-white/40' : 'text-slate-400'}`}>A small pause for a clearer mind</p>
+              <h3 className={`text-lg font-semibold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>Today</h3>
+              <p className={`text-xs ${theme === 'dark' ? 'text-white/40' : 'text-slate-400'}`}>A small pause for a clearer mind</p>
             </div>
           </div>
         </div>
@@ -336,7 +376,7 @@ export default function TodaysPrompt() {
 
           <div className={`flex items-center gap-2 text-[11px] md:text-xs ${theme === 'dark' ? 'text-white/40' : 'text-slate-400'}`}>
             <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-medium border ${theme === 'dark' ? 'bg-white/[0.05] border-white/[0.08] text-white/60' : 'bg-white/70 border-slate-100 text-slate-500'}`}>
-              <Sparkle size={11} weight="bold" className={theme === 'dark' ? 'text-[#818CF8]' : 'text-indigo-500'} />
+              <FontAwesomeIcon icon={faWandMagicSparkles} className={`text-[11px] ${theme === 'dark' ? 'text-[#818CF8]' : 'text-indigo-500'}`} />
               {focusAreaUsed ? `Focus preference: ${focusAreaUsed}` : 'General reflection'}
             </span>
           </div>
@@ -402,7 +442,7 @@ export default function TodaysPrompt() {
           {/* Enhanced Textarea with Focus Animations */}
           <div className="mb-3">
             <textarea
-              className={`w-full min-h-[160px] md:min-h-[140px] max-h-52 rounded-2xl border-2 px-3 md:px-4 py-2.5 md:py-3 focus:outline-none resize-none text-sm md:text-base transition-all duration-200 ${theme === 'dark' ? 'border-white/10 bg-white/5 text-white placeholder:text-white/40 focus:border-indigo-400 focus:bg-white/10 focus:shadow-[0_0_0_3px_rgba(99,102,241,0.25)]' : 'border-slate-200 bg-white text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:shadow-[0_0_0_3px_rgba(99,102,241,0.12)]'}`}
+              className={`w-full min-h-[160px] md:min-h-[140px] max-h-52 rounded-2xl border-2 px-3 md:px-4 py-2.5 md:py-3 focus:outline-none resize-none text-sm md:text-base transition-all duration-200 ${theme === 'dark' ? 'border-white/10 bg-white/5 text-white placeholder:text-white/40 focus:border-indigo-400 focus:bg-white/10 focus:shadow-[0_0_0_3px_rgba(99,102,241,0.25)]' : 'border-slate-200 bg-white text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50'}`}
               placeholder="Write your reflection..."
               maxLength={1200}
               value={reflection}
@@ -422,7 +462,7 @@ export default function TodaysPrompt() {
           
           {/* Mood Selector with Stagger Animation */}
           <div className="mb-3 relative z-10">
-            <label className={`text-xs md:text-sm font-semibold mb-2 block ${theme === 'dark' ? 'text-white/90' : 'text-gray-800'}`}>How are you feeling?</label>
+            <label className={`text-sm font-semibold mb-2 block ${theme === 'dark' ? 'text-white/90' : 'text-slate-800'}`}>How are you feeling?</label>
             <motion.div 
               className="flex gap-2 md:gap-2 overflow-x-auto md:overflow-visible md:flex-wrap scrollbar-hide px-3 py-1 md:px-0 scroll-fade-x md:!mask-image-none" 
               style={{ pointerEvents: 'auto', WebkitOverflowScrolling: 'touch' }}
@@ -442,6 +482,7 @@ export default function TodaysPrompt() {
                 <motion.button
                   key={mood}
                   type="button"
+                  aria-label={moodNames[mood]}
                   onClick={() => setSelectedMood(mood)}
                   variants={{
                     hidden: { opacity: 0, scale: 0.8 },
@@ -457,7 +498,7 @@ export default function TodaysPrompt() {
                   }}
                   whileHover={{ scale: 1.1, rotate: selectedMood === mood ? 0 : 5 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`text-xl md:text-2xl p-2.5 md:p-3 rounded-xl transition-colors duration-200 cursor-pointer motion-reduce:!transform-none flex-shrink-0 ${
+                  className={`text-xl p-2.5 rounded-xl transition-colors duration-200 cursor-pointer motion-reduce:!transform-none flex-shrink-0 ${
                     selectedMood === mood
                       ? "bg-indigo-100 ring-2 ring-indigo-400"
                       : theme === 'dark' 
@@ -465,17 +506,16 @@ export default function TodaysPrompt() {
                         : "bg-slate-50 hover:bg-white"
                   }`}
                 >
-                  {mood}
+                  <FontAwesomeIcon icon={moodIcons[mood]} />
                 </motion.button>
               ))}
             </motion.div>
-            <p className={`text-xs mt-1.5 ${theme === 'dark' ? 'text-white/50' : 'text-slate-400'}`}>Selected: {selectedMood || 'None'}</p>
           </div>
           
           {/* Tag Selector with Stagger Animation */}
           <div className="mb-3 md:mb-4 relative z-40">
-            <label className={`text-xs md:text-sm font-semibold mb-2 block flex items-center gap-2 ${theme === 'dark' ? 'text-white/90' : 'text-slate-800'}`}>
-              <span className="text-base md:text-lg">🏷️</span> Add tags (optional)
+            <label className={`text-sm font-semibold mb-2 block flex items-center gap-2 ${theme === 'dark' ? 'text-white/90' : 'text-slate-800'}`}>
+              <FontAwesomeIcon icon={faTags} className={`text-sm ${theme === 'dark' ? 'text-white/40' : 'text-slate-400'}`} /> Add tags (optional)
             </label>
             <motion.div 
               className="flex gap-2 md:gap-2 overflow-x-auto md:overflow-visible md:flex-wrap scrollbar-hide px-3 py-1 md:px-0 scroll-fade-x md:!mask-image-none"
@@ -529,11 +569,10 @@ export default function TodaysPrompt() {
                 </motion.button>
               ))}
             </motion.div>
-            <p className={`text-xs mt-1.5 ${theme === 'dark' ? 'text-white/50' : 'text-slate-400'}`}>Selected: {selectedTags.length > 0 ? selectedTags.join(', ') : 'None'}</p>
           </div>
           
           <div className="flex items-center justify-between mb-3">
-            <p className={`text-[10px] uppercase tracking-wide font-semibold ${theme === 'dark' ? 'text-white/30' : 'text-slate-400'}`}>
+            <p className={`text-[10px] uppercase tracking-wider font-semibold ${theme === 'dark' ? 'text-white/30' : 'text-slate-400'}`}>
               Who can see this
             </p>
             <VisibilitySelector value={visibility} onChange={setVisibility} />
@@ -547,55 +586,26 @@ export default function TodaysPrompt() {
                   handleSave()
                 }}
                 disabled={reflection.trim().length === 0}
-                className="w-full md:w-auto bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white font-bold px-5 md:px-7 py-2.5 md:py-2 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base shadow-lg shadow-indigo-500/25 hover:shadow-xl"
+                className="w-full md:w-auto bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white font-semibold px-6 md:px-8 py-3 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base shadow-lg shadow-indigo-500/25 hover:shadow-xl"
               >
                 Reflect
               </Button>
             </motion.div>
-            
-            {/* Animated Word Counter with Encouraging Message */}
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between md:justify-start gap-2 md:gap-4 flex-1">
-              <div className="flex items-center gap-2">
-                <motion.span
-                  key={wordCount}
-                  initial={{ scale: 1.2, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: "spring", bounce: 0.5, duration: 0.3 }}
-                  className={`text-sm font-semibold ${
-                    wordCount >= 150 
-                      ? theme === 'dark' ? 'text-indigo-300' : 'text-indigo-600'
-                      : wordCount >= 100
-                        ? theme === 'dark' ? 'text-indigo-300' : 'text-indigo-600'
-                        : theme === 'dark' ? 'text-white/50' : 'text-slate-400'
-                  }`}
-                >
-                  {wordCount}
-                </motion.span>
-                <span className={`text-xs ${theme === 'dark' ? 'text-white/40' : 'text-slate-400'}`}>words</span>
-                {getEncouragingMessage(wordCount) && (
-                  <motion.span
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className={`text-xs italic ml-1 ${theme === 'dark' ? 'text-indigo-300' : 'text-indigo-600'}`}
-                  >
-                    {getEncouragingMessage(wordCount)}
-                  </motion.span>
-                )}
-              </div>
-              
-                          </div>
+            <p className={`text-xs ${theme === 'dark' ? 'text-white/50' : 'text-slate-400'}`}>No pressure — even one sentence counts.</p>
           </div>
         </>
       ) : (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-3 md:space-y-4 mt-1 md:mt-2">
-          <div className={`p-3 md:p-4 rounded-xl ${theme === 'dark' ? 'bg-indigo-500/20 border border-indigo-500/30' : 'bg-indigo-50/80 border border-indigo-100'}`}>
-            <div className={`font-semibold text-base md:text-lg mb-2 ${theme === 'dark' ? 'text-indigo-300' : 'text-indigo-600'}`}>Saved.</div>
-            <div className={`text-xs md:text-sm mb-2 leading-relaxed ${theme === 'dark' ? 'text-white/80' : 'text-slate-700'}`}>{reflection}</div>
+          <div className={`p-4 md:p-5 rounded-2xl ${theme === 'dark' ? 'bg-indigo-500/20 border border-indigo-500/30' : 'bg-indigo-50/80 border border-indigo-100'}`}>
+            <div className={`font-semibold text-base mb-2 ${theme === 'dark' ? 'text-indigo-300' : 'text-indigo-600'}`}>Saved.</div>
+            <div className={`text-sm leading-relaxed ${theme === 'dark' ? 'text-white/80' : 'text-slate-700'}`}>{reflection}</div>
             <div className="flex items-center gap-2 mt-2 md:mt-3">
-              <span className="text-xl md:text-2xl">{selectedMood}</span>
+              {selectedMood && (
+                <FontAwesomeIcon icon={moodIcons[selectedMood]} className={`text-2xl ${theme === 'dark' ? 'text-white/90' : ''}`} />
+              )}
               <div className="flex gap-1 flex-wrap">
                 {selectedTags.map(tag => (
-                  <UIBadge key={tag} className={`text-xs ${theme === 'dark' ? 'bg-white/10 text-white/80 border-white/20' : 'bg-white/80 text-slate-600 border-slate-100'}`}>
+                  <UIBadge key={tag} className={`text-xs font-medium rounded-full px-2.5 py-1 ${theme === 'dark' ? 'bg-white/10 text-white/80 border-white/20' : 'bg-white/80 text-slate-600 border-slate-100'}`}>
                     {tag}
                   </UIBadge>
                 ))}
@@ -603,23 +613,25 @@ export default function TodaysPrompt() {
             </div>
           </div>
           <div className="space-y-2">
-            <p className={`text-xs md:text-sm font-medium ${theme === 'dark' ? 'text-white/80' : 'text-slate-800'}`}>How was this prompt for you?</p>
+            <p className={`text-sm font-medium ${theme === 'dark' ? 'text-white/80' : 'text-slate-800'}`}>How was this prompt for you?</p>
             <div className="flex flex-col sm:flex-row gap-2">
               <Button 
                 size="sm" 
                 variant={feedback === "helped" ? "default" : "ghost"} 
                 onClick={() => handleFeedback("helped")}
-                className={`text-xs md:text-sm ${feedback === "helped" ? "bg-indigo-500 hover:bg-indigo-600" : theme === 'dark' ? "text-white/70 hover:bg-white/10" : "text-slate-600 hover:bg-slate-100"}`}
+                className={`text-xs font-semibold ${feedback === "helped" ? "bg-indigo-500 hover:bg-indigo-600" : theme === 'dark' ? "text-white/70 hover:bg-white/10" : "text-slate-600 hover:bg-slate-100"}`}
               >
-                👍 This helped me
+                <FontAwesomeIcon icon={faThumbsUp} className="text-xs" />
+                This helped me
               </Button>
               <Button 
                 size="sm" 
                 variant={feedback === "irrelevant" ? "destructive" : "ghost"} 
                 onClick={() => handleFeedback("irrelevant")}
-                className={`text-xs md:text-sm ${feedback === "irrelevant" ? theme === 'dark' ? "bg-red-500/20 text-red-300 border border-red-500/30" : "bg-red-500/20 text-red-400 border border-red-400/30" : theme === 'dark' ? "text-white/70 hover:bg-white/10" : "text-slate-600 hover:bg-slate-100"}`}
+                className={`text-xs font-semibold ${feedback === "irrelevant" ? theme === 'dark' ? "bg-red-500/20 text-red-300 border border-red-500/30" : "bg-red-500/20 text-red-400 border border-red-400/30" : theme === 'dark' ? "text-white/70 hover:bg-white/10" : "text-slate-600 hover:bg-slate-100"}`}
               >
-                👎 Not relevant
+                <FontAwesomeIcon icon={faThumbsDown} className="text-xs" />
+                Not relevant
               </Button>
             </div>
           </div>
@@ -638,7 +650,7 @@ export default function TodaysPrompt() {
                     onClick={() => handleCloseAction('revisit')}
                     className={`text-xs md:text-sm justify-start gap-2 ${theme === 'dark' ? 'text-white/80 hover:bg-white/10' : 'text-slate-700 hover:bg-slate-100'}`}
                   >
-                    <Leaf size={16} weight="bold" aria-hidden="true" />
+                    <FontAwesomeIcon icon={faLeaf} className={`w-4 text-center ${theme === 'dark' ? 'text-[#818CF8]' : 'text-indigo-400'}`} aria-hidden="true" />
                     Revisit this tomorrow
                   </Button>
                   <Button
@@ -647,7 +659,7 @@ export default function TodaysPrompt() {
                     onClick={() => handleCloseAction('save')}
                     className={`text-xs md:text-sm justify-start gap-2 ${theme === 'dark' ? 'text-white/80 hover:bg-white/10' : 'text-slate-700 hover:bg-slate-100'}`}
                   >
-                    <BookmarkSimple size={16} weight="bold" aria-hidden="true" />
+                    <FontAwesomeIcon icon={faBookmark} className={`w-4 text-center ${theme === 'dark' ? 'text-[#818CF8]' : 'text-indigo-400'}`} aria-hidden="true" />
                     Save for later
                   </Button>
                   <Button
@@ -657,7 +669,7 @@ export default function TodaysPrompt() {
                     onClick={() => handleCloseAction('reminders_on')}
                     className={`text-xs md:text-sm justify-start gap-2 ${theme === 'dark' ? 'text-white/80 hover:bg-white/10' : 'text-slate-700 hover:bg-slate-100'}`}
                   >
-                    <Bell size={16} weight="bold" aria-hidden="true" />
+                    <FontAwesomeIcon icon={faBell} className={`w-4 text-center ${theme === 'dark' ? 'text-[#818CF8]' : 'text-indigo-400'}`} aria-hidden="true" />
                     Quiet reminder
                   </Button>
                 </div>
@@ -686,9 +698,9 @@ export default function TodaysPrompt() {
             <span aria-hidden className={`pointer-events-none absolute -top-20 -right-16 h-64 w-64 rounded-full blur-3xl ${theme === 'dark' ? 'bg-[#6366F1]/10' : 'bg-[#6366F1]/15'}`} />
             <div className="relative flex items-start justify-between mb-5 gap-3">
               <div className="flex items-center gap-3">
-                <IconOrb accent="rose" size="md">
-                  <Sparkle size={20} weight="bold" className="text-white" />
-                </IconOrb>
+                <span className="w-11 h-11 rounded-xl bg-gradient-to-br from-rose-400 to-rose-500 flex items-center justify-center text-white shadow-lg shadow-rose-500/25">
+                  <FontAwesomeIcon icon={faPenNib} className="text-base" />
+                </span>
                 <div>
                   <h3 className={`text-lg md:text-xl font-semibold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>Self-Journal</h3>
                   <p className={`text-xs md:text-sm ${theme === 'dark' ? 'text-white/55' : 'text-slate-500'}`}>No timer, no AI. Saved privately. Doesn't affect stats or rhythm.</p>
@@ -713,8 +725,9 @@ export default function TodaysPrompt() {
                     <button
                       key={mood}
                       type="button"
+                      aria-label={moodNames[mood]}
                       onClick={() => setJournalMood(mood)}
-                      className={`text-xl md:text-2xl p-2 md:p-3 rounded-lg transition-colors duration-200 cursor-pointer ${
+                      className={`text-xl p-2.5 rounded-xl transition-colors duration-200 cursor-pointer ${
                         journalMood === mood
                           ? "bg-indigo-100 ring-2 ring-indigo-400"
                           : theme === 'dark' 
@@ -723,7 +736,7 @@ export default function TodaysPrompt() {
                       }`}
                       disabled={journalSaving}
                     >
-                      {mood}
+                      <FontAwesomeIcon icon={moodIcons[mood]} />
                     </button>
                   ))}
                 </div>

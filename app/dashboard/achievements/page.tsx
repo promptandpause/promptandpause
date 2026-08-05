@@ -14,7 +14,16 @@ import {
   getRarityColor,
 } from "@/lib/types/achievements"
 import { achievementService } from "@/lib/services/achievementService"
-import { Trophy } from "phosphor-react"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import {
+  faFire,
+  faPenNib,
+  faStar,
+  faTags,
+  faTrophy,
+  faWandMagicSparkles,
+} from "@fortawesome/free-solid-svg-icons"
+import type { IconDefinition } from "@fortawesome/fontawesome-svg-core"
 import { BadgeIcon } from "./components/BadgeIcon"
 
 export default function AchievementsPage() {
@@ -47,12 +56,12 @@ function AchievementsPageContent() {
     loadUser()
   }, [loadUser])
 
-  const categories = [
-    { key: 'streak', name: getCategoryDisplayName('streak'), icon: '🔥' },
-    { key: 'reflection', name: getCategoryDisplayName('reflection'), icon: '📝' },
-    { key: 'topic', name: getCategoryDisplayName('topic'), icon: '🏷️' },
-    { key: 'milestone', name: getCategoryDisplayName('milestone'), icon: '⭐' },
-    { key: 'exploration', name: getCategoryDisplayName('exploration'), icon: '🌟' },
+  const categories: { key: string, name: string, icon: IconDefinition }[] = [
+    { key: 'streak', name: getCategoryDisplayName('streak'), icon: faFire },
+    { key: 'reflection', name: getCategoryDisplayName('reflection'), icon: faPenNib },
+    { key: 'topic', name: getCategoryDisplayName('topic'), icon: faTags },
+    { key: 'milestone', name: getCategoryDisplayName('milestone'), icon: faStar },
+    { key: 'exploration', name: getCategoryDisplayName('exploration'), icon: faWandMagicSparkles },
   ]
 
   const displayedBadges = selectedCategory
@@ -70,7 +79,7 @@ function AchievementsPageContent() {
         : 'bg-slate-900 text-white'
       : isDark
         ? 'bg-white/[0.04] border border-white/10 text-white/60 hover:border-white/20'
-        : 'bg-white/70 border border-slate-200 text-slate-600 hover:border-slate-400'
+        : 'bg-white border border-slate-200 text-slate-600 hover:border-slate-400'
 
   return (
     <div
@@ -90,7 +99,7 @@ function AchievementsPageContent() {
             >
               <div className="flex items-center gap-3 mb-2">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isDark ? 'bg-indigo-500/20 text-indigo-400' : 'bg-indigo-50 text-indigo-600'}`}>
-                  <Trophy size={20} weight="bold" />
+                  <FontAwesomeIcon icon={faTrophy} className="text-xl" />
                 </div>
                 <h1 className={`text-3xl lg:text-4xl font-extrabold tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}>
                   Achievements
@@ -131,7 +140,7 @@ function AchievementsPageContent() {
             </motion.section>
 
             {/* Filters */}
-            <section className="flex flex-wrap items-center gap-2 overflow-x-auto pb-1">
+            <section className="flex flex-wrap items-center gap-2 overflow-x-auto pb-1 animate-fade-up">
               <button
                 onClick={() => setSelectedCategory(null)}
                 className={`px-5 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-colors ${filterActive(selectedCategory === null)}`}
@@ -149,7 +158,7 @@ function AchievementsPageContent() {
                     onClick={() => setSelectedCategory(category.key)}
                     className={`px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap flex items-center gap-2 transition-colors ${filterActive(active)}`}
                   >
-                    <span className="text-sm">{category.icon}</span>
+                    <FontAwesomeIcon icon={category.icon} className="text-sm" />
                     <span className="hidden sm:inline">{category.name}</span>
                     <span className={`text-[10px] px-1.5 py-0.5 rounded-md ${
                       active
@@ -164,7 +173,7 @@ function AchievementsPageContent() {
             </section>
 
             {/* Achievement Grid */}
-            <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-fade-up">
               {loading ? (
                 <div className={`col-span-full text-center py-16 text-sm font-medium ${isDark ? "text-white/40" : "text-slate-500"}`}>
                   Loading achievements...
@@ -211,15 +220,15 @@ function BadgeCard({ badge, isUnlocked, earnedAt, isDark, index }: BadgeCardProp
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.03 }}
       whileHover={isUnlocked ? { y: -4 } : undefined}
-      className={`rounded-2xl p-6 flex flex-col items-center text-center transition-colors ${
+      className={`glass rounded-3xl soft-shadow p-6 flex flex-col items-center text-center transition-colors ${
         isDark
-          ? 'bg-white/[0.04] border border-white/[0.06]'
-          : 'bg-white/70 backdrop-blur-[12px] border border-slate-100 shadow-soft-card'
+          ? 'border border-white/[0.06]'
+          : 'border-slate-100'
       } ${
         isLegendary
           ? isDark
-            ? 'border-white/10 ring-1 ring-amber-400/20'
-            : 'border-2 border-amber-100'
+            ? 'ring-1 ring-amber-400/20'
+            : 'ring-2 ring-amber-100'
           : ''
       } ${!isUnlocked ? 'opacity-60 grayscale' : ''}`}
     >

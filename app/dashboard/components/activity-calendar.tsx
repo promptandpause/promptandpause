@@ -7,7 +7,8 @@ import { calculateReflectionStreak, getDailyActivity } from "@/lib/services/anal
 import { supabaseReflectionService } from "@/lib/services/supabaseReflectionService"
 import { DailyActivity } from "@/lib/types/reflection"
 import { motion, AnimatePresence } from "framer-motion"
-import { Calendar, TrendUp } from "phosphor-react"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCalendar, faFire, faLightbulb, faSeedling, faStar, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
 import { getSupabaseClient } from "@/lib/supabase/client"
 import { useTheme } from "@/contexts/ThemeContext"
 
@@ -84,15 +85,15 @@ export default function ActivityCalendar() {
 
   const card = isDark
     ? 'bg-white/[0.04] border border-white/[0.06]'
-    : 'bg-white/70 backdrop-blur-[12px] border border-slate-100 shadow-soft-card'
+    : 'glass rounded-3xl border-slate-100 soft-shadow'
 
   return (
-    <Card className={`rounded-3xl p-6 lg:p-8 flex flex-col transition-all duration-200 ${card}`}>
+    <Card className={`animate-fade-up rounded-3xl p-6 lg:p-8 flex flex-col transition-all duration-200 ${card}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isDark ? 'bg-indigo-500/20 text-indigo-400' : 'bg-indigo-50 text-indigo-600'}`}>
-            <Calendar size={16} weight="bold" />
+            <FontAwesomeIcon icon={faCalendar} className="text-sm" />
           </div>
           <h3 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>Activity</h3>
         </div>
@@ -104,7 +105,7 @@ export default function ActivityCalendar() {
           </div>
           <div className="text-center">
             <div className="flex items-center justify-center gap-1">
-              <TrendUp size={14} weight="bold" className={isDark ? 'text-indigo-400' : 'text-indigo-500'} />
+              <FontAwesomeIcon icon={faFire} className={`text-sm ${isDark ? 'text-indigo-400' : 'text-indigo-500'}`} />
               <p className={`text-xs uppercase font-bold tracking-widest mb-1 ${isDark ? 'text-white/40' : 'text-slate-400'}`}>Streak</p>
             </div>
             <p className={`text-2xl font-extrabold tabular-nums ${isDark ? 'text-white' : 'text-slate-900'}`}>{currentStreak}</p>
@@ -195,8 +196,9 @@ export default function ActivityCalendar() {
             animate={{ opacity: 1, x: 0 }}
             className="bg-gradient-to-r from-purple-500/20 to-red-500/20 border border-purple-400/30 rounded-lg p-3"
           >
-            <p className="text-purple-400 font-semibold text-sm mb-1">
-              🌱 {currentStreak} days in a row
+            <p className="text-purple-400 font-semibold text-sm mb-1 flex items-center gap-1.5">
+              <FontAwesomeIcon icon={faFire} className="text-xs" />
+              {currentStreak} days in a row
             </p>
             <p className={`text-xs ${isDark ? 'text-white/70' : 'text-slate-600'}`}>
               A gentle rhythm is taking shape.
@@ -206,8 +208,9 @@ export default function ActivityCalendar() {
         
         {currentStreak === 0 && totalReflections > 0 && (
           <div className="bg-blue-500/20 border border-blue-400/30 rounded-lg p-3">
-            <p className="text-blue-400 font-semibold text-sm mb-1">
-              💡 Reflect today to start a rhythm
+            <p className="text-blue-400 font-semibold text-sm mb-1 flex items-center gap-1.5">
+              <FontAwesomeIcon icon={faLightbulb} className="text-xs" />
+              Reflect today to start a rhythm
             </p>
             <p className={`text-xs ${isDark ? 'text-white/70' : 'text-slate-600'}`}>
               Complete today's reflection to begin.
@@ -217,8 +220,9 @@ export default function ActivityCalendar() {
 
         {totalReflections === 0 && (
           <div className="bg-purple-500/20 border border-purple-400/30 rounded-lg p-3">
-            <p className="text-purple-400 font-semibold text-sm mb-1">
-              ✨ Begin your journey
+            <p className="text-purple-400 font-semibold text-sm mb-1 flex items-center gap-1.5">
+              <FontAwesomeIcon icon={faWandMagicSparkles} className="text-xs" />
+              Begin your journey
             </p>
             <p className={`text-xs ${isDark ? 'text-white/70' : 'text-slate-600'}`}>
               Your first reflection is waiting!
@@ -229,17 +233,20 @@ export default function ActivityCalendar() {
         {/* Milestone badges */}
         {totalReflections >= 7 && (
           <Badge className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-400 border border-green-400/30">
-            🌱 First Week Complete
+            <FontAwesomeIcon icon={faSeedling} />
+            First Week Complete
           </Badge>
         )}
         {totalReflections >= 30 && (
           <Badge className="bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-400 border border-blue-400/30">
-            🌟 Month Milestone
+            <FontAwesomeIcon icon={faStar} />
+            Month Milestone
           </Badge>
         )}
         {currentStreak >= 7 && (
           <Badge className="bg-gradient-to-r from-purple-500/20 to-red-500/20 text-purple-400 border border-purple-400/30">
-            🌱 A Week of Rhythm
+            <FontAwesomeIcon icon={faSeedling} />
+            A Week of Rhythm
           </Badge>
         )}
       </div>

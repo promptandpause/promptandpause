@@ -10,7 +10,21 @@ import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
 import { useTheme } from "@/contexts/ThemeContext"
 import { motion } from "framer-motion"
-import { MagnifyingGlass, Trash, PencilSimple, CaretLeft, CaretRight, X, Plus } from "phosphor-react"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+  faBookOpen,
+  faFilter,
+  faArrowUpWideShort,
+  faMagnifyingGlass,
+  faPlus,
+  faWandSparkles,
+  faSun,
+  faXmark,
+  faPen,
+  faTrashCan,
+  faChevronLeft,
+  faChevronRight,
+} from '@fortawesome/free-solid-svg-icons'
 import { DashboardSidebar } from "../components/DashboardSidebar"
 
 const moods = ["😔", "😐", "😊", "😄", "🤔", "😌", "🙏", "💪"]
@@ -206,14 +220,14 @@ export default function JournalsPage() {
 
   const cardClass = theme === 'dark'
     ? 'bg-white/[0.04] border border-white/[0.06]'
-    : 'bg-white/70 backdrop-blur-[12px] border border-slate-100 shadow-soft-card'
+    : 'glass border-slate-100 soft-shadow'
 
   const labelClass = theme === 'dark' ? 'text-white/50' : 'text-slate-500'
 
   const inputBase = `border-2 border-transparent focus:border-indigo-500/60 ${
     theme === 'dark'
       ? 'bg-white/5 text-white placeholder:text-white/40 focus:bg-white/10'
-      : 'bg-slate-50 text-slate-900 placeholder:text-slate-400 focus:bg-white'
+      : 'bg-[#F7F9FA] text-slate-900 placeholder:text-slate-400 focus:bg-white'
   }`
 
   const pillBase = `px-4 py-2 rounded-xl border text-xs font-bold transition-all`
@@ -230,18 +244,26 @@ export default function JournalsPage() {
           <div className="max-w-4xl mx-auto px-5 py-12 lg:py-16">
 
             {/* Header */}
-            <header className="mb-10 lg:mb-12">
+            <header className="mb-10 lg:mb-12 animate-fade-up">
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <h1 className={`text-3xl lg:text-4xl font-extrabold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>My Journals</h1>
                   <p className={`text-slate-500 font-medium mt-2 ${theme === 'dark' ? 'text-white/40' : ''}`}>Private self-journals (no AI, no pressure). Edit or add freely.</p>
+                </div>
+                <div className={`hidden lg:flex gap-3 ${theme === 'dark' ? 'text-white/60' : 'text-slate-500'}`}>
+                  <button type="button" className={`w-12 h-12 rounded-2xl border border-slate-100 flex items-center justify-center transition-all hover:bg-slate-50 ${theme === 'dark' ? 'bg-white/[0.04] hover:bg-white/10' : 'bg-white/70 glass soft-shadow'}`} aria-label="Filter journals">
+                    <FontAwesomeIcon icon={faFilter} className="text-lg" />
+                  </button>
+                  <button type="button" className={`w-12 h-12 rounded-2xl border border-slate-100 flex items-center justify-center transition-all hover:bg-slate-50 ${theme === 'dark' ? 'bg-white/[0.04] hover:bg-white/10' : 'bg-white/70 glass soft-shadow'}`} aria-label="Sort journals">
+                    <FontAwesomeIcon icon={faArrowUpWideShort} className="text-lg" />
+                  </button>
                 </div>
               </div>
 
               {/* Search & Filters */}
               <div className={`space-y-6 rounded-[32px] p-6 lg:p-8 ${cardClass}`}>
                 <div className="relative">
-                  <MagnifyingGlass size={18} weight="bold" className={`absolute left-5 top-1/2 -translate-y-1/2 ${theme === 'dark' ? 'text-white/40' : 'text-slate-400'}`} />
+                  <FontAwesomeIcon icon={faMagnifyingGlass} className={`absolute left-5 top-1/2 -translate-y-1/2 ${theme === 'dark' ? 'text-white/40' : 'text-slate-400'}`} />
                   <Input
                     value={searchText}
                     onChange={(e) => setSearchText(e.target.value)}
@@ -266,17 +288,17 @@ export default function JournalsPage() {
                     <label className={`text-[11px] font-extrabold uppercase tracking-[0.18em] mb-3 block ${labelClass}`}>
                       Filter by mood
                     </label>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex gap-2 overflow-x-auto pb-1">
                       {moods.map(m => (
                         <button
                           key={m}
                           onClick={() => setFilterMood(filterMood === m ? null : m)}
-                          className={`w-10 h-10 rounded-xl text-xl flex items-center justify-center transition-all ${
+                          className={`w-10 h-10 min-w-[40px] rounded-xl text-xl flex items-center justify-center transition-all ${
                             filterMood === m
                               ? 'bg-indigo-50 border border-indigo-500 scale-110 dark:bg-indigo-500/20 dark:border-indigo-400/50'
                               : theme === 'dark'
                                 ? 'bg-white/5 border border-transparent hover:bg-white/10'
-                                : 'bg-slate-50 border border-transparent hover:bg-indigo-50'
+                                : 'bg-[#F7F9FA] border border-transparent hover:bg-indigo-50'
                           }`}
                         >
                           {m}
@@ -312,7 +334,7 @@ export default function JournalsPage() {
                     onClick={clearFilters}
                     className={`flex items-center gap-1.5 text-xs font-bold transition-colors ${theme === 'dark' ? 'text-white/50 hover:text-white' : 'text-slate-500 hover:text-slate-900'}`}
                   >
-                    <X size={12} weight="bold" />
+                    <FontAwesomeIcon icon={faXmark} className="text-xs" />
                     Clear all filters
                   </button>
                 )}
@@ -320,11 +342,11 @@ export default function JournalsPage() {
             </header>
 
             {/* New Journal Entry */}
-            <section className="mb-12">
+            <section className="mb-12 animate-fade-up">
               <div className={`relative overflow-hidden rounded-[40px] border-2 p-8 lg:p-10 ${(showEditor || editingId) ? 'block' : 'hidden md:block'} ${
                 theme === 'dark'
                   ? 'bg-white/[0.04] border-indigo-400/20'
-                  : 'bg-white/70 backdrop-blur-[12px] border-indigo-100 shadow-xl shadow-indigo-500/5'
+                  : 'glass border-indigo-100 shadow-xl shadow-indigo-500/5'
               }`}>
                 <div className={`absolute -top-12 -right-12 w-48 h-48 rounded-full blur-3xl pointer-events-none ${theme === 'dark' ? 'bg-indigo-500/10' : 'bg-indigo-100/60'}`} />
 
@@ -345,7 +367,7 @@ export default function JournalsPage() {
                         onClick={() => { setShowEditor(false); if (!editingId) resetEditor(); }}
                         className={`md:hidden p-1.5 rounded-lg transition-colors ${theme === 'dark' ? 'hover:bg-white/10 text-white/60' : 'hover:bg-slate-100 text-slate-500'}`}
                       >
-                        <X size={12} weight="bold" className="h-5 w-5" />
+                        <FontAwesomeIcon icon={faXmark} className="h-5 w-5" />
                       </button>
                     </div>
                   </div>
@@ -356,10 +378,10 @@ export default function JournalsPage() {
                       value={text}
                       onChange={(e) => setText(e.target.value)}
                       disabled={saving}
-                      className={`min-h-[200px] md:min-h-[220px] rounded-[24px] p-6 text-base md:text-lg font-medium border-2 border-transparent focus:border-indigo-500/20 ${
+                      className={`min-h-[240px] rounded-[24px] p-6 text-base md:text-lg font-medium border-2 border-transparent focus:border-indigo-500/20 ${
                         theme === 'dark'
                           ? 'bg-white/5 text-white placeholder:text-white/40 focus:bg-white/10'
-                          : 'bg-slate-50 text-slate-900 placeholder:text-slate-400 focus:bg-white'
+                          : 'bg-[#F7F9FA] text-slate-900 placeholder:text-slate-400 focus:bg-white'
                       }`}
                     />
 
@@ -377,7 +399,7 @@ export default function JournalsPage() {
                                   ? 'bg-indigo-50 border-indigo-500 scale-110 dark:bg-indigo-500/20 dark:border-indigo-400/50'
                                   : theme === 'dark'
                                     ? 'bg-white/5 border-transparent hover:bg-white/10'
-                                    : 'bg-slate-50 border-transparent hover:border-indigo-500/30 hover:bg-indigo-50'
+                                    : 'bg-[#F7F9FA] border-transparent hover:border-indigo-500/30 hover:bg-indigo-50'
                               }`}
                             >
                               {m}
@@ -402,12 +424,19 @@ export default function JournalsPage() {
                               {tag}
                             </button>
                           ))}
+                          <button
+                            type="button"
+                            aria-label="Add tag"
+                            className={`px-3 py-2 rounded-xl transition-colors ${theme === 'dark' ? 'bg-white/5 text-white/60 hover:text-indigo-400' : 'bg-slate-100 text-slate-500 hover:text-indigo-500'}`}
+                          >
+                            <FontAwesomeIcon icon={faPlus} className="text-xs" />
+                          </button>
                         </div>
                       </div>
                     </div>
 
                     <div className="flex items-center justify-end gap-4 pt-4">
-                      <Button variant="ghost" onClick={resetEditor} disabled={saving} className="px-8 py-3 h-auto text-sm font-bold text-slate-500 hover:text-slate-900">
+                      <Button variant="ghost" onClick={resetEditor} disabled={saving} className="px-8 py-4 h-auto text-sm font-bold text-slate-500 hover:text-slate-900">
                         Clear
                       </Button>
                       <Button
@@ -424,7 +453,7 @@ export default function JournalsPage() {
             </section>
 
             {/* Previous Journals */}
-            <section>
+            <section className="animate-fade-up">
               <div className="flex items-center justify-between mb-6 lg:mb-8">
                 <h3 className={`text-xl font-extrabold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
                   Your Journals ({filtered.length})
@@ -443,19 +472,19 @@ export default function JournalsPage() {
                   /* Empty state */
                   <div className={`rounded-[40px] p-10 md:p-16 text-center ${cardClass}`}>
                     <div className={`w-24 h-24 rounded-[32px] flex items-center justify-center mx-auto mb-6 ${theme === 'dark' ? 'bg-white/10 text-white/40' : 'bg-slate-100 text-slate-400'}`}>
-                      <span className="text-4xl">📓</span>
+                      <FontAwesomeIcon icon={faBookOpen} className="text-5xl" />
                     </div>
                     <h4 className={`text-xl font-extrabold mb-2 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>No journals yet.</h4>
                     <p className={`font-medium max-w-xs mx-auto mb-10 ${theme === 'dark' ? 'text-white/40' : 'text-slate-500'}`}>Start your journey today by writing your first reflection above.</p>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-md mx-auto text-left">
                       <div className="p-6 rounded-3xl bg-indigo-50/70 border border-indigo-100 dark:bg-indigo-500/10 dark:border-indigo-400/20">
-                        <span className={`text-2xl mb-3 block ${theme === 'dark' ? 'text-indigo-400' : 'text-indigo-500'}`}>✨</span>
+                        <FontAwesomeIcon icon={faWandSparkles} className={`text-2xl mb-3 block ${theme === 'dark' ? 'text-indigo-400' : 'text-indigo-500'}`} />
                         <p className={`text-xs font-bold uppercase tracking-widest mb-1 ${theme === 'dark' ? 'text-indigo-300' : 'text-indigo-700'}`}>Prompt Idea</p>
                         <p className={`text-sm font-bold leading-relaxed ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>What made you smile today?</p>
                       </div>
                       <div className="p-6 rounded-3xl bg-amber-50 border border-amber-200/60 dark:bg-amber-500/10 dark:border-amber-400/20">
-                        <span className={`text-2xl mb-3 block ${theme === 'dark' ? 'text-amber-400' : 'text-amber-500'}`}>☀️</span>
+                        <FontAwesomeIcon icon={faSun} className={`text-2xl mb-3 block ${theme === 'dark' ? 'text-amber-400' : 'text-amber-500'}`} />
                         <p className={`text-xs font-bold uppercase tracking-widest mb-1 ${theme === 'dark' ? 'text-amber-300' : 'text-amber-600'}`}>Daily Reflection</p>
                         <p className={`text-sm font-bold leading-relaxed ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>Describe a moment of peace you had.</p>
                       </div>
@@ -466,7 +495,7 @@ export default function JournalsPage() {
                   <div className={`rounded-[32px] p-12 text-center ${cardClass}`}>
                     <p className={`text-sm font-medium mb-4 ${theme === 'dark' ? 'text-white/50' : 'text-slate-500'}`}>No journals match your filters.</p>
                     <Button variant="ghost" size="sm" onClick={clearFilters} className={`text-xs font-bold ${theme === 'dark' ? 'text-white/60 hover:text-white' : 'text-slate-500 hover:text-slate-900'}`}>
-                      <X size={12} weight="bold" className="mr-1" />
+                      <FontAwesomeIcon icon={faXmark} className="mr-1" />
                       Clear all filters
                     </Button>
                   </div>
@@ -498,8 +527,8 @@ export default function JournalsPage() {
                             </p>
                           </div>
                           <div className="flex flex-col gap-2">
-                            <Button variant="ghost" size="icon" onClick={() => startEdit(entry)} className={theme === 'dark' ? 'text-white/60 hover:text-white' : 'text-slate-500 hover:text-slate-900'}><PencilSimple size={16} weight="bold" /></Button>
-                            <Button variant="ghost" size="icon" onClick={() => handleDelete(entry.id)} className={theme === 'dark' ? 'text-white/60' : 'text-slate-500'}><Trash size={16} weight="bold" className="text-red-500" /></Button>
+                            <Button variant="ghost" size="icon" onClick={() => startEdit(entry)} className={theme === 'dark' ? 'text-white/60 hover:text-white' : 'text-slate-500 hover:text-slate-900'}><FontAwesomeIcon icon={faPen} /></Button>
+                            <Button variant="ghost" size="icon" onClick={() => handleDelete(entry.id)} className={theme === 'dark' ? 'text-white/60' : 'text-slate-500'}><FontAwesomeIcon icon={faTrashCan} className="text-red-500" /></Button>
                           </div>
                         </div>
                       </motion.div>
@@ -517,7 +546,7 @@ export default function JournalsPage() {
                           disabled={currentPage === 1}
                           className={`px-3 py-1 ${theme === 'dark' ? 'text-white/60 hover:text-white' : 'text-slate-600 hover:text-slate-900'} ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
-                          <CaretLeft size={16} weight="bold" className="h-4 w-4" />
+                          <FontAwesomeIcon icon={faChevronLeft} className="h-4 w-4" />
                           Previous
                         </Button>
 
@@ -556,7 +585,7 @@ export default function JournalsPage() {
                           className={`px-3 py-1 ${theme === 'dark' ? 'text-white/60 hover:text-white' : 'text-slate-600 hover:text-slate-900'} ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
                           Next
-                          <CaretRight size={16} weight="bold" className="h-4 w-4" />
+                          <FontAwesomeIcon icon={faChevronRight} className="h-4 w-4" />
                         </Button>
                       </div>
 
@@ -580,7 +609,7 @@ export default function JournalsPage() {
           className={`md:hidden fixed bottom-28 right-4 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all active:scale-95 bg-indigo-500 text-white shadow-indigo-500/40 hover:bg-indigo-600`}
           aria-label="New Journal"
         >
-          <Plus size={24} weight="bold" />
+          <FontAwesomeIcon icon={faPlus} />
         </button>
       )}
     </div>

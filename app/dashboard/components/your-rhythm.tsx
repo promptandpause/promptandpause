@@ -4,6 +4,18 @@ import { useEffect, useState } from "react"
 import { useTheme } from "@/contexts/ThemeContext"
 import { supabaseMoodService } from "@/lib/services/supabaseReflectionService"
 import { MoodType } from "@/lib/types/reflection"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import type { IconDefinition } from "@fortawesome/fontawesome-svg-core"
+import {
+  faFaceFrownOpen,
+  faFaceMeh,
+  faFaceSmile,
+  faFaceGrin,
+  faCircleQuestion,
+  faFaceSmileWink,
+  faHandsPraying,
+  faHandFist,
+} from "@fortawesome/free-solid-svg-icons"
 
 type Day = {
   date: string
@@ -11,6 +23,17 @@ type Day = {
 }
 
 const MOODS: MoodType[] = ["😔", "😐", "😊", "😄", "🤔", "😌", "🙏", "💪"]
+
+const MOOD_ICONS: Record<string, IconDefinition> = {
+  "😔": faFaceFrownOpen,
+  "😐": faFaceMeh,
+  "😊": faFaceSmile,
+  "😄": faFaceGrin,
+  "🤔": faCircleQuestion,
+  "😌": faFaceSmileWink,
+  "🙏": faHandsPraying,
+  "💪": faHandFist,
+}
 
 function normalizeMood(m: any): MoodType | null {
   if (MOODS.includes(m)) return m as MoodType
@@ -53,14 +76,14 @@ export default function YourRhythm() {
 
   return (
     <section
-      className={`rounded-3xl p-5 md:p-6 border transition-all ${
-        isDark ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-slate-100 shadow-soft-card'
+      className={`rounded-3xl border transition-all ${
+        isDark ? 'bg-white/[0.04] border-white/[0.06]' : 'glass border-slate-100 soft-shadow p-5'
       }`}
     >
       <div className="flex flex-col gap-4">
         <div className="flex items-start justify-between">
           <div>
-            <p className={`text-[10px] uppercase tracking-[0.14em] font-semibold mb-2 ${isDark ? 'text-white/40' : 'text-slate-400'}`}>Mood trends</p>
+            <p className={`text-[10px] uppercase tracking-[0.14em] font-semibold mb-1 ${isDark ? 'text-white/40' : 'text-slate-400'}`}>Mood trends</p>
             <div className="flex items-baseline gap-2">
               <span className={`text-2xl font-bold tabular-nums ${isDark ? 'text-white' : 'text-slate-900'}`}>{daysReflected}/7</span>
               <span className={`text-xs ${isDark ? 'text-white/50' : 'text-slate-400'}`}>days reflected this week</span>
@@ -73,18 +96,25 @@ export default function YourRhythm() {
           {days.map((d, i) => (
             <div
               key={d.date}
-              className={`w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center ${
+              className={`w-9 h-9 rounded-full flex items-center justify-center ${
                 i === days.length - 1
                   ? isDark ? 'bg-[#818CF8]/15 border border-[#818CF8]/30' : 'bg-indigo-50 border border-indigo-100'
                   : d.mood
                     ? isDark ? 'bg-white/8' : 'bg-white border border-slate-100'
-                    : isDark ? 'bg-white/5' : 'bg-slate-100'
+                    : isDark ? 'bg-white/5' : 'bg-[#EFF3F4]'
               }`}
               aria-label={d.date}
               title={d.date}
             >
               {d.mood
-                ? <span className="text-base leading-none">{d.mood}</span>
+                ? (
+                    <FontAwesomeIcon
+                      icon={MOOD_ICONS[d.mood] || faFaceSmile}
+                      className={`text-base ${
+                        i === days.length - 1 ? 'text-indigo-400' : isDark ? 'text-white/70' : 'text-slate-500'
+                      }`}
+                    />
+                  )
                 : <span className={`text-xs ${isDark ? 'text-white/15' : 'text-slate-300'}`}>—</span>
               }
             </div>

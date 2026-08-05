@@ -2,7 +2,20 @@
 
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Smiley, SmileyMeh, SmileySad, Heart, Sparkle } from "phosphor-react"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import {
+  faFaceFrownOpen,
+  faFaceMeh,
+  faFaceSmile,
+  faFaceGrin,
+  faCircleQuestion,
+  faFaceSmileWink,
+  faHeart,
+  faHandsPraying,
+  faHandFist,
+  faFire,
+} from "@fortawesome/free-solid-svg-icons"
+import type { IconProp } from "@fortawesome/fontawesome-svg-core"
 import { useTheme } from "@/contexts/ThemeContext"
 import { supabaseMoodService, supabaseReflectionService, supabaseAnalyticsService } from "@/lib/services/supabaseReflectionService"
 import type { MoodType } from "@/lib/types/reflection"
@@ -10,15 +23,15 @@ import { ModuleShell, ModuleErrorBoundary } from "./ModuleShell"
 
 const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
-const moodConfig: Record<string, { icon: typeof Smiley; label: string; color: string; bg: string }> = {
-  "😔": { icon: SmileySad, label: "Sad", color: "text-rose-500", bg: "bg-rose-100 dark:bg-rose-500/15" },
-  "😐": { icon: SmileyMeh, label: "Neutral", color: "text-amber-500", bg: "bg-amber-100 dark:bg-amber-500/15" },
-  "😊": { icon: Smiley, label: "Happy", color: "text-emerald-500", bg: "bg-emerald-100 dark:bg-emerald-500/15" },
-  "😄": { icon: Smiley, label: "Joyful", color: "text-emerald-500", bg: "bg-emerald-100 dark:bg-emerald-500/15" },
-  "🤔": { icon: SmileyMeh, label: "Thoughtful", color: "text-violet-500", bg: "bg-violet-100 dark:bg-violet-500/15" },
-  "😌": { icon: Heart, label: "Calm", color: "text-sky-500", bg: "bg-sky-100 dark:bg-sky-500/15" },
-  "🙏": { icon: Sparkle, label: "Grateful", color: "text-amber-500", bg: "bg-amber-100 dark:bg-amber-500/15" },
-  "💪": { icon: Sparkle, label: "Strong", color: "text-violet-500", bg: "bg-violet-100 dark:bg-violet-500/15" },
+const moodConfig: Record<string, { icon: IconProp; label: string; color: string; bg: string }> = {
+  "😔": { icon: faFaceFrownOpen, label: "Sad", color: "text-rose-500", bg: "bg-rose-100 dark:bg-rose-500/15" },
+  "😐": { icon: faFaceMeh, label: "Neutral", color: "text-amber-500", bg: "bg-amber-100 dark:bg-amber-500/15" },
+  "😊": { icon: faFaceSmile, label: "Happy", color: "text-emerald-500", bg: "bg-emerald-100 dark:bg-emerald-500/15" },
+  "😄": { icon: faFaceGrin, label: "Joyful", color: "text-emerald-500", bg: "bg-emerald-100 dark:bg-emerald-500/15" },
+  "🤔": { icon: faCircleQuestion, label: "Thoughtful", color: "text-violet-500", bg: "bg-violet-100 dark:bg-violet-500/15" },
+  "😌": { icon: faFaceSmileWink, label: "Calm", color: "text-sky-500", bg: "bg-sky-100 dark:bg-sky-500/15" },
+  "🙏": { icon: faHandsPraying, label: "Grateful", color: "text-amber-500", bg: "bg-amber-100 dark:bg-amber-500/15" },
+  "💪": { icon: faHandFist, label: "Strong", color: "text-violet-500", bg: "bg-violet-100 dark:bg-violet-500/15" },
 }
 
 interface WeekDay {
@@ -104,13 +117,14 @@ function MoodModuleInner() {
 
   return (
     <ModuleShell
-      icon={<Heart size={18} weight="bold" />}
+      icon={<FontAwesomeIcon icon={faHeart} />}
       title="Your Mood"
       subtitle="This week at a glance"
       accent="indigo"
       action={
         currentStreak > 0 ? (
           <span className="inline-flex items-center gap-1 text-[10px] font-medium px-2 py-1 rounded-full bg-amber-50 text-amber-700 dark:bg-amber-400/10 dark:text-amber-300 border border-amber-200/60 dark:border-amber-400/20">
+            <FontAwesomeIcon icon={faFire} className="text-[10px]" />
             {currentStreak} day{currentStreak === 1 ? "" : "s"} in a row
           </span>
         ) : undefined
@@ -130,7 +144,11 @@ function MoodModuleInner() {
                   !day.mood ? (isDark ? "border border-white/10" : "") : ""
                 }`}
               >
-                {day.mood ? <span>{day.mood}</span> : <span className={`text-xs ${isDark ? "text-white/20" : "text-slate-300"}`}>—</span>}
+                {day.mood ? (
+                  <FontAwesomeIcon icon={moodConfig[day.mood].icon} className={`text-base ${moodConfig[day.mood].color}`} />
+                ) : (
+                  <span className={`text-xs ${isDark ? "text-white/20" : "text-slate-300"}`}>—</span>
+                )}
               </div>
               <span className={`text-[10px] font-medium ${isToday ? "text-indigo-500" : isDark ? "text-white/40" : "text-slate-400"}`}>
                 {isToday ? "Now" : day.dayName}
@@ -162,7 +180,7 @@ function MoodModuleInner() {
               <div className="space-y-2">
                 {activeData.mood && (
                   <div className="flex items-center gap-2">
-                    <span className="text-2xl">{activeData.mood}</span>
+                    <FontAwesomeIcon icon={moodConfig[activeData.mood].icon} className={`text-2xl ${moodConfig[activeData.mood].color}`} />
                     <span className={`text-sm ${isDark ? "text-white/70" : "text-slate-500"}`}>
                       {moodLabels[activeData.mood] || "Mood recorded"}
                     </span>
@@ -191,7 +209,7 @@ function MoodModuleInner() {
               <span key={emoji} className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-medium ${
                 isDark ? "bg-white/[0.06] text-white/70" : "bg-white text-slate-500 border border-slate-100"
               }`}>
-                <span className="text-sm">{emoji}</span>
+                <FontAwesomeIcon icon={moodConfig[emoji].icon} className={`text-sm ${moodConfig[emoji].color}`} />
                 {moodLabels[emoji] || emoji}
                 {count > 1 && <span className={isDark ? "text-white/30" : "text-slate-400"}>×{count}</span>}
               </span>

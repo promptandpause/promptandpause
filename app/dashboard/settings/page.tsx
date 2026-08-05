@@ -8,13 +8,33 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
-  Bell, ChevronLeft as CaretLeft, ChevronRight as CaretRight, HelpCircle as Question, Lock, Palette,
-  Shield, Trash2 as Trash, Upload, User, Zap as Lightning, CreditCard,
-  Globe as GlobeHemisphereWest, Loader2 as Spinner, CheckCircle2 as CheckCircle, XCircle, Settings as Gear, BatteryCharging,
-  ArrowRight, Mail as Envelope, Key, Eye, EyeOff as EyeSlash, Copy, Check, ExternalLink as ArrowSquareOut, BookOpen as Notebook,
-  LayoutGrid as Layout, Archive as ArchiveBox, Crown, Calendar, Smartphone as DeviceMobile, LogOut
-} from "lucide-react"
+  faBell,
+  faBolt,
+  faCalendarDays,
+  faCheck,
+  faChevronLeft,
+  faChevronRight,
+  faCircleCheck,
+  faCircleQuestion,
+  faClock,
+  faCreditCard,
+  faCrown,
+  faEnvelope,
+  faEye,
+  faEyeSlash,
+  faGear,
+  faGlobe,
+  faLock,
+  faMobile,
+  faPalette,
+  faRightFromBracket,
+  faShieldHalved,
+  faSpinner,
+  faTriangleExclamation,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons"
 import { SlackIcon } from "@/components/icons/SlackIcon"
 import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon"
 import { TeamsIcon } from "@/components/icons/TeamsIcon"
@@ -42,7 +62,6 @@ import {
 } from "@/lib/services/cacheService"
 import { usePushNotifications } from "@/lib/hooks/usePushNotifications"
 import FocusAreasManager from "../components/focus-areas-manager"
-import { IconOrb, type Accent } from "@/components/ui/accent-card"
 import {
   Select,
   SelectContent,
@@ -60,11 +79,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-const sidebarNav = [
-  { icon: Layout, label: "dashboard", href: "/", active: false },
-  { icon: ArchiveBox, label: "archive", href: "/archive", active: false },
-  { icon: Gear, label: "settings", href: "/settings", active: true },
-]
 
 // Use IANA timezones from the timezone utility (imported at top)
 // This ensures compatibility with JavaScript's Intl.DateTimeFormat and handles DST automatically
@@ -180,6 +194,9 @@ function SettingsPageContent() {
   
   // Profile states
   const [fullName, setFullName] = useState("")
+  const [displayName, setDisplayName] = useState("")
+  const [avatarUrl, setAvatarUrl] = useState("")
+  const [avatarUploading, setAvatarUploading] = useState(false)
   const [email, setEmail] = useState("")
   const [timezone, setTimezone] = useState("") // Will be auto-detected
   const [timezoneInfo, setTimezoneInfo] = useState<any>(null)
@@ -241,6 +258,8 @@ function SettingsPageContent() {
 
       if (cachedProfile) {
         setFullName(cachedProfile.full_name || '')
+        setDisplayName(cachedProfile.display_name || '')
+        setAvatarUrl(cachedProfile.avatar_url || '')
         // Prefer timezone_iana over old timezone field
         const savedTimezone = cachedProfile.timezone_iana || cachedProfile.timezone
         if (savedTimezone) {
@@ -276,6 +295,8 @@ function SettingsPageContent() {
         const { success, data: profile } = await profileResponse.json()
         if (success && profile) {
           setFullName(profile.full_name || '')
+          setDisplayName(profile.display_name || '')
+          setAvatarUrl(profile.avatar_url || '')
           // Prefer timezone_iana over old timezone field
           const savedTimezone = profile.timezone_iana || profile.timezone
           if (savedTimezone) {
@@ -337,7 +358,7 @@ function SettingsPageContent() {
     
     if (success === 'true') {
       toast({
-        title: "Payment Successful! 🎉",
+        title: "Payment Successful",
         description: "Your subscription has been activated. Welcome to Premium!",
       })
       // Clean URL
@@ -391,6 +412,8 @@ function SettingsPageContent() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           full_name: fullName,
+          display_name: displayName,
+          avatar_url: avatarUrl,
           timezone_iana: timezone, // Save as IANA timezone
           timezone: timezone, // Keep old field for backwards compatibility
         }),
@@ -411,6 +434,47 @@ function SettingsPageContent() {
         description: error.message || t('toast.errorGeneric') || "Failed to save profile. Please try again.",
         variant: "destructive",
       })
+    }
+  }
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setAvatarUploading(true)
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      const res = await fetch('/api/user/avatar', { method: 'POST', body: formData })
+      const data = await res.json()
+      if (res.ok && data.url) {
+        setAvatarUrl(data.url)
+        toast({ title: 'Avatar uploaded' })
+      } else {
+        toast({ title: 'Upload failed', description: data.error, variant: 'destructive' })
+      }
+    } catch {
+      toast({ title: 'Upload failed', description: 'Network error', variant: 'destructive' })
+    }
+    setAvatarUploading(false)
+    e.target.value = ''
+  }
+
+  const handleAvatarRemove = async () => {
+    setAvatarUrl('')
+    try {
+      const response = await fetch('/api/user/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ avatar_url: '' }),
+      })
+      if (response.ok) {
+        toast({ title: 'Avatar removed' })
+      } else {
+        toast({ title: 'Failed to remove avatar', variant: 'destructive' })
+      }
+    } catch {
+      toast({ title: 'Failed to remove avatar', variant: 'destructive' })
     }
   }
 
@@ -966,9 +1030,9 @@ function SettingsPageContent() {
                   }`}
                 >
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
-                    theme === 'dark' ? 'bg-white/10' : 'bg-slate-100'
+                    theme === 'dark' ? 'bg-white/10' : 'bg-indigo-50'
                   }`}>
-                    <User size={18} className={theme === 'dark' ? 'text-white/70' : 'text-slate-600'} />
+                    <FontAwesomeIcon icon={faUser} className={theme === 'dark' ? 'text-white/70' : 'text-indigo-600'} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className={`font-semibold text-[15px] truncate ${
@@ -978,7 +1042,7 @@ function SettingsPageContent() {
                       theme === 'dark' ? 'text-white/40' : 'text-slate-500'
                     }`}>Name, email, timezone</p>
                   </div>
-                  <CaretRight size={18} className={theme === 'dark' ? 'text-white/25' : 'text-slate-300'} />
+                  <FontAwesomeIcon icon={faChevronRight} className={theme === 'dark' ? 'text-white/25' : 'text-slate-300'} />
                 </button>
 
                 <div className={`h-px my-2 ${theme === 'dark' ? 'bg-white/[0.08]' : 'bg-slate-100'}`} />
@@ -989,9 +1053,9 @@ function SettingsPageContent() {
                 }`}>Account</p>
 
                 {[
-                  { view: 'notifications' as SettingsView, icon: Bell, label: 'Notifications' },
-                  { view: 'security' as SettingsView, icon: Lock, label: 'Security' },
-                  { view: 'preferences' as SettingsView, icon: Palette, label: 'Preferences' },
+                  { view: 'notifications' as SettingsView, icon: faBell, label: 'Notifications' },
+                  { view: 'security' as SettingsView, icon: faLock, label: 'Security' },
+                  { view: 'preferences' as SettingsView, icon: faPalette, label: 'Preferences' },
                 ].map((item, i) => (
                   <button
                     key={item.view}
@@ -1000,11 +1064,11 @@ function SettingsPageContent() {
                       theme === 'dark' ? 'active:bg-white/5' : 'active:bg-slate-50'
                     }`}
                   >
-                    <item.icon size={18} className={theme === 'dark' ? 'text-white/50' : 'text-slate-600'} />
+                    <FontAwesomeIcon icon={item.icon} className={theme === 'dark' ? 'text-white/50' : 'text-slate-600'} />
                     <span className={`flex-1 text-[15px] ${
                       theme === 'dark' ? 'text-white' : 'text-slate-900'
                     }`}>{item.label}</span>
-                    <CaretRight size={18} className={theme === 'dark' ? 'text-white/25' : 'text-slate-300'} />
+                    <FontAwesomeIcon icon={faChevronRight} className={theme === 'dark' ? 'text-white/25' : 'text-slate-300'} />
                   </button>
                 ))}
 
@@ -1021,7 +1085,7 @@ function SettingsPageContent() {
                     theme === 'dark' ? 'active:bg-white/5' : 'active:bg-slate-50'
                   }`}
                 >
-                  <CreditCard size={18} className={theme === 'dark' ? 'text-white/50' : 'text-slate-600'} />
+                  <FontAwesomeIcon icon={faCreditCard} className={theme === 'dark' ? 'text-white/50' : 'text-slate-600'} />
                   <span className={`flex-1 text-[15px] ${
                     theme === 'dark' ? 'text-white' : 'text-slate-900'
                   }`}>Subscription</span>
@@ -1030,7 +1094,7 @@ function SettingsPageContent() {
                   }`}>
                     {tier === 'premium' && isTrial ? 'Trial' : tier === 'premium' ? 'Premium' : 'Free'}
                   </span>
-                  <CaretRight size={18} className={theme === 'dark' ? 'text-white/25' : 'text-slate-300'} />
+                  <FontAwesomeIcon icon={faChevronRight} className={theme === 'dark' ? 'text-white/25' : 'text-slate-300'} />
                 </button>
 
                 <button
@@ -1039,11 +1103,11 @@ function SettingsPageContent() {
                     theme === 'dark' ? 'active:bg-white/5' : 'active:bg-slate-50'
                   }`}
                 >
-                  <Lightning size={18} className={theme === 'dark' ? 'text-white/50' : 'text-slate-600'} />
+                  <FontAwesomeIcon icon={faBolt} className={theme === 'dark' ? 'text-white/50' : 'text-slate-600'} />
                   <span className={`flex-1 text-[15px] ${
                     theme === 'dark' ? 'text-white' : 'text-slate-900'
                   }`}>Integrations</span>
-                  <CaretRight size={18} className={theme === 'dark' ? 'text-white/25' : 'text-slate-300'} />
+                  <FontAwesomeIcon icon={faChevronRight} className={theme === 'dark' ? 'text-white/25' : 'text-slate-300'} />
                 </button>
 
                 <div className={`h-px my-2 ${theme === 'dark' ? 'bg-white/[0.08]' : 'bg-slate-100'}`} />
@@ -1059,11 +1123,11 @@ function SettingsPageContent() {
                     theme === 'dark' ? 'active:bg-white/5' : 'active:bg-slate-50'
                   }`}
                 >
-                  <Question size={18} className={theme === 'dark' ? 'text-white/50' : 'text-slate-600'} />
+                  <FontAwesomeIcon icon={faCircleQuestion} className={theme === 'dark' ? 'text-white/50' : 'text-slate-600'} />
                   <span className={`flex-1 text-[15px] ${
                     theme === 'dark' ? 'text-white' : 'text-slate-900'
                   }`}>Contact Support</span>
-                  <CaretRight size={18} className={theme === 'dark' ? 'text-white/25' : 'text-slate-300'} />
+                  <FontAwesomeIcon icon={faChevronRight} className={theme === 'dark' ? 'text-white/25' : 'text-slate-300'} />
                 </Link>
 
                 <div className={`h-px my-2 ${theme === 'dark' ? 'bg-white/[0.08]' : 'bg-slate-100'}`} />
@@ -1078,7 +1142,7 @@ function SettingsPageContent() {
                     theme === 'dark' ? 'active:bg-red-500/10' : 'active:bg-red-50'
                   }`}
                 >
-                  <LogOut size={18} />
+                  <FontAwesomeIcon icon={faRightFromBracket} />
                   <span className="flex-1 text-[15px]">Sign Out</span>
                 </button>
 
@@ -1086,9 +1150,9 @@ function SettingsPageContent() {
                   onClick={() => navigateToView('danger')}
                   className="w-full flex items-center gap-3 px-1 py-3 text-left transition-colors active:bg-red-500/5"
                 >
-                  <Shield size={18} className="text-red-500" />
+                  <FontAwesomeIcon icon={faShieldHalved} className="text-red-500" />
                   <span className="flex-1 text-[15px] text-red-500 font-medium">Account Management</span>
-                  <CaretRight size={18} className="text-red-500/40" />
+                  <FontAwesomeIcon icon={faChevronRight} className="text-red-500/40" />
                 </button>
               </div>
             ) : (
@@ -1105,7 +1169,7 @@ function SettingsPageContent() {
                         : 'text-indigo-600 active:text-indigo-800'
                     }`}
                   >
-                    <CaretLeft size={18} strokeWidth={2.5} />
+                    <FontAwesomeIcon icon={faChevronLeft} />
                     <span className="text-sm font-medium">Settings</span>
                     <span className={`text-sm ${theme === 'dark' ? 'text-white/30' : 'text-slate-500'}`}>/</span>
                     <span className={`text-sm ${theme === 'dark' ? 'text-white/70' : 'text-slate-600'}`}>
@@ -1122,64 +1186,121 @@ function SettingsPageContent() {
 
                 {/* Detail Views */}
                 {currentView === 'profile' && (
-                  <Card className={`rounded-2xl p-4 shadow-lg ${
+                  <div className="space-y-4">
+                  {/* Profile Photo */}
+                  <div className={`flex items-center gap-5 p-5 animate-fade-up rounded-3xl ${
                     theme === 'dark'
                       ? 'bg-white/5 border-white/10'
-                      : 'bg-white/70 backdrop-blur-[12px] border border-slate-100 shadow-soft-card'
+                      : 'glass rounded-3xl border-slate-100 soft-shadow'
+                  }`}>
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 border-4 border-white shadow-sm flex items-center justify-center shrink-0 overflow-hidden">
+                      {avatarUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={avatarUrl} alt="Profile" className="w-full h-full object-cover" />
+                      ) : (
+                        <FontAwesomeIcon icon={faUser} className="text-3xl text-indigo-500" />
+                      )}
+                    </div>
+                    <div className="space-y-3">
+                      <div className="flex gap-2">
+                        <label className="px-4 py-2 bg-indigo-500 text-white text-xs font-semibold rounded-lg hover:bg-indigo-600 transition-all cursor-pointer">
+                          Change Photo
+                          <input
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
+                            className="hidden"
+                            disabled={avatarUploading}
+                            onChange={handleAvatarChange}
+                          />
+                        </label>
+                        <button
+                          type="button"
+                          onClick={handleAvatarRemove}
+                          disabled={avatarUploading}
+                          className="px-4 py-2 border border-slate-200 text-slate-600 text-xs font-semibold rounded-lg hover:bg-slate-50 transition-all"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                      <p className={`text-xs ${theme === 'dark' ? 'text-white/40' : 'text-slate-400'}`}>
+                        {avatarUploading ? 'Uploading...' : 'JPG, GIF or PNG. Max size of 2MB.'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <Card className={`animate-fade-up rounded-3xl p-4 ${
+                    theme === 'dark'
+                      ? 'bg-white/5 border-white/10'
+                      : 'glass rounded-3xl border-slate-100 soft-shadow'
                   }`}>
                     <div className="flex items-center gap-2 mb-4">
-                      <User size={20} strokeWidth={2.5} className="text-indigo-600" />
-                      <h3 className={`text-xl font-semibold ${
+                      <FontAwesomeIcon icon={faUser} className="text-indigo-600" />
+                      <h3 className={`text-xl font-extrabold tracking-tight ${
                         theme === 'dark' ? 'text-white' : 'text-slate-900'
                       }`}>Profile</h3>
                     </div>
                     <div className="space-y-3">
                       <div className="space-y-1.5">
                         <Label htmlFor="name-mobile" className={`text-sm font-medium ${
-                          theme === 'dark' ? 'text-white/90' : 'text-slate-600'
+                          theme === 'dark' ? 'text-white/90' : 'text-slate-700'
                         }`}>Full Name</Label>
                         <Input
                           id="name-mobile"
                           value={fullName}
                           onChange={(e) => setFullName(e.target.value)}
-                          className={`text-sm h-10 ${
+                          className={`text-sm h-10 rounded-xl ${
                             theme === 'dark'
                               ? 'bg-white/10 border border-white/10 text-white placeholder:text-white/40 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20'
-                              : 'bg-white border border-slate-100 text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200'
+                              : 'bg-white border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
+                          }`}
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="display-name-mobile" className={`text-sm font-medium ${
+                          theme === 'dark' ? 'text-white/90' : 'text-slate-700'
+                        }`}>Display Name</Label>
+                        <Input
+                          id="display-name-mobile"
+                          value={displayName}
+                          onChange={(e) => setDisplayName(e.target.value)}
+                          className={`text-sm h-10 rounded-xl ${
+                            theme === 'dark'
+                              ? 'bg-white/10 border border-white/10 text-white placeholder:text-white/40 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20'
+                              : 'bg-white border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
                           }`}
                         />
                       </div>
                       <div className="space-y-1.5">
                         <Label htmlFor="email-mobile" className={`text-sm font-medium ${
-                          theme === 'dark' ? 'text-white/90' : 'text-slate-600'
+                          theme === 'dark' ? 'text-white/90' : 'text-slate-700'
                         }`}>Email</Label>
                         <Input
                           id="email-mobile"
                           type="email"
                           value={email}
                           disabled
-                          className={`text-sm h-10 ${
+                          className={`text-sm h-10 rounded-xl ${
                             theme === 'dark'
                               ? 'bg-white/5 border-white/10 text-white/40'
-                              : 'bg-slate-50 border border-slate-100 text-slate-500'
+                              : 'bg-slate-50 border border-slate-200 text-slate-400 cursor-not-allowed'
                           }`}
                         />
                         <p className={`text-xs ${
-                          theme === 'dark' ? 'text-white/40' : 'text-slate-500'
-                        }`}>Email cannot be changed</p>
+                          theme === 'dark' ? 'text-white/40' : 'text-slate-400'
+                        }`}>Email cannot be changed from settings. Contact support to update.</p>
                       </div>
                       <div className="space-y-1.5">
                         <Label htmlFor="timezone-mobile" className={`text-sm font-medium ${
-                          theme === 'dark' ? 'text-white/90' : 'text-slate-600'
+                          theme === 'dark' ? 'text-white/90' : 'text-slate-700'
                         }`}>Timezone</Label>
                         <Select value={timezone} onValueChange={(value) => {
                           setTimezone(value)
                           setTimezoneInfo(getTimezoneInfo(value))
                         }}>
-                          <SelectTrigger className={`text-sm h-10 ${
+                          <SelectTrigger className={`text-sm h-10 rounded-xl ${
                             theme === 'dark'
                               ? 'bg-white/10 border border-white/10 text-white'
-                              : 'bg-white border border-slate-100 text-slate-900'
+                              : 'bg-white border border-slate-200 text-slate-900'
                           }`}>
                             <SelectValue />
                           </SelectTrigger>
@@ -1204,29 +1325,28 @@ function SettingsPageContent() {
                             })}
                           </SelectContent>
                         </Select>
-                        {timezoneInfo && timezoneInfo.dstNote && (
-                          <p className={`text-xs ${
-                            theme === 'dark' ? 'text-white/40' : 'text-slate-500'
-                          }`}>{timezoneInfo.dstNote}</p>
-                        )}
+                        <p className={`text-xs ${
+                          theme === 'dark' ? 'text-white/40' : 'text-slate-400'
+                        }`}>Automatically detects daylight saving time.</p>
                       </div>
-                      <Button onClick={handleSaveProfile} className="w-full bg-gradient-to-r from-[#6366F1] to-[#818CF8] hover:from-[#4F46E5] hover:to-[#818CF8] text-white h-12 text-base font-medium rounded-xl shadow-lg active:scale-[0.98] transition-transform">
+                      <Button onClick={handleSaveProfile} className="w-full bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white h-12 text-base font-semibold rounded-xl shadow-lg shadow-indigo-500/20 active:scale-[0.98] transition-transform">
                         Save Changes
                       </Button>
                     </div>
                   </Card>
+                  </div>
                 )}
 
                 {currentView === 'notifications' && (
                   <div className="space-y-4">
                     {/* Push & Device Notifications Section */}
-                    <Card className={`backdrop-blur-xl rounded-2xl p-4 shadow-lg ${
+                    <Card className={`animate-fade-up rounded-3xl p-4 shadow-lg ${
                       theme === 'dark'
                         ? 'bg-white/5 border-white/10'
-                        : 'bg-white/70 backdrop-blur-[12px] border border-slate-100 shadow-soft-card'
+                        : 'glass rounded-3xl border-slate-100 soft-shadow'
                     }`}>
                       <div className="flex items-center gap-2 mb-3">
-                        <DeviceMobile size={16} strokeWidth={2.5} className="text-indigo-500" />
+                        <FontAwesomeIcon icon={faMobile} className="text-indigo-500" />
                         <h4 className={`text-sm font-semibold uppercase tracking-wide ${
                           theme === 'dark' ? 'text-white/50' : 'text-slate-500'
                         }`}>Device</h4>
@@ -1235,13 +1355,13 @@ function SettingsPageContent() {
                     </Card>
 
                     {/* Email Notifications Section */}
-                    <Card className={`backdrop-blur-xl rounded-2xl p-4 shadow-lg ${
+                    <Card className={`animate-fade-up rounded-3xl p-4 shadow-lg ${
                       theme === 'dark'
                         ? 'bg-white/5 border-white/10'
-                        : 'bg-white/70 backdrop-blur-[12px] border border-slate-100 shadow-soft-card'
+                        : 'glass rounded-3xl border-slate-100 soft-shadow'
                     }`}>
                       <div className="flex items-center gap-2 mb-3">
-                        <Envelope size={16} strokeWidth={2.5} className={theme === 'dark' ? 'text-indigo-400' : 'text-indigo-600'} />
+                        <FontAwesomeIcon icon={faEnvelope} className={theme === 'dark' ? 'text-indigo-400' : 'text-indigo-600'} />
                         <h4 className={`text-sm font-semibold uppercase tracking-wide ${
                           theme === 'dark' ? 'text-white/50' : 'text-slate-500'
                         }`}>Email</h4>
@@ -1290,13 +1410,13 @@ function SettingsPageContent() {
                     </Card>
 
                     {/* Schedule Section */}
-                    <Card className={`backdrop-blur-xl rounded-2xl p-4 shadow-lg ${
+                    <Card className={`animate-fade-up rounded-3xl p-4 shadow-lg ${
                       theme === 'dark'
                         ? 'bg-white/5 border-white/10'
-                        : 'bg-white/70 backdrop-blur-[12px] border border-slate-100 shadow-soft-card'
+                        : 'glass rounded-3xl border-slate-100 soft-shadow'
                     }`}>
                       <div className="flex items-center gap-2 mb-3">
-                        <Calendar size={16} strokeWidth={2.5} className="text-purple-500" />
+                        <FontAwesomeIcon icon={faCalendarDays} className="text-purple-500" />
                         <h4 className={`text-sm font-semibold uppercase tracking-wide ${
                           theme === 'dark' ? 'text-white/50' : 'text-slate-500'
                         }`}>Schedule</h4>
@@ -1322,15 +1442,12 @@ function SettingsPageContent() {
                             <div className={`absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none ${
                               theme === 'dark' ? 'text-white/40' : 'text-slate-500'
                             }`}>
-                              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <circle cx="12" cy="12" r="10"/>
-                                <polyline points="12 6 12 12 16 14"/>
-                              </svg>
+                              <FontAwesomeIcon icon={faClock} className="text-lg" />
                             </div>
                             <div className={`absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none ${
                               theme === 'dark' ? 'text-white/40' : 'text-slate-500'
                             }`}>
-                              <CaretRight size={20} strokeWidth={2.5} className="rotate-90" />
+                              <FontAwesomeIcon icon={faChevronRight} className="rotate-90" />
                             </div>
                           </div>
                           <p className={`text-xs ${
@@ -1348,7 +1465,7 @@ function SettingsPageContent() {
                               <Link href="/settings" onClick={() => navigateToView('subscription')} className={`text-xs px-2 py-1 rounded-full flex items-center gap-1 ${
                                 theme === 'dark' ? 'bg-purple-500/20 text-purple-300 hover:bg-purple-500/30' : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
                               }`}>
-                                <Crown size={12} strokeWidth={2.5} />
+                                <FontAwesomeIcon icon={faCrown} className="text-xs" />
                                 3 included
                               </Link>
                             )}
@@ -1408,13 +1525,13 @@ function SettingsPageContent() {
                 )}
 
                 {currentView === 'security' && (
-                  <Card className={`rounded-2xl p-4 shadow-lg ${
+                  <Card className={`animate-fade-up rounded-3xl p-4 shadow-lg ${
                     theme === 'dark'
                       ? 'bg-white/5 border-white/10'
-                      : 'bg-white/70 backdrop-blur-[12px] border border-slate-100 shadow-soft-card'
+                      : 'glass rounded-3xl border-slate-100 soft-shadow'
                   }`}>
                     <div className="flex items-center gap-2 mb-4">
-                      <Lock size={20} strokeWidth={2.5} className="text-slate-500" />
+                      <FontAwesomeIcon icon={faLock} className="text-slate-500" />
                       <h3 className={`text-xl font-semibold ${
                         theme === 'dark' ? 'text-white' : 'text-slate-900'
                       }`}>Security</h3>
@@ -1426,7 +1543,7 @@ function SettingsPageContent() {
                           : 'bg-green-50'
                       }`}>
                         <div className="flex items-center gap-2">
-                          <CheckCircle size={16} strokeWidth={2.5} className={`${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`} />
+                          <FontAwesomeIcon icon={faCircleCheck} className={`${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`} />
                           <p className={`text-sm font-medium ${
                             theme === 'dark' ? 'text-green-300' : 'text-green-700'
                           }`}>Signed in with Google</p>
@@ -1465,7 +1582,7 @@ function SettingsPageContent() {
                                 theme === 'dark' ? 'text-white/40 hover:text-white/50' : 'text-slate-500 hover:text-slate-500'
                               }`}
                             >
-                              {showPasswordFields ? <EyeSlash size={20} strokeWidth={2.5} /> : <Eye size={20} strokeWidth={2.5} />}
+                              {showPasswordFields ? <FontAwesomeIcon icon={faEyeSlash} /> : <FontAwesomeIcon icon={faEye} />}
                             </button>
                           </div>
                         </div>
@@ -1493,7 +1610,7 @@ function SettingsPageContent() {
                               theme === 'dark' ? 'text-white/40 hover:text-white/50' : 'text-slate-500 hover:text-slate-500'
                             }`}
                           >
-                            {showPasswordFields ? <EyeSlash size={20} strokeWidth={2.5} /> : <Eye size={20} strokeWidth={2.5} />}
+                            {showPasswordFields ? <FontAwesomeIcon icon={faEyeSlash} /> : <FontAwesomeIcon icon={faEye} />}
                           </button>
                         </div>
                       </div>
@@ -1520,7 +1637,7 @@ function SettingsPageContent() {
                               theme === 'dark' ? 'text-white/40 hover:text-white/50' : 'text-slate-500 hover:text-slate-500'
                             }`}
                           >
-                            {showPasswordFields ? <EyeSlash size={20} strokeWidth={2.5} /> : <Eye size={20} strokeWidth={2.5} />}
+                            {showPasswordFields ? <FontAwesomeIcon icon={faEyeSlash} /> : <FontAwesomeIcon icon={faEye} />}
                           </button>
                         </div>
                       </div>
@@ -1538,13 +1655,13 @@ function SettingsPageContent() {
                 )}
 
                 {currentView === 'preferences' && (
-                  <Card className={`rounded-2xl p-4 shadow-lg ${
+                  <Card className={`animate-fade-up rounded-3xl p-4 shadow-lg ${
                     theme === 'dark'
                       ? 'bg-white/5 border-white/10'
-                      : 'bg-white/70 backdrop-blur-[12px] border border-slate-100 shadow-soft-card'
+                      : 'glass rounded-3xl border-slate-100 soft-shadow'
                   }`}>
                     <div className="flex items-center gap-2 mb-4">
-                      <Palette size={20} strokeWidth={2.5} className="text-purple-600" />
+                      <FontAwesomeIcon icon={faPalette} className="text-purple-600" />
                       <h3 className={`text-xl font-semibold ${
                         theme === 'dark' ? 'text-white' : 'text-slate-900'
                       }`}>Preferences</h3>
@@ -1710,13 +1827,13 @@ function SettingsPageContent() {
                 )}
 
                 {currentView === 'subscription' && (
-                  <Card className={`rounded-2xl p-4 shadow-lg ${
+                  <Card className={`animate-fade-up rounded-3xl p-4 shadow-lg ${
                     theme === 'dark'
                       ? 'bg-white/5 border-white/10'
-                      : 'bg-white/70 backdrop-blur-[12px] border border-slate-100 shadow-soft-card'
+                      : 'glass rounded-3xl border-slate-100 soft-shadow'
                   }`}>
                     <div className="flex items-center gap-2 mb-4">
-                      <CreditCard size={20} strokeWidth={2.5} className={theme === 'dark' ? 'text-indigo-400' : 'text-indigo-600'} />
+                      <FontAwesomeIcon icon={faCreditCard} className={theme === 'dark' ? 'text-indigo-400' : 'text-indigo-600'} />
                       <h3 className={`text-xl font-semibold ${
                         theme === 'dark' ? 'text-white' : 'text-slate-900'
                       }`}>Subscription</h3>
@@ -1766,7 +1883,7 @@ function SettingsPageContent() {
                                 ? 'bg-amber-500/20 border border-amber-400/40 text-amber-300'
                                 : 'bg-amber-100 border-2 border-amber-300 text-amber-700'
                             }`}>
-                              <Crown size={12} strokeWidth={2.5} /> Active
+                              <FontAwesomeIcon icon={faCrown} className="text-xs" /> Active
                             </span>
                           )}
                           {currentPlan === "premium" && isTrial && (
@@ -1775,7 +1892,7 @@ function SettingsPageContent() {
                                 ? 'bg-purple-500/20 border border-purple-400/40 text-purple-300'
                                 : 'bg-purple-100 border-2 border-purple-300 text-purple-700'
                             }`}>
-                              <Lightning size={12} strokeWidth={2.5} /> Trial
+                              <FontAwesomeIcon icon={faBolt} className="text-xs" /> Trial
                             </span>
                           )}
                           {currentPlan === "free" && (
@@ -1799,7 +1916,7 @@ function SettingsPageContent() {
                               : 'bg-gradient-to-br from-amber-100 to-purple-100 border-2 border-amber-300'
                           }`}>
                             <div className="flex items-center gap-2 mb-3">
-                              <Crown size={20} strokeWidth={2.5} className={`${
+                              <FontAwesomeIcon icon={faCrown} className={`${
                                 theme === 'dark' ? 'text-amber-400' : 'text-amber-700'
                               }`} />
                               <h4 className={`font-semibold ${
@@ -1865,7 +1982,7 @@ function SettingsPageContent() {
                                 <div key={index} className={`flex items-center gap-2 text-xs ${
                                   theme === 'dark' ? 'text-white' : 'text-slate-900'
                                 }`}>
-                                  <Check size={12} strokeWidth={2.5} className={theme === 'dark' ? 'text-indigo-400' : 'text-indigo-600'} />
+                                  <FontAwesomeIcon icon={faCheck} className={theme === 'dark' ? 'text-indigo-400' : 'text-indigo-600'} />
                                   <span>{feature}</span>
                                 </div>
                               ))}
@@ -1875,7 +1992,7 @@ function SettingsPageContent() {
                               onClick={handleUpgradeToPremium} 
                               className="w-full bg-gradient-to-r from-[#6366F1] to-[#818CF8] hover:from-[#4F46E5] hover:to-[#818CF8] text-white font-semibold h-10"
                             >
-                              <Crown size={16} strokeWidth={2.5} className="mr-2" /> 
+                              <FontAwesomeIcon icon={faCrown} className="mr-2" /> 
                               Upgrade to Premium
                             </Button>
                           </div>
@@ -1892,7 +2009,7 @@ function SettingsPageContent() {
                               : 'bg-gradient-to-br from-amber-100 to-purple-100 border-2 border-amber-300'
                           }`}>
                             <div className="flex items-center gap-2 mb-2">
-                              <Crown size={16} strokeWidth={2.5} className={`${
+                              <FontAwesomeIcon icon={faCrown} className={`${
                                 theme === 'dark' ? 'text-amber-400' : 'text-amber-700'
                               }`} />
                               <p className={`text-sm font-semibold ${
@@ -1911,7 +2028,7 @@ function SettingsPageContent() {
                                 "Slack integration",
                               ].map((feature, index) => (
                                 <div key={index} className="flex items-center gap-1.5">
-                                  <Check size={12} strokeWidth={2.5} className={theme === 'dark' ? 'text-indigo-400' : 'text-indigo-600'} />
+                                  <FontAwesomeIcon icon={faCheck} className={theme === 'dark' ? 'text-indigo-400' : 'text-indigo-600'} />
                                   <span>{feature}</span>
                                 </div>
                               ))}
@@ -1951,7 +2068,7 @@ function SettingsPageContent() {
                                 <div key={index} className={`flex items-start gap-2 text-xs ${
                                   theme === 'dark' ? 'text-white/80' : 'text-slate-600'
                                 }`}>
-                                  <Check size={12} strokeWidth={2.5} className="text-indigo-600 flex-shrink-0 mt-0.5" />
+                                  <FontAwesomeIcon icon={faCheck} className="text-indigo-600 flex-shrink-0 mt-0.5" />
                                   <span>{feature}</span>
                                 </div>
                               ))}
@@ -1999,13 +2116,13 @@ function SettingsPageContent() {
                 )}
 
                 {currentView === 'integrations' && (
-                  <Card className={`rounded-2xl p-4 shadow-lg ${
+                  <Card className={`animate-fade-up rounded-3xl p-4 shadow-lg ${
                     theme === 'dark'
                       ? 'bg-white/5 border-white/10'
-                      : 'bg-white/70 backdrop-blur-[12px] border border-slate-100 shadow-soft-card'
+                      : 'glass rounded-3xl border-slate-100 soft-shadow'
                   }`}>
                     <div className="flex items-center gap-2 mb-4">
-                      <Lightning size={20} strokeWidth={2.5} className="text-purple-600" />
+                      <FontAwesomeIcon icon={faBolt} className="text-purple-600" />
                       <h3 className={`text-xl font-semibold ${
                         theme === 'dark' ? 'text-white' : 'text-slate-900'
                       }`}>Integrations</h3>
@@ -2025,7 +2142,7 @@ function SettingsPageContent() {
                             {currentPlan !== 'premium' ? (
                               <p className={`text-xs flex items-center gap-1 ${
                                 theme === 'dark' ? 'text-amber-400' : 'text-amber-600'
-                              }`}><Crown size={12} strokeWidth={2.5} /> Premium Feature</p>
+                              }`}><FontAwesomeIcon icon={faCrown} className="text-xs" /> Premium Feature</p>
                             ) : slackConnected ? (
                               <p className={`text-xs ${
                                 theme === 'dark' ? 'text-green-400' : 'text-green-600'
@@ -2082,13 +2199,13 @@ function SettingsPageContent() {
                 )}
 
                 {currentView === 'danger' && (
-                  <Card className={`rounded-2xl p-4 shadow-lg ${
+                  <Card className={`animate-fade-up rounded-3xl p-4 shadow-lg ${
                     theme === 'dark'
                       ? 'bg-white/5 border-white/10'
-                      : 'bg-white/70 backdrop-blur-[12px] border border-slate-100 shadow-soft-card'
+                      : 'glass rounded-3xl border-slate-100 soft-shadow'
                   }`}>
                     <div className="flex items-center gap-2 mb-4">
-                      <Gear size={20} strokeWidth={2.5} className="text-slate-500" />
+                      <FontAwesomeIcon icon={faGear} className="text-slate-500" />
                       <h3 className={`text-xl font-semibold ${
                         theme === 'dark' ? 'text-white' : 'text-slate-900'
                       }`}>Account Management</h3>
@@ -2144,21 +2261,21 @@ function SettingsPageContent() {
           <div className="w-[260px] shrink-0 sticky top-10">
             <div className="flex items-center gap-3 mb-2">
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${theme === 'dark' ? 'bg-indigo-500/20 text-indigo-400' : 'bg-indigo-50 text-indigo-600'}`}>
-                <Gear size={20} />
+                <FontAwesomeIcon icon={faGear} />
               </div>
               <h1 className={`text-3xl font-extrabold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>Settings</h1>
             </div>
             <p className={`text-sm mb-6 font-medium ${theme === 'dark' ? 'text-white/40' : 'text-slate-500'}`}>Manage your account and preferences</p>
             <nav className="space-y-1">
-              <button onClick={() => navigateToView('profile')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors ${(currentView === 'profile' || currentView === 'main') ? (theme === 'dark' ? 'bg-white text-slate-900 font-semibold' : 'bg-slate-900 text-white font-semibold') : (theme === 'dark' ? 'text-white/60 hover:bg-white/5' : 'text-slate-600 hover:bg-white/70')}`}><User size={18} /><span>Your Profile</span></button>
-              <button onClick={() => navigateToView('notifications')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors ${currentView === 'notifications' ? (theme === 'dark' ? 'bg-white text-slate-900 font-semibold' : 'bg-slate-900 text-white font-semibold') : (theme === 'dark' ? 'text-white/60 hover:bg-white/5' : 'text-slate-600 hover:bg-white/70')}`}><Bell size={18} /><span>Notifications</span></button>
-              <button onClick={() => navigateToView('security')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors ${currentView === 'security' ? (theme === 'dark' ? 'bg-white text-slate-900 font-semibold' : 'bg-slate-900 text-white font-semibold') : (theme === 'dark' ? 'text-white/60 hover:bg-white/5' : 'text-slate-600 hover:bg-white/70')}`}><Lock size={18} /><span>Security</span></button>
-              <button onClick={() => navigateToView('preferences')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors ${currentView === 'preferences' ? (theme === 'dark' ? 'bg-white text-slate-900 font-semibold' : 'bg-slate-900 text-white font-semibold') : (theme === 'dark' ? 'text-white/60 hover:bg-white/5' : 'text-slate-600 hover:bg-white/70')}`}><Palette size={18} /><span>Appearance &amp; Preferences</span></button>
-              <button onClick={() => navigateToView('subscription')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors ${currentView === 'subscription' ? (theme === 'dark' ? 'bg-white text-slate-900 font-semibold' : 'bg-slate-900 text-white font-semibold') : (theme === 'dark' ? 'text-white/60 hover:bg-white/5' : 'text-slate-600 hover:bg-white/70')}`}><CreditCard size={18} /><span>Billing &amp; Plan</span></button>
-              <button onClick={() => navigateToView('integrations')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors ${currentView === 'integrations' ? (theme === 'dark' ? 'bg-white text-slate-900 font-semibold' : 'bg-slate-900 text-white font-semibold') : (theme === 'dark' ? 'text-white/60 hover:bg-white/5' : 'text-slate-600 hover:bg-white/70')}`}><Lightning size={18} /><span>Integrations</span></button>
+              <button onClick={() => navigateToView('profile')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors ${(currentView === 'profile' || currentView === 'main') ? (theme === 'dark' ? 'bg-white text-slate-900 font-semibold' : 'bg-slate-900 text-white font-semibold') : (theme === 'dark' ? 'text-white/60 hover:bg-white/5' : 'text-slate-600 hover:bg-white/70')}`}><FontAwesomeIcon icon={faUser} /><span>Your Profile</span></button>
+              <button onClick={() => navigateToView('notifications')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors ${currentView === 'notifications' ? (theme === 'dark' ? 'bg-white text-slate-900 font-semibold' : 'bg-slate-900 text-white font-semibold') : (theme === 'dark' ? 'text-white/60 hover:bg-white/5' : 'text-slate-600 hover:bg-white/70')}`}><FontAwesomeIcon icon={faBell} /><span>Notifications</span></button>
+              <button onClick={() => navigateToView('security')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors ${currentView === 'security' ? (theme === 'dark' ? 'bg-white text-slate-900 font-semibold' : 'bg-slate-900 text-white font-semibold') : (theme === 'dark' ? 'text-white/60 hover:bg-white/5' : 'text-slate-600 hover:bg-white/70')}`}><FontAwesomeIcon icon={faLock} /><span>Security</span></button>
+              <button onClick={() => navigateToView('preferences')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors ${currentView === 'preferences' ? (theme === 'dark' ? 'bg-white text-slate-900 font-semibold' : 'bg-slate-900 text-white font-semibold') : (theme === 'dark' ? 'text-white/60 hover:bg-white/5' : 'text-slate-600 hover:bg-white/70')}`}><FontAwesomeIcon icon={faPalette} /><span>Appearance &amp; Preferences</span></button>
+              <button onClick={() => navigateToView('subscription')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors ${currentView === 'subscription' ? (theme === 'dark' ? 'bg-white text-slate-900 font-semibold' : 'bg-slate-900 text-white font-semibold') : (theme === 'dark' ? 'text-white/60 hover:bg-white/5' : 'text-slate-600 hover:bg-white/70')}`}><FontAwesomeIcon icon={faCreditCard} /><span>Billing &amp; Plan</span></button>
+              <button onClick={() => navigateToView('integrations')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors ${currentView === 'integrations' ? (theme === 'dark' ? 'bg-white text-slate-900 font-semibold' : 'bg-slate-900 text-white font-semibold') : (theme === 'dark' ? 'text-white/60 hover:bg-white/5' : 'text-slate-600 hover:bg-white/70')}`}><FontAwesomeIcon icon={faBolt} /><span>Integrations</span></button>
               <div className={`pt-4 mt-4 border-t ${theme === 'dark' ? 'border-white/10' : 'border-slate-100'}`}>
-                <Link href="/dashboard/support" className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors ${theme === 'dark' ? 'text-white/60 hover:bg-white/5' : 'text-slate-600 hover:bg-white/70'}`}><Question size={18} /><span>Support</span></Link>
-                <button onClick={() => navigateToView('danger')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors text-red-500 ${currentView === 'danger' ? (theme === 'dark' ? 'bg-red-500/10' : 'bg-red-50') : 'hover:bg-red-50'}`}><Shield size={18} /><span>Account Management</span></button>
+                <Link href="/dashboard/support" className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors ${theme === 'dark' ? 'text-white/60 hover:bg-white/5' : 'text-slate-600 hover:bg-white/70'}`}><FontAwesomeIcon icon={faCircleQuestion} /><span>Support</span></Link>
+                <button onClick={() => navigateToView('danger')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors text-red-500 ${currentView === 'danger' ? (theme === 'dark' ? 'bg-red-500/10' : 'bg-red-50') : 'hover:bg-red-50'}`}><FontAwesomeIcon icon={faShieldHalved} /><span>Account Management</span></button>
                 <button
                   onClick={async () => {
                     await supabase.auth.signOut()
@@ -2166,7 +2283,7 @@ function SettingsPageContent() {
                   }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors text-red-600 ${theme === 'dark' ? 'hover:bg-red-500/10' : 'hover:bg-red-50'}`}
                 >
-                  <LogOut size={18} />
+                  <FontAwesomeIcon icon={faRightFromBracket} />
                   <span>Sign Out</span>
                 </button>
               </div>
@@ -2176,17 +2293,59 @@ function SettingsPageContent() {
           <div className="flex-1 min-w-0 max-w-2xl">
             {(currentView === 'main' || currentView === 'profile') && (
             // Profile Settings
-            <Card className={`backdrop-blur-xl rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg hover:shadow-xl transition-shadow ${
+            <Card className={`animate-fade-up rounded-3xl p-3 md:p-6 shadow-lg hover:shadow-xl transition-shadow ${
               theme === 'dark'
                 ? 'bg-white/5 border-white/10'
-                : 'bg-white/70 backdrop-blur-[12px] border border-slate-100 shadow-soft-card'
+                : 'glass rounded-3xl border-slate-100 soft-shadow'
             }`}>
               <div className="flex items-center gap-2 mb-4">
-                <User size={20} strokeWidth={2.5} className="text-indigo-600" />
+                <FontAwesomeIcon icon={faUser} className="text-indigo-600" />
                 <h3 className={`text-base md:text-xl font-semibold ${
                   theme === 'dark' ? 'text-white' : 'text-slate-900'
                 }`}>Profile Information</h3>
               </div>
+
+              {/* Profile Photo */}
+              <div className={`flex items-center gap-5 p-4 md:p-5 mb-4 rounded-3xl ${
+                theme === 'dark'
+                  ? 'bg-white/5 border-white/10'
+                  : 'bg-white/70 backdrop-blur-[12px] border border-slate-100 shadow-soft-card'
+              }`}>
+                <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 border-4 border-white shadow-sm flex items-center justify-center shrink-0 overflow-hidden">
+                  {avatarUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={avatarUrl} alt="Profile" className="w-full h-full object-cover" />
+                  ) : (
+                    <FontAwesomeIcon icon={faUser} className="text-2xl md:text-3xl text-indigo-500" />
+                  )}
+                </div>
+                <div className="space-y-3">
+                  <div className="flex gap-2">
+                    <label className="px-4 py-2 bg-indigo-500 text-white text-xs font-semibold rounded-lg hover:bg-indigo-600 transition-all cursor-pointer">
+                      Change Photo
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
+                        className="hidden"
+                        disabled={avatarUploading}
+                        onChange={handleAvatarChange}
+                      />
+                    </label>
+                    <button
+                      type="button"
+                      onClick={handleAvatarRemove}
+                      disabled={avatarUploading}
+                      className="px-4 py-2 border border-slate-200 text-slate-600 text-xs font-semibold rounded-lg hover:bg-slate-50 transition-all"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  <p className={`text-xs ${theme === 'dark' ? 'text-white/40' : 'text-slate-400'}`}>
+                    {avatarUploading ? 'Uploading...' : 'JPG, GIF or PNG. Max size of 2MB.'}
+                  </p>
+                </div>
+              </div>
+
               <div className="space-y-3">
                 <div className="space-y-1.5">
                   <Label htmlFor="name" className={`text-sm font-medium ${
@@ -2196,6 +2355,21 @@ function SettingsPageContent() {
                     id="name"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
+                    className={`text-sm h-9 md:h-10 ${
+                      theme === 'dark'
+                        ? 'bg-white/10 border border-white/10 text-white placeholder:text-white/40 focus:border-indigo-400'
+                        : 'bg-white border border-slate-100 text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200'
+                    }`}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="display-name" className={`text-sm font-medium ${
+                    theme === 'dark' ? 'text-white/90' : 'text-slate-600'
+                  }`}>Display Name</Label>
+                  <Input
+                    id="display-name"
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
                     className={`text-sm h-9 md:h-10 ${
                       theme === 'dark'
                         ? 'bg-white/10 border border-white/10 text-white placeholder:text-white/40 focus:border-indigo-400'
@@ -2269,7 +2443,7 @@ function SettingsPageContent() {
                       theme === 'dark' ? 'text-white/40' : 'text-slate-500'
                     }`}>
                       <p className="flex items-center gap-1">
-                        <span>🌍</span>
+                        <FontAwesomeIcon icon={faGlobe} className="text-xs" />
                         <span className="font-medium">{timezoneInfo.display}</span>
                       </p>
                       <p className={theme === 'dark' ? 'text-white/40' : 'text-slate-500'}>{timezoneInfo.dstNote}</p>
@@ -2290,13 +2464,13 @@ function SettingsPageContent() {
             )}
             {currentView === 'notifications' && (
             // Notification Settings
-            <Card className={`backdrop-blur-xl rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg hover:shadow-xl transition-shadow ${
+            <Card className={`animate-fade-up rounded-3xl p-3 md:p-6 shadow-lg hover:shadow-xl transition-shadow ${
               theme === 'dark'
                 ? 'bg-white/5 border-white/10'
-                : 'bg-white/70 backdrop-blur-[12px] border border-slate-100 shadow-soft-card'
+                : 'glass rounded-3xl border-slate-100 soft-shadow'
             }`}>
               <div className="flex items-center gap-2 mb-4">
-                <Bell size={20} strokeWidth={2.5} className={theme === 'dark' ? 'text-indigo-400' : 'text-indigo-600'} />
+                <FontAwesomeIcon icon={faBell} className={theme === 'dark' ? 'text-indigo-400' : 'text-indigo-600'} />
                 <h3 className={`text-base md:text-xl font-semibold ${
                   theme === 'dark' ? 'text-white' : 'text-slate-900'
                 }`}>Notifications</h3>
@@ -2436,13 +2610,13 @@ function SettingsPageContent() {
             )}
             {currentView === 'security' && (
             // Security Settings
-            <Card className={`backdrop-blur-xl rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg hover:shadow-xl transition-shadow ${
+            <Card className={`animate-fade-up rounded-3xl p-3 md:p-6 shadow-lg hover:shadow-xl transition-shadow ${
               theme === 'dark'
                 ? 'bg-white/5 border-white/10'
-                : 'bg-white/70 backdrop-blur-[12px] border border-slate-100 shadow-soft-card'
+                : 'glass rounded-3xl border-slate-100 soft-shadow'
             }`}>
               <div className="flex items-center gap-2 mb-4">
-                <Lock size={20} strokeWidth={2.5} className="text-red-600" />
+                <FontAwesomeIcon icon={faLock} className="text-red-600" />
                 <h3 className={`text-base md:text-xl font-semibold ${
                   theme === 'dark' ? 'text-white' : 'text-slate-900'
                 }`}>Security</h3>
@@ -2544,13 +2718,13 @@ function SettingsPageContent() {
             )}
             {currentView === 'preferences' && (
             // Preferences
-            <Card className={`backdrop-blur-xl rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg hover:shadow-xl transition-shadow ${
+            <Card className={`animate-fade-up rounded-3xl p-3 md:p-6 shadow-lg hover:shadow-xl transition-shadow ${
               theme === 'dark'
                 ? 'bg-white/5 border-white/10'
-                : 'bg-white/70 backdrop-blur-[12px] border border-slate-100 shadow-soft-card'
+                : 'glass rounded-3xl border-slate-100 soft-shadow'
             }`}>
               <div className="flex items-center gap-2 mb-4">
-                <Palette size={20} strokeWidth={2.5} className="text-purple-600" />
+                <FontAwesomeIcon icon={faPalette} className="text-purple-600" />
                 <h3 className={`text-base md:text-xl font-semibold ${
                   theme === 'dark' ? 'text-white' : 'text-slate-900'
                 }`}>Preferences</h3>
@@ -2688,7 +2862,7 @@ function SettingsPageContent() {
                   }`}>
                     <div className="flex items-center justify-between gap-2 mb-2">
                       <div className="flex items-center gap-2">
-                        <Calendar size={16} strokeWidth={2.5} className="text-purple-600" />
+                        <FontAwesomeIcon icon={faCalendarDays} className="text-purple-600" />
                         <Label className={`font-medium ${
                           theme === 'dark' ? 'text-white' : 'text-slate-900'
                         }`}>Select Days for Prompts</Label>
@@ -2699,9 +2873,7 @@ function SettingsPageContent() {
                             ? 'bg-green-500/10 text-green-400 border border-green-400/30'
                             : 'bg-green-50 text-green-700 border-2 border-green-300'
                         }`}>
-                          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
-                          </svg>
+                          <FontAwesomeIcon icon={faCheck} className="text-xs" />
                           Saved
                         </span>
                       )}
@@ -2790,13 +2962,13 @@ function SettingsPageContent() {
             )}
             {currentView === 'subscription' && (
             // Subscription Section
-            <Card className={`rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow ${
+            <Card className={`animate-fade-up animate-fade-up rounded-3xl p-6 shadow-lg hover:shadow-xl transition-shadow ${
             theme === 'dark'
               ? 'bg-white/5 border-white/10'
-              : 'bg-white/70 backdrop-blur-[12px] border border-slate-100 shadow-soft-card'
+              : 'glass rounded-3xl border-slate-100 soft-shadow'
           }`}>
             <div className="flex items-center gap-3 mb-6">
-              <CreditCard size={24} strokeWidth={2.5} className={theme === 'dark' ? 'text-indigo-400' : 'text-indigo-600'} />
+              <FontAwesomeIcon icon={faCreditCard} className={theme === 'dark' ? 'text-indigo-400' : 'text-indigo-600'} />
               <h3 className={`text-xl font-semibold ${
                 theme === 'dark' ? 'text-white' : 'text-slate-900'
               }`}>Subscription</h3>
@@ -2828,7 +3000,7 @@ function SettingsPageContent() {
                         ? 'bg-amber-500/10 text-amber-400 border border-amber-400/30'
                         : 'bg-amber-100 text-amber-700 border-2 border-amber-400'
                     }`}>
-                      <Crown size={12} strokeWidth={2.5} />
+                      <FontAwesomeIcon icon={faCrown} className="text-xs" />
                       Premium
                     </span>
                   )}
@@ -2862,12 +3034,12 @@ function SettingsPageContent() {
 
               {/* Upgrade to Premium */}
               {currentPlan === "free" && (
-                  <div className={`relative overflow-hidden p-6 rounded-2xl text-white ${theme === 'dark' ? 'bg-gradient-to-br from-[#1B2436] to-[#0A0E18] border border-white/10' : 'bg-slate-900 shadow-soft-card'}`}>
+                  <div className={`relative overflow-hidden p-6 rounded-3xl text-white ${theme === 'dark' ? 'bg-gradient-to-br from-[#1B2436] to-[#0A0E18] border border-white/10' : 'bg-slate-900 shadow-soft-card'}`}>
                     <div className="absolute -right-10 -top-10 w-44 h-44 bg-indigo-500/25 rounded-full blur-3xl pointer-events-none" />
                     <div className="absolute -bottom-12 -left-10 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl pointer-events-none" />
                     <div className="relative flex items-center gap-3 mb-4">
                       <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0 text-amber-300">
-                        <Crown size={26} strokeWidth={2.5} />
+                        <FontAwesomeIcon icon={faCrown} className="text-2xl" />
                       </div>
                       <div>
                         <h4 className="text-xl font-bold text-white">Premium Tier</h4>
@@ -2925,7 +3097,7 @@ function SettingsPageContent() {
                       "Priority email support (24hr response)",
                     ].map((feature, index) => (
                       <div key={index} className="flex items-start gap-2 text-sm text-white/80">
-                        <Check size={16} strokeWidth={2.5} className="text-indigo-300 flex-shrink-0 mt-0.5" />
+                        <FontAwesomeIcon icon={faCheck} className="text-indigo-300 flex-shrink-0 mt-0.5" />
                         <span>{feature}</span>
                       </div>
                     ))}
@@ -2935,7 +3107,7 @@ function SettingsPageContent() {
                     onClick={handleUpgradeToPremium}
                     className="w-full bg-white text-slate-900 font-bold text-base rounded-xl shadow-lg shadow-black/10 transition-all duration-700 ease-out hover:scale-[1.02] h-12"
                   >
-                    <Crown size={20} strokeWidth={2.5} className="mr-2 text-indigo-600" />
+                    <FontAwesomeIcon icon={faCrown} className="mr-2 text-indigo-600" />
                     Upgrade to Premium
                   </Button>
                 </div>
@@ -2989,7 +3161,7 @@ function SettingsPageContent() {
                         <div key={index} className={`flex items-start gap-2 text-sm ${
                           theme === 'dark' ? 'text-white/50' : 'text-slate-600'
                         }`}>
-                          <Check size={16} strokeWidth={2.5} className="text-indigo-600 flex-shrink-0 mt-0.5" />
+                          <FontAwesomeIcon icon={faCheck} className="text-indigo-600 flex-shrink-0 mt-0.5" />
                           <span>{feature}</span>
                         </div>
                       ))}
@@ -3030,13 +3202,13 @@ function SettingsPageContent() {
             )}
             {currentView === 'integrations' && (
             // Integrations Section
-            <Card className={`rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow ${
+            <Card className={`animate-fade-up animate-fade-up rounded-3xl p-6 shadow-lg hover:shadow-xl transition-shadow ${
             theme === 'dark'
               ? 'bg-white/5 border-white/10'
-              : 'bg-white/70 backdrop-blur-[12px] border border-slate-100 shadow-soft-card'
+              : 'glass rounded-3xl border-slate-100 soft-shadow'
           }`}>
             <div className="flex items-center gap-3 mb-6">
-              <Lightning size={24} strokeWidth={2.5} className="text-purple-600" />
+              <FontAwesomeIcon icon={faBolt} className="text-purple-600" />
               <h3 className={`text-xl font-semibold ${
                 theme === 'dark' ? 'text-white' : 'text-slate-900'
               }`}>Integrations</h3>
@@ -3076,7 +3248,7 @@ function SettingsPageContent() {
                             ? 'bg-amber-500/10 border border-amber-400/30 text-amber-400'
                             : 'bg-amber-100 border-2 border-amber-300 text-amber-700'
                         }`}>
-                          <Crown size={12} strokeWidth={2.5} />
+                          <FontAwesomeIcon icon={faCrown} className="text-xs" />
                           Premium
                         </span>
                       ) : slackConnected ? (
@@ -3106,7 +3278,7 @@ function SettingsPageContent() {
                           size="sm"
                           className="bg-gradient-to-r from-[#6366F1] to-[#818CF8] hover:from-[#4F46E5] hover:to-[#818CF8] text-white transition-all duration-300"
                         >
-                          <Crown size={16} strokeWidth={2.5} className="mr-2" />
+                          <FontAwesomeIcon icon={faCrown} className="mr-2" />
                           Upgrade to Premium
                         </Button>
                       </Link>
@@ -3140,7 +3312,7 @@ function SettingsPageContent() {
                       >
                         {slackLoading ? (
                           <>
-                            <span className="animate-spin mr-2">⏳</span>
+                            <FontAwesomeIcon icon={faSpinner} spin className="mr-2" />
                             Connecting...
                           </>
                         ) : (
@@ -3261,13 +3433,13 @@ function SettingsPageContent() {
             )}
             {currentView === 'danger' && (
             // Danger Zone
-            <Card className={`rounded-2xl p-6 shadow-lg ${
+            <Card className={`animate-fade-up rounded-3xl p-6 shadow-lg ${
             theme === 'dark'
               ? 'bg-red-500/10 border border-red-400/30'
               : 'bg-red-50 border-2 border-red-300'
           }`}>
             <div className="flex items-center gap-3 mb-4">
-              <Shield size={24} strokeWidth={2.5} className="text-red-600" />
+              <FontAwesomeIcon icon={faShieldHalved} className="text-red-600" />
               <h3 className={`text-xl font-semibold ${
                 theme === 'dark' ? 'text-red-200' : 'text-slate-900'
               }`}>Danger Zone</h3>
@@ -3354,7 +3526,7 @@ function SettingsPageContent() {
               <div className={`mt-3 sm:mt-4 font-medium text-xs sm:text-sm ${
                 theme === 'dark' ? 'text-amber-400' : 'text-amber-700'
               }`}>
-                ⚠️ Your Premium access will continue until the end of your current billing period.
+                <FontAwesomeIcon icon={faTriangleExclamation} className="mr-1" /> Your Premium access will continue until the end of your current billing period.
               </div>
             </AlertDialogHeader>
             <AlertDialogFooter className="flex-col-reverse sm:flex-row sm:justify-center gap-2 sm:gap-3 mt-4">
@@ -3456,7 +3628,7 @@ function SettingsPageContent() {
               >
                 {isDeleting ? (
                   <span className="flex items-center gap-2">
-                    <Spinner size={16} strokeWidth={2.5} className="animate-spin" />
+                    <FontAwesomeIcon icon={faSpinner} spin className="mr-2" />
                     Deleting...
                   </span>
                 ) : (

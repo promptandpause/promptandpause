@@ -7,7 +7,8 @@ import { useTheme } from "@/contexts/ThemeContext"
 import { useEffect, useState, useCallback } from "react"
 import { motion } from "framer-motion"
 import { getSupabaseClient } from "@/lib/supabase/client"
-import { Hash, BookOpen, CalendarBlank, PenNib } from "phosphor-react"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPenNib, faHashtag, faCalendar } from '@fortawesome/free-solid-svg-icons'
 import QuickStats from "../components/quick-stats"
 import ActivityCalendar from "../components/activity-calendar"
 import { calculateWritingMetrics } from "@/lib/services/analyticsService"
@@ -97,19 +98,19 @@ function InsightsContent() {
 
   const cardClass = isDark
     ? 'bg-white/[0.04] border border-white/[0.06]'
-    : 'bg-white/70 backdrop-blur-[12px] border border-slate-100 shadow-soft-card'
+    : 'glass rounded-3xl border-slate-100 soft-shadow'
 
   const hasData = writingMetrics !== null && writingMetrics.averageWordCount > 0
 
   const leftColumn = (
-    <div className="lg:col-span-2 space-y-6 lg:space-y-8">
+    <div className="lg:col-span-2 space-y-6 lg:space-y-8 animate-fade-up" style={{ animationDelay: '0.1s' }}>
       <ActivityCalendar />
 
       {hasData && (
         <div className={`rounded-3xl p-6 lg:p-8 ${cardClass}`}>
           <div className="flex items-center gap-3 mb-6">
             <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isDark ? 'bg-white/10 text-white/60' : 'bg-slate-100 text-slate-600'}`}>
-              <PenNib size={16} weight="bold" />
+              <FontAwesomeIcon icon={faPenNib} className="text-sm" />
             </div>
             <h3 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>Writing Stats</h3>
           </div>
@@ -146,7 +147,7 @@ function InsightsContent() {
 
       {!hasData && (
         <div className={`text-center py-12 rounded-3xl ${cardClass}`}>
-          <CalendarBlank size={36} weight="bold" className={`mx-auto mb-3 ${isDark ? 'text-white/15' : 'text-slate-300'}`} />
+          <FontAwesomeIcon icon={faCalendar} className={`mx-auto mb-3 text-4xl ${isDark ? 'text-white/15' : 'text-slate-300'}`} />
           <p className={`text-sm font-medium ${isDark ? 'text-white/50' : 'text-slate-400'}`}>
             Start reflecting to see your insights
           </p>
@@ -179,7 +180,7 @@ function InsightsContent() {
   )
 
   const rightColumn = (
-    <div className="space-y-6 lg:space-y-8">
+    <div className="space-y-6 lg:space-y-8 animate-fade-up" style={{ animationDelay: '0.2s' }}>
       {!isLoading && (isFree ? (
         <UpgradePrompt feature="insights" />
       ) : (
@@ -190,7 +191,7 @@ function InsightsContent() {
         <div className={`rounded-3xl p-6 lg:p-8 ${cardClass}`}>
           <div className="flex items-center gap-3 mb-6">
             <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isDark ? 'bg-white/10 text-white/60' : 'bg-slate-100 text-slate-600'}`}>
-              <Hash size={16} weight="bold" />
+              <FontAwesomeIcon icon={faHashtag} className="text-sm" />
             </div>
             <h3 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>Top Tags</h3>
           </div>
@@ -232,19 +233,15 @@ function InsightsContent() {
         <DashboardSidebar />
 
         <main className="flex-1 overflow-y-auto scrollbar-thin">
-          <div className="max-w-[1100px] mx-auto px-4 md:px-8 pt-16 md:pt-10 pb-10 space-y-6">
-            <motion.div
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ type: "spring", stiffness: 260, damping: 22 }}
-            >
-              <h1 className={`text-3xl lg:text-4xl font-extrabold tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}>
+          <div className="max-w-[1100px] mx-auto px-4 md:px-8 pt-16 md:pt-10 pb-10 space-y-8">
+            <div className="animate-fade-up">
+              <h1 className={`text-2xl md:text-3xl font-extrabold tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}>
                 Insights
               </h1>
               <p className={`text-sm mt-2 font-medium ${isDark ? "text-white/40" : "text-slate-500"}`}>
                 Your writing patterns, mood trends, and reflection stats.
               </p>
-            </motion.div>
+            </div>
 
             <QuickStats />
 

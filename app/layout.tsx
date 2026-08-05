@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from 'next'
-import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
-import { Playfair_Display } from 'next/font/google'
+import { Inter, Playfair_Display } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Toaster } from '@/components/ui/sonner'
@@ -10,6 +9,7 @@ import { ThemeProvider } from '@/contexts/ThemeContext'
 import { GlobalSyncProvider } from '@/lib/context/GlobalSyncContext'
 import { PWARegistration } from '@/components/PWARegistration'
 import MetaPixel from '@/components/MetaPixel'
+import '@fortawesome/fontawesome-svg-core/styles.css'
 import './globals.css'
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://promptandpause.com'
@@ -17,6 +17,12 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://promptandpause.com'
 const playfair = Playfair_Display({
   subsets: ['latin'],
   variable: '--font-serif',
+  display: 'swap',
+})
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
   display: 'swap',
 })
 
@@ -109,7 +115,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} ${playfair.variable}`}>
+      <body className={`font-sans ${inter.variable} ${GeistMono.variable} ${playfair.variable}`}>
         <ThemeProvider>
           <LanguageProvider>
             <GlobalSyncProvider>

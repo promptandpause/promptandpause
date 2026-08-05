@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { TrendUp, TrendDown, Minus, BookOpen, CalendarCheck, Activity } from "phosphor-react"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faArrowTrendUp, faArrowTrendDown, faMinus, faBookOpen, faCalendarCheck, faChartLine } from '@fortawesome/free-solid-svg-icons'
 import { calculateMoodTrends } from "@/lib/services/analyticsService"
 import { supabaseReflectionService } from "@/lib/services/supabaseReflectionService"
 import { getSupabaseClient } from "@/lib/supabase/client"
@@ -54,9 +55,9 @@ export default function QuickStats() {
   }, [supabase])
 
   const getTrendIcon = () => {
-    if (moodTrend === 'improving') return <TrendUp size={14} weight="bold" className="text-green-500" />
-    if (moodTrend === 'declining') return <TrendDown size={14} weight="bold" className="text-red-500" />
-    return <Minus size={14} weight="bold" className="text-slate-500" />
+    if (moodTrend === 'improving') return <FontAwesomeIcon icon={faArrowTrendUp} className="text-[13px] text-green-500" />
+    if (moodTrend === 'declining') return <FontAwesomeIcon icon={faArrowTrendDown} className="text-[13px] text-red-500" />
+    return <FontAwesomeIcon icon={faMinus} className="text-[13px] text-slate-500" />
   }
 
   const getTrendText = () => {
@@ -67,7 +68,7 @@ export default function QuickStats() {
 
   const card = isDark
     ? 'bg-white/[0.04] border border-white/[0.06]'
-    : 'bg-white/70 backdrop-blur-[12px] border border-slate-100 shadow-soft-card'
+    : 'glass rounded-3xl border-slate-100 soft-shadow'
 
   const orb = (accent: string) => {
     const map: Record<string, string> = {
@@ -88,21 +89,21 @@ export default function QuickStats() {
     {
       key: 'reflections',
       accent: 'blue',
-      icon: <BookOpen size={16} weight="bold" />,
+      icon: <FontAwesomeIcon icon={faBookOpen} className="text-sm" />,
       label: 'Reflections',
       value: <span className={`text-2xl font-extrabold tabular-nums ${isDark ? 'text-white' : 'text-slate-900'}`}>{totalReflections}</span>,
     },
     {
       key: 'week',
       accent: 'emerald',
-      icon: <CalendarCheck size={16} weight="bold" />,
+      icon: <FontAwesomeIcon icon={faCalendarCheck} className="text-sm" />,
       label: 'This Week',
       value: <span className={`text-2xl font-extrabold tabular-nums ${isDark ? 'text-white' : 'text-slate-900'}`}>{thisWeekCount}</span>,
     },
     {
       key: 'mood',
       accent: 'violet',
-      icon: <Activity size={16} weight="bold" />,
+      icon: <FontAwesomeIcon icon={faChartLine} className="text-sm" />,
       label: 'Mood Trend',
       value: (
         <span className={`text-sm font-bold flex items-center gap-1.5 px-2.5 py-1 rounded-full ${isDark ? 'bg-white/10 text-white' : 'bg-green-50 text-green-600'}`}>

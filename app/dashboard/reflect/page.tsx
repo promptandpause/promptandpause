@@ -55,12 +55,12 @@ function ReflectContent() {
         <DashboardSidebar />
 
         <main className="flex-1 overflow-y-auto scrollbar-thin">
-          <div className="max-w-[680px] mx-auto px-4 md:px-8 pt-16 md:pt-10 pb-10">
+          <div className="max-w-[680px] mx-auto px-6 pt-6 md:pt-10 pb-32 lg:pb-16 space-y-6">
             <motion.div
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ type: "spring", stiffness: 260, damping: 22 }}
-              className="mb-6"
+              className="animate-fade-up"
             >
               <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}>
                 Reflect

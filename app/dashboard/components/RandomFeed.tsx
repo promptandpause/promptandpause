@@ -4,11 +4,53 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from '@/contexts/ThemeContext'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Heart, ChatCircle, Sparkle, UserPlus } from 'phosphor-react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
+import {
+  faHeart as faHeartSolid,
+  faComment,
+  faWandMagicSparkles,
+  faFaceSmile,
+  faFaceFrownOpen,
+  faFaceMeh,
+  faFaceGrin,
+  faCircleQuestion,
+  faFaceSmileWink,
+  faHandsPraying,
+  faHandFist,
+} from '@fortawesome/free-solid-svg-icons'
+import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { CommentSection } from '@/components/social/CommentSection'
 import { ReportBlockMenu } from '@/components/social/ReportBlockMenu'
+
+const MOOD_ICONS: Record<string, IconDefinition> = {
+  '😔': faFaceFrownOpen,
+  '😐': faFaceMeh,
+  '😊': faFaceSmile,
+  '😄': faFaceGrin,
+  '🤔': faCircleQuestion,
+  '😌': faFaceSmileWink,
+  '🙏': faHandsPraying,
+  '💪': faHandFist,
+}
+
+function MoodIcon({ mood, className }: { mood?: string; className?: string }) {
+  const icon = (mood && MOOD_ICONS[mood]) || faFaceSmile
+  return <FontAwesomeIcon icon={icon} className={className} />
+}
+
+const AVATAR_GRADIENTS = [
+  'from-indigo-200 to-slate-200',
+  'from-rose-200 to-slate-200',
+  'from-amber-200 to-slate-200',
+  'from-violet-200 to-slate-200',
+  'from-teal-200 to-slate-200',
+  'from-fuchsia-200 to-slate-200',
+  'from-orange-200 to-slate-200',
+  'from-emerald-200 to-slate-200',
+]
 
 interface FeedReflection {
   id: string
@@ -124,11 +166,12 @@ export function RandomFeed() {
   }
 
   return (
-    <div className="space-y-3 px-4">
+    <div className="space-y-3">
       <AnimatePresence>
         {feed.map((item, i) => {
           const displayName = item.profile?.display_name || item.profile?.full_name || 'Unknown'
           const initials = displayName.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
+          const isQuote = item.reflection_text.trim().startsWith('"')
           return (
             <motion.div
               key={item.id}
@@ -138,7 +181,7 @@ export function RandomFeed() {
               className={`rounded-3xl border p-5 cursor-pointer transition-colors ${
                 isDark
                   ? 'bg-white/[0.04] border-white/[0.06] hover:bg-white/[0.06]'
-                  : 'bg-white/70 border-slate-100 hover:bg-white shadow-soft-card'
+                  : 'glass border-slate-100 soft-shadow hover:bg-white'
               }`}
               onClick={() => item.profile?.username && router.push(`/${item.profile.username}`)}
             >
@@ -146,7 +189,7 @@ export function RandomFeed() {
                 <Link href={`/${item.profile?.username}`} onClick={e => e.stopPropagation()} className="shrink-0">
                   <Avatar className="h-10 w-10">
                     <AvatarImage src={item.profile?.avatar_url || undefined} />
-                    <AvatarFallback className={`text-xs ${isDark ? 'bg-[#1B2436] text-white/40' : 'bg-slate-100 text-slate-500'}`}>
+                    <AvatarFallback className={`text-sm font-semibold ${isDark ? 'bg-[#1B2436] text-white/40' : `bg-gradient-to-br ${AVATAR_GRADIENTS[i % AVATAR_GRADIENTS.length]} text-slate-600`}`}>
                       {initials}
                     </AvatarFallback>
                   </Avatar>
@@ -160,7 +203,7 @@ export function RandomFeed() {
                       <span className={`text-sm ${isDark ? 'text-white/30' : 'text-slate-400'}`}>
                         @{item.profile?.username}
                       </span>
-                      <span className={`text-[10px] ${isDark ? 'text-white/20' : 'text-slate-300'}`}>
+                      <span className={`text-xs ${isDark ? 'text-white/20' : 'text-slate-300'}`}>
                         · {timeAgo(item.created_at)}
                       </span>
                     </div>
@@ -173,11 +216,14 @@ export function RandomFeed() {
                       onBlocked={() => setFeed(prev => prev.filter(f => f.user_id !== item.user_id))}
                     />
                   </div>
-                  <p className={`text-sm leading-relaxed mt-1 ${isDark ? 'text-white/80' : 'text-slate-700'}`}>
+                  <p className={`mt-1 ${isQuote
+                    ? 'serif italic text-[15px] leading-relaxed text-slate-800 dark:text-white/80'
+                    : `text-sm leading-relaxed ${isDark ? 'text-white/80' : 'text-slate-700'}`
+                  }`}>
                     {item.reflection_text}
                   </p>
                   <div className="flex items-center gap-3 mt-3">
-                    <span className="text-lg leading-none">{item.mood}</span>
+                    <MoodIcon mood={item.mood} className={`text-lg ${isDark ? 'text-white/60' : 'text-slate-500'}`} />
                     {item.tags?.slice(0, 3).map(tag => (
                       <span
                         key={tag}
@@ -190,7 +236,7 @@ export function RandomFeed() {
                   <div className="flex items-center gap-6 mt-3">
                     <button className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#818CF8]' : 'text-slate-400 hover:text-indigo-500'}`}
                       onClick={e => { e.stopPropagation(); toggleComments(item.id) }}>
-                      <ChatCircle size={14} weight="bold" /> Reply
+                      <FontAwesomeIcon icon={faComment} className="text-sm" /> Reply
                     </button>
                     <button
                       onClick={async e => {
@@ -214,11 +260,11 @@ export function RandomFeed() {
                           : isDark ? 'text-white/30 hover:text-rose-400' : 'text-slate-400 hover:text-rose-500'
                       }`}
                     >
-                      <Heart size={14} weight={item.is_liked_by_me ? 'fill' : 'bold'} /> {item.like_count > 0 ? item.like_count : 'Like'}
+                      <FontAwesomeIcon icon={item.is_liked_by_me ? faHeartSolid : faHeartRegular} className="text-sm" /> {item.like_count > 0 ? item.like_count : 'Like'}
                     </button>
                     <button className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#818CF8]' : 'text-slate-400 hover:text-indigo-500'}`}
                       onClick={e => { e.stopPropagation(); router.push('/dashboard/reflect') }}>
-                      <Sparkle size={14} weight="bold" /> Reflect
+                      <FontAwesomeIcon icon={faWandMagicSparkles} className="text-sm" /> Reflect
                     </button>
                   </div>
                   {openComments.has(item.id) && (

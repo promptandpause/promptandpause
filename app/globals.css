@@ -76,7 +76,7 @@
   --sidebar-ring: rgba(99, 102, 241, 0.4);
   
   /* Typography */
-  --font-sans: 'Geist', 'Geist Fallback';
+  --font-sans: var(--font-inter), 'Inter', 'Inter Fallback', system-ui, sans-serif;
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
 
   --font-serif: 'Playfair Display', 'Playfair Display Fallback';
@@ -382,6 +382,55 @@
 }
 
 /* ===== GLASS EFFECT UTILITIES (outside @layer to prevent purging) ===== */
+/* Mockup `glass` — white/70 + blur, matches design-mockups/*.html */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--glass-border);
+}
+@media (min-width: 768px) {
+  .glass {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+}
+@media (max-width: 767px) {
+  .glass {
+    background: rgba(255, 255, 255, 0.9);
+  }
+}
+.dark .glass {
+  background: rgba(17, 24, 39, 0.7);
+  border-color: var(--glass-border);
+}
+
+/* Mockup `.soft-shadow` — soft top-light drop shadow */
+.soft-shadow {
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+}
+
+/* Mockup breathe-ring pulse */
+@keyframes mock-breathe {
+  0%, 100% { transform: scale(0.8); opacity: 0.4; }
+  50% { transform: scale(1.15); opacity: 1; }
+}
+.breathe-ring {
+  animation: mock-breathe 8s ease-in-out infinite;
+}
+
+/* Mockup fade-up entrance */
+@keyframes mock-fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up {
+  animation: mock-fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Mockup `.serif` — Playfair Display accent */
+.serif {
+  font-family: var(--font-serif), 'Playfair Display', serif;
+}
+
 .glass-light {
   background: var(--glass-light);
   border: 1px solid var(--glass-border);

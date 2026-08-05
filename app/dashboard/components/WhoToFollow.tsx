@@ -6,7 +6,17 @@ import { useTheme } from '@/contexts/ThemeContext'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { UserPlus, Check } from 'phosphor-react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faUserPlus, faCheck } from '@fortawesome/free-solid-svg-icons'
+
+const AVATAR_GRADIENTS = [
+  'from-emerald-200 to-slate-200',
+  'from-sky-200 to-slate-200',
+  'from-violet-200 to-slate-200',
+  'from-amber-200 to-slate-200',
+  'from-rose-200 to-slate-200',
+  'from-teal-200 to-slate-200',
+]
 
 interface SuggestedUser {
   id: string
@@ -50,7 +60,7 @@ export function WhoToFollow() {
 
   if (loading) {
     return (
-      <div className={`rounded-3xl border ${isDark ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-slate-100 shadow-soft-card'} p-4`}>
+      <div className={`rounded-3xl border p-5 ${isDark ? 'bg-white/[0.04] border-white/[0.06]' : 'glass border-slate-100 soft-shadow'}`}>
         <h3 className={`text-sm font-semibold mb-4 ${isDark ? 'text-white' : 'text-slate-900'}`}>Who to follow</h3>
         {[1, 2, 3].map(i => (
           <div key={i} className="flex items-center gap-3 mb-3">
@@ -67,7 +77,7 @@ export function WhoToFollow() {
 
   if (users.length === 0) {
     return (
-      <div className={`rounded-3xl border ${isDark ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-slate-100 shadow-soft-card'} p-4`}>
+      <div className={`rounded-3xl border p-5 ${isDark ? 'bg-white/[0.04] border-white/[0.06]' : 'glass border-slate-100 soft-shadow'}`}>
         <h3 className={`text-sm font-semibold mb-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>Who to follow</h3>
         <p className={`text-sm ${isDark ? 'text-white/30' : 'text-slate-400'}`}>
           No suggestions yet. Follow friends to see their reflections in your feed.
@@ -77,10 +87,10 @@ export function WhoToFollow() {
   }
 
   return (
-    <div className={`rounded-3xl border ${isDark ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-slate-100 shadow-soft-card'} p-4`}>
+    <div className={`rounded-3xl border p-5 ${isDark ? 'bg-white/[0.04] border-white/[0.06]' : 'glass border-slate-100 soft-shadow'}`}>
       <h3 className={`text-sm font-semibold mb-4 ${isDark ? 'text-white' : 'text-slate-900'}`}>Who to follow</h3>
       <div className="space-y-4">
-        {users.map(user => {
+        {users.map((user, i) => {
           const displayName = user.display_name || user.full_name || 'Unknown'
           const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
           const isFollowed = followedIds.has(user.id)
@@ -95,7 +105,7 @@ export function WhoToFollow() {
                 <Link href={`/${user.username}`} className="shrink-0">
                   <Avatar className="h-9 w-9">
                     <AvatarImage src={user.avatar_url || undefined} />
-                    <AvatarFallback className={`text-xs ${isDark ? 'bg-[#1B2436] text-white/40' : 'bg-slate-100 text-slate-500'}`}>
+                    <AvatarFallback className={`text-xs font-semibold ${isDark ? 'bg-[#1B2436] text-white/40' : `bg-gradient-to-br ${AVATAR_GRADIENTS[i % AVATAR_GRADIENTS.length]} text-slate-600`}`}>
                       {initials}
                     </AvatarFallback>
                   </Avatar>
@@ -125,9 +135,9 @@ export function WhoToFollow() {
                 }`}
               >
                 {isFollowed ? (
-                  <><Check size={12} weight="bold" className="mr-1" /> Followed</>
+                  <><FontAwesomeIcon icon={faCheck} className="mr-1 text-xs" /> Followed</>
                 ) : (
-                  <><UserPlus size={12} weight="bold" className="mr-1" /> Follow</>
+                  <><FontAwesomeIcon icon={faUserPlus} className="mr-1 text-xs" /> Follow</>
                 )}
               </Button>
             </motion.div>

@@ -5,7 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useToast } from '@/hooks/use-toast'
 import { Button } from '@/components/ui/button'
-import { Sparkle, Spinner, Globe, Users, Lock, Check, Buildings } from 'phosphor-react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faWandMagicSparkles, faPaperPlane, faGlobe, faUserGroup, faLock, faCheck, faBuilding, faSpinner } from '@fortawesome/free-solid-svg-icons'
 
 type Visibility = 'private' | 'friends_only' | 'public' | 'workspace'
 
@@ -80,26 +81,27 @@ export function QuickShare({ onShared }: { onShared?: () => void }) {
   const isWorkspaceMember = workspaces.length > 0
 
   const visOptions: { value: Visibility; icon: React.ReactNode; label: string }[] = [
-    { value: 'public', icon: <Globe size={14} weight="bold" />, label: 'Public' },
-    { value: 'friends_only', icon: <Users size={14} weight="bold" />, label: 'Friends' },
-    { value: 'private', icon: <Lock size={14} weight="bold" />, label: 'Private' },
-    ...(isWorkspaceMember ? [{ value: 'workspace' as Visibility, icon: <Buildings size={14} weight="bold" />, label: 'Workspace' }] : []),
+    { value: 'public', icon: <FontAwesomeIcon icon={faGlobe} className="text-xs" />, label: 'Public' },
+    { value: 'friends_only', icon: <FontAwesomeIcon icon={faUserGroup} className="text-xs" />, label: 'Friends' },
+    { value: 'private', icon: <FontAwesomeIcon icon={faLock} className="text-xs" />, label: 'Private' },
+    ...(isWorkspaceMember ? [{ value: 'workspace' as Visibility, icon: <FontAwesomeIcon icon={faBuilding} className="text-xs" />, label: 'Workspace' }] : []),
   ]
 
   return (
-    <div className={`rounded-3xl border ${isDark ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-slate-100 shadow-soft-card'}`}>
+    <div className={`rounded-3xl border ${isDark ? 'bg-white/[0.04] border-white/[0.06]' : 'glass border-slate-100 soft-shadow'}`}>
       <button
         onClick={() => setOpen(!open)}
-        className={`flex items-center gap-3 w-full px-4 py-2.5 transition-colors rounded-3xl ${
+        className={`flex items-center gap-3 w-full px-5 py-4 transition-colors rounded-3xl cursor-pointer ${
           isDark ? 'hover:bg-white/[0.03]' : 'hover:bg-slate-50/60'
         }`}
       >
         <span className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${isDark ? 'bg-[#818CF8]/15 text-[#818CF8]' : 'bg-indigo-50 text-indigo-400'}`}>
-          <Sparkle size={18} weight="bold" />
+          <FontAwesomeIcon icon={faWandMagicSparkles} />
         </span>
         <span className={`text-sm flex-1 ${isDark ? 'text-white/30' : 'text-slate-400'}`}>
           Share your reflection...
         </span>
+        <FontAwesomeIcon icon={faPaperPlane} className={`text-sm ${isDark ? 'text-white/20' : 'text-slate-300'}`} />
       </button>
 
       <AnimatePresence>
@@ -152,7 +154,7 @@ export function QuickShare({ onShared }: { onShared?: () => void }) {
                       : 'bg-[#6366F1] text-white hover:bg-[#4F46E5] disabled:opacity-50'
                   }`}
                 >
-                  {submitting ? <Spinner size={14} weight="bold" className="animate-spin" /> : <Check size={14} weight="bold" />}
+                  {submitting ? <FontAwesomeIcon icon={faSpinner} spin className="text-xs" /> : <FontAwesomeIcon icon={faCheck} className="text-xs" />}
                   {submitting ? 'Sharing...' : 'Share'}
                 </Button>
               </div>

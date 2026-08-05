@@ -1,29 +1,29 @@
 "use client"
 
-import { useState, useEffect, createElement } from "react"
+import { useState, useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
-  ArchiveBox,
-  Gear,
-  House,
-  UserCircle,
-  Notebook,
-  Heart,
-  BookOpen,
-  BookmarkSimple,
-  Rss,
-  UserPlus,
-  Layout,
-  PencilLine,
-  ChartBar,
-  Trophy,
-  Lifebuoy,
-  X,
-  List,
-  Buildings,
-} from "phosphor-react"
+  faBoxArchive,
+  faGear,
+  faHouse,
+  faCircleUser,
+  faBookOpen,
+  faHeart,
+  faBookmark,
+  faRss,
+  faUserPlus,
+  faTableColumns,
+  faPenNib,
+  faChartColumn,
+  faTrophy,
+  faLifeRing,
+  faXmark,
+  faBars,
+  faBuilding,
+} from "@fortawesome/free-solid-svg-icons"
 import Link from "next/link"
 import { getSupabaseClient } from "@/lib/supabase/client"
 import { useTier } from "@/hooks/useTier"
@@ -64,21 +64,21 @@ export function DashboardSidebar() {
   }
 
   const sidebarNav = [
-    { icon: Layout, label: "dashboard", href: "/dashboard", active: isActive("/") },
-    { icon: UserCircle, label: "my_profile", href: "/", active: false, isProfile: true },
+    { icon: faTableColumns, label: "dashboard", href: "/dashboard", active: isActive("/") },
+    { icon: faCircleUser, label: "my_profile", href: "/", active: false, isProfile: true },
 
-    { icon: PencilLine, label: "reflect", href: "/reflect", active: isActive("/reflect") },
-    { icon: Rss, label: "feed", href: "/dashboard/feed", active: isActive("/dashboard/feed") },
-    { icon: UserPlus, label: "friends", href: "/friends", active: isActive("/friends") },
-    { icon: Heart, label: "wellness", href: "/wellness", active: isActive("/wellness") },
-    { icon: ArchiveBox, label: "archive", href: "/archive", active: isActive("/archive") },
-    { icon: BookmarkSimple, label: "saved", href: "/saved", active: isActive("/saved") },
-    { icon: Notebook, label: "my_journals", href: "/journals", active: isActive("/journals") },
-    { icon: ChartBar, label: "insights", href: "/insights", active: isActive("/insights") },
-    { icon: Gear, label: "settings", href: "/settings", active: isActive("/settings") },
-    { icon: Buildings, label: "workspaces", href: "/workspace", active: isActive("/workspace") },
-    { icon: Lifebuoy, label: "support", href: "/dashboard/support", active: isActive("/dashboard/support") },
-    { icon: Trophy, label: "achievements", href: "/achievements", active: isActive("/achievements") },
+    { icon: faPenNib, label: "reflect", href: "/reflect", active: isActive("/reflect") },
+    { icon: faRss, label: "feed", href: "/dashboard/feed", active: isActive("/dashboard/feed") },
+    { icon: faUserPlus, label: "friends", href: "/friends", active: isActive("/friends") },
+    { icon: faHeart, label: "wellness", href: "/wellness", active: isActive("/wellness") },
+    { icon: faBoxArchive, label: "archive", href: "/archive", active: isActive("/archive") },
+    { icon: faBookmark, label: "saved", href: "/saved", active: isActive("/saved") },
+    { icon: faBookOpen, label: "my_journals", href: "/journals", active: isActive("/journals") },
+    { icon: faChartColumn, label: "insights", href: "/insights", active: isActive("/insights") },
+    { icon: faGear, label: "settings", href: "/settings", active: isActive("/settings") },
+    { icon: faBuilding, label: "workspaces", href: "/workspace", active: isActive("/workspace") },
+    { icon: faLifeRing, label: "support", href: "/dashboard/support", active: isActive("/dashboard/support") },
+    { icon: faTrophy, label: "achievements", href: "/achievements", active: isActive("/achievements") },
   ]
 
   // Desktop nav keeps Settings pinned at the bottom of the list, separate
@@ -89,12 +89,12 @@ export function DashboardSidebar() {
   ]
 
   const mobileNav = [
-    { id: "home", icon: House, label: t("nav.dashboard"), href: "/dashboard", active: isActive("/") },
+    { id: "home", icon: faHouse, label: t("nav.dashboard"), href: "/dashboard", active: isActive("/") },
 
-    { id: "reflect", icon: PencilLine, label: t("nav.reflect"), href: "/reflect", active: isActive("/reflect") },
-    { id: "feed", icon: Rss, label: t("nav.feed"), href: "/dashboard/feed", active: isActive("/dashboard/feed") },
-    { id: "wellness", icon: Heart, label: t("nav.wellness"), href: "/wellness", active: isActive("/wellness") },
-    { id: "archive", icon: ArchiveBox, label: t("nav.archive"), href: "/archive", active: isActive("/archive") },
+    { id: "reflect", icon: faPenNib, label: t("nav.reflect"), href: "/reflect", active: isActive("/reflect") },
+    { id: "feed", icon: faRss, label: t("nav.feed"), href: "/dashboard/feed", active: isActive("/dashboard/feed") },
+    { id: "wellness", icon: faHeart, label: t("nav.wellness"), href: "/wellness", active: isActive("/wellness") },
+    { id: "archive", icon: faBoxArchive, label: t("nav.archive"), href: "/archive", active: isActive("/archive") },
   ]
 
   useEffect(() => {
@@ -219,10 +219,9 @@ export function DashboardSidebar() {
                           : "text-[#64748B] hover:bg-slate-100 hover:text-[#1E293B]"
                     }`}
                   >
-                    <item.icon
-                      size={24}
-                      weight={active ? "fill" : "regular"}
-                      className={active ? (isDark ? "text-[#818CF8]" : "text-[#6366F1]") : ""}
+                    <FontAwesomeIcon
+                      icon={item.icon}
+                      className={`text-2xl ${active ? (isDark ? "text-[#818CF8]" : "text-[#6366F1]") : ""}`}
                     />
                     <span>{item.label === "my_profile" ? "My Profile" : item.label === "workspaces" ? "Workspaces" : t(`nav.${item.label}` as any)}</span>
                   </button>
@@ -253,7 +252,7 @@ export function DashboardSidebar() {
                       {userProfile.avatar_url ? (
                         <img src={userProfile.avatar_url} alt="" className="h-10 w-10 rounded-full object-cover" />
                       ) : (
-                        <UserCircle size={22} weight="bold" className={isDark ? "text-white/40" : "text-[#64748B]"} />
+                        <FontAwesomeIcon icon={faCircleUser} className={`text-2xl ${isDark ? "text-white/40" : "text-[#64748B]"}`} />
                       )}
                     </div>
                   </Link>
@@ -266,7 +265,7 @@ export function DashboardSidebar() {
                     </p>
                   </div>
                   <Link href="/settings">
-                    <Gear size={16} weight="bold" className={`shrink-0 cursor-pointer transition-colors ${isDark ? "text-white/20 hover:text-white/40" : "text-[#94A3B8] hover:text-[#64748B]"}`} />
+                    <FontAwesomeIcon icon={faGear} className={`shrink-0 cursor-pointer transition-colors text-base ${isDark ? "text-white/20 hover:text-white/40" : "text-[#94A3B8] hover:text-[#64748B]"}`} />
                   </Link>
                 </div>
                 <div className="flex items-center gap-4 text-sm mb-3">
@@ -304,7 +303,7 @@ export function DashboardSidebar() {
             className={`justify-self-start p-2 -ml-2 rounded-lg transition-colors ${isDark ? "hover:bg-white/10" : "hover:bg-[#EDF2F7]"}`}
             aria-label="Open navigation menu"
           >
-            <List size={22} weight="bold" className={isDark ? "text-white" : "text-[#1E293B]"} />
+            <FontAwesomeIcon icon={faBars} className={`text-2xl ${isDark ? "text-white" : "text-[#1E293B]"}`} />
           </button>
           <Link href="/dashboard" className="justify-self-center">
             <img
@@ -317,7 +316,7 @@ export function DashboardSidebar() {
             <NotificationBell />
             <Link href="/settings">
               <button className={`p-2 -mr-2 rounded-lg transition-colors ${isDark ? "hover:bg-white/10" : "hover:bg-[#EDF2F7]"}`} aria-label="Settings">
-                <Gear size={20} weight="bold" className={isDark ? "text-white/50" : "text-[#64748B]"} />
+                <FontAwesomeIcon icon={faGear} className={`text-xl ${isDark ? "text-white/50" : "text-[#64748B]"}`} />
               </button>
             </Link>
           </div>
@@ -337,7 +336,7 @@ export function DashboardSidebar() {
               className={`absolute top-3 right-3 p-2 rounded-lg transition-colors ${isDark ? "hover:bg-white/10" : "hover:bg-[#EDF2F7]"}`}
               aria-label="Close navigation menu"
             >
-              <X size={20} weight="bold" className={isDark ? "text-white/50" : "text-[#64748B]"} />
+              <FontAwesomeIcon icon={faXmark} className={`text-xl ${isDark ? "text-white/50" : "text-[#64748B]"}`} />
             </button>
             <nav className="flex-1 px-3 py-2 space-y-0.5">
               {sidebarNav.map((item) => {
@@ -362,10 +361,9 @@ export function DashboardSidebar() {
                             : "text-[#64748B] hover:bg-slate-100 hover:text-[#1E293B]"
                       }`}
                     >
-                      <item.icon
-                        size={22}
-                        weight={active ? "fill" : "regular"}
-                        className={active ? (isDark ? "text-[#818CF8]" : "text-[#6366F1]") : ""}
+                      <FontAwesomeIcon
+                        icon={item.icon}
+                        className={`text-xl ${active ? (isDark ? "text-[#818CF8]" : "text-[#6366F1]") : ""}`}
                       />
                       <span>{item.label === "my_profile" ? "My Profile" : item.label === "workspaces" ? "Workspaces" : t(`nav.${item.label}` as any)}</span>
                     </button>
@@ -390,7 +388,7 @@ export function DashboardSidebar() {
                       {userProfile.avatar_url ? (
                         <img src={userProfile.avatar_url} alt="" className="h-9 w-9 rounded-full object-cover" />
                       ) : (
-                        <UserCircle size={20} weight="bold" className={isDark ? "text-white/40" : "text-[#64748B]"} />
+                        <FontAwesomeIcon icon={faCircleUser} className={`text-xl ${isDark ? "text-white/40" : "text-[#64748B]"}`} />
                       )}
                     </div>
                   </Link>
@@ -423,7 +421,10 @@ export function DashboardSidebar() {
                       : "text-[#64748B]"
                 }`}
               >
-                {createElement(item.icon, { size: 22, weight: item.active ? "fill" : "regular" })}
+                <FontAwesomeIcon
+                  icon={item.icon}
+                  className={`text-2xl ${item.active ? (isDark ? "text-[#818CF8]" : "text-[#6366F1]") : ""}`}
+                />
                 <span className="text-[10px] font-medium leading-none">{item.label}</span>
               </button>
             </Link>

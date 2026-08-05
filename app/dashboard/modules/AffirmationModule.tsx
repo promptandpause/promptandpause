@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Quotes } from "phosphor-react"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faQuoteLeft } from "@fortawesome/free-solid-svg-icons"
 import { useTheme } from "@/contexts/ThemeContext"
 import { useTranslation } from "@/hooks/useTranslation"
 import { ModuleShell, ModuleErrorBoundary } from "./ModuleShell"
@@ -65,7 +66,7 @@ function AffirmationModuleInner() {
 
   return (
     <ModuleShell
-      icon={<Quotes size={18} weight="bold" />}
+      icon={<FontAwesomeIcon icon={faQuoteLeft} />}
       title="Daily Affirmation"
       subtitle={t("dashboard.dailyReminder")}
       accent="amber"

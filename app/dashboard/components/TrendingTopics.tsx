@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useTheme } from '@/contexts/ThemeContext'
-import { Hash } from 'phosphor-react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faHashtag } from '@fortawesome/free-solid-svg-icons'
 
 interface TrendingTag {
   tag: string
@@ -31,7 +32,7 @@ export function TrendingTopics() {
 
   if (loading) {
     return (
-      <div className={`rounded-3xl border ${isDark ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-slate-100 shadow-soft-card'} p-4`}>
+      <div className={`rounded-3xl border p-5 ${isDark ? 'bg-white/[0.04] border-white/[0.06]' : 'glass border-slate-100 soft-shadow'}`}>
         <h3 className={`text-sm font-semibold mb-4 ${isDark ? 'text-white' : 'text-slate-900'}`}>Trending topics</h3>
         {[1, 2, 3, 4].map(i => (
           <div key={i} className="mb-3">
@@ -45,7 +46,7 @@ export function TrendingTopics() {
 
   if (trending.length === 0) {
     return (
-      <div className={`rounded-3xl border ${isDark ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-slate-100 shadow-soft-card'} p-4`}>
+      <div className={`rounded-3xl border p-5 ${isDark ? 'bg-white/[0.04] border-white/[0.06]' : 'glass border-slate-100 soft-shadow'}`}>
         <h3 className={`text-sm font-semibold mb-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>Trending topics</h3>
         <p className={`text-sm ${isDark ? 'text-white/30' : 'text-slate-400'}`}>
           No trending topics yet. Trends appear as the community shares reflections.
@@ -55,23 +56,21 @@ export function TrendingTopics() {
   }
 
   return (
-    <div className={`rounded-3xl border ${isDark ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-slate-100 shadow-soft-card'} p-4`}>
+    <div className={`rounded-3xl border p-5 ${isDark ? 'bg-white/[0.04] border-white/[0.06]' : 'glass border-slate-100 soft-shadow'}`}>
       <h3 className={`text-sm font-semibold mb-3 ${isDark ? 'text-white' : 'text-slate-900'}`}>Trending topics</h3>
-      <div className="space-y-1">
+      <div className="space-y-2">
         {trending.map((item, i) => (
           <motion.div
             key={item.tag}
             initial={{ opacity: 0, x: -5 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: i * 0.05 }}
-            className={`flex items-center gap-3 px-2 py-2.5 rounded-xl transition-colors ${
-              isDark ? '' : ''
-            }`}
+            className="flex items-center gap-3 px-2 py-1.5 rounded-xl"
           >
-            <Hash size={16} weight="bold" className={`shrink-0 ${isDark ? 'text-[#818CF8]/60' : 'text-slate-400'}`} />
+            <FontAwesomeIcon icon={faHashtag} className={`shrink-0 text-sm ${isDark ? 'text-[#818CF8]/60' : 'text-slate-400'}`} />
             <div className="flex-1 min-w-0">
               <p className={`text-sm font-semibold truncate ${isDark ? 'text-white' : 'text-slate-800'}`}>
-                {item.tag}
+                {item.tag.startsWith('#') ? item.tag : `#${item.tag}`}
               </p>
               <p className={`text-xs ${isDark ? 'text-white/30' : 'text-slate-400'}`}>
                 {item.count} {item.count === 1 ? 'reflection' : 'reflections'}

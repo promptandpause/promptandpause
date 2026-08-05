@@ -6,7 +6,16 @@ import { useTheme } from "@/contexts/ThemeContext"
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { getSupabaseClient } from "@/lib/supabase/client"
-import { Lifebuoy, CheckCircle, ArrowRight, CaretDown, EnvelopeSimple, Question, Clock } from "phosphor-react"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import {
+  faArrowRight,
+  faChevronDown,
+  faCircleCheck,
+  faCircleQuestion,
+  faClock,
+  faEnvelope,
+  faLifeRing,
+} from "@fortawesome/free-solid-svg-icons"
 
 function getBrowserName(ua: string): string {
   if (ua.includes('Edg/')) return 'Edge'
@@ -111,14 +120,14 @@ function SupportContent() {
             >
               <div className="flex items-center gap-3 mb-2">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isDark ? 'bg-indigo-500/20 text-indigo-400' : 'bg-indigo-50 text-indigo-600'}`}>
-                  <Lifebuoy size={20} weight="bold" />
+                  <FontAwesomeIcon icon={faLifeRing} className="text-xl" />
                 </div>
                 <h1 className={`text-3xl lg:text-4xl font-extrabold tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}>Support</h1>
               </div>
-              <p className={`text-sm font-medium ${isDark ? "text-white/40" : "text-slate-500"}`}>Need help? We're here for you.</p>
+              <p className={`font-medium ${isDark ? "text-white/40" : "text-slate-500"}`}>Need help? We're here for you.</p>
             </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 animate-fade-up" style={{ animationDelay: "0.1s" }}>
               {/* Left: Quick Help */}
               <div className="space-y-8">
                 <div className="space-y-3">
@@ -131,10 +140,10 @@ function SupportContent() {
                 <div className="space-y-4">
                   <a
                     href="mailto:support@promptandpause.com"
-                    className={`flex items-start gap-4 p-4 rounded-2xl transition-colors ${cardClass} ${isDark ? 'hover:border-white/20' : 'hover:border-slate-200'}`}
+                    className={`flex items-start gap-4 p-4 rounded-2xl transition-all ${cardClass} ${isDark ? 'hover:border-white/20' : 'hover:border-slate-200'}`}
                   >
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${isDark ? 'bg-indigo-500/20 text-indigo-400' : 'bg-indigo-50 text-indigo-600'}`}>
-                      <EnvelopeSimple size={18} weight="bold" />
+                      <FontAwesomeIcon icon={faEnvelope} className="text-lg" />
                     </div>
                     <div>
                       <p className={`text-sm font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>Email Support</p>
@@ -146,10 +155,10 @@ function SupportContent() {
                     href="https://github.com/promptandpause/promptandpause#readme"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`flex items-start gap-4 p-4 rounded-2xl transition-colors ${cardClass} ${isDark ? 'hover:border-white/20' : 'hover:border-slate-200'}`}
+                    className={`flex items-start gap-4 p-4 rounded-2xl transition-all ${cardClass} ${isDark ? 'hover:border-white/20' : 'hover:border-slate-200'}`}
                   >
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${isDark ? 'bg-purple-500/20 text-purple-400' : 'bg-purple-50 text-purple-600'}`}>
-                      <Question size={18} weight="bold" />
+                      <FontAwesomeIcon icon={faCircleQuestion} className="text-lg" />
                     </div>
                     <div>
                       <p className={`text-sm font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>FAQ Center</p>
@@ -168,7 +177,7 @@ function SupportContent() {
                     <div className="mt-4 pt-4 border-t border-white/10 space-y-1.5 text-xs">
                       <div className="flex items-center justify-between gap-2">
                         <span className="text-slate-400">User ID</span>
-                        <span className="font-mono text-white/90 truncate">{userId ? `${userId.slice(0, 12)}…` : '—'}</span>
+                        <span className="font-mono text-white/90 truncate">{userId ? `${userId.slice(0, 6)}…${userId.slice(-4)}` : '—'}</span>
                       </div>
                       <div className="flex items-center justify-between gap-2">
                         <span className="text-slate-400">Browser</span>
@@ -231,14 +240,14 @@ function SupportContent() {
                             <option value="high">High</option>
                             <option value="urgent">Urgent</option>
                           </select>
-                          <CaretDown size={14} weight="bold" className={`absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none ${isDark ? 'text-white/40' : 'text-slate-400'}`} />
+                          <FontAwesomeIcon icon={faChevronDown} className={`absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-sm ${isDark ? 'text-white/40' : 'text-slate-400'}`} />
                         </div>
                       </div>
 
                       <div>
                         <label className={labelClass}>Response time</label>
                         <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border ${isDark ? 'bg-white/5 border-white/10' : 'bg-slate-50 border-slate-200'}`}>
-                          <Clock size={16} weight="bold" className={isDark ? 'text-indigo-400' : 'text-indigo-500'} />
+                          <FontAwesomeIcon icon={faClock} className={`text-base ${isDark ? 'text-indigo-400' : 'text-indigo-500'}`} />
                           <p className={`text-sm font-medium ${isDark ? 'text-white/70' : 'text-slate-600'}`}>Within 24 hours</p>
                         </div>
                       </div>
@@ -251,7 +260,7 @@ function SupportContent() {
                         className="w-full py-4 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-2xl flex items-center justify-center gap-3 shadow-lg shadow-indigo-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {loading ? "Submitting..." : "Submit Ticket"}
-                        {!loading && <ArrowRight size={16} weight="bold" />}
+                        {!loading && <FontAwesomeIcon icon={faArrowRight} className="text-sm" />}
                       </button>
                     </div>
                   </motion.form>
@@ -264,7 +273,7 @@ function SupportContent() {
                     className={`rounded-[32px] p-10 text-center ${cardClass}`}
                   >
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 mb-6">
-                      <CheckCircle size={32} weight="fill" />
+                      <FontAwesomeIcon icon={faCircleCheck} className="text-3xl" />
                     </div>
                     <h2 className={`text-xl font-extrabold mb-2 ${isDark ? "text-white" : "text-slate-900"}`}>Ticket Submitted</h2>
                     <p className={`mb-4 ${isDark ? "text-white/60" : "text-slate-500"}`}>

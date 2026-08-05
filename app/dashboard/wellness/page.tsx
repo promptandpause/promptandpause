@@ -4,30 +4,29 @@ import { useState, useEffect, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { 
-  Heart, 
-  Wind, 
-  Target, 
-  CheckCircle, 
-  ChartBar, 
-  Sparkle,
-  Lock,
-  Crown,
-  ArrowRight,
-  Leaf,
-  Sun,
-  TrendUp,
-  TrendDown,
-  Minus
-} from 'phosphor-react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+  faHeart,
+  faWind,
+  faBullseye,
+  faCircleCheck,
+  faChartColumn,
+  faWandMagicSparkles,
+  faLock,
+  faCrown,
+  faArrowRight,
+  faLeaf,
+  faSun,
+  faArrowTrendUp,
+  faArrowTrendDown,
+  faMinus,
+} from '@fortawesome/free-solid-svg-icons'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
 } from '@/components/ui/dialog'
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { getSupabaseClient } from '@/lib/supabase/client'
@@ -202,11 +201,11 @@ export default function WellnessPage() {
 
   const trendIcon =
     moodTrend === 'improving' ? (
-      <TrendUp size={14} weight="bold" />
+      <FontAwesomeIcon icon={faArrowTrendUp} className="text-sm" />
     ) : moodTrend === 'declining' ? (
-      <TrendDown size={14} weight="bold" />
+      <FontAwesomeIcon icon={faArrowTrendDown} className="text-sm" />
     ) : (
-      <Minus size={14} weight="bold" />
+      <FontAwesomeIcon icon={faMinus} className="text-sm" />
     )
   const trendColor =
     moodTrend === 'improving' ? 'text-emerald-600' : moodTrend === 'declining' ? 'text-rose-500' : 'text-slate-400'
@@ -255,7 +254,7 @@ export default function WellnessPage() {
                         : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                     }`}
                   >
-                    <Wind size={18} weight="bold" className="text-sky-500" />
+                    <FontAwesomeIcon icon={faWind} className="text-lg text-sky-500" />
                     <span className="hidden sm:inline">Breathe</span>
                   </Button>
                   <Button
@@ -266,7 +265,7 @@ export default function WellnessPage() {
                         : 'bg-rose-50/60 border border-rose-200 text-rose-500 hover:bg-rose-50'
                     }`}
                   >
-                    <Heart size={18} weight="bold" />
+                    <FontAwesomeIcon icon={faHeart} className="text-lg" />
                     <span className="hidden sm:inline">Support</span>
                   </Button>
                 </div>
@@ -281,7 +280,7 @@ export default function WellnessPage() {
                     <span className={`text-xs font-bold ${isDark ? 'text-white/40' : 'text-slate-400'}`}>this week</span>
                   </div>
                   <div className={`flex items-center gap-1.5 text-xs font-bold mt-3 ${isDark ? 'text-indigo-400' : 'text-indigo-500'}`}>
-                    <Leaf size={14} weight="bold" />
+                    <FontAwesomeIcon icon={faLeaf} className="text-sm" />
                     {statsReady ? `${daysDelta >= 0 ? '+' : ''}${daysDelta} vs last week` : '...'}
                   </div>
                 </motion.div>
@@ -292,7 +291,7 @@ export default function WellnessPage() {
                     <span className={`text-xs font-bold ${isDark ? 'text-white/40' : 'text-slate-400'}`}>entries</span>
                   </div>
                   <div className={`flex items-center gap-1.5 text-xs font-bold mt-3 ${isDark ? 'text-amber-400' : 'text-amber-600'}`}>
-                    <Sun size={14} weight="bold" />
+                    <FontAwesomeIcon icon={faSun} className="text-sm" />
                     {statsReady ? `+${gratitudeThisWeek} this week` : '...'}
                   </div>
                 </motion.div>
@@ -315,12 +314,12 @@ export default function WellnessPage() {
                       </>
                     ) : (
                       <span className={`text-lg font-bold flex items-center gap-2 ${isDark ? 'text-white/60' : 'text-slate-400'}`}>
-                        <Lock size={16} weight="bold" /> Premium
+                        <FontAwesomeIcon icon={faLock} className="text-sm" /> Premium
                       </span>
                     )}
                   </div>
                   <div className={`flex items-center gap-1.5 text-xs font-bold mt-3 ${isDark ? 'text-sky-400' : 'text-sky-600'}`}>
-                    <CheckCircle size={14} weight="bold" />
+                    <FontAwesomeIcon icon={faCircleCheck} className="text-sm" />
                     {isPremium
                       ? statsReady ? `${Math.max(0, habitsTotal - habitsDone)} left today` : '...'
                       : 'Unlock with Premium'}
@@ -422,7 +421,7 @@ export default function WellnessPage() {
                   <QuickToolCard
                     isDark={isDark}
                     accent="sky"
-                    icon={<Wind size={22} weight="bold" />}
+                    icon={<FontAwesomeIcon icon={faWind} className="text-xl" />}
                     title="Breathing"
                     subtitle="Calm your mind in under 4 minutes"
                     cta="Begin"
@@ -431,7 +430,7 @@ export default function WellnessPage() {
                   <QuickToolCard
                     isDark={isDark}
                     accent="rose"
-                    icon={<Heart size={22} weight="bold" />}
+                    icon={<FontAwesomeIcon icon={faHeart} className="text-xl" />}
                     title="Support"
                     subtitle="Hotlines & grounding exercises"
                     cta="Get Help"
@@ -440,7 +439,7 @@ export default function WellnessPage() {
                   <QuickToolCard
                     isDark={isDark}
                     accent="indigo"
-                    icon={<Target size={22} weight="bold" />}
+                    icon={<FontAwesomeIcon icon={faBullseye} className="text-xl" />}
                     title="Goals"
                     subtitle="Track intentions & habit progress"
                     cta="Overview"
@@ -463,7 +462,7 @@ export default function WellnessPage() {
                       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                         <div className="flex items-center gap-4">
                           <div className={`p-2.5 rounded-full ${isDark ? 'bg-indigo-500/20' : 'bg-white/80 shadow-sm'}`}>
-                            <Crown size={20} weight="bold" className={isDark ? 'text-indigo-300' : 'text-indigo-500'} />
+                            <FontAwesomeIcon icon={faCrown} className={`text-lg ${isDark ? 'text-indigo-300' : 'text-indigo-500'}`} />
                           </div>
                           <div>
                             <h3 className={`font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>
@@ -476,7 +475,7 @@ export default function WellnessPage() {
                         </div>
                         <Link href="/settings#subscription">
                           <Button className="gap-2 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white shadow-lg shadow-indigo-500/25">
-                            <Crown size={16} weight="bold" />
+                            <FontAwesomeIcon icon={faCrown} className="text-sm" />
                             Upgrade Now
                           </Button>
                         </Link>
@@ -493,31 +492,31 @@ export default function WellnessPage() {
                     value="overview" 
                     className={`gap-2 py-3 rounded-xl data-[state=active]:shadow-sm ${isDark ? 'data-[state=active]:bg-white/[0.12] data-[state=active]:text-white text-white/50' : 'data-[state=active]:bg-white data-[state=active]:text-slate-900 text-slate-500'}`}
                   >
-                    <Sparkle size={16} weight="bold" />
+                    <FontAwesomeIcon icon={faWandMagicSparkles} className="text-sm" />
                     <span className="hidden sm:inline">Overview</span>
                   </TabsTrigger>
                   <TabsTrigger 
                     value="insights" 
                     className={`gap-2 py-3 rounded-xl data-[state=active]:shadow-sm ${isDark ? 'data-[state=active]:bg-white/[0.12] data-[state=active]:text-white text-white/50' : 'data-[state=active]:bg-white data-[state=active]:text-slate-900 text-slate-500'}`}
                   >
-                    <ChartBar size={16} weight="bold" />
+                    <FontAwesomeIcon icon={faChartColumn} className="text-sm" />
                     <span className="hidden sm:inline">Insights</span>
                   </TabsTrigger>
                   <TabsTrigger 
                     value="goals" 
                     className={`gap-2 py-3 rounded-xl data-[state=active]:shadow-sm ${isDark ? 'data-[state=active]:bg-white/[0.12] data-[state=active]:text-white text-white/50' : 'data-[state=active]:bg-white data-[state=active]:text-slate-900 text-slate-500'}`}
                   >
-                    <Target size={16} weight="bold" />
+                    <FontAwesomeIcon icon={faBullseye} className="text-sm" />
                     <span className="hidden sm:inline">Goals</span>
-                    {!isPremium && <Lock size={12} weight="bold" className="ml-1 opacity-50" />}
+                    {!isPremium && <FontAwesomeIcon icon={faLock} className="text-xs ml-1 opacity-50" />}
                   </TabsTrigger>
                   <TabsTrigger 
                     value="habits" 
                     className={`gap-2 py-3 rounded-xl data-[state=active]:shadow-sm ${isDark ? 'data-[state=active]:bg-white/[0.12] data-[state=active]:text-white text-white/50' : 'data-[state=active]:bg-white data-[state=active]:text-slate-900 text-slate-500'}`}
                   >
-                    <CheckCircle size={16} weight="bold" />
+                    <FontAwesomeIcon icon={faCircleCheck} className="text-sm" />
                     <span className="hidden sm:inline">Habits</span>
-                    {!isPremium && <Lock size={12} weight="bold" className="ml-1 opacity-50" />}
+                    {!isPremium && <FontAwesomeIcon icon={faLock} className="text-xs ml-1 opacity-50" />}
                   </TabsTrigger>
                 </TabsList>
 
@@ -551,7 +550,7 @@ export default function WellnessPage() {
                   ) : (
                     <PremiumLockCard
                       isDark={isDark}
-                      icon={<Target size={48} weight="bold" />}
+                      icon={<FontAwesomeIcon icon={faBullseye} className="text-5xl" />}
                       title="Premium Feature"
                       description="Goal tracking helps you set intentions and track progress toward what matters most."
                     />
@@ -565,7 +564,7 @@ export default function WellnessPage() {
                   ) : (
                     <PremiumLockCard
                       isDark={isDark}
-                      icon={<CheckCircle size={48} weight="bold" />}
+                      icon={<FontAwesomeIcon icon={faCircleCheck} className="text-5xl" />}
                       title="Premium Feature"
                       description="Track daily habits and see how they correlate with your mood over time."
                     />
@@ -580,12 +579,6 @@ export default function WellnessPage() {
         {/* Crisis Support Dialog */}
         <Dialog open={showCrisisDialog} onOpenChange={setShowCrisisDialog}>
           <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <Heart size={20} weight="bold" className="text-rose-500" />
-                Crisis Support
-              </DialogTitle>
-            </DialogHeader>
             <CrisisSupport 
               userCountry={userCountry} 
               userId={userId} 
@@ -597,12 +590,6 @@ export default function WellnessPage() {
         {/* Breathing Exercise Dialog */}
         <Dialog open={showBreathingDialog} onOpenChange={setShowBreathingDialog}>
           <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <Wind size={20} weight="bold" className="text-sky-500" />
-                Breathing Exercise
-              </DialogTitle>
-            </DialogHeader>
             <BreathingExercise 
               userId={userId} 
               onComplete={() => {}} 
@@ -613,12 +600,6 @@ export default function WellnessPage() {
         {/* Gratitude Dialog */}
         <Dialog open={showGratitudeDialog} onOpenChange={setShowGratitudeDialog}>
           <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <Sparkle size={20} weight="bold" className="text-amber-500" />
-                Gratitude Entry
-              </DialogTitle>
-            </DialogHeader>
             <GratitudeEntry userId={userId} />
           </DialogContent>
         </Dialog>
@@ -691,7 +672,7 @@ function QuickToolCard({
       <p className={`text-sm mt-1.5 leading-relaxed relative z-10 ${isDark ? 'text-white/50' : 'text-slate-400'}`}>{subtitle}</p>
       <div className={`mt-auto relative z-10 flex items-center gap-2 font-bold text-xs uppercase tracking-widest ${ctaColor}`}>
         <span>{cta}</span>
-        <ArrowRight size={14} weight="bold" className="transition-transform group-hover:translate-x-1" />
+        <FontAwesomeIcon icon={faArrowRight} className="text-sm transition-transform group-hover:translate-x-1" />
       </div>
     </motion.button>
   )
@@ -722,7 +703,7 @@ function PremiumLockCard({
       </p>
       <Link href="/settings#subscription">
         <Button className="gap-2 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white shadow-lg shadow-indigo-500/25">
-          <Crown size={16} weight="bold" />
+          <FontAwesomeIcon icon={faCrown} className="text-sm" />
           Upgrade to Premium
         </Button>
       </Link>

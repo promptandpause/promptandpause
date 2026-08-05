@@ -2,15 +2,22 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { Wind, Play, Pause, ClockClockwise, Lock, Check } from 'phosphor-react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+  faWind,
+  faPlay,
+  faPause,
+  faRotateRight,
+  faLock,
+  faCheck,
+  faArrowRight,
+} from '@fortawesome/free-solid-svg-icons'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { 
-  breathingTechniques, 
+import {
+  breathingTechniques,
   getAvailableTechniques,
-  getTechnique,
   logBreathingSession,
-  type BreathingTechnique 
+  type BreathingTechnique,
 } from '@/lib/services/breathingService'
 import { getSupabaseClient } from '@/lib/supabase/client'
 import { useTier } from '@/hooks/useTier'
@@ -29,7 +36,7 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
   const { theme } = useTheme()
   const isDark = theme === 'dark'
   const reduceMotion = useReducedMotion()
-  
+
   const [selectedTechnique, setSelectedTechnique] = useState<BreathingTechnique | null>(null)
   const [phase, setPhase] = useState<Phase>('ready')
   const [countdown, setCountdown] = useState(0)
@@ -42,24 +49,24 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
   const supabase = getSupabaseClient()
   const availableTechniques = getAvailableTechniques(isPremium)
 
-  // Soft, editorial phase palette (pastel gradients instead of flat primaries)
+  // Mockup palette: sky orb, indigo CTA, slate stat boxes
   const getPhaseGradient = () => {
     switch (phase) {
       case 'inhale': return 'from-sky-400 via-sky-500 to-sky-600'
-      case 'hold1':  return 'from-violet-400 via-violet-500 to-violet-600'
-      case 'exhale': return 'from-emerald-400 via-emerald-500 to-emerald-600'
-      case 'hold2':  return 'from-amber-400 via-amber-500 to-amber-600'
-      default:       return 'from-[#9AB6A1] via-[#8AAE95] to-[#6FA984]'
+      case 'hold1':  return 'from-indigo-400 via-indigo-500 to-indigo-600'
+      case 'exhale': return 'from-sky-400 via-sky-500 to-sky-600'
+      case 'hold2':  return 'from-indigo-400 via-indigo-500 to-indigo-600'
+      default:       return 'from-sky-500 via-sky-600 to-indigo-600'
     }
   }
 
   const getPhaseGlow = () => {
     switch (phase) {
       case 'inhale': return 'bg-sky-400/50'
-      case 'hold1':  return 'bg-violet-400/50'
-      case 'exhale': return 'bg-emerald-400/50'
-      case 'hold2':  return 'bg-amber-400/50'
-      default:       return 'bg-[#6FA984]/40'
+      case 'hold1':  return 'bg-indigo-400/50'
+      case 'exhale': return 'bg-sky-400/50'
+      case 'hold2':  return 'bg-indigo-400/50'
+      default:       return 'bg-sky-400/40'
     }
   }
 
@@ -113,7 +120,7 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
   const completeExercise = useCallback(async () => {
     setPhase('complete')
     setIsRunning(false)
-    
+
     if (userId && selectedTechnique) {
       const duration = Math.round((Date.now() - startTime) / 1000)
       await logBreathingSession(
@@ -126,7 +133,7 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
         moodAfter || undefined
       )
     }
-    
+
     onComplete?.()
   }, [userId, selectedTechnique, startTime, moodBefore, moodAfter, supabase, onComplete])
 
@@ -181,60 +188,46 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
     return () => clearInterval(timer)
   }, [isRunning, phase, cycle, selectedTechnique, completeExercise])
 
+  // Mockup stat row: In / Hold / Out boxes
+  const renderStatRow = (showCycle: boolean) => (
+    <div className={`flex justify-between items-center rounded-3xl p-5 mb-7 ${isDark ? 'bg-white/5 border border-white/10' : 'bg-slate-50/80'}`}>
+      <div className="text-center flex-1 border-r border-slate-200 dark:border-white/10">
+        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">In</p>
+        <p className={`text-xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>{selectedTechnique?.inhale}s</p>
+      </div>
+      <div className="text-center flex-1 border-r border-slate-200 dark:border-white/10">
+        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Hold</p>
+        <p className={`text-xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>{selectedTechnique?.hold1 ?? selectedTechnique?.hold2}s</p>
+      </div>
+      <div className="text-center flex-1">
+        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Out</p>
+        <p className={`text-xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>{selectedTechnique?.exhale}s</p>
+      </div>
+      {showCycle && (
+        <div className="text-center flex-1 border-l border-slate-200 dark:border-white/10">
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Cycles</p>
+          <p className={`text-xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>{Math.min(cycle, selectedTechnique?.cycles || 1)}/{selectedTechnique?.cycles}</p>
+        </div>
+      )}
+    </div>
+  )
+
   // Technique selection view
   if (!selectedTechnique) {
-    // Map each technique category to an accent in the shared design system
-    const categoryAccent = (cat: string): 'emerald' | 'blue' | 'violet' | 'rose' | 'amber' => {
-      switch (cat) {
-        case 'calm': return 'emerald'
-        case 'energize': return 'amber'
-        case 'focus': return 'blue'
-        default: return 'violet'
-      }
-    }
-    const accentSurface = {
-      emerald: isDark ? 'from-emerald-500/10 via-white/[0.02] to-transparent border-emerald-400/15 hover:border-emerald-400/30' : 'from-emerald-50/90 via-white/70 to-white/60 border-emerald-200/60 hover:border-emerald-300/80',
-      blue:    isDark ? 'from-sky-500/10 via-white/[0.02] to-transparent border-sky-400/15 hover:border-sky-400/30'         : 'from-sky-50/90 via-white/70 to-white/60 border-sky-200/60 hover:border-sky-300/80',
-      violet:  isDark ? 'from-violet-500/10 via-white/[0.02] to-transparent border-violet-400/15 hover:border-violet-400/30' : 'from-violet-50/90 via-white/70 to-white/60 border-violet-200/60 hover:border-violet-300/80',
-      amber:   isDark ? 'from-amber-500/10 via-white/[0.02] to-transparent border-amber-400/15 hover:border-amber-400/30'   : 'from-amber-50/90 via-white/70 to-white/60 border-amber-200/60 hover:border-amber-300/80',
-      rose:    isDark ? 'from-rose-500/10 via-white/[0.02] to-transparent border-rose-400/15 hover:border-rose-400/30'     : 'from-rose-50/90 via-white/70 to-white/60 border-rose-200/60 hover:border-rose-300/80',
-    }
-    const accentOrb = {
-      emerald: 'from-emerald-400 via-emerald-500 to-emerald-600',
-      blue:    'from-sky-400 via-sky-500 to-sky-600',
-      violet:  'from-violet-400 via-violet-500 to-violet-600',
-      amber:   'from-amber-400 via-amber-500 to-amber-600',
-      rose:    'from-rose-400 via-rose-500 to-rose-600',
-    }
-    const accentGlow = {
-      emerald: 'bg-emerald-400/25',
-      blue:    'bg-sky-400/25',
-      violet:  'bg-violet-400/25',
-      amber:   'bg-amber-400/25',
-      rose:    'bg-rose-400/25',
-    }
-    const accentBadge = {
-      emerald: isDark ? 'bg-emerald-500/15 text-emerald-300 border-emerald-400/25' : 'bg-emerald-50 text-emerald-700 border-emerald-200',
-      blue:    isDark ? 'bg-sky-500/15 text-sky-300 border-sky-400/25'             : 'bg-sky-50 text-sky-700 border-sky-200',
-      violet:  isDark ? 'bg-violet-500/15 text-violet-300 border-violet-400/25'    : 'bg-violet-50 text-violet-700 border-violet-200',
-      amber:   isDark ? 'bg-amber-500/15 text-amber-300 border-amber-400/25'       : 'bg-amber-50 text-amber-700 border-amber-200',
-      rose:    isDark ? 'bg-rose-500/15 text-rose-300 border-rose-400/25'          : 'bg-rose-50 text-rose-700 border-rose-200',
-    }
-
     return (
       <div className="space-y-5">
-        {/* Header with hero orb */}
+        {/* Header with hero breathe ring (mockup 04) */}
         <div className="text-center space-y-3">
-          <div className="relative mx-auto w-16 h-16">
-            <span className={`absolute inset-[-8px] rounded-full blur-xl ${isDark ? 'bg-sky-500/40' : 'bg-sky-400/35'}`} />
-            <div className="relative w-16 h-16 rounded-full flex items-center justify-center bg-gradient-to-br from-sky-400 via-sky-500 to-sky-600 shadow-[0_14px_36px_-12px_rgba(14,165,233,0.45)]">
-              <span aria-hidden className="absolute inset-1 rounded-full bg-gradient-to-br from-white/30 via-white/5 to-transparent" />
-              <Wind size={28} className="text-white" />
+          <div className="w-52 h-52 mx-auto mb-8 relative flex items-center justify-center">
+            <div className="absolute inset-0 rounded-full bg-sky-100 breathe-ring" />
+            <div className="absolute inset-10 rounded-full bg-sky-200 breathe-ring" style={{ animationDelay: '-2s' }} />
+            <div className={`w-20 h-20 bg-gradient-to-br from-sky-500 to-sky-600 rounded-full flex items-center justify-center text-white relative z-10 shadow-2xl shadow-sky-200`}>
+              <FontAwesomeIcon icon={faWind} className="text-2xl" />
             </div>
           </div>
           <div>
-            <h2 className={`text-xl font-semibold tracking-tight ${isDark ? 'text-white' : 'text-[#2F3B34]'}`}>Breathing exercises</h2>
-            <p className={`mt-1 text-sm ${isDark ? 'text-white/55' : 'text-[#6B7F6E]'}`}>Choose a technique to calm your mind</p>
+            <h2 className={`text-xl font-semibold tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>Breathing exercises</h2>
+            <p className={`mt-1 text-sm ${isDark ? 'text-white/55' : 'text-slate-400'}`}>Sync your breath to reset your nervous system</p>
           </div>
         </div>
 
@@ -247,7 +240,6 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
         >
           {breathingTechniques.map((technique) => {
             const isLocked = technique.isPremium && !isPremium
-            const accent = categoryAccent(technique.category)
             return (
               <motion.li
                 key={technique.id}
@@ -265,52 +257,48 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
                   onClick={() => !isLocked && setSelectedTechnique(technique)}
                   className={[
                     'group relative w-full text-left overflow-hidden',
-                    'rounded-2xl p-4 border bg-gradient-to-br transition-colors duration-200',
-                    accentSurface[accent],
+                    'rounded-2xl p-4 border bg-white/70 border-slate-100 transition-colors duration-200',
+                    'hover:border-sky-200 hover:shadow-2xl hover:shadow-sky-100/60',
                     isLocked ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer',
-                    'shadow-[0_1px_2px_rgba(15,20,20,0.04)] hover:shadow-[0_12px_28px_-12px_rgba(15,20,20,0.18)]',
+                    isDark ? '!bg-white/[0.04] !border-white/10 hover:!border-sky-400/40' : '',
                     'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-sky-400/40',
                   ].join(' ')}
                 >
-                  {!isLocked && (
-                    <span
-                      aria-hidden
-                      className={`pointer-events-none absolute -top-8 -right-8 h-24 w-24 rounded-full blur-2xl opacity-0 group-hover:opacity-70 transition-opacity duration-500 ${accentGlow[accent]}`}
-                    />
-                  )}
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute -top-8 -right-8 h-24 w-24 rounded-full bg-sky-100 blur-2xl opacity-0 group-hover:opacity-70 transition-opacity duration-500"
+                  />
                   <div className="relative flex items-center gap-3.5">
-                    {/* Orb */}
-                    <span className="relative inline-flex items-center justify-center shrink-0">
-                      <span className={`absolute inset-[-6px] rounded-2xl bg-gradient-to-br ${accentOrb[accent]} opacity-25 blur-[6px]`} />
-                      <span className={`relative inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br ${accentOrb[accent]} shadow-sm`}>
-                        <span aria-hidden className="absolute inset-1 rounded-xl bg-gradient-to-br from-white/30 via-white/5 to-transparent" />
-                        <Wind size={20} className="text-white" />
-                      </span>
+                    <span className="relative inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 to-sky-600 text-white shadow-lg shadow-sky-200 shrink-0">
+                      <span aria-hidden className="absolute inset-1 rounded-xl bg-gradient-to-br from-white/30 via-white/5 to-transparent" />
+                      <FontAwesomeIcon icon={faWind} className="text-lg" />
                     </span>
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className={`text-[15px] font-semibold tracking-tight ${isDark ? 'text-white' : 'text-[#2F3B34]'}`}>
+                        <h3 className={`text-[15px] font-semibold tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
                           {technique.name}
                         </h3>
-                        <span className={`text-[10px] font-semibold uppercase tracking-[0.14em] px-2 py-0.5 rounded-full border ${accentBadge[accent]}`}>
+                        <span className={`text-[10px] font-semibold uppercase tracking-[0.14em] px-2 py-0.5 rounded-full border ${
+                          isDark ? 'bg-sky-500/15 text-sky-300 border-sky-400/25' : 'bg-sky-50 text-sky-700 border-sky-200'
+                        }`}>
                           {technique.category}
                         </span>
                         {isLocked && (
-                          <Lock size={14} className={`${isDark ? 'text-white/40' : 'text-[#A0A090]'}`} />
+                          <FontAwesomeIcon icon={faLock} className={`text-sm ${isDark ? 'text-white/40' : 'text-slate-400'}`} />
                         )}
                       </div>
-                      <p className={`mt-0.5 text-[13px] leading-snug ${isDark ? 'text-white/55' : 'text-[#6B7F6E]'}`}>
+                      <p className={`mt-0.5 text-[13px] leading-snug ${isDark ? 'text-white/55' : 'text-slate-400'}`}>
                         {technique.description}
                       </p>
-                      <p className={`mt-1.5 text-[11px] uppercase tracking-[0.12em] font-medium ${isDark ? 'text-white/35' : 'text-[#8A9B8F]'}`}>
+                      <p className={`mt-1.5 text-[11px] uppercase tracking-[0.12em] font-medium ${isDark ? 'text-white/35' : 'text-slate-400'}`}>
                         {technique.cycles} cycles · ~{Math.round(technique.duration / 60)} min
                       </p>
                     </div>
 
                     {!isLocked && (
                       <span
-                        className={`shrink-0 text-[13px] font-medium transition-transform duration-200 group-hover:translate-x-0.5 ${isDark ? 'text-white/35' : 'text-[#8A9B8F]'}`}
+                        className={`shrink-0 text-[13px] font-medium transition-transform duration-200 group-hover:translate-x-1 ${isDark ? 'text-white/35' : 'text-slate-400'}`}
                         aria-hidden
                       >
                         →
@@ -324,8 +312,8 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
         </motion.ul>
 
         {!isPremium && (
-          <p className={`text-center text-[12px] pt-1 ${isDark ? 'text-white/40' : 'text-[#8A9B8F]'}`}>
-            <Lock size={12} className="inline mr-1 -mt-0.5" />
+          <p className={`text-center text-[12px] pt-1 ${isDark ? 'text-white/40' : 'text-slate-400'}`}>
+            <FontAwesomeIcon icon={faLock} className="inline mr-1 text-xs" />
             Upgrade to Premium for more breathing techniques
           </p>
         )}
@@ -343,21 +331,22 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
           setSelectedTechnique(null)
           resetExercise()
         }}
-        className={`mb-2 ${isDark ? 'text-white/70 hover:text-white hover:bg-white/10' : ''}`}
+        className={`mb-2 ${isDark ? 'text-white/70 hover:text-white hover:bg-white/10' : 'text-slate-500 hover:text-slate-700 hover:bg-white'}`}
       >
-        ← Back to Techniques
+        <FontAwesomeIcon icon={faArrowRight} className="mr-1.5 text-sm rotate-180" />
+        Back to Techniques
       </Button>
 
       <header className="text-center space-y-1">
-        <h2 className={`text-lg md:text-xl font-semibold tracking-tight ${isDark ? 'text-white' : 'text-[#2F3B34]'}`}>
+        <h2 className={`text-lg md:text-xl font-semibold tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
           {selectedTechnique.name}
         </h2>
-        <p className={`text-xs uppercase tracking-[0.18em] ${isDark ? 'text-white/45' : 'text-[#8A9B8F]'}`}>
+        <p className={`text-xs uppercase tracking-[0.18em] ${isDark ? 'text-white/45' : 'text-slate-400'}`}>
           Cycle {Math.max(cycle, 1)} of {selectedTechnique.cycles}
         </p>
       </header>
 
-      {/* Breathing orb — layered ambient glow + pulsing rings + gradient dial */}
+      {/* Breathing orb — mockup breathe-ring + center orb */}
       <div className="relative flex justify-center py-6 md:py-10">
         {/* Outermost ambient glow, tinted to phase */}
         <motion.span
@@ -373,7 +362,7 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
               <motion.span
                 key={delay}
                 aria-hidden
-                className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-44 h-44 md:w-52 md:h-52 rounded-full border ${isDark ? 'border-white/15' : 'border-[#2F3B34]/10'}`}
+                className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-44 h-44 md:w-52 md:h-52 rounded-full border ${isDark ? 'border-white/15' : 'border-slate-900/10'}`}
                 animate={{ scale: [1, 1.5, 1], opacity: [0.55, 0, 0.55] }}
                 transition={{ duration: 3.5, ease: 'easeInOut', repeat: Infinity, delay }}
               />
@@ -394,11 +383,6 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
             <span
               aria-hidden
               className="absolute inset-1 rounded-full bg-gradient-to-br from-white/30 via-white/5 to-transparent"
-            />
-            {/* Specular top-left */}
-            <span
-              aria-hidden
-              className="absolute top-4 left-5 w-16 h-10 rounded-full bg-white/25 blur-xl"
             />
             <div className="relative text-center text-white">
               <AnimatePresence mode="wait">
@@ -421,19 +405,8 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
         </motion.div>
       </div>
 
-      {/* Progress track — thin rail with filled segments */}
-      <div className="mx-auto max-w-xs">
-        <div className={`relative h-1.5 rounded-full overflow-hidden ${isDark ? 'bg-white/10' : 'bg-[#E8E5DE]'}`}>
-          <motion.div
-            className={`absolute inset-y-0 left-0 rounded-full bg-gradient-to-r ${getPhaseGradient()}`}
-            initial={false}
-            animate={{
-              width: `${(Math.min(cycle, selectedTechnique.cycles) / selectedTechnique.cycles) * 100}%`,
-            }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          />
-        </div>
-      </div>
+      {/* Mockup stat row */}
+      {renderStatRow(true)}
 
       {/* Controls */}
       <div className="flex justify-center gap-2.5">
@@ -441,10 +414,10 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
           <motion.div whileHover={{ y: -1 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 26 }}>
             <Button
               onClick={startExercise}
-              className="gap-2 rounded-full px-6 py-5 bg-gradient-to-r from-[#6FA984] to-[#5A8F6E] hover:from-[#5E9876] hover:to-[#4F7C5F] text-white shadow-lg shadow-[#6FA984]/20 border-0"
+              className="gap-2 rounded-2xl px-7 py-4 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white shadow-lg shadow-indigo-500/25 border-0 font-semibold"
             >
-              <Play size={16} weight="bold" />
-              Begin
+              <FontAwesomeIcon icon={faPlay} className="text-sm" />
+              Start Session
             </Button>
           </motion.div>
         )}
@@ -456,9 +429,9 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
                 <Button
                   onClick={pauseExercise}
                   variant="outline"
-                  className={`gap-2 rounded-full px-5 ${isDark ? 'border-white/15 text-white hover:bg-white/10' : 'border-[#E8E5DE] text-[#3D3D3D] hover:bg-white'}`}
+                  className={`gap-2 rounded-2xl px-5 ${isDark ? 'border-white/15 text-white hover:bg-white/10' : 'border-slate-200 text-slate-700 hover:bg-white'}`}
                 >
-                  <Pause size={16} weight="bold" />
+                  <FontAwesomeIcon icon={faPause} className="text-sm" />
                   Pause
                 </Button>
               </motion.div>
@@ -466,9 +439,9 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
               <motion.div whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 26 }}>
                 <Button
                   onClick={resumeExercise}
-                  className="gap-2 rounded-full px-5 bg-gradient-to-r from-[#6FA984] to-[#5A8F6E] hover:from-[#5E9876] hover:to-[#4F7C5F] text-white border-0"
+                  className="gap-2 rounded-2xl px-5 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white border-0 font-semibold"
                 >
-                  <Play size={16} weight="bold" />
+                  <FontAwesomeIcon icon={faPlay} className="text-sm" />
                   Resume
                 </Button>
               </motion.div>
@@ -477,9 +450,9 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
               <Button
                 onClick={resetExercise}
                 variant="ghost"
-                className={`gap-2 rounded-full px-5 ${isDark ? 'text-white/70 hover:text-white hover:bg-white/10' : 'text-[#6B7F6E] hover:text-[#2F3B34] hover:bg-white'}`}
+                className={`gap-2 rounded-2xl px-5 ${isDark ? 'text-white/70 hover:text-white hover:bg-white/10' : 'text-slate-500 hover:text-slate-700 hover:bg-white'}`}
               >
-                <ClockClockwise size={16} weight="bold" />
+                <FontAwesomeIcon icon={faRotateRight} className="text-sm" />
                 Reset
               </Button>
             </motion.div>
@@ -492,14 +465,16 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ type: 'spring', stiffness: 220, damping: 18 }}
-              className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full border ${isDark ? 'bg-emerald-500/10 border-emerald-400/25 text-emerald-300' : 'bg-emerald-50 border-emerald-200 text-emerald-700'}`}
+              className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full border ${
+                isDark ? 'bg-sky-500/10 border-sky-400/25 text-sky-300' : 'bg-sky-50 border-sky-200 text-sky-700'
+              }`}
             >
-              <Check size={16} weight="bold" />
+              <FontAwesomeIcon icon={faCheck} className="text-sm" />
               <span className="text-sm font-medium">Well done</span>
             </motion.div>
             <div className="flex gap-2 justify-center">
-              <Button onClick={resetExercise} variant="outline" className={`gap-2 rounded-full ${isDark ? 'border-white/15 text-white hover:bg-white/10' : 'border-[#E8E5DE] text-[#3D3D3D] hover:bg-white'}`}>
-                <ClockClockwise size={16} weight="bold" />
+              <Button onClick={resetExercise} variant="outline" className={`gap-2 rounded-2xl ${isDark ? 'border-white/15 text-white hover:bg-white/10' : 'border-slate-200 text-slate-700 hover:bg-white'}`}>
+                <FontAwesomeIcon icon={faRotateRight} className="text-sm" />
                 Again
               </Button>
               <Button
@@ -508,7 +483,7 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
                   resetExercise()
                 }}
                 variant="ghost"
-                className={`rounded-full ${isDark ? 'text-white/70 hover:text-white hover:bg-white/10' : 'text-[#6B7F6E] hover:text-[#2F3B34] hover:bg-white'}`}
+                className={`rounded-2xl ${isDark ? 'text-white/70 hover:text-white hover:bg-white/10' : 'text-slate-500 hover:text-slate-700 hover:bg-white'}`}
               >
                 Try another
               </Button>
@@ -519,7 +494,7 @@ export default function BreathingExercise({ userId, onComplete }: BreathingExerc
 
       {/* Instructions */}
       {phase !== 'complete' && (
-        <p className={`text-center text-sm px-4 ${isDark ? 'text-white/45' : 'text-[#6B7F6E]'}`}>
+        <p className={`text-center text-sm px-4 ${isDark ? 'text-white/45' : 'text-slate-400'}`}>
           {selectedTechnique.description}
         </p>
       )}

@@ -2,23 +2,25 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  Target, 
-  Plus, 
-  Check, 
-  Pause, 
-  Trash, 
-  CaretRight,
-  Calendar,
-  Sparkle,
-  PencilSimple,
-  X
-} from 'phosphor-react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+  faBullseye,
+  faPlus,
+  faCheck,
+  faPause,
+  faTrash,
+  faCalendar,
+  faUser,
+  faBriefcase,
+  faHeartPulse,
+  faHeart,
+  faCoins,
+  faCircleInfo,
+} from '@fortawesome/free-solid-svg-icons'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Progress } from '@/components/ui/progress'
+import { Card, CardContent } from '@/components/ui/card'
 import {
   Dialog,
   DialogContent,
@@ -33,17 +35,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { 
-  getGoals, 
-  getActiveGoals,
-  createGoal, 
+import {
+  getGoals,
+  createGoal,
   updateGoalProgress,
   updateGoalStatus,
   deleteGoal,
   getGoalStats,
   type Goal,
   type GoalCategory,
-  type GoalStatus
+  type GoalStatus,
 } from '@/lib/services/goalsService'
 import { getSupabaseClient } from '@/lib/supabase/client'
 import { useToast } from '@/hooks/use-toast'
@@ -53,31 +54,40 @@ interface GoalsDashboardProps {
   userId: string
 }
 
+const categoryIcons: Record<GoalCategory, typeof faBullseye> = {
+  personal: faUser,
+  professional: faBriefcase,
+  wellness: faHeartPulse,
+  relationships: faHeart,
+  financial: faCoins,
+  other: faCircleInfo,
+}
+
 const categoryColorsLight: Record<GoalCategory, string> = {
-  personal: 'bg-purple-100 text-purple-700',
-  professional: 'bg-blue-100 text-blue-700',
-  wellness: 'bg-emerald-100 text-emerald-700',
-  relationships: 'bg-rose-100 text-rose-700',
-  financial: 'bg-amber-100 text-amber-700',
-  other: 'bg-gray-100 text-gray-700'
+  personal: 'bg-indigo-50 text-indigo-700',
+  professional: 'bg-sky-50 text-sky-700',
+  wellness: 'bg-emerald-50 text-emerald-700',
+  relationships: 'bg-rose-50 text-rose-700',
+  financial: 'bg-amber-50 text-amber-700',
+  other: 'bg-slate-100 text-slate-600',
 }
 
 const categoryColorsDark: Record<GoalCategory, string> = {
-  personal: 'bg-purple-500/20 text-purple-400',
-  professional: 'bg-blue-500/20 text-blue-400',
+  personal: 'bg-indigo-500/20 text-indigo-400',
+  professional: 'bg-sky-500/20 text-sky-400',
   wellness: 'bg-emerald-500/20 text-emerald-400',
   relationships: 'bg-rose-500/20 text-rose-400',
   financial: 'bg-amber-500/20 text-amber-400',
-  other: 'bg-white/10 text-white/70'
+  other: 'bg-white/10 text-white/70',
 }
 
-const categoryIcons: Record<GoalCategory, string> = {
-  personal: '🌟',
-  professional: '💼',
-  wellness: '🧘',
-  relationships: '❤️',
-  financial: '💰',
-  other: '📌'
+const categoryBars: Record<GoalCategory, string> = {
+  personal: 'from-indigo-400 to-indigo-500',
+  professional: 'from-sky-400 to-sky-500',
+  wellness: 'from-emerald-400 to-emerald-500',
+  relationships: 'from-rose-400 to-rose-500',
+  financial: 'from-amber-400 to-amber-500',
+  other: 'from-slate-400 to-slate-500',
 }
 
 export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
@@ -98,7 +108,7 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
     description: '',
     category: 'personal' as GoalCategory,
     target_date: '',
-    why_important: ''
+    why_important: '',
   })
   const [isCreating, setIsCreating] = useState(false)
   const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('active')
@@ -112,7 +122,7 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
       const status = filter === 'all' ? undefined : filter === 'active' ? 'active' : 'completed'
       const [goalsData, statsData] = await Promise.all([
         getGoals(supabase, userId, status as GoalStatus | undefined),
-        getGoalStats(supabase, userId)
+        getGoalStats(supabase, userId),
       ])
       setGoals(goalsData)
       setStats(statsData)
@@ -132,7 +142,7 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
       toast({
         title: 'Title required',
         description: 'Please enter a goal title',
-        variant: 'destructive'
+        variant: 'destructive',
       })
       return
     }
@@ -144,13 +154,13 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
         description: newGoal.description.trim() || undefined,
         category: newGoal.category,
         target_date: newGoal.target_date || undefined,
-        why_important: newGoal.why_important.trim() || undefined
+        why_important: newGoal.why_important.trim() || undefined,
       })
 
       if (result.success) {
         toast({
           title: 'Goal created',
-          description: 'Your new goal has been added'
+          description: 'Your new goal has been added',
         })
         setShowCreateDialog(false)
         setNewGoal({
@@ -158,14 +168,14 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
           description: '',
           category: 'personal',
           target_date: '',
-          why_important: ''
+          why_important: '',
         })
         loadGoals()
       } else {
         toast({
           title: 'Error',
           description: result.error || 'Failed to create goal',
-          variant: 'destructive'
+          variant: 'destructive',
         })
       }
     } catch (error) {
@@ -173,7 +183,7 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
       toast({
         title: 'Error',
         description: 'Failed to create goal',
-        variant: 'destructive'
+        variant: 'destructive',
       })
     } finally {
       setIsCreating(false)
@@ -186,8 +196,8 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
       loadGoals()
       if (progress >= 100) {
         toast({
-          title: '🎉 Goal completed!',
-          description: 'Congratulations on achieving your goal!'
+          title: 'Goal completed',
+          description: 'Congratulations on achieving your goal!',
         })
       }
     }
@@ -199,7 +209,7 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
       loadGoals()
       toast({
         title: 'Goal updated',
-        description: `Goal marked as ${status}`
+        description: `Goal marked as ${status}`,
       })
     }
   }
@@ -210,14 +220,14 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
       loadGoals()
       toast({
         title: 'Goal deleted',
-        description: 'Goal has been removed'
+        description: 'Goal has been removed',
       })
     }
   }
 
   if (isLoading) {
     return (
-      <Card className={isDark ? 'bg-white/5 border-white/10' : ''}>
+      <Card className={`glass rounded-3xl border-slate-100 soft-shadow ${isDark ? '!bg-white/[0.04] !border-white/[0.06]' : ''}`}>
         <CardContent className="p-6">
           <div className="animate-pulse space-y-4">
             <div className={`h-6 rounded w-1/3 ${isDark ? 'bg-white/10' : 'bg-gray-200'}`}></div>
@@ -230,17 +240,22 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
   }
 
   return (
-    <Card className={isDark ? 'bg-white/5 border-white/10' : ''}>
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className={`text-lg flex items-center gap-2 ${isDark ? 'text-white' : ''}`}>
-            <Target size={20} className="text-blue-500" />
-            Goals
-          </CardTitle>
+    <Card className={`glass rounded-3xl border-slate-100 soft-shadow ${isDark ? '!bg-white/[0.04] !border-white/[0.06]' : ''}`}>
+      <div className="p-6 pb-4">
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <div className="flex items-center gap-3">
+            <span className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-100 to-indigo-200 flex items-center justify-center shrink-0">
+              <FontAwesomeIcon icon={faBullseye} className={`text-sm ${isDark ? 'text-indigo-400' : 'text-indigo-500'}`} />
+            </span>
+            <div>
+              <h3 className={`text-base font-semibold tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>Goals</h3>
+              <p className={`text-xs ${isDark ? 'text-white/45' : 'text-slate-400'}`}>Track intentions &amp; habit progress</p>
+            </div>
+          </div>
           <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
             <DialogTrigger asChild>
-              <Button size="sm" className="gap-1">
-                <Plus size={16} weight="bold" />
+              <Button size="sm" className="gap-1.5 bg-indigo-500 hover:bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 border-0">
+                <FontAwesomeIcon icon={faPlus} className="text-xs" />
                 New Goal
               </Button>
             </DialogTrigger>
@@ -268,12 +283,12 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="personal">🌟 Personal</SelectItem>
-                      <SelectItem value="professional">💼 Professional</SelectItem>
-                      <SelectItem value="wellness">🧘 Wellness</SelectItem>
-                      <SelectItem value="relationships">❤️ Relationships</SelectItem>
-                      <SelectItem value="financial">💰 Financial</SelectItem>
-                      <SelectItem value="other">📌 Other</SelectItem>
+                      <SelectItem value="personal">Personal</SelectItem>
+                      <SelectItem value="professional">Professional</SelectItem>
+                      <SelectItem value="wellness">Wellness</SelectItem>
+                      <SelectItem value="relationships">Relationships</SelectItem>
+                      <SelectItem value="financial">Financial</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -299,7 +314,7 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
                 <Button
                   onClick={handleCreateGoal}
                   disabled={isCreating || !newGoal.title.trim()}
-                  className="w-full"
+                  className="w-full bg-indigo-500 hover:bg-indigo-600 text-white border-0"
                 >
                   {isCreating ? 'Creating...' : 'Create Goal'}
                 </Button>
@@ -308,51 +323,75 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
           </Dialog>
         </div>
 
-        {/* Stats */}
+        {/* Stats — mockup progress bars */}
         {stats && (
-          <div className="grid grid-cols-3 gap-2 mt-3">
-            <div className={`text-center p-2 rounded-lg ${isDark ? 'bg-blue-500/20' : 'bg-blue-50'}`}>
-              <div className={`text-lg font-bold ${isDark ? 'text-blue-400' : 'text-blue-700'}`}>{stats.activeGoals}</div>
-              <div className={`text-xs ${isDark ? 'text-blue-300' : 'text-blue-600'}`}>Active</div>
+          <div className="space-y-4 mt-6">
+            <div>
+              <div className="flex justify-between items-center mb-2.5">
+                <span className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>Active Goals</span>
+                <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest">{stats.activeGoals}</span>
+              </div>
+              <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden dark:bg-white/10">
+                <div
+                  className="h-full bg-gradient-to-r from-indigo-400 to-indigo-500 rounded-full transition-all duration-500"
+                  style={{ width: `${stats.totalGoals ? Math.min(100, (stats.activeGoals / stats.totalGoals) * 100) : 0}%` }}
+                />
+              </div>
             </div>
-            <div className={`text-center p-2 rounded-lg ${isDark ? 'bg-emerald-500/20' : 'bg-emerald-50'}`}>
-              <div className={`text-lg font-bold ${isDark ? 'text-emerald-400' : 'text-emerald-700'}`}>{stats.completedGoals}</div>
-              <div className={`text-xs ${isDark ? 'text-emerald-300' : 'text-emerald-600'}`}>Completed</div>
+            <div>
+              <div className="flex justify-between items-center mb-2.5">
+                <span className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>Completed</span>
+                <span className="text-[10px] font-bold text-sky-500 uppercase tracking-widest">{stats.completedGoals}</span>
+              </div>
+              <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden dark:bg-white/10">
+                <div
+                  className="h-full bg-gradient-to-r from-sky-400 to-sky-500 rounded-full transition-all duration-500"
+                  style={{ width: `${stats.totalGoals ? Math.min(100, (stats.completedGoals / stats.totalGoals) * 100) : 0}%` }}
+                />
+              </div>
             </div>
-            <div className={`text-center p-2 rounded-lg ${isDark ? 'bg-purple-500/20' : 'bg-purple-50'}`}>
-              <div className={`text-lg font-bold ${isDark ? 'text-purple-400' : 'text-purple-700'}`}>{stats.completionRate}%</div>
-              <div className={`text-xs ${isDark ? 'text-purple-300' : 'text-purple-600'}`}>Success Rate</div>
+            <div>
+              <div className="flex justify-between items-center mb-2.5">
+                <span className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>Success Rate</span>
+                <span className="text-[10px] font-bold text-amber-600 uppercase tracking-widest">{stats.completionRate}%</span>
+              </div>
+              <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden dark:bg-white/10">
+                <div
+                  className="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full transition-all duration-500"
+                  style={{ width: `${stats.completionRate}%` }}
+                />
+              </div>
             </div>
           </div>
         )}
 
         {/* Filter */}
-        <div className={`flex gap-1 mt-3 rounded-lg p-1 ${isDark ? 'bg-white/10' : 'bg-gray-100'}`}>
+        <div className={`flex gap-1 mt-6 rounded-2xl p-1 ${isDark ? 'bg-white/10' : 'bg-slate-100/80'}`}>
           {(['active', 'completed', 'all'] as const).map((f) => (
             <Button
               key={f}
               size="sm"
               variant={filter === f ? 'default' : 'ghost'}
-              className={`flex-1 h-7 text-xs capitalize ${filter === f ? isDark ? 'bg-white/20 shadow-sm text-white' : 'bg-white shadow-sm' : isDark ? 'text-white/60 hover:text-white' : ''}`}
+              className={`flex-1 h-7 text-xs capitalize ${filter === f ? isDark ? 'bg-white/20 shadow-sm text-white' : 'bg-white shadow-sm' : isDark ? 'text-white/60 hover:text-white' : 'text-slate-500'}`}
               onClick={() => setFilter(f)}
             >
               {f}
             </Button>
           ))}
         </div>
-      </CardHeader>
+      </div>
 
-      <CardContent className="space-y-3">
+      <div className="px-6 pb-6 space-y-3">
         <AnimatePresence>
           {goals.length === 0 ? (
-            <div className={`text-center py-8 ${isDark ? 'text-white/50' : 'text-gray-500'}`}>
-              <Target size={40} className={`mx-auto mb-2 ${isDark ? 'text-white/20' : 'text-gray-300'}`} />
+            <div className={`text-center py-8 ${isDark ? 'text-white/50' : 'text-slate-400'}`}>
+              <FontAwesomeIcon icon={faBullseye} className={`mx-auto mb-2 text-5xl ${isDark ? 'text-white/20' : 'text-slate-300'}`} />
               <p className="text-sm">No {filter !== 'all' ? filter : ''} goals yet</p>
               <Button
                 variant="link"
                 size="sm"
                 onClick={() => setShowCreateDialog(true)}
-                className="mt-2"
+                className="mt-2 text-indigo-500"
               >
                 Create your first goal
               </Button>
@@ -364,33 +403,42 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, x: -10 }}
-                className={`p-4 border rounded-lg transition-colors ${isDark ? 'border-white/10 hover:border-blue-400/30' : 'hover:border-blue-200'}`}
+                className={`p-4 rounded-2xl border transition-colors ${
+                  isDark ? 'border-white/10 hover:border-indigo-400/30' : 'border-slate-100 hover:border-indigo-200'
+                } ${isDark ? 'bg-white/[0.03]' : 'bg-white/60'}`}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${categoryColors[goal.category]}`}>
-                        {categoryIcons[goal.category]} {goal.category}
+                    <div className="flex items-center gap-2 mb-1 flex-wrap">
+                      <span className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full ${categoryColors[goal.category]}`}>
+                        <FontAwesomeIcon icon={categoryIcons[goal.category]} className="text-[10px]" />
+                        {goal.category}
                       </span>
                       {goal.status === 'completed' && (
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">
-                          ✓ Completed
+                        <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400">
+                          <FontAwesomeIcon icon={faCheck} className="text-[10px]" />
+                          Completed
                         </span>
                       )}
                     </div>
-                    <h4 className={`font-medium truncate ${isDark ? 'text-white' : 'text-gray-900'}`}>{goal.title}</h4>
+                    <h4 className={`font-medium truncate ${isDark ? 'text-white' : 'text-slate-900'}`}>{goal.title}</h4>
                     {goal.why_important && (
-                      <p className={`text-xs mt-1 line-clamp-2 ${isDark ? 'text-white/50' : 'text-gray-500'}`}>{goal.why_important}</p>
+                      <p className={`text-xs mt-1 line-clamp-2 ${isDark ? 'text-white/50' : 'text-slate-400'}`}>{goal.why_important}</p>
                     )}
-                    
+
                     {/* Progress bar */}
                     {goal.status === 'active' && (
                       <div className="mt-3">
-                        <div className={`flex items-center justify-between text-xs mb-1 ${isDark ? 'text-white/50' : 'text-gray-500'}`}>
+                        <div className={`flex items-center justify-between text-xs mb-1 ${isDark ? 'text-white/50' : 'text-slate-400'}`}>
                           <span>Progress</span>
-                          <span>{goal.progress}%</span>
+                          <span className="font-bold text-indigo-500">{goal.progress}%</span>
                         </div>
-                        <Progress value={goal.progress} className="h-2" />
+                        <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden dark:bg-white/10">
+                          <div
+                            className={`h-full bg-gradient-to-r ${categoryBars[goal.category]} rounded-full transition-all duration-500`}
+                            style={{ width: `${goal.progress}%` }}
+                          />
+                        </div>
                         <div className="flex gap-1 mt-2">
                           {[25, 50, 75, 100].map((p) => (
                             <Button
@@ -408,8 +456,8 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
                     )}
 
                     {goal.target_date && (
-                      <div className={`flex items-center gap-1 mt-2 text-xs ${isDark ? 'text-white/50' : 'text-gray-500'}`}>
-                        <Calendar size={12} />
+                      <div className={`flex items-center gap-1 mt-2 text-xs ${isDark ? 'text-white/50' : 'text-slate-400'}`}>
+                        <FontAwesomeIcon icon={faCalendar} className="text-xs" />
                         Target: {new Date(goal.target_date).toLocaleDateString()}
                       </div>
                     )}
@@ -426,7 +474,7 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
                           onClick={() => handleUpdateStatus(goal.id, 'completed')}
                           title="Mark complete"
                         >
-                          <Check size={16} weight="bold" className="text-emerald-500" />
+                          <FontAwesomeIcon icon={faCheck} className="text-sm text-emerald-500" />
                         </Button>
                         <Button
                           size="sm"
@@ -435,7 +483,7 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
                           onClick={() => handleUpdateStatus(goal.id, 'paused')}
                           title="Pause goal"
                         >
-                          <Pause size={16} weight="bold" className="text-amber-500" />
+                          <FontAwesomeIcon icon={faPause} className="text-sm text-amber-500" />
                         </Button>
                       </>
                     )}
@@ -446,7 +494,7 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
                       onClick={() => handleDeleteGoal(goal.id)}
                       title="Delete goal"
                     >
-                      <Trash size={16} weight="bold" className={`hover:text-rose-500 ${isDark ? 'text-white/40' : 'text-gray-400'}`} />
+                      <FontAwesomeIcon icon={faTrash} className={`text-sm hover:text-rose-500 ${isDark ? 'text-white/40' : 'text-slate-400'}`} />
                     </Button>
                   </div>
                 </div>
@@ -454,7 +502,7 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
             ))
           )}
         </AnimatePresence>
-      </CardContent>
+      </div>
     </Card>
   )
 }

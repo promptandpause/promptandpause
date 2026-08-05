@@ -2,6 +2,30 @@
 
 import { useState } from "react"
 import dynamic from "next/dynamic"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import {
+  faBriefcase,
+  faCakeCandles,
+  faChampagneGlasses,
+  faCrown,
+  faDove,
+  faDumbbell,
+  faFire,
+  faGem,
+  faHandsPraying,
+  faHeart,
+  faLeaf,
+  faMap,
+  faMedal,
+  faMoon,
+  faSeedling,
+  faSpa,
+  faSprout,
+  faStar,
+  faSun,
+  faWandMagicSparkles,
+} from "@fortawesome/free-solid-svg-icons"
+import type { IconDefinition } from "@fortawesome/fontawesome-svg-core"
 import { Badge } from "@/lib/types/achievements"
 
 // Dynamically import Lottie to reduce bundle size
@@ -12,6 +36,31 @@ interface BadgeIconProps {
   isUnlocked: boolean
   size?: "sm" | "md" | "lg"
   className?: string
+}
+
+const BADGE_ICONS: Record<string, IconDefinition> = {
+  streak_3: faSeedling,
+  streak_7: faFire,
+  streak_14: faStar,
+  streak_30: faCrown,
+  streak_100: faCrown,
+  streak_365: faStar,
+  reflection_1: faSprout,
+  reflection_10: faLeaf,
+  reflection_50: faHeart,
+  reflection_100: faWandMagicSparkles,
+  reflection_365: faGem,
+  reflection_500: faDove,
+  topic_gratitude: faHandsPraying,
+  topic_relationships: faHeart,
+  topic_career: faBriefcase,
+  topic_self_care: faSpa,
+  topic_health: faDumbbell,
+  milestone_first_save: faCakeCandles,
+  milestone_weekend_warrior: faChampagneGlasses,
+  milestone_early_bird: faSun,
+  milestone_night_owl: faMoon,
+  milestone_explorer: faMap,
 }
 
 export function BadgeIcon({ badge, isUnlocked, size = "md", className = "" }: BadgeIconProps) {
@@ -66,13 +115,16 @@ export function BadgeIcon({ badge, isUnlocked, size = "md", className = "" }: Ba
     )
   }
 
-  // Fallback to emoji
+  // Fallback to Font Awesome icon
   return (
     <div
       className={`${sizeClasses[size]} flex items-center justify-center ${className}`}
       onMouseEnter={handleMouseEnter}
     >
-      <span className="select-none">{badge.icon}</span>
+      <FontAwesomeIcon
+        icon={BADGE_ICONS[badge.id] ?? faMedal}
+        className="select-none"
+      />
     </div>
   )
 }
