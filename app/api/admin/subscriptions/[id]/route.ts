@@ -1,18 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser } from '@/lib/supabase/server'
 import { 
   checkAdminAuth, 
   getSubscriptionById,
   updateSubscription,
   logAdminActivity
 } from '@/lib/services/adminService'
+import { getAdminUser } from '@/lib/services/adminAuth'
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const user = await getAuthUser()
+    const user = await getAdminUser()
 
     if (!user) {
       return NextResponse.json(
@@ -71,7 +71,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const user = await getAuthUser()
+    const user = await getAdminUser()
 
     if (!user) {
       return NextResponse.json(

@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient, createServiceRoleClient, getAuthUser } from '@/lib/supabase/server'
+import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import Stripe from 'stripe'
 import { z } from 'zod'
 import { checkAdminAuth } from '@/lib/services/adminService'
 import { sendDiscountInvitationEmail } from '@/lib/services/emailService'
+import { getAdminUser } from '@/lib/services/adminAuth'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-10-29.clover' as any,
@@ -19,7 +20,7 @@ const InviteSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     // Verify admin authentication
-    const authUser = await getAuthUser()
+    const authUser = await getAdminUser()
 
     if (!authUser?.email) {
       return NextResponse.json(

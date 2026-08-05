@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
-import { getAuthUser } from '@/lib/supabase/server'
 import { checkAdminAuth, getSubscriptionStats } from '@/lib/services/adminService'
+import { getAdminUser } from '@/lib/services/adminAuth'
 
 export async function GET() {
   try {
     // Check authentication
-    const user = await getAuthUser()
+    const user = await getAdminUser()
 
     if (!user) {
       return NextResponse.json(

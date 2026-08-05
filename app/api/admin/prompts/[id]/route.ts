@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser } from '@/lib/supabase/server'
 import { checkAdminAuth, getPromptById, updatePrompt, deletePrompt } from '@/lib/services/adminService'
+import { getAdminUser } from '@/lib/services/adminAuth'
 
 export async function GET(
   request: NextRequest,
@@ -8,7 +8,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params
-    const user = await getAuthUser()
+    const user = await getAdminUser()
     
     if (!user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -37,7 +37,7 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params
-    const user = await getAuthUser()
+    const user = await getAdminUser()
     
     if (!user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -67,7 +67,7 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params
-    const user = await getAuthUser()
+    const user = await getAdminUser()
     
     if (!user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

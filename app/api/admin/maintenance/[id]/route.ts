@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser } from '@/lib/supabase/server'
 import { checkAdminAuth } from '@/lib/services/adminService'
 import { 
   getMaintenanceWindow, 
   updateMaintenanceWindow, 
   cancelMaintenanceWindow 
 } from '@/lib/services/maintenanceService'
+import { getAdminUser } from '@/lib/services/adminAuth'
 
 /**
  * GET /api/admin/maintenance/[id]
@@ -17,7 +17,7 @@ export async function GET(
 ) {
   try {
     // Check admin authentication
-    const user = await getAuthUser()
+    const user = await getAdminUser()
     
     if (!user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -53,7 +53,7 @@ export async function PUT(
 ) {
   try {
     // Check admin authentication
-    const user = await getAuthUser()
+    const user = await getAdminUser()
     
     if (!user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -129,7 +129,7 @@ export async function DELETE(
 ) {
   try {
     // Check admin authentication
-    const user = await getAuthUser()
+    const user = await getAdminUser()
     
     if (!user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

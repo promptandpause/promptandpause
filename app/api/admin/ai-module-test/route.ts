@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 import crypto from 'crypto'
-import { getAuthUser, createClient, createServiceRoleClient } from '@/lib/supabase/server'
+import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { checkAdminAuth } from '@/lib/services/adminService'
 import { generatePrompt } from '@/lib/services/aiService'
 import { getUserPreferences, getUserTier, listFocusAreas } from '@/lib/services/userService'
@@ -12,6 +12,7 @@ import { GeneratePromptContext, PromptType } from '@/lib/types/reflection'
 import { generateWeeklyInsights } from '@/lib/services/weeklyInsightService'
 import { generateMonthlyReflectionSummaryServer, getMonthRange } from '@/lib/services/monthlyReflectionService'
 import { FREEMIUM_FOCUS_AREAS } from '@/lib/constants/focusAreas'
+import { getAdminUser } from '@/lib/services/adminAuth'
 
 const FALLBACK_AFFIRMATIONS = [
   "You're doing great—one step at a time.",
@@ -65,7 +66,7 @@ async function resolveAdminEmail(request: NextRequest) {
   }
 
   if (!adminEmail) {
-    const user = await getAuthUser()
+    const user = await getAdminUser()
 
     if (!user?.email) {
       return {

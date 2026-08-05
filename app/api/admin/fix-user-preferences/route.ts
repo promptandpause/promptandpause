@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser, createServiceRoleClient } from '@/lib/supabase/server'
+import { createServiceRoleClient } from '@/lib/supabase/server'
 import { checkAdminAuth } from '@/lib/services/adminService'
+import { getAdminUser } from '@/lib/services/adminAuth'
 
 /**
  * POST /api/admin/fix-user-preferences
@@ -16,7 +17,7 @@ import { checkAdminAuth } from '@/lib/services/adminService'
 export async function POST(request: NextRequest) {
   try {
     // Require admin auth
-    const user = await getAuthUser()
+    const user = await getAdminUser()
 
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -179,7 +180,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     // Require admin auth
-    const user = await getAuthUser()
+    const user = await getAdminUser()
 
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

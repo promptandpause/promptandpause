@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import { isAdminUser, isSuperAdmin } from '@/lib/services/adminUserService'
+import { getAdminSession } from '@/lib/services/adminAuth'
 
 /**
  * Apply security headers to response
@@ -332,6 +333,22 @@ export default async function proxy(request: NextRequest) {
     if (request.nextUrl.pathname === '/admin-panel/login') {
       // Just return response - don't redirect authenticated users
       // The login page component will handle redirecting authenticated admins
+      return response
+    }
+
+    // OTP email-code logins authenticate via the admin_session cookie
+    // (no Supabase session exists), so validate it here before redirecting.
+    const otpSession = await getAdminSession(request.cookies.get('admin_session')?.value ?? '')
+    if (otpSession) {
+      // Check for super admin only routes
+      if (
+        request.nextUrl.pathname.startsWith('/admin-panel/settings') &&
+        otpSession.admin_users.role !== 'super_admin'
+      ) {
+        // Not a super admin - redirect to admin panel home
+        return redirectNoStore(new URL('/admin-panel', request.url), request)
+      }
+
       return response
     }
 

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser } from '@/lib/supabase/server'
 import { checkAdminAuth } from '@/lib/services/adminService'
 import { getTemplate } from '@/lib/services/emailTemplateService'
+import { getAdminUser } from '@/lib/services/adminAuth'
 
 /**
  * POST /api/admin/email-templates/[id]/preview
@@ -15,7 +15,7 @@ export async function POST(
     const params = await context.params
     
     // Check admin authentication
-    const user = await getAuthUser()
+    const user = await getAdminUser()
     
     if (!user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

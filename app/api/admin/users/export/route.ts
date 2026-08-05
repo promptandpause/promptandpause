@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser } from '@/lib/supabase/server'
 import { checkAdminAuth, getAllUsers, usersToCSV } from '@/lib/services/adminService'
+import { getAdminUser } from '@/lib/services/adminAuth'
 
 /**
  * GET /api/admin/users/export
@@ -9,7 +9,7 @@ import { checkAdminAuth, getAllUsers, usersToCSV } from '@/lib/services/adminSer
 export async function GET(request: NextRequest) {
   try {
     // Check authentication
-    const user = await getAuthUser()
+    const user = await getAdminUser()
 
     if (!user) {
       return NextResponse.json(

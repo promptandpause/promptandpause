@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser, createServiceRoleClient } from '@/lib/supabase/server'
+import { createServiceRoleClient } from '@/lib/supabase/server'
 import { checkAdminAuth } from '@/lib/services/adminService'
 import { sendSubscriptionEmail } from '@/lib/services/emailService'
 import { z } from 'zod'
+import { getAdminUser } from '@/lib/services/adminAuth'
 
 const BodySchema = z.object({
   userEmail: z.string().email(),
@@ -13,7 +14,7 @@ const BodySchema = z.object({
 export async function POST(req: NextRequest) {
   try {
     // Require authenticated admin
-    const user = await getAuthUser()
+    const user = await getAdminUser()
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }

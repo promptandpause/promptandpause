@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServiceRoleClient } from '@/lib/supabase/server'
+import { checkAdminAuth } from '@/lib/services/adminService'
+import { getAdminUser } from '@/lib/services/adminAuth'
 
 const NOCOBASE_URL = process.env.NEXT_PUBLIC_NOCOBASE_URL || 'https://promptandpause-helpdesk.up.railway.app'
 
@@ -26,17 +27,11 @@ async function fetchTickets(headers: Record<string, string>) {
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createServiceRoleClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const user = await getAdminUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const { data: adminUser } = await supabase
-      .from('admin_users')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    if (!adminUser) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    const adminAuth = await checkAdminAuth(user.email || '')
+    if (!adminAuth.isAdmin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
     const headers = await getAuthHeaders()
     const tickets = await fetchTickets(headers)

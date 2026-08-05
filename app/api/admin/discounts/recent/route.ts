@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
+import { createServiceRoleClient } from '@/lib/supabase/server'
 import { checkAdminAuth } from '@/lib/services/adminService'
+import { getAdminUser } from '@/lib/services/adminAuth'
 import { withRateLimit } from '@/lib/security/rateLimit'
 
 export async function GET(request: NextRequest) {
@@ -11,11 +12,10 @@ export async function GET(request: NextRequest) {
       return rateLimitResult.response!
     }
 
-    // Authenticate user
-    const supabaseAuth = await createClient()
-    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser()
+    // Authenticate user (OTP admin_session cookie or Supabase session)
+    const user = await getAdminUser()
 
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }

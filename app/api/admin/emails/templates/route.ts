@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser } from '@/lib/supabase/server'
 import { checkAdminAuth, getEmailTemplates } from '@/lib/services/adminService'
+import { getAdminUser } from '@/lib/services/adminAuth'
 
 export async function GET(request: NextRequest) {
   try {
     // Get user from Supabase auth
-    const user = await getAuthUser()
+    const user = await getAdminUser()
     
     if (!user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

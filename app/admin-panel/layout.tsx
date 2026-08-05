@@ -1,53 +1,13 @@
 import { redirect } from 'next/navigation'
-import { cookies } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
-import { createServiceRoleClient } from '@/lib/supabase/server'
 import { getAdminRole, isAdminUser, updateLastLogin } from '@/lib/services/adminUserService'
-import crypto from 'crypto'
+import { getAdminSession } from '@/lib/services/adminAuth'
 import AdminSidebar from './components/AdminSidebar'
 
 export const metadata = {
   title: 'Admin Panel | Prompt & Pause',
   description: 'Admin dashboard for managing users, analytics, and system settings',
   robots: { index: false, follow: false },
-}
-
-// Admin session timeout: 1 hour
-const ADMIN_SESSION_TIMEOUT_MS = 60 * 60 * 1000
-
-async function getAdminSession() {
-  const cookieStore = await cookies()
-  const sessionToken = cookieStore.get('admin_session')?.value
-
-  if (!sessionToken) {
-    return null
-  }
-
-  const supabase = createServiceRoleClient()
-  const sessionHash = crypto.createHash('sha256').update(sessionToken).digest('hex')
-
-  const { data: session, error } = await supabase
-    .from('admin_sessions')
-    .select('*, admin_users!inner(id, email, full_name, role, is_active)')
-    .eq('session_token', sessionHash)
-    .single()
-
-  if (error || !session) {
-    return null
-  }
-
-  // Check if session is expired
-  if (new Date(session.expires_at) < new Date()) {
-    await supabase.from('admin_sessions').delete().eq('id', session.id)
-    return null
-  }
-
-  // Check if admin user is still active
-  if (!session.admin_users.is_active) {
-    return null
-  }
-
-  return session
 }
 
 export default async function AdminLayout({

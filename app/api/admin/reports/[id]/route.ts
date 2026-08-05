@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser } from '@/lib/supabase/server'
 import {
   checkAdminAuth,
   updateContentReportStatus,
   removeReportedContent,
 } from '@/lib/services/adminService'
+import { getAdminUser } from '@/lib/services/adminAuth'
 
 // PATCH /api/admin/reports/[id]
 // Body: { status: 'reviewed' | 'dismissed' | 'actioned' }
@@ -16,7 +16,7 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params
-    const user = await getAuthUser()
+    const user = await getAdminUser()
     if (!user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }

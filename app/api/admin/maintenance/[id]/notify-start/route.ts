@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser } from '@/lib/supabase/server'
 import { checkAdminAuth } from '@/lib/services/adminService'
 import { sendMaintenanceStartNotifications } from '@/lib/services/maintenanceService'
+import { getAdminUser } from '@/lib/services/adminAuth'
 
 /**
  * POST /api/admin/maintenance/[id]/notify-start
@@ -13,7 +13,7 @@ export async function POST(
 ) {
   try {
     // Check admin authentication
-    const user = await getAuthUser()
+    const user = await getAdminUser()
     
     if (!user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

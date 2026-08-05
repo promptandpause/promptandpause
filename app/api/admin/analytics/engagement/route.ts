@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient, createServiceRoleClient, getAuthUser } from '@/lib/supabase/server'
+import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { checkAdminAuth } from '@/lib/services/adminService'
+import { getAdminUser } from '@/lib/services/adminAuth'
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic'
@@ -16,7 +17,7 @@ export const revalidate = 0
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient()
-    const user = await getAuthUser()
+    const user = await getAdminUser()
 
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

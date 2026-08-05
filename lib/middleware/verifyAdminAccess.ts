@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { isAdminUser, getAdminRole, updateLastLogin } from '@/lib/services/adminUserService'
+import { getAdminSession } from '@/lib/services/adminAuth'
 import { logger } from '@/lib/utils/logger'
 
 export interface AdminAuthResult {
@@ -30,6 +31,36 @@ export async function verifyAdminAccess(
   requiredRole?: 'super_admin' | 'admin' | 'employee'
 ): Promise<AdminAuthResult> {
   try {
+    // 0. Check OTP admin_session cookie (email-code login flow)
+    const otpSession = await getAdminSession()
+    if (otpSession) {
+      const adminUser = otpSession.admin_users
+      const role = adminUser.role as 'super_admin' | 'admin' | 'employee'
+
+      if (requiredRole) {
+        const hasRequiredRole = checkRolePermission(role, requiredRole)
+        if (!hasRequiredRole) {
+          logger.warn('admin_auth_failed', {
+            reason: 'insufficient_role',
+            email: adminUser.email,
+            role,
+            requiredRole,
+          })
+          return {
+            success: false,
+            error: `Forbidden: ${requiredRole} role required`,
+            statusCode: 403,
+          }
+        }
+      }
+
+      return {
+        success: true,
+        adminEmail: adminUser.email,
+        adminRole: role,
+      }
+    }
+
     // 1. Check valid Supabase session
     const supabase = await createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()

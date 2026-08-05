@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser } from '@/lib/supabase/server'
 import { checkAdminAuth } from '@/lib/services/adminService'
+import { getAdminUser } from '@/lib/services/adminAuth'
 
 export async function GET(_request: NextRequest) {
   try {
-    const user = await getAuthUser()
+    const user = await getAdminUser()
 
     if (!user) {
       return NextResponse.json({ isAuthenticated: false, isAdmin: false }, { status: 200 })

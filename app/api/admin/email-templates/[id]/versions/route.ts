@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser } from '@/lib/supabase/server'
 import { checkAdminAuth } from '@/lib/services/adminService'
 import { getTemplateVersions, rollbackToVersion, getTemplate } from '@/lib/services/emailTemplateService'
 import { bustCustomizationCache } from '@/lib/services/emailService'
+import { getAdminUser } from '@/lib/services/adminAuth'
 
 /**
  * GET /api/admin/email-templates/[id]/versions
@@ -16,7 +16,7 @@ export async function GET(
     const params = await context.params
     
     // Check admin authentication
-    const user = await getAuthUser()
+    const user = await getAdminUser()
     
     if (!user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -52,7 +52,7 @@ export async function POST(
     const params = await context.params
     
     // Check admin authentication
-    const user = await getAuthUser()
+    const user = await getAdminUser()
     
     if (!user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

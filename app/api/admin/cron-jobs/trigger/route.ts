@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser, createClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import { checkAdminAuth } from '@/lib/services/adminService'
+import { getAdminUser } from '@/lib/services/adminAuth'
 
 const ALLOWED_CRON_JOBS = new Set([
   'send-daily-prompts',
@@ -10,7 +11,7 @@ const ALLOWED_CRON_JOBS = new Set([
 
 export async function POST(request: NextRequest) {
   try {
-    const user = await getAuthUser()
+    const user = await getAdminUser()
 
     if (!user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

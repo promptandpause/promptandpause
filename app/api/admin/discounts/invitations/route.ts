@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser, createClient, createServiceRoleClient } from '@/lib/supabase/server'
+import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { checkAdminAuth } from '@/lib/services/adminService'
+import { getAdminUser } from '@/lib/services/adminAuth'
 
 export async function GET(request: NextRequest) {
   try {
     // Verify admin authentication
-    const user = await getAuthUser()
+    const user = await getAdminUser()
 
     if (!user?.email) {
       return NextResponse.json(

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser } from '@/lib/supabase/server'
 import { isAdminUser } from '@/lib/services/adminUserService'
+import { getAdminUser } from '@/lib/services/adminAuth'
 
 /**
  * Admin Access Verification API
@@ -8,7 +8,7 @@ import { isAdminUser } from '@/lib/services/adminUserService'
  */
 export async function GET(request: NextRequest) {
   try {
-    const user = await getAuthUser()
+    const user = await getAdminUser()
 
     if (!user) {
       return NextResponse.json(

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser } from '@/lib/supabase/server'
 import { checkAdminAuth } from '@/lib/services/adminService'
 import { getTemplate } from '@/lib/services/emailTemplateService'
 import { Resend } from 'resend'
+import { getAdminUser } from '@/lib/services/adminAuth'
 
 // Simple in-memory rate limiter (5 test emails per admin per minute)
 const rateLimiter = new Map<string, { count: number; resetAt: number }>()
@@ -38,7 +38,7 @@ export async function POST(
     const params = await context.params
     
     // Check admin authentication
-    const user = await getAuthUser()
+    const user = await getAdminUser()
     
     if (!user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

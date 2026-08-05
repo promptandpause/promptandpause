@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser } from '@/lib/supabase/server'
 import { checkAdminAuth, getAdminActivityLogs, logAdminActivity } from '@/lib/services/adminService'
+import { getAdminUser } from '@/lib/services/adminAuth'
 
 /**
  * Neutralize formula-injection characters in CSV cells.
@@ -41,7 +41,7 @@ function logsToCSV(logs: any[]): string {
 export async function GET(request: NextRequest) {
   try {
     // Check authentication
-    const user = await getAuthUser()
+    const user = await getAdminUser()
 
     if (!user) {
       return NextResponse.json(
