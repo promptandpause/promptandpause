@@ -104,31 +104,28 @@ export default function EmailTemplatesPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <div className="text-gray-500">Loading templates...</div>
+        <div className="text-muted-foreground">Loading templates...</div>
       </div>
     )
   }
 
   return (
-    <div className="h-full flex flex-col p-6 space-y-6">
+    <div className="h-full flex flex-col space-y-8">
       {/* Header */}
       <div>
-        <div className="flex items-center gap-3 mb-1">
-          <FileText className="h-7 w-7 text-blue-600" />
-          <h1 className="text-2xl font-semibold text-gray-900">Email Templates</h1>
-        </div>
-        <p className="text-sm text-gray-500">Customize and manage email templates</p>
+        <h1 className="text-3xl font-bold tracking-tight">Email Templates</h1>
+        <p className="text-muted-foreground">Customize and manage email templates</p>
       </div>
 
       {error && (
-        <Card className="p-4 bg-red-50 border-red-200">
-          <p className="text-sm text-red-700">{error}</p>
+        <Card className="p-4 border-destructive/40 bg-destructive/10">
+          <p className="text-sm text-destructive">{error}</p>
         </Card>
       )}
 
       {previewError && (
-        <Card className="p-4 bg-red-50 border-red-200">
-          <p className="text-sm text-red-700">{previewError}</p>
+        <Card className="p-4 border-destructive/40 bg-destructive/10">
+          <p className="text-sm text-destructive">{previewError}</p>
         </Card>
       )}
 
@@ -147,7 +144,7 @@ export default function EmailTemplatesPage() {
         <div className="col-span-5 overflow-y-auto">
           {selectedTemplate ? (
             <Tabs defaultValue="editor" className="space-y-4">
-              <TabsList className="bg-white border border-gray-200">
+              <TabsList>
                 <TabsTrigger value="editor">Editor</TabsTrigger>
                 <TabsTrigger value="preview">Preview</TabsTrigger>
                 <TabsTrigger value="history">History</TabsTrigger>
@@ -174,9 +171,9 @@ export default function EmailTemplatesPage() {
               </TabsContent>
             </Tabs>
           ) : (
-            <Card className="bg-white border border-gray-100 p-12 text-center">
-              <FileText className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">Select a template to edit</p>
+            <Card className="shadow-none border p-12 text-center">
+              <FileText className="h-16 w-16 text-muted-foreground/30 mx-auto mb-4" />
+              <p className="text-muted-foreground">Select a template to edit</p>
             </Card>
           )}
         </div>

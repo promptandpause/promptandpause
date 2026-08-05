@@ -6,9 +6,41 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Search, Download, ExternalLink } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import {
+  AlertCircle,
+  CheckCircle2,
+  Clock,
+  Download,
+  ExternalLink,
+  Search,
+  XCircle,
+  type LucideIcon,
+} from 'lucide-react'
 import { format } from 'date-fns'
 
 interface Subscription {
@@ -33,16 +65,34 @@ interface SubscriptionStats {
   recent_cancellations: number
 }
 
-const STATUS_COLORS: Record<string, string> = {
-  free: 'bg-blue-50 text-blue-700 border-blue-200',
-  freemium: 'bg-blue-50 text-blue-700 border-blue-200',
-  premium: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  cancelled: 'bg-red-50 text-red-700 border-red-200',
+const STATUS_BADGES: Record<string, { className: string; icon: LucideIcon }> = {
+  free: { className: 'bg-amber-500/10 text-amber-600 border-amber-500/20', icon: Clock },
+  freemium: { className: 'bg-amber-500/10 text-amber-600 border-amber-500/20', icon: Clock },
+  premium: { className: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20', icon: CheckCircle2 },
+  cancelled: { className: 'bg-slate-500/10 text-slate-600 border-slate-500/20', icon: XCircle },
 }
 
-const CYCLE_COLORS: Record<string, string> = {
-  monthly: 'bg-purple-50 text-purple-700 border-purple-200',
-  yearly: 'bg-amber-50 text-amber-700 border-amber-200',
+const CYCLE_BADGES: Record<string, string> = {
+  monthly: 'bg-slate-500/10 text-slate-600 border-slate-500/20',
+  yearly: 'bg-amber-500/10 text-amber-600 border-amber-500/20',
+}
+
+function getStatusBadge(status: string): { className: string; icon: LucideIcon } {
+  return STATUS_BADGES[status] || { className: 'bg-slate-500/10 text-slate-600 border-slate-500/20', icon: XCircle }
+}
+
+function getCycleBadge(cycle: string): string {
+  return CYCLE_BADGES[cycle] || 'bg-slate-500/10 text-slate-600 border-slate-500/20'
+}
+
+function StatusBadge({ status }: { status: string }) {
+  const { className, icon: Icon } = getStatusBadge(status)
+  return (
+    <Badge className={cn(className, 'border capitalize')}>
+      <Icon className="mr-1 h-3 w-3" />
+      {status}
+    </Badge>
+  )
 }
 
 export default function SubscriptionsPage() {
@@ -217,21 +267,16 @@ export default function SubscriptionsPage() {
     }
   }
 
-  function getStatusColor(status: string): string {
-    return STATUS_COLORS[status] || 'bg-neutral-50 text-neutral-700 border-neutral-200'
-  }
-
-  function getCycleColor(cycle: string): string {
-    return CYCLE_COLORS[cycle] || 'bg-neutral-50 text-neutral-700 border-neutral-200'
-  }
-
   if (loading && !subscriptions.length && !stats) {
     return (
-      <div className="p-6 space-y-6">
-        <Skeleton className="h-8 w-64" />
+      <div className="space-y-8">
+        <div>
+          <Skeleton className="h-9 w-48" />
+          <Skeleton className="h-4 w-64 mt-2" />
+        </div>
         <div className="grid gap-4 md:grid-cols-4">
           {[1, 2, 3, 4].map(i => (
-            <Skeleton key={i} className="h-32" />
+            <Skeleton key={i} className="h-28" />
           ))}
         </div>
         <Skeleton className="h-96" />
@@ -240,55 +285,72 @@ export default function SubscriptionsPage() {
   }
 
   return (
-    <div className="h-full flex flex-col p-6 gap-6">
-      {/* Header */}
-      <div className="flex items-start justify-between gap-4">
+    <div className="space-y-8">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-neutral-900">Subscriptions</h1>
-          <p className="text-sm text-neutral-500">Manage subscriptions and billing.</p>
+          <h1 className="text-3xl font-bold tracking-tight">Subscriptions</h1>
+          <p className="text-muted-foreground">Manage user billing, plans, and Stripe synchronization.</p>
         </div>
-
-        <Button onClick={handleExport} variant="outline" className="border-neutral-200 bg-white">
-          <Download className="h-4 w-4 mr-2" />
-          Export CSV
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={handleExport} variant="outline">
+            <Download className="mr-2 h-4 w-4" />
+            Export CSV
+          </Button>
+        </div>
       </div>
 
       {stats && (
-        <div className="text-xs text-neutral-500">
-          Total {stats.total} · Premium {stats.premium} · Free {stats.freemium} · Cancelled {stats.cancelled}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {[
+            { title: 'Total Subscriptions', value: stats.total.toLocaleString(), desc: 'All subscription records' },
+            { title: 'Premium', value: stats.premium.toLocaleString(), desc: 'Active paid subscribers' },
+            { title: 'Freemium', value: stats.freemium.toLocaleString(), desc: 'Free plan users' },
+            { title: 'Cancelled', value: stats.cancelled.toLocaleString(), desc: `${stats.recent_cancellations} recent cancellations` },
+          ].map((kpi) => (
+            <Card key={kpi.title} className="shadow-none border">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium">{kpi.title}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{kpi.value}</div>
+                <p className="text-xs text-muted-foreground mt-1">{kpi.desc}</p>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       )}
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-          <p className="text-sm text-red-700">{error}</p>
+        <div className="flex items-start gap-3 rounded-lg border border-destructive/40 bg-destructive/10 p-4 text-sm">
+          <AlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+          <div>
+            <p className="font-medium">Unable to load subscriptions</p>
+            <p className="text-muted-foreground mt-1">{error}</p>
+          </div>
         </div>
       )}
 
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-6 min-h-0">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_380px]">
         {/* Left pane: list */}
-        <div className="bg-white border border-neutral-200 rounded-xl overflow-hidden flex flex-col min-h-0">
-          {/* Filters */}
-          <div className="p-4 border-b border-neutral-200 space-y-3">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
-              <Input
-                placeholder="Search by email or name"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                className="pl-9 bg-white border-neutral-200"
-              />
+        <Card className="shadow-none border min-w-0">
+          <CardHeader className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="relative">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search by email or name"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                  className="pl-8 w-[250px] h-9"
+                />
+              </div>
+              <Button onClick={handleSearch}>Search</Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-[1fr_180px_180px] gap-3">
-              <Button onClick={handleSearch} className="bg-neutral-900 hover:bg-neutral-800">
-                Search
-              </Button>
-
+            <div className="flex flex-wrap items-center gap-2">
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="bg-white border-neutral-200">
+                <SelectTrigger className="w-[150px] h-9">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -300,7 +362,7 @@ export default function SubscriptionsPage() {
               </Select>
 
               <Select value={cycleFilter} onValueChange={setCycleFilter}>
-                <SelectTrigger className="bg-white border-neutral-200">
+                <SelectTrigger className="w-[150px] h-9">
                   <SelectValue placeholder="Billing" />
                 </SelectTrigger>
                 <SelectContent>
@@ -310,208 +372,205 @@ export default function SubscriptionsPage() {
                 </SelectContent>
               </Select>
             </div>
+          </CardHeader>
 
-            <div className="text-xs text-neutral-500">Showing {subscriptions.length} subscriptions</div>
-          </div>
-
-          {/* Subscriptions Table */}
-          <div className="flex-1 overflow-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-neutral-200">
-                  <th className="text-left p-4 text-neutral-500 font-medium">User</th>
-                  <th className="text-left p-4 text-neutral-500 font-medium">Status</th>
-                  <th className="text-left p-4 text-neutral-500 font-medium">Billing</th>
-                  <th className="text-left p-4 text-neutral-500 font-medium">Subscribed</th>
-                  <th className="text-left p-4 text-neutral-500 font-medium">End date</th>
-                  <th className="text-left p-4 text-neutral-500 font-medium">Record</th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  Array.from({ length: 10 }).map((_, i) => (
-                    <tr key={i} className="border-b border-neutral-200">
-                      <td className="p-4" colSpan={6}>
-                        <div className="space-y-2">
-                          <Skeleton className="h-4 w-64" />
-                          <Skeleton className="h-3 w-40" />
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                ) : subscriptions.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="p-8 text-center text-neutral-500">
-                      No subscriptions found.
-                    </td>
-                  </tr>
-                ) : (
-                  subscriptions.map((sub) => {
+          <CardContent>
+            {loading ? (
+              <div className="space-y-4 py-2">
+                {Array.from({ length: 10 }).map((_, i) => (
+                  <div key={i} className="space-y-2">
+                    <Skeleton className="h-4 w-64" />
+                    <Skeleton className="h-3 w-40" />
+                  </div>
+                ))}
+              </div>
+            ) : subscriptions.length === 0 ? (
+              <p className="py-10 text-center text-sm text-muted-foreground">No subscriptions found.</p>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>ID</TableHead>
+                    <TableHead>User</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Billing</TableHead>
+                    <TableHead>Subscribed</TableHead>
+                    <TableHead>End date</TableHead>
+                    <TableHead className="text-right">Record</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {subscriptions.map((sub) => {
                     const isSelected = selectedSubscriptionId === sub.id
                     return (
-                      <tr
+                      <TableRow
                         key={sub.id}
-                        className={`border-b border-neutral-200 hover:bg-neutral-50 cursor-pointer ${
-                          isSelected ? 'bg-neutral-50' : 'bg-white'
-                        }`}
+                        className={cn('cursor-pointer transition-colors', isSelected && 'bg-muted')}
                         onClick={() => {
                           router.replace(`/admin-panel/subscriptions?id=${sub.id}`)
                         }}
                       >
-                        <td className="p-4">
+                        <TableCell className="font-mono text-xs">{sub.id.slice(0, 8)}</TableCell>
+                        <TableCell>
                           <div>
-                            <p className="text-sm font-medium text-neutral-900">{sub.full_name || 'No name'}</p>
-                            <p className="text-xs text-neutral-500">{sub.email}</p>
+                            <p className="text-sm font-medium">{sub.full_name || 'No name'}</p>
+                            <p className="text-xs text-muted-foreground">{sub.email}</p>
                           </div>
-                        </td>
-                        <td className="p-4">
-                          <Badge className={`${getStatusColor(sub.subscription_status)} border capitalize`}>
-                            {sub.subscription_status}
-                          </Badge>
-                        </td>
-                        <td className="p-4">
+                        </TableCell>
+                        <TableCell>
+                          <StatusBadge status={sub.subscription_status} />
+                        </TableCell>
+                        <TableCell>
                           {sub.billing_cycle ? (
-                            <Badge className={`${getCycleColor(sub.billing_cycle)} border capitalize`}>
+                            <Badge className={cn(getCycleBadge(sub.billing_cycle), 'border capitalize')}>
                               {sub.billing_cycle}
                             </Badge>
                           ) : (
-                            <span className="text-sm text-neutral-500">—</span>
+                            <span className="text-sm text-muted-foreground">—</span>
                           )}
-                        </td>
-                        <td className="p-4 text-sm text-neutral-700">
+                        </TableCell>
+                        <TableCell className="text-sm text-muted-foreground">
                           {format(new Date(sub.created_at), 'MMM dd, yyyy')}
-                        </td>
-                        <td className="p-4 text-sm text-neutral-700">
+                        </TableCell>
+                        <TableCell className="text-sm text-muted-foreground">
                           {sub.subscription_end_date
                             ? format(new Date(sub.subscription_end_date), 'MMM dd, yyyy')
                             : '—'}
-                        </td>
-                        <td className="p-4">
-                          <Link
-                            href={`/admin-panel/subscriptions/${sub.id}`}
-                            onClick={(e) => e.stopPropagation()}
-                            className="inline-flex items-center gap-2 text-sm text-neutral-700 hover:text-neutral-900"
-                          >
-                            <ExternalLink className="h-4 w-4" />
-                            Full
-                          </Link>
-                        </td>
-                      </tr>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button variant="ghost" size="sm" asChild>
+                            <Link
+                              href={`/admin-panel/subscriptions/${sub.id}`}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <ExternalLink className="mr-2 h-4 w-4" />
+                              Full
+                            </Link>
+                          </Button>
+                        </TableCell>
+                      </TableRow>
                     )
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
+                  })}
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-between px-4 py-3 border-t border-neutral-200 bg-white">
-              <p className="text-xs text-neutral-500">Page {currentPage} of {totalPages}</p>
-              <div className="flex gap-2">
-                <Button
-                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  disabled={currentPage === 1}
-                  variant="outline"
-                  size="sm"
-                  className="border-neutral-200"
-                >
-                  Previous
-                </Button>
-                <Button
-                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={currentPage === totalPages}
-                  variant="outline"
-                  size="sm"
-                  className="border-neutral-200"
-                >
-                  Next
-                </Button>
+          <CardFooter className="border-t">
+            <p className="text-xs text-muted-foreground">Showing {subscriptions.length} subscriptions</p>
+            {totalPages > 1 && (
+              <div className="flex items-center gap-3 ml-auto">
+                <p className="text-xs text-muted-foreground">Page {currentPage} of {totalPages}</p>
+                <div className="flex gap-2">
+                  <Button
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    variant="outline"
+                    size="sm"
+                  >
+                    Previous
+                  </Button>
+                  <Button
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    variant="outline"
+                    size="sm"
+                  >
+                    Next
+                  </Button>
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </CardFooter>
+        </Card>
 
         {/* Right pane: detail */}
-        <div className="bg-white border border-neutral-200 rounded-xl overflow-hidden flex flex-col min-h-0">
+        <Card className="shadow-none border min-w-0">
           {!selectedSubscriptionId ? (
-            <div className="flex-1 p-10 text-sm text-neutral-500">Select a subscription to view details.</div>
+            <CardContent className="py-10 text-sm text-muted-foreground">
+              Select a subscription to view details.
+            </CardContent>
           ) : loading ? (
-            <div className="flex-1 p-6 space-y-4">
+            <CardContent className="space-y-4 py-6">
               <Skeleton className="h-6 w-56" />
               <Skeleton className="h-4 w-72" />
               <Skeleton className="h-40 w-full" />
-            </div>
+            </CardContent>
           ) : !selectedRow ? (
-            <div className="flex-1 p-6 text-sm text-neutral-500">Subscription not found.</div>
+            <CardContent className="py-6 text-sm text-muted-foreground">
+              Subscription not found.
+            </CardContent>
           ) : (
             <>
-              <div className="px-6 py-5 border-b border-neutral-200">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="min-w-0">
-                    <h2 className="text-lg font-semibold text-neutral-900 truncate">
-                      {selectedRow.full_name || 'User'}
-                    </h2>
-                    <p className="text-sm text-neutral-500 truncate">{selectedRow.email}</p>
-                  </div>
-                  <Link
-                    href={`/admin-panel/subscriptions/${selectedRow.id}`}
-                    className="inline-flex items-center gap-2 text-sm text-neutral-700 hover:text-neutral-900"
-                  >
-                    <ExternalLink className="h-4 w-4" />
+              <CardHeader className="flex-row items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <CardTitle className="text-lg truncate">
+                    {selectedRow.full_name || 'User'}
+                  </CardTitle>
+                  <CardDescription className="truncate">{selectedRow.email}</CardDescription>
+                </div>
+                <Button variant="outline" size="sm" asChild>
+                  <Link href={`/admin-panel/subscriptions/${selectedRow.id}`}>
+                    <ExternalLink className="mr-2 h-4 w-4" />
                     Full record
                   </Link>
-                </div>
-              </div>
+                </Button>
+              </CardHeader>
 
-              <div className="px-6 py-6 flex-1 overflow-y-auto">
+              <CardContent>
                 <div className="grid grid-cols-1 gap-5">
                   <div className="space-y-1">
-                    <div className="text-xs text-neutral-500">Status</div>
-                    <div className="text-sm text-neutral-900 capitalize">{selectedRow.subscription_status}</div>
+                    <div className="text-xs text-muted-foreground">Status</div>
+                    <StatusBadge status={selectedRow.subscription_status} />
                   </div>
                   <div className="space-y-1">
-                    <div className="text-xs text-neutral-500">Billing cycle</div>
-                    <div className="text-sm text-neutral-900">{selectedRow.billing_cycle || '—'}</div>
+                    <div className="text-xs text-muted-foreground">Billing cycle</div>
+                    {selectedRow.billing_cycle ? (
+                      <Badge className={cn(getCycleBadge(selectedRow.billing_cycle), 'border capitalize')}>
+                        {selectedRow.billing_cycle}
+                      </Badge>
+                    ) : (
+                      <div className="text-sm text-muted-foreground">—</div>
+                    )}
                   </div>
                   <div className="space-y-1">
-                    <div className="text-xs text-neutral-500">Subscribed</div>
-                    <div className="text-sm text-neutral-900">{format(new Date(selectedRow.created_at), 'MMM dd, yyyy')}</div>
+                    <div className="text-xs text-muted-foreground">Subscribed</div>
+                    <div className="text-sm">{format(new Date(selectedRow.created_at), 'MMM dd, yyyy')}</div>
                   </div>
                   <div className="space-y-1">
-                    <div className="text-xs text-neutral-500">End date</div>
-                    <div className="text-sm text-neutral-900">
+                    <div className="text-xs text-muted-foreground">End date</div>
+                    <div className="text-sm">
                       {selectedRow.subscription_end_date
                         ? format(new Date(selectedRow.subscription_end_date), 'MMM dd, yyyy')
                         : '—'}
                     </div>
                   </div>
                   <div className="space-y-1">
-                    <div className="text-xs text-neutral-500">Stripe customer</div>
+                    <div className="text-xs text-muted-foreground">Stripe customer</div>
                     {selectedRow.stripe_customer_id ? (
                       <a
                         href={`https://dashboard.stripe.com/customers/${selectedRow.stripe_customer_id}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm text-neutral-900 underline underline-offset-4"
+                        className="text-sm text-foreground underline underline-offset-4 break-all"
                       >
                         {selectedRow.stripe_customer_id}
                       </a>
                     ) : (
-                      <div className="text-sm text-neutral-700">—</div>
+                      <div className="text-sm text-muted-foreground">—</div>
                     )}
                   </div>
                   <div className="space-y-1">
-                    <div className="text-xs text-neutral-500">Stripe subscription</div>
-                    <div className="text-sm text-neutral-900 font-mono break-all">
+                    <div className="text-xs text-muted-foreground">Stripe subscription</div>
+                    <div className="text-sm font-mono break-all">
                       {selectedRow.subscription_id || '—'}
                     </div>
                   </div>
                 </div>
-              </div>
+              </CardContent>
             </>
           )}
-        </div>
+        </Card>
       </div>
     </div>
   )

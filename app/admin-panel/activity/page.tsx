@@ -1,15 +1,18 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { Card } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Spinner } from '@/components/ui/spinner'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useToast } from '@/hooks/use-toast'
-import { Download, Search, Filter } from 'lucide-react'
+import { Download, Search, Filter, ChevronLeft, ChevronRight } from 'lucide-react'
 import { format } from 'date-fns'
+import { cn } from '@/lib/utils'
 
 interface ActivityLog {
   id: string
@@ -46,26 +49,26 @@ const ACTION_TYPES = [
 ]
 
 const ACTION_COLORS: Record<string, string> = {
-  user_viewed: 'bg-blue-50 text-blue-700 border-blue-200',
-  user_updated: 'bg-amber-50 text-amber-700 border-amber-200',
-  user_deleted: 'bg-red-50 text-red-700 border-red-200',
-  subscription_viewed: 'bg-blue-50 text-blue-700 border-blue-200',
-  subscription_update: 'bg-purple-50 text-purple-700 border-purple-200',
-  subscription_cancel: 'bg-red-50 text-red-700 border-red-200',
-  admin_user_created: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  admin_user_updated: 'bg-amber-50 text-amber-700 border-amber-200',
-  admin_user_deactivated: 'bg-red-50 text-red-700 border-red-200',
-  admin_password_updated: 'bg-amber-50 text-amber-700 border-amber-200',
-  admin_email_updated: 'bg-amber-50 text-amber-700 border-amber-200',
-  email_template_updated: 'bg-purple-50 text-purple-700 border-purple-200',
+  user_viewed: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
+  user_updated: 'bg-amber-500/10 text-amber-600 border-amber-500/20',
+  user_deleted: 'bg-rose-500/10 text-rose-600 border-rose-500/20',
+  subscription_viewed: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
+  subscription_update: 'bg-purple-500/10 text-purple-600 border-purple-500/20',
+  subscription_cancel: 'bg-rose-500/10 text-rose-600 border-rose-500/20',
+  admin_user_created: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
+  admin_user_updated: 'bg-amber-500/10 text-amber-600 border-amber-500/20',
+  admin_user_deactivated: 'bg-rose-500/10 text-rose-600 border-rose-500/20',
+  admin_password_updated: 'bg-amber-500/10 text-amber-600 border-amber-500/20',
+  admin_email_updated: 'bg-amber-500/10 text-amber-600 border-amber-500/20',
+  email_template_updated: 'bg-purple-500/10 text-purple-600 border-purple-500/20',
 
-  prompt_created: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  prompt_updated: 'bg-amber-50 text-amber-700 border-amber-200',
-  prompt_deleted: 'bg-red-50 text-red-700 border-red-200',
-  setting_updated: 'bg-amber-50 text-amber-700 border-amber-200',
-  feature_flag_updated: 'bg-amber-50 text-amber-700 border-amber-200',
-  export_data: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  other: 'bg-gray-50 text-gray-700 border-gray-200',
+  prompt_created: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
+  prompt_updated: 'bg-amber-500/10 text-amber-600 border-amber-500/20',
+  prompt_deleted: 'bg-rose-500/10 text-rose-600 border-rose-500/20',
+  setting_updated: 'bg-amber-500/10 text-amber-600 border-amber-500/20',
+  feature_flag_updated: 'bg-amber-500/10 text-amber-600 border-amber-500/20',
+  export_data: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
+  other: 'bg-muted text-muted-foreground border-border',
 }
 
 export default function ActivityLogsPage() {
@@ -165,166 +168,156 @@ export default function ActivityLogsPage() {
   if (loading && logs.length === 0) {
     return (
       <div className="space-y-6">
-        <Skeleton className="h-8 w-64 bg-gray-200" />
-        <Skeleton className="h-96 bg-gray-200" />
+        <Skeleton className="h-8 w-64" />
+        <Skeleton className="h-96" />
       </div>
     )
   }
 
   return (
-    <div className="space-y-6 p-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-semibold text-gray-900">Activity Logs</h1>
-        <p className="text-sm text-gray-500 mt-1">Admin actions and system events</p>
+    <div className="space-y-8">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Activity Logs</h1>
+          <p className="text-muted-foreground">Admin actions and system events</p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={exportLogs}>
+            <Download className="mr-2 h-4 w-4" /> Export
+          </Button>
+        </div>
       </div>
 
       {error && (
-        <Card className="p-4 bg-red-50 border-red-200">
-          <p className="text-sm text-red-700">{error}</p>
+        <Card className="shadow-none border bg-rose-500/10 border-rose-500/20">
+          <CardContent className="p-4">
+            <p className="text-sm text-rose-600">{error}</p>
+          </CardContent>
         </Card>
       )}
 
-      {/* Filters */}
-      <Card className="bg-white border border-gray-100 p-4">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1 flex gap-2">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+      <Card className="shadow-none border">
+        <CardHeader className="pb-3">
+          <div className="flex flex-col md:flex-row gap-3">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
               <Input
                 placeholder="Search by user email..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                className="pl-9 bg-white border-gray-200 text-gray-900"
+                className="pl-10 h-10"
               />
             </div>
-            <Button onClick={handleSearch} className="bg-neutral-900 hover:bg-neutral-800">
-              Search
-            </Button>
-          </div>
-          
-          <div className="flex gap-2">
-            <Select value={actionType} onValueChange={setActionType}>
-              <SelectTrigger className="w-[200px] bg-white border-gray-200 text-gray-900">
-                <Filter className="h-4 w-4 mr-2" />
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {ACTION_TYPES.map((type) => (
-                  <SelectItem key={type.value} value={type.value}>
-                    {type.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex items-center gap-2">
+              <Select value={actionType} onValueChange={setActionType}>
+                <SelectTrigger className="w-[200px]">
+                  <Filter className="h-4 w-4 mr-2" />
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {ACTION_TYPES.map((type) => (
+                    <SelectItem key={type.value} value={type.value}>
+                      {type.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
-            <Button
-              onClick={exportLogs}
-              variant="outline"
-              className="border-gray-200 bg-white text-gray-900 hover:bg-gray-50"
-            >
-              <Download className="h-4 w-4 mr-2" />
-              Export
-            </Button>
+              <Button onClick={handleSearch} className="h-10">
+                Search
+              </Button>
+            </div>
           </div>
-        </div>
+        </CardHeader>
       </Card>
 
-      {/* Activity Table */}
-      <Card className="bg-white border border-gray-100">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-gray-100">
-                <th className="text-left p-4 text-gray-500 font-medium">Timestamp</th>
-                <th className="text-left p-4 text-gray-500 font-medium">Admin</th>
-                <th className="text-left p-4 text-gray-500 font-medium">Action</th>
-                <th className="text-left p-4 text-gray-500 font-medium">Target User</th>
-                <th className="text-left p-4 text-gray-500 font-medium">Details</th>
-              </tr>
-            </thead>
-            <tbody>
+      <Card className="shadow-none border">
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Timestamp</TableHead>
+                <TableHead>Admin</TableHead>
+                <TableHead>Action</TableHead>
+                <TableHead>Target User</TableHead>
+                <TableHead>Details</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {loading ? (
-                <tr>
-                  <td colSpan={5} className="p-4">
-                    <div className="flex justify-center">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-neutral-900"></div>
-                    </div>
-                  </td>
-                </tr>
+                <TableRow>
+                  <TableCell colSpan={5} className="h-24 text-center">
+                    <Spinner className="mx-auto size-8 text-muted-foreground" />
+                  </TableCell>
+                </TableRow>
               ) : logs.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="p-8 text-center text-gray-500">
+                <TableRow>
+                  <TableCell colSpan={5} className="h-32 text-center text-muted-foreground">
                     No activity logs found
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ) : (
                 logs.map((log) => (
-                  <tr key={log.id} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="p-4 text-sm text-gray-700">
+                  <TableRow key={log.id} className="hover:bg-muted/50 transition-colors">
+                    <TableCell className="text-sm text-muted-foreground">
                       {format(new Date(log.created_at), 'MMM dd, yyyy HH:mm:ss')}
-                    </td>
-                    <td className="p-4 text-sm text-gray-700">
-                      {log.admin_email}
-                    </td>
-                    <td className="p-4">
-                      <Badge className={`${getActionColor(log.action_type)} border`}>
+                    </TableCell>
+                    <TableCell className="text-sm">{log.admin_email}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className={cn('font-mono text-[10px] py-0 px-1.5 uppercase tracking-wider', getActionColor(log.action_type))}>
                         {log.action_type.replace(/_/g, ' ')}
                       </Badge>
-                    </td>
-                    <td className="p-4 text-sm text-gray-700">
+                    </TableCell>
+                    <TableCell className="text-sm">
                       {log.target_user_email || log.target_user_id || '-'}
-                    </td>
-                    <td className="p-4 text-sm text-gray-500">
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
                       {log.details ? (
                         <details className="cursor-pointer">
-                          <summary className="text-blue-700 hover:text-blue-800">
+                          <summary className="text-primary hover:underline">
                             View
                           </summary>
-                          <pre className="mt-2 text-xs bg-gray-50 p-3 rounded-lg border border-gray-200 overflow-x-auto text-gray-800">
+                          <pre className="mt-2 text-xs bg-muted p-3 rounded-lg border overflow-x-auto text-foreground">
                             {JSON.stringify(log.details, null, 2)}
                           </pre>
                         </details>
                       ) : (
                         '-'
                       )}
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))
               )}
-            </tbody>
-          </table>
-        </div>
+            </TableBody>
+          </Table>
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between p-4 border-t border-gray-100">
-            <p className="text-sm text-gray-500">
-              Page {currentPage} of {totalPages}
-            </p>
-            <div className="flex gap-2">
-              <Button
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                variant="outline"
-                size="sm"
-                className="border-gray-200 bg-white text-gray-900 hover:bg-gray-50 disabled:opacity-50"
-              >
-                Previous
-              </Button>
-              <Button
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-                variant="outline"
-                size="sm"
-                className="border-gray-200 bg-white text-gray-900 hover:bg-gray-50 disabled:opacity-50"
-              >
-                Next
-              </Button>
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between p-4 border-t">
+              <p className="text-xs text-muted-foreground">
+                Page {currentPage} of {totalPages}
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  variant="outline"
+                  size="sm"
+                >
+                  <ChevronLeft size={16} className="mr-1" /> Previous
+                </Button>
+                <Button
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  variant="outline"
+                  size="sm"
+                >
+                  Next <ChevronRight size={16} className="ml-1" />
+                </Button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </CardContent>
       </Card>
     </div>
   )

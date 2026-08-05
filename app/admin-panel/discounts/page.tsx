@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -48,10 +49,10 @@ interface DiscountInvitationRow {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  pending: 'bg-amber-50 text-amber-700 border-amber-200',
-  completed: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  expired: 'bg-neutral-50 text-neutral-700 border-neutral-200',
-  cancelled: 'bg-red-50 text-red-700 border-red-200',
+  pending: 'bg-amber-500/10 text-amber-600 border-amber-500/20',
+  completed: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
+  expired: 'bg-muted text-muted-foreground border',
+  cancelled: 'bg-red-500/10 text-red-600 border-red-500/20',
 }
 
 export default function DiscountsAdminPage() {
@@ -196,37 +197,37 @@ export default function DiscountsAdminPage() {
   }
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-semibold text-neutral-900">Discounts</h1>
-        <p className="text-sm text-neutral-500">Send Student/NHS checkout links and track redemption status.</p>
+        <h1 className="text-3xl font-bold tracking-tight">Discounts</h1>
+        <p className="text-muted-foreground">Send Student/NHS checkout links and track redemption status.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-6">
         {/* Left pane: create + list */}
         <div className="space-y-6">
-          <div className="bg-white border border-neutral-200 rounded-xl overflow-hidden">
-            <div className="p-4 border-b border-neutral-200">
-              <div className="text-sm font-medium text-neutral-900">Send discount invite</div>
+          <Card className="shadow-none border overflow-hidden p-0 gap-0">
+            <div className="p-4 border-b">
+              <div className="text-sm font-medium text-foreground">Send discount invite</div>
             </div>
 
             <div className="p-4 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <div className="text-xs text-neutral-500">User UUID or email</div>
+                  <div className="text-xs text-muted-foreground">User UUID or email</div>
                   <Input
                     value={userIdentifier}
                     onChange={(e) => setUserIdentifier(e.target.value)}
                     placeholder="user uuid or email"
-                    className="mt-2 bg-white border-neutral-200"
+                    className="mt-2"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <div className="text-xs text-neutral-500">Type</div>
+                    <div className="text-xs text-muted-foreground">Type</div>
                     <Select value={discountType} onValueChange={(v) => setDiscountType(v as DiscountType)}>
-                      <SelectTrigger className="mt-2 bg-white border-neutral-200">
+                      <SelectTrigger className="mt-2">
                         <SelectValue placeholder="Type" />
                       </SelectTrigger>
                       <SelectContent>
@@ -237,9 +238,9 @@ export default function DiscountsAdminPage() {
                   </div>
 
                   <div>
-                    <div className="text-xs text-neutral-500">Billing cycle</div>
+                    <div className="text-xs text-muted-foreground">Billing cycle</div>
                     <Select value={billingCycle} onValueChange={(v) => setBillingCycle(v as BillingCycle)}>
-                      <SelectTrigger className="mt-2 bg-white border-neutral-200">
+                      <SelectTrigger className="mt-2">
                         <SelectValue placeholder="Cycle" />
                       </SelectTrigger>
                       <SelectContent>
@@ -251,38 +252,38 @@ export default function DiscountsAdminPage() {
                 </div>
 
                 <div className="md:col-span-2">
-                  <div className="text-xs text-neutral-500">Notes (optional)</div>
+                  <div className="text-xs text-muted-foreground">Notes (optional)</div>
                   <Input
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     placeholder="Internal note"
-                    className="mt-2 bg-white border-neutral-200"
+                    className="mt-2"
                   />
                 </div>
               </div>
 
               <div className="flex items-center gap-3">
-                <Button onClick={handleSendInvite} disabled={submitting} className="bg-neutral-900 hover:bg-neutral-800">
+                <Button onClick={handleSendInvite} disabled={submitting}>
                   {submitting ? 'Sending…' : 'Send invite'}
                 </Button>
 
-                {inviteError && <span className="text-sm text-red-600">{inviteError}</span>}
-                {inviteSuccess && <span className="text-sm text-emerald-700">{inviteSuccess}</span>}
+                {inviteError && <span className="text-sm text-destructive">{inviteError}</span>}
+                {inviteSuccess && <span className="text-sm text-emerald-600">{inviteSuccess}</span>}
               </div>
             </div>
-          </div>
+          </Card>
 
-          <div className="bg-white border border-neutral-200 rounded-xl overflow-hidden">
-            <div className="p-4 border-b border-neutral-200 space-y-3">
+          <Card className="shadow-none border overflow-hidden p-0 gap-0">
+            <div className="p-4 border-b space-y-3">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <div className="text-sm font-medium text-neutral-900">Invitations</div>
-                  <div className="text-xs text-neutral-500">Showing {filteredInvitations.length} invitations</div>
+                  <div className="text-sm font-medium text-foreground">Invitations</div>
+                  <div className="text-xs text-muted-foreground">Showing {filteredInvitations.length} invitations</div>
                 </div>
               </div>
 
               {listError && (
-                <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                <div className="rounded-lg border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
                   {listError}
                 </div>
               )}
@@ -292,11 +293,10 @@ export default function DiscountsAdminPage() {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search"
-                  className="bg-white border-neutral-200"
                 />
 
                 <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as any)}>
-                  <SelectTrigger className="bg-white border-neutral-200">
+                  <SelectTrigger>
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -309,7 +309,7 @@ export default function DiscountsAdminPage() {
                 </Select>
 
                 <Select value={typeFilter} onValueChange={(v) => setTypeFilter(v as any)}>
-                  <SelectTrigger className="bg-white border-neutral-200">
+                  <SelectTrigger>
                     <SelectValue placeholder="Type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -330,13 +330,13 @@ export default function DiscountsAdminPage() {
             ) : (
               <Table>
                 <TableHeader>
-                  <TableRow className="border-neutral-200">
-                    <TableHead className="text-neutral-500">Status</TableHead>
-                    <TableHead className="text-neutral-500">Type</TableHead>
-                    <TableHead className="text-neutral-500">User</TableHead>
-                    <TableHead className="text-neutral-500">Cycle</TableHead>
-                    <TableHead className="text-neutral-500">Created</TableHead>
-                    <TableHead className="text-neutral-500">Expires</TableHead>
+                  <TableRow>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>User</TableHead>
+                    <TableHead>Cycle</TableHead>
+                    <TableHead>Created</TableHead>
+                    <TableHead>Expires</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -345,7 +345,7 @@ export default function DiscountsAdminPage() {
                     return (
                       <TableRow
                         key={inv.id}
-                        className={`border-neutral-200 cursor-pointer ${isSelected ? 'bg-neutral-50' : ''}`}
+                        className={`cursor-pointer ${isSelected ? 'bg-muted/50' : ''}`}
                         onClick={() => {
                           router.replace(`/admin-panel/discounts?id=${inv.id}`)
                         }}
@@ -353,21 +353,21 @@ export default function DiscountsAdminPage() {
                         <TableCell>
                           <Badge className={`${STATUS_COLORS[inv.status]} border`}>{inv.status}</Badge>
                         </TableCell>
-                        <TableCell className="text-neutral-900">{inv.discount_type}</TableCell>
-                        <TableCell className="text-neutral-900">{inv.user?.email || inv.user_id}</TableCell>
-                        <TableCell className="text-neutral-900">{inv.billing_cycle}</TableCell>
-                        <TableCell className="text-neutral-700">
+                        <TableCell className="text-foreground">{inv.discount_type}</TableCell>
+                        <TableCell className="text-foreground">{inv.user?.email || inv.user_id}</TableCell>
+                        <TableCell className="text-foreground">{inv.billing_cycle}</TableCell>
+                        <TableCell className="text-muted-foreground">
                           {format(new Date(inv.created_at), 'MMM dd, yyyy HH:mm')}
                         </TableCell>
-                        <TableCell className="text-neutral-700">
+                        <TableCell className="text-muted-foreground">
                           {format(new Date(inv.expires_at), 'MMM dd, yyyy HH:mm')}
                         </TableCell>
                       </TableRow>
                     )
                   })}
                   {filteredInvitations.length === 0 && (
-                    <TableRow className="border-neutral-200">
-                      <TableCell colSpan={6} className="text-neutral-500">
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-muted-foreground">
                         No invitations found.
                       </TableCell>
                     </TableRow>
@@ -375,13 +375,13 @@ export default function DiscountsAdminPage() {
                 </TableBody>
               </Table>
             )}
-          </div>
+          </Card>
         </div>
 
         {/* Right pane: detail */}
-        <div className="bg-white border border-neutral-200 rounded-xl overflow-hidden">
+        <Card className="shadow-none border overflow-hidden p-0 gap-0">
           {!selectedInvitationId ? (
-            <div className="p-10 text-sm text-neutral-500">Select an invitation to view details.</div>
+            <div className="p-10 text-sm text-muted-foreground">Select an invitation to view details.</div>
           ) : loading ? (
             <div className="p-6 space-y-4">
               <Skeleton className="h-6 w-56" />
@@ -389,16 +389,16 @@ export default function DiscountsAdminPage() {
               <Skeleton className="h-40 w-full" />
             </div>
           ) : !selectedInvitation ? (
-            <div className="p-6 text-sm text-neutral-500">Invitation not found.</div>
+            <div className="p-6 text-sm text-muted-foreground">Invitation not found.</div>
           ) : (
             <div>
-              <div className="px-6 py-5 border-b border-neutral-200">
+              <div className="px-6 py-5 border-b">
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
-                    <h2 className="text-lg font-semibold text-neutral-900 truncate">
+                    <h2 className="text-lg font-semibold text-foreground truncate">
                       {selectedInvitation.user?.full_name || selectedInvitation.user?.email || 'Invitation'}
                     </h2>
-                    <p className="text-sm text-neutral-500 truncate">{selectedInvitation.user?.email || selectedInvitation.user_id}</p>
+                    <p className="text-sm text-muted-foreground truncate">{selectedInvitation.user?.email || selectedInvitation.user_id}</p>
                   </div>
                   <Badge className={`${STATUS_COLORS[selectedInvitation.status]} border`}>{selectedInvitation.status}</Badge>
                 </div>
@@ -406,51 +406,51 @@ export default function DiscountsAdminPage() {
 
               <div className="px-6 py-6 space-y-5">
                 <div className="space-y-1">
-                  <div className="text-xs text-neutral-500">Discount type</div>
-                  <div className="text-sm text-neutral-900">{selectedInvitation.discount_type}</div>
+                  <div className="text-xs text-muted-foreground">Discount type</div>
+                  <div className="text-sm text-foreground">{selectedInvitation.discount_type}</div>
                 </div>
                 <div className="space-y-1">
-                  <div className="text-xs text-neutral-500">Billing cycle</div>
-                  <div className="text-sm text-neutral-900">{selectedInvitation.billing_cycle}</div>
+                  <div className="text-xs text-muted-foreground">Billing cycle</div>
+                  <div className="text-sm text-foreground">{selectedInvitation.billing_cycle}</div>
                 </div>
                 <div className="space-y-1">
-                  <div className="text-xs text-neutral-500">Created</div>
-                  <div className="text-sm text-neutral-900">{format(new Date(selectedInvitation.created_at), 'MMM dd, yyyy HH:mm')}</div>
+                  <div className="text-xs text-muted-foreground">Created</div>
+                  <div className="text-sm text-foreground">{format(new Date(selectedInvitation.created_at), 'MMM dd, yyyy HH:mm')}</div>
                 </div>
                 <div className="space-y-1">
-                  <div className="text-xs text-neutral-500">Expires</div>
-                  <div className="text-sm text-neutral-900">{format(new Date(selectedInvitation.expires_at), 'MMM dd, yyyy HH:mm')}</div>
+                  <div className="text-xs text-muted-foreground">Expires</div>
+                  <div className="text-sm text-foreground">{format(new Date(selectedInvitation.expires_at), 'MMM dd, yyyy HH:mm')}</div>
                 </div>
                 <div className="space-y-1">
-                  <div className="text-xs text-neutral-500">Admin</div>
-                  <div className="text-sm text-neutral-900">{selectedInvitation.admin?.email || selectedInvitation.admin_id}</div>
+                  <div className="text-xs text-muted-foreground">Admin</div>
+                  <div className="text-sm text-foreground">{selectedInvitation.admin?.email || selectedInvitation.admin_id}</div>
                 </div>
                 <div className="space-y-1">
-                  <div className="text-xs text-neutral-500">Checkout link</div>
+                  <div className="text-xs text-muted-foreground">Checkout link</div>
                   {selectedInvitation.stripe_checkout_url ? (
                     <a
                       href={selectedInvitation.stripe_checkout_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-sm text-neutral-900 underline underline-offset-4"
+                      className="inline-flex items-center gap-2 text-sm text-foreground underline underline-offset-4"
                     >
                       <ExternalLink className="h-4 w-4" />
                       Open
                     </a>
                   ) : (
-                    <div className="text-sm text-neutral-700">—</div>
+                    <div className="text-sm text-muted-foreground">—</div>
                   )}
                 </div>
                 {selectedInvitation.notes && (
                   <div className="space-y-1">
-                    <div className="text-xs text-neutral-500">Notes</div>
-                    <div className="text-sm text-neutral-900 whitespace-pre-wrap">{selectedInvitation.notes}</div>
+                    <div className="text-xs text-muted-foreground">Notes</div>
+                    <div className="text-sm text-foreground whitespace-pre-wrap">{selectedInvitation.notes}</div>
                   </div>
                 )}
                 {selectedInvitation.user?.id && (
                   <div className="pt-2">
                     <Link href={`/admin-panel/users?id=${selectedInvitation.user.id}`} className="inline-flex">
-                      <Button type="button" variant="outline" className="border-neutral-200 bg-white">
+                      <Button type="button" variant="outline">
                         View user
                       </Button>
                     </Link>
@@ -459,7 +459,7 @@ export default function DiscountsAdminPage() {
               </div>
             </div>
           )}
-        </div>
+        </Card>
       </div>
     </div>
   )

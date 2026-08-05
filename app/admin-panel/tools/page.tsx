@@ -1,12 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { Card } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { 
-  Wrench, 
   Bell, 
   Users, 
   RefreshCw, 
@@ -100,22 +99,20 @@ function AIModuleTester() {
 
   return (
     <div className="space-y-6">
-      <Card className="p-6">
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-indigo-600" />
-              AI Module Tester
-            </h3>
-            <p className="text-sm text-gray-500 mt-1">
-              Run test generations for AI modules and inspect the responses
-            </p>
-          </div>
-        </div>
-
+      <Card className="shadow-none border">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-indigo-600" />
+            AI Module Tester
+          </CardTitle>
+          <CardDescription>
+            Run test generations for AI modules and inspect the responses
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
-            <p className="text-xs font-medium text-gray-600">Module</p>
+            <p className="text-xs font-medium text-muted-foreground">Module</p>
             <Select value={module} onValueChange={setModule}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select module" />
@@ -129,12 +126,12 @@ function AIModuleTester() {
               </SelectContent>
             </Select>
             {activeModule && (
-              <p className="text-xs text-gray-500">{activeModule.description}</p>
+              <p className="text-xs text-muted-foreground">{activeModule.description}</p>
             )}
           </div>
 
           <div className="space-y-2">
-            <p className="text-xs font-medium text-gray-600">Target user (optional)</p>
+            <p className="text-xs font-medium text-muted-foreground">Target user (optional)</p>
             <Input
               value={userEmail}
               onChange={(event) => setUserEmail(event.target.value)}
@@ -145,15 +142,15 @@ function AIModuleTester() {
               onChange={(event) => setUserId(event.target.value)}
               placeholder="User ID (optional)"
             />
-            <p className="text-xs text-gray-400">Provide email or ID to test a specific user.</p>
+            <p className="text-xs text-muted-foreground">Provide email or ID to test a specific user.</p>
           </div>
         </div>
 
         {(showWeekOffset || showMonthOffset) && (
-          <div className="grid gap-4 md:grid-cols-2 mt-4">
+          <div className="grid gap-4 md:grid-cols-2">
             {showWeekOffset && (
               <div className="space-y-2">
-                <p className="text-xs font-medium text-gray-600">Week offset</p>
+                <p className="text-xs font-medium text-muted-foreground">Week offset</p>
                 <Input
                   value={weekOffset}
                   onChange={(event) => setWeekOffset(event.target.value)}
@@ -163,7 +160,7 @@ function AIModuleTester() {
             )}
             {showMonthOffset && (
               <div className="space-y-2">
-                <p className="text-xs font-medium text-gray-600">Month offset</p>
+                <p className="text-xs font-medium text-muted-foreground">Month offset</p>
                 <Input
                   value={monthOffset}
                   onChange={(event) => setMonthOffset(event.target.value)}
@@ -174,11 +171,11 @@ function AIModuleTester() {
           </div>
         )}
 
-        <div className="flex flex-wrap gap-3 mt-6">
+        <div className="flex flex-wrap gap-3">
           <Button
             onClick={runTest}
             disabled={loading}
-            className="gap-2 bg-indigo-600 hover:bg-indigo-700"
+            className="gap-2"
           >
             <Sparkles className={`h-4 w-4 ${loading ? 'animate-pulse' : ''}`} />
             Run Test
@@ -186,19 +183,19 @@ function AIModuleTester() {
         </div>
 
         {result && (
-          <div className={`mt-6 p-4 rounded-lg border ${
+          <div className={`p-4 rounded-lg border ${
             result.success
-              ? 'bg-green-50 border-green-200'
-              : 'bg-red-50 border-red-200'
+              ? 'border-emerald-500/20 bg-emerald-500/10'
+              : 'border-destructive/40 bg-destructive/10'
           }`}>
             <div className="flex items-center gap-2">
               {result.success ? (
-                <CheckCircle className="h-5 w-5 text-green-600" />
+                <CheckCircle className="h-5 w-5 text-emerald-600" />
               ) : (
-                <AlertCircle className="h-5 w-5 text-red-600" />
+                <AlertCircle className="h-5 w-5 text-destructive" />
               )}
               <span className={`font-medium ${
-                result.success ? 'text-green-800' : 'text-red-800'
+                result.success ? 'text-emerald-600' : 'text-destructive'
               }`}>
                 {result.message}
               </span>
@@ -207,23 +204,24 @@ function AIModuleTester() {
         )}
 
         {responseData && (
-          <div className="mt-4 space-y-3">
+          <div className="space-y-3">
             {requestPayload && (
-              <details className="rounded-lg border bg-gray-50 p-3">
-                <summary className="cursor-pointer text-sm text-gray-700">Request payload</summary>
-                <pre className="mt-2 text-xs text-gray-600 overflow-auto max-h-48">
+              <details className="rounded-lg border bg-muted p-3">
+                <summary className="cursor-pointer text-sm text-muted-foreground">Request payload</summary>
+                <pre className="mt-2 text-xs text-muted-foreground overflow-auto max-h-48">
                   {JSON.stringify(requestPayload, null, 2)}
                 </pre>
               </details>
             )}
-            <details className="rounded-lg border bg-gray-50 p-3" open>
-              <summary className="cursor-pointer text-sm text-gray-700">Response</summary>
-              <pre className="mt-2 text-xs text-gray-600 overflow-auto max-h-72">
+            <details className="rounded-lg border bg-muted p-3" open>
+              <summary className="cursor-pointer text-sm text-muted-foreground">Response</summary>
+              <pre className="mt-2 text-xs text-muted-foreground overflow-auto max-h-72">
                 {JSON.stringify(responseData, null, 2)}
               </pre>
             </details>
           </div>
         )}
+        </CardContent>
       </Card>
     </div>
   )
@@ -231,19 +229,16 @@ function AIModuleTester() {
 
 export default function ToolsPage() {
   return (
-    <div className="h-full flex flex-col p-6 gap-6">
+    <div className="h-full flex flex-col gap-8">
       {/* Header */}
       <div>
-        <div className="flex items-center gap-3">
-          <Wrench className="h-7 w-7 text-blue-600" />
-          <h1 className="text-2xl font-semibold text-neutral-900">Admin Tools</h1>
-        </div>
-        <p className="text-sm text-neutral-500">Utilities for managing notifications, user preferences, and system maintenance</p>
+        <h1 className="text-3xl font-bold tracking-tight">Admin Tools</h1>
+        <p className="text-muted-foreground">Utilities for managing notifications, user preferences, and system maintenance</p>
       </div>
 
       {/* Main Content */}
       <Tabs defaultValue="notifications" className="flex-1">
-        <TabsList className="bg-neutral-100 border border-neutral-200">
+        <TabsList>
           <TabsTrigger value="notifications" className="gap-2">
             <Bell className="h-4 w-4" />
             Notifications
@@ -326,20 +321,18 @@ function NotificationSyncTool() {
 
   return (
     <div className="space-y-6">
-      <Card className="p-6">
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-              <Bell className="h-5 w-5 text-blue-600" />
-              Notification Sync
-            </h3>
-            <p className="text-sm text-gray-500 mt-1">
-              Send daily prompts to users who should have received them today but didn't
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap gap-3 mb-6">
+      <Card className="shadow-none border">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Bell className="h-5 w-5 text-blue-600" />
+            Notification Sync
+          </CardTitle>
+          <CardDescription>
+            Send daily prompts to users who should have received them today but didn't
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+        <div className="flex flex-wrap gap-3">
           <Button 
             onClick={fetchReport} 
             disabled={loading}
@@ -361,7 +354,7 @@ function NotificationSyncTool() {
           <Button 
             onClick={() => runSync(false)} 
             disabled={loading}
-            className="gap-2 bg-blue-600 hover:bg-blue-700"
+            className="gap-2"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
             Send Notifications
@@ -371,17 +364,17 @@ function NotificationSyncTool() {
         {result && (
           <div className={`p-4 rounded-lg border ${
             result.success 
-              ? 'bg-green-50 border-green-200' 
-              : 'bg-red-50 border-red-200'
+              ? 'border-emerald-500/20 bg-emerald-500/10' 
+              : 'border-destructive/40 bg-destructive/10'
           }`}>
             <div className="flex items-center gap-2 mb-2">
               {result.success ? (
-                <CheckCircle className="h-5 w-5 text-green-600" />
+                <CheckCircle className="h-5 w-5 text-emerald-600" />
               ) : (
-                <AlertCircle className="h-5 w-5 text-red-600" />
+                <AlertCircle className="h-5 w-5 text-destructive" />
               )}
               <span className={`font-medium ${
-                result.success ? 'text-green-800' : 'text-red-800'
+                result.success ? 'text-emerald-600' : 'text-destructive'
               }`}>
                 {result.message}
               </span>
@@ -390,30 +383,30 @@ function NotificationSyncTool() {
               <div className="mt-3 text-sm">
                 {result.data.stats && (
                   <div className="grid grid-cols-4 gap-4 mb-4">
-                    <div className="bg-white p-3 rounded border">
-                      <p className="text-gray-500 text-xs">Total Users</p>
+                    <div className="rounded-lg border bg-card p-3">
+                      <p className="text-muted-foreground text-xs">Total Users</p>
                       <p className="text-xl font-semibold">{result.data.stats.totalUsers}</p>
                     </div>
-                    <div className="bg-white p-3 rounded border">
-                      <p className="text-gray-500 text-xs">Sent</p>
-                      <p className="text-xl font-semibold text-green-600">{result.data.stats.sent}</p>
+                    <div className="rounded-lg border bg-card p-3">
+                      <p className="text-muted-foreground text-xs">Sent</p>
+                      <p className="text-xl font-semibold text-emerald-600">{result.data.stats.sent}</p>
                     </div>
-                    <div className="bg-white p-3 rounded border">
-                      <p className="text-gray-500 text-xs">Skipped</p>
+                    <div className="rounded-lg border bg-card p-3">
+                      <p className="text-muted-foreground text-xs">Skipped</p>
                       <p className="text-xl font-semibold text-yellow-600">{result.data.stats.skipped}</p>
                     </div>
-                    <div className="bg-white p-3 rounded border">
-                      <p className="text-gray-500 text-xs">Errors</p>
-                      <p className="text-xl font-semibold text-red-600">{result.data.stats.errors}</p>
+                    <div className="rounded-lg border bg-card p-3">
+                      <p className="text-muted-foreground text-xs">Errors</p>
+                      <p className="text-xl font-semibold text-destructive">{result.data.stats.errors}</p>
                     </div>
                   </div>
                 )}
                 {result.data.results && result.data.results.length > 0 && (
                   <details className="mt-2">
-                    <summary className="cursor-pointer text-gray-600 hover:text-gray-800">
+                    <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
                       View Details ({result.data.results.length} users)
                     </summary>
-                    <pre className="mt-2 p-3 bg-gray-100 rounded text-xs overflow-auto max-h-64">
+                    <pre className="mt-2 p-3 bg-muted rounded text-xs overflow-auto max-h-64">
                       {JSON.stringify(result.data.results, null, 2)}
                     </pre>
                   </details>
@@ -424,40 +417,40 @@ function NotificationSyncTool() {
         )}
 
         {reportData && !result?.data && (
-          <div className="mt-4 p-4 bg-gray-50 rounded-lg border">
-            <h4 className="font-medium text-gray-900 mb-3">Today's Report: {reportData.todayDayOfWeek}</h4>
+          <div className="mt-4 p-4 bg-muted rounded-lg border">
+            <h4 className="font-medium text-foreground mb-3">Today's Report: {reportData.todayDayOfWeek}</h4>
             {reportData.summary && (
               <div className="grid grid-cols-5 gap-3 mb-4">
-                <div className="bg-white p-3 rounded border text-center">
-                  <p className="text-gray-500 text-xs">Total</p>
+                <div className="rounded-lg border bg-card p-3 text-center">
+                  <p className="text-muted-foreground text-xs">Total</p>
                   <p className="text-lg font-semibold">{reportData.summary.totalUsers}</p>
                 </div>
-                <div className="bg-white p-3 rounded border text-center">
-                  <p className="text-gray-500 text-xs">Reminders On</p>
+                <div className="rounded-lg border bg-card p-3 text-center">
+                  <p className="text-muted-foreground text-xs">Reminders On</p>
                   <p className="text-lg font-semibold">{reportData.summary.withDailyReminders}</p>
                 </div>
-                <div className="bg-white p-3 rounded border text-center">
-                  <p className="text-gray-500 text-xs">Should Receive</p>
+                <div className="rounded-lg border bg-card p-3 text-center">
+                  <p className="text-muted-foreground text-xs">Should Receive</p>
                   <p className="text-lg font-semibold">{reportData.summary.shouldReceiveToday}</p>
                 </div>
-                <div className="bg-white p-3 rounded border text-center">
-                  <p className="text-gray-500 text-xs">Has Prompt</p>
-                  <p className="text-lg font-semibold text-green-600">{reportData.summary.hasPromptToday}</p>
+                <div className="rounded-lg border bg-card p-3 text-center">
+                  <p className="text-muted-foreground text-xs">Has Prompt</p>
+                  <p className="text-lg font-semibold text-emerald-600">{reportData.summary.hasPromptToday}</p>
                 </div>
-                <div className="bg-white p-3 rounded border text-center">
-                  <p className="text-gray-500 text-xs">Needs Prompt</p>
+                <div className="rounded-lg border bg-card p-3 text-center">
+                  <p className="text-muted-foreground text-xs">Needs Prompt</p>
                   <p className="text-lg font-semibold text-orange-600">{reportData.summary.needsPrompt}</p>
                 </div>
               </div>
             )}
             {reportData.usersNeedingPrompt && reportData.usersNeedingPrompt.length > 0 && (
               <details>
-                <summary className="cursor-pointer text-gray-600 hover:text-gray-800">
+                <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
                   Users needing prompts ({reportData.usersNeedingPrompt.length})
                 </summary>
                 <div className="mt-2 max-h-48 overflow-auto">
                   <table className="w-full text-sm">
-                    <thead className="bg-gray-100">
+                    <thead className="bg-muted">
                       <tr>
                         <th className="text-left p-2">Email</th>
                         <th className="text-left p-2">Custom Days</th>
@@ -479,6 +472,7 @@ function NotificationSyncTool() {
             )}
           </div>
         )}
+        </CardContent>
       </Card>
     </div>
   )
@@ -528,20 +522,18 @@ function UserPreferencesFixTool() {
 
   return (
     <div className="space-y-6">
-      <Card className="p-6">
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-              <Users className="h-5 w-5 text-purple-600" />
-              Fix User Preferences
-            </h3>
-            <p className="text-sm text-gray-500 mt-1">
-              Fix users with missing custom_days, prompt_frequency, or daily_reminders settings
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap gap-3 mb-6">
+      <Card className="shadow-none border">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Users className="h-5 w-5 text-purple-600" />
+            Fix User Preferences
+          </CardTitle>
+          <CardDescription>
+            Fix users with missing custom_days, prompt_frequency, or daily_reminders settings
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+        <div className="flex flex-wrap gap-3">
           <Button 
             onClick={fetchReport} 
             disabled={loading}
@@ -563,7 +555,7 @@ function UserPreferencesFixTool() {
           <Button 
             onClick={() => runFix(false)} 
             disabled={loading}
-            className="gap-2 bg-purple-600 hover:bg-purple-700"
+            className="gap-2"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
             Apply Fix
@@ -573,43 +565,43 @@ function UserPreferencesFixTool() {
         {result && (
           <div className={`p-4 rounded-lg border ${
             result.success 
-              ? 'bg-green-50 border-green-200' 
-              : 'bg-red-50 border-red-200'
+              ? 'border-emerald-500/20 bg-emerald-500/10' 
+              : 'border-destructive/40 bg-destructive/10'
           }`}>
             <div className="flex items-center gap-2 mb-2">
               {result.success ? (
-                <CheckCircle className="h-5 w-5 text-green-600" />
+                <CheckCircle className="h-5 w-5 text-emerald-600" />
               ) : (
-                <AlertCircle className="h-5 w-5 text-red-600" />
+                <AlertCircle className="h-5 w-5 text-destructive" />
               )}
               <span className={`font-medium ${
-                result.success ? 'text-green-800' : 'text-red-800'
+                result.success ? 'text-emerald-600' : 'text-destructive'
               }`}>
                 {result.message}
               </span>
             </div>
             {result.data?.stats && (
               <div className="grid grid-cols-3 gap-4 mt-3">
-                <div className="bg-white p-3 rounded border">
-                  <p className="text-gray-500 text-xs">Total Users</p>
+                <div className="rounded-lg border bg-card p-3">
+                  <p className="text-muted-foreground text-xs">Total Users</p>
                   <p className="text-xl font-semibold">{result.data.stats.totalUsers}</p>
                 </div>
-                <div className="bg-white p-3 rounded border">
-                  <p className="text-gray-500 text-xs">Updated</p>
-                  <p className="text-xl font-semibold text-green-600">{result.data.stats.updated}</p>
+                <div className="rounded-lg border bg-card p-3">
+                  <p className="text-muted-foreground text-xs">Updated</p>
+                  <p className="text-xl font-semibold text-emerald-600">{result.data.stats.updated}</p>
                 </div>
-                <div className="bg-white p-3 rounded border">
-                  <p className="text-gray-500 text-xs">Skipped</p>
-                  <p className="text-xl font-semibold text-gray-600">{result.data.stats.skipped}</p>
+                <div className="rounded-lg border bg-card p-3">
+                  <p className="text-muted-foreground text-xs">Skipped</p>
+                  <p className="text-xl font-semibold text-muted-foreground">{result.data.stats.skipped}</p>
                 </div>
               </div>
             )}
             {result.data?.results && (
               <details className="mt-3">
-                <summary className="cursor-pointer text-gray-600 hover:text-gray-800 text-sm">
+                <summary className="cursor-pointer text-muted-foreground hover:text-foreground text-sm">
                   View Details
                 </summary>
-                <pre className="mt-2 p-3 bg-gray-100 rounded text-xs overflow-auto max-h-64">
+                <pre className="mt-2 p-3 bg-muted rounded text-xs overflow-auto max-h-64">
                   {JSON.stringify(result.data.results.filter((r: any) => r.status !== 'skipped'), null, 2)}
                 </pre>
               </details>
@@ -618,38 +610,39 @@ function UserPreferencesFixTool() {
         )}
 
         {reportData && !result?.data && (
-          <div className="mt-4 p-4 bg-gray-50 rounded-lg border">
-            <h4 className="font-medium text-gray-900 mb-3">Current Status</h4>
+          <div className="mt-4 p-4 bg-muted rounded-lg border">
+            <h4 className="font-medium text-foreground mb-3">Current Status</h4>
             {reportData.stats && (
               <div className="grid grid-cols-3 gap-3 mb-4">
-                <div className="bg-white p-3 rounded border">
-                  <p className="text-gray-500 text-xs">Total Users</p>
+                <div className="rounded-lg border bg-card p-3">
+                  <p className="text-muted-foreground text-xs">Total Users</p>
                   <p className="text-lg font-semibold">{reportData.stats.total}</p>
                 </div>
-                <div className="bg-white p-3 rounded border">
-                  <p className="text-gray-500 text-xs">Custom Days Set</p>
-                  <p className="text-lg font-semibold text-green-600">{reportData.stats.custom_days_set}</p>
+                <div className="rounded-lg border bg-card p-3">
+                  <p className="text-muted-foreground text-xs">Custom Days Set</p>
+                  <p className="text-lg font-semibold text-emerald-600">{reportData.stats.custom_days_set}</p>
                 </div>
-                <div className="bg-white p-3 rounded border">
-                  <p className="text-gray-500 text-xs">Custom Days Null</p>
+                <div className="rounded-lg border bg-card p-3">
+                  <p className="text-muted-foreground text-xs">Custom Days Null</p>
                   <p className="text-lg font-semibold text-orange-600">{reportData.stats.custom_days_null}</p>
                 </div>
-                <div className="bg-white p-3 rounded border">
-                  <p className="text-gray-500 text-xs">Reminders True</p>
-                  <p className="text-lg font-semibold text-green-600">{reportData.stats.daily_reminders_true}</p>
+                <div className="rounded-lg border bg-card p-3">
+                  <p className="text-muted-foreground text-xs">Reminders True</p>
+                  <p className="text-lg font-semibold text-emerald-600">{reportData.stats.daily_reminders_true}</p>
                 </div>
-                <div className="bg-white p-3 rounded border">
-                  <p className="text-gray-500 text-xs">Reminders Null</p>
+                <div className="rounded-lg border bg-card p-3">
+                  <p className="text-muted-foreground text-xs">Reminders Null</p>
                   <p className="text-lg font-semibold text-orange-600">{reportData.stats.daily_reminders_null}</p>
                 </div>
-                <div className="bg-white p-3 rounded border">
-                  <p className="text-gray-500 text-xs">Needs Fix</p>
-                  <p className="text-lg font-semibold text-red-600">{reportData.needsFixCount}</p>
+                <div className="rounded-lg border bg-card p-3">
+                  <p className="text-muted-foreground text-xs">Needs Fix</p>
+                  <p className="text-lg font-semibold text-destructive">{reportData.needsFixCount}</p>
                 </div>
               </div>
             )}
           </div>
         )}
+        </CardContent>
       </Card>
     </div>
   )
@@ -699,20 +692,18 @@ function TestPromptTool() {
 
   return (
     <div className="space-y-6">
-      <Card className="p-6">
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-              <Mail className="h-5 w-5 text-green-600" />
-              Test Daily Prompt
-            </h3>
-            <p className="text-sm text-gray-500 mt-1">
-              Send a test prompt email to yourself and view system diagnostics
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap gap-3 mb-6">
+      <Card className="shadow-none border">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Mail className="h-5 w-5 text-green-600" />
+            Test Daily Prompt
+          </CardTitle>
+          <CardDescription>
+            Send a test prompt email to yourself and view system diagnostics
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+        <div className="flex flex-wrap gap-3">
           <Button 
             onClick={fetchDiagnostics} 
             disabled={loading}
@@ -725,7 +716,7 @@ function TestPromptTool() {
           <Button 
             onClick={sendTestPrompt} 
             disabled={loading}
-            className="gap-2 bg-green-600 hover:bg-green-700"
+            className="gap-2"
           >
             <Mail className={`h-4 w-4 ${loading ? 'animate-pulse' : ''}`} />
             Send Test to Me
@@ -735,23 +726,23 @@ function TestPromptTool() {
         {result && (
           <div className={`p-4 rounded-lg border ${
             result.success 
-              ? 'bg-green-50 border-green-200' 
-              : 'bg-red-50 border-red-200'
+              ? 'border-emerald-500/20 bg-emerald-500/10' 
+              : 'border-destructive/40 bg-destructive/10'
           }`}>
             <div className="flex items-center gap-2">
               {result.success ? (
-                <CheckCircle className="h-5 w-5 text-green-600" />
+                <CheckCircle className="h-5 w-5 text-emerald-600" />
               ) : (
-                <AlertCircle className="h-5 w-5 text-red-600" />
+                <AlertCircle className="h-5 w-5 text-destructive" />
               )}
               <span className={`font-medium ${
-                result.success ? 'text-green-800' : 'text-red-800'
+                result.success ? 'text-emerald-600' : 'text-destructive'
               }`}>
                 {result.message}
               </span>
             </div>
             {result.data?.results && (
-              <pre className="mt-3 p-3 bg-gray-100 rounded text-xs overflow-auto max-h-48">
+              <pre className="mt-3 p-3 bg-muted rounded text-xs overflow-auto max-h-48">
                 {JSON.stringify(result.data.results, null, 2)}
               </pre>
             )}
@@ -759,33 +750,33 @@ function TestPromptTool() {
         )}
 
         {diagnostics && (
-          <div className="mt-4 p-4 bg-gray-50 rounded-lg border">
-            <h4 className="font-medium text-gray-900 mb-3">System Diagnostics</h4>
+          <div className="mt-4 p-4 bg-muted rounded-lg border">
+            <h4 className="font-medium text-foreground mb-3">System Diagnostics</h4>
             
             {diagnostics.stats && (
               <div className="grid grid-cols-4 gap-3 mb-4">
-                <div className="bg-white p-3 rounded border">
-                  <p className="text-gray-500 text-xs">Total Users</p>
+                <div className="rounded-lg border bg-card p-3">
+                  <p className="text-muted-foreground text-xs">Total Users</p>
                   <p className="text-lg font-semibold">{diagnostics.stats.total_users_with_preferences}</p>
                 </div>
-                <div className="bg-white p-3 rounded border">
-                  <p className="text-gray-500 text-xs">Reminders Enabled</p>
-                  <p className="text-lg font-semibold text-green-600">{diagnostics.stats.daily_reminders_enabled}</p>
+                <div className="rounded-lg border bg-card p-3">
+                  <p className="text-muted-foreground text-xs">Reminders Enabled</p>
+                  <p className="text-lg font-semibold text-emerald-600">{diagnostics.stats.daily_reminders_enabled}</p>
                 </div>
-                <div className="bg-white p-3 rounded border">
-                  <p className="text-gray-500 text-xs">Reminders Disabled</p>
-                  <p className="text-lg font-semibold text-gray-600">{diagnostics.stats.daily_reminders_disabled}</p>
+                <div className="rounded-lg border bg-card p-3">
+                  <p className="text-muted-foreground text-xs">Reminders Disabled</p>
+                  <p className="text-lg font-semibold text-muted-foreground">{diagnostics.stats.daily_reminders_disabled}</p>
                 </div>
-                <div className="bg-white p-3 rounded border">
-                  <p className="text-gray-500 text-xs">Reminders Null</p>
+                <div className="rounded-lg border bg-card p-3">
+                  <p className="text-muted-foreground text-xs">Reminders Null</p>
                   <p className="text-lg font-semibold text-orange-600">{diagnostics.stats.daily_reminders_null}</p>
                 </div>
               </div>
             )}
 
             {diagnostics.todayDebug && (
-              <div className="mb-4 p-3 bg-blue-50 rounded border border-blue-200">
-                <p className="text-sm text-blue-800">
+              <div className="mb-4 p-3 rounded-lg border border-blue-500/20 bg-blue-500/10">
+                <p className="text-sm text-blue-600">
                   <strong>Today:</strong> {diagnostics.todayDebug.today} | 
                   <strong> Users with today in custom_days:</strong> {diagnostics.todayDebug.usersWithTodayInCustomDays}
                 </p>
@@ -794,15 +785,15 @@ function TestPromptTool() {
 
             {diagnostics.environment && (
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">Environment</p>
+                <p className="text-sm font-medium text-muted-foreground mb-2">Environment</p>
                 <div className="flex gap-3">
                   <span className={`px-2 py-1 rounded text-xs ${
-                    diagnostics.environment.RESEND_API_KEY ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    diagnostics.environment.RESEND_API_KEY ? 'bg-emerald-500/10 text-emerald-600' : 'bg-red-500/10 text-red-600'
                   }`}>
                     RESEND_API_KEY: {diagnostics.environment.RESEND_API_KEY ? '✓' : '✗'}
                   </span>
                   <span className={`px-2 py-1 rounded text-xs ${
-                    diagnostics.environment.CRON_SECRET ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    diagnostics.environment.CRON_SECRET ? 'bg-emerald-500/10 text-emerald-600' : 'bg-red-500/10 text-red-600'
                   }`}>
                     CRON_SECRET: {diagnostics.environment.CRON_SECRET ? '✓' : '✗'}
                   </span>
@@ -812,12 +803,12 @@ function TestPromptTool() {
 
             {diagnostics.recentCronRuns && diagnostics.recentCronRuns.length > 0 && (
               <details>
-                <summary className="cursor-pointer text-gray-600 hover:text-gray-800 text-sm">
+                <summary className="cursor-pointer text-muted-foreground hover:text-foreground text-sm">
                   Recent Cron Runs ({diagnostics.recentCronRuns.length})
                 </summary>
                 <div className="mt-2 max-h-48 overflow-auto">
                   <table className="w-full text-xs">
-                    <thead className="bg-gray-100">
+                    <thead className="bg-muted">
                       <tr>
                         <th className="text-left p-2">Started</th>
                         <th className="text-left p-2">Status</th>
@@ -832,14 +823,14 @@ function TestPromptTool() {
                           <td className="p-2">{new Date(run.started_at).toLocaleString()}</td>
                           <td className="p-2">
                             <span className={`px-1.5 py-0.5 rounded text-xs ${
-                              run.status === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                              run.status === 'success' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-red-500/10 text-red-600'
                             }`}>
                               {run.status}
                             </span>
                           </td>
                           <td className="p-2">{run.total_users}</td>
-                          <td className="p-2 text-green-600">{run.successful_sends}</td>
-                          <td className="p-2 text-red-600">{run.failed_sends}</td>
+                          <td className="p-2 text-emerald-600">{run.successful_sends}</td>
+                          <td className="p-2 text-destructive">{run.failed_sends}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -849,6 +840,7 @@ function TestPromptTool() {
             )}
           </div>
         )}
+        </CardContent>
       </Card>
     </div>
   )

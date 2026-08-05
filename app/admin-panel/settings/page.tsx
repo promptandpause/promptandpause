@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { Badge } from '@/components/ui/badge'
+import { Label } from '@/components/ui/label'
+import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Save, ToggleLeft, Sliders } from 'lucide-react'
 
@@ -263,7 +265,7 @@ export default function SettingsPage() {
   if (meLoading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-neutral-500">Loading…</div>
+        <div className="text-muted-foreground">Loading…</div>
       </div>
     )
   }
@@ -271,20 +273,20 @@ export default function SettingsPage() {
   if (!currentAdmin) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-neutral-500">{error || 'Unable to load admin profile'}</div>
+        <div className="text-muted-foreground">{error || 'Unable to load admin profile'}</div>
       </div>
     )
   }
 
   if (!isSuperAdmin) {
     return (
-      <div className="h-full flex flex-col p-6 gap-6 w-full max-w-6xl mx-auto">
+      <div className="max-w-4xl space-y-8">
         <div>
-          <h1 className="text-2xl font-semibold text-neutral-900">System Settings</h1>
-          <p className="text-sm text-neutral-500">Configure application settings and features</p>
+          <h1 className="text-3xl font-bold tracking-tight">System Settings</h1>
+          <p className="text-muted-foreground">Configure application settings and features</p>
         </div>
 
-        <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
           Super Admin access is required to view and modify system settings.
         </div>
       </div>
@@ -294,31 +296,33 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-neutral-500">Loading settings...</div>
+        <div className="text-muted-foreground">Loading settings...</div>
       </div>
     )
   }
 
   return (
-    <div className="h-full flex flex-col p-6 gap-6 w-full max-w-6xl mx-auto">
-      <div>
-        <h1 className="text-2xl font-semibold text-neutral-900">System Settings</h1>
-        <p className="text-sm text-neutral-500">Configure application settings and features</p>
+    <div className="max-w-4xl space-y-8">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">System Settings</h1>
+          <p className="text-muted-foreground">Configure application settings and features</p>
+        </div>
       </div>
 
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
           {error}
         </div>
       )}
 
       <Tabs defaultValue="settings" className="space-y-6">
-        <TabsList className="bg-neutral-100 border border-neutral-200">
-          <TabsTrigger key="settings-tab" value="settings" className="data-[state=active]:bg-white">
+        <TabsList className="bg-muted">
+          <TabsTrigger key="settings-tab" value="settings">
             <Sliders className="h-4 w-4 mr-2" />
             System Settings
           </TabsTrigger>
-          <TabsTrigger key="features-tab" value="features" className="data-[state=active]:bg-white">
+          <TabsTrigger key="features-tab" value="features">
             <ToggleLeft className="h-4 w-4 mr-2" />
             Feature Flags
           </TabsTrigger>
@@ -328,126 +332,146 @@ export default function SettingsPage() {
           {Object.entries(groupedSettings)
             .sort(([a], [b]) => a.localeCompare(b))
             .map(([category, categorySettings]) => (
-            <Card key={category} className="bg-white border-neutral-200">
-              <CardHeader>
-                <CardTitle className="text-neutral-900 capitalize">{category}</CardTitle>
-                <CardDescription className="text-neutral-500">
-                  Configure {category} related settings
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {categorySettings.map((setting) => {
-                  const currentValue = editedSettings[setting.key] ?? setting.value
-                  const isEdited = editedSettings.hasOwnProperty(setting.key)
-                  const showGbpValue =
-                    !isEdited &&
-                    isPriceRelatedKey(setting.key) &&
-                    typeof setting.value === 'number'
+              <Card key={category} className="shadow-none border">
+                <CardHeader>
+                  <CardTitle className="capitalize">{category}</CardTitle>
+                  <CardDescription>
+                    Configure {category} related settings
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {categorySettings.map((setting, i) => {
+                    const currentValue = editedSettings[setting.key] ?? setting.value
+                    const isEdited = editedSettings.hasOwnProperty(setting.key)
+                    const showGbpValue =
+                      !isEdited &&
+                      isPriceRelatedKey(setting.key) &&
+                      typeof setting.value === 'number'
 
-                  return (
-                    <div key={setting.key} className="flex items-center justify-between p-4 bg-neutral-50 rounded-lg border border-neutral-200">
-                      <div className="flex-1 mr-4">
-                        <div className="flex items-center gap-2">
-                          <h4 className="text-sm font-medium text-neutral-900">{setting.key}</h4>
-                          {isEdited && (
-                            <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
-                              Modified
-                            </Badge>
-                          )}
-                        </div>
-                        <p className="text-xs text-neutral-500 mt-1">{setting.description}</p>
-                        {showGbpValue && (
-                          <p className="text-xs text-neutral-500 mt-1">Current (GBP): {gbp.format(setting.value)}</p>
-                        )}
-                      </div>
+                    return (
+                      <div key={setting.key} className="space-y-6">
+                        {i > 0 && <Separator />}
 
-                      <div className="flex items-center gap-2">
                         {setting.type === 'boolean' ? (
-                          <Switch
-                            checked={Boolean(currentValue)}
-                            onCheckedChange={(checked) => handleSettingChange(setting.key, checked)}
-                            className="data-[state=checked]:bg-blue-600"
-                          />
-                        ) : setting.type === 'number' ? (
-                          <Input
-                            type="number"
-                            value={currentValue ?? ''}
-                            onChange={(e) => {
-                              const raw = e.target.value
-                              if (raw === '') {
-                                handleSettingChange(setting.key, null)
-                                return
-                              }
-                              const parsed = Number(raw)
-                              handleSettingChange(setting.key, Number.isFinite(parsed) ? parsed : null)
-                            }}
-                            className="w-32 bg-white border-neutral-200 text-neutral-900"
-                          />
+                          <div className="flex items-center justify-between">
+                            <div className="space-y-0.5">
+                              <div className="flex items-center gap-2">
+                                <Label>{setting.key}</Label>
+                                {isEdited && (
+                                  <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20">
+                                    Modified
+                                  </Badge>
+                                )}
+                              </div>
+                              <p className="text-xs text-muted-foreground">{setting.description}</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {isEdited && (
+                                <Button size="sm" variant="outline" onClick={() => handleSaveSetting(setting.key)}>
+                                  <Save className="h-3 w-3" />
+                                </Button>
+                              )}
+                              <Switch
+                                checked={Boolean(currentValue)}
+                                onCheckedChange={(checked) => handleSettingChange(setting.key, checked)}
+                              />
+                            </div>
+                          </div>
                         ) : (
-                          <Input
-                            value={currentValue ?? ''}
-                            onChange={(e) => handleSettingChange(setting.key, e.target.value)}
-                            className="w-48 bg-white border-neutral-200 text-neutral-900"
-                          />
-                        )}
-
-                        {isEdited && (
-                          <Button
-                            size="sm"
-                            onClick={() => handleSaveSetting(setting.key)}
-                            className="bg-blue-600 hover:bg-blue-700"
-                          >
-                            <Save className="h-3 w-3" />
-                          </Button>
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="space-y-0.5">
+                              <div className="flex items-center gap-2">
+                                <Label>{setting.key}</Label>
+                                {isEdited && (
+                                  <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20">
+                                    Modified
+                                  </Badge>
+                                )}
+                              </div>
+                              <p className="text-xs text-muted-foreground">{setting.description}</p>
+                              {showGbpValue && (
+                                <p className="text-xs text-muted-foreground">Current (GBP): {gbp.format(setting.value)}</p>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {isEdited && (
+                                <Button size="sm" variant="outline" onClick={() => handleSaveSetting(setting.key)}>
+                                  <Save className="h-3 w-3" />
+                                </Button>
+                              )}
+                              {setting.type === 'number' ? (
+                                <Input
+                                  type="number"
+                                  value={currentValue ?? ''}
+                                  onChange={(e) => {
+                                    const raw = e.target.value
+                                    if (raw === '') {
+                                      handleSettingChange(setting.key, null)
+                                      return
+                                    }
+                                    const parsed = Number(raw)
+                                    handleSettingChange(setting.key, Number.isFinite(parsed) ? parsed : null)
+                                  }}
+                                  className="w-32"
+                                />
+                              ) : (
+                                <Input
+                                  value={currentValue ?? ''}
+                                  onChange={(e) => handleSettingChange(setting.key, e.target.value)}
+                                  className="w-48"
+                                />
+                              )}
+                            </div>
+                          </div>
                         )}
                       </div>
-                    </div>
-                  )
-                })}
-              </CardContent>
-            </Card>
-          ))}
+                    )
+                  })}
+                </CardContent>
+              </Card>
+            ))}
         </TabsContent>
 
         <TabsContent value="features" className="space-y-6">
-          <Card className="bg-white border-neutral-200">
+          <Card className="shadow-none border">
             <CardHeader>
-              <CardTitle className="text-neutral-900">Feature Flags</CardTitle>
-              <CardDescription className="text-neutral-500">
+              <CardTitle>Feature Flags</CardTitle>
+              <CardDescription>
                 Enable or disable application features
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6">
               {flags.length === 0 ? (
-                <div className="text-center py-8 text-neutral-500">
+                <div className="text-center py-8 text-muted-foreground">
                   No feature flags configured
                 </div>
               ) : (
-                flags.map((flag) => (
-                  <div key={flag.key} className="flex items-center justify-between p-4 bg-neutral-50 rounded-lg border border-neutral-200">
-                    <div className="flex-1 mr-4">
-                      <div className="flex items-center gap-2">
-                        <h4 className="text-sm font-medium text-neutral-900">{flag.name}</h4>
-                        <Badge
-                          variant="outline"
-                          className={`text-xs ${
-                            flag.enabled
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                              : 'bg-neutral-50 text-neutral-700 border-neutral-200'
-                          }`}
-                        >
-                          {flag.enabled ? 'Enabled' : 'Disabled'}
-                        </Badge>
+                flags.map((flag, i) => (
+                  <div key={flag.key} className="space-y-6">
+                    {i > 0 && <Separator />}
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <div className="flex items-center gap-2">
+                          <Label>{flag.name}</Label>
+                          <Badge
+                            variant="outline"
+                            className={
+                              flag.enabled
+                                ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20'
+                                : 'bg-muted text-muted-foreground'
+                            }
+                          >
+                            {flag.enabled ? 'Enabled' : 'Disabled'}
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-muted-foreground">{flag.description}</p>
+                        <p className="text-xs text-muted-foreground">Key: {flag.key}</p>
                       </div>
-                      <p className="text-xs text-neutral-500 mt-1">{flag.description}</p>
-                      <p className="text-xs text-neutral-500 mt-1">Key: {flag.key}</p>
+                      <Switch
+                        checked={flag.enabled}
+                        onCheckedChange={(checked) => handleToggleFlag(flag.key, checked)}
+                      />
                     </div>
-
-                    <Switch
-                      checked={flag.enabled}
-                      onCheckedChange={(checked) => handleToggleFlag(flag.key, checked)}
-                      className="data-[state=checked]:bg-green-600"
-                    />
                   </div>
                 ))
               )}
@@ -455,6 +479,24 @@ export default function SettingsPage() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <div className="flex justify-end gap-4">
+        <Button
+          variant="outline"
+          onClick={() => {
+            setEditedSettings({})
+            fetchData()
+          }}
+        >
+          Discard Changes
+        </Button>
+        <Button
+          onClick={() => Object.keys(editedSettings).forEach((key) => handleSaveSetting(key))}
+          disabled={Object.keys(editedSettings).length === 0}
+        >
+          Save Configuration
+        </Button>
+      </div>
     </div>
   )
 }

@@ -1,18 +1,10 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Dialog,
   DialogContent,
@@ -40,8 +32,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { UserPlus, Shield, ShieldCheck, Users, Search, Edit, Trash2, Mail } from 'lucide-react'
+import { Building2, Edit, Mail, Search, Shield, Trash2 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { useToast } from '@/hooks/use-toast'
 
@@ -273,29 +266,25 @@ export default function AdminUsersPage() {
     setIsEditDialogOpen(true)
   }
 
-  const getRoleBadge = (role: string) => {
-    const styles = {
-      super_admin: 'bg-purple-50 text-purple-700 border-purple-200',
-      admin: 'bg-blue-50 text-blue-700 border-blue-200',
-      employee: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    }
-    const icons = {
-      super_admin: <ShieldCheck className="h-3 w-3 mr-1" />,
-      admin: <Shield className="h-3 w-3 mr-1" />,
-      employee: <Users className="h-3 w-3 mr-1" />,
-    }
-    const labels = {
-      super_admin: 'Super Admin',
-      admin: 'Admin',
-      employee: 'Employee',
-    }
-    return (
-      <Badge variant="outline" className={styles[role as keyof typeof styles]}>
-        {icons[role as keyof typeof icons]}
-        {labels[role as keyof typeof labels]}
-      </Badge>
-    )
+  const roleLabels: Record<string, string> = {
+    super_admin: 'Super Admin',
+    admin: 'Admin',
+    employee: 'Employee',
   }
+
+  const getRoleBadge = (role: string) => (
+    <Badge variant="outline" className="font-normal">
+      {roleLabels[role] || role}
+    </Badge>
+  )
+
+  const getInitials = (name: string) =>
+    name
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase() || '')
+      .join('') || '?'
 
   const filteredUsers = users.filter(user =>
     user.email.toLowerCase().includes(search.toLowerCase()) ||
@@ -305,7 +294,7 @@ export default function AdminUsersPage() {
   if (meLoading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-neutral-500">Loading…</div>
+        <div className="text-muted-foreground">Loading…</div>
       </div>
     )
   }
@@ -313,17 +302,17 @@ export default function AdminUsersPage() {
   if (!currentAdmin) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-neutral-500">{error || 'Unable to load admin profile'}</div>
+        <div className="text-muted-foreground">{error || 'Unable to load admin profile'}</div>
       </div>
     )
   }
 
   if (!canManageAdminUsers) {
     return (
-      <div className="h-full flex flex-col p-6 gap-6">
+      <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-semibold text-neutral-900">Admin Users</h1>
-          <p className="text-sm text-neutral-500">Manage admin panel access and roles</p>
+          <h1 className="text-3xl font-bold tracking-tight">Admin Users</h1>
+          <p className="text-muted-foreground">Manage staff access and permission levels.</p>
         </div>
         <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
           You don’t have permission to manage admin users.
@@ -333,61 +322,56 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <div className="h-full flex flex-col p-6 gap-6">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-neutral-900">Admin Users</h1>
-          <p className="text-sm text-neutral-500">Manage admin panel access and roles</p>
+          <h1 className="text-3xl font-bold tracking-tight">Admin Users</h1>
+          <p className="text-muted-foreground">Manage staff access and permission levels.</p>
         </div>
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-blue-600 hover:bg-blue-700">
-              <UserPlus className="h-4 w-4 mr-2" />
-              Create Admin User
-            </Button>
+            <Button>Invite New Admin</Button>
           </DialogTrigger>
-          <DialogContent className="bg-white border-neutral-200">
+          <DialogContent>
             <DialogHeader>
-              <DialogTitle className="text-neutral-900">Create Admin User</DialogTitle>
-              <DialogDescription className="text-neutral-500">
+              <DialogTitle>Create Admin User</DialogTitle>
+              <DialogDescription>
                 Create a new admin user. They will receive an email with their credentials.
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="email" className="text-neutral-900">Email *</Label>
+                <Label htmlFor="email">Email *</Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="user@promptandpause.com"
                   value={createForm.email}
                   onChange={(e) => setCreateForm({ ...createForm, email: e.target.value })}
-                  className="bg-white border-neutral-200 text-neutral-900"
                 />
-                <p className="text-xs text-neutral-500 mt-1">Must be @promptandpause.com domain</p>
+                <p className="text-xs text-muted-foreground mt-1">Must be @promptandpause.com domain</p>
               </div>
               <div>
-                <Label htmlFor="full_name" className="text-neutral-900">Full Name *</Label>
+                <Label htmlFor="full_name">Full Name *</Label>
                 <Input
                   id="full_name"
                   placeholder="John Doe"
                   value={createForm.full_name}
                   onChange={(e) => setCreateForm({ ...createForm, full_name: e.target.value })}
-                  className="bg-white border-neutral-200 text-neutral-900"
                 />
               </div>
               <div>
-                <Label htmlFor="role" className="text-neutral-900">Role *</Label>
+                <Label htmlFor="role">Role *</Label>
                 <Select
                   value={createForm.role}
                   onValueChange={(value) =>
                     setCreateForm({ ...createForm, role: value as 'super_admin' | 'admin' | 'employee' })
                   }
                 >
-                  <SelectTrigger className="bg-white border-neutral-200 text-neutral-900">
+                  <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-white border-neutral-200">
+                  <SelectContent>
                     {isSuperAdmin && (
                       <SelectItem value="super_admin">Super Admin - Full Access</SelectItem>
                     )}
@@ -397,23 +381,20 @@ export default function AdminUsersPage() {
                 </Select>
               </div>
               <div>
-                <Label htmlFor="department" className="text-neutral-900">Department</Label>
+                <Label htmlFor="department">Department</Label>
                 <Input
                   id="department"
                   placeholder="Engineering, Support, etc."
                   value={createForm.department}
                   onChange={(e) => setCreateForm({ ...createForm, department: e.target.value })}
-                  className="bg-white border-neutral-200 text-neutral-900"
                 />
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)} className="border-neutral-200 bg-white">
+              <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleCreateUser} className="bg-blue-600 hover:bg-blue-700">
-                Create User
-              </Button>
+              <Button onClick={handleCreateUser}>Create User</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -425,160 +406,144 @@ export default function AdminUsersPage() {
         </div>
       )}
 
-      <Card className="bg-white border-neutral-200">
-        <CardHeader>
-          <CardTitle className="text-neutral-900">Admin Users ({filteredUsers.length})</CardTitle>
-          <CardDescription className="text-neutral-500">
-            Domain-locked to @promptandpause.com
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="mb-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-500" />
-              <Input
-                placeholder="Search by email or name..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-10 bg-white border-neutral-200 text-neutral-900"
-              />
-            </div>
-          </div>
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Search by email or name..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="pl-10"
+        />
+      </div>
 
-          {loading ? (
-            <div className="text-center py-8 text-neutral-500">Loading admin users...</div>
-          ) : filteredUsers.length === 0 ? (
-            <div className="text-center py-8 text-neutral-500">No admin users found</div>
-          ) : (
-            <div className="rounded-md border border-neutral-200">
-              <Table>
-                <TableHeader>
-                  <TableRow className="border-neutral-200">
-                    <TableHead className="text-neutral-500">User</TableHead>
-                    <TableHead className="text-neutral-500">Role</TableHead>
-                    <TableHead className="text-neutral-500">Department</TableHead>
-                    <TableHead className="text-neutral-500">Status</TableHead>
-                    <TableHead className="text-neutral-500">Last Login</TableHead>
-                    <TableHead className="text-neutral-500 text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredUsers.map((user) => (
-                    <TableRow key={user.id} className="border-neutral-200">
-                      <TableCell>
-                        <div>
-                          <div className="font-medium text-neutral-900">{user.full_name}</div>
-                          <div className="text-sm text-neutral-500 flex items-center gap-1">
-                            <Mail className="h-3 w-3" />
-                            {user.email}
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>{getRoleBadge(user.role)}</TableCell>
-                      <TableCell className="text-neutral-900">
-                        {user.department || <span className="text-neutral-500">-</span>}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant="outline"
-                          className={
-                            user.is_active
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                              : 'bg-red-50 text-red-700 border-red-200'
-                          }
+      {loading ? (
+        <div className="text-center py-8 text-muted-foreground">Loading admin users...</div>
+      ) : filteredUsers.length === 0 ? (
+        <div className="text-center py-8 text-muted-foreground">No admin users found</div>
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {filteredUsers.map((user) => (
+            <Card key={user.id} className="shadow-none border">
+              <CardHeader className="flex flex-row items-center gap-4 pb-4">
+                <Avatar className="h-12 w-12 border">
+                  <AvatarFallback>{getInitials(user.full_name)}</AvatarFallback>
+                </Avatar>
+                <div className="flex-1 space-y-1 min-w-0">
+                  <CardTitle className="text-base truncate">{user.full_name}</CardTitle>
+                  {getRoleBadge(user.role)}
+                </div>
+                <div className="flex items-center gap-1">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => openEditDialog(user)}
+                    disabled={!isSuperAdmin && user.role === 'super_admin'}
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  {user.is_active && (
+                    <AlertDialog open={deactivateConfirmOpen && userToDeactivate?.id === user.id} onOpenChange={(open) => !open && setDeactivateConfirmOpen(false)}>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDeactivateUser(user)}
+                          disabled={Boolean(currentAdmin.user_id === user.user_id) || (!isSuperAdmin && user.role === 'super_admin')}
+                          className="text-destructive hover:text-destructive"
                         >
-                          {user.is_active ? 'Active' : 'Inactive'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-neutral-500 text-sm">
-                        {user.last_login_at ? formatDistanceToNow(new Date(user.last_login_at), { addSuffix: true }) : 'Never'}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => openEditDialog(user)}
-                            disabled={!isSuperAdmin && user.role === 'super_admin'}
-                            className="text-neutral-600 hover:text-neutral-900 disabled:opacity-50"
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          {user.is_active && (
-                            <AlertDialog open={deactivateConfirmOpen && userToDeactivate?.id === user.id} onOpenChange={(open) => !open && setDeactivateConfirmOpen(false)}>
-                              <AlertDialogTrigger asChild>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  onClick={() => handleDeactivateUser(user)}
-                                  disabled={Boolean(currentAdmin.user_id === user.user_id) || (!isSuperAdmin && user.role === 'super_admin')}
-                                  className="text-red-400 hover:text-red-300 disabled:opacity-50"
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent className="bg-white border-neutral-200">
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle className="text-neutral-900">Deactivate Admin User</AlertDialogTitle>
-                                  <AlertDialogDescription className="text-neutral-500">
-                                    Are you sure you want to deactivate {user.full_name || user.email}? This will revoke their admin access.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel className="bg-white text-neutral-900 border-neutral-200">Cancel</AlertDialogCancel>
-                                  <AlertDialogAction onClick={confirmDeactivate} className="bg-red-600 hover:bg-red-700">
-                                    Deactivate
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Deactivate Admin User</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to deactivate {user.full_name || user.email}? This will revoke their admin access.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={confirmDeactivate} className="bg-red-600 hover:bg-red-700">
+                            Deactivate
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-3 pt-0">
+                <div className="flex items-center text-sm text-muted-foreground gap-2">
+                  <Mail size={14} />
+                  {user.email}
+                </div>
+                <div className="flex items-center justify-between text-sm text-muted-foreground gap-2">
+                  <span className="flex items-center gap-2 min-w-0">
+                    <Shield size={14} />
+                    {roleLabels[user.role] || user.role}
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className={
+                      user.is_active
+                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                        : 'bg-red-50 text-red-700 border-red-200'
+                    }
+                  >
+                    {user.is_active ? 'Active' : 'Inactive'}
+                  </Badge>
+                </div>
+                {user.department && (
+                  <div className="flex items-center text-sm text-muted-foreground gap-2">
+                    <Building2 size={14} />
+                    {user.department}
+                  </div>
+                )}
+              </CardContent>
+              <CardFooter className="text-xs text-muted-foreground">
+                {user.last_login_at
+                  ? `Last login ${formatDistanceToNow(new Date(user.last_login_at), { addSuffix: true })}`
+                  : 'Never logged in'}
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      )}
 
       {/* Edit Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="bg-white border-neutral-200">
+        <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-neutral-900">Edit Admin User</DialogTitle>
-            <DialogDescription className="text-neutral-500">
+            <DialogTitle>Edit Admin User</DialogTitle>
+            <DialogDescription>
               Update admin user details and permissions
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label className="text-neutral-900">Email</Label>
+              <Label>Email</Label>
               <Input
                 value={selectedUser?.email || ''}
                 disabled
-                className="bg-neutral-50 border-neutral-200 text-neutral-500"
+                className="bg-muted text-muted-foreground"
               />
-              <p className="text-xs text-neutral-500 mt-1">Email cannot be changed here</p>
+              <p className="text-xs text-muted-foreground mt-1">Email cannot be changed here</p>
             </div>
             <div>
-              <Label htmlFor="edit_full_name" className="text-neutral-900">Full Name</Label>
+              <Label htmlFor="edit_full_name">Full Name</Label>
               <Input
                 id="edit_full_name"
                 value={editForm.full_name}
                 onChange={(e) => setEditForm({ ...editForm, full_name: e.target.value })}
-                className="bg-white border-neutral-200 text-neutral-900"
               />
             </div>
             <div>
-              <Label htmlFor="edit_role" className="text-neutral-900">Role</Label>
+              <Label htmlFor="edit_role">Role</Label>
               <Select value={editForm.role} onValueChange={(value: any) => setEditForm({ ...editForm, role: value })}>
-                <SelectTrigger className="bg-white border-neutral-200 text-neutral-900">
+                <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-white border-neutral-200">
+                <SelectContent>
                   {isSuperAdmin && (
                     <SelectItem value="super_admin">Super Admin - Full Access</SelectItem>
                   )}
@@ -588,22 +553,19 @@ export default function AdminUsersPage() {
               </Select>
             </div>
             <div>
-              <Label htmlFor="edit_department" className="text-neutral-900">Department</Label>
+              <Label htmlFor="edit_department">Department</Label>
               <Input
                 id="edit_department"
                 value={editForm.department}
                 onChange={(e) => setEditForm({ ...editForm, department: e.target.value })}
-                className="bg-white border-neutral-200 text-neutral-900"
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)} className="border-neutral-200 bg-white">
+            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleUpdateUser} className="bg-blue-600 hover:bg-blue-700">
-              Update User
-            </Button>
+            <Button onClick={handleUpdateUser}>Update User</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

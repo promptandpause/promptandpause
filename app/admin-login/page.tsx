@@ -6,7 +6,9 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Shield, Lock, Mail, AlertCircle, Loader2 } from 'lucide-react'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Loader2, AlertCircle } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 function sanitizeRedirectPath(raw: string | null): string {
@@ -24,11 +26,11 @@ function AdminLoginContent() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [otp, setOtp] = useState('')
-  const [codeSent, setCodeSent] = useState(false)
+  const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [checkingAuth, setCheckingAuth] = useState(true)
-  const [loginMethod, setLoginMethod] = useState<'password' | 'otp'>('password')
+  const [loginMethod, setLoginMethod] = useState<'password' | 'otp'>('otp')
   const hasCheckedAuthRef = useRef(false)
 
   const redirectPath = sanitizeRedirectPath(searchParams.get('redirect'))
@@ -80,7 +82,7 @@ function AdminLoginContent() {
       const response = await fetch('/api/admin/send-otp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) })
       const data = await response.json()
       if (!response.ok) { setError(data.error || 'Failed to send code'); setLoading(false); return }
-      setCodeSent(true)
+      setStep(2)
     } catch (err: any) { setError(err.message || 'Failed to send code') }
     finally { setLoading(false) }
   }
@@ -99,13 +101,13 @@ function AdminLoginContent() {
 
   const switchMethod = () => {
     setLoginMethod(loginMethod === 'password' ? 'otp' : 'password')
-    setError(''); setCodeSent(false); setOtp(''); setPassword('')
+    setError(''); setStep(1); setOtp(''); setPassword('')
   }
 
   if (checkingAuth) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 flex items-center justify-center">
-        <div className="flex items-center gap-3 text-slate-500">
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="flex items-center gap-3 text-muted-foreground">
           <Loader2 className="h-5 w-5 animate-spin" />
           <span className="text-sm">Checking authentication...</span>
         </div>
@@ -114,106 +116,81 @@ function AdminLoginContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
       <div className="w-full max-w-md">
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-500/20 mb-5">
-            <Shield className="h-8 w-8 text-white" />
-          </div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight mb-1">Admin Panel</h1>
-          <p className="text-sm text-slate-500">Prompt & Pause</p>
-        </div>
-
-        <div className="bg-white border border-slate-200 rounded-2xl shadow-xl">
-          <div className="p-7">
-            <div className="mb-6">
-              <h2 className="text-lg font-semibold text-slate-900">Sign in</h2>
-              <p className="text-sm text-slate-500 mt-1">
-                {loginMethod === 'password' ? 'Restricted to @promptandpause.com accounts' : 'Receive a one-time code via email'}
-              </p>
+        <Card className="w-full max-w-md shadow-lg border-none">
+          <CardHeader className="space-y-1 text-center">
+            <div className="mx-auto w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-primary-foreground font-bold text-xl mb-4">
+              P
             </div>
-
+            <CardTitle className="text-2xl">Admin Portal</CardTitle>
+            <CardDescription>
+              {loginMethod === 'password'
+                ? 'Enter your credentials to access the admin panel'
+                : step === 1
+                  ? 'Enter your email to receive an OTP'
+                  : 'Enter the 6-digit code sent to your inbox'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
             {error && (
-              <div className="mb-5 p-3 rounded-xl bg-red-50 border border-red-200 flex items-start gap-3">
-                <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 flex-shrink-0" />
-                <p className="text-sm text-red-700">{error}</p>
-              </div>
+              <Alert variant="destructive" className="mb-4">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
             )}
 
             {loginMethod === 'password' ? (
-              <form onSubmit={handlePasswordLogin} className="space-y-5">
+              <form onSubmit={handlePasswordLogin} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-sm font-medium text-slate-700">Email Address</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
-                    <Input id="email" type="email" placeholder="admin@promptandpause.com" value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="h-11 pl-10 bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
-                      required disabled={loading} />
-                  </div>
+                  <Label htmlFor="email">Email address</Label>
+                  <Input id="email" type="email" placeholder="admin@promptandpause.com" value={email}
+                    onChange={(e) => setEmail(e.target.value)} required disabled={loading} />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-sm font-medium text-slate-700">Password</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
-                    <Input id="password" type="password" placeholder="Enter your password" value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="h-11 pl-10 bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
-                      required disabled={loading} />
-                  </div>
+                  <Label htmlFor="password">Password</Label>
+                  <Input id="password" type="password" placeholder="Enter your password" value={password}
+                    onChange={(e) => setPassword(e.target.value)} required disabled={loading} />
                 </div>
-                <Button type="submit" disabled={loading}
-                  className="w-full h-11 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium shadow-lg shadow-blue-500/20 transition-all">
-                  {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Signing in...</> : 'Sign In'}
+                <Button type="submit" className="w-full h-11 text-base" disabled={loading}>
+                  {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Signing in...</> : 'Sign In'}
+                </Button>
+                <Button variant="link" className="w-full text-xs text-muted-foreground" onClick={switchMethod}>
+                  Use email code instead
+                </Button>
+              </form>
+            ) : step === 1 ? (
+              <form onSubmit={handleSendCode} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email address</Label>
+                  <Input id="email" type="email" placeholder="admin@promptandpause.com" value={email}
+                    onChange={(e) => setEmail(e.target.value)} required />
+                </div>
+                <Button type="submit" className="w-full h-11 text-base" disabled={loading}>
+                  {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Sending...</> : 'Send Magic Code'}
+                </Button>
+                <Button variant="link" className="w-full text-xs text-muted-foreground" onClick={switchMethod}>
+                  Use password instead
                 </Button>
               </form>
             ) : (
-              <form onSubmit={codeSent ? handleVerifyCode : handleSendCode} className="space-y-5">
+              <form onSubmit={handleVerifyCode} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="otp-email" className="text-sm font-medium text-slate-700">Email Address</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
-                    <Input id="otp-email" type="email" placeholder="admin@promptandpause.com" value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="h-11 pl-10 bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
-                      required disabled={loading || codeSent} />
-                  </div>
+                  <Label htmlFor="otp">Security Code</Label>
+                  <Input id="otp" type="text" placeholder="000000" className="text-center tracking-[1em] font-mono text-xl" maxLength={6}
+                    value={otp} onChange={(e) => setOtp(e.target.value)} required disabled={loading} />
                 </div>
-                {codeSent && (
-                  <div className="space-y-2">
-                    <Label htmlFor="otp" className="text-sm font-medium text-slate-700">6-digit Code</Label>
-                    <div className="relative">
-                      <Lock className="absolute left-3.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
-                      <Input id="otp" type="text" placeholder="000000" value={otp}
-                        onChange={(e) => setOtp(e.target.value)}
-                        className="h-11 pl-10 bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 rounded-xl text-lg tracking-[0.5em] text-center focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
-                        required disabled={loading} maxLength={6} />
-                    </div>
-                  </div>
-                )}
-                <Button type="submit" disabled={loading}
-                  className="w-full h-11 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium shadow-lg shadow-blue-500/20 transition-all">
-                  {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />{codeSent ? 'Verifying...' : 'Sending code...'}</> : (codeSent ? 'Verify Code' : 'Send Code')}
+                <Button type="submit" className="w-full h-11 text-base" disabled={loading}>
+                  {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Verifying...</> : 'Verify & Access'}
+                </Button>
+                <Button variant="link" className="w-full text-xs text-muted-foreground" onClick={() => { setStep(1); setError(''); setOtp('') }}>
+                  Back to email entry
                 </Button>
               </form>
             )}
-
-            <div className="mt-6 text-center">
-              <button type="button" onClick={switchMethod} className="text-sm text-blue-600 hover:text-blue-700 transition-colors">
-                {loginMethod === 'password' ? 'Use email code instead' : 'Use password instead'}
-              </button>
-            </div>
-          </div>
-
-          <div className="px-7 py-4 bg-slate-50 border-t border-slate-100 rounded-b-2xl">
-            <div className="flex items-start gap-2.5">
-              <AlertCircle className="h-3.5 w-3.5 text-slate-400 mt-0.5 flex-shrink-0" />
-              <p className="text-xs text-slate-500">Admin access is restricted to authorized personnel only.</p>
-            </div>
-          </div>
-        </div>
-
-        <p className="text-center text-xs text-slate-400 mt-6">Prompt & Pause Admin Panel</p>
+          </CardContent>
+        </Card>
+        <p className="text-center text-xs text-muted-foreground mt-6">Prompt & Pause Admin Panel</p>
       </div>
     </div>
   )
@@ -222,8 +199,8 @@ function AdminLoginContent() {
 export default function AdminLoginPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 flex items-center justify-center">
-        <div className="flex items-center gap-3 text-slate-500">
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="flex items-center gap-3 text-muted-foreground">
           <Loader2 className="h-5 w-5 animate-spin" />
           <span className="text-sm">Loading...</span>
         </div>

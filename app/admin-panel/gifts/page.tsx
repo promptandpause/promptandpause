@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -44,10 +45,10 @@ interface GiftRow {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  pending: 'bg-amber-50 text-amber-700 border-amber-200',
-  redeemed: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  expired: 'bg-neutral-50 text-neutral-700 border-neutral-200',
-  refunded: 'bg-red-50 text-red-700 border-red-200',
+  pending: 'bg-amber-500/10 text-amber-600 border-amber-500/20',
+  redeemed: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
+  expired: 'bg-muted text-muted-foreground border',
+  refunded: 'bg-red-500/10 text-red-600 border-red-500/20',
 }
 
 function formatGBPFromPence(amountPaid: number) {
@@ -132,26 +133,25 @@ export default function GiftsAdminPage() {
   }, [gifts, selectedGiftId])
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-semibold text-neutral-900">Gifts</h1>
-        <p className="text-sm text-neutral-500">Operational view of gift purchases and redemption status.</p>
+        <h1 className="text-3xl font-bold tracking-tight">Gifts</h1>
+        <p className="text-muted-foreground">Operational view of gift purchases and redemption status.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-6">
         {/* Left pane: list */}
-        <div className="bg-white border border-neutral-200 rounded-xl overflow-hidden">
-          <div className="p-4 border-b border-neutral-200 space-y-3">
+        <Card className="shadow-none border overflow-hidden p-0 gap-0">
+          <div className="p-4 border-b space-y-3">
             <div className="grid grid-cols-1 md:grid-cols-[1fr_220px] gap-3">
               <Input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search purchaser/recipient/token"
-                className="bg-white border-neutral-200"
               />
 
               <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as any)}>
-                <SelectTrigger className="bg-white border-neutral-200">
+                <SelectTrigger>
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -165,7 +165,7 @@ export default function GiftsAdminPage() {
             </div>
 
             {error && (
-              <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              <div className="rounded-lg border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
                 {error}
               </div>
             )}
@@ -180,13 +180,13 @@ export default function GiftsAdminPage() {
           ) : (
             <Table>
               <TableHeader>
-                <TableRow className="border-neutral-200">
-                  <TableHead className="text-neutral-500">Status</TableHead>
-                  <TableHead className="text-neutral-500">Duration</TableHead>
-                  <TableHead className="text-neutral-500">Amount</TableHead>
-                  <TableHead className="text-neutral-500">Buyer</TableHead>
-                  <TableHead className="text-neutral-500">Recipient</TableHead>
-                  <TableHead className="text-neutral-500">Purchased</TableHead>
+                <TableRow>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Duration</TableHead>
+                  <TableHead>Amount</TableHead>
+                  <TableHead>Buyer</TableHead>
+                  <TableHead>Recipient</TableHead>
+                  <TableHead>Purchased</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -195,7 +195,7 @@ export default function GiftsAdminPage() {
                   return (
                     <TableRow
                       key={g.id}
-                      className={`border-neutral-200 cursor-pointer ${isSelected ? 'bg-neutral-50' : ''}`}
+                      className={`cursor-pointer ${isSelected ? 'bg-muted/50' : ''}`}
                       onClick={() => {
                         router.replace(`/admin-panel/gifts?id=${g.id}`)
                       }}
@@ -203,17 +203,17 @@ export default function GiftsAdminPage() {
                       <TableCell>
                         <Badge className={`${STATUS_COLORS[g.status]} border`}>{g.status}</Badge>
                       </TableCell>
-                      <TableCell className="text-neutral-900">{g.duration_months}m</TableCell>
-                      <TableCell className="text-neutral-900">{formatGBPFromPence(g.amount_paid)}</TableCell>
-                      <TableCell className="text-neutral-900">{g.purchaser_email}</TableCell>
-                      <TableCell className="text-neutral-900">{g.recipient_email || g.recipient?.email || '—'}</TableCell>
-                      <TableCell className="text-neutral-700">{format(new Date(g.purchased_at), 'MMM dd, yyyy')}</TableCell>
+                      <TableCell className="text-foreground">{g.duration_months}m</TableCell>
+                      <TableCell className="text-foreground">{formatGBPFromPence(g.amount_paid)}</TableCell>
+                      <TableCell className="text-foreground">{g.purchaser_email}</TableCell>
+                      <TableCell className="text-foreground">{g.recipient_email || g.recipient?.email || '—'}</TableCell>
+                      <TableCell className="text-muted-foreground">{format(new Date(g.purchased_at), 'MMM dd, yyyy')}</TableCell>
                     </TableRow>
                   )
                 })}
                 {filtered.length === 0 && (
-                  <TableRow className="border-neutral-200">
-                    <TableCell colSpan={6} className="text-neutral-500">
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-muted-foreground">
                       No gifts found.
                     </TableCell>
                   </TableRow>
@@ -221,12 +221,12 @@ export default function GiftsAdminPage() {
               </TableBody>
             </Table>
           )}
-        </div>
+        </Card>
 
         {/* Right pane: detail */}
-        <div className="bg-white border border-neutral-200 rounded-xl overflow-hidden">
+        <Card className="shadow-none border overflow-hidden p-0 gap-0">
           {!selectedGiftId ? (
-            <div className="p-10 text-sm text-neutral-500">Select a gift to view details.</div>
+            <div className="p-10 text-sm text-muted-foreground">Select a gift to view details.</div>
           ) : loading ? (
             <div className="p-6 space-y-4">
               <Skeleton className="h-6 w-56" />
@@ -234,14 +234,14 @@ export default function GiftsAdminPage() {
               <Skeleton className="h-40 w-full" />
             </div>
           ) : !selectedGift ? (
-            <div className="p-6 text-sm text-neutral-500">Gift not found.</div>
+            <div className="p-6 text-sm text-muted-foreground">Gift not found.</div>
           ) : (
             <div>
-              <div className="px-6 py-5 border-b border-neutral-200">
+              <div className="px-6 py-5 border-b">
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
-                    <h2 className="text-lg font-semibold text-neutral-900 truncate">Gift subscription</h2>
-                    <p className="text-sm text-neutral-500 truncate">{selectedGift.purchaser_email}</p>
+                    <h2 className="text-lg font-semibold text-foreground truncate">Gift subscription</h2>
+                    <p className="text-sm text-muted-foreground truncate">{selectedGift.purchaser_email}</p>
                   </div>
                   <Badge className={`${STATUS_COLORS[selectedGift.status]} border`}>{selectedGift.status}</Badge>
                 </div>
@@ -249,42 +249,42 @@ export default function GiftsAdminPage() {
 
               <div className="px-6 py-6 space-y-5">
                 <div className="space-y-1">
-                  <div className="text-xs text-neutral-500">Amount</div>
-                  <div className="text-sm text-neutral-900">{formatGBPFromPence(selectedGift.amount_paid)}</div>
+                  <div className="text-xs text-muted-foreground">Amount</div>
+                  <div className="text-sm text-foreground">{formatGBPFromPence(selectedGift.amount_paid)}</div>
                 </div>
                 <div className="space-y-1">
-                  <div className="text-xs text-neutral-500">Duration</div>
-                  <div className="text-sm text-neutral-900">{selectedGift.duration_months} months</div>
+                  <div className="text-xs text-muted-foreground">Duration</div>
+                  <div className="text-sm text-foreground">{selectedGift.duration_months} months</div>
                 </div>
                 <div className="space-y-1">
-                  <div className="text-xs text-neutral-500">Recipient</div>
-                  <div className="text-sm text-neutral-900">
+                  <div className="text-xs text-muted-foreground">Recipient</div>
+                  <div className="text-sm text-foreground">
                     {selectedGift.recipient_email || selectedGift.recipient?.email || '—'}
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <div className="text-xs text-neutral-500">Purchased</div>
-                  <div className="text-sm text-neutral-900">{format(new Date(selectedGift.purchased_at), 'MMM dd, yyyy')}</div>
+                  <div className="text-xs text-muted-foreground">Purchased</div>
+                  <div className="text-sm text-foreground">{format(new Date(selectedGift.purchased_at), 'MMM dd, yyyy')}</div>
                 </div>
                 <div className="space-y-1">
-                  <div className="text-xs text-neutral-500">Expires</div>
-                  <div className="text-sm text-neutral-900">{format(new Date(selectedGift.expires_at), 'MMM dd, yyyy')}</div>
+                  <div className="text-xs text-muted-foreground">Expires</div>
+                  <div className="text-sm text-foreground">{format(new Date(selectedGift.expires_at), 'MMM dd, yyyy')}</div>
                 </div>
                 <div className="space-y-1">
-                  <div className="text-xs text-neutral-500">Redeemed at</div>
-                  <div className="text-sm text-neutral-900">
+                  <div className="text-xs text-muted-foreground">Redeemed at</div>
+                  <div className="text-sm text-foreground">
                     {selectedGift.redeemed_at ? format(new Date(selectedGift.redeemed_at), 'MMM dd, yyyy') : '—'}
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <div className="text-xs text-neutral-500">Redemption token</div>
-                  <div className="text-sm text-neutral-900 font-mono break-all">{selectedGift.redemption_token}</div>
+                  <div className="text-xs text-muted-foreground">Redemption token</div>
+                  <div className="text-sm text-foreground font-mono break-all">{selectedGift.redemption_token}</div>
                 </div>
 
                 {selectedGift.recipient?.id && (
                   <div className="pt-2">
                     <Link href={`/admin-panel/users?id=${selectedGift.recipient.id}`} className="inline-flex">
-                      <Button type="button" variant="outline" className="border-neutral-200 bg-white">
+                      <Button type="button" variant="outline">
                         <ExternalLink className="h-4 w-4 mr-2" />
                         View user
                       </Button>
@@ -294,7 +294,7 @@ export default function GiftsAdminPage() {
               </div>
             </div>
           )}
-        </div>
+        </Card>
       </div>
     </div>
   )

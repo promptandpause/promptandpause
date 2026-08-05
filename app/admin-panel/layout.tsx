@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getAdminRole, isAdminUser, updateLastLogin } from '@/lib/services/adminUserService'
 import { getAdminSession } from '@/lib/services/adminAuth'
-import AdminSidebar from './components/AdminSidebar'
+import AdminShell from './components/AdminShell'
 
 export const metadata = {
   title: 'Admin Panel | Prompt & Pause',
@@ -19,18 +19,11 @@ export default async function AdminLayout({
   const otpSession = await getAdminSession()
   if (otpSession) {
     const adminUser = otpSession.admin_users
-    
+
     return (
-      <div className="min-h-screen bg-slate-950">
-        <div className="flex h-screen overflow-hidden">
-          <AdminSidebar userEmail={adminUser.email || ''} userRole={adminUser.role || 'employee'} />
-          <main className="flex-1 overflow-y-auto bg-gradient-to-br from-slate-50 to-gray-50">
-            <div className="w-full">
-              {children}
-            </div>
-          </main>
-        </div>
-      </div>
+      <AdminShell userEmail={adminUser.email || ''} userRole={adminUser.role || 'employee'}>
+        {children}
+      </AdminShell>
     )
   }
 
@@ -70,15 +63,8 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="min-h-screen bg-slate-950">
-      <div className="flex h-screen overflow-hidden">
-        <AdminSidebar userEmail={user.email || ''} userRole={adminRole || 'employee'} />
-        <main className="flex-1 overflow-y-auto bg-gradient-to-br from-slate-50 to-gray-50">
-          <div className="w-full">
-            {children}
-          </div>
-        </main>
-      </div>
-    </div>
+    <AdminShell userEmail={user.email || ''} userRole={adminRole || 'employee'}>
+      {children}
+    </AdminShell>
   )
 }

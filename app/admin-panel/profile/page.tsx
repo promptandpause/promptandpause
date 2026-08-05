@@ -118,9 +118,9 @@ export default function AdminProfilePage() {
 
   const getRoleBadge = (role: string) => {
     const styles = {
-      super_admin: 'bg-purple-50 text-purple-700 border-purple-200',
-      admin: 'bg-blue-50 text-blue-700 border-blue-200',
-      employee: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      super_admin: 'bg-purple-500/10 text-purple-600 border-purple-500/20',
+      admin: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
+      employee: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
     }
     const labels = {
       super_admin: 'Super Admin',
@@ -137,7 +137,7 @@ export default function AdminProfilePage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-neutral-500">Loading profile...</div>
+        <div className="text-muted-foreground">Loading profile...</div>
       </div>
     )
   }
@@ -145,52 +145,52 @@ export default function AdminProfilePage() {
   if (!profile) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-neutral-500">{error || 'Profile not found'}</div>
+        <div className="text-muted-foreground">{error || 'Profile not found'}</div>
       </div>
     )
   }
 
   return (
-    <div className="h-full flex flex-col p-6 gap-6 w-full max-w-5xl mx-auto">
+    <div className="h-full flex flex-col gap-8 w-full max-w-5xl mx-auto">
       <div>
-        <h1 className="text-2xl font-semibold text-neutral-900">My Profile</h1>
-        <p className="text-sm text-neutral-500">Manage your admin account settings</p>
+        <h1 className="text-3xl font-bold tracking-tight">My Profile</h1>
+        <p className="text-muted-foreground">Manage your admin account settings</p>
       </div>
 
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-lg border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
           {error}
         </div>
       )}
 
       <div className="grid gap-6 md:grid-cols-2">
-        <Card className="bg-white border-neutral-200">
+        <Card className="shadow-none border">
           <CardHeader>
-            <CardTitle className="text-neutral-900 flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2">
               <User className="h-5 w-5" />
               Profile Information
             </CardTitle>
-            <CardDescription className="text-neutral-500">
+            <CardDescription>
               Your admin account details
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label className="text-neutral-500 text-sm">Full Name</Label>
-              <div className="text-neutral-900 font-medium mt-1">{profile.full_name}</div>
+              <Label className="text-sm text-muted-foreground">Full Name</Label>
+              <div className="text-foreground font-medium mt-1">{profile.full_name}</div>
             </div>
-            <Separator className="bg-neutral-200" />
+            <Separator />
             <div>
-              <Label className="text-neutral-500 text-sm flex items-center gap-2">
+              <Label className="text-sm text-muted-foreground flex items-center gap-2">
                 <Mail className="h-4 w-4" />
                 Email
               </Label>
-              <div className="text-neutral-900 font-medium mt-1">{profile.email}</div>
-              <p className="text-xs text-neutral-500 mt-1">Email cannot be changed (contact super admin)</p>
+              <div className="text-foreground font-medium mt-1">{profile.email}</div>
+              <p className="text-xs text-muted-foreground mt-1">Email cannot be changed (contact super admin)</p>
             </div>
-            <Separator className="bg-neutral-200" />
+            <Separator />
             <div>
-              <Label className="text-neutral-500 text-sm flex items-center gap-2">
+              <Label className="text-sm text-muted-foreground flex items-center gap-2">
                 <Shield className="h-4 w-4" />
                 Role
               </Label>
@@ -198,36 +198,36 @@ export default function AdminProfilePage() {
             </div>
             {profile.department && (
               <>
-                <Separator className="bg-neutral-200" />
+                <Separator />
                 <div>
-                  <Label className="text-neutral-500 text-sm">Department</Label>
-                  <div className="text-neutral-900 font-medium mt-1">{profile.department}</div>
+                  <Label className="text-sm text-muted-foreground">Department</Label>
+                  <div className="text-foreground font-medium mt-1">{profile.department}</div>
                 </div>
               </>
             )}
           </CardContent>
         </Card>
 
-        <Card className="bg-white border-neutral-200">
+        <Card className="shadow-none border">
           <CardHeader>
-            <CardTitle className="text-neutral-900 flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2">
               <Clock className="h-5 w-5" />
               Account Activity
             </CardTitle>
-            <CardDescription className="text-neutral-500">
+            <CardDescription>
               Your account timeline
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label className="text-neutral-500 text-sm flex items-center gap-2">
+              <Label className="text-sm text-muted-foreground flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
                 Account Created
               </Label>
-              <div className="text-neutral-900 font-medium mt-1">
+              <div className="text-foreground font-medium mt-1">
                 {formatDistanceToNow(new Date(profile.created_at), { addSuffix: true })}
               </div>
-              <div className="text-xs text-neutral-500 mt-1">
+              <div className="text-xs text-muted-foreground mt-1">
                 {new Date(profile.created_at).toLocaleDateString('en-US', { 
                   year: 'numeric', 
                   month: 'long', 
@@ -235,16 +235,16 @@ export default function AdminProfilePage() {
                 })}
               </div>
             </div>
-            <Separator className="bg-neutral-200" />
+            <Separator />
             <div>
-              <Label className="text-neutral-500 text-sm">Last Login</Label>
-              <div className="text-neutral-900 font-medium mt-1">
+              <Label className="text-sm text-muted-foreground">Last Login</Label>
+              <div className="text-foreground font-medium mt-1">
                 {profile.last_login_at 
                   ? formatDistanceToNow(new Date(profile.last_login_at), { addSuffix: true })
                   : 'Never'}
               </div>
               {profile.last_login_at && (
-                <div className="text-xs text-neutral-500 mt-1">
+                <div className="text-xs text-muted-foreground mt-1">
                   {new Date(profile.last_login_at).toLocaleDateString('en-US', { 
                     year: 'numeric', 
                     month: 'long', 
@@ -255,16 +255,16 @@ export default function AdminProfilePage() {
                 </div>
               )}
             </div>
-            <Separator className="bg-neutral-200" />
+            <Separator />
             <div>
-              <Label className="text-neutral-500 text-sm">Account Status</Label>
+              <Label className="text-sm text-muted-foreground">Account Status</Label>
               <div className="mt-2">
                 <Badge
                   variant="outline"
                   className={
                     profile.is_active
-                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                      : 'bg-red-50 text-red-700 border-red-200'
+                      ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20'
+                      : 'bg-red-500/10 text-red-600 border-red-500/20'
                   }
                 >
                   {profile.is_active ? 'Active' : 'Inactive'}
@@ -275,45 +275,42 @@ export default function AdminProfilePage() {
         </Card>
       </div>
 
-      <Card className="bg-white border-neutral-200">
+      <Card className="shadow-none border">
         <CardHeader>
-          <CardTitle className="text-neutral-900 flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2">
             <Lock className="h-5 w-5" />
             Change Password
           </CardTitle>
-          <CardDescription className="text-neutral-500">
+          <CardDescription>
             Update your password to keep your account secure
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4 max-w-md">
             <div>
-              <Label htmlFor="new_password" className="text-neutral-900">New Password</Label>
+              <Label htmlFor="new_password">New Password</Label>
               <Input
                 id="new_password"
                 type="password"
                 placeholder="Enter new password"
                 value={passwordForm.new_password}
                 onChange={(e) => setPasswordForm({ ...passwordForm, new_password: e.target.value })}
-                className="bg-white border-neutral-200 text-neutral-900"
               />
-              <p className="text-xs text-neutral-500 mt-1">Must be at least 8 characters long</p>
+              <p className="text-xs text-muted-foreground mt-1">Must be at least 8 characters long</p>
             </div>
             <div>
-              <Label htmlFor="confirm_password" className="text-neutral-900">Confirm Password</Label>
+              <Label htmlFor="confirm_password">Confirm Password</Label>
               <Input
                 id="confirm_password"
                 type="password"
                 placeholder="Confirm new password"
                 value={passwordForm.confirm_password}
                 onChange={(e) => setPasswordForm({ ...passwordForm, confirm_password: e.target.value })}
-                className="bg-white border-neutral-200 text-neutral-900"
               />
             </div>
             <Button 
               onClick={handleChangePassword}
               disabled={isChangingPassword || !passwordForm.new_password || !passwordForm.confirm_password}
-              className="bg-blue-600 hover:bg-blue-700"
             >
               {isChangingPassword ? 'Changing Password...' : 'Change Password'}
             </Button>
@@ -322,32 +319,32 @@ export default function AdminProfilePage() {
       </Card>
 
       {profile.role === 'super_admin' && (
-        <Card className="bg-white border-neutral-200 border-purple-200">
+        <Card className="shadow-none border-purple-500/30">
           <CardHeader>
-            <CardTitle className="text-neutral-900 flex items-center gap-2">
-              <Shield className="h-5 w-5 text-purple-700" />
+            <CardTitle className="flex items-center gap-2">
+              <Shield className="h-5 w-5 text-purple-600" />
               Super Admin Privileges
             </CardTitle>
-            <CardDescription className="text-neutral-500">
+            <CardDescription>
               You have full system access
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2 text-neutral-700">
+            <ul className="space-y-2 text-muted-foreground">
               <li className="flex items-center gap-2">
-                <div className="h-1.5 w-1.5 rounded-full bg-purple-700" />
+                <div className="h-1.5 w-1.5 rounded-full bg-purple-600" />
                 Full access to all admin panel features
               </li>
               <li className="flex items-center gap-2">
-                <div className="h-1.5 w-1.5 rounded-full bg-purple-700" />
+                <div className="h-1.5 w-1.5 rounded-full bg-purple-600" />
                 Can manage all admin users including other super admins
               </li>
               <li className="flex items-center gap-2">
-                <div className="h-1.5 w-1.5 rounded-full bg-purple-700" />
+                <div className="h-1.5 w-1.5 rounded-full bg-purple-600" />
                 Can update email addresses
               </li>
               <li className="flex items-center gap-2">
-                <div className="h-1.5 w-1.5 rounded-full bg-purple-700" />
+                <div className="h-1.5 w-1.5 rounded-full bg-purple-600" />
                 Access to system settings and API management
               </li>
             </ul>

@@ -1,11 +1,18 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { Card } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,479 +22,367 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
-import { Clock, CheckCircle, XCircle, Activity, TrendingUp, Play, RefreshCw, Loader2, AlertCircle } from 'lucide-react'
-import { format } from 'date-fns'
+import { Switch } from '@/components/ui/switch'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import {
+  Clock,
+  Play,
+  FileText,
+  RefreshCw,
+  Loader2,
+  AlertCircle,
+  CheckCircle2,
+  XCircle,
+  Power,
+} from 'lucide-react'
 import { toast } from 'sonner'
-
-interface CronJobRun {
-  id: string
-  job_name: string
-  status: string
-  started_at: string
-  completed_at: string | null
-  execution_time_ms: number | null
-  error_message: string | null
-  logs: any
-}
-
-interface CronJobStats {
-  total_runs: number
-  successful_runs: number
-  failed_runs: number
-  success_rate: number
-  avg_execution_time: number
-  jobs: Array<{
-    name: string
-    total: number
-    successful: number
-    failed: number
-    last_run: string
-  }>
-}
-
-const STATUS_COLORS: Record<string, string> = {
-  success: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  failed: 'bg-red-50 text-red-700 border-red-200',
-  running: 'bg-blue-50 text-blue-700 border-blue-200',
-}
-
-const AVAILABLE_JOBS = [
-  {
-    name: 'send-daily-prompts',
-    displayName: 'Daily Prompt Emails',
-    description: 'Send daily reflection prompts to users',
-    icon: '📧'
-  },
-  {
-    name: 'regenerate-weekly-insights',
-    displayName: 'Weekly Insights Generation',
-    description: 'Regenerate AI-powered weekly insights for users',
-    icon: '🔄'
-  }
-]
+import {
+  formatSchedule,
+  jobStatusLabel,
+  isJobStatusFailure,
+  type CronJob,
+  type CronJobHistoryItem,
+} from '@/lib/services/cronJobOrg'
 
 export default function CronJobsPage() {
-  const [runs, setRuns] = useState<CronJobRun[]>([])
-  const [stats, setStats] = useState<CronJobStats | null>(null)
+  const [jobs, setJobs] = useState<CronJob[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [triggering, setTriggering] = useState<string | null>(null)
   const [refreshing, setRefreshing] = useState(false)
-  const [jobFilter, setJobFilter] = useState('all')
-  const [statusFilter, setStatusFilter] = useState('all')
-  const [currentPage, setCurrentPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
-  const limit = 50
+  const [error, setError] = useState<string | null>(null)
 
-  const loadRuns = useCallback(async () => {
+  const [runTarget, setRunTarget] = useState<CronJob | null>(null)
+  const [running, setRunning] = useState(false)
+
+  const [historyTarget, setHistoryTarget] = useState<CronJob | null>(null)
+  const [history, setHistory] = useState<CronJobHistoryItem[]>([])
+  const [historyLoading, setHistoryLoading] = useState(false)
+
+  const loadJobs = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
-      const params = new URLSearchParams({
-        limit: limit.toString(),
-        offset: ((currentPage - 1) * limit).toString(),
-      })
-
-      if (jobFilter !== 'all') {
-        params.append('job_name', jobFilter)
+      const response = await fetch('/api/admin/cron-jobs')
+      if (!response.ok) {
+        const data = await response.json().catch(() => null)
+        throw new Error(data?.error || 'Failed to fetch cron jobs')
       }
-
-      if (statusFilter !== 'all') {
-        params.append('status', statusFilter)
-      }
-
-      const response = await fetch(`/api/admin/cron-jobs?${params}`)
-      if (!response.ok) throw new Error('Failed to fetch runs')
-
       const data = await response.json()
-      setRuns(data.runs)
-      setTotalPages(Math.ceil(data.total / limit))
-    } catch (error: any) {
-      setError(error?.message || 'Failed to load cron job runs')
+      setJobs(data.jobs || [])
+    } catch (err: any) {
+      setError(err?.message || 'Failed to load cron jobs')
     } finally {
       setLoading(false)
     }
-  }, [currentPage, jobFilter, limit, statusFilter])
-
-  useEffect(() => {
-    loadStats()
   }, [])
 
   useEffect(() => {
-    loadRuns()
-  }, [loadRuns])
-
-  async function loadStats() {
-    try {
-      setError(null)
-      const response = await fetch('/api/admin/cron-jobs/stats')
-      if (!response.ok) throw new Error('Failed to fetch stats')
-      const data = await response.json()
-      setStats(data.stats)
-    } catch (error: any) {
-      setError(error?.message || 'Failed to load cron job stats')
-    }
-  }
+    loadJobs()
+  }, [loadJobs])
 
   async function refreshData() {
     try {
       setRefreshing(true)
-      setError(null)
-      await Promise.all([loadStats(), loadRuns()])
-      toast.success('Data refreshed')
-    } catch (error: any) {
-      setError(error?.message || 'Failed to refresh data')
-      toast.error('Failed to refresh data')
+      await loadJobs()
+      toast.success('Cron jobs refreshed')
+    } catch {
+      toast.error('Failed to refresh cron jobs')
     } finally {
       setRefreshing(false)
     }
   }
 
-  const [triggerConfirmOpen, setTriggerConfirmOpen] = useState(false)
-  const [jobToTrigger, setJobToTrigger] = useState<string | null>(null)
-
-  async function triggerJob(jobName: string) {
-    setJobToTrigger(jobName)
-    setTriggerConfirmOpen(true)
-  }
-
-  async function confirmTrigger() {
-    if (!jobToTrigger) return
-
+  async function confirmRun() {
+    if (!runTarget) return
     try {
-      setTriggering(jobToTrigger)
-
-      const response = await fetch('/api/admin/cron-jobs/trigger', {
+      setRunning(true)
+      const response = await fetch(`/api/admin/cron-jobs/${runTarget.jobId}/run`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ job_name: jobToTrigger }),
       })
-
       const data = await response.json()
-
-      if (response.ok) {
-        const processed = data?.data?.stats?.totalProcessed || 0
-        toast.success(`Job triggered successfully! Processed ${processed} users.`)
-        setTimeout(() => {
-          loadStats()
-          loadRuns()
-        }, 2000)
+      if (response.ok && data.success) {
+        toast.success(`Ran "${title(runTarget)}" — HTTP ${data.httpStatus} in ${data.duration}ms`)
       } else {
-        toast.error(data?.error || 'Failed to trigger cron job')
+        toast.error(data?.error || data?.statusText || 'Job run failed')
       }
-    } catch (error) {
-      toast.error('Failed to trigger cron job')
+    } catch {
+      toast.error('Failed to run job')
     } finally {
-      setTriggering(null)
-      setTriggerConfirmOpen(false)
-      setJobToTrigger(null)
+      setRunning(false)
+      setRunTarget(null)
     }
   }
 
-  function getStatusColor(status: string): string {
-    return STATUS_COLORS[status] || 'bg-gray-50 text-gray-700 border-gray-200'
-  }
-
-  function getStatusIcon(status: string) {
-    switch (status) {
-      case 'success':
-        return <CheckCircle className="h-4 w-4 text-emerald-600" />
-      case 'failed':
-        return <XCircle className="h-4 w-4 text-red-600" />
-      case 'running':
-        return <Activity className="h-4 w-4 text-blue-600 animate-spin" />
-      default:
-        return <Clock className="h-4 w-4 text-gray-500" />
+  async function toggleJob(job: CronJob, enabled: boolean) {
+    const previous = job.enabled
+    setJobs(prev => prev.map(j => (j.jobId === job.jobId ? { ...j, enabled } : j)))
+    try {
+      const response = await fetch(`/api/admin/cron-jobs/${job.jobId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled }),
+      })
+      const data = await response.json()
+      if (!response.ok) {
+        throw new Error(data?.error || 'Failed to update job')
+      }
+      toast.success(`"${title(job)}" ${enabled ? 'enabled' : 'paused'}`)
+    } catch (err: any) {
+      setJobs(prev => prev.map(j => (j.jobId === job.jobId ? { ...j, enabled: previous } : j)))
+      toast.error(err?.message || 'Failed to update job')
     }
   }
 
-  if (loading && !runs.length && !stats) {
+  async function openHistory(job: CronJob) {
+    setHistoryTarget(job)
+    setHistoryLoading(true)
+    setHistory([])
+    try {
+      const response = await fetch(`/api/admin/cron-jobs/${job.jobId}/history`)
+      const data = await response.json()
+      if (!response.ok) throw new Error(data?.error || 'Failed to load history')
+      setHistory(data.history || [])
+    } catch (err: any) {
+      toast.error(err?.message || 'Failed to load history')
+    } finally {
+      setHistoryLoading(false)
+    }
+  }
+
+  function title(job: CronJob): string {
+    return job.title || job.url.replace(/^https?:\/\//, '').replace(/\/$/, '')
+  }
+
+  function statusLabel(job: CronJob): { label: string; variant: 'default' | 'secondary' | 'destructive' } {
+    if (!job.enabled) return { label: 'Paused', variant: 'secondary' }
+    if (job.lastStatus > 0 && isJobStatusFailure(job.lastStatus)) {
+      return { label: 'Failed', variant: 'destructive' }
+    }
+    return { label: 'Active', variant: 'default' }
+  }
+
+  function relativeTime(unixSeconds: number): string {
+    if (!unixSeconds) return 'Never'
+    const diff = Math.floor(Date.now() / 1000) - unixSeconds
+    if (diff < 60) return 'just now'
+    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`
+    return `${Math.floor(diff / 86400)}d ago`
+  }
+
+  function formatHistoryTime(unixSeconds: number): string {
+    return new Date(unixSeconds * 1000).toLocaleString()
+  }
+
+  if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton className="h-8 w-64 bg-gray-200" />
-        <div className="grid gap-4 md:grid-cols-4">
-          {[1, 2, 3, 4].map(i => (
-            <Skeleton key={i} className="h-32 bg-gray-200" />
+        <div>
+          <Skeleton className="h-9 w-48" />
+          <Skeleton className="h-4 w-72 mt-2" />
+        </div>
+        <div className="grid gap-4">
+          {[1, 2, 3, 4, 5].map(i => (
+            <Skeleton key={i} className="h-[72px]" />
           ))}
         </div>
-        <Skeleton className="h-96 bg-gray-200" />
       </div>
     )
   }
 
-  const statCards = stats ? [
-    {
-      title: 'Total Runs',
-      value: stats.total_runs.toLocaleString(),
-      icon: Activity,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50',
-    },
-    {
-      title: 'Successful',
-      value: stats.successful_runs.toLocaleString(),
-      icon: CheckCircle,
-      color: 'text-emerald-600',
-      bgColor: 'bg-emerald-50',
-    },
-    {
-      title: 'Failed',
-      value: stats.failed_runs.toLocaleString(),
-      icon: XCircle,
-      color: 'text-red-600',
-      bgColor: 'bg-red-50',
-    },
-    {
-      title: 'Success Rate',
-      value: `${stats.success_rate.toFixed(1)}%`,
-      icon: TrendingUp,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50',
-    },
-  ] : []
-
-  // Get unique job names from the runs list
-  const uniqueJobs = Array.from(new Set(runs.map(r => r.job_name)))
-
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Cron Job Monitoring</h1>
-          <p className="text-sm text-gray-500 mt-1">Track scheduled job executions</p>
+          <h1 className="text-3xl font-bold tracking-tight">Cron Jobs</h1>
+          <p className="text-muted-foreground">Monitor and trigger system scheduled tasks.</p>
         </div>
-        <Button
-          onClick={refreshData}
-          disabled={refreshing}
-          variant="outline"
-          className="border-gray-200 bg-white text-gray-900 hover:bg-gray-50"
-        >
-          <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-          Refresh
+        <Button variant="outline" onClick={refreshData} disabled={refreshing}>
+          <RefreshCw className={`mr-2 h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+          Refresh Status
         </Button>
       </div>
 
       {error && (
-        <Card className="p-4 bg-red-50 border-red-200">
-          <p className="text-sm text-red-700">{error}</p>
-        </Card>
-      )}
-
-      {/* Available Jobs - Manual Trigger */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-gray-900">Available Jobs</h2>
-        <div className="grid gap-4">
-          {AVAILABLE_JOBS.map((job) => (
-            <Card key={job.name} className="bg-white border border-gray-100">
-              <div className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="text-4xl">{job.icon}</div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">{job.displayName}</h3>
-                      <p className="text-sm text-gray-500 mt-1">{job.description}</p>
-                      <p className="text-xs text-gray-500 mt-2">
-                        Job Name:{' '}
-                        <code className="bg-gray-100 text-gray-800 px-2 py-0.5 rounded">{job.name}</code>
-                      </p>
-                    </div>
-                  </div>
-                  <AlertDialog open={triggerConfirmOpen && jobToTrigger === job.name} onOpenChange={(open) => !open && setTriggerConfirmOpen(false)}>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        disabled={triggering === job.name}
-                        className="bg-blue-500 hover:bg-blue-600 text-white min-w-[140px]"
-                      >
-                        {triggering === job.name ? (
-                          <>
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                            Running...
-                          </>
-                        ) : (
-                          <>
-                            <Play className="h-4 w-4 mr-2" />
-                            Run Now
-                          </>
-                        )}
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent className="bg-white border-gray-200">
-                      <AlertDialogHeader>
-                        <AlertDialogTitle className="text-gray-900">Trigger Cron Job</AlertDialogTitle>
-                        <AlertDialogDescription className="text-gray-600">
-                          Are you sure you want to manually trigger "{job.displayName}"? This will send emails to eligible users.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel className="bg-white text-gray-900 border-gray-200">Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={confirmTrigger} className="bg-blue-600 hover:bg-blue-700">
-                          Confirm
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-      </div>
-
-      {stats && (
-        <div className="grid gap-4 md:grid-cols-4">
-          {statCards.map((card) => {
-            const Icon = card.icon
-            return (
-              <Card key={card.title} className="bg-white border border-gray-100">
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className={`p-2 rounded-lg ${card.bgColor}`}>
-                      <Icon className={`h-5 w-5 ${card.color}`} />
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-sm text-gray-500">{card.title}</p>
-                    <p className="text-2xl font-semibold text-gray-900">{card.value}</p>
-                  </div>
-                </div>
-              </Card>
-            )
-          })}
-        </div>
-      )}
-
-      <Card className="bg-white border border-gray-100 p-4">
-        <div className="flex gap-4">
-          <Select value={jobFilter} onValueChange={setJobFilter}>
-            <SelectTrigger className="w-[200px] bg-white border-gray-200 text-gray-900">
-              <SelectValue placeholder="All Jobs" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Jobs</SelectItem>
-              {uniqueJobs.map(job => (
-                <SelectItem key={job} value={job}>{job}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[180px] bg-white border-gray-200 text-gray-900">
-              <SelectValue placeholder="All Statuses" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="success">Success</SelectItem>
-              <SelectItem value="failed">Failed</SelectItem>
-              <SelectItem value="running">Running</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </Card>
-
-      <Card className="bg-white border border-gray-100">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-gray-100">
-                <th className="text-left p-4 text-gray-500 font-medium">Job Name</th>
-                <th className="text-left p-4 text-gray-500 font-medium">Status</th>
-                <th className="text-left p-4 text-gray-500 font-medium">Started</th>
-                <th className="text-left p-4 text-gray-500 font-medium">Duration</th>
-                <th className="text-left p-4 text-gray-500 font-medium">Error</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan={5} className="p-4">
-                    <div className="flex justify-center">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-                    </div>
-                  </td>
-                </tr>
-              ) : runs.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="p-8 text-center">
-                    <div className="flex flex-col items-center gap-3 text-gray-500">
-                      <AlertCircle className="h-12 w-12 text-gray-300" />
-                      <div>
-                        <p className="font-medium">No cron job runs found</p>
-                        <p className="text-sm mt-1">Trigger a job manually or wait for the scheduled run</p>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-              ) : (
-                runs.map((run) => (
-                  <tr key={run.id} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="p-4 text-sm font-medium text-gray-900">{run.job_name}</td>
-                    <td className="p-4">
-                      <div className="flex items-center gap-2">
-                        {getStatusIcon(run.status)}
-                        <Badge className={`${getStatusColor(run.status)} border capitalize`}>
-                          {run.status}
-                        </Badge>
-                      </div>
-                    </td>
-                    <td className="p-4 text-sm text-gray-700">
-                      {format(new Date(run.started_at), 'MMM dd, HH:mm:ss')}
-                    </td>
-                    <td className="p-4 text-sm text-gray-700">
-                      {run.execution_time_ms ? `${run.execution_time_ms}ms` : '-'}
-                    </td>
-                    <td className="p-4 text-sm text-gray-500">
-                      {run.error_message ? (
-                        <details className="cursor-pointer">
-                          <summary className="text-red-700 hover:text-red-800">
-                            View error
-                          </summary>
-                          <pre className="mt-2 text-xs bg-red-50 p-3 rounded-lg border border-red-200 overflow-x-auto max-w-md text-red-800">
-                            {run.error_message}
-                          </pre>
-                        </details>
-                      ) : (
-                        '-'
-                      )}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between p-4 border-t border-gray-100">
-            <p className="text-sm text-gray-500">
-              Page {currentPage} of {totalPages}
-            </p>
-            <div className="flex gap-2">
-              <Button
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                variant="outline"
-                size="sm"
-                className="border-gray-200 bg-white text-gray-900 hover:bg-gray-50 disabled:opacity-50"
-              >
-                Previous
-              </Button>
-              <Button
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-                variant="outline"
-                size="sm"
-                className="border-gray-200 bg-white text-gray-900 hover:bg-gray-50 disabled:opacity-50"
-              >
-                Next
-              </Button>
-            </div>
+        <div className="flex items-start gap-3 rounded-lg border border-destructive/40 bg-destructive/10 p-4 text-sm">
+          <AlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+          <div>
+            <p className="font-medium">Unable to load cron jobs</p>
+            <p className="text-muted-foreground mt-1">{error}</p>
+            {error.includes('CRONJOB_ORG_API_KEY') && (
+              <p className="text-muted-foreground mt-1">
+                Add the <code className="bg-muted px-1 rounded">CRONJOB_ORG_API_KEY</code> environment
+                variable to Vercel, then redeploy.
+              </p>
+            )}
           </div>
-        )}
-      </Card>
+        </div>
+      )}
+
+      {!error && (
+        <div className="grid gap-4">
+          {jobs.length === 0 ? (
+            <Card className="shadow-none border border-dashed bg-muted/20">
+              <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+                <Clock className="h-10 w-10 text-muted-foreground" />
+                <p className="font-medium mt-4 text-muted-foreground">No cron jobs found</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Create jobs in the cron-job.org console to see them here.
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            jobs.map((job) => {
+              const status = statusLabel(job)
+              return (
+                <Card key={job.jobId} className="shadow-none border">
+                  <CardContent className="p-4 flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-4 min-w-0">
+                      <div className="p-2 bg-muted rounded-md shrink-0">
+                        <Clock size={20} className="text-muted-foreground" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-medium truncate">{title(job)}</p>
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5 flex-wrap">
+                          <code className="bg-muted px-1 rounded">{formatSchedule(job.schedule)}</code>
+                          <span>•</span>
+                          <span>Last run: {relativeTime(job.lastExecution)}</span>
+                          {job.lastDuration > 0 && (
+                            <>
+                              <span>•</span>
+                              <span>{job.lastDuration}ms</span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4 shrink-0">
+                      <Badge variant={status.variant}>{status.label}</Badge>
+                      <div className="flex items-center gap-1" title={job.enabled ? 'Pause job' : 'Enable job'}>
+                        <Power size={14} className="text-muted-foreground" />
+                        <Switch
+                          checked={job.enabled}
+                          onCheckedChange={(checked) => toggleJob(job, checked)}
+                        />
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        title={`Run ${title(job)} now`}
+                        onClick={() => setRunTarget(job)}
+                      >
+                        <Play size={16} />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        title={`View history for ${title(job)}`}
+                        onClick={() => openHistory(job)}
+                      >
+                        <FileText size={16} />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )
+            })
+          )}
+        </div>
+      )}
+
+      {/* Run now confirmation */}
+      <AlertDialog open={!!runTarget} onOpenChange={(open) => !open && setRunTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Run "{runTarget ? title(runTarget) : ''}" now?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will fire a single request to the job URL immediately. It will not be recorded in
+              cron-job.org history.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmRun} disabled={running}>
+              {running && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Run Now
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* History dialog */}
+      <Dialog open={!!historyTarget} onOpenChange={(open) => !open && setHistoryTarget(null)}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Execution History</DialogTitle>
+            <DialogDescription>
+              Recent runs for "{historyTarget ? title(historyTarget) : ''}"
+            </DialogDescription>
+          </DialogHeader>
+
+          {historyLoading ? (
+            <div className="space-y-2 py-4">
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+          ) : history.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-10 text-center text-muted-foreground">
+              <FileText className="h-8 w-8" />
+              <p className="text-sm mt-2">No executions recorded yet.</p>
+            </div>
+          ) : (
+            <div className="max-h-[50vh] overflow-y-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Executed</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>HTTP</TableHead>
+                    <TableHead>Duration</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {history.map((item) => (
+                    <TableRow key={item.identifier}>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {formatHistoryTime(item.date)}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          {item.status === 1 ? (
+                            <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                          ) : item.status === 0 ? (
+                            <Clock className="h-4 w-4 text-muted-foreground" />
+                          ) : (
+                            <XCircle className="h-4 w-4 text-destructive" />
+                          )}
+                          <span className={item.status === 1 ? 'text-emerald-600' : item.status === 0 ? 'text-muted-foreground' : 'text-destructive'}>
+                            {item.statusText || jobStatusLabel(item.status)}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-sm">{item.httpStatus ?? '-'}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">{item.duration}ms</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+
+          <DialogFooter className="sm:justify-end">
+            <Button variant="outline" onClick={() => setHistoryTarget(null)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

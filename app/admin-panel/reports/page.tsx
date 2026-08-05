@@ -131,10 +131,10 @@ export default function ContentReportsPage() {
 
   function getStatusBadge(status: string) {
     const variants: Record<string, { color: string; icon: any }> = {
-      pending: { color: 'bg-amber-50 text-amber-700 border-amber-200', icon: AlertTriangle },
-      reviewed: { color: 'bg-blue-50 text-blue-700 border-blue-200', icon: CheckCircle2 },
-      dismissed: { color: 'bg-neutral-50 text-neutral-700 border-neutral-200', icon: CheckCircle2 },
-      actioned: { color: 'bg-emerald-50 text-emerald-700 border-emerald-200', icon: CheckCircle2 },
+      pending: { color: 'bg-amber-500/10 text-amber-600 border-amber-500/20', icon: AlertTriangle },
+      reviewed: { color: 'bg-blue-500/10 text-blue-600 border-blue-500/20', icon: CheckCircle2 },
+      dismissed: { color: 'bg-muted text-muted-foreground border', icon: CheckCircle2 },
+      actioned: { color: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20', icon: CheckCircle2 },
     }
     const variant = variants[status] || variants.pending
     const Icon = variant.icon
@@ -149,85 +149,85 @@ export default function ContentReportsPage() {
   if (loading && !stats) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-neutral-500">Loading reports...</div>
+        <div className="text-muted-foreground">Loading reports...</div>
       </div>
     )
   }
 
   return (
-    <div className="h-full flex flex-col p-6 gap-6">
+    <div className="h-full flex flex-col gap-8">
       <div>
-        <h1 className="text-2xl font-semibold text-neutral-900">Content Reports</h1>
-        <p className="text-sm text-neutral-500">Review reported reflections, comments, and users</p>
+        <h1 className="text-3xl font-bold tracking-tight">Content Reports</h1>
+        <p className="text-muted-foreground">Review reported reflections, comments, and users</p>
       </div>
 
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-lg border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
           {error}
         </div>
       )}
 
       {stats && stats.self_harm_pending > 0 && (
-        <div className="rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-800 flex items-center gap-2 font-medium">
+        <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-600 flex items-center gap-2 font-medium">
           <ShieldAlert className="h-4 w-4 shrink-0" />
           {stats.self_harm_pending} pending self-harm {stats.self_harm_pending === 1 ? 'report needs' : 'reports need'} review — these are sorted to the top of the queue below.
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="bg-white border-neutral-200">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="shadow-none border">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-neutral-500">Total Reports</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Reports</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
-              <div className="text-2xl font-semibold text-neutral-900">{stats?.total || 0}</div>
+              <div className="text-2xl font-bold text-foreground">{stats?.total || 0}</div>
               <Flag className="h-8 w-8 text-blue-500" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-white border-neutral-200">
+        <Card className="shadow-none border">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-neutral-500">Pending Review</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Pending Review</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
-              <div className="text-2xl font-semibold text-amber-700">{stats?.pending || 0}</div>
+              <div className="text-2xl font-bold text-amber-600">{stats?.pending || 0}</div>
               <AlertTriangle className="h-8 w-8 text-amber-500" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-white border-neutral-200">
+        <Card className="shadow-none border">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-neutral-500">Self-Harm (Pending)</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Self-Harm (Pending)</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
-              <div className="text-2xl font-semibold text-red-700">{stats?.self_harm_pending || 0}</div>
+              <div className="text-2xl font-bold text-red-600">{stats?.self_harm_pending || 0}</div>
               <ShieldAlert className="h-8 w-8 text-red-500" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-white border-neutral-200">
+        <Card className="shadow-none border">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-neutral-500">Actioned</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Actioned</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
-              <div className="text-2xl font-semibold text-emerald-700">{stats?.actioned || 0}</div>
-              <CheckCircle2 className="h-8 w-8 text-green-500" />
+              <div className="text-2xl font-bold text-emerald-600">{stats?.actioned || 0}</div>
+              <CheckCircle2 className="h-8 w-8 text-emerald-500" />
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <Card className="bg-white border-neutral-200">
+      <Card className="shadow-none border">
         <CardHeader>
-          <CardTitle className="text-neutral-900">Reports</CardTitle>
-          <CardDescription className="text-neutral-500">
+          <CardTitle>Reports</CardTitle>
+          <CardDescription>
             Click a report to see the reported content in full
           </CardDescription>
         </CardHeader>
@@ -236,7 +236,7 @@ export default function ContentReportsPage() {
             <select
               value={statusFilter}
               onChange={(e) => { setStatusFilter(e.target.value); setPage(1) }}
-              className="px-3 py-2 bg-white border border-neutral-200 rounded-md text-neutral-900 text-sm"
+              className="h-10 rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             >
               <option value="">All Statuses</option>
               <option value="pending">Pending</option>
@@ -248,7 +248,7 @@ export default function ContentReportsPage() {
             <select
               value={reasonFilter}
               onChange={(e) => { setReasonFilter(e.target.value); setPage(1) }}
-              className="px-3 py-2 bg-white border border-neutral-200 rounded-md text-neutral-900 text-sm"
+              className="h-10 rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             >
               <option value="">All Reasons</option>
               {Object.entries(REASON_LABELS).map(([value, label]) => (
@@ -259,7 +259,7 @@ export default function ContentReportsPage() {
 
           <div className="space-y-2">
             {reports.length === 0 ? (
-              <div className="text-center py-8 text-neutral-500 text-sm">No reports found</div>
+              <div className="text-center py-8 text-muted-foreground text-sm">No reports found</div>
             ) : (
               reports.map((report) => {
                 const isExpanded = expandedId === report.id
@@ -269,22 +269,22 @@ export default function ContentReportsPage() {
                     key={report.id}
                     className={`rounded-lg border overflow-hidden ${
                       isSelfHarm && report.status === 'pending'
-                        ? 'border-red-300 bg-red-50/50'
-                        : 'border-neutral-200 bg-white'
+                        ? 'border-red-500/30 bg-red-500/5'
+                        : 'border bg-card'
                     }`}
                   >
                     <button
                       onClick={() => setExpandedId(isExpanded ? null : report.id)}
-                      className="w-full flex items-center justify-between gap-4 px-4 py-3 text-left hover:bg-neutral-50"
+                      className="w-full flex items-center justify-between gap-4 px-4 py-3 text-left hover:bg-muted/50 transition-colors"
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         {isSelfHarm && <ShieldAlert className="h-4 w-4 text-red-600 shrink-0" />}
                         <div className="min-w-0">
-                          <div className="text-sm font-medium text-neutral-900 truncate">
+                          <div className="text-sm font-medium text-foreground truncate">
                             {REASON_LABELS[report.reason] || report.reason} · {report.target_type}
-                            {report.target_deleted && <span className="text-neutral-400 font-normal"> (content deleted)</span>}
+                            {report.target_deleted && <span className="text-muted-foreground font-normal"> (content deleted)</span>}
                           </div>
-                          <div className="text-xs text-neutral-500 truncate">
+                          <div className="text-xs text-muted-foreground truncate">
                             Reported by {report.reporter?.full_name || report.reporter?.email || 'Unknown'} ·{' '}
                             {format(new Date(report.created_at), 'MMM dd, yyyy')}
                           </div>
@@ -292,36 +292,36 @@ export default function ContentReportsPage() {
                       </div>
                       <div className="flex items-center gap-3 shrink-0">
                         {getStatusBadge(report.status)}
-                        {isExpanded ? <ChevronUp className="h-4 w-4 text-neutral-400" /> : <ChevronDown className="h-4 w-4 text-neutral-400" />}
+                        {isExpanded ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
                       </div>
                     </button>
 
                     {isExpanded && (
-                      <div className="px-4 pb-4 border-t border-neutral-100 pt-3 space-y-3">
+                      <div className="border-t px-4 pt-3 pb-4 space-y-3">
                         {report.details && (
                           <div>
-                            <div className="text-xs font-medium text-neutral-500 mb-1">Reporter's details</div>
-                            <div className="text-sm text-neutral-800">{report.details}</div>
+                            <div className="text-xs font-medium text-muted-foreground mb-1">Reporter's details</div>
+                            <div className="text-sm text-foreground">{report.details}</div>
                           </div>
                         )}
 
                         <div>
-                          <div className="text-xs font-medium text-neutral-500 mb-1">
+                          <div className="text-xs font-medium text-muted-foreground mb-1">
                             Reported {report.target_type}
                             {report.target_author && (
                               <> by {report.target_author.full_name || report.target_author.email}</>
                             )}
                           </div>
                           {report.target_deleted ? (
-                            <div className="text-sm text-neutral-400 italic">
+                            <div className="text-sm text-muted-foreground italic">
                               This content no longer exists (already deleted).
                             </div>
                           ) : report.target_type === 'user' ? (
-                            <div className="text-sm text-neutral-800">
+                            <div className="text-sm text-foreground">
                               {report.target?.full_name || report.target?.username} ({report.target?.email})
                             </div>
                           ) : (
-                            <div className="text-sm text-neutral-800 bg-neutral-50 rounded-md p-3 border border-neutral-200 whitespace-pre-wrap">
+                            <div className="text-sm text-foreground bg-muted rounded-md p-3 border whitespace-pre-wrap">
                               {report.target?.text}
                             </div>
                           )}
@@ -333,7 +333,6 @@ export default function ContentReportsPage() {
                             variant="outline"
                             disabled={actingOnId === report.id}
                             onClick={() => updateStatus(report.id, 'dismissed')}
-                            className="bg-white border-neutral-200 text-neutral-700 hover:bg-neutral-50"
                           >
                             Dismiss
                           </Button>
@@ -342,7 +341,6 @@ export default function ContentReportsPage() {
                             variant="outline"
                             disabled={actingOnId === report.id}
                             onClick={() => updateStatus(report.id, 'reviewed')}
-                            className="bg-white border-neutral-200 text-neutral-700 hover:bg-neutral-50"
                           >
                             Mark Reviewed
                           </Button>
@@ -352,7 +350,7 @@ export default function ContentReportsPage() {
                               variant="outline"
                               disabled={actingOnId === report.id}
                               onClick={() => removeContent(report)}
-                              className="bg-white border-red-200 text-red-700 hover:bg-red-50"
+                              className="border-red-500/30 text-red-600 hover:bg-red-500/10 hover:text-red-600"
                             >
                               <Trash2 className="h-3.5 w-3.5 mr-1.5" />
                               Remove Content
@@ -374,11 +372,10 @@ export default function ContentReportsPage() {
                 size="sm"
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="bg-white border-neutral-200 text-neutral-900 hover:bg-neutral-50"
               >
                 Previous
               </Button>
-              <span className="flex items-center px-4 text-sm text-neutral-500">
+              <span className="flex items-center px-4 text-sm text-muted-foreground">
                 Page {page} of {totalPages}
               </span>
               <Button
@@ -386,7 +383,6 @@ export default function ContentReportsPage() {
                 size="sm"
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="bg-white border-neutral-200 text-neutral-900 hover:bg-neutral-50"
               >
                 Next
               </Button>

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { Card } from '@/components/ui/card'
-import { Settings } from 'lucide-react'
 import MaintenanceStatus from './components/MaintenanceStatus'
 import ScheduledMaintenance from './components/ScheduledMaintenance'
 import MaintenanceHistory from './components/MaintenanceHistory'
@@ -41,32 +40,29 @@ export default function MaintenancePage() {
   }
 
   return (
-    <div className="h-full flex flex-col p-6 gap-6">
+    <div className="h-full flex flex-col gap-8">
       {/* Header */}
       <div>
-        <div className="flex items-center gap-3">
-          <Settings className="h-7 w-7 text-amber-600" />
-          <h1 className="text-2xl font-semibold text-neutral-900">Maintenance Control</h1>
-        </div>
-        <p className="text-sm text-neutral-500">Manage system maintenance windows and scheduled downtime</p>
+        <h1 className="text-3xl font-bold tracking-tight">Maintenance Control</h1>
+        <p className="text-muted-foreground">Manage system maintenance windows and scheduled downtime</p>
       </div>
 
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-lg border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
           {error}
         </div>
       )}
 
       {/* Active Status Banner */}
       {maintenanceEnabled && (
-        <Card className="bg-amber-50 border-amber-200 p-4">
+        <Card className="border-amber-500/20 bg-amber-500/10 p-4">
           <div className="flex items-center gap-3">
             <div className="h-3 w-3 bg-amber-600 rounded-full animate-pulse" />
             <div>
-              <p className="text-amber-800 font-semibold">
+              <p className="text-amber-600 font-semibold">
                 System is currently in maintenance mode
               </p>
-              <p className="text-sm text-amber-700">
+              <p className="text-sm text-amber-600/90">
                 Users are seeing the maintenance page
               </p>
             </div>
@@ -87,7 +83,7 @@ export default function MaintenancePage() {
         {/* Right - Scheduled & History (60%) */}
         <div className="col-span-7 overflow-y-auto">
           <Tabs defaultValue="scheduled" className="space-y-4">
-            <TabsList className="bg-neutral-100 border border-neutral-200">
+            <TabsList>
               <TabsTrigger value="scheduled">Scheduled Maintenance</TabsTrigger>
               <TabsTrigger value="history">History</TabsTrigger>
             </TabsList>

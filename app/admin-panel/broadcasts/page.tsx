@@ -1,10 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Megaphone, Send, AlertCircle, CheckCircle2, Loader2, Eye, Users, EyeOff } from 'lucide-react'
+import { Send, AlertCircle, CheckCircle2, Loader2, Eye, Users, EyeOff } from 'lucide-react'
 
 const TEMPLATE_OPTIONS = [
   { value: 'feature_announcement', label: 'Feature Announcement' },
@@ -66,90 +67,91 @@ export default function BroadcastsPage() {
   ` : ''
 
   return (
-    <div className="p-8 max-w-4xl mx-auto space-y-8">
+    <div className="mx-auto max-w-4xl space-y-8">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-500/20">
-          <Megaphone className="h-6 w-6 text-white" />
-        </div>
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Broadcasts</h1>
-          <p className="text-sm text-slate-500">Send announcements to your users</p>
-        </div>
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">Broadcasts</h1>
+        <p className="text-muted-foreground">Send announcements to your users</p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Composer */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white border border-slate-200 rounded-xl p-6 space-y-5 shadow-sm">
-            <h2 className="text-base font-semibold text-slate-900">Compose Message</h2>
-
-            <div className="space-y-2">
-              <Label className="text-sm font-medium text-slate-700">Template Theme</Label>
-              <select
-                value={templateKey}
-                onChange={(e) => setTemplateKey(e.target.value)}
-                className="w-full h-11 px-3 rounded-xl bg-white border border-slate-300 text-slate-900 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
-              >
-                {TEMPLATE_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
-                ))}
-              </select>
-              <p className="text-xs text-slate-400">Controls the branded wrapper (colors, logo, footer) around your content.</p>
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-sm font-medium text-slate-700">Subject Line</Label>
-              <Input
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-                placeholder="e.g. New reflection features are here!"
-                className="h-11 bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label className="text-sm font-medium text-slate-700">Email Content (HTML)</Label>
-                <button
-                  onClick={() => setPreview(!preview)}
-                  className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1.5"
+          <Card className="shadow-none border">
+            <CardHeader>
+              <CardTitle>Compose Message</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              <div className="space-y-2">
+                <Label>Template Theme</Label>
+                <select
+                  value={templateKey}
+                  onChange={(e) => setTemplateKey(e.target.value)}
+                  className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                 >
-                  {preview ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-                  {preview ? 'Edit' : 'Preview'}
-                </button>
+                  {TEMPLATE_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+                <p className="text-xs text-muted-foreground">Controls the branded wrapper (colors, logo, footer) around your content.</p>
               </div>
-              {preview ? (
-                <div
-                  className="w-full min-h-[300px] rounded-xl bg-white border border-slate-200 p-4 overflow-auto"
-                  dangerouslySetInnerHTML={{ __html: previewHtml }}
+
+              <div className="space-y-2">
+                <Label>Subject Line</Label>
+                <Input
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                  placeholder="e.g. New reflection features are here!"
                 />
-              ) : (
-                <textarea
-                  value={contentHtml}
-                  onChange={(e) => setContentHtml(e.target.value)}
-                  placeholder='<p>Write your announcement here...</p><p>Use basic HTML tags: &lt;h2&gt;, &lt;p&gt;, &lt;a&gt;, &lt;strong&gt;, &lt;ul&gt;, &lt;li&gt;</p>'
-                  className="w-full min-h-[300px] p-4 rounded-xl bg-white border border-slate-300 text-slate-900 placeholder:text-slate-400 text-sm font-mono focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-y"
-                />
-              )}
-              <p className="text-xs text-slate-400">Write basic HTML. It will be wrapped with the selected template branding.</p>
-            </div>
-          </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label>Email Content (HTML)</Label>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setPreview(!preview)}
+                    className="h-8 px-2"
+                  >
+                    {preview ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                    {preview ? 'Edit' : 'Preview'}
+                  </Button>
+                </div>
+                {preview ? (
+                  <div
+                    className="w-full min-h-[300px] rounded-md bg-card border p-4 overflow-auto"
+                    dangerouslySetInnerHTML={{ __html: previewHtml }}
+                  />
+                ) : (
+                  <textarea
+                    value={contentHtml}
+                    onChange={(e) => setContentHtml(e.target.value)}
+                    placeholder='<p>Write your announcement here...</p><p>Use basic HTML tags: &lt;h2&gt;, &lt;p&gt;, &lt;a&gt;, &lt;strong&gt;, &lt;ul&gt;, &lt;li&gt;</p>'
+                    className="w-full min-h-[300px] p-4 rounded-md bg-card border border-input text-foreground placeholder:text-muted-foreground text-sm font-mono focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-y"
+                  />
+                )}
+                <p className="text-xs text-muted-foreground">Write basic HTML. It will be wrapped with the selected template branding.</p>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Audience */}
-          <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-            <h2 className="text-base font-semibold text-slate-900 mb-4">Audience</h2>
-            <div className="space-y-3">
+          <Card className="shadow-none border">
+            <CardHeader>
+              <CardTitle className="mb-1">Audience</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
               {AUDIENCE_OPTIONS.map((opt) => (
                 <label
                   key={opt.value}
-                  className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
+                  className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
                     audience === opt.value
-                      ? 'bg-blue-50 border-blue-200'
-                      : 'bg-white border-slate-200 hover:bg-slate-50'
+                      ? 'bg-primary/10 border-primary/30'
+                      : 'bg-card border hover:bg-muted'
                   }`}
                 >
                   <input
@@ -162,59 +164,63 @@ export default function BroadcastsPage() {
                   />
                   <div>
                     <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4 text-slate-500" />
-                      <p className="text-sm font-medium text-slate-900">{opt.label}</p>
+                      <Users className="h-4 w-4 text-muted-foreground" />
+                      <p className="text-sm font-medium text-foreground">{opt.label}</p>
                     </div>
-                    <p className="text-xs text-slate-500 mt-0.5">{opt.desc}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{opt.desc}</p>
                   </div>
                 </label>
               ))}
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
           {/* Actions */}
-          <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-            <h2 className="text-base font-semibold text-slate-900 mb-4">Actions</h2>
-            <Button
-              onClick={handleSend}
-              disabled={sending || !subject.trim() || !contentHtml.trim()}
-              className="w-full h-11 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium shadow-lg shadow-blue-500/20 transition-all disabled:opacity-50"
-            >
-              {sending ? (
-                <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Sending...</>
-              ) : (
-                <><Send className="h-4 w-4 mr-2" />Send Broadcast</>
-              )}
-            </Button>
-            <p className="text-xs text-slate-400 mt-2 text-center">This cannot be undone. Double-check your content.</p>
-          </div>
+          <Card className="shadow-none border">
+            <CardHeader>
+              <CardTitle className="mb-1">Actions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Button
+                onClick={handleSend}
+                disabled={sending || !subject.trim() || !contentHtml.trim()}
+                className="w-full"
+              >
+                {sending ? (
+                  <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Sending...</>
+                ) : (
+                  <><Send className="h-4 w-4 mr-2" />Send Broadcast</>
+                )}
+              </Button>
+              <p className="text-xs text-muted-foreground mt-2 text-center">This cannot be undone. Double-check your content.</p>
+            </CardContent>
+          </Card>
         </div>
       </div>
 
       {/* Error */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
-          <AlertCircle className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
-          <p className="text-sm text-red-700">{error}</p>
+        <div className="flex items-start gap-3 rounded-lg border border-destructive/40 bg-destructive/10 p-4">
+          <AlertCircle className="h-5 w-5 text-destructive mt-0.5 flex-shrink-0" />
+          <p className="text-sm text-destructive">{error}</p>
         </div>
       )}
 
       {/* Result */}
       {result && (
-        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6">
+        <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-6">
           <div className="flex items-center gap-3 mb-4">
             <CheckCircle2 className="h-6 w-6 text-emerald-600" />
             <div>
-              <h3 className="text-base font-semibold text-emerald-900">Broadcast Complete</h3>
-              <p className="text-sm text-emerald-700">Sent to {result.sent} of {result.sent + result.failed} users ({result.failed} failed)</p>
+              <h3 className="text-base font-semibold text-emerald-600">Broadcast Complete</h3>
+              <p className="text-sm text-emerald-600/90">Sent to {result.sent} of {result.sent + result.failed} users ({result.failed} failed)</p>
             </div>
           </div>
           {result.errors?.length > 0 && (
             <div className="mt-3 space-y-1">
-              <p className="text-xs font-medium text-red-600">Failed deliveries:</p>
+              <p className="text-xs font-medium text-destructive">Failed deliveries:</p>
               <div className="max-h-32 overflow-y-auto space-y-1">
                 {result.errors.map((e: any, i: number) => (
-                  <p key={i} className="text-xs text-red-600">• {e.email}: {e.error}</p>
+                  <p key={i} className="text-xs text-destructive">• {e.email}: {e.error}</p>
                 ))}
               </div>
             </div>
