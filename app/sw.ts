@@ -1,7 +1,7 @@
 /// <reference lib="webworker" />
 
-const CACHE_NAME = 'prompt-and-pause-v2'
-const RUNTIME_CACHE = 'runtime-cache-v2'
+const CACHE_NAME = 'prompt-and-pause-v3'
+const RUNTIME_CACHE = 'runtime-cache-v3'
 
 declare const self: ServiceWorkerGlobalScope
 
@@ -16,11 +16,42 @@ const PRECACHE_ASSETS = [
   '/manifest.json',
 ]
 
+// Navigation FetchEvents use redirect mode 'manual', so a Response produced by
+// following an HTTP redirect (response.redirected === true) is rejected with
+// "a redirected response was used for a request whose redirect mode is not
+// 'follow'". Rebuild such responses as a clean copy (redirected === false)
+// before serving or caching them. Adapted from Workbox's cleanRedirect().
+function cleanRedirectedResponse(response: Response): Promise<Response> {
+  if (!response.redirected) {
+    return Promise.resolve(response)
+  }
+
+  const clonedResponse = response.clone()
+
+  return clonedResponse.blob().then((body) => {
+    return new Response(body, {
+      headers: clonedResponse.headers,
+      status: clonedResponse.status,
+      statusText: clonedResponse.statusText,
+    })
+  })
+}
+
 // Install event - cache essential assets
 self.addEventListener('install', (event: ExtendableEvent) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(PRECACHE_ASSETS)
+      // Fetch each asset individually and store a clean (non-redirected)
+      // copy. cache.addAll() follows 3xx redirects and stores the redirected
+      // response under the original URL, which later breaks navigations.
+      return Promise.all(
+        PRECACHE_ASSETS.map((asset) =>
+          fetch(asset)
+            .then((response) => cleanRedirectedResponse(response))
+            .then((cleanResponse) => cache.put(asset, cleanResponse))
+            .catch(() => {})
+        )
+      )
     })
   )
   // Force the waiting service worker to become the active service worker
@@ -64,24 +95,23 @@ self.addEventListener('fetch', (event: FetchEvent) => {
 
   event.respondWith(
     fetch(request)
-      .then((response) => {
-        // Clone the response before caching
-        const responseToCache = response.clone()
-
-        // Cache successful responses
-        if (response.status === 200) {
+      .then((response) => cleanRedirectedResponse(response))
+      .then((cleanResponse) => {
+        // Cache successful responses (cleaned copies only, so redirects never
+        // get cached under their original URL)
+        if (cleanResponse.status === 200) {
           caches.open(RUNTIME_CACHE).then((cache) => {
-            cache.put(request, responseToCache)
+            cache.put(request, cleanResponse.clone())
           })
         }
 
-        return response
+        return cleanResponse
       })
       .catch(() => {
         // If network fails, try cache
         return caches.match(request).then((cachedResponse) => {
           if (cachedResponse) {
-            return cachedResponse
+            return cleanRedirectedResponse(cachedResponse)
           }
 
           // If no cache, return offline page for navigation requests
