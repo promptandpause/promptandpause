@@ -26,8 +26,8 @@ export default function ProfileSettingsRedirectPage() {
 
   return (
     <AuthGuard redirectPath="/dashboard/settings/profile">
-      <div className={`min-h-screen flex items-center justify-center ${isDark ? 'bg-[#0A0A0A]' : 'bg-[#FFFFFF]'}`}>
-        <Spinner size={24} weight="bold" className={`animate-spin ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`} />
+      <div className={`min-h-screen flex items-center justify-center ${isDark ? 'bg-[#0A0E18]' : 'bg-[#F9FBFB]'}`}>
+        <Spinner size={24} weight="bold" className={`animate-spin ${isDark ? 'text-white/30' : 'text-slate-400'}`} />
       </div>
     </AuthGuard>
   )

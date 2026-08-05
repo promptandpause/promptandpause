@@ -24,7 +24,7 @@ export function VisibilitySelector({ value, onChange, className }: VisibilitySel
   const isDark = theme === 'dark'
 
   return (
-    <div className={cn('flex gap-1 p-1 rounded-xl', isDark ? 'bg-white/[0.06]' : 'bg-[#F7F9FA]', className)}>
+    <div className={cn('flex gap-1 p-1 rounded-full', isDark ? 'bg-white/[0.06]' : 'bg-slate-100/80', className)}>
       {options.map(opt => {
         const Icon = opt.icon
         const selected = value === opt.value
@@ -33,18 +33,18 @@ export function VisibilitySelector({ value, onChange, className }: VisibilitySel
             key={opt.value}
             onClick={() => onChange(opt.value)}
             className={cn(
-              'relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all',
+              'relative flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all',
               selected
-                ? isDark ? 'text-white' : 'text-[#0F1419]'
-                : isDark ? 'text-white/30 hover:text-white/50' : 'text-[#8B98A5] hover:text-[#536471]'
+                ? isDark ? 'text-white' : 'text-slate-900'
+                : isDark ? 'text-white/30 hover:text-white/50' : 'text-slate-400 hover:text-slate-600'
             )}
           >
             {selected && (
               <motion.div
                 layoutId="visibility-bg"
                 className={cn(
-                  'absolute inset-0 rounded-lg',
-                  isDark ? 'bg-[#161618]' : 'bg-white shadow-sm'
+                  'absolute inset-0 rounded-full',
+                  isDark ? 'bg-[#1B2436]' : 'bg-white shadow-sm'
                 )}
               />
             )}

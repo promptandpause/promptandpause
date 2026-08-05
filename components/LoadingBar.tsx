@@ -49,7 +49,7 @@ export default function LoadingBar() {
           className={`fixed top-0 left-0 right-0 h-[2px] z-[100] origin-left motion-reduce:hidden ${
             isDark
               ? 'bg-gradient-to-r from-[#8BA8C8] via-[#B8A8D8] to-[#8ABFA8]'
-              : 'bg-gradient-to-r from-[#1D9BF0] via-[#0085FF] to-[#1D9BF0]'
+              : 'bg-gradient-to-r from-[#6366F1] via-[#818CF8] to-[#818CF8]'
           }`}
           style={{ transformOrigin: 'left' }}
         >

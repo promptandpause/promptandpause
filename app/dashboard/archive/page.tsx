@@ -39,6 +39,7 @@ function ArchivePageContent() {
   const { toast } = useToast()
   const supabase = getSupabaseClient()
   const { theme } = useTheme()
+  const isDark = theme === "dark"
   const { tier, features = {}, isLoading: tierLoading } = useTier()
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedFilter, setSelectedFilter] = useState("All")
@@ -200,105 +201,121 @@ function ArchivePageContent() {
   return (
     <div 
       data-dashboard
-      className={`min-h-screen ${theme === 'dark' ? 'bg-[#0A0A0A]' : 'bg-[#FFFFFF]'}`}
+      className={`min-h-screen ${isDark ? 'bg-[#0A0E18]' : 'bg-[#F9FBFB]'}`}
     >
       <div className="flex h-screen overflow-hidden">
         <DashboardSidebar />
 
         <main className="flex-1 pb-32 md:pb-10 overflow-y-auto scrollbar-thin">
-          <div className="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-10 pt-16 md:pt-10">
+          <div className="max-w-[680px] mx-auto px-4 md:px-8 pt-16 md:pt-10">
           <div className="space-y-5 md:space-y-6">
-          {/* Header Card */}
+
+          {/* Page title */}
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ type: "spring", stiffness: 260, damping: 22 }}
+          >
+            <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>Archive</h1>
+            <p className={`text-sm mt-1 ${isDark ? 'text-white/40' : 'text-slate-400'}`}>Browse your past reflections.</p>
+          </motion.div>
+
+          {/* Toolbar Card */}
           <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ type: "spring", stiffness: 100, damping: 20 }}
             >
-            <Card className={`rounded-2xl p-4 md:p-6 border shadow-none ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#EFF3F4]'}`}>
-            <div className="flex flex-col md:flex-row md:items-center md:items-center md:justify-between gap-3 md:gap-4">
+            <Card className={`rounded-3xl p-4 md:p-5 border shadow-none ${isDark ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-slate-100 shadow-soft-card'}`}>
               <div className="flex items-center gap-3">
-                <ArchiveBox size={20} weight="bold" className="text-white" />
-                <div>
-                  <h2 className={`text-xl md:text-3xl font-semibold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-[#0F1419]'}`}>Archive</h2>
-                  <p className={`text-xs md:text-sm ${theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'}`}>Browse your past reflections.</p>
+                <span className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                  isDark ? 'bg-white/[0.06]' : 'bg-gradient-to-br from-indigo-100 to-indigo-200'
+                }`}>
+                  <ArchiveBox size={18} weight="bold" className={isDark ? 'text-[#818CF8]' : 'text-indigo-500'} />
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>Your archive</p>
+                  <p className={`text-xs ${isDark ? 'text-white/40' : 'text-slate-400'}`}>
+                    {archivedReflections.length} reflection{archivedReflections.length !== 1 ? 's' : ''} saved
+                  </p>
                 </div>
               </div>
-              <div className="flex items-center gap-2 md:gap-4 overflow-x-auto pb-2 md:pb-0">
+
+              <div className="mt-4 flex items-center gap-2">
                 {/* Search - Premium Feature */}
                 {tier === 'premium' ? (
-                  <div className="relative flex-1 md:flex-initial">
-                    <MagnifyingGlass size={16} weight="bold" className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />
+                  <div className="relative flex-1 min-w-0">
+                    <MagnifyingGlass size={16} weight="bold" className={`absolute left-3.5 top-1/2 transform -translate-y-1/2 h-4 w-4 ${isDark ? 'text-white/40' : 'text-slate-400'}`} />
                     <Input
                       placeholder={t('archive.search')}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className={`pl-10 h-9 md:h-10 rounded-xl text-sm min-w-[120px] ${
-                        theme === 'dark'
-                          ? 'bg-white/8 border border-white/10 text-white placeholder:text-white/40 focus:border-white/20'
-                          : 'bg-white border border-[#EFF3F4] text-[#0F1419] placeholder:text-[#8B98A5] focus:border-[#1D9BF0]'
+                      className={`pl-10 h-10 rounded-full text-sm ${
+                        isDark
+                          ? 'bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:border-white/20'
+                          : 'bg-white border border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50'
                       }`}
                     />
                   </div>
                 ) : (
-                  <div className="relative flex-1 md:flex-initial">
+                  <div className="relative flex-1 min-w-0">
                     <div className="relative">
-                      <MagnifyingGlass size={16} weight="bold" className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />
+                      <MagnifyingGlass size={16} weight="bold" className={`absolute left-3.5 top-1/2 transform -translate-y-1/2 h-4 w-4 ${isDark ? 'text-white/40' : 'text-slate-400'}`} />
                       <Input
                         placeholder="🔒 Premium"
                         disabled
-                        className={`pl-10 h-9 md:h-10 rounded-xl text-sm cursor-not-allowed opacity-50 min-w-[120px] ${
-                          theme === 'dark'
-                            ? 'bg-white/5 border border-white/8 text-white/40 placeholder:text-white/30'
-                            : 'bg-[#EFF3F4] border border-[#EFF3F4] text-[#8B98A5] placeholder:text-[#C4C0B8]'
+                        className={`pl-10 h-10 rounded-full text-sm cursor-not-allowed opacity-60 ${
+                          isDark
+                            ? 'bg-white/5 border border-white/10 text-white/40 placeholder:text-white/30'
+                            : 'bg-slate-100/80 border border-slate-200 text-slate-400 placeholder:text-slate-400'
                         }`}
                       />
                     </div>
                   </div>
                 )}
+                {/* Filter */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className={`h-9 md:h-10 text-sm whitespace-nowrap ${
-                      theme === 'dark'
-                        ? 'text-white border border-white/10 hover:bg-white/8'
-                        : 'text-[#536471] border border-[#EFF3F4] hover:bg-[#EFF3F4]'
+                    <Button variant="ghost" className={`shrink-0 h-10 rounded-full text-sm whitespace-nowrap ${
+                      isDark
+                        ? 'text-white/70 border border-white/10 hover:bg-white/10 hover:text-white'
+                        : 'text-slate-600 border border-slate-200 hover:bg-slate-50 hover:text-slate-800'
                     }`}>
-                      <Funnel size={16} weight="bold" className={`mr-1 md:mr-2 h-4 w-4 ${
-                        theme === 'dark' ? 'text-white' : 'text-[#536471]'
-                      }`} />
+                      <Funnel size={16} weight="bold" className={`mr-1 md:mr-2 h-4 w-4 ${isDark ? 'text-white/70' : 'text-slate-500'}`} />
                       <span className="hidden md:inline">{selectedFilter}</span>
                       <span className="md:hidden">All</span>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className={`${
-                    theme === 'dark'
-                      ? 'bg-[#1A1F2E] border border-white/10'
-                      : 'bg-[#F7F9FA] border border-[#EFF3F4]'
+                    isDark
+                      ? 'bg-[#1B2436] border border-white/10'
+                      : 'bg-white/95 border border-slate-100 shadow-soft-card'
                   }`}>
                     <DropdownMenuItem 
-                      className={`cursor-pointer ${
-                        theme === 'dark'
-                          ? 'text-white hover:bg-white/8 focus:bg-white/8'
-                          : 'text-[#0F1419] hover:bg-[#EFF3F4] focus:bg-[#EFF3F4]'
+                      className={`cursor-pointer rounded-xl ${
+                        isDark
+                          ? 'text-white/80 hover:bg-white/10 focus:bg-white/10 hover:text-white'
+                          : 'text-slate-700 hover:bg-indigo-50 focus:bg-indigo-50 hover:text-indigo-600'
                       }`}
                       onClick={() => setSelectedFilter("All")}
                     >
                       All Reflections
                     </DropdownMenuItem>
                     <DropdownMenuItem 
-                      className={`cursor-pointer ${
-                        theme === 'dark'
-                          ? 'text-white hover:bg-white/8 focus:bg-white/8'
-                          : 'text-[#0F1419] hover:bg-[#EFF3F4] focus:bg-[#EFF3F4]'
+                      className={`cursor-pointer rounded-xl ${
+                        isDark
+                          ? 'text-white/80 hover:bg-white/10 focus:bg-white/10 hover:text-white'
+                          : 'text-slate-700 hover:bg-indigo-50 focus:bg-indigo-50 hover:text-indigo-600'
                       }`}
                       onClick={() => setSelectedFilter("This Week")}
                     >
                       This Week
                     </DropdownMenuItem>
                     <DropdownMenuItem 
-                      className={`cursor-pointer ${
-                        theme === 'dark'
-                          ? 'text-white hover:bg-white/8 focus:bg-white/8'
-                          : 'text-[#0F1419] hover:bg-[#EFF3F4] focus:bg-[#EFF3F4]'
+                      className={`cursor-pointer rounded-xl ${
+                        isDark
+                          ? 'text-white/80 hover:bg-white/10 focus:bg-white/10 hover:text-white'
+                          : 'text-slate-700 hover:bg-indigo-50 focus:bg-indigo-50 hover:text-indigo-600'
                       }`}
                       onClick={() => setSelectedFilter("This Month")}
                     >
@@ -310,25 +327,21 @@ function ArchivePageContent() {
                 {tier === 'premium' ? (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button className={`transition-colors h-9 md:h-10 text-sm ${
-                        theme === 'dark'
-                          ? 'bg-white/8 hover:bg-white/12 border border-white/10 text-white'
-                          : 'bg-white hover:bg-[#EFF3F4] border border-[#EFF3F4] text-[#536471]'
-                      }`}>
+                      <Button className={`shrink-0 h-10 rounded-full text-sm bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white shadow-lg shadow-indigo-500/25`}>
                         <DownloadSimple size={16} weight="bold" className="mr-1 md:mr-2 h-4 w-4" />
                         <span className="hidden md:inline">Export</span>
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className={`${
-                      theme === 'dark'
-                        ? 'bg-[#1A1F2E] border border-white/10'
-                        : 'bg-[#F7F9FA] border border-[#EFF3F4]'
+                      isDark
+                        ? 'bg-[#1B2436] border border-white/10'
+                        : 'bg-white/95 border border-slate-100 shadow-soft-card'
                     }`}>
                       <DropdownMenuItem 
-                        className={`cursor-pointer ${
-                          theme === 'dark'
-                            ? 'text-white hover:bg-white/8 focus:bg-white/8'
-                            : 'text-[#0F1419] hover:bg-[#EFF3F4] focus:bg-[#EFF3F4]'
+                        className={`cursor-pointer rounded-xl ${
+                          isDark
+                            ? 'text-white/80 hover:bg-white/10 focus:bg-white/10 hover:text-white'
+                            : 'text-slate-700 hover:bg-indigo-50 focus:bg-indigo-50 hover:text-indigo-600'
                         }`}
                         onClick={exportToCSV}
                       >
@@ -336,10 +349,10 @@ function ArchivePageContent() {
                         Export as CSV
                       </DropdownMenuItem>
                       <DropdownMenuItem 
-                        className={`cursor-pointer ${
-                          theme === 'dark'
-                            ? 'text-white hover:bg-white/8 focus:bg-white/8'
-                            : 'text-[#0F1419] hover:bg-[#EFF3F4] focus:bg-[#EFF3F4]'
+                        className={`cursor-pointer rounded-xl ${
+                          isDark
+                            ? 'text-white/80 hover:bg-white/10 focus:bg-white/10 hover:text-white'
+                            : 'text-slate-700 hover:bg-indigo-50 focus:bg-indigo-50 hover:text-indigo-600'
                         }`}
                         onClick={exportToText}
                       >
@@ -352,10 +365,10 @@ function ArchivePageContent() {
                   <div className="relative group">
                     <Button 
                       disabled
-                      className={`cursor-not-allowed opacity-50 h-9 md:h-10 text-sm ${
-                        theme === 'dark'
-                          ? 'bg-white/5 border border-white/8 text-white/30'
-                          : 'bg-[#EFF3F4] border border-[#EFF3F4] text-[#8B98A5]'
+                      className={`shrink-0 h-10 rounded-full text-sm cursor-not-allowed opacity-60 ${
+                        isDark
+                          ? 'bg-white/5 border border-white/10 text-white/40'
+                          : 'bg-slate-100/80 border border-slate-200 text-slate-400'
                       }`}
                     >
                       <DownloadSimple size={16} weight="bold" className="mr-1 md:mr-2 h-4 w-4" />
@@ -368,23 +381,22 @@ function ArchivePageContent() {
                   </div>
                 )}
               </div>
-            </div>
-          </Card>
+            </Card>
           </motion.div>
 
           {/* Reflections List */}
-          <Card className={`rounded-2xl p-4 md:p-6 border shadow-none ${
-            theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#EFF3F4]'
+          <Card className={`rounded-3xl p-5 md:p-6 border shadow-none ${
+            isDark ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-slate-100 shadow-soft-card'
           }`}>
-            <div className="flex items-center justify-between mb-4 md:mb-6">
+            <div className="flex items-center justify-between mb-4">
               <div>
-                <h3 className={`text-lg md:text-xl font-semibold ${
-                  theme === 'dark' ? 'text-white' : 'text-[#0F1419]'
+                <h3 className={`text-sm md:text-base font-semibold ${
+                  isDark ? 'text-white' : 'text-slate-900'
                 }`}>Past Reflections</h3>
                 {loading ? (
-                  <Skeleton className={`h-4 w-32 mt-1 ${theme === 'dark' ? 'bg-white/8' : 'bg-[#EFF3F4]'}`} />
+                  <Skeleton className={`h-3 w-24 mt-1.5 ${isDark ? 'bg-white/10' : 'bg-slate-100'}`} />
                 ) : (
-                  <p className={`text-xs md:text-sm mt-1 ${theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'}`}>
+                  <p className={`text-xs mt-1 ${isDark ? 'text-white/40' : 'text-slate-400'}`}>
                     {filteredReflections.length} reflection{filteredReflections.length !== 1 ? 's' : ''} found
                   </p>
                 )}
@@ -393,38 +405,41 @@ function ArchivePageContent() {
                 <Button
                   variant="ghost"
                   onClick={() => setShowAll(!showAll)}
-                  className={`transition-colors ${
-                    theme === 'dark' ? 'text-white hover:bg-white/8' : 'text-[#536471] hover:bg-[#EFF3F4]'
+                  className={`text-xs font-semibold ${
+                    isDark ? 'text-[#818CF8] hover:bg-white/10' : 'text-indigo-500 hover:bg-indigo-50'
                   }`}
                 >
                   {showAll ? (
-                    <>Show Less <CaretUp size={20} weight="bold" className="ml-2 h-4 w-4" /></>
+                    <>Show Less <CaretUp size={20} weight="bold" className="ml-1.5 h-4 w-4" /></>
                   ) : (
-                    <>See More ({filteredReflections.length - 3} more) <CaretDown size={20} weight="bold" className="ml-2 h-4 w-4" /></>
+                    <>See More <CaretDown size={20} weight="bold" className="ml-1.5 h-4 w-4" /></>
                   )}
                 </Button>
               )}
             </div>
-            <div className="space-y-4">
+            <div className={`divide-y ${isDark ? 'divide-white/[0.06]' : 'divide-slate-100'}`}>
               {loading ? (
                 Array(3).fill(0).map((_, index) => (
-                  <Card key={index} className={`rounded-2xl p-5 border shadow-none ${
-                    theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white border-[#EFF3F4]'
-                  }`}>
+                  <div key={index} className="py-5 first:pt-0 last:pb-0">
                     <div className="flex items-start gap-3">
-                      <Skeleton className={`h-10 w-10 rounded-full ${theme === 'dark' ? 'bg-white/8' : 'bg-[#EFF3F4]'}`} />
-                      <div className="flex-1 space-y-2">
-                        <Skeleton className={`h-4 w-24 ${theme === 'dark' ? 'bg-white/8' : 'bg-[#EFF3F4]'}`} />
-                        <Skeleton className={`h-5 w-full ${theme === 'dark' ? 'bg-white/8' : 'bg-[#EFF3F4]'}`} />
-                        <Skeleton className={`h-4 w-3/4 ${theme === 'dark' ? 'bg-white/8' : 'bg-[#EFF3F4]'}`} />
+                      <Skeleton className={`h-10 w-10 rounded-full ${isDark ? 'bg-white/10' : 'bg-slate-100'}`} />
+                      <div className="flex-1 space-y-2 pt-1">
+                        <Skeleton className={`h-3 w-24 ${isDark ? 'bg-white/10' : 'bg-slate-100'}`} />
+                        <Skeleton className={`h-4 w-full ${isDark ? 'bg-white/10' : 'bg-slate-100'}`} />
+                        <Skeleton className={`h-4 w-3/4 ${isDark ? 'bg-white/10' : 'bg-slate-100'}`} />
                       </div>
                     </div>
-                  </Card>
+                  </div>
                 ))
               ) : filteredReflections.length === 0 ? (
                 <div className="text-center py-12">
-                  <p className={`text-lg ${theme === 'dark' ? 'text-white/50' : 'text-[#8B98A5]'}`}>No reflections found</p>
-                  <p className={`text-sm mt-2 ${theme === 'dark' ? 'text-white/30' : 'text-[#8B98A5]'}`}>
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mx-auto ${
+                    isDark ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-slate-50 border border-slate-100'
+                  }`}>
+                    <MagnifyingGlass size={20} weight="bold" className={isDark ? 'text-white/30' : 'text-slate-300'} />
+                  </div>
+                  <p className={`text-sm font-medium mt-3 ${isDark ? 'text-white/60' : 'text-slate-600'}`}>No reflections found</p>
+                  <p className={`text-xs mt-1 ${isDark ? 'text-white/30' : 'text-slate-400'}`}>
                     {searchQuery ? "Try adjusting your search" : "Start writing your first reflection!"}
                   </p>
                 </div>
@@ -437,116 +452,115 @@ function ArchivePageContent() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3, delay: index * 0.1 }}
+                      className="py-5 first:pt-0 last:pb-0"
                     >
-                      <Card className={`rounded-2xl p-4 md:p-5 transition-all duration-200 border shadow-none ${
-                        theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06] hover:bg-white/8' : 'bg-white border-[#EFF3F4] hover:bg-[#F7F9FA]'
-                      }`}>
-                        <div className="space-y-3">
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="flex items-start gap-2 md:gap-3 flex-1 min-w-0">
-                              <span className="text-2xl md:text-3xl flex-shrink-0">{item.mood}</span>
-                              <div className="flex-1 min-w-0">
-                                <p className={`text-xs md:text-sm ${theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'}`}>{item.date}</p>
-                                <p className={`font-medium italic text-sm md:text-base mt-1 line-clamp-2 ${theme === 'dark' ? 'text-white' : 'text-[#0F1419]'}`}>{item.prompt_text}</p>
-                              </div>
-                            </div>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => toggleReflection(item.id)}
-                              className={`transition-colors ${theme === 'dark' ? 'text-white hover:bg-white/8' : 'text-[#536471] hover:bg-[#EFF3F4]'}`}
-                            >
-                              <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.3 }}>
-                                <CaretDown size={20} weight="bold" className={`h-5 w-5 ${theme === 'dark' ? 'text-white' : 'text-[#536471]'}`} />
-                              </motion.div>
-                            </Button>
+                        <div className="flex items-start gap-3">
+                          <span className={`w-10 h-10 rounded-full border flex items-center justify-center text-lg shrink-0 ${
+                            isDark ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-slate-50 border-slate-100'
+                          }`}>{item.mood}</span>
+                          <div className="flex-1 min-w-0">
+                            <p className={`text-xs ${isDark ? 'text-white/40' : 'text-slate-400'}`}>{item.date}</p>
+                            <p className={`font-serif italic text-sm md:text-[15px] leading-relaxed mt-1 line-clamp-2 ${isDark ? 'text-white/85' : 'text-slate-800'}`}>{item.prompt_text}</p>
                           </div>
-                          <AnimatePresence>
-                            {isExpanded && (
-                              <motion.div
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: "auto" }}
-                                exit={{ opacity: 0, height: 0 }}
-                                transition={{ duration: 0.3, ease: "easeInOut" }}
-                                className="overflow-hidden"
-                              >
-                                <div className="space-y-3 pt-2">
-                                  <p className={`text-sm leading-relaxed pl-12 ${theme === 'dark' ? 'text-white/70' : 'text-[#536471]'}`}>
-                                    {item.reflection_text}
-                                  </p>
-                                  <div className="flex gap-2 pl-12 flex-wrap">
-                                    {item.tags.map((tag, idx) => (
-                                      <Badge
-                                        key={idx}
-                                        className={`cursor-pointer ${
-                                          theme === 'dark'
-                                            ? 'bg-white/8 text-white/70 border border-white/10 hover:bg-white/12'
-                                            : 'bg-[#EFF3F4] text-[#536471] border border-[#EFF3F4] hover:bg-[#EFF3F4]'
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => toggleReflection(item.id)}
+                            className={`w-8 h-8 rounded-full shrink-0 mt-1 ${isDark ? 'text-white/60 hover:bg-white/10' : 'text-slate-400 hover:bg-slate-50'}`}
+                          >
+                            <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.3 }}>
+                              <CaretDown size={20} weight="bold" className={`h-4 w-4 ${isExpanded ? (isDark ? 'text-[#818CF8]' : 'text-indigo-500') : ''}`} />
+                            </motion.div>
+                          </Button>
+                        </div>
+                        <AnimatePresence>
+                          {isExpanded && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: "auto" }}
+                              exit={{ opacity: 0, height: 0 }}
+                              transition={{ duration: 0.3, ease: "easeInOut" }}
+                              className="overflow-hidden"
+                            >
+                              <div className="space-y-3 pt-3 ml-[52px]">
+                                <p className={`text-sm leading-relaxed ${isDark ? 'text-white/60' : 'text-slate-600'}`}>
+                                  {item.reflection_text}
+                                </p>
+                                <div className="flex gap-2 flex-wrap">
+                                  {item.tags.map((tag, idx) => (
+                                    <Badge
+                                      key={idx}
+                                      className={`px-2.5 py-1 rounded-full text-[11px] font-medium ${
+                                        isDark
+                                          ? 'bg-white/[0.06] text-white/70 border border-white/[0.08]'
+                                          : 'bg-slate-50 text-slate-500 border border-slate-100'
+                                      }`}
+                                    >
+                                      {tag}
+                                    </Badge>
+                                  ))}
+                                </div>
+                                {/* Share row */}
+                                <div className="flex items-center gap-2 pt-1">
+                                  {item.visibility === 'public' ? (
+                                    <span className={`inline-flex items-center gap-1 text-[11px] font-medium ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>
+                                      <Globe size={12} weight="bold" /> Public
+                                    </span>
+                                  ) : item.visibility === 'friends_only' ? (
+                                    <span className={`inline-flex items-center gap-1 text-[11px] font-medium ${isDark ? 'text-indigo-400' : 'text-indigo-600'}`}>
+                                      <Users size={12} weight="bold" /> Friends
+                                    </span>
+                                  ) : (
+                                    <span className={`inline-flex items-center gap-1 text-[11px] font-medium ${isDark ? 'text-white/40' : 'text-slate-400'}`}>
+                                      <Lock size={12} weight="bold" /> Private
+                                    </span>
+                                  )}
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        disabled={updatingVisibility === item.id}
+                                        className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full h-7 ${
+                                          isDark
+                                            ? 'text-[#818CF8] hover:text-white hover:bg-white/10'
+                                            : 'text-indigo-500 hover:text-indigo-600 hover:bg-indigo-50'
                                         }`}
                                       >
-                                        {tag}
-                                      </Badge>
-                                    ))}
-                                  </div>
-                                  {/* Share row */}
-                                  <div className="flex items-center gap-2 pl-12 pt-1 relative">
-                                    {item.visibility === 'public' ? (
-                                      <span className={`inline-flex items-center gap-1 text-xs ${theme === 'dark' ? 'text-emerald-400' : 'text-emerald-600'}`}>
-                                        <Globe size={12} weight="bold" /> Public
-                                      </span>
-                                    ) : item.visibility === 'friends_only' ? (
-                                      <span className={`inline-flex items-center gap-1 text-xs ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>
-                                        <Users size={12} weight="bold" /> Friends
-                                      </span>
-                                    ) : (
-                                      <span className={`inline-flex items-center gap-1 text-xs ${theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'}`}>
-                                        <Lock size={12} weight="bold" /> Private
-                                      </span>
-                                    )}
-                                    <DropdownMenu>
-                                      <DropdownMenuTrigger asChild>
-                                        <Button
-                                          size="sm"
-                                          variant="ghost"
-                                          disabled={updatingVisibility === item.id}
-                                          className={`text-xs gap-1.5 h-7 px-2 rounded-full ${theme === 'dark' ? 'text-white/50 hover:text-white hover:bg-white/10' : 'text-[#536471] hover:text-[#0F1419] hover:bg-[#EFF3F4]'}`}
-                                        >
-                                          <ShareNetwork size={14} weight="bold" />
-                                          {updatingVisibility === item.id ? '...' : 'Share'}
-                                        </Button>
-                                      </DropdownMenuTrigger>
-                                      <DropdownMenuContent className={`w-56 ${theme === 'dark' ? 'bg-[#1A1F2E] border-white/10' : 'bg-white border-[#EFF3F4]'}`}>
-                                        <DropdownMenuItem onClick={() => updateVisibility(item.id, 'public')} className={`cursor-pointer ${theme === 'dark' ? 'text-white hover:bg-white/8' : 'text-[#0F1419] hover:bg-[#F7F9FA]'}`}>
-                                          <Globe size={16} weight="bold" className="text-[#1D9BF0] mr-3" />
-                                          <div className="text-left">
-                                            <p className="font-medium text-sm">Share publicly</p>
-                                            <p className={`text-xs ${theme === 'dark' ? 'text-white/40' : 'text-[#536471]'}`}>Everyone can see</p>
-                                          </div>
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem onClick={() => updateVisibility(item.id, 'friends_only')} className={`cursor-pointer ${theme === 'dark' ? 'text-white hover:bg-white/8' : 'text-[#0F1419] hover:bg-[#F7F9FA]'}`}>
-                                          <Users size={16} weight="bold" className="text-emerald-500 mr-3" />
-                                          <div className="text-left">
-                                            <p className="font-medium text-sm">Share with friends</p>
-                                            <p className={`text-xs ${theme === 'dark' ? 'text-white/40' : 'text-[#536471]'}`}>Only your friends</p>
-                                          </div>
-                                        </DropdownMenuItem>
-                                        <div className={`h-px mx-3 ${theme === 'dark' ? 'bg-white/10' : 'bg-[#EFF3F4]'}`} />
-                                        <DropdownMenuItem onClick={() => updateVisibility(item.id, 'private')} className={`cursor-pointer ${theme === 'dark' ? 'text-white/50 hover:text-white hover:bg-white/8' : 'text-[#536471] hover:text-[#0F1419] hover:bg-[#F7F9FA]'}`}>
-                                          <Lock size={16} weight="bold" className="mr-3" />
-                                          <div className="text-left">
-                                            <p className="font-medium text-sm">Make private</p>
-                                            <p className={`text-xs ${theme === 'dark' ? 'text-white/40' : 'text-[#536471]'}`}>Only you</p>
-                                          </div>
-                                        </DropdownMenuItem>
-                                      </DropdownMenuContent>
-                                    </DropdownMenu>
-                                  </div>
+                                        <ShareNetwork size={14} weight="bold" />
+                                        {updatingVisibility === item.id ? '...' : 'Share'}
+                                      </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent className={`w-56 ${isDark ? 'bg-[#1B2436] border-white/10' : 'bg-white/95 border-slate-100 shadow-soft-card'}`}>
+                                      <DropdownMenuItem onClick={() => updateVisibility(item.id, 'public')} className={`cursor-pointer rounded-xl ${isDark ? 'text-white hover:bg-white/10' : 'text-slate-700 hover:bg-indigo-50'}`}>
+                                        <Globe size={16} weight="bold" className={isDark ? 'text-[#818CF8] mr-3' : 'text-indigo-500 mr-3'} />
+                                        <div className="text-left">
+                                          <p className="font-medium text-sm">Share publicly</p>
+                                          <p className={`text-xs ${isDark ? 'text-white/40' : 'text-slate-400'}`}>Everyone can see</p>
+                                        </div>
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem onClick={() => updateVisibility(item.id, 'friends_only')} className={`cursor-pointer rounded-xl ${isDark ? 'text-white hover:bg-white/10' : 'text-slate-700 hover:bg-indigo-50'}`}>
+                                        <Users size={16} weight="bold" className="text-emerald-500 mr-3" />
+                                        <div className="text-left">
+                                          <p className="font-medium text-sm">Share with friends</p>
+                                          <p className={`text-xs ${isDark ? 'text-white/40' : 'text-slate-400'}`}>Only your friends</p>
+                                        </div>
+                                      </DropdownMenuItem>
+                                      <div className={`h-px mx-3 ${isDark ? 'bg-white/10' : 'bg-slate-100'}`} />
+                                      <DropdownMenuItem onClick={() => updateVisibility(item.id, 'private')} className={`cursor-pointer rounded-xl ${isDark ? 'text-white/50 hover:text-white hover:bg-white/10' : 'text-slate-400 hover:text-slate-700 hover:bg-indigo-50'}`}>
+                                        <Lock size={16} weight="bold" className="mr-3" />
+                                        <div className="text-left">
+                                          <p className="font-medium text-sm">Make private</p>
+                                          <p className={`text-xs ${isDark ? 'text-white/40' : 'text-slate-400'}`}>Only you</p>
+                                        </div>
+                                      </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
                                 </div>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </div>
-                      </Card>
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                     </motion.div>
                   )
                 })
@@ -560,4 +574,3 @@ function ArchivePageContent() {
     </div>
   )
 }
-

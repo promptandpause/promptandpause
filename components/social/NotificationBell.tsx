@@ -155,14 +155,14 @@ export function NotificationBell() {
 
   const typeIcon = (type: string) => {
     switch (type) {
-      case 'friend_request': return <UserPlus className="h-4 w-4 text-[#1D9BF0]" />
+      case 'friend_request': return <UserPlus className="h-4 w-4 text-indigo-600" />
       case 'friend_accepted': return <UserPlus className="h-4 w-4 text-emerald-500" />
-      case 'new_comment': return <MessageCircle className="h-4 w-4 text-[#1D9BF0]" />
+      case 'new_comment': return <MessageCircle className="h-4 w-4 text-indigo-600" />
       case 'whiteboard': return <MessageSquare className="h-4 w-4 text-amber-500" />
-      case 'share': return <Share2 className="h-4 w-4 text-[#1D9BF0]" />
+      case 'share': return <Share2 className="h-4 w-4 text-indigo-600" />
       case 'like': return <Heart className="h-4 w-4 text-pink-500" />
-      case 'follow': return <UserPlus className="h-4 w-4 text-[#1D9BF0]" />
-      default: return <Sparkle className="h-4 w-4 text-[#1D9BF0]" />
+      case 'follow': return <UserPlus className="h-4 w-4 text-indigo-600" />
+      default: return <Sparkle className="h-4 w-4 text-indigo-600" />
     }
   }
 
@@ -185,12 +185,12 @@ export function NotificationBell() {
       <button
         ref={bellRef}
         onClick={() => { setOpen(!open); if (!open) load() }}
-        className={`relative p-2 rounded-lg transition-colors ${isDark ? 'hover:bg-white/10' : 'hover:bg-[#EFF3F4]'}`}
+        className={`relative p-2 rounded-lg transition-colors ${isDark ? 'hover:bg-white/10' : 'hover:bg-slate-100'}`}
         aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
       >
-        <Bell size={20} fill={unreadCount > 0 ? 'currentColor' : 'none'} className={isDark ? 'text-white/50' : 'text-[#536471]'} />
+        <Bell size={20} fill={unreadCount > 0 ? 'currentColor' : 'none'} className={isDark ? 'text-white/50' : 'text-slate-600'} />
         {unreadCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 h-4 min-w-[16px] flex items-center justify-center rounded-full bg-[#1D9BF0] text-[10px] font-bold text-white px-1">
+          <span className="absolute -top-0.5 -right-0.5 h-4 min-w-[16px] flex items-center justify-center rounded-full bg-indigo-600 text-[10px] font-bold text-white px-1">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
@@ -214,21 +214,21 @@ export function NotificationBell() {
             }}
             className="rounded-2xl shadow-xl border overflow-hidden"
           >
-            <div className={`relative ${isDark ? 'bg-[#161618] border-white/[0.08]' : 'bg-white border-[#EFF3F4]'}`}>
+            <div className={`relative ${isDark ? 'bg-[#0A0E18] border-white/[0.08]' : 'bg-white border-slate-100'}`}>
               {/* Close button */}
               <button
                 onClick={() => setOpen(false)}
-                className={`absolute top-3 right-3 p-1 rounded-lg transition-colors ${isDark ? 'hover:bg-white/10 text-white/40' : 'hover:bg-[#EFF3F4] text-[#8B98A5]'}`}
+                className={`absolute top-3 right-3 p-1 rounded-lg transition-colors ${isDark ? 'hover:bg-white/10 text-white/40' : 'hover:bg-slate-100 text-slate-500'}`}
               >
                 <X className="h-3.5 w-3.5" />
               </button>
 
-              <div className={`flex items-center justify-between px-4 py-3 border-b ${isDark ? 'border-white/[0.06]' : 'border-[#EFF3F4]'}`}>
-                <h3 className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>Notifications</h3>
+              <div className={`flex items-center justify-between px-4 py-3 border-b ${isDark ? 'border-white/[0.06]' : 'border-slate-100'}`}>
+                <h3 className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>Notifications</h3>
                 {unreadCount > 0 && (
                   <button
                     onClick={markAllRead}
-                    className={`text-xs font-medium flex items-center gap-1 transition-colors ${isDark ? 'text-[#1D9BF0] hover:text-white' : 'text-[#1D9BF0] hover:text-[#0F1419]'}`}
+                    className={`text-xs font-medium flex items-center gap-1 transition-colors ${isDark ? 'text-indigo-600 hover:text-white' : 'text-indigo-600 hover:text-slate-900'}`}
                   >
                     <Check className="h-3 w-3" /> Mark all read
                   </button>
@@ -236,7 +236,7 @@ export function NotificationBell() {
               </div>
               <div className="overflow-y-auto max-h-[calc(70vh-52px)]">
                 {notifications.length === 0 ? (
-                  <div className={`px-4 py-10 text-center text-sm ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
+                  <div className={`px-4 py-10 text-center text-sm ${isDark ? 'text-white/30' : 'text-slate-500'}`}>
                     No notifications yet
                   </div>
                 ) : (
@@ -256,35 +256,35 @@ export function NotificationBell() {
                       }}
                       className={`w-full text-left px-4 py-3 flex items-start gap-3 transition-colors ${
                         !n.is_read
-                          ? isDark ? 'bg-[#1D9BF0]/5' : 'bg-[#1D9BF0]/5'
+                          ? isDark ? 'bg-indigo-500/5' : 'bg-indigo-500/5'
                           : ''
-                      } ${isDark ? 'hover:bg-white/[0.03]' : 'hover:bg-[#F7F9FA]'}`}
+                      } ${isDark ? 'hover:bg-white/[0.03]' : 'hover:bg-slate-50'}`}
                     >
                       <div className="shrink-0 mt-0.5">
                         {n.actor ? (
                           <Avatar className="h-9 w-9">
                             <AvatarImage src={n.actor.avatar_url || undefined} />
-                            <AvatarFallback className={`text-xs ${isDark ? 'bg-[#252529] text-white/40' : 'bg-[#EFF3F4] text-[#536471]'}`}>
+                            <AvatarFallback className={`text-xs ${isDark ? 'bg-[#252529] text-white/40' : 'bg-slate-100 text-slate-600'}`}>
                               {(n.actor.display_name || n.actor.full_name || '?')[0]}
                             </AvatarFallback>
                           </Avatar>
                         ) : (
-                          <div className={`h-9 w-9 rounded-full flex items-center justify-center ${isDark ? 'bg-white/[0.06]' : 'bg-[#EFF3F4]'}`}>
+                          <div className={`h-9 w-9 rounded-full flex items-center justify-center ${isDark ? 'bg-white/[0.06]' : 'bg-slate-100'}`}>
                             {typeIcon(n.type)}
                           </div>
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className={`text-sm leading-snug ${isDark ? 'text-white/80' : 'text-[#0F1419]'}`}>
+                        <p className={`text-sm leading-snug ${isDark ? 'text-white/80' : 'text-slate-900'}`}>
                           {typeLabel(n)}
                         </p>
-                        <p className={`text-xs mt-0.5 ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
+                        <p className={`text-xs mt-0.5 ${isDark ? 'text-white/30' : 'text-slate-500'}`}>
                           {timeAgo(n.created_at)}
                         </p>
                       </div>
                       {!n.is_read && (
                         <div className="shrink-0 mt-1.5">
-                          <div className="h-2 w-2 rounded-full bg-[#1D9BF0]" />
+                          <div className="h-2 w-2 rounded-full bg-indigo-600" />
                         </div>
                       )}
                     </button>
@@ -295,7 +295,7 @@ export function NotificationBell() {
                     onClick={loadMore}
                     disabled={loadingMore}
                     className={`w-full text-center py-2.5 text-xs font-semibold transition-colors ${
-                      isDark ? 'text-[#1D9BF0] hover:bg-white/[0.03]' : 'text-[#1D9BF0] hover:bg-[#F7F9FA]'
+                      isDark ? 'text-indigo-600 hover:bg-white/[0.03]' : 'text-indigo-600 hover:bg-slate-50'
                     }`}
                   >
                     {loadingMore ? 'Loading…' : 'Load more'}

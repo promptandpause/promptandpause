@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react"
 import Image from "next/image"
+import Link from "next/link"
 import Lenis from "lenis"
 import { useScroll, useTransform, motion } from "framer-motion"
 import { Star, Gift, Megaphone, Handshake } from "lucide-react"
@@ -89,7 +90,7 @@ export default function SupportUsPage() {
   return (
     <>
       <Navigation />
-      <main className="bg-[#EFF3F4] text-[#0F1419]">
+      <main className="bg-slate-100 text-slate-900">
       <HeroSection />
       <WhySupportSection />
       <WaysToSupportSection isAuthenticated={isAuthenticated} router={router} />
@@ -141,7 +142,7 @@ function HeroSection() {
 
 function WhySupportSection() {
   return (
-    <div className="min-h-screen flex items-center px-6 py-32 bg-[#F7F9FA]">
+    <div className="min-h-screen flex items-center px-6 py-32 bg-slate-50">
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
         <div className="h-[400px] lg:h-[600px] relative">
           <Image
@@ -193,13 +194,13 @@ function WaysToSupportSection({ isAuthenticated, router }: { isAuthenticated: bo
       <div className="max-w-7xl mx-auto w-full">
         <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-20 leading-tight">Ways to Support</h2>
         <div className="grid md:grid-cols-2 gap-8 lg:gap-10">
-          <div className="group backdrop-blur-md bg-[#F7F9FA]/80 border border-[#B3D9F2] p-10 lg:p-12 rounded-3xl hover:bg-white hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#1D9BF0] mb-6 group-hover:scale-110 transition-transform duration-300">
+          <div className="group backdrop-blur-md bg-slate-50/80 border border-slate-200 p-10 lg:p-12 rounded-3xl hover:bg-white hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-600 mb-6 group-hover:scale-110 transition-transform duration-300">
               <Star className="w-8 h-8 text-white" />
             </div>
             <h3 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">Upgrade to Premium</h3>
-            <p className="text-2xl font-bold text-[#0F1419] mb-4">£12/month or £99/year</p>
-            <p className="text-[#8B98A5] leading-relaxed text-lg mb-8">
+            <p className="text-2xl font-bold text-slate-900 mb-4">£12/month or £99/year</p>
+            <p className="text-slate-500 leading-relaxed text-lg mb-8">
               Get daily prompts, weekly and monthly reflections, and export—while helping fund free access for others.
             </p>
             <a
@@ -210,36 +211,36 @@ function WaysToSupportSection({ isAuthenticated, router }: { isAuthenticated: bo
                   router.push("/")
                 }
               }}
-              className="block px-8 py-4 bg-[#1D9BF0] text-white text-sm font-medium tracking-wide transition-all duration-300 hover:bg-[#1A8CD8] cursor-pointer w-full text-center"
+              className="block px-8 py-4 bg-indigo-600 text-white text-sm font-medium tracking-wide transition-all duration-300 hover:bg-indigo-500 cursor-pointer w-full text-center"
             >
               VIEW PREMIUM FEATURES
             </a>
           </div>
 
-          <div className="group backdrop-blur-md bg-[#F7F9FA]/80 border border-[#B3D9F2] p-10 lg:p-12 rounded-3xl hover:bg-white hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#1D9BF0] mb-6 group-hover:scale-110 transition-transform duration-300">
+          <div className="group backdrop-blur-md bg-slate-50/80 border border-slate-200 p-10 lg:p-12 rounded-3xl hover:bg-white hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-600 mb-6 group-hover:scale-110 transition-transform duration-300">
               <Gift className="w-8 h-8 text-white" />
             </div>
             <h3 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">Gift Premium to Someone</h3>
-            <p className="text-2xl font-bold text-[#0F1419] mb-4">From £12</p>
-            <p className="text-[#8B98A5] leading-relaxed text-lg mb-8">
+            <p className="text-2xl font-bold text-slate-900 mb-4">From £12</p>
+            <p className="text-slate-500 leading-relaxed text-lg mb-8">
               Know someone navigating a tough time? Gift them 1, 3, or 6 months of Premium.
             </p>
-            <a
+            <Link
               href="/gifts"
-              className="block px-8 py-4 bg-[#1D9BF0] text-white text-sm font-medium tracking-wide transition-all duration-300 hover:bg-[#1A8CD8] cursor-pointer w-full text-center min-h-[52px] flex items-center justify-center touch-manipulation"
+              className="block px-8 py-4 bg-indigo-600 text-white text-sm font-medium tracking-wide transition-all duration-300 hover:bg-indigo-500 cursor-pointer w-full text-center min-h-[52px] flex items-center justify-center touch-manipulation"
             >
               GIFT PREMIUM
-            </a>
+            </Link>
           </div>
 
-          <div className="group backdrop-blur-md bg-[#F7F9FA]/80 border border-[#B3D9F2] p-10 lg:p-12 rounded-3xl hover:bg-white hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#1D9BF0] mb-6 group-hover:scale-110 transition-transform duration-300">
+          <div className="group backdrop-blur-md bg-slate-50/80 border border-slate-200 p-10 lg:p-12 rounded-3xl hover:bg-white hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-600 mb-6 group-hover:scale-110 transition-transform duration-300">
               <Megaphone className="w-8 h-8 text-white" />
             </div>
             <h3 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">Spread the Word</h3>
-            <p className="text-2xl font-bold text-[#0F1419] mb-4">Free</p>
-            <p className="text-[#8B98A5] leading-relaxed text-lg mb-8">
+            <p className="text-2xl font-bold text-slate-900 mb-4">Free</p>
+            <p className="text-slate-500 leading-relaxed text-lg mb-8">
               If it’s been useful, you can share it with someone who might appreciate a quiet prompt.
             </p>
             <div className="flex gap-4">
@@ -247,7 +248,7 @@ function WaysToSupportSection({ isAuthenticated, router }: { isAuthenticated: bo
                 href="https://twitter.com/intent/tweet?text=Check%20out%20@promptandpause%20for%20daily%20mental%20health%20reflection"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 px-6 py-4 border-2 border-[#1D9BF0] text-[#1D9BF0] text-sm font-medium tracking-wide transition-all duration-300 hover:bg-[#1D9BF0] hover:text-white cursor-pointer text-center"
+                className="flex-1 px-6 py-4 border-2 border-indigo-600 text-indigo-600 text-sm font-medium tracking-wide transition-all duration-300 hover:bg-indigo-500 hover:text-white cursor-pointer text-center"
               >
                 TWITTER
               </a>
@@ -255,27 +256,27 @@ function WaysToSupportSection({ isAuthenticated, router }: { isAuthenticated: bo
                 href="https://www.linkedin.com/sharing/share-offsite/?url=https://promptandpause.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 px-6 py-4 border-2 border-[#1D9BF0] text-[#1D9BF0] text-sm font-medium tracking-wide transition-all duration-300 hover:bg-[#1D9BF0] hover:text-white cursor-pointer text-center"
+                className="flex-1 px-6 py-4 border-2 border-indigo-600 text-indigo-600 text-sm font-medium tracking-wide transition-all duration-300 hover:bg-indigo-500 hover:text-white cursor-pointer text-center"
               >
                 LINKEDIN
               </a>
             </div>
           </div>
 
-          <div className="group backdrop-blur-md bg-[#F7F9FA]/80 border border-[#B3D9F2] p-10 lg:p-12 rounded-3xl hover:bg-white hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#1D9BF0] mb-6 group-hover:scale-110 transition-transform duration-300">
+          <div className="group backdrop-blur-md bg-slate-50/80 border border-slate-200 p-10 lg:p-12 rounded-3xl hover:bg-white hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-600 mb-6 group-hover:scale-110 transition-transform duration-300">
               <Handshake className="w-8 h-8 text-white" />
             </div>
             <h3 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">Partner with Us</h3>
-            <p className="text-[#8B98A5] leading-relaxed text-lg mb-8 mt-12">
+            <p className="text-slate-500 leading-relaxed text-lg mb-8 mt-12">
               Are you a therapist, HR leader, or wellness advocate? Let's collaborate to reach more people.
             </p>
-            <a
+            <Link
               href="/contact"
-              className="block px-8 py-4 bg-[#1D9BF0] text-white text-sm font-medium tracking-wide transition-all duration-300 hover:bg-[#1A8CD8] cursor-pointer w-full text-center"
+              className="block px-8 py-4 bg-indigo-600 text-white text-sm font-medium tracking-wide transition-all duration-300 hover:bg-indigo-500 cursor-pointer w-full text-center"
             >
               CONTACT US
-            </a>
+            </Link>
           </div>
         </div>
       </div>
@@ -356,47 +357,47 @@ function ImpactStatsSection({ stats }: { stats: ImpactStats | null }) {
 
 function TransparencySection() {
   return (
-    <div className="min-h-screen flex items-center px-6 py-32 bg-[#E8F5FE]">
+    <div className="min-h-screen flex items-center px-6 py-32 bg-slate-100">
       <div className="max-w-5xl mx-auto">
         <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-16 leading-tight">Where Your Money Goes</h2>
         <div className="space-y-8 mb-16">
           <div className="flex items-center gap-6">
-            <div className="flex-shrink-0 w-24 text-3xl font-bold text-[#0F1419]">40%</div>
-            <div className="flex-1 h-4 bg-[#B3D9F2] rounded-full overflow-hidden">
-              <div className="h-full bg-[#1D9BF0] rounded-full" style={{ width: "40%" }} />
+            <div className="flex-shrink-0 w-24 text-3xl font-bold text-slate-900">40%</div>
+            <div className="flex-1 h-4 bg-slate-200 rounded-full overflow-hidden">
+              <div className="h-full bg-indigo-600 rounded-full" style={{ width: "40%" }} />
             </div>
-            <div className="flex-shrink-0 w-64 text-lg text-[#8B98A5]">AI infrastructure (Groq/OpenAI APIs)</div>
+            <div className="flex-shrink-0 w-64 text-lg text-slate-500">AI infrastructure (Groq/OpenAI APIs)</div>
           </div>
           <div className="flex items-center gap-6">
-            <div className="flex-shrink-0 w-24 text-3xl font-bold text-[#0F1419]">25%</div>
-            <div className="flex-1 h-4 bg-[#B3D9F2] rounded-full overflow-hidden">
-              <div className="h-full bg-[#1D9BF0] rounded-full" style={{ width: "25%" }} />
+            <div className="flex-shrink-0 w-24 text-3xl font-bold text-slate-900">25%</div>
+            <div className="flex-1 h-4 bg-slate-200 rounded-full overflow-hidden">
+              <div className="h-full bg-indigo-600 rounded-full" style={{ width: "25%" }} />
             </div>
-            <div className="flex-shrink-0 w-64 text-lg text-[#8B98A5]">Email delivery (Resend)</div>
+            <div className="flex-shrink-0 w-64 text-lg text-slate-500">Email delivery (Resend)</div>
           </div>
           <div className="flex items-center gap-6">
-            <div className="flex-shrink-0 w-24 text-3xl font-bold text-[#0F1419]">20%</div>
-            <div className="flex-1 h-4 bg-[#B3D9F2] rounded-full overflow-hidden">
-              <div className="h-full bg-[#1D9BF0] rounded-full" style={{ width: "20%" }} />
+            <div className="flex-shrink-0 w-24 text-3xl font-bold text-slate-900">20%</div>
+            <div className="flex-1 h-4 bg-slate-200 rounded-full overflow-hidden">
+              <div className="h-full bg-indigo-600 rounded-full" style={{ width: "20%" }} />
             </div>
-            <div className="flex-shrink-0 w-64 text-lg text-[#8B98A5]">Development & maintenance</div>
+            <div className="flex-shrink-0 w-64 text-lg text-slate-500">Development & maintenance</div>
           </div>
           <div className="flex items-center gap-6">
-            <div className="flex-shrink-0 w-24 text-3xl font-bold text-[#0F1419]">10%</div>
-            <div className="flex-1 h-4 bg-[#B3D9F2] rounded-full overflow-hidden">
-              <div className="h-full bg-[#1D9BF0] rounded-full" style={{ width: "10%" }} />
+            <div className="flex-shrink-0 w-24 text-3xl font-bold text-slate-900">10%</div>
+            <div className="flex-1 h-4 bg-slate-200 rounded-full overflow-hidden">
+              <div className="h-full bg-indigo-600 rounded-full" style={{ width: "10%" }} />
             </div>
-            <div className="flex-shrink-0 w-64 text-lg text-[#8B98A5]">Payment processing (Stripe)</div>
+            <div className="flex-shrink-0 w-64 text-lg text-slate-500">Payment processing (Stripe)</div>
           </div>
           <div className="flex items-center gap-6">
-            <div className="flex-shrink-0 w-24 text-3xl font-bold text-[#0F1419]">5%</div>
-            <div className="flex-1 h-4 bg-[#B3D9F2] rounded-full overflow-hidden">
-              <div className="h-full bg-[#1D9BF0] rounded-full" style={{ width: "5%" }} />
+            <div className="flex-shrink-0 w-24 text-3xl font-bold text-slate-900">5%</div>
+            <div className="flex-1 h-4 bg-slate-200 rounded-full overflow-hidden">
+              <div className="h-full bg-indigo-600 rounded-full" style={{ width: "5%" }} />
             </div>
-            <div className="flex-shrink-0 w-64 text-lg text-[#8B98A5]">Domain & hosting</div>
+            <div className="flex-shrink-0 w-64 text-lg text-slate-500">Domain & hosting</div>
           </div>
         </div>
-        <p className="text-xl md:text-2xl leading-relaxed text-[#8B98A5] italic">
+        <p className="text-xl md:text-2xl leading-relaxed text-slate-500 italic">
           We're not profitable yet, but we're committed to sustainable growth without compromise on quality or privacy.
         </p>
       </div>
@@ -406,25 +407,25 @@ function TransparencySection() {
 
 function OtherWaysSection() {
   return (
-    <div className="min-h-screen flex items-center px-6 py-32 bg-[#F7F9FA]">
+    <div className="min-h-screen flex items-center px-6 py-32 bg-slate-50">
       <div className="max-w-5xl mx-auto">
         <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-16 leading-tight">Other Ways to Help</h2>
         <div className="grid md:grid-cols-2 gap-8">
-          <div className="group p-8 border-2 border-[#B3D9F2] hover:border-[#1D9BF0] transition-all duration-300 cursor-pointer">
+          <div className="group p-8 border-2 border-slate-200 hover:border-indigo-600 transition-all duration-300 cursor-pointer">
             <h3 className="text-2xl font-bold mb-3">Leave a Review</h3>
-            <p className="text-[#8B98A5] text-lg">Help others discover us on Trustpilot or ProductHunt</p>
+            <p className="text-slate-500 text-lg">Help others discover us on Trustpilot or ProductHunt</p>
           </div>
-          <div className="group p-8 border-2 border-[#B3D9F2] hover:border-[#1D9BF0] transition-all duration-300 cursor-pointer">
+          <div className="group p-8 border-2 border-slate-200 hover:border-indigo-600 transition-all duration-300 cursor-pointer">
             <h3 className="text-2xl font-bold mb-3">Suggest Features</h3>
-            <p className="text-[#8B98A5] text-lg">Tell us what would make Prompt & Pause better for you</p>
+            <p className="text-slate-500 text-lg">Tell us what would make Prompt & Pause better for you</p>
           </div>
-          <div className="group p-8 border-2 border-[#B3D9F2] hover:border-[#1D9BF0] transition-all duration-300 cursor-pointer">
+          <div className="group p-8 border-2 border-slate-200 hover:border-indigo-600 transition-all duration-300 cursor-pointer">
             <h3 className="text-2xl font-bold mb-3">Report Bugs</h3>
-            <p className="text-[#8B98A5] text-lg">Help us improve by reporting technical issues</p>
+            <p className="text-slate-500 text-lg">Help us improve by reporting technical issues</p>
           </div>
-          <div className="group p-8 border-2 border-[#B3D9F2] hover:border-[#1D9BF0] transition-all duration-300 cursor-pointer">
+          <div className="group p-8 border-2 border-slate-200 hover:border-indigo-600 transition-all duration-300 cursor-pointer">
             <h3 className="text-2xl font-bold mb-3">Share Your Story</h3>
-            <p className="text-[#8B98A5] text-lg">Your reflection journey could inspire others</p>
+            <p className="text-slate-500 text-lg">Your reflection journey could inspire others</p>
           </div>
         </div>
       </div>
@@ -434,7 +435,7 @@ function OtherWaysSection() {
 
 function CTASection({ isAuthenticated, router }: { isAuthenticated: boolean; router: any }) {
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 py-32 bg-[#B3D9F2] text-[#0F1419]">
+    <div className="min-h-screen flex items-center justify-center px-6 py-32 bg-slate-200 text-slate-900">
       <div className="max-w-4xl text-center">
         <h2 className="text-4xl md:text-6xl lg:text-8xl font-bold mb-16 leading-tight text-balance">
           Ready to Support?
@@ -448,22 +449,22 @@ function CTASection({ isAuthenticated, router }: { isAuthenticated: boolean; rou
                 router.push("/")
               }
             }}
-            className="px-10 py-5 bg-white text-[#0F1419] border-2 border-white text-base font-medium tracking-wide transition-all duration-300 hover:bg-transparent hover:text-[#0F1419] cursor-pointer text-center"
+            className="px-10 py-5 bg-white text-slate-900 border-2 border-white text-base font-medium tracking-wide transition-all duration-300 hover:bg-transparent hover:text-slate-900 cursor-pointer text-center"
           >
             UPGRADE TO PREMIUM
           </button>
-          <a
+          <Link
             href="/gifts"
-            className="px-10 py-5 border-2 border-white bg-transparent text-[#0F1419] text-base font-medium tracking-wide transition-all duration-300 hover:bg-white hover:text-[#0F1419] cursor-pointer text-center"
+            className="px-10 py-5 border-2 border-white bg-transparent text-slate-900 text-base font-medium tracking-wide transition-all duration-300 hover:bg-white hover:text-slate-900 cursor-pointer text-center"
           >
             GIFT PREMIUM
-          </a>
-          <a
+          </Link>
+          <Link
             href="/contact"
-            className="px-10 py-5 border-2 border-white bg-transparent text-[#0F1419] text-base font-medium tracking-wide transition-all duration-300 hover:bg-white hover:text-[#0F1419] cursor-pointer text-center"
+            className="px-10 py-5 border-2 border-white bg-transparent text-slate-900 text-base font-medium tracking-wide transition-all duration-300 hover:bg-white hover:text-slate-900 cursor-pointer text-center"
           >
             JUST SAY HI
-          </a>
+          </Link>
         </div>
       </div>
     </div>

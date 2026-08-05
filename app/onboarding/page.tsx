@@ -146,6 +146,7 @@ export default function Onboarding() {
       didRegeneratePreviewOnHydrate.current = true
       generatePreviewPrompt()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hydrated, step, previewPrompt])
 
   function handleAgeVerified(data: { dateOfBirth: string; country: string; isCompliant: boolean }) {
@@ -267,19 +268,19 @@ export default function Onboarding() {
           -webkit-appearance: none;
           height: 24px;
           width: 24px;
-          border-radius: 50%;
-          background: #1D9BF0;
-          cursor: pointer;
-          box-shadow: 0 2px 8px rgba(29,155,240,0.3);
+           border-radius: 50%;
+           background: #6366F1;
+           cursor: pointer;
+           box-shadow: 0 2px 8px rgba(99,102,241,0.3);
           border: 2px solid white;
         }
         input[type="range"]::-moz-range-thumb {
           height: 24px;
           width: 24px;
-          border-radius: 50%;
-          background: #1D9BF0;
-          cursor: pointer;
-          box-shadow: 0 2px 8px rgba(29,155,240,0.3);
+           border-radius: 50%;
+           background: #6366F1;
+           cursor: pointer;
+           box-shadow: 0 2px 8px rgba(99,102,241,0.3);
           border: 2px solid white;
         }
       `}</style>
@@ -290,7 +291,7 @@ export default function Onboarding() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="bg-white border border-[#EFF3F4] rounded-2xl shadow-[0_2px_12px_rgba(15,20,25,0.08)] px-6 sm:px-8 py-8 sm:py-10">
+        <div className="bg-white border border-slate-100 rounded-2xl shadow-[0_2px_12px_rgba(15,20,25,0.08)] px-6 sm:px-8 py-8 sm:py-10">
           {step === -2 ? (
             <AgeVerification onVerified={handleAgeVerified} />
           ) : step === -1 ? (
@@ -299,7 +300,7 @@ export default function Onboarding() {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: "spring", bounce: 0.5, delay: 0.2 }}
-                className="w-20 h-20 rounded-full bg-[#0F1419] flex items-center justify-center shadow-lg"
+                className="w-20 h-20 rounded-full bg-slate-900 flex items-center justify-center shadow-lg"
               >
                 <Sparkles className="w-10 h-10 text-white" />
               </motion.div>
@@ -309,7 +310,7 @@ export default function Onboarding() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.15 }}
-                  className="text-2xl sm:text-3xl font-bold text-[#0F1419]"
+                  className="text-2xl sm:text-3xl font-bold text-slate-900"
                 >
                   Welcome to Prompt & Pause
                 </motion.h1>
@@ -317,7 +318,7 @@ export default function Onboarding() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
-                  className="text-[#536471] text-sm"
+                  className="text-slate-600 text-sm"
                 >
                   Your personal space for daily reflection
                 </motion.p>
@@ -327,17 +328,17 @@ export default function Onboarding() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="w-full bg-[#F7F9FA] border border-[#EFF3F4] rounded-xl p-5"
+                className="w-full bg-slate-50 border border-slate-100 rounded-xl p-5"
               >
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="w-8 h-8 rounded-full bg-[#1D9BF0] flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center">
                     <Zap className="w-4 h-4 text-white" />
                   </div>
-                  <p className="text-base font-semibold text-[#0F1419]">
+                  <p className="text-base font-semibold text-slate-900">
                     Start with a 7-day free trial
                   </p>
                 </div>
-                <p className="text-sm text-[#536471] ml-11">
+                <p className="text-sm text-slate-600 ml-11">
                   No credit card required &bull; Full access to all features
                 </p>
               </motion.div>
@@ -346,9 +347,9 @@ export default function Onboarding() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4 }}
-                className="bg-[#F7F9FA] rounded-xl p-4 text-xs text-[#536471] leading-relaxed border border-[#EFF3F4]"
+                className="bg-slate-50 rounded-xl p-4 text-xs text-slate-600 leading-relaxed border border-slate-100"
               >
-                <strong className="text-[#0F1419]">Disclaimer:</strong> Prompt & Pause is not a doctor, registered therapist, or a provider of professional medical, clinical, or crisis care. This service is for self-reflection and general wellness, not diagnosis, treatment, or urgent care. If you are in a crisis, please seek help from a qualified provider or call emergency services.
+                <strong className="text-slate-900">Disclaimer:</strong> Prompt & Pause is not a doctor, registered therapist, or a provider of professional medical, clinical, or crisis care. This service is for self-reflection and general wellness, not diagnosis, treatment, or urgent care. If you are in a crisis, please seek help from a qualified provider or call emergency services.
               </motion.div>
 
               <motion.label
@@ -357,7 +358,7 @@ export default function Onboarding() {
                 transition={{ delay: 0.45 }}
                 className="flex items-start gap-3 w-full cursor-pointer group"
               >
-                <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all shrink-0 mt-0.5 ${acceptedTerms ? 'bg-[#1D9BF0] border-[#1D9BF0]' : 'border-[#CFD9DE] group-hover:border-[#1D9BF0]/50'}`}>
+                <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all shrink-0 mt-0.5 ${acceptedTerms ? 'bg-indigo-600 border-indigo-600' : 'border-slate-200 group-hover:border-indigo-600/50'}`}>
                   {acceptedTerms && <Check className="w-4 h-4 text-white" />}
                 </div>
                 <input
@@ -366,7 +367,7 @@ export default function Onboarding() {
                   checked={acceptedTerms}
                   onChange={e => setAcceptedTerms(e.target.checked)}
                 />
-                <span className="text-sm text-[#536471] text-left">I accept the terms and acknowledge Prompt & Pause is not a medical/clinical provider</span>
+                <span className="text-sm text-slate-600 text-left">I accept the terms and acknowledge Prompt & Pause is not a medical/clinical provider</span>
               </motion.label>
 
               <motion.div
@@ -377,7 +378,7 @@ export default function Onboarding() {
               >
                 <Button
                   disabled={!acceptedTerms}
-                  className="w-full bg-[#0F1419] hover:bg-black text-white rounded-full px-8 py-4 text-lg font-semibold disabled:opacity-30 transition-all duration-300 touch-manipulation"
+                  className="w-full bg-slate-900 hover:bg-black text-white rounded-full px-8 py-4 text-lg font-semibold disabled:opacity-30 transition-all duration-300 touch-manipulation"
                   onClick={() => setStep(0)}
                 >
                   <span className="flex items-center justify-center gap-2">
@@ -391,16 +392,16 @@ export default function Onboarding() {
             <>
               <div className="mb-8">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-medium text-[#536471]">
+                  <span className="text-sm font-medium text-slate-600">
                     Step {Math.min(step + 1, steps.length)} of {steps.length}
                   </span>
-                  <span className="text-sm text-[#536471]">
+                  <span className="text-sm text-slate-600">
                     {Math.round(((Math.min(step + 1, steps.length)) / steps.length) * 100)}%
                   </span>
                 </div>
-                <div className="w-full h-1.5 bg-[#EFF3F4] rounded-full overflow-hidden">
+                <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
                   <motion.div
-                    className="h-full bg-[#1D9BF0] rounded-full"
+                    className="h-full bg-indigo-600 rounded-full"
                     initial={{ width: 0 }}
                     animate={{ width: `${((Math.min(step + 1, steps.length)) / steps.length) * 100}%` }}
                     transition={{ duration: 0.5, ease: "easeOut" }}
@@ -427,16 +428,16 @@ export default function Onboarding() {
                             transition={{ type: 'spring', stiffness: 220, damping: 18 }}
                             className="mb-5"
                           >
-                            <div className="w-14 h-14 mx-auto rounded-full bg-[#1D9BF0]/10 flex items-center justify-center">
-                              <Icon className="w-7 h-7 text-[#1D9BF0]" strokeWidth={1.5} />
+                            <div className="w-14 h-14 mx-auto rounded-full bg-indigo-500/10 flex items-center justify-center">
+                              <Icon className="w-7 h-7 text-indigo-600" strokeWidth={1.5} />
                             </div>
                           </motion.div>
                         )
                       })()}
-                      <h2 className="text-xl sm:text-2xl font-bold text-[#0F1419] mb-2 tracking-tight">
+                      <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2 tracking-tight">
                         {steps[step].question}
                       </h2>
-                      <p className="text-sm text-[#536471]">
+                      <p className="text-sm text-slate-600">
                         {step === 0 && "Understanding your journey helps us personalize your experience"}
                         {step === 1 && "This helps us tailor prompts to where you are right now"}
                         {step === 2 && "We'll send your daily reflection prompt at this time"}
@@ -460,8 +461,8 @@ export default function Onboarding() {
                             whileTap={{ scale: 0.99 }}
                             className={`w-full p-4 rounded-xl text-left font-medium transition-all duration-200 ${
                               answers[steps[step].key as keyof typeof answers] === opt
-                                ? "bg-[#1D9BF0] text-white shadow-[0_2px_8px_rgba(29,155,240,0.25)]"
-                                : "bg-[#F7F9FA] text-[#0F1419] border border-[#EFF3F4] hover:border-[#1D9BF0]/30"
+                                ? "bg-indigo-600 text-white shadow-[0_2px_8px_rgba(29,155,240,0.25)]"
+                                : "bg-slate-50 text-slate-900 border border-slate-100 hover:border-indigo-600/30"
                             }`}
                             onClick={() => selectOption(opt)}
                           >
@@ -489,9 +490,9 @@ export default function Onboarding() {
                             min={steps[step].min}
                             max={steps[step].max}
                             value={answers.mood}
-                            className="w-full h-1.5 bg-[#EFF3F4] rounded-full appearance-none cursor-pointer accent-[#1D9BF0]"
+                            className="w-full h-1.5 bg-slate-100 rounded-full appearance-none cursor-pointer accent-indigo-600"
                             style={{
-                              background: `linear-gradient(to right, #1D9BF0 0%, #1D9BF0 ${(answers.mood - 1) * 11.1}%, #EFF3F4 ${(answers.mood - 1) * 11.1}%, #EFF3F4 100%)`
+                              background: `linear-gradient(to right, #6366F1 0%, #6366F1 ${(answers.mood - 1) * 11.1}%, #F1F5F9 ${(answers.mood - 1) * 11.1}%, #F1F5F9 100%)`
                             }}
                             onChange={e => setAnswers(a => ({ ...a, mood: +e.target.value }))}
                           />
@@ -499,7 +500,7 @@ export default function Onboarding() {
                         <div className="flex justify-between items-center">
                           <div className="text-center">
                             <span className="text-2xl block mb-1">&#x1F614;</span>
-                            <p className="text-xs text-[#536471]">{steps[step].minLabel}</p>
+                            <p className="text-xs text-slate-600">{steps[step].minLabel}</p>
                           </div>
                           <motion.div
                             key={answers.mood}
@@ -507,12 +508,12 @@ export default function Onboarding() {
                             animate={{ scale: 1 }}
                             className="text-center"
                           >
-                            <span className="text-4xl font-bold text-[#1D9BF0]">{answers.mood}</span>
-                            <p className="text-xs text-[#536471] mt-1">out of 10</p>
+                            <span className="text-4xl font-bold text-indigo-600">{answers.mood}</span>
+                            <p className="text-xs text-slate-600 mt-1">out of 10</p>
                           </motion.div>
                           <div className="text-center">
                             <span className="text-2xl block mb-1">&#x1F60A;</span>
-                            <p className="text-xs text-[#536471]">{steps[step].maxLabel}</p>
+                            <p className="text-xs text-slate-600">{steps[step].maxLabel}</p>
                           </div>
                         </div>
                       </motion.div>
@@ -529,10 +530,10 @@ export default function Onboarding() {
                               whileTap={isLocked ? {} : { scale: 0.98 }}
                               className={`p-6 rounded-xl flex flex-col items-center gap-3 transition-all duration-200 relative ${
                                 isLocked
-                                  ? "bg-[#F7F9FA] text-[#536471] border border-[#EFF3F4] cursor-not-allowed opacity-60"
+                                  ? "bg-slate-50 text-slate-600 border border-slate-100 cursor-not-allowed opacity-60"
                                   : answers.delivery === o.label
-                                    ? "bg-[#1D9BF0] text-white shadow-[0_2px_8px_rgba(29,155,240,0.25)]"
-                                    : "bg-[#F7F9FA] text-[#0F1419] border border-[#EFF3F4] hover:border-[#1D9BF0]/30"
+                                    ? "bg-indigo-600 text-white shadow-[0_2px_8px_rgba(29,155,240,0.25)]"
+                                    : "bg-slate-50 text-slate-900 border border-slate-100 hover:border-indigo-600/30"
                               }`}
                               onClick={() => !isLocked && selectOption(o.label)}
                               disabled={isLocked}
@@ -540,7 +541,7 @@ export default function Onboarding() {
                               <o.icon className="w-8 h-8" />
                               <span className="font-medium">{o.label}</span>
                               {isLocked && (
-                                <span className="text-xs text-[#536471] font-medium flex items-center gap-1">
+                                <span className="text-xs text-slate-600 font-medium flex items-center gap-1">
                                   <Crown className="w-3 h-3" /> Premium
                                 </span>
                               )}
@@ -574,8 +575,8 @@ export default function Onboarding() {
                             whileTap={{ scale: 0.99 }}
                             className={`w-full p-4 rounded-xl text-left font-medium transition-all duration-200 ${
                               answers.focus.includes(opt)
-                                ? "bg-[#1D9BF0] text-white shadow-[0_2px_8px_rgba(29,155,240,0.25)]"
-                                : "bg-[#F7F9FA] text-[#0F1419] border border-[#EFF3F4] hover:border-[#1D9BF0]/30"
+                                ? "bg-indigo-600 text-white shadow-[0_2px_8px_rgba(29,155,240,0.25)]"
+                                : "bg-slate-50 text-slate-900 border border-slate-100 hover:border-indigo-600/30"
                             }`}
                             onClick={() => toggleOption(opt)}
                           >
@@ -584,10 +585,10 @@ export default function Onboarding() {
                               <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
                                 answers.focus.includes(opt)
                                   ? "bg-white border-white"
-                                  : "border-[#CFD9DE]"
+                                  : "border-slate-200"
                               }`}>
                                 {answers.focus.includes(opt) && (
-                                  <Check className="w-4 h-4 text-[#1D9BF0]" />
+                                  <Check className="w-4 h-4 text-indigo-600" />
                                 )}
                               </div>
                             </div>
@@ -601,7 +602,7 @@ export default function Onboarding() {
                         variant="ghost"
                         disabled={step === 0}
                         onClick={back}
-                        className="flex items-center gap-2 text-[#536471] hover:text-[#0F1419] rounded-full"
+                        className="flex items-center gap-2 text-slate-600 hover:text-slate-900 rounded-full"
                       >
                         <ChevronLeft className="w-4 h-4" />
                         Back
@@ -616,7 +617,7 @@ export default function Onboarding() {
                           (step === 3 && !answers.delivery) ||
                           (step === 4 && (!answers.focus || answers.focus.length === 0))
                         }
-                        className="bg-[#1D9BF0] hover:bg-[#1A8CD8] text-white px-8 py-3 rounded-full font-semibold shadow-[0_2px_8px_rgba(29,155,240,0.25)] disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+                        className="bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-3 rounded-full font-semibold shadow-[0_2px_8px_rgba(29,155,240,0.25)] disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
                       >
                         {step === steps.length - 1 ? "See Preview" : "Continue"}
                         <ChevronRight className="w-4 h-4" />
@@ -635,7 +636,7 @@ export default function Onboarding() {
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         transition={{ type: "spring", bounce: 0.5, delay: 0.2 }}
-                        className="w-16 h-16 mx-auto rounded-full bg-[#0F1419] flex items-center justify-center shadow-lg"
+                        className="w-16 h-16 mx-auto rounded-full bg-slate-900 flex items-center justify-center shadow-lg"
                       >
                         <Star className="w-8 h-8 text-white" />
                       </motion.div>
@@ -643,7 +644,7 @@ export default function Onboarding() {
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.15 }}
-                        className="text-2xl font-bold text-[#0F1419]"
+                        className="text-2xl font-bold text-slate-900"
                       >
                         Here&apos;s a preview of your first prompt
                       </motion.h2>
@@ -651,7 +652,7 @@ export default function Onboarding() {
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="text-[#536471]"
+                        className="text-slate-600"
                       >
                         Your reflection space is ready when you are
                       </motion.p>
@@ -661,22 +662,22 @@ export default function Onboarding() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4 }}
-                      className="bg-[#F7F9FA] border border-[#EFF3F4] rounded-xl p-6"
+                      className="bg-slate-50 border border-slate-100 rounded-xl p-6"
                     >
                       <div className="flex items-start gap-4">
-                        <div className="w-10 h-10 rounded-full bg-[#1D9BF0]/10 flex items-center justify-center flex-shrink-0">
-                          <Feather className="w-5 h-5 text-[#1D9BF0]" />
+                        <div className="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center flex-shrink-0">
+                          <Feather className="w-5 h-5 text-indigo-600" />
                         </div>
                         <div className="flex-1">
-                          <h3 className="text-xs font-bold text-[#536471] uppercase tracking-wider mb-3">
+                          <h3 className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-3">
                             Today&apos;s Prompt
                           </h3>
-                          <blockquote className="text-lg text-[#0F1419] leading-relaxed italic">
+                          <blockquote className="text-lg text-slate-900 leading-relaxed italic">
                             {previewPrompt ? (
                               `"${previewPrompt}"`
                             ) : (
-                              <span className="flex items-center gap-2 text-[#536471] not-italic">
-                                <div className="animate-spin h-4 w-4 border-2 border-[#1D9BF0] border-t-transparent rounded-full"></div>
+                              <span className="flex items-center gap-2 text-slate-600 not-italic">
+                                <div className="animate-spin h-4 w-4 border-2 border-indigo-600 border-t-transparent rounded-full"></div>
                                 Crafting your personalized prompt...
                               </span>
                             )}
@@ -688,10 +689,10 @@ export default function Onboarding() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.6 }}
-                        className="mt-6 pt-4 border-t border-[#EFF3F4]"
+                        className="mt-6 pt-4 border-t border-slate-100"
                       >
-                        <p className="text-sm text-[#536471] text-center">
-                          Personalized for: <span className="font-semibold text-[#1D9BF0]">{answers.focus.join(", ")}</span>
+                        <p className="text-sm text-slate-600 text-center">
+                          Personalized for: <span className="font-semibold text-indigo-600">{answers.focus.join(", ")}</span>
                         </p>
                       </motion.div>
                     </motion.div>
@@ -705,7 +706,7 @@ export default function Onboarding() {
                         <Button
                           onClick={handleSubmit}
                           disabled={isSubmitting}
-                          className="w-full bg-[#0F1419] hover:bg-black text-white py-4 rounded-full text-lg font-semibold shadow-lg disabled:opacity-30 transition-all duration-300"
+                          className="w-full bg-slate-900 hover:bg-black text-white py-4 rounded-full text-lg font-semibold shadow-lg disabled:opacity-30 transition-all duration-300"
                         >
                           {isSubmitting ? (
                             <span className="flex items-center justify-center gap-2">
@@ -724,7 +725,7 @@ export default function Onboarding() {
                         variant="ghost"
                         onClick={() => setStep(steps.length - 1)}
                         disabled={isSubmitting}
-                        className="w-full text-[#536471] hover:text-[#0F1419] rounded-full"
+                        className="w-full text-slate-600 hover:text-slate-900 rounded-full"
                       >
                         <ChevronLeft className="w-4 h-4 mr-1" />
                         Adjust my preferences
@@ -742,8 +743,8 @@ export default function Onboarding() {
                       animate={{ scale: 1 }}
                       transition={{ type: "spring", bounce: 0.5, delay: 0.2 }}
                     >
-                      <div className="w-[100px] h-[100px] mx-auto rounded-full bg-[#1D9BF0]/10 border border-[#1D9BF0]/20 flex items-center justify-center">
-                        <Check className="w-10 h-10 text-[#1D9BF0]" />
+                      <div className="w-[100px] h-[100px] mx-auto rounded-full bg-indigo-500/10 border border-indigo-600/20 flex items-center justify-center">
+                        <Check className="w-10 h-10 text-indigo-600" />
                       </div>
                     </motion.div>
 
@@ -753,38 +754,38 @@ export default function Onboarding() {
                       transition={{ delay: 0.2 }}
                       className="space-y-2"
                     >
-                      <h2 className="text-2xl font-bold text-[#0F1419]">All done!</h2>
-                      <p className="text-[#536471]">Welcome to your reflection journey</p>
+                      <h2 className="text-2xl font-bold text-slate-900">All done!</h2>
+                      <p className="text-slate-600">Welcome to your reflection journey</p>
                     </motion.div>
 
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3 }}
-                      className="bg-[#F7F9FA] rounded-xl p-5 space-y-3 text-left border border-[#EFF3F4]"
+                      className="bg-slate-50 rounded-xl p-5 space-y-3 text-left border border-slate-100"
                     >
                       <div className="flex items-center gap-3">
-                        <Clock className="w-5 h-5 text-[#1D9BF0]" />
-                        <span className="text-[#536471]">
-                          Daily prompts at <span className="font-semibold text-[#0F1419]">{answers.promptTime}</span>
+                        <Clock className="w-5 h-5 text-indigo-600" />
+                        <span className="text-slate-600">
+                          Daily prompts at <span className="font-semibold text-slate-900">{answers.promptTime}</span>
                         </span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <Target className="w-5 h-5 text-[#1D9BF0]" />
-                        <span className="text-[#536471]">
-                          Focus: <span className="font-semibold text-[#0F1419]">{answers.focus.join(", ")}</span>
+                        <Target className="w-5 h-5 text-indigo-600" />
+                        <span className="text-slate-600">
+                          Focus: <span className="font-semibold text-slate-900">{answers.focus.join(", ")}</span>
                         </span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <Mail className="w-5 h-5 text-[#1D9BF0]" />
-                        <span className="text-[#536471]">
-                          Delivery via <span className="font-semibold text-[#0F1419]">{answers.delivery}</span>
+                        <Mail className="w-5 h-5 text-indigo-600" />
+                        <span className="text-slate-600">
+                          Delivery via <span className="font-semibold text-slate-900">{answers.delivery}</span>
                         </span>
                       </div>
                     </motion.div>
 
-                    <div className="flex items-center justify-center gap-2 text-[#536471] pt-4">
-                      <div className="animate-spin h-5 w-5 border-2 border-[#1D9BF0] border-t-transparent rounded-full"></div>
+                    <div className="flex items-center justify-center gap-2 text-slate-600 pt-4">
+                      <div className="animate-spin h-5 w-5 border-2 border-indigo-600 border-t-transparent rounded-full"></div>
                       <span>Redirecting to your dashboard...</span>
                     </div>
                   </motion.div>

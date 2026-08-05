@@ -20,7 +20,7 @@ import { motion } from 'framer-motion'
 import { ChevronRight, Heart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
-export type Accent = 'emerald' | 'blue' | 'violet' | 'rose' | 'amber'
+export type Accent = 'emerald' | 'blue' | 'indigo' | 'violet' | 'rose' | 'amber'
 
 export const accentStyles: Record<
   Accent,
@@ -47,6 +47,17 @@ export const accentStyles: Record<
     fill: 'bg-gradient-to-br from-sky-400 via-sky-500 to-sky-600 text-white',
     ringBand: 'from-sky-400/35 to-sky-300/10',
     glowOrb: 'bg-sky-400/35',
+  },
+  indigo: {
+    glow: 'bg-indigo-400/25',
+    surface:
+      'from-indigo-50/90 via-white/70 to-white/60 dark:from-indigo-500/10 dark:via-white/[0.02] dark:to-transparent',
+    border:
+      'border-indigo-200/60 dark:border-indigo-400/15 hover:border-indigo-300/80 dark:hover:border-indigo-400/30',
+    ring: 'focus-visible:ring-indigo-400/40',
+    fill: 'bg-gradient-to-br from-indigo-500 via-indigo-500 to-indigo-600 text-white',
+    ringBand: 'from-indigo-500/35 to-indigo-400/10',
+    glowOrb: 'bg-indigo-500/35',
   },
   violet: {
     glow: 'bg-violet-400/25',

@@ -120,7 +120,7 @@ export default function MaintenancePage() {
 
           {/* Current Time */}
           <div className="text-center">
-            <p className="text-sm text-[#8B98A5] mb-2">Current Time</p>
+            <p className="text-sm text-slate-500 mb-2">Current Time</p>
             <p className="text-2xl font-mono text-[#4A5A49]">
               {mounted && currentTime ? currentTime.toLocaleTimeString() : '--:--:--'}
             </p>
@@ -131,7 +131,7 @@ export default function MaintenancePage() {
             <p className="text-[#4A5A49] mb-2">
               Thank you for your patience and understanding
             </p>
-            <p className="text-sm text-[#8B98A5]">
+            <p className="text-sm text-slate-500">
               Your reflections and data are safe and will be available once maintenance is complete
             </p>
           </div>
@@ -149,7 +149,7 @@ export default function MaintenancePage() {
 
         {/* Refresh Hint */}
         <div className="mt-6 text-center">
-          <p className="text-sm text-[#8B98A5]">
+          <p className="text-sm text-slate-500">
             Try refreshing this page in a few minutes to see if we're back online
           </p>
         </div>

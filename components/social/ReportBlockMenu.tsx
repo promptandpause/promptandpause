@@ -114,7 +114,7 @@ export function ReportBlockMenu({ targetType, targetId, authorId, authorName, is
     <div className="relative" ref={ref}>
       <button
         onClick={e => { e.stopPropagation(); setOpen(v => !v) }}
-        className={`p-1 rounded-full transition-colors ${isDark ? 'text-white/30 hover:bg-white/10 hover:text-white/60' : 'text-[#8B98A5] hover:bg-[#EFF3F4] hover:text-[#536471]'}`}
+        className={`p-1 rounded-full transition-colors ${isDark ? 'text-white/30 hover:bg-white/10 hover:text-white/60' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-600'}`}
         aria-label="More options"
       >
         <MoreHorizontal size={16} />
@@ -124,7 +124,7 @@ export function ReportBlockMenu({ targetType, targetId, authorId, authorName, is
         <div
           onClick={e => e.stopPropagation()}
           className={`absolute right-0 top-7 z-50 w-56 rounded-xl shadow-lg overflow-hidden border ${
-            isDark ? 'bg-[#0A0A0A] border-white/10' : 'bg-white border-[#EFF3F4]'
+            isDark ? 'bg-[#0A0E18] border-white/10' : 'bg-white border-slate-100'
           }`}
         >
           {!showReasons ? (
@@ -133,7 +133,7 @@ export function ReportBlockMenu({ targetType, targetId, authorId, authorName, is
                 onClick={() => setShowReasons(true)}
                 disabled={reported}
                 className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 text-sm text-left transition-colors ${
-                  isDark ? 'text-white/80 hover:bg-white/5' : 'text-[#0F1419] hover:bg-[#F7F9FA]'
+                  isDark ? 'text-white/80 hover:bg-white/5' : 'text-slate-900 hover:bg-slate-50'
                 }`}
               >
                 <Flag size={15} />
@@ -143,7 +143,7 @@ export function ReportBlockMenu({ targetType, targetId, authorId, authorName, is
                 onClick={isBlocked ? unblockUser : blockUser}
                 disabled={blocking}
                 className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 text-sm text-left transition-colors border-t ${
-                  isDark ? 'text-red-400 hover:bg-white/5 border-white/[0.06]' : 'text-red-500 hover:bg-[#F7F9FA] border-[#EFF3F4]'
+                  isDark ? 'text-red-400 hover:bg-white/5 border-white/[0.06]' : 'text-red-500 hover:bg-slate-50 border-slate-100'
                 }`}
               >
                 {isBlocked ? <UserCheck size={15} /> : <UserX size={15} />}
@@ -152,7 +152,7 @@ export function ReportBlockMenu({ targetType, targetId, authorId, authorName, is
             </>
           ) : (
             <div className="py-1.5">
-              <p className={`px-3.5 pb-1.5 text-xs font-semibold ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
+              <p className={`px-3.5 pb-1.5 text-xs font-semibold ${isDark ? 'text-white/40' : 'text-slate-500'}`}>
                 Why are you reporting this?
               </p>
               {REASONS.map(r => (
@@ -160,7 +160,7 @@ export function ReportBlockMenu({ targetType, targetId, authorId, authorName, is
                   key={r.value}
                   onClick={() => submitReport(r.value)}
                   className={`w-full px-3.5 py-2 text-sm text-left transition-colors ${
-                    isDark ? 'text-white/80 hover:bg-white/5' : 'text-[#0F1419] hover:bg-[#F7F9FA]'
+                    isDark ? 'text-white/80 hover:bg-white/5' : 'text-slate-900 hover:bg-slate-50'
                   }`}
                 >
                   {r.label}

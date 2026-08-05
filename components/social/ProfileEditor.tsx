@@ -160,14 +160,14 @@ export function ProfileEditor({ onSaved }: { onSaved?: () => void } = {}) {
                 placeholder="your-username"
                 className={cn(inputClass(isDark), usernameError ? 'border-rose-500/50' : usernameValid ? 'border-emerald-500/50' : '')}
               />
-              {checkingUsername && <Spinner size={14} weight="bold" className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-[#8B98A5]" />}
+              {checkingUsername && <Spinner size={14} weight="bold" className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-slate-500" />}
               {usernameValid && <CheckCircle size={14} weight="bold" className="absolute right-3 top-1/2 -translate-y-1/2 text-emerald-500" />}
               {usernameError && <XCircle size={14} weight="bold" className="absolute right-3 top-1/2 -translate-y-1/2 text-rose-500" />}
             </div>
             {usernameError ? (
               <p className="text-xs mt-1 text-rose-500">{usernameError}</p>
             ) : (
-              <p className={`text-xs mt-1 ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`}>
+              <p className={`text-xs mt-1 ${isDark ? 'text-white/20' : 'text-slate-500'}`}>
                 Your public profile: promptandpause.com/<strong>@{profile.username || 'username'}</strong>
               </p>
             )}
@@ -178,18 +178,18 @@ export function ProfileEditor({ onSaved }: { onSaved?: () => void } = {}) {
       {/* Avatar */}
       <Section title="Avatar" isDark={isDark} icon={<User size={16} weight="bold" />}>
         <div className="flex items-center gap-5">
-          <div className={`w-20 h-20 rounded-full overflow-hidden flex-shrink-0 ${isDark ? 'bg-white/[0.06]' : 'bg-[#EFF3F4]'}`}>
+          <div className={`w-20 h-20 rounded-full overflow-hidden flex-shrink-0 ${isDark ? 'bg-white/[0.06]' : 'bg-slate-100'}`}>
             {(avatarPreview || profile.avatar_url) ? (
               <img src={avatarPreview || profile.avatar_url} alt="" className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
-                <User size={28} className={isDark ? 'text-white/20' : 'text-[#8B98A5]'} />
+                <User size={28} className={isDark ? 'text-white/20' : 'text-slate-500'} />
               </div>
             )}
           </div>
           <div className="flex-1">
             <label className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold cursor-pointer transition-colors ${
-              isDark ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-[#0F1419] text-white hover:bg-[#536471]'
+              isDark ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-slate-900 text-white hover:bg-slate-600'
             }`}>
               <ImageSquare size={16} weight="bold" />
               Choose image
@@ -224,8 +224,8 @@ export function ProfileEditor({ onSaved }: { onSaved?: () => void } = {}) {
                 }}
               />
             </label>
-            {uploadingAvatar && <p className={`text-xs mt-1.5 ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>Uploading...</p>}
-            <p className={`text-xs mt-1 ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`}>
+            {uploadingAvatar && <p className={`text-xs mt-1.5 ${isDark ? 'text-white/30' : 'text-slate-500'}`}>Uploading...</p>}
+            <p className={`text-xs mt-1 ${isDark ? 'text-white/20' : 'text-slate-500'}`}>
               PNG, JPEG, WebP, AVIF or GIF. Max 5MB.
             </p>
           </div>
@@ -241,7 +241,7 @@ export function ProfileEditor({ onSaved }: { onSaved?: () => void } = {}) {
           maxLength={500}
           className={cn(inputClass(isDark), 'min-h-[80px]')}
         />
-        <p className={`text-xs mt-1 ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`}>{profile.bio.length}/500</p>
+        <p className={`text-xs mt-1 ${isDark ? 'text-white/20' : 'text-slate-500'}`}>{profile.bio.length}/500</p>
       </Section>
 
       {/* Theme Selector */}
@@ -304,13 +304,13 @@ export function ProfileEditor({ onSaved }: { onSaved?: () => void } = {}) {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className={`text-sm font-medium ${isDark ? 'text-white/70' : 'text-[#536471]'}`}>Default visibility</p>
-              <p className={`text-xs ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>When you write a new reflection</p>
+              <p className={`text-sm font-medium ${isDark ? 'text-white/70' : 'text-slate-600'}`}>Default visibility</p>
+              <p className={`text-xs ${isDark ? 'text-white/30' : 'text-slate-500'}`}>When you write a new reflection</p>
             </div>
             <select
               value={profile.share_default}
               onChange={e => setProfile(p => ({ ...p, share_default: e.target.value as any }))}
-              className={`text-sm rounded-xl px-3 py-2 ${isDark ? 'bg-white/[0.06] text-white border-white/10' : 'bg-white text-[#0F1419] border-[#EFF3F4]'} border`}
+              className={`text-sm rounded-xl px-3 py-2 ${isDark ? 'bg-white/[0.06] text-white border-white/10' : 'bg-white text-slate-900 border-slate-100'} border`}
             >
               <option value="private">Private</option>
               <option value="friends_only">Friends only</option>
@@ -339,7 +339,7 @@ export function ProfileEditor({ onSaved }: { onSaved?: () => void } = {}) {
         <Button
           onClick={handleSave}
           disabled={saving}
-          className={`px-6 ${isDark ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-[#0F1419] text-white hover:bg-[#536471]'}`}
+          className={`px-6 ${isDark ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-slate-900 text-white hover:bg-slate-600'}`}
         >
           {saving ? <Spinner size={16} weight="bold" className="animate-spin mr-2" /> : <FloppyDisk size={16} weight="bold" className="mr-2" />}
           Save Profile
@@ -351,8 +351,8 @@ export function ProfileEditor({ onSaved }: { onSaved?: () => void } = {}) {
 
 function Section({ title, children, isDark, icon }: { title: string; children: React.ReactNode; isDark: boolean; icon?: React.ReactNode }) {
   return (
-    <div className={`rounded-2xl p-5 ${isDark ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-white/80 border border-[#EFF3F4]'}`}>
-      <h3 className={`flex items-center gap-2 text-sm font-semibold mb-4 ${isDark ? 'text-white/70' : 'text-[#536471]'}`}>
+    <div className={`rounded-2xl p-5 ${isDark ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-white/80 border border-slate-100'}`}>
+      <h3 className={`flex items-center gap-2 text-sm font-semibold mb-4 ${isDark ? 'text-white/70' : 'text-slate-600'}`}>
         {icon}{title}
       </h3>
       {children}
@@ -361,7 +361,7 @@ function Section({ title, children, isDark, icon }: { title: string; children: R
 }
 
 function Label({ children, isDark }: { children: React.ReactNode; isDark: boolean }) {
-  return <p className={`text-xs font-medium mb-1.5 ${isDark ? 'text-white/50' : 'text-[#8B98A5]'}`}>{children}</p>
+  return <p className={`text-xs font-medium mb-1.5 ${isDark ? 'text-white/50' : 'text-slate-500'}`}>{children}</p>
 }
 
 function ToggleRow({ label, description, checked, onChange, isDark }: {
@@ -370,12 +370,12 @@ function ToggleRow({ label, description, checked, onChange, isDark }: {
   return (
     <label className="flex items-center justify-between cursor-pointer">
       <div>
-        <p className={`text-sm font-medium ${isDark ? 'text-white/70' : 'text-[#536471]'}`}>{label}</p>
-        <p className={`text-xs ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>{description}</p>
+        <p className={`text-sm font-medium ${isDark ? 'text-white/70' : 'text-slate-600'}`}>{label}</p>
+        <p className={`text-xs ${isDark ? 'text-white/30' : 'text-slate-500'}`}>{description}</p>
       </div>
       <button
         onClick={() => onChange(!checked)}
-        className={`relative h-6 w-11 rounded-full transition-colors ${checked ? 'bg-[#1D9BF0]' : isDark ? 'bg-white/10' : 'bg-[#EFF3F4]'}`}
+        className={`relative h-6 w-11 rounded-full transition-colors ${checked ? 'bg-indigo-600' : isDark ? 'bg-white/10' : 'bg-slate-100'}`}
       >
         <motion.div
           animate={{ x: checked ? 22 : 2 }}
@@ -389,5 +389,5 @@ function ToggleRow({ label, description, checked, onChange, isDark }: {
 function inputClass(isDark: boolean) {
   return isDark
     ? 'bg-white/[0.06] border-white/[0.08] text-white placeholder:text-white/20'
-    : 'bg-white border-[#EFF3F4] text-[#0F1419] placeholder:text-[#8B98A5]'
+    : 'bg-white border-slate-100 text-slate-900 placeholder:text-slate-400'
 }

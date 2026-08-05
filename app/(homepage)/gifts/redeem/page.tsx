@@ -95,19 +95,19 @@ function GiftRedeemContent() {
   return (
     <>
       <Navigation />
-      <main className="min-h-screen bg-[#EFF3F4] text-[#0F1419]">
+      <main className="min-h-screen bg-slate-100 text-slate-900">
         <div className="pt-28 pb-16 px-6">
           <div className="max-w-3xl mx-auto">
-            <div className="rounded-3xl border border-[#B3D9F2] bg-white shadow-sm p-6 sm:p-10">
+            <div className="rounded-3xl border border-slate-200 bg-white shadow-sm p-6 sm:p-10">
               <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Redeem your gift</h1>
-              <p className="mt-3 text-[#536471] leading-relaxed">
+              <p className="mt-3 text-slate-600 leading-relaxed">
                 Enter the 32-character gift code from your email. You’ll need to be signed in to apply the gift to your
                 account.
               </p>
 
               <form onSubmit={onSubmit} className="mt-8 space-y-4">
                 <label className="block">
-                  <span className="block text-sm font-medium text-[#536471]">Gift code</span>
+                  <span className="block text-sm font-medium text-slate-600">Gift code</span>
                   <input
                     value={token}
                     onChange={(e) => setToken(e.target.value)}
@@ -116,9 +116,9 @@ function GiftRedeemContent() {
                     autoCapitalize="none"
                     autoCorrect="off"
                     spellCheck={false}
-                    className="mt-2 w-full rounded-xl border border-[#B3D9F2] px-4 py-3 font-mono text-sm tracking-wider outline-none focus:ring-2 focus:ring-[#1D9BF0]/10 bg-white"
+                    className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 font-mono text-sm tracking-wider outline-none focus:ring-2 focus:ring-indigo-500/10 bg-white"
                   />
-                  <div className="mt-2 flex items-center justify-between text-xs text-[#8B98A5]">
+                  <div className="mt-2 flex items-center justify-between text-xs text-slate-500">
                     <span>Length: {trimmedToken.length}/32</span>
                     <button
                       type="button"
@@ -127,7 +127,7 @@ function GiftRedeemContent() {
                         setResult(null)
                         setHttpStatus(null)
                       }}
-                      className="underline underline-offset-4 hover:text-[#0F1419]"
+                      className="underline underline-offset-4 hover:text-slate-900"
                     >
                       Clear
                     </button>
@@ -137,21 +137,21 @@ function GiftRedeemContent() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full rounded-xl bg-[#1D9BF0] text-white px-5 py-3 font-medium hover:bg-[#1A8CD8] transition-colors disabled:opacity-60"
+                  className="w-full rounded-xl bg-indigo-600 text-white px-5 py-3 font-medium hover:bg-indigo-500 transition-colors disabled:opacity-60"
                 >
                   {loading ? 'Redeeming…' : 'Redeem gift'}
                 </button>
               </form>
 
               {httpStatus === 401 && (
-                <div className="mt-6 rounded-2xl border border-[#B3D9F2] bg-[#E8F5FE] p-4">
-                  <p className="text-sm text-[#0F1419]">
+                <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-100 p-4">
+                  <p className="text-sm text-slate-900">
                     You need to sign in before you can redeem a gift.
                   </p>
                   <div className="mt-3">
                     <Link
                       href={loginHref}
-                      className="inline-flex items-center justify-center rounded-xl bg-[#1D9BF0] px-4 py-2 text-sm font-medium text-white hover:bg-[#1A8CD8]"
+                      className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500"
                     >
                       Go to login
                     </Link>
@@ -163,7 +163,7 @@ function GiftRedeemContent() {
                 <div
                   className={`mt-6 rounded-2xl border p-4 ${
                     result.success
-                      ? 'border-[#1D9BF0] bg-[#1D9BF0]/10 text-[#1D9BF0]'
+                      ? 'border-indigo-600 bg-indigo-500/10 text-indigo-600'
                       : 'border-red-200 bg-red-50 text-red-900'
                   }`}
                 >
@@ -172,7 +172,7 @@ function GiftRedeemContent() {
                   </p>
 
                   {result.success && (
-                    <div className="mt-3 text-sm text-[#1D9BF0]/90 space-y-1">
+                    <div className="mt-3 text-sm text-indigo-600/90 space-y-1">
                       {typeof result.duration_months === 'number' && (
                         <p>
                           Gift applied: <span className="font-medium">{result.duration_months} month{result.duration_months === 1 ? '' : 's'}</span>
@@ -186,7 +186,7 @@ function GiftRedeemContent() {
                       <div className="pt-2">
                         <Link
                           href="/"
-                          className="inline-flex items-center justify-center rounded-xl bg-[#1D9BF0] px-4 py-2 text-sm font-medium text-white hover:bg-[#1A8CD8]"
+                          className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500"
                         >
                           Go to dashboard
                         </Link>
@@ -196,14 +196,14 @@ function GiftRedeemContent() {
                 </div>
               )}
 
-              <div className="mt-10 border-t border-[#B3D9F2] pt-6">
+              <div className="mt-10 border-t border-slate-200 pt-6">
                 <h2 className="text-base font-semibold">Need help?</h2>
-                <p className="mt-2 text-sm text-[#536471] leading-relaxed">
+                <p className="mt-2 text-sm text-slate-600 leading-relaxed">
                   If your code isn’t working, double-check that you copied all 32 characters (no spaces). If it still
                   fails, contact support and include the email you received the gift on.
                 </p>
                 <div className="mt-3">
-                  <Link href="/contact" className="text-sm font-medium underline underline-offset-4 hover:text-[#1D9BF0]">
+                  <Link href="/contact" className="text-sm font-medium underline underline-offset-4 hover:text-indigo-500">
                     Contact support
                   </Link>
                 </div>
@@ -220,8 +220,8 @@ function GiftRedeemContent() {
 export default function GiftRedeemPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-[#EFF3F4] flex items-center justify-center">
-        <div className="text-[#8B98A5]">Loading...</div>
+      <div className="min-h-screen bg-slate-100 flex items-center justify-center">
+        <div className="text-slate-500">Loading...</div>
       </div>
     }>
       <GiftRedeemContent />

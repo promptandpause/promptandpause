@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { 
   Phone, 
@@ -65,9 +65,9 @@ export default function CrisisSupport({ userCountry = 'UK', userId, onClose }: C
     setHotlines(getHotlinesForCountry(userCountry))
   }, [userCountry])
 
-  const logUsage = async (toolType: 'grounding_54321' | 'box_breathing' | 'coping_statements' | 'hotline_access', completed: boolean = false) => {
+  const logUsage = useCallback(async (toolType: 'grounding_54321' | 'box_breathing' | 'coping_statements' | 'hotline_access', completed: boolean = false) => {
     await logCrisisToolUsage(supabase, toolType, userId, completed)
-  }
+  }, [supabase, userId])
 
   const startGrounding = () => {
     setActiveTool('grounding')
@@ -123,7 +123,7 @@ export default function CrisisSupport({ userCountry = 'UK', userId, onClose }: C
     if (breathingCycles >= 4) {
       logUsage('box_breathing', true)
     }
-  }, [breathingCycles])
+  }, [breathingCycles, logUsage])
 
   const senseIcons = {
     SEE: Eye,

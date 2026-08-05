@@ -35,10 +35,10 @@ export function FeedCard({ item }: { item: FeedItem }) {
       layout
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`rounded-2xl overflow-hidden transition-all ${
+      className={`rounded-3xl overflow-hidden transition-all ${
         isDark
           ? 'bg-white/[0.04] border border-white/[0.06] hover:border-white/[0.1]'
-          : 'bg-white/80 border border-[#EFF3F4] hover:border-[#EFF3F4]'
+          : 'bg-white/70 backdrop-blur-[12px] border border-slate-100 hover:border-slate-200 shadow-soft-card'
       }`}
     >
       {/* Header */}
@@ -46,18 +46,18 @@ export function FeedCard({ item }: { item: FeedItem }) {
         <button onClick={() => profile?.username && router.push(`/${profile.username}`)} className="flex items-center gap-3 flex-1 min-w-0 text-left">
           <Avatar className="h-9 w-9">
             <AvatarImage src={profile?.avatar_url || undefined} />
-            <AvatarFallback className={`text-xs ${isDark ? 'bg-[#161618] text-white/50' : 'bg-[#F7F9FA] text-[#8B98A5]'}`}>
+            <AvatarFallback className={`text-xs ${isDark ? 'bg-[#1B2436] text-white/50' : 'bg-slate-100 text-slate-500'}`}>
               {initials}
             </AvatarFallback>
           </Avatar>
           <div className="min-w-0">
-            <p className={`text-sm font-medium truncate ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+            <p className={`text-sm font-medium truncate ${isDark ? 'text-white' : 'text-slate-900'}`}>
               {displayName}
             </p>
             <div className="flex items-center gap-1.5">
-              <span className={`text-[11px] ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>{timeAgo}</span>
-              <span className={`${isDark ? 'text-white/20' : 'text-[#C0BFB0]'}`}>·</span>
-              <span className={`${isDark ? 'text-white/20' : 'text-[#C0BFB0]'}`}>
+              <span className={`text-[11px] ${isDark ? 'text-white/30' : 'text-slate-400'}`}>{timeAgo}</span>
+              <span className={`${isDark ? 'text-white/20' : 'text-slate-300'}`}>·</span>
+              <span className={`${isDark ? 'text-white/20' : 'text-slate-300'}`}>
                 {visibilityIcon[item.reflection.visibility]}
               </span>
             </div>
@@ -67,10 +67,10 @@ export function FeedCard({ item }: { item: FeedItem }) {
 
       {/* Content */}
       <div className="p-4">
-        <p className={`text-xs font-medium mb-2 ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
+        <p className={`text-xs font-medium mb-2 ${isDark ? 'text-white/40' : 'text-slate-400'}`}>
           {item.reflection.prompt_text}
         </p>
-        <p className={`text-sm leading-relaxed ${isDark ? 'text-white/80' : 'text-[#0F1419]'}`}>
+        <p className={`text-sm leading-relaxed whitespace-pre-wrap ${isDark ? 'text-white/80' : 'text-slate-900'}`}>
           {item.reflection.reflection_text}
         </p>
         <div className="flex items-center gap-2 mt-3">
@@ -79,7 +79,7 @@ export function FeedCard({ item }: { item: FeedItem }) {
             <span
               key={tag}
               className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${
-                isDark ? 'bg-white/[0.06] text-white/40' : 'bg-[#F7F9FA] text-[#8B98A5]'
+                isDark ? 'bg-white/[0.06] text-white/40' : 'bg-slate-100/80 text-slate-500'
               }`}
             >
               {tag}
@@ -89,7 +89,7 @@ export function FeedCard({ item }: { item: FeedItem }) {
       </div>
 
       {/* Actions */}
-      <div className={`px-4 py-2.5 border-t ${isDark ? 'border-white/[0.06]' : 'border-[#EFF3F4]'} flex items-center gap-1`}>
+      <div className={`px-4 py-2.5 border-t ${isDark ? 'border-white/[0.06]' : 'border-slate-100'} flex items-center gap-1`}>
         <Button
           variant="ghost"
           size="sm"
@@ -109,7 +109,7 @@ export function FeedCard({ item }: { item: FeedItem }) {
               ? 'text-pink-500 hover:text-pink-600'
               : isDark
                 ? 'text-white/40 hover:text-white hover:bg-white/5'
-                : 'text-[#8B98A5] hover:text-[#536471] hover:bg-[#F7F9FA]'
+                : 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'
           }`}
         >
           <Heart className="h-3.5 w-3.5" fill={liked ? 'currentColor' : 'none'} />
@@ -122,7 +122,7 @@ export function FeedCard({ item }: { item: FeedItem }) {
           className={`text-xs gap-1.5 ${
             isDark
               ? 'text-white/40 hover:text-white hover:bg-white/5'
-              : 'text-[#8B98A5] hover:text-[#536471] hover:bg-[#F7F9FA]'
+              : 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'
           }`}
         >
           <MessageCircle className="h-3.5 w-3.5" />
@@ -137,7 +137,7 @@ export function FeedCard({ item }: { item: FeedItem }) {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className={`border-t ${isDark ? 'border-white/[0.04]' : 'border-[#F7F9FA]'}`}
+            className={`border-t ${isDark ? 'border-white/[0.04]' : 'border-slate-100'}`}
           >
             <CommentSection reflectionId={item.reflection.id} reflectionOwnerId={item.author.id} />
           </motion.div>

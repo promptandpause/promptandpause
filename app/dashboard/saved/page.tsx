@@ -37,26 +37,25 @@ export default function SavedPage() {
   const [removingId, setRemovingId] = useState<string | null>(null)
 
   useEffect(() => {
-    void load()
-  }, [])
-
-  async function load() {
-    setLoading(true)
-    try {
-      const [savedRes, revisitRes] = await Promise.all([
-        fetch('/api/bookmarks?kind=saved', { cache: 'no-store' }),
-        fetch('/api/bookmarks?kind=revisit', { cache: 'no-store' }),
-      ])
-      const savedJson = savedRes.ok ? await savedRes.json() : { data: [] }
-      const revisitJson = revisitRes.ok ? await revisitRes.json() : { data: [] }
-      setSaved((savedJson.data || []).filter((b: BookmarkRow) => b.reflections))
-      setRevisits((revisitJson.data || []).filter((b: BookmarkRow) => b.reflections))
-    } catch {
-      toast({ title: 'Error', description: 'Could not load your bookmarks.', variant: 'destructive' })
-    } finally {
-      setLoading(false)
+    async function load() {
+      setLoading(true)
+      try {
+        const [savedRes, revisitRes] = await Promise.all([
+          fetch('/api/bookmarks?kind=saved', { cache: 'no-store' }),
+          fetch('/api/bookmarks?kind=revisit', { cache: 'no-store' }),
+        ])
+        const savedJson = savedRes.ok ? await savedRes.json() : { data: [] }
+        const revisitJson = revisitRes.ok ? await revisitRes.json() : { data: [] }
+        setSaved((savedJson.data || []).filter((b: BookmarkRow) => b.reflections))
+        setRevisits((revisitJson.data || []).filter((b: BookmarkRow) => b.reflections))
+      } catch {
+        toast({ title: 'Error', description: 'Could not load your bookmarks.', variant: 'destructive' })
+      } finally {
+        setLoading(false)
+      }
     }
-  }
+    void load()
+  }, [toast])
 
   async function remove(bookmarkId: string, kind: 'saved' | 'revisit') {
     setRemovingId(bookmarkId)
@@ -80,7 +79,7 @@ export default function SavedPage() {
     <AuthGuard redirectPath="/dashboard/saved">
       <div
         data-dashboard
-        className={`min-h-screen ${isDark ? 'bg-[#0A0A0A]' : 'bg-[#FFFFFF]'}`}
+        className={`min-h-screen ${isDark ? 'bg-[#0A0E18]' : 'bg-[#F9FBFB]'}`}
       >
         <div className="flex h-screen overflow-hidden">
           <DashboardSidebar />
@@ -93,17 +92,17 @@ export default function SavedPage() {
                 transition={{ type: "spring", stiffness: 100, damping: 20 }}
               >
               <header className="mb-6 md:mb-8">
-                <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+                <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
                   Saved
                 </h1>
-                <p className={`text-sm mt-1.5 ${isDark ? 'text-white/50' : 'text-[#8B98A5]'}`}>
+                <p className={`text-sm mt-1.5 ${isDark ? 'text-white/50' : 'text-slate-400'}`}>
                   Reflections you marked to revisit or return to.
                 </p>
               </header>
               </motion.div>
 
               {loading ? (
-                <div className={`flex items-center gap-2 py-10 ${isDark ? 'text-white/50' : 'text-[#8B98A5]'}`}>
+                <div className={`flex items-center gap-2 py-10 ${isDark ? 'text-white/50' : 'text-slate-400'}`}>
                   <Spinner size={16} weight="bold" className="animate-spin" />
                   <span className="text-sm">Loading…</span>
                 </div>
@@ -161,17 +160,17 @@ function Section({
   return (
     <section>
       <div className="flex items-center gap-2 mb-3">
-        <span className={isDark ? 'text-white/60' : 'text-[#536471]'}>{icon}</span>
-        <h2 className={`text-base font-semibold ${isDark ? 'text-white/80' : 'text-[#0F1419]'}`}>
+        <span className={isDark ? 'text-white/60' : 'text-slate-500'}>{icon}</span>
+        <h2 className={`text-base font-semibold ${isDark ? 'text-white/80' : 'text-slate-900'}`}>
           {title}
         </h2>
-        <span className={`text-xs ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
+        <span className={`text-xs ${isDark ? 'text-white/40' : 'text-slate-400'}`}>
           ({items.length})
         </span>
       </div>
 
       {items.length === 0 ? (
-        <p className={`text-sm ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>{emptyText}</p>
+        <p className={`text-sm ${isDark ? 'text-white/40' : 'text-slate-400'}`}>{emptyText}</p>
       ) : (
         <ul className="space-y-3">
           <AnimatePresence initial={false}>
@@ -184,21 +183,21 @@ function Section({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, height: 0, marginTop: 0, marginBottom: 0 }}
                   transition={{ duration: 0.2 }}
-                  className={`rounded-2xl p-4 md:p-5 border ${isDark ? 'bg-white/[0.04] border-white/[0.08]' : 'bg-white/70 border-[#EFF3F4]'}`}
+                  className={`rounded-3xl p-4 md:p-5 border shadow-soft-card ${isDark ? 'bg-white/[0.04] border-white/[0.08]' : 'bg-white/70 backdrop-blur-[12px] border-slate-100'}`}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
-                      <p className={`text-xs uppercase tracking-wide font-semibold ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
+                      <p className={`text-xs uppercase tracking-wide font-semibold ${isDark ? 'text-white/40' : 'text-slate-400'}`}>
                         {kind === 'revisit' && b.revisit_on
                           ? `For ${b.revisit_on}`
                           : formatDate(r.date)}
                       </p>
                       {r.prompt_text && (
-                        <blockquote className={`mt-1.5 italic text-sm md:text-base leading-relaxed ${isDark ? 'text-white/80' : 'text-[#0F1419]'}`}>
+                        <blockquote className={`mt-1.5 italic text-sm md:text-base leading-relaxed ${isDark ? 'text-white/80' : 'text-slate-900'}`}>
                           &ldquo;{r.prompt_text}&rdquo;
                         </blockquote>
                       )}
-                      <p className={`mt-2 text-sm leading-relaxed whitespace-pre-wrap ${isDark ? 'text-white/70' : 'text-[#536471]'}`}>
+                      <p className={`mt-2 text-sm leading-relaxed whitespace-pre-wrap ${isDark ? 'text-white/70' : 'text-slate-600'}`}>
                         {truncate(r.reflection_text, 320)}
                       </p>
                       {r.tags && r.tags.length > 0 && (
@@ -206,7 +205,7 @@ function Section({
                           {r.tags.map(t => (
                             <span
                               key={t}
-                              className={`text-xs px-2 py-0.5 rounded-full border ${isDark ? 'bg-white/5 text-white/70 border-white/10' : 'bg-white text-[#536471] border-[#E0DDD6]'}`}
+                              className={`text-xs px-2 py-0.5 rounded-full border ${isDark ? 'bg-white/5 text-white/70 border-white/10' : 'bg-white/70 text-slate-500 border-slate-200'}`}
                             >
                               {t}
                             </span>
@@ -219,7 +218,7 @@ function Section({
                       onClick={() => onRemove(b.id, kind)}
                       disabled={removingId === b.id}
                       aria-label="Remove bookmark"
-                      className={`flex-shrink-0 p-2 rounded-lg transition-colors ${isDark ? 'text-white/40 hover:text-white/80 hover:bg-white/10' : 'text-[#8B98A5] hover:text-[#0F1419] hover:bg-[#EFF3F4]'} disabled:opacity-40 disabled:cursor-not-allowed`}
+                      className={`flex-shrink-0 p-2 rounded-lg transition-colors ${isDark ? 'text-white/40 hover:text-white/80 hover:bg-white/10' : 'text-slate-400 hover:text-slate-900 hover:bg-slate-100'} disabled:opacity-40 disabled:cursor-not-allowed`}
                     >
                       {removingId === b.id
                         ? <Spinner size={16} weight="bold" className="animate-spin" />

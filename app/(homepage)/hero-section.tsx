@@ -202,46 +202,46 @@ export default function HeroSection() {
         <div className="max-w-[1280px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-4 items-center">
             <div className="max-w-md mx-auto lg:mx-0 w-full">
-              <h1 className="font-bold text-[#0F1419] text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.1] mb-10 whitespace-nowrap">
+              <h1 className="font-bold text-slate-900 text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.1] mb-10 whitespace-nowrap">
                 Prompt. Pause. Reflect.
               </h1>
 
               <div className="max-w-sm">
                 {mode === "signup" && (
                   <>
-                    <p className="text-2xl sm:text-3xl font-bold text-[#0F1419] mb-6">Join today.</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-slate-900 mb-6">Join today.</p>
                     <div className="flex flex-col gap-3">
                       <button onClick={handleGoogleSignIn} disabled={isGoogleLoading}
-                        className="flex items-center justify-center gap-2 w-full rounded-full bg-[#0F1419] text-white font-medium py-2.5 px-6 hover:bg-black/90 transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
+                        className="flex items-center justify-center gap-2 w-full rounded-full bg-slate-900 text-white font-medium py-2.5 px-6 hover:bg-black/90 transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
                         {isGoogleLoading ? <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" /> : <GoogleIcon />}
                         Continue with Google
                       </button>
                       <div className="flex items-center gap-3 my-1">
-                        <div className="h-px flex-1 bg-[#EFF3F4]" />
-                        <span className="text-[#536471] text-sm">or</span>
-                        <div className="h-px flex-1 bg-[#EFF3F4]" />
+                        <div className="h-px flex-1 bg-slate-100" />
+                        <span className="text-slate-600 text-sm">or</span>
+                        <div className="h-px flex-1 bg-slate-100" />
                       </div>
                       <form onSubmit={handleEmailSignUp}>
                         <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
                           placeholder="Email" disabled={isSubmitting}
-                          className="w-full rounded-xl border border-[#CFD9DE] px-3 py-3 text-[#0F1419] text-base placeholder:text-[#536471] focus:border-[#1D9BF0] focus:outline-none focus:ring-1 focus:ring-[#1D9BF0] mb-3 disabled:opacity-50" />
+                          className="w-full rounded-xl border border-slate-200 px-3 py-3 text-slate-900 text-base placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 mb-3 disabled:opacity-50" />
                         <button type="submit" disabled={!email || isSubmitting}
-                          className="w-full rounded-full bg-[#1D9BF0] text-white font-bold py-3 px-6 hover:bg-[#1A8CD8] transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
+                          className="w-full rounded-full bg-indigo-600 text-white font-bold py-3 px-6 hover:bg-indigo-500 transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
                           {isSubmitting ? "Sending..." : "Continue"}
                         </button>
                       </form>
-                      <p className="text-[13px] text-[#536471] leading-relaxed mt-1">
+                      <p className="text-[13px] text-slate-600 leading-relaxed mt-1">
                         By signing up, you agree to the{" "}
-                        <Link href="/terms-of-service" className="text-[#1D9BF0] hover:underline">Terms of Service</Link>{" "}and{" "}
-                        <Link href="/privacy-policy" className="text-[#1D9BF0] hover:underline">Privacy Policy</Link>, including{" "}
-                        <Link href="/cookie-policy" className="text-[#1D9BF0] hover:underline">Cookie Use</Link>.
+                        <Link href="/terms-of-service" className="text-indigo-600 hover:underline">Terms of Service</Link>{" "}and{" "}
+                        <Link href="/privacy-policy" className="text-indigo-600 hover:underline">Privacy Policy</Link>, including{" "}
+                        <Link href="/cookie-policy" className="text-indigo-600 hover:underline">Cookie Use</Link>.
                       </p>
                     </div>
                     <div className="mt-8 text-center">
-                      <p className="text-[#0F1419] text-sm">
+                      <p className="text-slate-900 text-sm">
                         Already have an account?{" "}
                         <button onClick={() => { setMode("signin"); setPassword("") }}
-                          className="text-[#1D9BF0] font-bold hover:underline cursor-pointer">Sign in</button>
+                          className="text-indigo-600 font-bold hover:underline cursor-pointer">Sign in</button>
                       </p>
                     </div>
                   </>
@@ -249,42 +249,42 @@ export default function HeroSection() {
 
                 {mode === "signin" && (
                   <>
-                    <p className="text-2xl sm:text-3xl font-bold text-[#0F1419] mb-6">Welcome back.</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-slate-900 mb-6">Welcome back.</p>
                     <div className="flex flex-col gap-3">
                       <button onClick={handleGoogleSignIn} disabled={isGoogleLoading}
-                        className="flex items-center justify-center gap-2 w-full rounded-full bg-[#0F1419] text-white font-medium py-2.5 px-6 hover:bg-black/90 transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
+                        className="flex items-center justify-center gap-2 w-full rounded-full bg-slate-900 text-white font-medium py-2.5 px-6 hover:bg-black/90 transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
                         {isGoogleLoading ? <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" /> : <GoogleIcon />}
                         Continue with Google
                       </button>
                       <div className="flex items-center gap-3 my-1">
-                        <div className="h-px flex-1 bg-[#EFF3F4]" />
-                        <span className="text-[#536471] text-sm">or</span>
-                        <div className="h-px flex-1 bg-[#EFF3F4]" />
+                        <div className="h-px flex-1 bg-slate-100" />
+                        <span className="text-slate-600 text-sm">or</span>
+                        <div className="h-px flex-1 bg-slate-100" />
                       </div>
                       <form onSubmit={handleEmailSignIn}>
                         <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
                           placeholder="Email" disabled={isSubmitting}
-                          className="w-full rounded-xl border border-[#CFD9DE] px-3 py-3 text-[#0F1419] text-base placeholder:text-[#536471] focus:border-[#1D9BF0] focus:outline-none focus:ring-1 focus:ring-[#1D9BF0] mb-3 disabled:opacity-50" />
+                          className="w-full rounded-xl border border-slate-200 px-3 py-3 text-slate-900 text-base placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 mb-3 disabled:opacity-50" />
                         <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
                           placeholder="Password" disabled={isSubmitting}
-                          className="w-full rounded-xl border border-[#CFD9DE] px-3 py-3 text-[#0F1419] text-base placeholder:text-[#536471] focus:border-[#1D9BF0] focus:outline-none focus:ring-1 focus:ring-[#1D9BF0] mb-3 disabled:opacity-50" />
+                          className="w-full rounded-xl border border-slate-200 px-3 py-3 text-slate-900 text-base placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 mb-3 disabled:opacity-50" />
                         <button type="submit" disabled={!email || !password || isSubmitting}
-                          className="w-full rounded-full bg-[#1D9BF0] text-white font-bold py-3 px-6 hover:bg-[#1A8CD8] transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
+                          className="w-full rounded-full bg-indigo-600 text-white font-bold py-3 px-6 hover:bg-indigo-500 transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
                           {isSubmitting ? "Signing in..." : "Sign in"}
                         </button>
                         <div className="mt-2 text-right">
                           <button onClick={() => setMode("forgot")}
-                            className="text-[13px] text-[#1D9BF0] hover:underline cursor-pointer">
+                            className="text-[13px] text-indigo-600 hover:underline cursor-pointer">
                             Forgot password?
                           </button>
                         </div>
                       </form>
                     </div>
                     <div className="mt-8 text-center">
-                      <p className="text-[#0F1419] text-sm">
+                      <p className="text-slate-900 text-sm">
                         Don&apos;t have an account?{" "}
                         <button onClick={() => setMode("signup")}
-                          className="text-[#1D9BF0] font-bold hover:underline cursor-pointer">Sign up</button>
+                          className="text-indigo-600 font-bold hover:underline cursor-pointer">Sign up</button>
                       </p>
                     </div>
                   </>
@@ -292,27 +292,27 @@ export default function HeroSection() {
 
                 {mode === "forgot" && (
                   <>
-                    <p className="text-2xl sm:text-3xl font-bold text-[#0F1419] mb-2">Reset your password</p>
-                    <p className="text-sm text-[#536471] mb-6">We&apos;ll email you a reset link.</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">Reset your password</p>
+                    <p className="text-sm text-slate-600 mb-6">We&apos;ll email you a reset link.</p>
                     <form onSubmit={handleForgotPassword}>
                       <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
                         placeholder="Email" disabled={isSubmitting || submitted}
-                        className="w-full rounded-xl border border-[#CFD9DE] px-3 py-3 text-[#0F1419] text-base placeholder:text-[#536471] focus:border-[#1D9BF0] focus:outline-none focus:ring-1 focus:ring-[#1D9BF0] mb-3 disabled:opacity-50" />
+                        className="w-full rounded-xl border border-slate-200 px-3 py-3 text-slate-900 text-base placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 mb-3 disabled:opacity-50" />
                       <button type="submit" disabled={!email || isSubmitting || submitted}
-                        className="w-full rounded-full bg-[#1D9BF0] text-white font-bold py-3 px-6 hover:bg-[#1A8CD8] transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
+                        className="w-full rounded-full bg-indigo-600 text-white font-bold py-3 px-6 hover:bg-indigo-500 transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
                         {isSubmitting ? "Sending..." : submitted ? "Email sent!" : "Send reset instructions"}
                       </button>
                     </form>
                     {submitted && (
-                      <p className="text-[13px] text-[#536471] mt-3 text-center">
+                      <p className="text-[13px] text-slate-600 mt-3 text-center">
                         Check your inbox for reset instructions.
                       </p>
                     )}
                     <div className="mt-8 text-center">
-                      <p className="text-[#0F1419] text-sm">
+                      <p className="text-slate-900 text-sm">
                         Remembered your password?{" "}
                         <button onClick={() => { setMode("signin"); setSubmitted(false) }}
-                          className="text-[#1D9BF0] font-bold hover:underline cursor-pointer">Sign in</button>
+                          className="text-indigo-600 font-bold hover:underline cursor-pointer">Sign in</button>
                       </p>
                     </div>
                   </>
@@ -320,24 +320,24 @@ export default function HeroSection() {
 
                 {mode === "change-password" && (
                   <>
-                    <p className="text-2xl sm:text-3xl font-bold text-[#0F1419] mb-2">Change your password</p>
-                    <p className="text-sm text-[#536471] mb-6">Enter a new password for your account.</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">Change your password</p>
+                    <p className="text-sm text-slate-600 mb-6">Enter a new password for your account.</p>
                     <form onSubmit={handleChangePassword}>
                       <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)}
                         placeholder="New Password (min 8 characters)" disabled={isSubmitting}
-                        className="w-full rounded-xl border border-[#CFD9DE] px-3 py-3 text-[#0F1419] text-base placeholder:text-[#536471] focus:border-[#1D9BF0] focus:outline-none focus:ring-1 focus:ring-[#1D9BF0] mb-3 disabled:opacity-50" />
+                        className="w-full rounded-xl border border-slate-200 px-3 py-3 text-slate-900 text-base placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 mb-3 disabled:opacity-50" />
                       <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
                         placeholder="Confirm New Password" disabled={isSubmitting}
-                        className="w-full rounded-xl border border-[#CFD9DE] px-3 py-3 text-[#0F1419] text-base placeholder:text-[#536471] focus:border-[#1D9BF0] focus:outline-none focus:ring-1 focus:ring-[#1D9BF0] mb-3 disabled:opacity-50" />
+                        className="w-full rounded-xl border border-slate-200 px-3 py-3 text-slate-900 text-base placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 mb-3 disabled:opacity-50" />
                       <button type="submit" disabled={!newPassword || !confirmPassword || isSubmitting}
-                        className="w-full rounded-full bg-[#1D9BF0] text-white font-bold py-3 px-6 hover:bg-[#1A8CD8] transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
+                        className="w-full rounded-full bg-indigo-600 text-white font-bold py-3 px-6 hover:bg-indigo-500 transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
                         {isSubmitting ? "Updating..." : "Change Password"}
                       </button>
                     </form>
                     <div className="mt-8 text-center">
-                      <p className="text-[#0F1419] text-sm">
+                      <p className="text-slate-900 text-sm">
                         <button onClick={() => window.location.href = "/"}
-                          className="text-[#1D9BF0] font-bold hover:underline cursor-pointer">
+                          className="text-indigo-600 font-bold hover:underline cursor-pointer">
                           Back to home
                         </button>
                       </p>
@@ -347,10 +347,10 @@ export default function HeroSection() {
 
                 {mode === "verify" && (
                   <>
-                    <p className="text-2xl sm:text-3xl font-bold text-[#0F1419] mb-2">Verify your email</p>
-                    <p className="text-sm text-[#536471] mb-6">Open the link in your verification email.</p>
-                    <div className="bg-[#F7F9FA] border border-[#EFF3F4] rounded-xl p-4 mb-3">
-                      <p className="text-[13px] text-[#536471]">
+                    <p className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">Verify your email</p>
+                    <p className="text-sm text-slate-600 mb-6">Open the link in your verification email.</p>
+                    <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 mb-3">
+                      <p className="text-[13px] text-slate-600">
                         We&apos;ve sent you a verification email. Please check your inbox and click the verification link.
                         Don&apos;t forget to check your spam folder.
                       </p>
@@ -358,17 +358,17 @@ export default function HeroSection() {
                     <form onSubmit={handleResendVerify}>
                       <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
                         placeholder="Your Email" disabled={isSubmitting}
-                        className="w-full rounded-xl border border-[#CFD9DE] px-3 py-3 text-[#0F1419] text-base placeholder:text-[#536471] focus:border-[#1D9BF0] focus:outline-none focus:ring-1 focus:ring-[#1D9BF0] mb-3 disabled:opacity-50" />
+                        className="w-full rounded-xl border border-slate-200 px-3 py-3 text-slate-900 text-base placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 mb-3 disabled:opacity-50" />
                       <button type="submit" disabled={!email || isSubmitting}
-                        className="w-full rounded-full bg-[#1D9BF0] text-white font-bold py-3 px-6 hover:bg-[#1A8CD8] transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
+                        className="w-full rounded-full bg-indigo-600 text-white font-bold py-3 px-6 hover:bg-indigo-500 transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
                         {isSubmitting ? "Sending..." : "Resend Verification Email"}
                       </button>
                     </form>
                     <div className="mt-8 text-center">
-                      <p className="text-[#0F1419] text-sm">
+                      <p className="text-slate-900 text-sm">
                         Already verified?{" "}
                         <button onClick={() => setMode("signin")}
-                          className="text-[#1D9BF0] font-bold hover:underline cursor-pointer">Sign in</button>
+                          className="text-indigo-600 font-bold hover:underline cursor-pointer">Sign in</button>
                       </p>
                     </div>
                   </>

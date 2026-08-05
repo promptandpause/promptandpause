@@ -91,7 +91,7 @@ export default function PWAWelcomePage() {
   if (isChecking) {
     return (
       <main className="h-screen bg-white flex items-center justify-center">
-        <div className="animate-pulse text-[#536471] text-sm">Loading...</div>
+        <div className="animate-pulse text-slate-600 text-sm">Loading...</div>
       </main>
     )
   }
@@ -106,10 +106,10 @@ export default function PWAWelcomePage() {
             alt="Prompt & Pause"
             className="h-10 sm:h-12 w-auto mx-auto lg:mx-0 mb-8"
           />
-          <h1 className="font-bold text-[#0F1419] text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.1] mb-6">
+          <h1 className="font-bold text-slate-900 text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.1] mb-6">
             Prompt. Pause. Reflect.
           </h1>
-          <p className="text-[#536471] text-lg sm:text-xl leading-relaxed">
+          <p className="text-slate-600 text-lg sm:text-xl leading-relaxed">
             AI-powered daily reflection prompts personalized to your goals and mood. Write privately or share with a community doing the same work.
           </p>
         </div>
@@ -120,38 +120,38 @@ export default function PWAWelcomePage() {
         <div className="w-full max-w-sm">
           {mode === 'signup' && (
             <>
-              <p className="text-2xl sm:text-3xl font-bold text-[#0F1419] mb-6">Join today.</p>
+              <p className="text-2xl sm:text-3xl font-bold text-slate-900 mb-6">Join today.</p>
               <div className="flex flex-col gap-3">
                 <button onClick={handleGoogleSignIn} disabled={isGoogleLoading}
-                  className="flex items-center justify-center gap-2 w-full rounded-full bg-[#0F1419] text-white font-medium py-2.5 px-6 hover:bg-black/90 transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
+                  className="flex items-center justify-center gap-2 w-full rounded-full bg-slate-900 text-white font-medium py-2.5 px-6 hover:bg-black/90 transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
                   {isGoogleLoading ? <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" /> : <GoogleIcon />}
                   Continue with Google
                 </button>
                 <div className="flex items-center gap-3 my-1">
-                  <div className="h-px flex-1 bg-[#EFF3F4]" />
-                  <span className="text-[#536471] text-sm">or</span>
-                  <div className="h-px flex-1 bg-[#EFF3F4]" />
+                  <div className="h-px flex-1 bg-slate-100" />
+                  <span className="text-slate-600 text-sm">or</span>
+                  <div className="h-px flex-1 bg-slate-100" />
                 </div>
                 <form onSubmit={handleEmailSignUp}>
                   <input type="email" value={email} onChange={e => setEmail(e.target.value)}
                     placeholder="Email" disabled={isSubmitting}
-                    className="w-full rounded-xl border border-[#CFD9DE] px-3 py-3 text-[#0F1419] text-base placeholder:text-[#536471] focus:border-[#1D9BF0] focus:outline-none focus:ring-1 focus:ring-[#1D9BF0] mb-3 disabled:opacity-50" />
+                    className="w-full rounded-xl border border-slate-200 px-3 py-3 text-slate-900 text-base placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 mb-3 disabled:opacity-50" />
                   <button type="submit" disabled={!email || isSubmitting}
-                    className="w-full rounded-full bg-[#1D9BF0] text-white font-bold py-3 px-6 hover:bg-[#1A8CD8] transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
+                    className="w-full rounded-full bg-indigo-600 text-white font-bold py-3 px-6 hover:bg-indigo-500 transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
                     {isSubmitting ? 'Sending...' : 'Continue'}
                   </button>
                 </form>
-                <p className="text-[13px] text-[#536471] leading-relaxed mt-1">
+                <p className="text-[13px] text-slate-600 leading-relaxed mt-1">
                   By signing up, you agree to the{' '}
-                  <Link href="/terms-of-service" className="text-[#1D9BF0] hover:underline">Terms of Service</Link>{' '}and{' '}
-                  <Link href="/privacy-policy" className="text-[#1D9BF0] hover:underline">Privacy Policy</Link>.
+                  <Link href="/terms-of-service" className="text-indigo-600 hover:underline">Terms of Service</Link>{' '}and{' '}
+                  <Link href="/privacy-policy" className="text-indigo-600 hover:underline">Privacy Policy</Link>.
                 </p>
               </div>
               <div className="mt-8 text-center">
-                <p className="text-[#0F1419] text-sm">
+                <p className="text-slate-900 text-sm">
                   Already have an account?{' '}
                   <button onClick={() => { setMode('signin'); setPassword('') }}
-                    className="text-[#1D9BF0] font-bold hover:underline cursor-pointer">Sign in</button>
+                    className="text-indigo-600 font-bold hover:underline cursor-pointer">Sign in</button>
                 </p>
               </div>
             </>
@@ -159,36 +159,36 @@ export default function PWAWelcomePage() {
 
           {mode === 'signin' && (
             <>
-              <p className="text-2xl sm:text-3xl font-bold text-[#0F1419] mb-6">Welcome back.</p>
+              <p className="text-2xl sm:text-3xl font-bold text-slate-900 mb-6">Welcome back.</p>
               <div className="flex flex-col gap-3">
                 <button onClick={handleGoogleSignIn} disabled={isGoogleLoading}
-                  className="flex items-center justify-center gap-2 w-full rounded-full bg-[#0F1419] text-white font-medium py-2.5 px-6 hover:bg-black/90 transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
+                  className="flex items-center justify-center gap-2 w-full rounded-full bg-slate-900 text-white font-medium py-2.5 px-6 hover:bg-black/90 transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
                   {isGoogleLoading ? <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" /> : <GoogleIcon />}
                   Continue with Google
                 </button>
                 <div className="flex items-center gap-3 my-1">
-                  <div className="h-px flex-1 bg-[#EFF3F4]" />
-                  <span className="text-[#536471] text-sm">or</span>
-                  <div className="h-px flex-1 bg-[#EFF3F4]" />
+                  <div className="h-px flex-1 bg-slate-100" />
+                  <span className="text-slate-600 text-sm">or</span>
+                  <div className="h-px flex-1 bg-slate-100" />
                 </div>
                 <form onSubmit={handleEmailSignIn}>
                   <input type="email" value={email} onChange={e => setEmail(e.target.value)}
                     placeholder="Email" disabled={isSubmitting}
-                    className="w-full rounded-xl border border-[#CFD9DE] px-3 py-3 text-[#0F1419] text-base placeholder:text-[#536471] focus:border-[#1D9BF0] focus:outline-none focus:ring-1 focus:ring-[#1D9BF0] mb-3 disabled:opacity-50" />
+                    className="w-full rounded-xl border border-slate-200 px-3 py-3 text-slate-900 text-base placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 mb-3 disabled:opacity-50" />
                   <input type="password" value={password} onChange={e => setPassword(e.target.value)}
                     placeholder="Password" disabled={isSubmitting}
-                    className="w-full rounded-xl border border-[#CFD9DE] px-3 py-3 text-[#0F1419] text-base placeholder:text-[#536471] focus:border-[#1D9BF0] focus:outline-none focus:ring-1 focus:ring-[#1D9BF0] mb-3 disabled:opacity-50" />
+                    className="w-full rounded-xl border border-slate-200 px-3 py-3 text-slate-900 text-base placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 mb-3 disabled:opacity-50" />
                   <button type="submit" disabled={!email || !password || isSubmitting}
-                    className="w-full rounded-full bg-[#1D9BF0] text-white font-bold py-3 px-6 hover:bg-[#1A8CD8] transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
+                    className="w-full rounded-full bg-indigo-600 text-white font-bold py-3 px-6 hover:bg-indigo-500 transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
                     {isSubmitting ? 'Signing in...' : 'Sign in'}
                   </button>
                 </form>
               </div>
               <div className="mt-8 text-center">
-                <p className="text-[#0F1419] text-sm">
+                <p className="text-slate-900 text-sm">
                   Don&apos;t have an account?{' '}
                   <button onClick={() => setMode('signup')}
-                    className="text-[#1D9BF0] font-bold hover:underline cursor-pointer">Sign up</button>
+                    className="text-indigo-600 font-bold hover:underline cursor-pointer">Sign up</button>
                 </p>
               </div>
             </>

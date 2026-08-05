@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -26,15 +26,7 @@ export function CommentSection({ reflectionId, reflectionOwnerId }: CommentSecti
   const [hasMore, setHasMore] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
 
-  useEffect(() => {
-    loadComments()
-    fetch('/api/user/profile')
-      .then(r => r.ok ? r.json() : Promise.resolve(null))
-      .then(d => setMyId(d?.data?.id || null))
-      .catch(() => {})
-  }, [reflectionId])
-
-  async function loadComments() {
+  const loadComments = useCallback(async () => {
     try {
       const res = await fetch(`/api/social/comments?reflection_id=${reflectionId}`)
       const { data, nextCursor, hasMore: more } = await res.json()
@@ -43,7 +35,15 @@ export function CommentSection({ reflectionId, reflectionOwnerId }: CommentSecti
       setHasMore(!!more)
     } catch {}
     setLoading(false)
-  }
+  }, [reflectionId])
+
+  useEffect(() => {
+    loadComments()
+    fetch('/api/user/profile')
+      .then(r => r.ok ? r.json() : Promise.resolve(null))
+      .then(d => setMyId(d?.data?.id || null))
+      .catch(() => {})
+  }, [loadComments])
 
   async function loadEarlier() {
     if (loadingMore || !hasMore || !cursor) return
@@ -96,7 +96,7 @@ export function CommentSection({ reflectionId, reflectionOwnerId }: CommentSecti
           className={`flex-1 text-sm bg-transparent border-0 border-b outline-none py-1.5 ${
             isDark
               ? 'text-white/70 placeholder:text-white/20 border-white/10 focus:border-white/30'
-              : 'text-[#0F1419] placeholder:text-[#8B98A5] border-[#EFF3F4] focus:border-[#536471]'
+              : 'text-slate-900 placeholder:text-slate-400 border-slate-100 focus:border-slate-500'
           }`}
         />
         <Button
@@ -104,7 +104,7 @@ export function CommentSection({ reflectionId, reflectionOwnerId }: CommentSecti
           variant="ghost"
           onClick={handlePost}
           disabled={!text.trim() || posting}
-          className={`h-8 w-8 p-0 ${isDark ? 'text-white/40 hover:text-white' : 'text-[#8B98A5] hover:text-[#0F1419]'}`}
+          className={`h-8 w-8 p-0 ${isDark ? 'text-white/40 hover:text-white' : 'text-slate-500 hover:text-slate-900'}`}
         >
           {posting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
         </Button>
@@ -113,10 +113,10 @@ export function CommentSection({ reflectionId, reflectionOwnerId }: CommentSecti
       {/* Comments list */}
       {loading ? (
         <div className="flex justify-center py-4">
-          <Loader2 className={`h-4 w-4 animate-spin ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`} />
+          <Loader2 className={`h-4 w-4 animate-spin ${isDark ? 'text-white/20' : 'text-slate-500'}`} />
         </div>
       ) : comments.length === 0 ? (
-        <p className={`text-xs text-center py-4 ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`}>
+        <p className={`text-xs text-center py-4 ${isDark ? 'text-white/20' : 'text-slate-500'}`}>
           No comments yet
         </p>
       ) : (
@@ -126,7 +126,7 @@ export function CommentSection({ reflectionId, reflectionOwnerId }: CommentSecti
               onClick={loadEarlier}
               disabled={loadingMore}
               className={`w-full text-center text-xs font-medium py-1.5 transition-colors ${
-                isDark ? 'text-[#1D9BF0] hover:text-white' : 'text-[#1D9BF0] hover:text-[#0F1419]'
+                isDark ? 'text-indigo-600 hover:text-white' : 'text-indigo-600 hover:text-slate-900'
               }`}
             >
               {loadingMore ? 'Loading…' : 'Load earlier comments'}
@@ -142,23 +142,23 @@ export function CommentSection({ reflectionId, reflectionOwnerId }: CommentSecti
             >
               <Avatar className="h-6 w-6 flex-shrink-0">
                 <AvatarImage src={comment.author?.avatar_url || undefined} />
-                <AvatarFallback className={`text-[8px] ${isDark ? 'bg-[#161618] text-white/30' : 'bg-[#F7F9FA] text-[#8B98A5]'}`}>
+                <AvatarFallback className={`text-[8px] ${isDark ? 'bg-[#0A0E18] text-white/30' : 'bg-slate-50 text-slate-500'}`}>
                   {comment.author?.full_name?.[0] || '?'}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline gap-2">
-                  <span className={`text-xs font-medium ${isDark ? 'text-white/60' : 'text-[#536471]'}`}>
+                  <span className={`text-xs font-medium ${isDark ? 'text-white/60' : 'text-slate-600'}`}>
                     {comment.author?.display_name || comment.author?.full_name || 'Someone'}
                   </span>
-                  <span className={`text-[10px] ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`}>
+                  <span className={`text-[10px] ${isDark ? 'text-white/20' : 'text-slate-500'}`}>
                     {getTimeAgo(comment.created_at)}
                   </span>
                   {myId && ((comment as any).author_id === myId || reflectionOwnerId === myId) && (
                     <button
                       onClick={() => handleDelete(comment.id)}
                       title={(comment as any).author_id === myId ? 'Delete your comment' : 'Remove comment from your reflection'}
-                      className={`ml-auto text-[10px] flex items-center gap-1 transition-colors ${isDark ? 'text-white/20 hover:text-red-400' : 'text-[#8B98A5] hover:text-red-500'}`}
+                      className={`ml-auto text-[10px] flex items-center gap-1 transition-colors ${isDark ? 'text-white/20 hover:text-red-400' : 'text-slate-500 hover:text-red-500'}`}
                     >
                       <Trash2 className="h-3 w-3" />
                     </button>
@@ -175,7 +175,7 @@ export function CommentSection({ reflectionId, reflectionOwnerId }: CommentSecti
                     </div>
                   )}
                 </div>
-                <p className={`text-sm mt-0.5 ${isDark ? 'text-white/70' : 'text-[#0F1419]'}`}>
+                <p className={`text-sm mt-0.5 ${isDark ? 'text-white/70' : 'text-slate-900'}`}>
                   {comment.body}
                 </p>
               </div>

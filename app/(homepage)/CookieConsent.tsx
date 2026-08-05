@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Link from "next/link"
 import { X } from "lucide-react"
 
 const COOKIE_CONSENT_STATUS_KEY = "cookieConsent"
@@ -73,7 +74,7 @@ export default function CookieConsent() {
     <>
       {/* Backdrop overlay */}
       <div
-        className={`fixed inset-0 bg-[#0F1419]/20 backdrop-blur-md z-[9998] transition-opacity duration-300 ${
+        className={`fixed inset-0 bg-slate-900/20 backdrop-blur-md z-[9998] transition-opacity duration-300 ${
           isClosing ? "opacity-0" : "opacity-100"
         }`}
         onClick={closePopup}
@@ -85,11 +86,11 @@ export default function CookieConsent() {
           isClosing ? "translate-y-full sm:translate-y-0 sm:translate-x-[-120%] opacity-0" : "translate-y-0 sm:translate-x-0 opacity-100"
         }`}
       >
-        <div className="backdrop-blur-xl bg-[#F7F9FA]/95 border border-[#B3D9F2] rounded-t-3xl sm:rounded-3xl shadow-2xl p-6 sm:p-8 m-0">
+        <div className="backdrop-blur-xl bg-slate-50/95 border border-slate-200 rounded-t-3xl sm:rounded-3xl shadow-2xl p-6 sm:p-8 m-0">
           {/* Close button */}
           <button
             onClick={closePopup}
-            className="absolute top-4 right-4 text-[#8B98A5] hover:text-[#0F1419] transition-colors"
+            className="absolute top-4 right-4 text-slate-500 hover:text-slate-900 transition-colors"
             aria-label="Close cookie consent"
           >
             <X className="w-5 h-5" />
@@ -97,18 +98,18 @@ export default function CookieConsent() {
 
           {/* Cookie icon */}
           <div className="mb-5">
-            <div className="w-14 h-14 bg-[#E8F0E3] border border-[#B3D9F2] rounded-2xl flex items-center justify-center">
+            <div className="w-14 h-14 bg-[#E8F0E3] border border-slate-200 rounded-2xl flex items-center justify-center">
               <span className="text-3xl">🍪</span>
             </div>
           </div>
 
           {/* Title */}
-          <h3 className="text-2xl font-semibold text-[#0F1419] mb-3">
+          <h3 className="text-2xl font-semibold text-slate-900 mb-3">
             We value your privacy
           </h3>
 
           {/* Description */}
-          <p className="text-sm text-[#536471] mb-6 leading-relaxed">
+          <p className="text-sm text-slate-600 mb-6 leading-relaxed">
             We use cookies to enhance your experience, personalize content, and analyze our traffic. 
             By accepting, you help us provide you with the best possible service for your mental wellbeing journey.
           </p>
@@ -118,7 +119,7 @@ export default function CookieConsent() {
             {/* Accept button - Primary */}
             <button
               onClick={handleAccept}
-              className="w-full bg-gradient-to-r from-[#1D9BF0] to-[#1A8CD8] text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-2xl hover:from-[#1A8CD8] hover:to-[#006FCC] touch-manipulation"
+              className="w-full bg-gradient-to-r from-[#6366F1] to-[#818CF8] text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-2xl hover:from-[#4F46E5] hover:to-[#006FCC] touch-manipulation"
             >
               Accept Cookies
             </button>
@@ -127,14 +128,14 @@ export default function CookieConsent() {
             <div className="flex flex-col sm:flex-row gap-2">
               <button
                 onClick={closePopup}
-                className="flex-1 text-sm text-[#5A6A5E] hover:text-[#0F1419] py-3 px-4 rounded-xl hover:bg-[#E8F0E3] border border-[#B3D9F2] transition-all touch-manipulation"
+                className="flex-1 text-sm text-[#5A6A5E] hover:text-slate-900 py-3 px-4 rounded-xl hover:bg-[#E8F0E3] border border-slate-200 transition-all touch-manipulation"
               >
                 Remind me later
               </button>
               
               <button
                 onClick={handleNeverShowAgain}
-                className="flex-1 text-sm text-[#5A6A5E] hover:text-[#0F1419] py-3 px-4 rounded-xl hover:bg-[#E8F0E3] border border-[#B3D9F2] transition-all touch-manipulation"
+                className="flex-1 text-sm text-[#5A6A5E] hover:text-slate-900 py-3 px-4 rounded-xl hover:bg-[#E8F0E3] border border-slate-200 transition-all touch-manipulation"
               >
                 Never show again
               </button>
@@ -142,13 +143,13 @@ export default function CookieConsent() {
           </div>
 
           {/* Learn more link */}
-          <div className="mt-5 pt-5 border-t border-[#B3D9F2]">
-            <a
+          <div className="mt-5 pt-5 border-t border-slate-200">
+            <Link
               href="/cookie-policy"
-              className="text-xs text-[#8B98A5] hover:text-[#0F1419] font-medium hover:underline transition-colors"
+              className="text-xs text-slate-500 hover:text-slate-900 font-medium hover:underline transition-colors"
             >
               Learn more about our Cookie Policy →
-            </a>
+            </Link>
           </div>
         </div>
       </div>

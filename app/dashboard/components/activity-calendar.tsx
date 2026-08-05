@@ -13,6 +13,7 @@ import { useTheme } from "@/contexts/ThemeContext"
 
 export default function ActivityCalendar() {
   const { theme } = useTheme()
+  const isDark = theme === 'dark'
   const [activities, setActivities] = useState<DailyActivity[]>([])
   const [hoveredDay, setHoveredDay] = useState<DailyActivity | null>(null)
   const [currentStreak, setCurrentStreak] = useState(0)
@@ -54,11 +55,11 @@ export default function ActivityCalendar() {
   }, [supabase])
 
   const getIntensityColor = (count: number) => {
-    if (count === 0) return theme === 'dark' ? "bg-white/5" : "bg-gray-100/50"
-    if (count === 1) return "bg-[#B8D8B8]/40"
-    if (count === 2) return "bg-[#B8D8B8]/60"
-    if (count >= 3) return "bg-[#B8D8B8]/80"
-    return "bg-[#B8D8B8]"
+    if (count === 0) return isDark ? "bg-white/5" : "bg-slate-100"
+    if (count === 1) return isDark ? "bg-indigo-500/40" : "bg-indigo-200"
+    if (count === 2) return isDark ? "bg-indigo-500/60" : "bg-indigo-300"
+    if (count === 3) return isDark ? "bg-indigo-500/80" : "bg-indigo-400"
+    return "bg-indigo-500"
   }
 
   const formatDate = (dateStr: string) => {
@@ -81,49 +82,66 @@ export default function ActivityCalendar() {
     weeks.push(activities.slice(i, i + 7))
   }
 
-  
-  return (
-    <Card className={`rounded-3xl p-6 h-fit flex flex-col transition-all duration-200 ${theme === 'dark' ? 'glass-light shadow-soft-lg' : 'glass-medium shadow-soft-md'}`}>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <Calendar size={20} weight="bold" className="text-purple-400" />
-          <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Activity</h3>
-        </div>
-      </div>
+  const card = isDark
+    ? 'bg-white/[0.04] border border-white/[0.06]'
+    : 'bg-white/70 backdrop-blur-[12px] border border-slate-100 shadow-soft-card'
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        <div className={`rounded-lg p-3 border ${theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200'}`}>
-          <p className={`text-xs mb-1 ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>Total</p>
-          <p className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{totalReflections}</p>
-        </div>
-        <div className={`rounded-lg p-3 border ${theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200'}`}>
-          <div className="flex items-center gap-1">
-            <TrendUp size={16} weight="bold" className="text-purple-400" />
-            <p className={`text-xs ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>Days in a row</p>
+  return (
+    <Card className={`rounded-3xl p-6 lg:p-8 flex flex-col transition-all duration-200 ${card}`}>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isDark ? 'bg-indigo-500/20 text-indigo-400' : 'bg-indigo-50 text-indigo-600'}`}>
+            <Calendar size={16} weight="bold" />
           </div>
-          <p className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{currentStreak}</p>
+          <h3 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>Activity</h3>
+        </div>
+
+        <div className="flex gap-8">
+          <div className="text-center">
+            <p className={`text-xs uppercase font-bold tracking-widest mb-1 ${isDark ? 'text-white/40' : 'text-slate-400'}`}>Total</p>
+            <p className={`text-2xl font-extrabold tabular-nums ${isDark ? 'text-white' : 'text-slate-900'}`}>{totalReflections}</p>
+          </div>
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-1">
+              <TrendUp size={14} weight="bold" className={isDark ? 'text-indigo-400' : 'text-indigo-500'} />
+              <p className={`text-xs uppercase font-bold tracking-widest mb-1 ${isDark ? 'text-white/40' : 'text-slate-400'}`}>Streak</p>
+            </div>
+            <p className={`text-2xl font-extrabold tabular-nums ${isDark ? 'text-white' : 'text-slate-900'}`}>{currentStreak}</p>
+          </div>
         </div>
       </div>
 
       {/* Calendar Grid */}
-      <div className="space-y-2 mb-3">
-        <p className={`text-xs ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>Last 12 weeks</p>
+      <div className="space-y-4 mb-3">
+        <div className="flex items-center justify-between text-sm text-slate-500">
+          <span className={isDark ? 'text-white/50' : 'text-slate-500'}>Last 12 weeks</span>
+          <div className="flex items-center gap-2">
+            <span className={`text-[10px] ${isDark ? 'text-white/40' : 'text-slate-400'}`}>Less</span>
+            <div className="flex gap-1">
+              <div className={`w-3 h-3 rounded-sm border ${isDark ? 'bg-white/5 border-white/10' : 'bg-slate-100 border-slate-200'}`} />
+              <div className={`w-3 h-3 rounded-sm ${isDark ? 'bg-indigo-500/40' : 'bg-indigo-200'}`} />
+              <div className={`w-3 h-3 rounded-sm ${isDark ? 'bg-indigo-500/60' : 'bg-indigo-300'}`} />
+              <div className={`w-3 h-3 rounded-sm ${isDark ? 'bg-indigo-500' : 'bg-indigo-500'}`} />
+            </div>
+            <span className={`text-[10px] ${isDark ? 'text-white/40' : 'text-slate-400'}`}>More</span>
+          </div>
+        </div>
+
         <div className="relative">
-          <div className="space-y-1">
+          <div className="grid grid-cols-12 gap-1.5">
             {weeks.map((week, weekIndex) => (
-              <div key={weekIndex} className="flex gap-1">
+              <div key={weekIndex} className="flex flex-col gap-1.5">
                 {week.map((day, dayIndex) => (
                   <motion.div
                     key={day.date}
-                    whileHover={{ scale: 1.2 }}
-                    className="relative"
+                    whileHover={{ scale: 1.25 }}
+                    className="relative w-full"
                     onMouseEnter={() => setHoveredDay(day)}
                     onMouseLeave={() => setHoveredDay(null)}
                   >
                     <div
-                      className={`w-3 h-3 rounded-sm ${getIntensityColor(day.count)} border cursor-pointer transition-all duration-200 ${theme === 'dark' ? 'border-white/20' : 'border-gray-200'}`}
+                      className={`w-full aspect-square rounded-[5px] ${getIntensityColor(day.count)} border cursor-pointer transition-all duration-200 ${isDark ? 'border-white/10' : 'border-slate-200'}`}
                       title={`${formatDate(day.date)}: ${day.count} reflection${day.count !== 1 ? 's' : ''}`}
                     />
                   </motion.div>
@@ -141,16 +159,16 @@ export default function ActivityCalendar() {
                 exit={{ opacity: 0, y: 5 }}
                 className="absolute -top-20 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none"
               >
-                <div className={`backdrop-blur-xl border rounded-lg p-3 min-w-[180px] shadow-xl ${theme === 'dark' ? 'bg-slate-800/90 border-white/20' : 'bg-white/80 border-gray-300'}`}>
-                  <p className={`font-medium text-sm mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                <div className={`backdrop-blur-xl border rounded-lg p-3 min-w-[180px] shadow-xl ${isDark ? 'bg-slate-800/90 border-white/20' : 'bg-white/90 border-slate-200'}`}>
+                  <p className={`font-semibold text-sm mb-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>
                     {formatDate(hoveredDay.date)}
                   </p>
-                  <p className={`text-xs mb-2 ${theme === 'dark' ? 'text-white/60' : 'text-gray-500'}`}>
+                  <p className={`text-xs mb-2 ${isDark ? 'text-white/60' : 'text-slate-500'}`}>
                     {getDayOfWeek(hoveredDay.date)}
                   </p>
                   {hoveredDay.count > 0 ? (
                     <div className="space-y-1">
-                      <p className={`text-sm font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                      <p className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>
                         {hoveredDay.count} reflection{hoveredDay.count !== 1 ? 's' : ''}
                       </p>
                       <div className="flex gap-1">
@@ -160,7 +178,7 @@ export default function ActivityCalendar() {
                       </div>
                     </div>
                   ) : (
-                    <p className={`text-xs ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>No reflections</p>
+                    <p className={`text-xs ${isDark ? 'text-white/50' : 'text-slate-500'}`}>No reflections</p>
                   )}
                 </div>
               </motion.div>
@@ -169,20 +187,8 @@ export default function ActivityCalendar() {
         </div>
       </div>
 
-      {/* Legend */}
-      <div className={`flex items-center justify-between text-xs pt-3 border-t ${theme === 'dark' ? 'text-white/50 border-white/10' : 'text-gray-500 border-gray-200'}`}>
-        <span>Less</span>
-        <div className="flex gap-1">
-          <div className={`w-3 h-3 rounded-sm border ${theme === 'dark' ? 'bg-white/5 border-white/20' : 'bg-gray-50 border-gray-200'}`} />
-          <div className={`w-3 h-3 rounded-sm bg-green-400/30 border ${theme === 'dark' ? 'border-white/20' : 'border-gray-200'}`} />
-          <div className={`w-3 h-3 rounded-sm bg-green-400/50 border ${theme === 'dark' ? 'border-white/20' : 'border-gray-200'}`} />
-          <div className={`w-3 h-3 rounded-sm bg-green-400/70 border ${theme === 'dark' ? 'border-white/20' : 'border-gray-200'}`} />
-        </div>
-        <span>More</span>
-      </div>
-
       {/* Quick insights */}
-      <div className="mt-4 space-y-2">
+      <div className="mt-2 space-y-2">
         {currentStreak > 0 && (
           <motion.div
             initial={{ opacity: 0, x: -10 }}
@@ -192,7 +198,7 @@ export default function ActivityCalendar() {
             <p className="text-purple-400 font-semibold text-sm mb-1">
               🌱 {currentStreak} days in a row
             </p>
-            <p className={`text-xs ${theme === 'dark' ? 'text-white/70' : 'text-gray-600'}`}>
+            <p className={`text-xs ${isDark ? 'text-white/70' : 'text-slate-600'}`}>
               A gentle rhythm is taking shape.
             </p>
           </motion.div>
@@ -203,7 +209,7 @@ export default function ActivityCalendar() {
             <p className="text-blue-400 font-semibold text-sm mb-1">
               💡 Reflect today to start a rhythm
             </p>
-            <p className={`text-xs ${theme === 'dark' ? 'text-white/70' : 'text-gray-600'}`}>
+            <p className={`text-xs ${isDark ? 'text-white/70' : 'text-slate-600'}`}>
               Complete today's reflection to begin.
             </p>
           </div>
@@ -214,7 +220,7 @@ export default function ActivityCalendar() {
             <p className="text-purple-400 font-semibold text-sm mb-1">
               ✨ Begin your journey
             </p>
-            <p className={`text-xs ${theme === 'dark' ? 'text-white/70' : 'text-gray-600'}`}>
+            <p className={`text-xs ${isDark ? 'text-white/70' : 'text-slate-600'}`}>
               Your first reflection is waiting!
             </p>
           </div>

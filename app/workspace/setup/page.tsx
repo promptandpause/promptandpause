@@ -67,26 +67,26 @@ export default function WorkspaceSetupPage() {
   }, [searchParams, router])
 
   return (
-    <div className={`min-h-screen flex items-center justify-center px-6 ${isDark ? 'bg-[#0A0A0A]' : 'bg-[#FFFFFF]'}`}>
+    <div className={`min-h-screen flex items-center justify-center px-6 ${isDark ? 'bg-[#0A0E18]' : 'bg-[#F9FBFB]'}`}>
       <div className="text-center max-w-sm">
         {status === 'polling' && (
           <>
-            <Loader2 className={`h-8 w-8 mx-auto mb-4 animate-spin ${isDark ? 'text-[#1D9BF0]' : 'text-[#1D9BF0]'}`} />
-            <p className={`text-sm font-medium ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>Setting up your workspace\u2026</p>
-            <p className={`text-xs mt-1 ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>This only takes a few seconds.</p>
+            <Loader2 className={`h-8 w-8 mx-auto mb-4 animate-spin ${isDark ? 'text-indigo-600' : 'text-indigo-600'}`} />
+            <p className={`text-sm font-medium ${isDark ? 'text-white' : 'text-slate-900'}`}>Setting up your workspace\u2026</p>
+            <p className={`text-xs mt-1 ${isDark ? 'text-white/40' : 'text-slate-500'}`}>This only takes a few seconds.</p>
           </>
         )}
         {status === 'ready' && (
           <>
             <CheckCircle2 className="h-8 w-8 mx-auto mb-4 text-emerald-500" />
-            <p className={`text-sm font-medium ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>Your workspace is ready</p>
-            <p className={`text-xs mt-1 ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>Taking you there now\u2026</p>
+            <p className={`text-sm font-medium ${isDark ? 'text-white' : 'text-slate-900'}`}>Your workspace is ready</p>
+            <p className={`text-xs mt-1 ${isDark ? 'text-white/40' : 'text-slate-500'}`}>Taking you there now\u2026</p>
           </>
         )}
         {status === 'canceled' && (
           <>
-            <p className={`text-sm font-medium mb-3 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>Checkout canceled</p>
-            <Link href="/workspace" className="text-sm text-[#1D9BF0] hover:underline">
+            <p className={`text-sm font-medium mb-3 ${isDark ? 'text-white' : 'text-slate-900'}`}>Checkout canceled</p>
+            <Link href="/workspace" className="text-sm text-indigo-600 hover:underline">
               Back to workspaces
             </Link>
           </>
@@ -94,8 +94,8 @@ export default function WorkspaceSetupPage() {
         {status === 'error' && (
           <>
             <XCircle className="h-8 w-8 mx-auto mb-4 text-red-500" />
-            <p className={`text-sm font-medium mb-1 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>{errorMsg}</p>
-            <Link href="/workspace" className="text-sm text-[#1D9BF0] hover:underline">
+            <p className={`text-sm font-medium mb-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>{errorMsg}</p>
+            <Link href="/workspace" className="text-sm text-indigo-600 hover:underline">
               Back to workspaces
             </Link>
           </>

@@ -4,15 +4,14 @@ import { AuthGuard } from "@/components/auth/AuthGuard"
 import GlobalDataSync from "../components/global-data-sync"
 import { DashboardSidebar } from "../components/DashboardSidebar"
 import { useTheme } from "@/contexts/ThemeContext"
-import { useTranslation } from "@/hooks/useTranslation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { motion } from "framer-motion"
 import { getSupabaseClient } from "@/lib/supabase/client"
-import { Hash, BookOpen, CalendarBlank, ChartBar, Brain, ClockClockwise, Calendar } from "phosphor-react"
+import { Hash, BookOpen, CalendarBlank, PenNib } from "phosphor-react"
 import QuickStats from "../components/quick-stats"
 import ActivityCalendar from "../components/activity-calendar"
 import { calculateWritingMetrics } from "@/lib/services/analyticsService"
-import { TierGate, UpgradePrompt } from "@/components/tier/TierGate"
+import { TierGate, UpgradePrompt, PremiumStatusCard } from "@/components/tier/TierGate"
 import { useTier } from "@/hooks/useTier"
 import dynamic from "next/dynamic"
 
@@ -50,26 +49,7 @@ function InsightsContent() {
     trend: 'increasing' | 'decreasing' | 'stable'
   } | null>(null)
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const { data: { user } } = await supabase.auth.getUser()
-        if (!user) return
-        setUserId(user.id)
-
-        const [tags, metrics] = await Promise.all([
-          fetchTopTags(user.id),
-          calculateWritingMetrics(user.id),
-        ])
-
-        setTopTags(tags)
-        setWritingMetrics(metrics)
-      } catch {}
-    }
-    load()
-  }, [supabase])
-
-  async function fetchTopTags(userId: string): Promise<TagCount[]> {
+  const fetchTopTags = useCallback(async (userId: string): Promise<TagCount[]> => {
     try {
       const { data, error } = await supabase
         .from("reflections")
@@ -94,7 +74,155 @@ function InsightsContent() {
     } catch {
       return []
     }
-  }
+  }, [supabase])
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return
+        setUserId(user.id)
+
+        const [tags, metrics] = await Promise.all([
+          fetchTopTags(user.id),
+          calculateWritingMetrics(user.id),
+        ])
+
+        setTopTags(tags)
+        setWritingMetrics(metrics)
+      } catch {}
+    }
+    load()
+  }, [supabase, fetchTopTags])
+
+  const cardClass = isDark
+    ? 'bg-white/[0.04] border border-white/[0.06]'
+    : 'bg-white/70 backdrop-blur-[12px] border border-slate-100 shadow-soft-card'
+
+  const hasData = writingMetrics !== null && writingMetrics.averageWordCount > 0
+
+  const leftColumn = (
+    <div className="lg:col-span-2 space-y-6 lg:space-y-8">
+      <ActivityCalendar />
+
+      {hasData && (
+        <div className={`rounded-3xl p-6 lg:p-8 ${cardClass}`}>
+          <div className="flex items-center gap-3 mb-6">
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isDark ? 'bg-white/10 text-white/60' : 'bg-slate-100 text-slate-600'}`}>
+              <PenNib size={16} weight="bold" />
+            </div>
+            <h3 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>Writing Stats</h3>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            <div className={`p-4 rounded-2xl ${isDark ? 'bg-white/5' : 'bg-slate-50'}`}>
+              <p className={`text-xs mb-1 ${isDark ? 'text-white/40' : 'text-slate-500'}`}>Avg Words</p>
+              <p className={`text-2xl font-extrabold tabular-nums ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                {writingMetrics.averageWordCount}
+              </p>
+            </div>
+            <div className={`p-4 rounded-2xl ${isDark ? 'bg-white/5' : 'bg-slate-50'}`}>
+              <p className={`text-xs mb-1 ${isDark ? 'text-white/40' : 'text-slate-500'}`}>Total Words</p>
+              <p className={`text-2xl font-extrabold tabular-nums ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                {writingMetrics.totalWords.toLocaleString()}
+              </p>
+            </div>
+            <div className={`p-4 rounded-2xl ${isDark ? 'bg-white/5' : 'bg-slate-50'}`}>
+              <p className={`text-xs mb-1 ${isDark ? 'text-white/40' : 'text-slate-500'}`}>Shortest</p>
+              <p className={`text-2xl font-extrabold tabular-nums ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                {writingMetrics.shortestReflection}
+              </p>
+            </div>
+          </div>
+
+          <div className={`p-4 border border-dashed rounded-2xl flex items-center justify-between text-sm ${isDark ? 'border-white/10' : 'border-slate-200'}`}>
+            <span className={isDark ? 'text-white/50' : 'text-slate-500'}>
+              Trending <span className={`font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>{writingMetrics.trend === 'increasing' ? 'longer' : writingMetrics.trend === 'decreasing' ? 'shorter' : 'steady'}</span>
+            </span>
+            <span className={isDark ? 'text-white/40' : 'text-slate-400'}>Longest entry: {writingMetrics.longestReflection} words</span>
+          </div>
+        </div>
+      )}
+
+      {!hasData && (
+        <div className={`text-center py-12 rounded-3xl ${cardClass}`}>
+          <CalendarBlank size={36} weight="bold" className={`mx-auto mb-3 ${isDark ? 'text-white/15' : 'text-slate-300'}`} />
+          <p className={`text-sm font-medium ${isDark ? 'text-white/50' : 'text-slate-400'}`}>
+            Start reflecting to see your insights
+          </p>
+          <p className={`text-xs mt-1 ${isDark ? 'text-white/25' : 'text-slate-400'}`}>
+            Stats, tags, and trends appear after your first entry.
+          </p>
+        </div>
+      )}
+
+      {!isFree && (
+        <div className="grid gap-6 lg:grid-cols-2">
+          <TierGate feature="mood-analytics">
+            <MoodAnalytics />
+          </TierGate>
+
+          <TierGate feature="weekly-insights">
+            <WeeklyInsights />
+          </TierGate>
+
+          <TierGate feature="from-your-past">
+            <FromYourPastCard />
+          </TierGate>
+
+          <TierGate feature="monthly-summary">
+            <MonthlyReflectionCard />
+          </TierGate>
+        </div>
+      )}
+    </div>
+  )
+
+  const rightColumn = (
+    <div className="space-y-6 lg:space-y-8">
+      {!isLoading && (isFree ? (
+        <UpgradePrompt feature="insights" />
+      ) : (
+        <PremiumStatusCard />
+      ))}
+
+      {topTags.length > 0 && (
+        <div className={`rounded-3xl p-6 lg:p-8 ${cardClass}`}>
+          <div className="flex items-center gap-3 mb-6">
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isDark ? 'bg-white/10 text-white/60' : 'bg-slate-100 text-slate-600'}`}>
+              <Hash size={16} weight="bold" />
+            </div>
+            <h3 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>Top Tags</h3>
+          </div>
+
+          <div className="space-y-6">
+            {topTags.map((t, i) => {
+              const maxCount = topTags[0].count
+              const barWidth = (t.count / maxCount) * 100
+              return (
+                <div key={t.tag}>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className={`text-sm font-medium truncate ${isDark ? 'text-white/60' : 'text-slate-700'}`}>
+                      #{t.tag}
+                    </span>
+                    <span className={`text-sm font-bold tabular-nums ${isDark ? 'text-white' : 'text-slate-900'}`}>{t.count}</span>
+                  </div>
+                  <div className="w-full h-2 rounded-full overflow-hidden bg-slate-100 dark:bg-white/[0.06]">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${barWidth}%` }}
+                      transition={{ duration: 0.6, delay: i * 0.05 }}
+                      className="h-full rounded-full bg-gradient-to-r from-[#6366F1] to-[#818CF8]"
+                    />
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  )
 
   return (
     <div className={`min-h-screen ${isDark ? "bg-[#0A0E18]" : "bg-[#F9FBFB]"}`}>
@@ -110,120 +238,20 @@ function InsightsContent() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ type: "spring", stiffness: 260, damping: 22 }}
             >
-              <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}>
+              <h1 className={`text-3xl lg:text-4xl font-extrabold tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}>
                 Insights
               </h1>
-              <p className={`text-sm mt-1 ${isDark ? "text-white/40" : "text-slate-400"}`}>
+              <p className={`text-sm mt-2 font-medium ${isDark ? "text-white/40" : "text-slate-500"}`}>
                 Your writing patterns, mood trends, and reflection stats.
               </p>
             </motion.div>
 
             <QuickStats />
 
-            <ActivityCalendar />
-
-            <div className="grid gap-6 lg:grid-cols-2">
-              {isFree ? (
-                <div className="lg:col-span-2">
-                  <UpgradePrompt feature="insights" />
-                </div>
-              ) : (
-                <>
-                  <TierGate feature="mood-analytics">
-                    <MoodAnalytics />
-                  </TierGate>
-
-                  <TierGate feature="weekly-insights">
-                    <WeeklyInsights />
-                  </TierGate>
-
-                  <TierGate feature="from-your-past">
-                    <FromYourPastCard />
-                  </TierGate>
-
-                  <TierGate feature="monthly-summary">
-                    <MonthlyReflectionCard />
-                  </TierGate>
-                </>
-              )}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+              {leftColumn}
+              {rightColumn}
             </div>
-
-            {writingMetrics && writingMetrics.averageWordCount > 0 && (
-              <div className={`rounded-3xl border p-5 ${isDark ? "bg-white/[0.04] border-white/[0.06]" : "bg-white/70 border-slate-100 shadow-soft-card"}`}>
-                <div className="flex items-center gap-2 mb-4">
-                  <BookOpen size={18} weight="bold" className={isDark ? "text-white/40" : "text-slate-400"} />
-                  <h3 className={`text-base font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>Writing Stats</h3>
-                </div>
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <p className={`text-xs ${isDark ? "text-white/30" : "text-slate-400"}`}>Avg Words</p>
-                    <p className={`text-lg font-bold tabular-nums ${isDark ? "text-white" : "text-slate-900"}`}>
-                      {writingMetrics.averageWordCount}
-                    </p>
-                  </div>
-                  <div>
-                    <p className={`text-xs ${isDark ? "text-white/30" : "text-slate-400"}`}>Total Words</p>
-                    <p className={`text-lg font-bold tabular-nums ${isDark ? "text-white" : "text-slate-900"}`}>
-                      {writingMetrics.totalWords.toLocaleString()}
-                    </p>
-                  </div>
-                  <div>
-                    <p className={`text-xs ${isDark ? "text-white/30" : "text-slate-400"}`}>Shortest</p>
-                    <p className={`text-lg font-bold tabular-nums ${isDark ? "text-white" : "text-slate-900"}`}>
-                      {writingMetrics.shortestReflection}
-                    </p>
-                  </div>
-                </div>
-                <div className={`mt-2 flex items-center gap-1.5 text-xs ${isDark ? "text-white/30" : "text-slate-400"}`}>
-                  {writingMetrics.trend === 'increasing' ? 'Trending longer' : writingMetrics.trend === 'decreasing' ? 'Trending shorter' : 'Steady writing'} · Longest: {writingMetrics.longestReflection}
-                </div>
-              </div>
-            )}
-
-            {topTags.length > 0 && (
-              <div className={`rounded-3xl border p-5 ${isDark ? "bg-white/[0.04] border-white/[0.06]" : "bg-white/70 border-slate-100 shadow-soft-card"}`}>
-                <div className="flex items-center gap-2 mb-4">
-                  <Hash size={18} weight="bold" className={isDark ? "text-white/40" : "text-slate-400"} />
-                  <h3 className={`text-base font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>Top Tags</h3>
-                </div>
-                <div className="space-y-2">
-                  {topTags.map((t, i) => {
-                    const maxCount = topTags[0].count
-                    const barWidth = (t.count / maxCount) * 100
-                    return (
-                      <div key={t.tag} className="flex items-center gap-3">
-                        <span className={`text-sm w-24 truncate ${isDark ? "text-white/60" : "text-slate-500"}`}>
-                          #{t.tag}
-                        </span>
-                        <div className="flex-1 h-5 rounded-full overflow-hidden bg-slate-100 dark:bg-white/[0.06]">
-                          <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: `${barWidth}%` }}
-                            transition={{ duration: 0.6, delay: i * 0.05 }}
-                            className="h-full rounded-full bg-gradient-to-r from-[#6366F1] to-[#818CF8]"
-                          />
-                        </div>
-                        <span className={`text-xs tabular-nums w-8 text-right ${isDark ? "text-white/30" : "text-slate-400"}`}>
-                          {t.count}
-                        </span>
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-            )}
-
-            {(!writingMetrics || writingMetrics.averageWordCount === 0) && (
-              <div className={`text-center py-12 rounded-3xl ${isDark ? "bg-white/[0.02] border border-white/[0.06]" : "bg-white/50 border border-slate-100"}`}>
-                <CalendarBlank size={36} weight="bold" className={`mx-auto mb-3 ${isDark ? "text-white/15" : "text-slate-300"}`} />
-                <p className={`text-sm font-medium ${isDark ? "text-white/50" : "text-slate-400"}`}>
-                  Start reflecting to see your insights
-                </p>
-                <p className={`text-xs mt-1 ${isDark ? "text-white/25" : "text-slate-400"}`}>
-                  Stats, tags, and trends appear after your first entry.
-                </p>
-              </div>
-            )}
           </div>
         </main>
       </div>

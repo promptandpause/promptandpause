@@ -333,32 +333,32 @@ export default function WorkspaceDashboardPage() {
 
   if (loading) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${isDark ? 'bg-[#0A0A0A]' : 'bg-[#FFFFFF]'}`}>
-        <Loader2 className={`h-6 w-6 animate-spin ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`} />
+      <div className={`min-h-screen flex items-center justify-center ${isDark ? 'bg-[#0A0E18]' : 'bg-[#F9FBFB]'}`}>
+        <Loader2 className={`h-6 w-6 animate-spin ${isDark ? 'text-white/30' : 'text-slate-500'}`} />
       </div>
     )
   }
 
   if (error || !org) {
     return (
-      <div className={`min-h-screen flex items-center justify-center px-6 ${isDark ? 'bg-[#0A0A0A]' : 'bg-[#FFFFFF]'}`}>
+      <div className={`min-h-screen flex items-center justify-center px-6 ${isDark ? 'bg-[#0A0E18]' : 'bg-[#F9FBFB]'}`}>
         <div className="text-center">
-          <p className={`text-sm font-medium mb-3 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>{error || 'Workspace not found'}</p>
-          <Link href="/workspace" className="text-sm text-[#1D9BF0] hover:underline">Back to workspaces</Link>
+          <p className={`text-sm font-medium mb-3 ${isDark ? 'text-white' : 'text-slate-900'}`}>{error || 'Workspace not found'}</p>
+          <Link href="/workspace" className="text-sm text-indigo-600 hover:underline">Back to workspaces</Link>
         </div>
       </div>
     )
   }
 
-  const cardBorder = isDark ? 'border-white/[0.08]' : 'border-[#EFF3F4]'
-  const cardBg = isDark ? 'bg-white/[0.04]' : 'bg-[#F7F9FA]'
+  const cardBorder = isDark ? 'border-white/10' : 'border-slate-100'
+  const cardBg = isDark ? 'bg-white/[0.04]' : 'bg-slate-50'
   const inputCls = (disabled?: boolean) =>
-    `flex-1 px-3.5 py-2 rounded-lg text-sm border outline-none focus:border-[#1D9BF0] ${
-      isDark ? 'bg-white/[0.04] border-white/10 text-white placeholder:text-white/30' : 'bg-white border-[#CFD9DE] text-[#0F1419]'
+    `flex-1 px-3.5 py-2 rounded-lg text-sm border outline-none focus:border-indigo-500 ${
+      isDark ? 'bg-white/[0.04] border-white/10 text-white placeholder:text-white/30' : 'bg-white border-slate-200 text-slate-900'
     } ${disabled ? 'opacity-60 cursor-not-allowed' : ''}`
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-[#0A0A0A]' : 'bg-[#FFFFFF]'}`}>
+    <div className={`min-h-screen ${isDark ? 'bg-[#0A0E18]' : 'bg-[#F9FBFB]'}`}>
       <div className="flex h-screen overflow-hidden">
         <DashboardSidebar />
         <main className="flex-1 pb-32 md:pb-10 overflow-y-auto scrollbar-thin">
@@ -366,7 +366,7 @@ export default function WorkspaceDashboardPage() {
         <Link
           href="/workspace"
           className={`hidden md:inline-flex items-center gap-2 text-sm mb-8 transition-colors ${
-            isDark ? 'text-white/50 hover:text-white' : 'text-[#536471] hover:text-[#0F1419]'
+            isDark ? 'text-white/50 hover:text-white' : 'text-slate-600 hover:text-slate-900'
           }`}
         >
           <ArrowLeft className="h-4 w-4" />
@@ -374,12 +374,12 @@ export default function WorkspaceDashboardPage() {
         </Link>
 
         <div className="flex items-center gap-3 mb-1">
-          <div className={`h-11 w-11 rounded-full flex items-center justify-center ${isDark ? 'bg-[#1D9BF0]/20' : 'bg-[#1D9BF0]/10'}`}>
-            <Users className="h-5 w-5 text-[#1D9BF0]" />
+          <div className={`h-11 w-11 rounded-full flex items-center justify-center ${isDark ? 'bg-indigo-500/20' : 'bg-indigo-500/10'}`}>
+            <Users className="h-5 w-5 text-indigo-600" />
           </div>
           <div>
-            <h1 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>{org.name}</h1>
-            <p className={`text-xs ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
+            <h1 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>{org.name}</h1>
+            <p className={`text-xs ${isDark ? 'text-white/40' : 'text-slate-500'}`}>
               {activeSeatsUsed} of {org.seat_count} seats used
             </p>
           </div>
@@ -390,8 +390,8 @@ export default function WorkspaceDashboardPage() {
             onClick={() => setTab('members')}
             className={`px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
               tab === 'members'
-                ? 'bg-[#1D9BF0] border-[#1D9BF0] text-white'
-                : isDark ? 'border-white/10 text-white/60 hover:text-white' : 'border-[#CFD9DE] text-[#536471] hover:text-[#0F1419]'
+                ? isDark ? 'bg-white text-slate-900 border-white' : 'bg-slate-900 text-white border-slate-900'
+                : isDark ? 'border-white/10 text-white/60 hover:text-white' : 'border-slate-200 text-slate-600 hover:text-slate-900'
             }`}
           >
             Members
@@ -400,8 +400,8 @@ export default function WorkspaceDashboardPage() {
             onClick={() => setTab('feed')}
             className={`px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
               tab === 'feed'
-                ? 'bg-[#1D9BF0] border-[#1D9BF0] text-white'
-                : isDark ? 'border-white/10 text-white/60 hover:text-white' : 'border-[#CFD9DE] text-[#536471] hover:text-[#0F1419]'
+                ? isDark ? 'bg-white text-slate-900 border-white' : 'bg-slate-900 text-white border-slate-900'
+                : isDark ? 'border-white/10 text-white/60 hover:text-white' : 'border-slate-200 text-slate-600 hover:text-slate-900'
             }`}
           >
             Team feed
@@ -411,8 +411,8 @@ export default function WorkspaceDashboardPage() {
               onClick={() => setTab('analytics')}
               className={`px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
                 tab === 'analytics'
-                  ? 'bg-[#1D9BF0] border-[#1D9BF0] text-white'
-                  : isDark ? 'border-white/10 text-white/60 hover:text-white' : 'border-[#CFD9DE] text-[#536471] hover:text-[#0F1419]'
+                  ? isDark ? 'bg-white text-slate-900 border-white' : 'bg-slate-900 text-white border-slate-900'
+                  : isDark ? 'border-white/10 text-white/60 hover:text-white' : 'border-slate-200 text-slate-600 hover:text-slate-900'
               }`}
             >
               Analytics
@@ -423,8 +423,8 @@ export default function WorkspaceDashboardPage() {
               onClick={() => setTab('settings')}
               className={`px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
                 tab === 'settings'
-                  ? 'bg-[#1D9BF0] border-[#1D9BF0] text-white'
-                  : isDark ? 'border-white/10 text-white/60 hover:text-white' : 'border-[#CFD9DE] text-[#536471] hover:text-[#0F1419]'
+                  ? isDark ? 'bg-white text-slate-900 border-white' : 'bg-slate-900 text-white border-slate-900'
+                  : isDark ? 'border-white/10 text-white/60 hover:text-white' : 'border-slate-200 text-slate-600 hover:text-slate-900'
               }`}
             >
               Settings
@@ -439,16 +439,16 @@ export default function WorkspaceDashboardPage() {
               <div className={`p-4 rounded-xl border ${cardBg} ${cardBorder}`}>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <div>
-                    <h2 className={`text-sm font-semibold mb-0.5 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+                    <h2 className={`text-sm font-semibold mb-0.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>
                       Workspace analytics opt-in
                     </h2>
-                    <p className={`text-xs ${isDark ? 'text-white/50' : 'text-[#536471]'}`}>
+                    <p className={`text-xs ${isDark ? 'text-white/50' : 'text-slate-600'}`}>
                       Your activity can contribute to anonymous team aggregates once you opt in.
                     </p>
                   </div>
                   <Link
                     href={`/workspace/${orgId}/consent`}
-                    className="shrink-0 px-4 py-2 rounded-full text-sm font-semibold bg-[#1D9BF0] text-white hover:bg-[#1A8CD8] transition-colors text-center"
+                    className="shrink-0 px-4 py-2 rounded-full text-sm font-semibold bg-indigo-600 text-white hover:bg-indigo-500 transition-colors text-center"
                   >
                     Review & opt in
                   </Link>
@@ -458,7 +458,7 @@ export default function WorkspaceDashboardPage() {
 
             {canManage && (
               <div className={`p-4 rounded-xl border ${cardBg} ${cardBorder}`}>
-                <h2 className={`text-sm font-semibold mb-3 flex items-center gap-2 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+                <h2 className={`text-sm font-semibold mb-3 flex items-center gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
                   <UserPlus className="h-4 w-4" /> Add someone
                 </h2>
                 <div className="flex gap-2">
@@ -471,7 +471,7 @@ export default function WorkspaceDashboardPage() {
                   <select
                     value={inviteRole}
                     onChange={e => setInviteRole(e.target.value as 'admin' | 'member')}
-                    className={`shrink-0 px-3 py-2 rounded-lg text-sm border outline-none ${isDark ? 'bg-white/[0.04] border-white/10 text-white/70' : 'bg-white border-[#CFD9DE] text-[#536471]'}`}
+                    className={`shrink-0 px-3 py-2 rounded-lg text-sm border outline-none ${isDark ? 'bg-white/[0.04] border-white/10 text-white/70' : 'bg-white border-slate-200 text-slate-600'}`}
                   >
                     <option value="member">Member</option>
                     <option value="admin">Admin</option>
@@ -479,7 +479,7 @@ export default function WorkspaceDashboardPage() {
                   <button
                     onClick={sendInvite}
                     disabled={inviting}
-                    className="px-4 py-2 rounded-lg text-sm font-semibold bg-[#1D9BF0] text-white hover:bg-[#1A8CD8] transition-colors disabled:opacity-60 shrink-0"
+                    className="px-4 py-2 rounded-lg text-sm font-semibold bg-indigo-600 text-white hover:bg-indigo-500 transition-colors disabled:opacity-60 shrink-0"
                   >
                     {inviting ? 'Adding...' : 'Add'}
                   </button>
@@ -487,7 +487,7 @@ export default function WorkspaceDashboardPage() {
 
                 {lookup && !inviteError && !inviteSuccess && (
                   <p className={`text-xs mt-2 flex items-center gap-1.5 ${
-                    lookup.alreadyMember ? 'text-amber-500' : isDark ? 'text-white/50' : 'text-[#536471]'
+                    lookup.alreadyMember ? 'text-amber-500' : isDark ? 'text-white/50' : 'text-slate-600'
                   }`}>
                     <LinkIcon className="h-3 w-3 shrink-0" />
                     {lookup.alreadyMember
@@ -508,19 +508,19 @@ export default function WorkspaceDashboardPage() {
 
             {pendingInvites.length > 0 && (
               <div>
-                <h2 className={`text-sm font-semibold mb-3 ${isDark ? 'text-white/70' : 'text-[#536471]'}`}>
+                <h2 className={`text-sm font-semibold mb-3 ${isDark ? 'text-white/70' : 'text-slate-600'}`}>
                   Pending invites
                 </h2>
                 <div className="space-y-2">
                   {pendingInvites.map(invite => (
                     <div
                       key={invite.id}
-                      className={`flex items-center justify-between p-3 rounded-lg border ${isDark ? 'border-white/[0.06]' : 'border-[#EFF3F4]'}`}
+                      className={`flex items-center justify-between p-3 rounded-lg border ${isDark ? 'border-white/[0.06]' : 'border-slate-100'}`}
                     >
                       <div className="flex items-center gap-2.5 min-w-0">
-                        <Mail className={`h-4 w-4 shrink-0 ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`} />
-                        <span className={`text-sm truncate ${isDark ? 'text-white/70' : 'text-[#0F1419]'}`}>{invite.email}</span>
-                        <span className={`text-[10px] uppercase tracking-wide shrink-0 ${isDark ? 'text-white/25' : 'text-[#8B98A5]'}`}>
+                        <Mail className={`h-4 w-4 shrink-0 ${isDark ? 'text-white/30' : 'text-slate-500'}`} />
+                        <span className={`text-sm truncate ${isDark ? 'text-white/70' : 'text-slate-900'}`}>{invite.email}</span>
+                        <span className={`text-[10px] uppercase tracking-wide shrink-0 ${isDark ? 'text-white/25' : 'text-slate-500'}`}>
                           {invite.role === 'admin' ? 'Admin' : 'Member'}
                         </span>
                       </div>
@@ -529,14 +529,14 @@ export default function WorkspaceDashboardPage() {
                           <button
                             onClick={() => resendInvite(invite.id)}
                             disabled={resending === invite.id}
-                            className={`text-xs font-medium flex items-center gap-1 ${isDark ? 'text-white/40 hover:text-white' : 'text-[#8B98A5] hover:text-[#0F1419]'}`}
+                            className={`text-xs font-medium flex items-center gap-1 ${isDark ? 'text-white/40 hover:text-white' : 'text-slate-500 hover:text-slate-900'}`}
                           >
                             {resending === invite.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
                             Resend
                           </button>
                           <button
                             onClick={() => revokeInvite(invite.id)}
-                            className={`text-xs font-medium ${isDark ? 'text-white/30 hover:text-red-400' : 'text-[#8B98A5] hover:text-red-500'}`}
+                            className={`text-xs font-medium ${isDark ? 'text-white/30 hover:text-red-400' : 'text-slate-500 hover:text-red-500'}`}
                           >
                             Revoke
                           </button>
@@ -549,7 +549,7 @@ export default function WorkspaceDashboardPage() {
             )}
 
             <div>
-              <h2 className={`text-sm font-semibold mb-3 ${isDark ? 'text-white/70' : 'text-[#536471]'}`}>
+              <h2 className={`text-sm font-semibold mb-3 ${isDark ? 'text-white/70' : 'text-slate-600'}`}>
                 Members
               </h2>
               <div className="space-y-2">
@@ -559,25 +559,25 @@ export default function WorkspaceDashboardPage() {
                   return (
                     <div
                       key={member.id}
-                      className={`flex items-center justify-between p-3 rounded-lg border ${isDark ? 'border-white/[0.06]' : 'border-[#EFF3F4]'}`}
+                      className={`flex items-center justify-between p-3 rounded-lg border ${isDark ? 'border-white/[0.06]' : 'border-slate-100'}`}
                     >
                       <div className="flex items-center gap-2.5 min-w-0">
-                        <div className={`h-8 w-8 rounded-full flex items-center justify-center shrink-0 ${isDark ? 'bg-white/[0.06]' : 'bg-[#EFF3F4]'}`}>
+                        <div className={`h-8 w-8 rounded-full flex items-center justify-center shrink-0 ${isDark ? 'bg-white/[0.06]' : 'bg-slate-100'}`}>
                           {member.profile?.avatar_url ? (
                             <img src={member.profile.avatar_url} alt="" className="h-8 w-8 rounded-full object-cover" />
                           ) : (
-                            <span className={`text-xs font-semibold ${isDark ? 'text-white/50' : 'text-[#536471]'}`}>
+                            <span className={`text-xs font-semibold ${isDark ? 'text-white/50' : 'text-slate-600'}`}>
                               {name.charAt(0).toUpperCase()}
                             </span>
                           )}
                         </div>
                         <div className="min-w-0">
-                          <div className={`text-sm font-medium truncate flex items-center gap-1.5 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
-                            {name} {isSelf && <span className={isDark ? 'text-white/30' : 'text-[#8B98A5]'}>(you)</span>}
+                          <div className={`text-sm font-medium truncate flex items-center gap-1.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                            {name} {isSelf && <span className={isDark ? 'text-white/30' : 'text-slate-500'}>(you)</span>}
                             {member.role === 'owner' && <Crown className="h-3 w-3 text-amber-500" />}
-                            {member.role === 'admin' && <ShieldCheck className="h-3 w-3 text-[#1D9BF0]" />}
+                            {member.role === 'admin' && <ShieldCheck className="h-3 w-3 text-indigo-600" />}
                           </div>
-                          <div className={`text-xs ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
+                          <div className={`text-xs ${isDark ? 'text-white/30' : 'text-slate-500'}`}>
                             {member.last_active_at
                               ? `Active ${new Date(member.last_active_at).toLocaleDateString()}`
                               : 'Not active yet'}
@@ -592,7 +592,7 @@ export default function WorkspaceDashboardPage() {
                           <select
                             value={member.role}
                             onChange={e => changeRole(member.user_id, e.target.value as 'admin' | 'member')}
-                            className={`text-xs rounded-md px-2 py-1 border ${isDark ? 'bg-white/[0.04] border-white/10 text-white/70' : 'bg-white border-[#CFD9DE] text-[#536471]'}`}
+                            className={`text-xs rounded-md px-2 py-1 border ${isDark ? 'bg-white/[0.04] border-white/10 text-white/70' : 'bg-white border-slate-200 text-slate-600'}`}
                           >
                             <option value="member">Member</option>
                             <option value="admin">Admin</option>
@@ -601,7 +601,7 @@ export default function WorkspaceDashboardPage() {
                         {(isSelf || (canManage && member.role !== 'owner')) && (
                           <button
                             onClick={() => removeMember(member.user_id, isSelf)}
-                            className={`p-1.5 rounded-full transition-colors ${isDark ? 'text-white/30 hover:text-red-400 hover:bg-white/5' : 'text-[#8B98A5] hover:text-red-500 hover:bg-[#F7F9FA]'}`}
+                            className={`p-1.5 rounded-full transition-colors ${isDark ? 'text-white/30 hover:text-red-400 hover:bg-white/5' : 'text-slate-500 hover:text-red-500 hover:bg-slate-50'}`}
                             title={isSelf ? 'Leave workspace' : 'Remove member'}
                           >
                             <Trash2 className="h-3.5 w-3.5" />
@@ -616,7 +616,7 @@ export default function WorkspaceDashboardPage() {
           </div>
             {/* Right column: privacy note, desktop only -- persistent alongside the roster on wide screens */}
             <div className={`hidden lg:block sticky top-6 p-4 rounded-xl border text-xs leading-relaxed ${
-              isDark ? 'bg-white/[0.03] border-white/[0.06] text-white/40' : 'bg-[#F7F9FA] border-[#EFF3F4] text-[#8B98A5]'
+              isDark ? 'bg-white/[0.03] border-white/[0.06] text-white/40' : 'bg-slate-50 border-slate-100 text-slate-500'
             }`}>
               Workspace admins only ever see this roster -- name, role, and activity presence. Reflection content is
               never visible to anyone but the person who wrote it. Analytics are aggregate-only and members opt in
@@ -627,20 +627,20 @@ export default function WorkspaceDashboardPage() {
 
         {tab === 'feed' && (
           <div className="max-w-[680px] mt-8">
-            <p className={`text-xs mb-4 ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
+            <p className={`text-xs mb-4 ${isDark ? 'text-white/40' : 'text-slate-500'}`}>
               Reflections your teammates chose to share with this workspace only. Nothing here appears on the public feed.
             </p>
             {feedLoading ? (
               <div className="flex justify-center py-16">
-                <Loader2 className={`h-5 w-5 animate-spin ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`} />
+                <Loader2 className={`h-5 w-5 animate-spin ${isDark ? 'text-white/30' : 'text-slate-500'}`} />
               </div>
             ) : feed.length === 0 ? (
               <div className={`rounded-2xl p-10 text-center ${cardBg} ${cardBorder}`}>
-                <Users className={`h-8 w-8 mx-auto mb-3 ${isDark ? 'text-white/15' : 'text-[#8B98A5]'}`} />
-                <h3 className={`text-sm font-semibold mb-1 ${isDark ? 'text-white/70' : 'text-[#0F1419]'}`}>
+                <Users className={`h-8 w-8 mx-auto mb-3 ${isDark ? 'text-white/15' : 'text-slate-500'}`} />
+                <h3 className={`text-sm font-semibold mb-1 ${isDark ? 'text-white/70' : 'text-slate-900'}`}>
                   No workspace shares yet
                 </h3>
-                <p className={`text-xs ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
+                <p className={`text-xs ${isDark ? 'text-white/40' : 'text-slate-500'}`}>
                   Share something with your workspace and it will appear here for the whole team.
                 </p>
               </div>
@@ -663,11 +663,11 @@ export default function WorkspaceDashboardPage() {
                       className={`text-sm px-6 py-2 rounded-xl transition-all ${
                         isDark
                           ? 'bg-white/[0.06] text-white/50 hover:bg-white/10 hover:text-white'
-                          : 'bg-white/80 text-[#536471] hover:bg-white border border-[#EFF3F4]'
+                          : 'bg-white/80 text-slate-600 hover:bg-white border border-slate-100'
                       }`}
                     >
                       {feedLoadingMore ? (
-                        <Loader2 className={`h-4 w-4 animate-spin mx-auto ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`} />
+                        <Loader2 className={`h-4 w-4 animate-spin mx-auto ${isDark ? 'text-white/40' : 'text-slate-500'}`} />
                       ) : (
                         'Load more'
                       )}
@@ -692,7 +692,7 @@ export default function WorkspaceDashboardPage() {
         {tab === 'settings' && (
           <div className="max-w-[560px] mt-8 space-y-6">
             <div className={`p-5 rounded-xl border ${cardBg} ${cardBorder}`}>
-              <h2 className={`text-sm font-semibold mb-3 flex items-center gap-2 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+              <h2 className={`text-sm font-semibold mb-3 flex items-center gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 <Settings className="h-4 w-4" /> Workspace name
               </h2>
               <input
@@ -706,7 +706,7 @@ export default function WorkspaceDashboardPage() {
                 <button
                   onClick={handleRename}
                   disabled={renaming || !newName.trim() || newName.trim() === org.name}
-                  className="px-4 py-2 rounded-full text-sm font-semibold bg-[#1D9BF0] text-white hover:bg-[#1A8CD8] transition-colors disabled:opacity-60"
+                  className="px-4 py-2 rounded-full text-sm font-semibold bg-indigo-600 text-white hover:bg-indigo-500 transition-colors disabled:opacity-60"
                 >
                   {renaming ? 'Saving...' : 'Save name'}
                 </button>
@@ -716,10 +716,10 @@ export default function WorkspaceDashboardPage() {
             {isOwner && (
               <>
                 <div className={`p-5 rounded-xl border ${cardBg} ${cardBorder}`}>
-                  <h2 className={`text-sm font-semibold mb-1 flex items-center gap-2 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+                  <h2 className={`text-sm font-semibold mb-1 flex items-center gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
                     <Users className="h-4 w-4" /> Seats & billing
                   </h2>
-                  <p className={`text-xs mb-4 ${isDark ? 'text-white/50' : 'text-[#536471]'}`}>
+                  <p className={`text-xs mb-4 ${isDark ? 'text-white/50' : 'text-slate-600'}`}>
                     {activeSeatsUsed} of {org.seat_count} seats in use. Changing the seat count updates your subscription
                     immediately, billed by Stripe.
                   </p>
@@ -735,7 +735,7 @@ export default function WorkspaceDashboardPage() {
                     <button
                       onClick={handleUpdateSeats}
                       disabled={updatingSeats || seatCountInput === org.seat_count}
-                      className="px-4 py-2 rounded-lg text-sm font-semibold bg-[#1D9BF0] text-white hover:bg-[#1A8CD8] transition-colors disabled:opacity-60 shrink-0"
+                      className="px-4 py-2 rounded-lg text-sm font-semibold bg-indigo-600 text-white hover:bg-indigo-500 transition-colors disabled:opacity-60 shrink-0"
                     >
                       {updatingSeats ? 'Updating...' : 'Update seats'}
                     </button>
@@ -744,7 +744,7 @@ export default function WorkspaceDashboardPage() {
                   <button
                     onClick={openPortal}
                     disabled={portalLoading}
-                    className="inline-flex items-center gap-2 text-sm font-semibold text-[#1D9BF0] hover:underline disabled:opacity-60"
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:underline disabled:opacity-60"
                   >
                     {portalLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ExternalLink className="h-4 w-4" />}
                     Manage billing, payment methods & invoices
@@ -752,16 +752,16 @@ export default function WorkspaceDashboardPage() {
                 </div>
 
                 <div className={`p-5 rounded-xl border ${cardBg} ${cardBorder}`}>
-                  <h2 className={`text-sm font-semibold mb-1 flex items-center gap-2 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+                  <h2 className={`text-sm font-semibold mb-1 flex items-center gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
                     <Crown className="h-4 w-4 text-amber-500" /> Transfer ownership
                   </h2>
-                  <p className={`text-xs mb-3 ${isDark ? 'text-white/50' : 'text-[#536471]'}`}>
+                  <p className={`text-xs mb-3 ${isDark ? 'text-white/50' : 'text-slate-600'}`}>
                     Hand this workspace to another member. You'll become an admin.
                   </p>
                   <select
                     value={transferUserId}
                     onChange={e => setTransferUserId(e.target.value)}
-                    className={`w-full px-3.5 py-2 rounded-lg text-sm border outline-none mb-3 ${isDark ? 'bg-white/[0.04] border-white/10 text-white' : 'bg-white border-[#CFD9DE] text-[#0F1419]'}`}
+                    className={`w-full px-3.5 py-2 rounded-lg text-sm border outline-none mb-3 ${isDark ? 'bg-white/[0.04] border-white/10 text-white' : 'bg-white border-slate-200 text-slate-900'}`}
                   >
                     <option value="">Choose a member...</option>
                     {members.filter(m => m.status === 'active' && m.user_id !== myUserId).map(m => (
@@ -786,7 +786,7 @@ export default function WorkspaceDashboardPage() {
           </div>
         )}
 
-        <p className={`lg:hidden text-xs mt-8 text-center ${isDark ? 'text-white/25' : 'text-[#8B98A5]'}`}>
+        <p className={`lg:hidden text-xs mt-8 text-center ${isDark ? 'text-white/25' : 'text-slate-500'}`}>
           Workspace admins only ever see this roster -- name, role, and activity presence. Reflection content is
           never visible to anyone but the person who wrote it.
         </p>

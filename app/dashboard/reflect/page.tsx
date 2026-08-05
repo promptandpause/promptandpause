@@ -48,7 +48,7 @@ function ReflectContent() {
   }, [supabase])
 
   return (
-    <div className={`min-h-screen ${isDark ? "bg-[#0A0A0A]" : "bg-[#FFFFFF]"}`}>
+    <div className={`min-h-screen ${isDark ? "bg-[#0A0E18]" : "bg-[#F9FBFB]"}`}>
       <GlobalDataSync />
 
       <div className="flex h-screen overflow-hidden">
@@ -62,10 +62,10 @@ function ReflectContent() {
               transition={{ type: "spring", stiffness: 260, damping: 22 }}
               className="mb-6"
             >
-              <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight ${isDark ? "text-white" : "text-[#0F1419]"}`}>
+              <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}>
                 Reflect
               </h1>
-              <p className={`text-sm mt-1 ${isDark ? "text-white/40" : "text-[#8B98A5]"}`}>
+              <p className={`text-sm mt-1 ${isDark ? "text-white/40" : "text-slate-400"}`}>
                 Your private space to write, process, and grow.
               </p>
             </motion.div>

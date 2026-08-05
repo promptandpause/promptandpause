@@ -36,14 +36,14 @@ export default function ConsentPage() {
   }
 
   return (
-    <div className={`max-w-xl mx-auto px-4 py-16 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+    <div className={`max-w-xl mx-auto px-4 py-16 ${isDark ? 'text-white' : 'text-slate-900'}`}>
       <h1 className="text-2xl font-bold mb-2">Workspace analytics consent</h1>
-      <p className={`text-sm mb-6 ${isDark ? 'text-white/60' : 'text-[#536471]'}`}>
+      <p className={`text-sm mb-6 ${isDark ? 'text-white/60' : 'text-slate-600'}`}>
         Your workspace admin can see aggregate engagement data for the team. This page explains exactly what is and isn't included.
       </p>
 
-      <div className={`space-y-4 text-sm leading-relaxed ${isDark ? 'text-white/70' : 'text-[#0F1419]'}`}>
-        <div className={`p-4 rounded-xl border ${isDark ? 'border-white/10 bg-white/[0.03]' : 'border-[#EFF3F4] bg-[#F7F9FA]'}`}>
+      <div className={`space-y-4 text-sm leading-relaxed ${isDark ? 'text-white/70' : 'text-slate-900'}`}>
+        <div className={`p-4 rounded-xl border ${isDark ? 'border-white/10 bg-white/[0.03]' : 'border-slate-100 bg-slate-50'}`}>
           <h2 className="font-semibold mb-1">What we track</h2>
           <ul className="list-disc pl-5 space-y-1">
             <li>Whether you were active on a given day.</li>
@@ -52,7 +52,7 @@ export default function ConsentPage() {
           </ul>
         </div>
 
-        <div className={`p-4 rounded-xl border ${isDark ? 'border-white/10 bg-white/[0.03]' : 'border-[#EFF3F4] bg-[#F7F9FA]'}`}>
+        <div className={`p-4 rounded-xl border ${isDark ? 'border-white/10 bg-white/[0.03]' : 'border-slate-100 bg-slate-50'}`}>
           <h2 className="font-semibold mb-1">What we never track</h2>
           <ul className="list-disc pl-5 space-y-1">
             <li>Your reflection content is never shown to admins or other members.</li>
@@ -69,7 +69,7 @@ export default function ConsentPage() {
       <button
         onClick={giveConsent}
         disabled={submitting}
-        className="mt-8 w-full py-2.5 rounded-full text-sm font-semibold bg-[#1D9BF0] text-white hover:bg-[#1A8CD8] transition-colors disabled:opacity-60"
+        className="mt-8 w-full py-2.5 rounded-full text-sm font-semibold bg-indigo-600 text-white hover:bg-indigo-500 transition-colors disabled:opacity-60"
       >
         {submitting ? <span className="inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Saving...</span> : 'Opt in to workspace analytics'}
       </button>

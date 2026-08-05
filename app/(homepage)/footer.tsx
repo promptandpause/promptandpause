@@ -17,7 +17,7 @@ const footerLinks = [
 
 export default function Footer() {
   return (
-    <footer className="bg-white border-t border-[#EFF3F4] py-4 px-4">
+    <footer className="bg-white border-t border-slate-100 py-4 px-4">
       <nav
         aria-label="Footer"
         className="flex flex-wrap flex-row justify-center gap-x-1 gap-y-1 max-w-5xl mx-auto"
@@ -26,17 +26,17 @@ export default function Footer() {
           <span key={link.label} className="flex items-center">
             <Link
               href={link.href}
-              className="text-[11px] text-[#536471] hover:underline px-1 py-0.5 leading-none"
+              className="text-[11px] text-slate-600 hover:underline px-1 py-0.5 leading-none"
             >
               {link.label}
             </Link>
             {i < footerLinks.length - 1 && (
-              <span className="text-[#536471] text-[11px] select-none">·</span>
+              <span className="text-slate-600 text-[11px] select-none">·</span>
             )}
           </span>
         ))}
         <span className="flex items-center">
-          <span className="text-[11px] text-[#536471] px-1 py-0.5 leading-none">
+          <span className="text-[11px] text-slate-600 px-1 py-0.5 leading-none">
             &copy; 2026 Prompt &amp; Pause from DC REGENT GROUP
           </span>
         </span>

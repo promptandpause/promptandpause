@@ -6,9 +6,9 @@ import { useTheme } from '@/contexts/ThemeContext'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Lock, Crown, Sparkles } from 'lucide-react'
+import { Lock, Crown, Sparkles, CheckCircle } from 'lucide-react'
 import Link from 'next/link'
-import { getUpgradeMessage } from '@/lib/utils/tierManagement'
+import { getUpgradeBenefits, getUpgradeMessage } from '@/lib/utils/tierManagement'
 
 /**
  * TierGate Component
@@ -87,58 +87,143 @@ export function UpgradePrompt({ feature, size = 'md' }: UpgradePromptProps) {
   const isDark = theme === 'dark'
 
   const sizeClasses = {
-    sm: 'p-4',
-    md: 'p-6',
-    lg: 'p-8',
+    sm: 'p-5',
+    md: 'p-6 lg:p-8',
+    lg: 'p-8 lg:p-10',
+  }
+
+  const iconClasses = {
+    sm: 'h-10 w-10 rounded-xl',
+    md: 'h-12 w-12 rounded-2xl',
+    lg: 'h-14 w-14 rounded-2xl',
+  }
+
+  const titleClasses = {
+    sm: 'text-base',
+    md: 'text-xl',
+    lg: 'text-2xl',
+  }
+
+  const textClasses = {
+    sm: 'text-xs',
+    md: 'text-sm',
+    lg: 'text-base',
+  }
+
+  const buttonClasses = {
+    sm: 'py-2.5 text-xs',
+    md: 'py-3 text-sm',
+    lg: 'py-3.5 text-base',
   }
 
   return (
-    <Card className={`backdrop-blur-xl bg-gradient-to-br ${isDark ? 'from-yellow-500/10 to-orange-500/10 border border-yellow-400/30' : 'from-yellow-50 to-orange-50 border border-yellow-300/60'} ${sizeClasses[size]}`}>
-      <div className="flex items-start gap-4">
-        {/* Icon */}
-        <div className="flex-shrink-0">
-          <div className="h-12 w-12 rounded-full bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center">
-            <Crown className="h-6 w-6 text-white" />
-          </div>
+    <Card className={`relative overflow-hidden rounded-3xl border shadow-none ${sizeClasses[size]} ${
+      isDark
+        ? 'bg-gradient-to-br from-[#1B2436] to-[#0A0E18] border-white/10'
+        : 'bg-slate-900 border-slate-900 shadow-soft-card'
+    }`}>
+      {/* Glow accent */}
+      <div className={`absolute -top-10 -right-10 w-40 h-40 rounded-full blur-3xl pointer-events-none ${isDark ? 'bg-indigo-500/15' : 'bg-indigo-500/20'}`} />
+
+      <div className="relative z-10 flex flex-col gap-4">
+        <div className={`${iconClasses[size]} bg-indigo-500/20 flex items-center justify-center`}>
+          <Crown className={`${size === 'sm' ? 'h-5 w-5' : 'h-6 w-6'} text-indigo-300`} />
         </div>
 
-        {/* Content */}
-        <div className="flex-1 space-y-3">
-          <div className="flex items-center gap-2">
-            <h3 className={`font-semibold text-lg ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              Premium Feature
-            </h3>
-            <Badge className={`${isDark ? 'bg-yellow-500/20 text-yellow-400 border-yellow-400/30' : 'bg-yellow-100 text-yellow-700 border-yellow-300'}`}>
+        <div className="space-y-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className={`${titleClasses[size]} font-extrabold text-white`}>Premium Feature</h3>
+            <Badge className="rounded-full bg-indigo-400/20 text-indigo-300 border border-indigo-400/30">
               Upgrade Required
             </Badge>
           </div>
-
-          <p className={`text-sm leading-relaxed ${isDark ? 'text-white/70' : 'text-gray-600'}`}>
+          <p className={`${textClasses[size]} text-white/60 leading-relaxed`}>
             {message || 'This feature is available with Premium. Upgrade to unlock daily prompts, unlimited archive, AI insights, and more.'}
           </p>
-
-          <div className="flex items-center gap-3 pt-2">
-            <Link href="/dashboard/settings">
-              <Button
-                size="sm"
-                className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white border-0"
-              >
-                <Sparkles className="mr-2 h-4 w-4" />
-                Upgrade to Premium
-              </Button>
-            </Link>
-            
-            <Link href="/pricing">
-              <Button
-                size="sm"
-                variant="ghost"
-                className={isDark ? 'text-white/70 hover:text-white hover:bg-white/10' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'}
-              >
-                See Plans
-              </Button>
-            </Link>
-          </div>
         </div>
+
+        <div className="flex flex-col gap-2.5 pt-1">
+          <Link href="/dashboard/settings">
+            <Button className={`w-full ${buttonClasses[size]} bg-indigo-500 hover:bg-indigo-400 text-white font-bold`}>
+              <Sparkles className="h-4 w-4" />
+              Upgrade to Premium
+            </Button>
+          </Link>
+          <Link href="/pricing">
+            <Button variant="ghost" className={`w-full ${buttonClasses[size]} text-white/70 hover:text-white hover:bg-white/10 font-semibold`}>
+              See Plans
+            </Button>
+          </Link>
+        </div>
+      </div>
+    </Card>
+  )
+}
+
+/**
+ * PremiumStatusCard Component
+ * 
+ * Shows the user's active Premium membership status and benefits.
+ */
+
+interface PremiumStatusCardProps {
+  size?: 'sm' | 'md' | 'lg'
+}
+
+export function PremiumStatusCard({ size = 'md' }: PremiumStatusCardProps) {
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
+  const { statusMessage, isTrial } = useTier()
+
+  const sizeClasses = {
+    sm: 'p-5',
+    md: 'p-6 lg:p-8',
+    lg: 'p-8 lg:p-10',
+  }
+
+  const benefits = getUpgradeBenefits()
+
+  return (
+    <Card className={`relative overflow-hidden rounded-3xl border shadow-none ${sizeClasses[size]} ${
+      isDark
+        ? 'bg-gradient-to-br from-[#1B2436] to-[#0A0E18] border-white/10'
+        : 'bg-slate-900 border-slate-900 shadow-soft-card'
+    }`}>
+      {/* Glow accent */}
+      <div className={`absolute -top-10 -right-10 w-40 h-40 rounded-full blur-3xl pointer-events-none ${isDark ? 'bg-indigo-500/15' : 'bg-indigo-500/20'}`} />
+
+      <div className="relative z-10 flex flex-col gap-4">
+        <div className="flex items-start justify-between">
+          <div className="h-12 w-12 rounded-2xl bg-indigo-500/20 flex items-center justify-center">
+            <Crown className="h-6 w-6 text-indigo-300" />
+          </div>
+          <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-400/15 text-emerald-300 border border-emerald-400/30 text-[10px] font-bold uppercase tracking-tighter">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            {isTrial ? 'Trial' : 'Active'}
+          </span>
+        </div>
+
+        <div>
+          <h3 className="text-xl font-extrabold text-white">{isTrial ? 'Premium Trial' : 'Premium Active'}</h3>
+          <p className="text-sm text-white/60 mt-1 leading-relaxed">
+            {statusMessage || 'Thanks for being a Premium member.'}
+          </p>
+        </div>
+
+        <div className="space-y-2.5">
+          {benefits.slice(0, 4).map((benefit) => (
+            <div key={benefit} className="flex items-start gap-2.5 text-sm text-white/70">
+              <CheckCircle className="h-4 w-4 text-indigo-400 shrink-0 mt-0.5" />
+              <span>{benefit}</span>
+            </div>
+          ))}
+        </div>
+
+        <Link href="/dashboard/settings">
+          <Button className="w-full py-3 text-sm bg-indigo-500 hover:bg-indigo-400 text-white font-bold">
+            Manage Plan
+          </Button>
+        </Link>
       </div>
     </Card>
   )
@@ -289,8 +374,8 @@ export function PromptLimitBanner() {
       limitReached
         ? 'bg-gradient-to-r from-orange-500/10 to-red-500/10 border-orange-400/30'
         : theme === 'dark'
-          ? 'bg-white/5 border-white/8'
-          : 'bg-[#FFFFFF] border-[#EFF3F4]'
+          ? 'bg-white/[0.04] border-white/[0.06]'
+          : 'bg-white/70 border-slate-100 shadow-soft-card'
     }`}>
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">

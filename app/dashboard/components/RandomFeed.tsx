@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from '@/contexts/ThemeContext'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -76,7 +76,7 @@ export function RandomFeed() {
     setLoading(false)
   }
 
-  async function loadMore() {
+  const loadMore = useCallback(async () => {
     if (loadingMore || !hasMore || !cursor) return
     setLoadingMore(true)
     try {
@@ -89,7 +89,7 @@ export function RandomFeed() {
       }
     } catch {}
     setLoadingMore(false)
-  }
+  }, [cursor, hasMore, loadingMore])
 
   useEffect(() => {
     if (!loaderRef.current || loading) return
@@ -101,7 +101,7 @@ export function RandomFeed() {
     )
     observer.observe(loaderRef.current)
     return () => observer.disconnect()
-  }, [loaderRef.current, loading, cursor, hasMore, loadingMore])
+  }, [loading, loadMore])
 
   if (loading) {
     return (

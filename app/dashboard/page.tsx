@@ -185,7 +185,7 @@ function DashboardContent() {
 
         <main className="flex-1 overflow-y-auto scrollbar-thin">
           <div className="max-w-[1400px] mx-auto flex gap-8 px-0 xl:px-6">
-          <div className="flex-1 min-w-0 max-w-[680px] border-r border-[#EFF3F4] dark:border-white/[0.06]">
+          <div className="flex-1 min-w-0 max-w-[680px] border-r border-slate-100 dark:border-white/[0.06]">
           {/* Header */}
           <div className={`sticky top-0 z-10 backdrop-blur-md ${
             isDark ? "bg-[#0A0E18]/80 border-b border-white/[0.06]" : "bg-[#F9FBFB]/80 border-b border-slate-100"
@@ -280,7 +280,7 @@ function DashboardContent() {
                 <motion.div key="following" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                   {followingLoading ? (
                     <div className="flex justify-center py-12">
-                      <Spinner size={24} weight="bold" className={`animate-spin ${isDark ? "text-white/20" : "text-[#8B98A5]"}`} />
+                      <Spinner size={24} weight="bold" className={`animate-spin ${isDark ? "text-white/20" : "text-slate-500"}`} />
                     </div>
                   ) : followingFeed.length === 0 ? (
                     <div className={`text-center py-16 px-8 ${isDark ? "text-white/30" : "text-slate-400"}`}>
@@ -409,7 +409,7 @@ function DashboardContent() {
                 <motion.div key="likes" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                   {likesLoading ? (
                     <div className="flex justify-center py-12">
-                      <Spinner size={24} weight="bold" className={`animate-spin ${isDark ? "text-white/20" : "text-[#8B98A5]"}`} />
+                      <Spinner size={24} weight="bold" className={`animate-spin ${isDark ? "text-white/20" : "text-slate-500"}`} />
                     </div>
                   ) : likesFeed.length === 0 ? (
                     <div className={`text-center py-16 px-8 ${isDark ? "text-white/30" : "text-slate-400"}`}>

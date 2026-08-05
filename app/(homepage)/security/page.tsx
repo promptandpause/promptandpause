@@ -43,14 +43,14 @@ export default function SecurityPage() {
   return (
     <>
       <Navigation />
-      <main className="min-h-screen bg-[#EFF3F4] text-[#0F1419]">
+      <main className="min-h-screen bg-slate-100 text-slate-900">
 
         {/* Hero */}
         <section ref={heroRef} className="relative h-screen flex items-center justify-center overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-[#EFF3F4] via-[#E8F5FE] to-[#B3D9F2]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-100 via-slate-100 to-slate-200" />
           <motion.div style={{ opacity, scale }} className="relative z-10 text-center px-4 max-w-4xl mx-auto">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="mb-6">
-              <ShieldCheck className="w-16 h-16 mx-auto mb-6 text-[#1D9BF0]" />
+              <ShieldCheck className="w-16 h-16 mx-auto mb-6 text-indigo-600" />
             </motion.div>
             <motion.h1
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}
@@ -60,13 +60,13 @@ export default function SecurityPage() {
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-xl md:text-2xl text-[#536471] mb-8 text-balance max-w-2xl mx-auto"
+              className="text-xl md:text-2xl text-slate-600 mb-8 text-balance max-w-2xl mx-auto"
             >
               We take the security of your mental health data seriously. Here's exactly what we do to protect it.
             </motion.p>
             <motion.p
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.6 }}
-              className="text-sm text-[#8B98A5]"
+              className="text-sm text-slate-500"
             >
               Last reviewed: February 2026
             </motion.p>
@@ -81,7 +81,7 @@ export default function SecurityPage() {
               className="text-center mb-16"
             >
               <h2 className="text-4xl md:text-5xl font-bold mb-4 uppercase">Penetration Testing</h2>
-              <p className="text-lg text-[#536471] max-w-2xl mx-auto">
+              <p className="text-lg text-slate-600 max-w-2xl mx-auto">
                 Prompt &amp; Pause undergoes regular independent penetration testing by specialist security firms. We publish our testing programme and remediation status openly.
               </p>
             </motion.div>
@@ -90,23 +90,23 @@ export default function SecurityPage() {
               {/* Akido */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }} viewport={{ once: true }}
-                className="p-8 bg-[#F7F9FA] border border-[#B3D9F2] rounded-2xl"
+                className="p-8 bg-slate-50 border border-slate-200 rounded-2xl"
               >
                 <div className="flex items-start gap-4 mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-[#0F1419] flex items-center justify-center flex-shrink-0">
-                    <Shield className="w-6 h-6 text-[#1D9BF0]" />
+                  <div className="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center flex-shrink-0">
+                    <Shield className="w-6 h-6 text-indigo-600" />
                   </div>
                   <div>
                     <h3 className="text-2xl font-bold">Akido Security</h3>
-                    <p className="text-sm text-[#8B98A5] mt-1">Automated + manual penetration testing</p>
+                    <p className="text-sm text-slate-500 mt-1">Automated + manual penetration testing</p>
                   </div>
                 </div>
-                <p className="text-[#536471] leading-relaxed mb-4">
+                <p className="text-slate-600 leading-relaxed mb-4">
                   Akido provides continuous automated security scanning combined with expert-led manual penetration testing. Their platform covers OWASP Top 10, API security, and business logic vulnerabilities.
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {["OWASP Top 10", "API Testing", "Auth Flows", "Continuous Scanning"].map(tag => (
-                    <span key={tag} className="px-2.5 py-1 text-xs font-medium bg-[#B3D9F2] text-[#0F1419] rounded-full">{tag}</span>
+                    <span key={tag} className="px-2.5 py-1 text-xs font-medium bg-slate-200 text-slate-900 rounded-full">{tag}</span>
                   ))}
                 </div>
               </motion.div>
@@ -114,23 +114,23 @@ export default function SecurityPage() {
               {/* HostedScan */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }} viewport={{ once: true }}
-                className="p-8 bg-[#F7F9FA] border border-[#B3D9F2] rounded-2xl"
+                className="p-8 bg-slate-50 border border-slate-200 rounded-2xl"
               >
                 <div className="flex items-start gap-4 mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-[#0F1419] flex items-center justify-center flex-shrink-0">
-                    <Search className="w-6 h-6 text-[#1D9BF0]" />
+                  <div className="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center flex-shrink-0">
+                    <Search className="w-6 h-6 text-indigo-600" />
                   </div>
                   <div>
                     <h3 className="text-2xl font-bold">HostedScan</h3>
-                    <p className="text-sm text-[#8B98A5] mt-1">Vulnerability scanning &amp; monitoring</p>
+                    <p className="text-sm text-slate-500 mt-1">Vulnerability scanning &amp; monitoring</p>
                   </div>
                 </div>
-                <p className="text-[#536471] leading-relaxed mb-4">
+                <p className="text-slate-600 leading-relaxed mb-4">
                   HostedScan runs scheduled vulnerability scans across our infrastructure, network, and web application layers. Results are reviewed and triaged by our team on every scan cycle.
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {["Network Scanning", "CVE Detection", "SSL/TLS Checks", "Scheduled Scans"].map(tag => (
-                    <span key={tag} className="px-2.5 py-1 text-xs font-medium bg-[#B3D9F2] text-[#0F1419] rounded-full">{tag}</span>
+                    <span key={tag} className="px-2.5 py-1 text-xs font-medium bg-slate-200 text-slate-900 rounded-full">{tag}</span>
                   ))}
                 </div>
               </motion.div>
@@ -139,9 +139,9 @@ export default function SecurityPage() {
             {/* Testing cadence */}
             <motion.div
               initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} viewport={{ once: true }}
-              className="p-6 bg-[#B3D9F2] border border-[#C5D9C8] rounded-2xl text-center"
+              className="p-6 bg-slate-200 border border-[#C5D9C8] rounded-2xl text-center"
             >
-              <p className="text-[#0F1419] font-medium">
+              <p className="text-slate-900 font-medium">
                 Testing cadence: <strong>continuous automated scanning</strong> + <strong>manual penetration tests on every major release</strong> and at minimum quarterly.
               </p>
             </motion.div>
@@ -149,7 +149,7 @@ export default function SecurityPage() {
         </section>
 
         {/* What We Test */}
-        <section className="py-24 px-4 bg-[#EFF3F4]">
+        <section className="py-24 px-4 bg-slate-100">
           <div className="max-w-4xl mx-auto">
             <motion.h2
               initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }}
@@ -163,14 +163,14 @@ export default function SecurityPage() {
                   key={area.label}
                   initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.07 }} viewport={{ once: true }}
-                  className="p-5 bg-white border border-[#B3D9F2] rounded-xl flex gap-4"
+                  className="p-5 bg-white border border-slate-200 rounded-xl flex gap-4"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-[#B3D9F2] flex items-center justify-center flex-shrink-0">
-                    <area.icon className="w-5 h-5 text-[#0F1419]" />
+                  <div className="w-10 h-10 rounded-lg bg-slate-200 flex items-center justify-center flex-shrink-0">
+                    <area.icon className="w-5 h-5 text-slate-900" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-[#0F1419] mb-1">{area.label}</h3>
-                    <p className="text-sm text-[#8B98A5]">{area.description}</p>
+                    <h3 className="font-bold text-slate-900 mb-1">{area.label}</h3>
+                    <p className="text-sm text-slate-500">{area.description}</p>
                   </div>
                 </motion.div>
               ))}
@@ -186,7 +186,7 @@ export default function SecurityPage() {
               className="mb-12"
             >
               <h2 className="text-4xl font-bold mb-4 uppercase">Most Recent Assessment</h2>
-              <p className="text-[#536471]">February 2026 — Full application penetration test. All findings remediated or accepted with documented rationale.</p>
+              <p className="text-slate-600">February 2026 — Full application penetration test. All findings remediated or accepted with documented rationale.</p>
             </motion.div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
@@ -198,17 +198,17 @@ export default function SecurityPage() {
                   className={`p-5 rounded-xl border text-center ${f.bg}`}
                 >
                   <div className={`text-4xl font-bold mb-1 ${f.color}`}>{f.count}</div>
-                  <div className="text-sm font-medium text-[#0F1419]">{f.severity}</div>
+                  <div className="text-sm font-medium text-slate-900">{f.severity}</div>
                 </motion.div>
               ))}
             </div>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} viewport={{ once: true }}
-              className="p-6 bg-[#F7F9FA] border border-[#B3D9F2] rounded-2xl mb-8"
+              className="p-6 bg-slate-50 border border-slate-200 rounded-2xl mb-8"
             >
               <h3 className="text-xl font-bold mb-5 flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-[#1D9BF0]" />
+                <CheckCircle className="w-5 h-5 text-indigo-600" />
                 Remediation Status
               </h3>
               <div className="space-y-3">
@@ -219,9 +219,9 @@ export default function SecurityPage() {
                     transition={{ duration: 0.4, delay: index * 0.06 }} viewport={{ once: true }}
                     className="flex items-center gap-3"
                   >
-                    <CheckCircle className="w-4 h-4 text-[#1D9BF0] flex-shrink-0" />
-                    <span className="text-[#536471] text-sm">{r.item}</span>
-                    <span className="ml-auto text-xs font-medium text-[#1D9BF0] bg-[#B3D9F2] px-2 py-0.5 rounded-full">Resolved</span>
+                    <CheckCircle className="w-4 h-4 text-indigo-600 flex-shrink-0" />
+                    <span className="text-slate-600 text-sm">{r.item}</span>
+                    <span className="ml-auto text-xs font-medium text-indigo-600 bg-slate-200 px-2 py-0.5 rounded-full">Resolved</span>
                   </motion.div>
                 ))}
               </div>
@@ -240,7 +240,7 @@ export default function SecurityPage() {
         </section>
 
         {/* Our Security Practices */}
-        <section className="py-24 px-4 bg-[#EFF3F4]">
+        <section className="py-24 px-4 bg-slate-100">
           <div className="max-w-4xl mx-auto">
             <motion.h2
               initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }}
@@ -261,10 +261,10 @@ export default function SecurityPage() {
                   key={item.title}
                   initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.07 }} viewport={{ once: true }}
-                  className="p-6 bg-white border border-[#B3D9F2] rounded-xl"
+                  className="p-6 bg-white border border-slate-200 rounded-xl"
                 >
-                  <h3 className="font-bold text-lg mb-2 text-[#0F1419]">{item.title}</h3>
-                  <p className="text-sm text-[#8B98A5] leading-relaxed">{item.body}</p>
+                  <h3 className="font-bold text-lg mb-2 text-slate-900">{item.title}</h3>
+                  <p className="text-sm text-slate-500 leading-relaxed">{item.body}</p>
                 </motion.div>
               ))}
             </div>
@@ -278,18 +278,18 @@ export default function SecurityPage() {
               initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }}
             >
               <h2 className="text-4xl font-bold mb-6 uppercase">Responsible Disclosure</h2>
-              <p className="text-[#536471] leading-relaxed mb-8">
+              <p className="text-slate-600 leading-relaxed mb-8">
                 If you discover a security vulnerability in Prompt &amp; Pause, we ask that you report it to us privately before public disclosure. We commit to acknowledging your report within 48 hours and providing a remediation timeline within 7 days.
               </p>
-              <div className="p-6 bg-[#F7F9FA] border border-[#B3D9F2] rounded-2xl space-y-3">
-                <p className="font-bold text-[#0F1419]">Report a vulnerability:</p>
-                <p className="text-[#536471]">
+              <div className="p-6 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
+                <p className="font-bold text-slate-900">Report a vulnerability:</p>
+                <p className="text-slate-600">
                   Email:{" "}
-                  <a href="mailto:security@promptandpause.com" className="text-[#1D9BF0] underline hover:text-[#0F1419]">
+                  <a href="mailto:security@promptandpause.com" className="text-indigo-600 underline hover:text-slate-900">
                     security@promptandpause.com
                   </a>
                 </p>
-                <p className="text-sm text-[#8B98A5]">
+                <p className="text-sm text-slate-500">
                   Please include: affected URL or endpoint, steps to reproduce, potential impact, and your contact details. We do not pursue legal action against good-faith security researchers.
                 </p>
               </div>
@@ -298,20 +298,20 @@ export default function SecurityPage() {
         </section>
 
         {/* CTA */}
-        <section className="py-20 px-4 bg-[#B3D9F2]">
+        <section className="py-20 px-4 bg-slate-200">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 uppercase text-[#0F1419]">Questions About Security?</h2>
-            <p className="text-xl text-[#536471] mb-8">We're transparent about how we protect your data. Reach out anytime.</p>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 uppercase text-slate-900">Questions About Security?</h2>
+            <p className="text-xl text-slate-600 mb-8">We're transparent about how we protect your data. Reach out anytime.</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/contact"
-                className="inline-block px-8 py-4 bg-[#0F1419] text-white font-bold uppercase hover:bg-[#536471] transition-colors duration-300 rounded"
+                className="inline-block px-8 py-4 bg-slate-900 text-white font-bold uppercase hover:bg-slate-600 transition-colors duration-300 rounded"
               >
                 Contact Us
               </Link>
               <Link
                 href="/privacy-policy"
-                className="inline-block px-8 py-4 bg-white text-[#0F1419] font-bold uppercase hover:bg-[#EFF3F4] transition-colors duration-300 rounded"
+                className="inline-block px-8 py-4 bg-white text-slate-900 font-bold uppercase hover:bg-slate-100 transition-colors duration-300 rounded"
               >
                 Privacy Policy
               </Link>

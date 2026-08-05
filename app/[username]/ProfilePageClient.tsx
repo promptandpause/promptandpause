@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { User, MessageCircle, Music, Palette, Sparkles, Lock, Pencil, Settings, Layout, Archive, House, Heart, Rss, Trash2, X, ArrowLeft, Ban } from 'lucide-react'
+import { User, MessageCircle, Music, Palette, Sparkles, Lock, Pencil, Settings, Layout, Archive, House, Heart, Rss, Trash2, X, ArrowLeft, Ban, Globe, Users } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { useTheme } from '@/contexts/ThemeContext'
@@ -168,7 +168,7 @@ export function ProfilePageClient({
     ? '4px'
     : profile.profile_theme?.border_style === 'retro'
     ? '8px'
-    : '16px'
+    : '24px'
   const cardBorderWidth = profile.profile_theme?.border_style === 'retro' ? '2px' : '1px'
   const cardStyle = { borderRadius: cardRadius, borderWidth: cardBorderWidth } as const
 
@@ -178,6 +178,16 @@ export function ProfilePageClient({
   return (
     <div className={`min-h-screen ${isDark ? 'bg-[#0A0E18]' : 'bg-[#F9FBFB]'}`}>
       {showCursorTrail && <CursorTrail color={accentColor} />}
+      {/* Back to Dashboard -- mobile, above the hero */}
+      <div className="lg:hidden px-4 md:px-8 mb-3">
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-2 pl-2.5 pr-3.5 py-2 rounded-full bg-black/40 hover:bg-black/55 backdrop-blur-md text-white transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          <span className="text-xs font-semibold">Dashboard</span>
+        </Link>
+      </div>
       {/* Cover Image */}
       <div
         className="h-32 sm:h-48 md:h-64 w-full relative overflow-hidden"
@@ -188,10 +198,10 @@ export function ProfilePageClient({
         }}
       >
         {showSparkles && <SparkleField color={accentColor} />}
-        {/* Back to Dashboard -- always visible, own profile or someone else's */}
+        {/* Back to Dashboard -- desktop, overlay on the cover */}
         <Link
           href="/dashboard"
-          className="absolute top-3 left-3 sm:top-4 sm:left-4 z-20 flex items-center gap-2 pl-2.5 pr-3.5 py-2 rounded-full bg-black/40 hover:bg-black/55 backdrop-blur-md text-white transition-colors"
+          className="hidden lg:flex absolute top-4 left-4 z-20 items-center gap-2 pl-2.5 pr-3.5 py-2 rounded-full bg-black/40 hover:bg-black/55 backdrop-blur-md text-white transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
           <span className="text-xs font-semibold hidden sm:inline">Dashboard</span>
@@ -205,15 +215,15 @@ export function ProfilePageClient({
           <div className="flex-1 min-w-0">
 
       {/* Profile Header */}
-      <div className="-mt-[40px] sm:-mt-16 relative z-10">
-        <div className="flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-6">
+      <div className="mt-4 sm:mt-6 relative z-10">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 200, damping: 20 }}
             className="self-start"
           >
-            <Avatar className="h-24 w-24 sm:h-32 sm:w-32 md:h-40 md:w-40 border-4 border-white dark:border-[#0A0E18] ring-2 ring-black/5">
+            <Avatar className="h-24 w-24 sm:h-32 sm:w-32 md:h-40 md:w-40 border-4 border-white dark:border-[#0A0E18] ring-2 ring-slate-100 dark:ring-white/10">
               <AvatarImage src={profile.avatar_url || undefined} />
               <AvatarFallback className={`text-2xl sm:text-4xl font-light ${isDark ? 'bg-[#1B2436] text-white/60' : 'bg-white text-slate-500'}`}>
                 {initials}
@@ -330,7 +340,7 @@ export function ProfilePageClient({
 
         {/* Navigation Tabs */}
         <div className={`mt-6 sm:mt-8 border-b ${isDark ? 'border-white/10' : 'border-slate-100'}`}>
-          <div className="flex gap-6 -mb-px">
+          <div className="flex">
             <TabButton
               active={activeTab === 'reflections'}
               onClick={() => setActiveTab('reflections')}
@@ -423,66 +433,98 @@ export function ProfilePageClient({
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05 }}
-                    className={`p-4 sm:p-5 ${
-                      isDark
-                        ? 'bg-white/[0.04] border border-white/[0.06]'
-                        : 'bg-white/80 border border-slate-100'
-                    }`}
+                      className={`overflow-hidden ${
+                        isDark
+                          ? 'bg-white/[0.04] border border-white/[0.06]'
+                          : 'bg-white/70 backdrop-blur-[12px] border border-slate-100 shadow-soft-card'
+                      }`}
                     style={cardStyle}
                   >
-                    {ref.prompt_text && (
-                      <p className={`text-xs sm:text-sm font-medium mb-2 ${isDark ? 'text-white/50' : 'text-slate-400'}`}>
-                        {ref.prompt_text}
-                      </p>
-                    )}
-                    <p className={`text-sm leading-relaxed ${isDark ? 'text-white/80' : 'text-slate-900'}`}>
-                      {ref.reflection_text.slice(0, 300)}
-                      {ref.reflection_text.length > 300 ? '...' : ''}
-                    </p>
-                    <div className="flex items-center gap-2 sm:gap-3 mt-3 flex-wrap">
-                      <span className="text-lg leading-none">{ref.mood}</span>
-                      {ref.tags?.slice(0, 4).map(tag => (
-                        <span
-                          key={tag}
-                          className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${
-                            isDark ? 'bg-white/[0.06] text-white/40' : 'bg-slate-50 text-slate-400'
-                          }`}
-                        >
-                          #{tag}
-                        </span>
-                      ))}
-                      {ref.visibility && ref.visibility !== 'public' && (
-                        <span className={`text-[10px] ${isDark ? 'text-white/20' : 'text-[#CFD9DE]'}`}>
-                          {ref.visibility === 'friends_only' ? 'Friends' : 'Private'}
-                        </span>
-                      )}
+                    {/* Header — author row */}
+                    <div className="p-4 pb-0 flex items-center gap-3 sm:gap-4">
+                      <Link href={profile.username ? `/${profile.username}` : '#'} className="shrink-0">
+                        <Avatar className="h-10 w-10 sm:h-12 sm:w-12">
+                          <AvatarImage src={profile.avatar_url || undefined} />
+                          <AvatarFallback className={`text-xs ${isDark ? 'bg-[#1B2436] text-white/50' : 'bg-slate-100 text-slate-500'}`}>
+                            {initials}
+                          </AvatarFallback>
+                        </Avatar>
+                      </Link>
+                      <div className="min-w-0 flex-1">
+                        <p className={`text-sm font-semibold truncate ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                          {displayName}
+                        </p>
+                        <div className="flex items-center gap-1.5">
+                          <span className={`text-[11px] ${isDark ? 'text-white/30' : 'text-slate-400'}`}>
+                            @{profile.username} · {timeAgo(ref.created_at)}
+                          </span>
+                          <span className={`flex items-center ${isDark ? 'text-white/30' : 'text-slate-300'}`}>
+                            {ref.visibility === 'public' ? <Globe size={11} /> : ref.visibility === 'friends_only' ? <Users size={11} /> : <Lock size={11} />}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-6 mt-3">
+
+                    {/* Content */}
+                    <div className="p-4">
+                      {ref.prompt_text && (
+                        <p className={`text-[11px] font-medium mb-2 ${isDark ? 'text-white/40' : 'text-slate-400'}`}>
+                          {ref.prompt_text}
+                        </p>
+                      )}
+                      <p className={`text-sm sm:text-[15px] leading-relaxed whitespace-pre-wrap ${isDark ? 'text-white/80' : 'text-slate-900'}`}>
+                        {ref.reflection_text}
+                      </p>
+                      <div className="flex items-center gap-2 sm:gap-3 mt-3 flex-wrap">
+                        <span className="text-lg leading-none">{ref.mood}</span>
+                        {ref.tags?.slice(0, 4).map(tag => (
+                          <span
+                            key={tag}
+                            className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${
+                              isDark ? 'bg-white/[0.06] text-white/40' : 'bg-slate-100/80 text-slate-500'
+                            }`}
+                          >
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className={`flex justify-between items-center max-w-md gap-2 px-4 pb-4 text-xs font-bold ${isDark ? 'text-white/40' : 'text-slate-400'}`}>
                       <button
                         onClick={() => toggleComments(ref.id)}
-                        className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#6366F1]' : 'text-slate-500 hover:text-[#6366F1]'}`}
+                        className={`flex items-center gap-1.5 sm:gap-2 transition-colors group/btn ${isDark ? 'hover:text-white' : 'hover:text-indigo-500'}`}
                       >
-                        <MessageCircle size={14} /> {ref.comment_count ? ref.comment_count : 'Reply'}
+                        <span className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-colors group-hover/btn:bg-indigo-50 ${isDark ? 'group-hover/btn:bg-white/5' : ''}`}>
+                          <MessageCircle size={14} />
+                        </span>
+                        {ref.comment_count ? ref.comment_count : 'Reply'}
                       </button>
                       <button
                         onClick={() => toggleLike(ref, 'reflections')}
-                        className={`flex items-center gap-1.5 text-xs transition-colors ${
-                          ref.is_liked_by_me ? 'text-rose-500' : isDark ? 'text-white/30 hover:text-rose-400' : 'text-slate-500 hover:text-rose-500'
-                        }`}
+                        className={`flex items-center gap-1.5 sm:gap-2 transition-colors group/btn ${ref.is_liked_by_me ? 'text-rose-500' : isDark ? 'hover:text-white' : 'hover:text-rose-500'}`}
                       >
-                        <Heart size={14} fill={ref.is_liked_by_me ? 'currentColor' : 'none'} /> {ref.like_count ? ref.like_count : 'Like'}
+                        <span className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-colors group-hover/btn:bg-rose-50 ${isDark ? 'group-hover/btn:bg-rose-500/10' : ''}`}>
+                          <Heart size={14} fill={ref.is_liked_by_me ? 'currentColor' : 'none'} />
+                        </span>
+                        {ref.like_count ? ref.like_count : 'Like'}
                       </button>
                       {isOwnProfile && (
                         <button
                           onClick={() => deleteReflection(ref.id)}
-                          className={`flex items-center gap-1.5 text-xs transition-colors ml-auto ${isDark ? 'text-white/30 hover:text-red-400' : 'text-slate-500 hover:text-red-500'}`}
+                          className={`flex items-center gap-1.5 transition-colors group/btn ml-auto ${isDark ? 'text-white/30 hover:text-red-400' : 'text-slate-500 hover:text-red-500'}`}
                         >
-                          <Trash2 size={14} /> Delete
+                          <span className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-colors group-hover/btn:bg-rose-50 ${isDark ? 'group-hover/btn:bg-rose-500/10' : ''}`}>
+                            <Trash2 size={14} />
+                          </span>
+                          Delete
                         </button>
                       )}
                     </div>
+
                     {openComments.has(ref.id) && (
-                      <div className={`mt-3 -mx-4 sm:-mx-5 border-t ${isDark ? 'border-white/[0.06]' : 'border-slate-100'}`}>
+                      <div className={`border-t ${isDark ? 'border-white/[0.04]' : 'border-slate-100'}`}>
                         <CommentSection reflectionId={ref.id} reflectionOwnerId={profile.id} />
                       </div>
                     )}
@@ -515,22 +557,42 @@ export function ProfilePageClient({
               ) : (
                 likesFeed.map((ref, i) => {
                   const authorName = ref.profile?.display_name || ref.profile?.full_name || ref.profile?.username || 'Unknown'
+                  const authorInitials = authorName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
                   return (
                     <motion.div
                       key={ref.id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.05 }}
-                      className={`p-4 sm:p-5 ${
-                        isDark ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-white/80 border border-slate-100'
+                      className={`overflow-hidden ${
+                        isDark ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-white/70 border border-slate-100 shadow-soft-card'
                       }`}
                       style={cardStyle}
                     >
-                      <Link href={ref.profile?.username ? `/${ref.profile.username}` : '#'} className={`text-xs font-semibold mb-1 inline-block ${isDark ? 'text-white/60 hover:text-white' : 'text-slate-500 hover:text-slate-900'}`}>
-                        {authorName}
-                      </Link>
-                      {ref.user_id && (
-                        <div className="float-right -mt-1">
+                      {/* Header — author row */}
+                      <div className="p-4 pb-0 flex items-center gap-3 sm:gap-4">
+                        <Link href={ref.profile?.username ? `/${ref.profile.username}` : '#'} className="shrink-0">
+                          <Avatar className="h-10 w-10 sm:h-12 sm:w-12">
+                            <AvatarImage src={ref.profile?.avatar_url || undefined} />
+                            <AvatarFallback className={`text-xs ${isDark ? 'bg-[#1B2436] text-white/50' : 'bg-slate-100 text-slate-500'}`}>
+                              {authorInitials}
+                            </AvatarFallback>
+                          </Avatar>
+                        </Link>
+                        <div className="min-w-0 flex-1">
+                          <Link href={ref.profile?.username ? `/${ref.profile.username}` : '#'} className={`text-sm font-semibold truncate block ${isDark ? 'text-white hover:text-white/80' : 'text-slate-900 hover:text-slate-600'}`}>
+                            {authorName}
+                          </Link>
+                          <div className="flex items-center gap-1.5">
+                            <span className={`text-[11px] ${isDark ? 'text-white/30' : 'text-slate-400'}`}>
+                              {ref.profile?.username ? `@${ref.profile.username}` : ''} · {timeAgo(ref.created_at)}
+                            </span>
+                            <span className={`flex items-center ${isDark ? 'text-white/30' : 'text-slate-300'}`}>
+                              {ref.visibility === 'public' ? <Globe size={11} /> : ref.visibility === 'friends_only' ? <Users size={11} /> : <Lock size={11} />}
+                            </span>
+                          </div>
+                        </div>
+                        {ref.user_id && (
                           <ReportBlockMenu
                             targetType="reflection"
                             targetId={ref.id}
@@ -541,34 +603,53 @@ export function ProfilePageClient({
                             onBlocked={() => setLikesFeed(prev => prev.filter(f => f.user_id !== ref.user_id))}
                             onUnblock={() => setBlockedUsers(prev => prev.filter(id => id !== ref.user_id))}
                           />
-                        </div>
-                      )}
-                      {ref.prompt_text && (
-                        <p className={`text-xs sm:text-sm font-medium mb-2 ${isDark ? 'text-white/50' : 'text-slate-400'}`}>
-                          {ref.prompt_text}
+                        )}
+                      </div>
+
+                      {/* Content */}
+                      <div className="p-4">
+                        {ref.prompt_text && (
+                          <p className={`text-[11px] font-medium mb-2 ${isDark ? 'text-white/40' : 'text-slate-400'}`}>
+                            {ref.prompt_text}
+                          </p>
+                        )}
+                        <p className={`text-sm sm:text-[15px] leading-relaxed whitespace-pre-wrap ${isDark ? 'text-white/80' : 'text-slate-900'}`}>
+                          {ref.reflection_text}
                         </p>
-                      )}
-                      <p className={`text-sm leading-relaxed ${isDark ? 'text-white/80' : 'text-slate-900'}`}>
-                        {ref.reflection_text}
-                      </p>
-                      <div className="flex items-center gap-6 mt-3">
+                        <div className="flex items-center gap-2 sm:gap-3 mt-3 flex-wrap">
+                          <span className="text-lg leading-none">{ref.mood}</span>
+                          {ref.tags?.slice(0, 4).map(tag => (
+                            <span key={tag} className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${isDark ? 'bg-white/[0.06] text-white/40' : 'bg-slate-100/80 text-slate-500'}`}>
+                              #{tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      <div className={`flex justify-between items-center max-w-md gap-2 px-4 pb-4 text-xs font-bold ${isDark ? 'text-white/40' : 'text-slate-400'}`}>
                         <button
                           onClick={() => toggleComments(ref.id)}
-                          className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#6366F1]' : 'text-slate-500 hover:text-[#6366F1]'}`}
+                          className={`flex items-center gap-1.5 sm:gap-2 transition-colors group/btn ${isDark ? 'hover:text-white' : 'hover:text-indigo-500'}`}
                         >
-                          <MessageCircle size={14} /> {ref.comment_count ? ref.comment_count : 'Reply'}
+                          <span className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-colors group-hover/btn:bg-indigo-50 ${isDark ? 'group-hover/btn:bg-white/5' : ''}`}>
+                            <MessageCircle size={14} />
+                          </span>
+                          {ref.comment_count ? ref.comment_count : 'Reply'}
                         </button>
                         <button
                           onClick={() => toggleLike(ref, 'likes')}
-                          className={`flex items-center gap-1.5 text-xs transition-colors ${
-                            ref.is_liked_by_me ? 'text-rose-500' : isDark ? 'text-white/30 hover:text-rose-400' : 'text-slate-500 hover:text-rose-500'
-                          }`}
+                          className={`flex items-center gap-1.5 sm:gap-2 transition-colors group/btn ${ref.is_liked_by_me ? 'text-rose-500' : isDark ? 'hover:text-white' : 'hover:text-rose-500'}`}
                         >
-                          <Heart size={14} fill={ref.is_liked_by_me ? 'currentColor' : 'none'} /> {ref.like_count ? ref.like_count : 'Like'}
+                          <span className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-colors group-hover/btn:bg-rose-50 ${isDark ? 'group-hover/btn:bg-rose-500/10' : ''}`}>
+                            <Heart size={14} fill={ref.is_liked_by_me ? 'currentColor' : 'none'} />
+                          </span>
+                          {ref.like_count ? ref.like_count : 'Like'}
                         </button>
                       </div>
+
                       {openComments.has(ref.id) && (
-                        <div className={`mt-3 -mx-4 sm:-mx-5 border-t ${isDark ? 'border-white/[0.06]' : 'border-slate-100'}`}>
+                        <div className={`border-t ${isDark ? 'border-white/[0.04]' : 'border-slate-100'}`}>
                           <CommentSection reflectionId={ref.id} reflectionOwnerId={ref.user_id} />
                         </div>
                       )}
@@ -660,6 +741,19 @@ export function ProfilePageClient({
   )
 }
 
+function timeAgo(dateStr: string): string {
+  const date = new Date(dateStr).getTime()
+  const diff = Date.now() - date
+  const mins = Math.floor(diff / 60000)
+  if (mins < 1) return 'just now'
+  if (mins < 60) return `${mins}m`
+  const hours = Math.floor(mins / 60)
+  if (hours < 24) return `${hours}h`
+  const days = Math.floor(hours / 24)
+  if (days < 7) return `${days}d`
+  return new Date(dateStr).toLocaleDateString()
+}
+
 function SparkleField({ color }: { color: string }) {
   const sparkles = [
     { top: '15%', left: '8%', size: 14, delay: 0 },
@@ -707,20 +801,14 @@ function TabButton({
   return (
     <button
       onClick={onClick}
-      className={`relative pb-3 text-sm font-medium transition-colors ${
+      style={{ borderColor: active ? accentColor : 'transparent' }}
+      className={`flex-1 sm:flex-none sm:px-8 py-3.5 sm:py-4 text-sm border-b-4 transition-colors ${
         active
-          ? isDark ? 'text-white' : 'text-slate-900'
-          : isDark ? 'text-white/30 hover:text-white/50' : 'text-slate-400 hover:text-slate-500'
+          ? `font-bold ${isDark ? 'text-white' : 'text-slate-900'}`
+          : `font-semibold ${isDark ? 'text-white/30 hover:text-white/50 hover:bg-white/5' : 'text-slate-400 hover:text-slate-600 hover:bg-white/60'}`
       }`}
     >
       {children}
-      {active && (
-        <motion.div
-          layoutId="tab-indicator"
-          className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full"
-          style={{ backgroundColor: accentColor }}
-        />
-      )}
 
       {/* ─── Mobile Bottom Tab Bar (when logged in) ─── */}
       {loggedInUserId && isActive && (

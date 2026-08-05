@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react"
 import Image from "next/image"
+import Link from "next/link"
 import Lenis from "lenis"
 import { useScroll, useTransform, motion } from "framer-motion"
 import { Sparkles, Clock, Brain, Lock, Archive, Flame, Mail, MessageSquare, Check, X, Heart, Wind, Target, BarChart3, Users, ThumbsUp, PenSquare } from "lucide-react"
@@ -47,7 +48,7 @@ export default function FeaturesPage() {
   return (
     <>
       <Navigation />
-      <main className="bg-[#EFF3F4] text-[#0F1419]">
+      <main className="bg-slate-100 text-slate-900">
       <HeroSection />
       <CoreFeaturesSection />
       <CommunityFeaturesSection />
@@ -84,7 +85,7 @@ function HeroSection() {
           className="brightness-90"
         />
         <motion.div style={{ opacity }} className="absolute inset-0 flex items-center justify-center z-10 px-6">
-          <div className="absolute inset-0 bg-gradient-to-b from-[#EFF3F4]/5 via-[#E8F5FE]/10 to-[#B3D9F2]/15 z-[-1]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-100/5 via-slate-100/10 to-slate-200/15 z-[-1]" />
           <div className="text-center text-white max-w-5xl relative z-10">
             <h1 className="text-4xl md:text-6xl lg:text-8xl font-bold mb-8 leading-tight text-balance">
               Everything you need for a quiet reflection practice
@@ -151,20 +152,20 @@ function CoreFeaturesSection() {
   ]
 
   return (
-    <div className="min-h-screen flex items-center px-6 py-32 bg-[#F7F9FA]">
+    <div className="min-h-screen flex items-center px-6 py-32 bg-slate-50">
       <div className="max-w-7xl mx-auto w-full">
         <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-20 leading-tight">Core Features</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
           {features.map((feature, index) => (
             <div
               key={index}
-              className="group backdrop-blur-md bg-[#EFF3F4]/80 border border-[#B3D9F2] p-10 lg:p-12 rounded-3xl hover:bg-[#F7F9FA] hover:shadow-2xl hover:scale-[1.02] transition-all duration-500"
+              className="group backdrop-blur-md bg-slate-100/80 border border-slate-200 p-10 lg:p-12 rounded-3xl hover:bg-slate-50 hover:shadow-2xl hover:scale-[1.02] transition-all duration-500"
             >
-              <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-[#1D9BF0] mb-6 group-hover:scale-110 transition-transform duration-300">
+              <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-indigo-600 mb-6 group-hover:scale-110 transition-transform duration-300">
                 <feature.icon className="w-7 h-7 text-white" />
               </div>
               <h3 className="text-2xl md:text-3xl font-bold mb-4 leading-tight">{feature.title}</h3>
-              <p className="text-[#536471] leading-relaxed text-lg">{feature.description}</p>
+              <p className="text-slate-600 leading-relaxed text-lg">{feature.description}</p>
             </div>
           ))}
         </div>
@@ -202,13 +203,13 @@ function CommunityFeaturesSection() {
   ]
 
   return (
-    <div className="min-h-screen flex items-center px-6 py-32 bg-[#EFF3F4]">
+    <div className="min-h-screen flex items-center px-6 py-32 bg-slate-100">
       <div className="max-w-7xl mx-auto w-full">
-        <div className="inline-block px-6 py-2 bg-[#1D9BF0]/10 backdrop-blur-md border border-[#1D9BF0]/20 rounded-full mb-8 text-sm font-medium tracking-wide">
+        <div className="inline-block px-6 py-2 bg-indigo-500/10 backdrop-blur-md border border-indigo-600/20 rounded-full mb-8 text-sm font-medium tracking-wide">
           OPTIONAL & OPT-IN
         </div>
         <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">Connect, if you want to</h2>
-        <p className="text-lg md:text-xl leading-relaxed text-[#536471] mb-16 max-w-3xl">
+        <p className="text-lg md:text-xl leading-relaxed text-slate-600 mb-16 max-w-3xl">
           Reflection can be solitary or shared — that's up to you. Every social feature is off by default and stays
           that way unless you turn it on.
         </p>
@@ -216,13 +217,13 @@ function CommunityFeaturesSection() {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="group backdrop-blur-md bg-[#F7F9FA]/80 border border-[#B3D9F2] p-10 rounded-3xl hover:bg-white hover:shadow-2xl hover:scale-[1.02] transition-all duration-500"
+              className="group backdrop-blur-md bg-slate-50/80 border border-slate-200 p-10 rounded-3xl hover:bg-white hover:shadow-2xl hover:scale-[1.02] transition-all duration-500"
             >
-              <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-[#1D9BF0] mb-6 group-hover:scale-110 transition-transform duration-300">
+              <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-indigo-600 mb-6 group-hover:scale-110 transition-transform duration-300">
                 <feature.icon className="w-7 h-7 text-white" />
               </div>
               <h3 className="text-xl md:text-2xl font-bold mb-4 leading-tight">{feature.title}</h3>
-              <p className="text-[#536471] leading-relaxed">{feature.description}</p>
+              <p className="text-slate-600 leading-relaxed">{feature.description}</p>
             </div>
           ))}
         </div>
@@ -233,80 +234,80 @@ function CommunityFeaturesSection() {
 
 function PremiumFeaturesSection() {
   return (
-    <div className="min-h-screen flex items-center px-6 py-32 bg-[#E8F5FE] text-[#0F1419]">
+    <div className="min-h-screen flex items-center px-6 py-32 bg-slate-100 text-slate-900">
       <div className="max-w-7xl mx-auto w-full">
-        <div className="inline-block px-6 py-2 bg-[#1D9BF0]/10 backdrop-blur-md border border-[#1D9BF0]/20 rounded-full mb-12 text-sm font-medium tracking-wide">
+        <div className="inline-block px-6 py-2 bg-indigo-500/10 backdrop-blur-md border border-indigo-600/20 rounded-full mb-12 text-sm font-medium tracking-wide">
           PREMIUM ONLY
         </div>
         <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-20 leading-tight">Premium Features</h2>
         <div className="grid md:grid-cols-3 gap-8 lg:gap-10">
-          <div className="backdrop-blur-xl bg-[#EFF3F4]/80 border border-[#B3D9F2] p-10 lg:p-12 rounded-3xl hover:bg-[#F7F9FA] hover:scale-[1.02] transition-all duration-500">
+          <div className="backdrop-blur-xl bg-slate-100/80 border border-slate-200 p-10 lg:p-12 rounded-3xl hover:bg-slate-50 hover:scale-[1.02] transition-all duration-500">
             <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">Weekly Insight Digest</h3>
-            <p className="text-[#536471] leading-relaxed text-lg">
+            <p className="text-slate-600 leading-relaxed text-lg">
               A calm weekly reflection you can open when you want perspective. No scores, no comparison.
             </p>
           </div>
 
-          <div className="backdrop-blur-xl bg-[#EFF3F4]/80 border border-[#B3D9F2] p-10 lg:p-12 rounded-3xl hover:bg-[#F7F9FA] hover:scale-[1.02] transition-all duration-500">
+          <div className="backdrop-blur-xl bg-slate-100/80 border border-slate-200 p-10 lg:p-12 rounded-3xl hover:bg-slate-50 hover:scale-[1.02] transition-all duration-500">
             <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">Monthly Reflection</h3>
-            <p className="text-[#536471] leading-relaxed text-lg">
+            <p className="text-slate-600 leading-relaxed text-lg">
               A short monthly summary for gentle perspective over time.
             </p>
           </div>
 
-          <div className="backdrop-blur-xl bg-[#EFF3F4]/80 border border-[#B3D9F2] p-10 lg:p-12 rounded-3xl hover:bg-[#F7F9FA] hover:scale-[1.02] transition-all duration-500">
+          <div className="backdrop-blur-xl bg-slate-100/80 border border-slate-200 p-10 lg:p-12 rounded-3xl hover:bg-slate-50 hover:scale-[1.02] transition-all duration-500">
             <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">From Your Past</h3>
-            <p className="text-[#536471] leading-relaxed text-lg">
+            <p className="text-slate-600 leading-relaxed text-lg">
               A rare, optional resurfacing of a past reflection—dismissible, with a long cooldown.
             </p>
           </div>
 
-          <div className="backdrop-blur-md bg-[#EFF3F4]/80 border border-[#B3D9F2] p-10 lg:p-12 rounded-3xl hover:bg-[#F7F9FA] hover:scale-[1.02] transition-all duration-500">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#1D9BF0] mb-6">
+          <div className="backdrop-blur-md bg-slate-100/80 border border-slate-200 p-10 lg:p-12 rounded-3xl hover:bg-slate-50 hover:scale-[1.02] transition-all duration-500">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-indigo-600 mb-6">
               <Target className="w-6 h-6 text-white" />
             </div>
             <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">Goals & Intentions</h3>
-            <p className="text-[#536471] leading-relaxed text-lg">
+            <p className="text-slate-600 leading-relaxed text-lg">
               Set personal goals and weekly intentions. Track your progress toward what matters most to you.
             </p>
           </div>
 
-          <div className="backdrop-blur-md bg-[#EFF3F4]/80 border border-[#B3D9F2] p-10 lg:p-12 rounded-3xl hover:bg-[#F7F9FA] hover:scale-[1.02] transition-all duration-500">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#1D9BF0] mb-6">
+          <div className="backdrop-blur-md bg-slate-100/80 border border-slate-200 p-10 lg:p-12 rounded-3xl hover:bg-slate-50 hover:scale-[1.02] transition-all duration-500">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-indigo-600 mb-6">
               <Check className="w-6 h-6 text-white" />
             </div>
             <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">Habit Tracking</h3>
-            <p className="text-[#536471] leading-relaxed text-lg">
+            <p className="text-slate-600 leading-relaxed text-lg">
               Track daily habits and see how they correlate with your mood over time. Discover what helps you thrive.
             </p>
           </div>
 
-          <div className="backdrop-blur-md bg-[#EFF3F4]/80 border border-[#B3D9F2] p-10 lg:p-12 rounded-3xl hover:bg-[#F7F9FA] hover:scale-[1.02] transition-all duration-500">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#1D9BF0] mb-6">
+          <div className="backdrop-blur-md bg-slate-100/80 border border-slate-200 p-10 lg:p-12 rounded-3xl hover:bg-slate-50 hover:scale-[1.02] transition-all duration-500">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-indigo-600 mb-6">
               <BarChart3 className="w-6 h-6 text-white" />
             </div>
             <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">Advanced Mood Insights</h3>
-            <p className="text-[#536471] leading-relaxed text-lg">
+            <p className="text-slate-600 leading-relaxed text-lg">
               Monthly trends, AI-powered analysis, best/worst day patterns, and deeper insights into your emotional wellbeing.
             </p>
           </div>
 
-          <div className="backdrop-blur-md bg-[#EFF3F4]/80 border border-[#B3D9F2] p-10 lg:p-12 rounded-3xl hover:bg-[#F7F9FA] hover:scale-[1.02] transition-all duration-500">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#1D9BF0] mb-6">
+          <div className="backdrop-blur-md bg-slate-100/80 border border-slate-200 p-10 lg:p-12 rounded-3xl hover:bg-slate-50 hover:scale-[1.02] transition-all duration-500">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-indigo-600 mb-6">
               <Heart className="w-6 h-6 text-white" />
             </div>
             <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">Unlimited Gratitude</h3>
-            <p className="text-[#536471] leading-relaxed text-lg">
+            <p className="text-slate-600 leading-relaxed text-lg">
               Record up to 10 gratitude entries per day instead of 3. Build a richer gratitude practice.
             </p>
           </div>
 
-          <div className="backdrop-blur-md bg-[#EFF3F4]/80 border border-[#B3D9F2] p-10 lg:p-12 rounded-3xl hover:bg-[#F7F9FA] hover:scale-[1.02] transition-all duration-500">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#1D9BF0] mb-6">
+          <div className="backdrop-blur-md bg-slate-100/80 border border-slate-200 p-10 lg:p-12 rounded-3xl hover:bg-slate-50 hover:scale-[1.02] transition-all duration-500">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-indigo-600 mb-6">
               <Sparkles className="w-6 h-6 text-white" />
             </div>
             <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">Unlimited Prompts</h3>
-            <p className="text-[#536471] leading-relaxed text-lg">
+            <p className="text-slate-600 leading-relaxed text-lg">
               Daily prompts instead of 3x per week. Reflect as often as you like with no limits.
             </p>
           </div>
@@ -347,12 +348,12 @@ function DeliveryOptionsSection() {
           Delivery Options
         </h2>
         <div className="grid md:grid-cols-2 gap-10 lg:gap-16">
-          <div className="backdrop-blur-xl bg-[#EFF3F4]/80 border border-[#B3D9F2] rounded-3xl p-10 md:p-12 lg:p-16 hover:bg-[#F7F9FA] transition-all duration-500">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#1D9BF0] mb-8">
+          <div className="backdrop-blur-xl bg-slate-100/80 border border-slate-200 rounded-3xl p-10 md:p-12 lg:p-16 hover:bg-slate-50 transition-all duration-500">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-600 mb-8">
               <Mail className="w-8 h-8 text-white" />
             </div>
-            <h3 className="text-3xl md:text-4xl font-bold mb-8 text-[#0F1419]">Email Delivery</h3>
-            <ul className="space-y-4 text-[#536471] text-lg">
+            <h3 className="text-3xl md:text-4xl font-bold mb-8 text-slate-900">Email Delivery</h3>
+            <ul className="space-y-4 text-slate-600 text-lg">
               <li className="flex items-start gap-3">
                 <Check className="w-6 h-6 flex-shrink-0 mt-1" />
                 <span>Clean, distraction-free emails</span>
@@ -372,12 +373,12 @@ function DeliveryOptionsSection() {
             </ul>
           </div>
 
-          <div className="backdrop-blur-xl bg-[#EFF3F4]/80 border border-[#B3D9F2] rounded-3xl p-10 md:p-12 lg:p-16 hover:bg-[#F7F9FA] transition-all duration-500">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#1D9BF0] mb-8">
+          <div className="backdrop-blur-xl bg-slate-100/80 border border-slate-200 rounded-3xl p-10 md:p-12 lg:p-16 hover:bg-slate-50 transition-all duration-500">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-600 mb-8">
               <MessageSquare className="w-8 h-8 text-white" />
             </div>
-            <h3 className="text-3xl md:text-4xl font-bold mb-8 text-[#0F1419]">Slack Delivery</h3>
-            <ul className="space-y-4 text-[#536471] text-lg">
+            <h3 className="text-3xl md:text-4xl font-bold mb-8 text-slate-900">Slack Delivery</h3>
+            <ul className="space-y-4 text-slate-600 text-lg">
               <li className="flex items-start gap-3">
                 <Check className="w-6 h-6 flex-shrink-0 mt-1" />
                 <span>Prompts in your workspace</span>
@@ -404,7 +405,7 @@ function DeliveryOptionsSection() {
 
 function UKFeaturesSection() {
   return (
-    <div className="min-h-screen flex items-center px-6 py-32 bg-[#F7F9FA]">
+    <div className="min-h-screen flex items-center px-6 py-32 bg-slate-50">
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
         <div className="h-[400px] lg:h-[600px] relative">
           <Image
@@ -417,25 +418,25 @@ function UKFeaturesSection() {
         </div>
         <div>
           <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-12 leading-tight">Globally Aware</h2>
-          <div className="space-y-6 text-lg md:text-xl leading-relaxed text-[#536471]">
+          <div className="space-y-6 text-lg md:text-xl leading-relaxed text-slate-600">
             <div className="flex items-start gap-4">
-              <div className="w-2 h-2 rounded-full bg-[#1D9BF0] mt-3 flex-shrink-0" />
+              <div className="w-2 h-2 rounded-full bg-indigo-600 mt-3 flex-shrink-0" />
               <p>UK & US crisis resources at its core (Samaritans, NHS 111, 988 Lifeline)</p>
             </div>
             <div className="flex items-start gap-4">
-              <div className="w-2 h-2 rounded-full bg-[#1D9BF0] mt-3 flex-shrink-0" />
+              <div className="w-2 h-2 rounded-full bg-indigo-600 mt-3 flex-shrink-0" />
               <p>Multi-language support (English, Spanish, French, Dutch)</p>
             </div>
             <div className="flex items-start gap-4">
-              <div className="w-2 h-2 rounded-full bg-[#1D9BF0] mt-3 flex-shrink-0" />
+              <div className="w-2 h-2 rounded-full bg-indigo-600 mt-3 flex-shrink-0" />
               <p>Timezone-adaptive delivery—prompts arrive at your chosen time, wherever you are</p>
             </div>
             <div className="flex items-start gap-4">
-              <div className="w-2 h-2 rounded-full bg-[#1D9BF0] mt-3 flex-shrink-0" />
+              <div className="w-2 h-2 rounded-full bg-indigo-600 mt-3 flex-shrink-0" />
               <p>Data stored within EU (Supabase)</p>
             </div>
             <div className="flex items-start gap-4">
-              <div className="w-2 h-2 rounded-full bg-[#1D9BF0] mt-3 flex-shrink-0" />
+              <div className="w-2 h-2 rounded-full bg-indigo-600 mt-3 flex-shrink-0" />
               <p>Prompts reference real-world context (redundancy, NHS waiting lists, insurance, career change)</p>
             </div>
           </div>
@@ -447,35 +448,35 @@ function UKFeaturesSection() {
 
 function WhatWeDontDoSection() {
   return (
-    <div className="min-h-screen flex items-center px-6 py-32 bg-[#E8F5FE]">
+    <div className="min-h-screen flex items-center px-6 py-32 bg-slate-100">
       <div className="max-w-5xl mx-auto">
         <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-12 leading-tight">What We Don't Do</h2>
-        <p className="text-lg md:text-xl leading-relaxed text-[#536471] mb-12">
+        <p className="text-lg md:text-xl leading-relaxed text-slate-600 mb-12">
           To keep Prompt & Pause simple and focused, we intentionally don't include:
         </p>
-        <div className="space-y-6 text-lg md:text-xl leading-relaxed text-[#536471]">
+        <div className="space-y-6 text-lg md:text-xl leading-relaxed text-slate-600">
           <div className="flex items-start gap-4">
-            <X className="w-6 h-6 text-[#1D9BF0] mt-1 flex-shrink-0" />
+            <X className="w-6 h-6 text-indigo-600 mt-1 flex-shrink-0" />
             <p>Therapy or clinical diagnosis</p>
           </div>
           <div className="flex items-start gap-4">
-            <X className="w-6 h-6 text-[#1D9BF0] mt-1 flex-shrink-0" />
+            <X className="w-6 h-6 text-indigo-600 mt-1 flex-shrink-0" />
             <p>Long guided meditation sessions</p>
           </div>
           <div className="flex items-start gap-4">
-            <X className="w-6 h-6 text-[#1D9BF0] mt-1 flex-shrink-0" />
+            <X className="w-6 h-6 text-indigo-600 mt-1 flex-shrink-0" />
             <p>Forced social pressure, public leaderboards, or streak shaming</p>
           </div>
           <div className="flex items-start gap-4">
-            <X className="w-6 h-6 text-[#1D9BF0] mt-1 flex-shrink-0" />
+            <X className="w-6 h-6 text-indigo-600 mt-1 flex-shrink-0" />
             <p>Gamification points system</p>
           </div>
           <div className="flex items-start gap-4">
-            <X className="w-6 h-6 text-[#1D9BF0] mt-1 flex-shrink-0" />
+            <X className="w-6 h-6 text-indigo-600 mt-1 flex-shrink-0" />
             <p>Multiple daily notifications</p>
           </div>
           <div className="flex items-start gap-4">
-            <X className="w-6 h-6 text-[#1D9BF0] mt-1 flex-shrink-0" />
+            <X className="w-6 h-6 text-indigo-600 mt-1 flex-shrink-0" />
             <p>Ads or sponsored content</p>
           </div>
         </div>
@@ -487,13 +488,13 @@ function WhatWeDontDoSection() {
 
 function ComparisonTableSection() {
   return (
-    <div className="min-h-screen flex items-center px-6 py-32 bg-[#F7F9FA]">
+    <div className="min-h-screen flex items-center px-6 py-32 bg-slate-50">
       <div className="max-w-7xl mx-auto w-full">
         <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-20 leading-tight">How We Compare</h2>
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="border-b-2 border-[#0F1419]">
+              <tr className="border-b-2 border-slate-900">
                 <th className="text-left py-6 px-4 text-lg md:text-xl font-bold">Feature</th>
                 <th className="text-left py-6 px-4 text-lg md:text-xl font-bold">Prompt & Pause</th>
                 <th className="text-left py-6 px-4 text-lg md:text-xl font-bold">Therapy Apps</th>
@@ -501,56 +502,56 @@ function ComparisonTableSection() {
                 <th className="text-left py-6 px-4 text-lg md:text-xl font-bold">Journaling Apps</th>
               </tr>
             </thead>
-            <tbody className="text-[#536471]">
-              <tr className="border-b border-[#B3D9F2]">
+            <tbody className="text-slate-600">
+              <tr className="border-b border-slate-200">
                 <td className="py-6 px-4 font-medium">Cost</td>
-                <td className="py-6 px-4 font-bold text-[#0F1419]">£0-12/month</td>
+                <td className="py-6 px-4 font-bold text-slate-900">£0-12/month</td>
                 <td className="py-6 px-4">£150+/month</td>
                 <td className="py-6 px-4">£10-15/month</td>
                 <td className="py-6 px-4">£5-10/month</td>
               </tr>
-              <tr className="border-b border-[#B3D9F2]">
+              <tr className="border-b border-slate-200">
                 <td className="py-6 px-4 font-medium">Time needed</td>
-                <td className="py-6 px-4 font-bold text-[#0F1419]">5 mins/day</td>
+                <td className="py-6 px-4 font-bold text-slate-900">5 mins/day</td>
                 <td className="py-6 px-4">50 mins/session</td>
                 <td className="py-6 px-4">10-20 mins</td>
                 <td className="py-6 px-4">15-30 mins</td>
               </tr>
-              <tr className="border-b border-[#B3D9F2]">
+              <tr className="border-b border-slate-200">
                 <td className="py-6 px-4 font-medium">Personalization</td>
-                <td className="py-6 px-4 font-bold text-[#0F1419]">AI-tailored</td>
+                <td className="py-6 px-4 font-bold text-slate-900">AI-tailored</td>
                 <td className="py-6 px-4">Human therapist</td>
                 <td className="py-6 px-4">Generic</td>
                 <td className="py-6 px-4">Blank page</td>
               </tr>
-              <tr className="border-b border-[#B3D9F2]">
+              <tr className="border-b border-slate-200">
                 <td className="py-6 px-4 font-medium">Global + UK/US resources</td>
                 <td className="py-6 px-4">
-                  <Check className="w-6 h-6 text-[#1D9BF0]" />
+                  <Check className="w-6 h-6 text-indigo-600" />
                 </td>
                 <td className="py-6 px-4">
-                  <X className="w-6 h-6 text-[#B3D9F2]" />
+                  <X className="w-6 h-6 text-slate-200" />
                 </td>
                 <td className="py-6 px-4">
-                  <X className="w-6 h-6 text-[#B3D9F2]" />
+                  <X className="w-6 h-6 text-slate-200" />
                 </td>
                 <td className="py-6 px-4">
-                  <X className="w-6 h-6 text-[#B3D9F2]" />
+                  <X className="w-6 h-6 text-slate-200" />
                 </td>
               </tr>
               <tr>
                 <td className="py-6 px-4 font-medium">No app needed</td>
                 <td className="py-6 px-4">
-                  <Check className="w-6 h-6 text-[#1D9BF0]" />
+                  <Check className="w-6 h-6 text-indigo-600" />
                 </td>
                 <td className="py-6 px-4">
-                  <X className="w-6 h-6 text-[#B3D9F2]" />
+                  <X className="w-6 h-6 text-slate-200" />
                 </td>
                 <td className="py-6 px-4">
-                  <X className="w-6 h-6 text-[#B3D9F2]" />
+                  <X className="w-6 h-6 text-slate-200" />
                 </td>
                 <td className="py-6 px-4">
-                  <X className="w-6 h-6 text-[#B3D9F2]" />
+                  <X className="w-6 h-6 text-slate-200" />
                 </td>
               </tr>
             </tbody>
@@ -563,24 +564,24 @@ function ComparisonTableSection() {
 
 function CTASection() {
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 py-32 bg-[#E8F5FE] text-[#0F1419]">
+    <div className="min-h-screen flex items-center justify-center px-6 py-32 bg-slate-100 text-slate-900">
       <div className="max-w-4xl text-center">
         <h2 className="text-4xl md:text-6xl lg:text-8xl font-bold mb-16 leading-tight text-balance">
           Start Reflecting Today
         </h2>
         <div className="flex flex-col sm:flex-row gap-6 justify-center">
-          <a
+          <Link
             href="/auth"
-            className="px-10 py-5 bg-[#1D9BF0] text-white border-2 border-[#1D9BF0] text-base font-medium tracking-wide transition-all duration-300 hover:bg-transparent hover:text-[#0F1419] cursor-pointer text-center"
+            className="px-10 py-5 bg-indigo-600 text-white border-2 border-indigo-600 text-base font-medium tracking-wide transition-all duration-300 hover:bg-transparent hover:text-slate-900 cursor-pointer text-center"
           >
             START FREE
-          </a>
-          <a
+          </Link>
+          <Link
             href="/pricing"
-            className="px-10 py-5 border-2 border-[#1D9BF0] bg-transparent text-[#0F1419] text-base font-medium tracking-wide transition-all duration-300 hover:bg-[#1D9BF0] hover:text-white cursor-pointer text-center"
+            className="px-10 py-5 border-2 border-indigo-600 bg-transparent text-slate-900 text-base font-medium tracking-wide transition-all duration-300 hover:bg-indigo-500 hover:text-white cursor-pointer text-center"
           >
             VIEW PRICING
-          </a>
+          </Link>
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { UserPlus, UserCheck, UserX, Clock, Loader2, UserMinus, UserRoundPlus } from 'lucide-react'
@@ -25,12 +25,7 @@ export function FriendButton({ profileUserId, className }: FriendButtonProps) {
   const [isPending, setIsPending] = useState(false)
   const isDark = theme === 'dark'
 
-  useEffect(() => {
-    if (!user) return
-    loadStatus()
-  }, [user, profileUserId])
-
-  async function loadStatus() {
+  const loadStatus = useCallback(async () => {
     try {
       const [friendRes, followRes] = await Promise.all([
         fetch('/api/social/friends'),
@@ -57,7 +52,12 @@ export function FriendButton({ profileUserId, className }: FriendButtonProps) {
       setFriendStatus('none')
       setFollowStatus('none')
     }
-  }
+  }, [user, profileUserId])
+
+  useEffect(() => {
+    if (!user) return
+    loadStatus()
+  }, [user, loadStatus])
 
   async function handleFollow() {
     setIsPending(true)
@@ -132,8 +132,8 @@ export function FriendButton({ profileUserId, className }: FriendButtonProps) {
             onClick={handleFollow}
             className={`rounded-full text-xs font-semibold gap-1.5 transition-all ${
               isDark
-                ? 'border-[#1D9BF0]/40 text-[#1D9BF0] hover:border-red-400/40 hover:text-red-400'
-                : 'border-[#1D9BF0]/40 text-[#1D9BF0] hover:border-red-400 hover:text-red-500'
+                ? 'border-indigo-600/40 text-indigo-600 hover:border-red-400/40 hover:text-red-400'
+                : 'border-indigo-600/40 text-indigo-600 hover:border-red-400 hover:text-red-500'
             }`}
           >
             {isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <UserMinus className="h-3.5 w-3.5" />}
@@ -150,7 +150,7 @@ export function FriendButton({ profileUserId, className }: FriendButtonProps) {
             className={`rounded-full text-xs font-semibold gap-1.5 transition-all ${
               isDark
                 ? 'border-white/10 text-white/70 hover:bg-white/10 hover:text-white'
-                : 'border-[#CFD9DE] text-[#0F1419] hover:bg-[#EFF3F4]'
+                : 'border-slate-200 text-slate-900 hover:bg-slate-100'
             }`}
           >
             {isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <UserRoundPlus className="h-3.5 w-3.5" />}
@@ -170,7 +170,7 @@ export function FriendButton({ profileUserId, className }: FriendButtonProps) {
             className={`rounded-full text-xs font-semibold gap-1.5 ${
               isDark
                 ? 'border-white/10 text-white/50 hover:bg-white/10 hover:text-white'
-                : 'border-[#EFF3F4] text-[#536471] hover:bg-[#EFF3F4]'
+                : 'border-slate-100 text-slate-600 hover:bg-slate-100'
             }`}
           >
             {isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <UserPlus className="h-3.5 w-3.5" />}
@@ -185,8 +185,8 @@ export function FriendButton({ profileUserId, className }: FriendButtonProps) {
             onClick={handleFriend}
             className={`rounded-full text-xs font-semibold gap-1.5 ${
               isDark
-                ? 'border-[#1D9BF0]/30 text-[#1D9BF0]/60 hover:border-red-400/30 hover:text-red-400'
-                : 'border-[#B3D9F2] text-[#1D9BF0]/60 hover:border-red-300 hover:text-red-500'
+                ? 'border-indigo-600/30 text-indigo-600/60 hover:border-red-400/30 hover:text-red-400'
+                : 'border-slate-200 text-indigo-600/60 hover:border-red-300 hover:text-red-500'
             }`}
           >
             {isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Clock className="h-3.5 w-3.5" />}
@@ -202,8 +202,8 @@ export function FriendButton({ profileUserId, className }: FriendButtonProps) {
             onClick={handleFriend}
             className={`rounded-full text-xs font-semibold gap-1.5 ${
               isDark
-                ? 'border-[#1D9BF0]/40 text-[#1D9BF0] hover:bg-[#1D9BF0]/10'
-                : 'border-[#B3D9F2] text-[#1D9BF0] hover:bg-[#E8F5FE]'
+                ? 'border-indigo-600/40 text-indigo-600 hover:bg-indigo-500/10'
+                : 'border-slate-200 text-indigo-600 hover:bg-slate-100'
             }`}
           >
             {isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <UserCheck className="h-3.5 w-3.5" />}
@@ -218,8 +218,8 @@ export function FriendButton({ profileUserId, className }: FriendButtonProps) {
             onClick={handleFriend}
             className={`rounded-full text-xs font-semibold gap-1.5 ${
               isDark
-                ? 'border-[#1D9BF0]/30 text-[#1D9BF0]/70 hover:border-red-400/30 hover:text-red-400/70'
-                : 'border-[#B3D9F2] text-[#1D9BF0] hover:border-red-300 hover:text-red-500'
+                ? 'border-indigo-600/30 text-indigo-600/70 hover:border-red-400/30 hover:text-red-400/70'
+                : 'border-slate-200 text-indigo-600 hover:border-red-300 hover:text-red-500'
             }`}
           >
             {isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <UserX className="h-3.5 w-3.5" />}

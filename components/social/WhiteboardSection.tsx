@@ -93,7 +93,7 @@ export function WhiteboardSection({ profileUserId, entries: initialEntries, isOw
     <div className="space-y-3 sm:space-y-4">
       {/* Post to whiteboard */}
       {currentUserId && (
-        <div className={`rounded-2xl p-3 sm:p-4 ${isDark ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-white/80 border border-[#EFF3F4]'}`}>
+        <div className={`rounded-2xl p-3 sm:p-4 ${isDark ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-white/80 border border-slate-100'}`}>
           <Textarea
             value={text}
             onChange={e => setText(e.target.value)}
@@ -104,7 +104,7 @@ export function WhiteboardSection({ profileUserId, entries: initialEntries, isOw
                 : 'Leave a note...'
             }
             className={`min-h-[72px] sm:min-h-[80px] resize-none text-sm border-0 bg-transparent p-0 ${
-              isDark ? 'text-white/80 placeholder:text-white/20' : 'text-[#0F1419] placeholder:text-[#8B98A5]'
+              isDark ? 'text-white/80 placeholder:text-white/20' : 'text-slate-900 placeholder:text-slate-400'
             } focus:ring-0`}
           />
           {error && (
@@ -114,7 +114,7 @@ export function WhiteboardSection({ profileUserId, entries: initialEntries, isOw
             </p>
           )}
           <div className="flex items-center justify-between mt-2 sm:mt-3">
-            <span className={`text-xs ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`}>
+            <span className={`text-xs ${isDark ? 'text-white/20' : 'text-slate-500'}`}>
               {text.length > 0 && `${text.length} characters`}
             </span>
             <Button
@@ -124,7 +124,7 @@ export function WhiteboardSection({ profileUserId, entries: initialEntries, isOw
               className={`text-xs ${
                 isDark
                   ? 'bg-white/10 text-white hover:bg-white/20'
-                  : 'bg-[#1D9BF0] text-white hover:bg-[#1A8CD8]'
+                  : 'bg-indigo-600 text-white hover:bg-indigo-500'
               }`}
             >
               {posting ? <Loader2 className="h-3 w-3 animate-spin mr-1.5" /> : <PenLine className="h-3 w-3 mr-1.5" />}
@@ -136,13 +136,13 @@ export function WhiteboardSection({ profileUserId, entries: initialEntries, isOw
 
       {/* Entries */}
       {entries.length === 0 ? (
-        <div className={`text-center py-10 sm:py-12 rounded-2xl ${isDark ? 'bg-white/[0.02]' : 'bg-[#F7F9FA]'}`}>
-          <PenLine size={24} className={`mx-auto mb-2 ${isDark ? 'text-white/15' : 'text-[#CFD9DE]'}`} />
-          <p className={`text-sm ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
+        <div className={`text-center py-10 sm:py-12 rounded-2xl ${isDark ? 'bg-white/[0.02]' : 'bg-slate-50'}`}>
+          <PenLine size={24} className={`mx-auto mb-2 ${isDark ? 'text-white/15' : 'text-slate-300'}`} />
+          <p className={`text-sm ${isDark ? 'text-white/30' : 'text-slate-500'}`}>
             No notes yet
           </p>
           {currentUserId && (
-            <p className={`text-xs mt-1 ${isDark ? 'text-white/15' : 'text-[#CFD9DE]'}`}>
+            <p className={`text-xs mt-1 ${isDark ? 'text-white/15' : 'text-slate-300'}`}>
               Be the first to leave a note
             </p>
           )}
@@ -162,26 +162,26 @@ export function WhiteboardSection({ profileUserId, entries: initialEntries, isOw
                 className={`rounded-2xl p-3 sm:p-4 flex gap-3 group ${
                   isDark
                     ? 'bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.05]'
-                    : 'bg-white/60 border border-[#EFF3F4] hover:bg-white/90 hover:shadow-sm'
+                    : 'bg-white/60 border border-slate-100 hover:bg-white/90 hover:shadow-sm'
                 } transition-all duration-200`}
               >
                 <Avatar className="h-8 w-8 sm:h-9 sm:w-9 flex-shrink-0 mt-0.5">
                   <AvatarImage src={entry.author?.avatar_url || undefined} />
-                  <AvatarFallback className={`text-[10px] ${isDark ? 'bg-[#161618] text-white/40' : 'bg-[#EFF3F4] text-[#8B98A5]'}`}>
+                  <AvatarFallback className={`text-[10px] ${isDark ? 'bg-[#0A0E18] text-white/40' : 'bg-slate-100 text-slate-500'}`}>
                     {(entry.author?.full_name || '?')[0]}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <p className={`text-xs font-medium truncate ${isDark ? 'text-white/60' : 'text-[#536471]'}`}>
+                    <p className={`text-xs font-medium truncate ${isDark ? 'text-white/60' : 'text-slate-600'}`}>
                       {entry.author?.display_name || entry.author?.full_name || 'Someone'}
                     </p>
-                    <span className={`text-[10px] ${isDark ? 'text-white/20' : 'text-[#CFD9DE]'}`}>
+                    <span className={`text-[10px] ${isDark ? 'text-white/20' : 'text-slate-300'}`}>
                       {timeAgo(entry.created_at)}
                     </span>
                   </div>
                   <p className={`text-sm mt-1 leading-relaxed whitespace-pre-wrap break-words ${
-                    isDark ? 'text-white/80' : 'text-[#0F1419]'
+                    isDark ? 'text-white/80' : 'text-slate-900'
                   }`}>
                     {entry.content?.text}
                   </p>
@@ -193,7 +193,7 @@ export function WhiteboardSection({ profileUserId, entries: initialEntries, isOw
                     className={`shrink-0 opacity-0 group-hover:opacity-100 transition-all p-1.5 self-start rounded-lg ${
                       isDark
                         ? 'text-white/20 hover:bg-white/10 hover:text-red-400'
-                        : 'text-[#8B98A5] hover:bg-[#EFF3F4] hover:text-red-500'
+                        : 'text-slate-500 hover:bg-slate-100 hover:text-red-500'
                     }`}
                   >
                     {deletingId === entry.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 size={14} />}

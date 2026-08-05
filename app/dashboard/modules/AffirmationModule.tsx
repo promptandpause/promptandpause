@@ -15,19 +15,20 @@ export function AffirmationModule() {
   )
 }
 
+const quotes = [
+  "You're doing great—one step at a time.",
+  "Be gentle with yourself today.",
+  "Every small step counts.",
+  "You are enough, just as you are.",
+  "Progress, not perfection.",
+  "You've already handled hard things before.",
+]
+
 function AffirmationModuleInner() {
   const { theme } = useTheme()
   const { t } = useTranslation()
   const isDark = theme === "dark"
 
-  const quotes = [
-    "You're doing great—one step at a time.",
-    "Be gentle with yourself today.",
-    "Every small step counts.",
-    "You are enough, just as you are.",
-    "Progress, not perfection.",
-    "You've already handled hard things before.",
-  ]
   const [quote, setQuote] = useState(quotes[0])
 
   useEffect(() => {
@@ -76,10 +77,10 @@ function AffirmationModuleInner() {
         transition={{ duration: 0.3 }}
         className="relative"
       >
-        <span className={`absolute -top-1 -left-1 text-3xl leading-none font-serif opacity-20 select-none ${isDark ? "text-[#1D9BF0]" : "text-[#1D9BF0]"}`}>
+        <span className={`absolute -top-1 -left-1 text-3xl leading-none font-serif opacity-20 select-none ${isDark ? "text-[#818CF8]" : "text-indigo-400"}`}>
           &ldquo;
         </span>
-        <p className={`text-sm leading-relaxed pl-4 ${isDark ? "text-white/85" : "text-[#0F1419]"}`}>
+        <p className={`font-serif italic text-sm md:text-[15px] leading-relaxed pl-4 ${isDark ? "text-white/85" : "text-slate-800"}`}>
           {quote}
         </p>
       </motion.div>

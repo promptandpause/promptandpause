@@ -69,7 +69,7 @@ export default function WorkspaceLandingPage() {
   const pricePerSeat = billingInterval === 'annual' ? 6 : 7.5
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-[#0A0A0A]' : 'bg-[#FFFFFF]'}`}>
+    <div className={`min-h-screen ${isDark ? 'bg-[#0A0E18]' : 'bg-[#F9FBFB]'}`}>
       <div className="flex h-screen overflow-hidden">
         <DashboardSidebar />
         <main className="flex-1 pb-32 md:pb-10 overflow-y-auto scrollbar-thin">
@@ -77,23 +77,23 @@ export default function WorkspaceLandingPage() {
         <Link
           href="/dashboard"
           className={`hidden md:inline-flex items-center gap-2 text-sm mb-8 transition-colors ${
-            isDark ? 'text-white/50 hover:text-white' : 'text-[#536471] hover:text-[#0F1419]'
+            isDark ? 'text-white/50 hover:text-white' : 'text-slate-600 hover:text-slate-900'
           }`}
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Dashboard
         </Link>
 
-        <h1 className={`text-2xl sm:text-3xl font-bold mb-2 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+        <h1 className={`text-2xl sm:text-3xl font-bold mb-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
           Workspaces
         </h1>
-        <p className={`text-sm mb-8 ${isDark ? 'text-white/50' : 'text-[#536471]'}`}>
+        <p className={`text-sm mb-8 ${isDark ? 'text-white/50' : 'text-slate-600'}`}>
           Bring Prompt & Pause to your team. Your personal reflections stay exactly as private as they are today.
         </p>
 
         {loading ? (
           <div className="flex justify-center py-16">
-            <Loader2 className={`h-6 w-6 animate-spin ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`} />
+            <Loader2 className={`h-6 w-6 animate-spin ${isDark ? 'text-white/30' : 'text-slate-500'}`} />
           </div>
         ) : (
           <>
@@ -105,17 +105,17 @@ export default function WorkspaceLandingPage() {
                     onClick={() => router.push(`/workspace/${org.id}`)}
                     className={`w-full text-left p-4 rounded-xl border transition-colors flex items-center justify-between ${
                       isDark
-                        ? 'bg-white/[0.04] border-white/[0.08] hover:bg-white/[0.07]'
-                        : 'bg-[#F7F9FA] border-[#EFF3F4] hover:bg-[#EFF3F4]'
+                        ? 'bg-white/[0.04] border-white/10 hover:bg-white/[0.07]'
+                        : 'bg-slate-50 border-slate-100 hover:bg-slate-100'
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`h-10 w-10 rounded-full flex items-center justify-center ${isDark ? 'bg-[#1D9BF0]/20' : 'bg-[#1D9BF0]/10'}`}>
-                        <Users className="h-5 w-5 text-[#1D9BF0]" />
+                      <div className={`h-10 w-10 rounded-full flex items-center justify-center ${isDark ? 'bg-indigo-500/20' : 'bg-indigo-500/10'}`}>
+                        <Users className="h-5 w-5 text-indigo-600" />
                       </div>
                       <div>
-                        <div className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>{org.name}</div>
-                        <div className={`text-xs ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
+                        <div className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>{org.name}</div>
+                        <div className={`text-xs ${isDark ? 'text-white/40' : 'text-slate-500'}`}>
                           {org.seat_count} seats · {org.myRole}
                         </div>
                       </div>
@@ -129,7 +129,7 @@ export default function WorkspaceLandingPage() {
               <button
                 onClick={() => setShowCreate(true)}
                 className={`w-full flex items-center justify-center gap-2 py-3 rounded-full text-sm font-semibold transition-colors ${
-                  isDark ? 'bg-white/[0.06] text-white hover:bg-white/10' : 'bg-[#EFF3F4] text-[#0F1419] hover:bg-[#E1E8EA]'
+                  isDark ? 'bg-white/[0.06] text-white hover:bg-white/10' : 'bg-slate-100 text-slate-900 hover:bg-slate-200'
                 }`}
               >
                 <Plus className="h-4 w-4" />
@@ -139,23 +139,23 @@ export default function WorkspaceLandingPage() {
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`p-5 rounded-2xl border ${isDark ? 'bg-white/[0.04] border-white/[0.08]' : 'bg-[#F7F9FA] border-[#EFF3F4]'}`}
+                className={`p-5 rounded-2xl border ${isDark ? 'bg-white/[0.04] border-white/10' : 'bg-slate-50 border-slate-100'}`}
               >
-                <h2 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>Create a workspace</h2>
+                <h2 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-slate-900'}`}>Create a workspace</h2>
 
-                <label className={`text-xs font-medium block mb-1.5 ${isDark ? 'text-white/50' : 'text-[#536471]'}`}>
+                <label className={`text-xs font-medium block mb-1.5 ${isDark ? 'text-white/50' : 'text-slate-600'}`}>
                   Workspace name
                 </label>
                 <input
                   value={orgName}
                   onChange={e => setOrgName(e.target.value)}
                   placeholder="Acme Inc."
-                  className={`w-full px-3.5 py-2.5 rounded-lg text-sm mb-4 border outline-none focus:border-[#1D9BF0] ${
-                    isDark ? 'bg-white/[0.04] border-white/10 text-white placeholder:text-white/30' : 'bg-white border-[#CFD9DE] text-[#0F1419]'
+                  className={`w-full px-3.5 py-2.5 rounded-lg text-sm mb-4 border outline-none focus:border-indigo-500 ${
+                    isDark ? 'bg-white/[0.04] border-white/10 text-white placeholder:text-white/30' : 'bg-white border-slate-200 text-slate-900'
                   }`}
                 />
 
-                <label className={`text-xs font-medium block mb-1.5 ${isDark ? 'text-white/50' : 'text-[#536471]'}`}>
+                <label className={`text-xs font-medium block mb-1.5 ${isDark ? 'text-white/50' : 'text-slate-600'}`}>
                   Number of seats
                 </label>
                 <input
@@ -164,12 +164,12 @@ export default function WorkspaceLandingPage() {
                   max={1000}
                   value={seatCount}
                   onChange={e => setSeatCount(Math.max(1, parseInt(e.target.value) || 1))}
-                  className={`w-full px-3.5 py-2.5 rounded-lg text-sm mb-4 border outline-none focus:border-[#1D9BF0] ${
-                    isDark ? 'bg-white/[0.04] border-white/10 text-white' : 'bg-white border-[#CFD9DE] text-[#0F1419]'
+                  className={`w-full px-3.5 py-2.5 rounded-lg text-sm mb-4 border outline-none focus:border-indigo-500 ${
+                    isDark ? 'bg-white/[0.04] border-white/10 text-white' : 'bg-white border-slate-200 text-slate-900'
                   }`}
                 />
 
-                <label className={`text-xs font-medium block mb-1.5 ${isDark ? 'text-white/50' : 'text-[#536471]'}`}>
+                <label className={`text-xs font-medium block mb-1.5 ${isDark ? 'text-white/50' : 'text-slate-600'}`}>
                   Billing
                 </label>
                 <div className="flex gap-2 mb-5">
@@ -177,8 +177,8 @@ export default function WorkspaceLandingPage() {
                     onClick={() => setBillingInterval('monthly')}
                     className={`flex-1 py-2 rounded-lg text-sm font-medium border transition-colors ${
                       billingInterval === 'monthly'
-                        ? 'bg-[#1D9BF0] border-[#1D9BF0] text-white'
-                        : isDark ? 'border-white/10 text-white/60' : 'border-[#CFD9DE] text-[#536471]'
+                        ? 'bg-indigo-600 border-indigo-600 text-white'
+                        : isDark ? 'border-white/10 text-white/60' : 'border-slate-200 text-slate-600'
                     }`}
                   >
                     Monthly
@@ -187,15 +187,15 @@ export default function WorkspaceLandingPage() {
                     onClick={() => setBillingInterval('annual')}
                     className={`flex-1 py-2 rounded-lg text-sm font-medium border transition-colors ${
                       billingInterval === 'annual'
-                        ? 'bg-[#1D9BF0] border-[#1D9BF0] text-white'
-                        : isDark ? 'border-white/10 text-white/60' : 'border-[#CFD9DE] text-[#536471]'
+                        ? 'bg-indigo-600 border-indigo-600 text-white'
+                        : isDark ? 'border-white/10 text-white/60' : 'border-slate-200 text-slate-600'
                     }`}
                   >
                     Annual <span className="opacity-75">(save 20%)</span>
                   </button>
                 </div>
 
-                <p className={`text-xs mb-5 ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
+                <p className={`text-xs mb-5 ${isDark ? 'text-white/40' : 'text-slate-500'}`}>
                   £{pricePerSeat}/seat/{billingInterval === 'annual' ? 'mo, billed annually' : 'mo'} · £{(pricePerSeat * seatCount).toFixed(2)}{billingInterval === 'annual' ? '/mo' : '/mo'} total for {seatCount} {seatCount === 1 ? 'seat' : 'seats'}
                 </p>
 
@@ -206,14 +206,14 @@ export default function WorkspaceLandingPage() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => setShowCreate(false)}
-                    className={`px-4 py-2.5 rounded-full text-sm font-medium ${isDark ? 'text-white/60 hover:bg-white/5' : 'text-[#536471] hover:bg-white'}`}
+                    className={`px-4 py-2.5 rounded-full text-sm font-medium ${isDark ? 'text-white/60 hover:bg-white/5' : 'text-slate-600 hover:bg-white'}`}
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleCreate}
                     disabled={submitting}
-                    className="flex-1 py-2.5 rounded-full text-sm font-semibold bg-[#1D9BF0] text-white hover:bg-[#1A8CD8] transition-colors disabled:opacity-60"
+                    className="flex-1 py-2.5 rounded-full text-sm font-semibold bg-indigo-600 text-white hover:bg-indigo-500 transition-colors disabled:opacity-60"
                   >
                     {submitting ? 'Starting checkout\u2026' : 'Continue to payment'}
                   </button>

@@ -6,11 +6,11 @@ import { calculateMoodTrends } from "@/lib/services/analyticsService"
 import { supabaseReflectionService } from "@/lib/services/supabaseReflectionService"
 import { getSupabaseClient } from "@/lib/supabase/client"
 import { useTheme } from "@/contexts/ThemeContext"
-import { IconOrb, type Accent } from "@/components/ui/accent-card"
 import { motion } from "framer-motion"
 
 export default function QuickStats() {
   const { theme } = useTheme()
+  const isDark = theme === 'dark'
   const [totalReflections, setTotalReflections] = useState(0)
   const [thisWeekCount, setThisWeekCount] = useState(0)
   const [moodTrend, setMoodTrend] = useState<'improving' | 'declining' | 'stable'>('stable')
@@ -54,9 +54,9 @@ export default function QuickStats() {
   }, [supabase])
 
   const getTrendIcon = () => {
-    if (moodTrend === 'improving') return <TrendUp size={20} weight="bold" className="text-green-400" />
-    if (moodTrend === 'declining') return <TrendDown size={20} weight="bold" className="text-red-400" />
-    return <Minus size={20} weight="bold" className="text-yellow-400" />
+    if (moodTrend === 'improving') return <TrendUp size={14} weight="bold" className="text-green-500" />
+    if (moodTrend === 'declining') return <TrendDown size={14} weight="bold" className="text-red-500" />
+    return <Minus size={14} weight="bold" className="text-slate-500" />
   }
 
   const getTrendText = () => {
@@ -65,20 +65,22 @@ export default function QuickStats() {
     return 'Stable'
   }
 
-  const getTrendLabel = () => {
-    return (
-      <span className={`text-xs text-center leading-tight ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>
-        <span className="hidden md:inline">Mood Trend</span>
-        <span className="md:hidden">Mood</span>
-      </span>
-    )
-  }
+  const card = isDark
+    ? 'bg-white/[0.04] border border-white/[0.06]'
+    : 'bg-white/70 backdrop-blur-[12px] border border-slate-100 shadow-soft-card'
 
-  const isDark = theme === 'dark'
+  const orb = (accent: string) => {
+    const map: Record<string, string> = {
+      blue: 'bg-indigo-50 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-400',
+      emerald: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400',
+      violet: 'bg-purple-50 text-purple-600 dark:bg-purple-500/20 dark:text-purple-400',
+    }
+    return map[accent] || map.blue
+  }
 
   const tiles: Array<{
     key: string
-    accent: Accent
+    accent: string
     icon: React.ReactNode
     label: string
     value: React.ReactNode
@@ -86,48 +88,51 @@ export default function QuickStats() {
     {
       key: 'reflections',
       accent: 'blue',
-      icon: <BookOpen size={16} weight="bold" className="text-white" />,
+      icon: <BookOpen size={16} weight="bold" />,
       label: 'Reflections',
-      value: <span className={`text-xl font-bold tabular-nums ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>{totalReflections}</span>,
+      value: <span className={`text-2xl font-extrabold tabular-nums ${isDark ? 'text-white' : 'text-slate-900'}`}>{totalReflections}</span>,
     },
     {
       key: 'week',
       accent: 'emerald',
-      icon: <CalendarCheck size={16} weight="bold" className="text-white" />,
-      label: 'This week',
-      value: <span className={`text-xl font-bold tabular-nums ${isDark ? 'text-emerald-300' : 'text-[#5A8F6E]'}`}>{thisWeekCount}</span>,
+      icon: <CalendarCheck size={16} weight="bold" />,
+      label: 'This Week',
+      value: <span className={`text-2xl font-extrabold tabular-nums ${isDark ? 'text-white' : 'text-slate-900'}`}>{thisWeekCount}</span>,
     },
     {
       key: 'mood',
       accent: 'violet',
-      icon: <Activity size={16} weight="bold" className="text-white" />,
-      label: 'Mood trend',
+      icon: <Activity size={16} weight="bold" />,
+      label: 'Mood Trend',
       value: (
-        <div className="flex items-center gap-1.5">
+        <span className={`text-sm font-bold flex items-center gap-1.5 px-2.5 py-1 rounded-full ${isDark ? 'bg-white/10 text-white' : 'bg-green-50 text-green-600'}`}>
           {getTrendIcon()}
-          <span className={`text-sm font-bold ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>{getTrendText()}</span>
-        </div>
+          {getTrendText()}
+        </span>
       ),
     },
   ]
 
   return (
-    <div className={`rounded-2xl p-5 space-y-0 ${isDark ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-white/70 border border-[#EFF3F4]'}`}>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {tiles.map((t, i) => (
-        <div key={t.key}>
-          <motion.div
-            whileHover={{ x: 1 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 28 }}
-            className={`flex items-center justify-between py-3 px-1 rounded-lg transition-colors ${isDark ? 'hover:bg-white/[0.03]' : 'hover:bg-[#F5F3EE]/60'}`}
-          >
-            <div className="flex items-center gap-3">
-              <IconOrb accent={t.accent} size="sm">{t.icon}</IconOrb>
-              <span className={`text-sm ${isDark ? 'text-white/60' : 'text-[#536471]'}`}>{t.label}</span>
+        <motion.div
+          key={t.key}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ type: 'spring', stiffness: 260, damping: 22, delay: i * 0.06 }}
+          className={`rounded-3xl p-6 ${card}`}
+        >
+          <div className="flex items-center justify-between mb-4">
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${orb(t.accent)}`}>
+              {t.icon}
             </div>
             {t.value}
-          </motion.div>
-          {i < tiles.length - 1 && <div className={`h-px mx-1 ${isDark ? 'bg-white/[0.04]' : 'bg-[#EFF3F4]/80'}`} />}
-        </div>
+          </div>
+          <h3 className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-white/40' : 'text-slate-500'}`}>
+            {t.label}
+          </h3>
+        </motion.div>
       ))}
     </div>
   )

@@ -45,15 +45,15 @@ export default function WorkspaceAnalyticsPage() {
 
   if (loading) {
     return (
-      <div className={`flex items-center justify-center py-16 ${isDark ? 'bg-[#0A0A0A]' : 'bg-white'}`}>
-        <Loader2 className={`h-6 w-6 animate-spin ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`} />
+      <div className={`flex items-center justify-center py-16 ${isDark ? 'bg-[#0A0E18]' : 'bg-white'}`}>
+        <Loader2 className={`h-6 w-6 animate-spin ${isDark ? 'text-white/30' : 'text-slate-500'}`} />
       </div>
     )
   }
 
   if (error || !data.length) {
     return (
-      <div className={`text-center py-16 ${isDark ? 'text-white/50' : 'text-[#536471]'}`}>
+      <div className={`text-center py-16 ${isDark ? 'text-white/50' : 'text-slate-600'}`}>
         {error || 'No analytics data available yet'}
       </div>
     )
@@ -68,26 +68,26 @@ export default function WorkspaceAnalyticsPage() {
 
   return (
     <div className="space-y-6">
-      <div className={`p-4 rounded-xl border ${isDark ? 'bg-white/[0.04] border-white/[0.08]' : 'bg-[#F7F9FA] border-[#EFF3F4]'}`}>
-        <h3 className={`text-sm font-semibold mb-4 flex items-center gap-2 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+      <div className={`p-4 rounded-xl border ${isDark ? 'bg-white/[0.04] border-white/10' : 'bg-slate-50 border-slate-100'}`}>
+        <h3 className={`text-sm font-semibold mb-4 flex items-center gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
           <TrendingUp className="h-4 w-4" /> Reflections over time
         </h3>
         <ResponsiveContainer width="100%" height={280}>
           <LineChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke={isDark ? 'rgba(255,255,255,0.08)' : '#e5e7eb'} />
+            <CartesianGrid strokeDasharray="3 3" stroke={isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'} />
             <XAxis 
               dataKey="date" 
-              stroke={isDark ? 'rgba(255,255,255,0.3)' : '#8B98A5'}
+              stroke={isDark ? 'rgba(255,255,255,0.3)' : '#94A3B8'}
               style={{ fontSize: '11px' }}
             />
             <YAxis 
-              stroke={isDark ? 'rgba(255,255,255,0.3)' : '#8B98A5'}
+              stroke={isDark ? 'rgba(255,255,255,0.3)' : '#94A3B8'}
               style={{ fontSize: '11px' }}
             />
             <Tooltip 
               contentStyle={{
-                background: isDark ? '#1A1A1A' : '#fff',
-                border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#e5e7eb'}`,
+                background: isDark ? '#1B2436' : '#fff',
+                border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'}`,
                 borderRadius: '8px',
               }}
               formatter={(value: any, name: any, props: any) => {
@@ -100,7 +100,7 @@ export default function WorkspaceAnalyticsPage() {
             <Line 
               type="monotone" 
               dataKey="reflections" 
-              stroke="#1D9BF0" 
+              stroke="#6366F1" 
               strokeWidth={2}
               dot={false}
               name="Reflections"
@@ -109,26 +109,26 @@ export default function WorkspaceAnalyticsPage() {
         </ResponsiveContainer>
       </div>
 
-      <div className={`p-4 rounded-xl border ${isDark ? 'bg-white/[0.04] border-white/[0.08]' : 'bg-[#F7F9FA] border-[#EFF3F4]'}`}>
-        <h3 className={`text-sm font-semibold mb-4 flex items-center gap-2 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+      <div className={`p-4 rounded-xl border ${isDark ? 'bg-white/[0.04] border-white/10' : 'bg-slate-50 border-slate-100'}`}>
+        <h3 className={`text-sm font-semibold mb-4 flex items-center gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
           <TrendingUp className="h-4 w-4" /> Active members over time
         </h3>
         <ResponsiveContainer width="100%" height={280}>
           <LineChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke={isDark ? 'rgba(255,255,255,0.08)' : '#e5e7eb'} />
+            <CartesianGrid strokeDasharray="3 3" stroke={isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'} />
             <XAxis 
               dataKey="date" 
-              stroke={isDark ? 'rgba(255,255,255,0.3)' : '#8B98A5'}
+              stroke={isDark ? 'rgba(255,255,255,0.3)' : '#94A3B8'}
               style={{ fontSize: '11px' }}
             />
             <YAxis 
-              stroke={isDark ? 'rgba(255,255,255,0.3)' : '#8B98A5'}
+              stroke={isDark ? 'rgba(255,255,255,0.3)' : '#94A3B8'}
               style={{ fontSize: '11px' }}
             />
             <Tooltip 
               contentStyle={{
-                background: isDark ? '#1A1A1A' : '#fff',
-                border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#e5e7eb'}`,
+                background: isDark ? '#1B2436' : '#fff',
+                border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'}`,
                 borderRadius: '8px',
               }}
               formatter={(value: any, name: any, props: any) => {
@@ -141,7 +141,7 @@ export default function WorkspaceAnalyticsPage() {
             <Line 
               type="monotone" 
               dataKey="members" 
-              stroke="#10B981" 
+              stroke="#818CF8" 
               strokeWidth={2}
               dot={false}
               name="Active members"

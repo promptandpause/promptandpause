@@ -18,6 +18,21 @@ export function useAuthGuard(redirectPath?: string, requireAdmin: boolean = fals
 
   useEffect(() => {
     async function checkAuth() {
+      // OTP sessions use an admin_session cookie rather than Supabase auth
+      if (requireAdmin) {
+        try {
+          const res = await fetch('/api/admin/check-session')
+          const data = await res.json()
+          if (data?.authenticated) {
+            setIsAdmin(true)
+            setIsAuthenticated(true)
+            return
+          }
+        } catch (_error) {
+          // Fall through to the Supabase check
+        }
+      }
+
       const { data: { user } } = await supabase.auth.getUser()
 
       if (!user) {

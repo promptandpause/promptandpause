@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Target, 
@@ -106,11 +106,7 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
   const supabase = getSupabaseClient()
   const { toast } = useToast()
 
-  useEffect(() => {
-    loadGoals()
-  }, [userId, filter])
-
-  const loadGoals = async () => {
+  const loadGoals = useCallback(async () => {
     setIsLoading(true)
     try {
       const status = filter === 'all' ? undefined : filter === 'active' ? 'active' : 'completed'
@@ -125,7 +121,11 @@ export default function GoalsDashboard({ userId }: GoalsDashboardProps) {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [supabase, userId, filter])
+
+  useEffect(() => {
+    loadGoals()
+  }, [loadGoals])
 
   const handleCreateGoal = async () => {
     if (!newGoal.title.trim()) {

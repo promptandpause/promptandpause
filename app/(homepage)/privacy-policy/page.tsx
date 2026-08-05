@@ -39,10 +39,10 @@ export default function PrivacyPolicyPage() {
   return (
     <>
       <Navigation />
-      <main className="min-h-screen bg-[#EFF3F4] text-[#0F1419]">
+      <main className="min-h-screen bg-slate-100 text-slate-900">
       {/* Hero Section */}
       <section ref={heroRef} className="relative h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#EFF3F4] via-[#E8F5FE] to-[#B3D9F2]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-100 via-slate-100 to-slate-200" />
 
         <motion.div style={{ opacity, scale }} className="relative z-10 text-center px-4 max-w-4xl mx-auto">
           <motion.div
@@ -51,7 +51,7 @@ export default function PrivacyPolicyPage() {
             transition={{ duration: 0.8 }}
             className="mb-6"
           >
-            <Shield className="w-16 h-16 mx-auto mb-6 text-[#1D9BF0]" />
+            <Shield className="w-16 h-16 mx-auto mb-6 text-indigo-600" />
           </motion.div>
 
           <motion.h1
@@ -67,7 +67,7 @@ export default function PrivacyPolicyPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-xl md:text-2xl text-[#536471] mb-8 text-balance"
+            className="text-xl md:text-2xl text-slate-600 mb-8 text-balance"
           >
             Your privacy matters. Here's how we protect and handle your data.
           </motion.p>
@@ -76,7 +76,7 @@ export default function PrivacyPolicyPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-sm text-[#8B98A5]"
+            className="text-sm text-slate-500"
           >
             Last Updated: July 2026
           </motion.p>
@@ -96,9 +96,9 @@ export default function PrivacyPolicyPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.05 }}
                 viewport={{ once: true }}
-                className="p-4 bg-[#F7F9FA] backdrop-blur-md rounded-lg hover:bg-[#EFF3F4] transition-all duration-300 hover:scale-105"
+                className="p-4 bg-slate-50 backdrop-blur-md rounded-lg hover:bg-slate-100 transition-all duration-300 hover:scale-105"
               >
-                <span className="text-[#8B98A5] text-sm">0{index + 1}</span>
+                <span className="text-slate-500 text-sm">0{index + 1}</span>
                 <h3 className="text-lg font-bold">{section.title}</h3>
               </motion.a>
             ))}
@@ -112,7 +112,7 @@ export default function PrivacyPolicyPage() {
           {/* Introduction */}
           <div id="introduction" className="scroll-mt-20">
             <h2 className="text-4xl font-bold mb-6 uppercase">Introduction</h2>
-            <div className="space-y-4 text-[#536471] leading-relaxed">
+            <div className="space-y-4 text-slate-600 leading-relaxed">
               <p>
                 Prompt & Pause ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy
                 explains how we collect, use, disclose, and safeguard your information when you use our mental health
@@ -133,12 +133,12 @@ export default function PrivacyPolicyPage() {
           <div id="data-collection" className="scroll-mt-20">
             <h2 className="text-4xl font-bold mb-6 uppercase">Data We Collect</h2>
             <div className="space-y-6">
-              <div className="p-6 bg-[#F7F9FA] border border-[#B3D9F2] rounded-lg">
+              <div className="p-6 bg-slate-50 border border-slate-200 rounded-lg">
                 <h3 className="text-2xl font-bold mb-4 flex items-center gap-3">
                   <Database className="w-6 h-6" />
                   Account Information
                 </h3>
-                <ul className="space-y-2 text-[#536471] list-disc list-inside">
+                <ul className="space-y-2 text-slate-600 list-disc list-inside">
                   <li>Email address (required for account creation)</li>
                   <li>Name (optional)</li>
                   <li>Password (encrypted and stored securely via Supabase Auth)</li>
@@ -146,12 +146,12 @@ export default function PrivacyPolicyPage() {
                 </ul>
               </div>
 
-              <div className="p-6 bg-[#F7F9FA] border border-[#B3D9F2] rounded-lg">
+              <div className="p-6 bg-slate-50 border border-slate-200 rounded-lg">
                 <h3 className="text-2xl font-bold mb-4 flex items-center gap-3">
                   <MessageSquare className="w-6 h-6" />
                   Reflection Data
                 </h3>
-                <ul className="space-y-2 text-[#536471] list-disc list-inside">
+                <ul className="space-y-2 text-slate-600 list-disc list-inside">
                   <li>Your responses to daily prompts</li>
                   <li>Self-journal entries (private, not shared with AI)</li>
                   <li>Optional check-in information (if you choose to use it)</li>
@@ -162,12 +162,12 @@ export default function PrivacyPolicyPage() {
                 </ul>
               </div>
 
-              <div className="p-6 bg-[#F7F9FA] border border-[#B3D9F2] rounded-lg">
+              <div className="p-6 bg-slate-50 border border-slate-200 rounded-lg">
                 <h3 className="text-2xl font-bold mb-4 flex items-center gap-3">
                   <Users className="w-6 h-6" />
                   Social & Community Data
                 </h3>
-                <ul className="space-y-2 text-[#536471] list-disc list-inside">
+                <ul className="space-y-2 text-slate-600 list-disc list-inside">
                   <li>Profile information you choose to add (display name, username, bio, avatar, cover photo, theme preferences)</li>
                   <li>Reflections you mark as "Public" or "Friends Only," and who can see them based on that setting</li>
                   <li>Likes, comments, and whiteboard messages you post or receive</li>
@@ -177,24 +177,24 @@ export default function PrivacyPolicyPage() {
                 </ul>
               </div>
 
-              <div className="p-6 bg-[#F7F9FA] border border-[#B3D9F2] rounded-lg">
+              <div className="p-6 bg-slate-50 border border-slate-200 rounded-lg">
                 <h3 className="text-2xl font-bold mb-4 flex items-center gap-3">
                   <CreditCard className="w-6 h-6" />
                   Payment Information
                 </h3>
-                <ul className="space-y-2 text-[#536471] list-disc list-inside">
+                <ul className="space-y-2 text-slate-600 list-disc list-inside">
                   <li>Payment details (processed and stored by Stripe, not by us)</li>
                   <li>Billing address</li>
                   <li>Transaction history</li>
                 </ul>
               </div>
 
-              <div className="p-6 bg-[#F7F9FA] border border-[#B3D9F2] rounded-lg">
+              <div className="p-6 bg-slate-50 border border-slate-200 rounded-lg">
                 <h3 className="text-2xl font-bold mb-4 flex items-center gap-3">
                   <Server className="w-6 h-6" />
                   Technical Data
                 </h3>
-                <ul className="space-y-2 text-[#536471] list-disc list-inside">
+                <ul className="space-y-2 text-slate-600 list-disc list-inside">
                   <li>IP address</li>
                   <li>Browser type and version</li>
                   <li>Device information</li>
@@ -208,7 +208,7 @@ export default function PrivacyPolicyPage() {
           {/* How We Use Data */}
           <div id="how-we-use" className="scroll-mt-20">
             <h2 className="text-4xl font-bold mb-6 uppercase">How We Use Your Data</h2>
-            <div className="space-y-4 text-[#536471] leading-relaxed">
+            <div className="space-y-4 text-slate-600 leading-relaxed">
               <p>We use your personal data for the following purposes:</p>
               <ul className="space-y-3 list-disc list-inside ml-4">
                 <li>
@@ -237,7 +237,7 @@ export default function PrivacyPolicyPage() {
                   <strong>Security:</strong> To detect and prevent fraud, abuse, and security incidents
                 </li>
               </ul>
-              <p className="mt-6 p-4 bg-[#E8F5FE] border border-[#B3D9F2] rounded-lg">
+              <p className="mt-6 p-4 bg-slate-100 border border-slate-200 rounded-lg">
                 <strong>Legal Basis (GDPR):</strong> We process your data based on (1) your consent, (2) contractual
                 necessity, (3) legitimate interests, and (4) legal obligations.
               </p>
@@ -250,7 +250,7 @@ export default function PrivacyPolicyPage() {
               <Users className="w-8 h-8" />
               Social Features & Public Content
             </h2>
-            <div className="space-y-4 text-[#536471] leading-relaxed">
+            <div className="space-y-4 text-slate-600 leading-relaxed">
               <p>
                 Prompt & Pause includes optional social features: a public community feed, following other users,
                 friends-only sharing, comments, likes, and a profile whiteboard. These features are entirely opt-in --
@@ -291,7 +291,7 @@ export default function PrivacyPolicyPage() {
               <Flag className="w-8 h-8" />
               Content Moderation & Reporting
             </h2>
-            <div className="space-y-4 text-[#536471] leading-relaxed">
+            <div className="space-y-4 text-slate-600 leading-relaxed">
               <p>
                 Users can report reflections, comments, or other users for reasons including spam, harassment,
                 hate speech, inappropriate content, or content indicating risk of self-harm. When you submit a
@@ -303,11 +303,11 @@ export default function PrivacyPolicyPage() {
                 or take no action if a report does not violate our guidelines. We do not disclose the identity of
                 the reporter to the reported user.
               </p>
-              <p className="p-4 bg-[#E8F5FE] border border-[#B3D9F2] rounded-lg">
+              <p className="p-4 bg-slate-100 border border-slate-200 rounded-lg">
                 <strong>Self-harm and safety reports:</strong> If a report indicates a user may be at risk of
                 self-harm, we prioritize that report for review. Prompt & Pause is not a crisis service; if you or
                 someone else is in immediate danger, contact local emergency services. Our in-app{" "}
-                <Link href="/crisis-resources" className="text-[#1D9BF0] underline hover:text-[#0F1419]">
+                <Link href="/crisis-resources" className="text-indigo-600 underline hover:text-slate-900">
                   Crisis Resources
                 </Link>{" "}
                 page lists further support options.
@@ -318,49 +318,49 @@ export default function PrivacyPolicyPage() {
           {/* Third-Party Services */}
           <div id="third-party" className="scroll-mt-20">
             <h2 className="text-4xl font-bold mb-6 uppercase">Third-Party Services</h2>
-            <div className="space-y-4 text-[#536471] leading-relaxed">
+            <div className="space-y-4 text-slate-600 leading-relaxed">
               <p>We use the following third-party services to operate Prompt & Pause:</p>
 
               <div className="grid md:grid-cols-2 gap-4 mt-6">
-                <div className="p-4 bg-white border border-[#B3D9F2] rounded-lg">
+                <div className="p-4 bg-white border border-slate-200 rounded-lg">
                   <h4 className="font-bold mb-2">Supabase</h4>
-                  <p className="text-sm text-[#8B98A5]">
+                  <p className="text-sm text-slate-500">
                     Database hosting and authentication. Data stored in EU/UK regions.
                   </p>
                 </div>
-                <div className="p-4 bg-white border border-[#B3D9F2] rounded-lg">
+                <div className="p-4 bg-white border border-slate-200 rounded-lg">
                   <h4 className="font-bold mb-2">Groq API</h4>
-                  <p className="text-sm text-[#8B98A5]">
+                  <p className="text-sm text-slate-500">
                     Primary AI processing for prompt generation. Data not used for training.
                   </p>
                 </div>
-                <div className="p-4 bg-white border border-[#B3D9F2] rounded-lg">
+                <div className="p-4 bg-white border border-slate-200 rounded-lg">
                   <h4 className="font-bold mb-2">OpenAI API</h4>
-                  <p className="text-sm text-[#8B98A5]">
+                  <p className="text-sm text-slate-500">
                     Secondary AI processing. Data not used for training (zero retention policy).
                   </p>
                 </div>
-                <div className="p-4 bg-white border border-[#B3D9F2] rounded-lg">
+                <div className="p-4 bg-white border border-slate-200 rounded-lg">
                   <h4 className="font-bold mb-2">Resend</h4>
-                  <p className="text-sm text-[#8B98A5]">Email delivery service for prompts and notifications.</p>
+                  <p className="text-sm text-slate-500">Email delivery service for prompts and notifications.</p>
                 </div>
-                <div className="p-4 bg-white border border-[#B3D9F2] rounded-lg">
+                <div className="p-4 bg-white border border-slate-200 rounded-lg">
                   <h4 className="font-bold mb-2">Stripe</h4>
-                  <p className="text-sm text-[#8B98A5]">Payment processing. We do not store your payment details.</p>
+                  <p className="text-sm text-slate-500">Payment processing. We do not store your payment details.</p>
                 </div>
-                <div className="p-4 bg-white border border-[#B3D9F2] rounded-lg">
+                <div className="p-4 bg-white border border-slate-200 rounded-lg">
                   <h4 className="font-bold mb-2">Vercel</h4>
-                  <p className="text-sm text-[#8B98A5]">Hosting and infrastructure. Data stored in EU/US regions.</p>
+                  <p className="text-sm text-slate-500">Hosting and infrastructure. Data stored in EU/US regions.</p>
                 </div>
-                <div className="p-4 bg-white border border-[#B3D9F2] rounded-lg">
+                <div className="p-4 bg-white border border-slate-200 rounded-lg">
                   <h4 className="font-bold mb-2">Slack</h4>
-                  <p className="text-sm text-[#8B98A5]">
+                  <p className="text-sm text-slate-500">
                     Optional integration for prompt delivery to your workspace.
                   </p>
                 </div>
               </div>
 
-              <p className="mt-6 p-4 bg-[#E8F5FE] border border-[#B3D9F2] rounded-lg">
+              <p className="mt-6 p-4 bg-slate-100 border border-slate-200 rounded-lg">
                 All third-party services are carefully selected and comply with GDPR requirements. We have Data
                 Processing Agreements (DPAs) in place where required.
               </p>
@@ -373,7 +373,7 @@ export default function PrivacyPolicyPage() {
               <Lock className="w-8 h-8" />
               Data Security
             </h2>
-            <div className="space-y-4 text-[#536471] leading-relaxed">
+            <div className="space-y-4 text-slate-600 leading-relaxed">
               <p>We implement industry-standard security measures to protect your data:</p>
               <ul className="space-y-3 list-disc list-inside ml-4">
                 <li>
@@ -405,41 +405,41 @@ export default function PrivacyPolicyPage() {
           {/* Your Rights (GDPR) */}
           <div id="your-rights" className="scroll-mt-20">
             <h2 className="text-4xl font-bold mb-6 uppercase">Your Rights (GDPR)</h2>
-            <div className="space-y-4 text-[#536471] leading-relaxed">
+            <div className="space-y-4 text-slate-600 leading-relaxed">
               <p>Under GDPR, you have the following rights:</p>
 
               <div className="grid gap-4 mt-6">
-                <div className="p-4 bg-white border border-[#B3D9F2] rounded-lg">
+                <div className="p-4 bg-white border border-slate-200 rounded-lg">
                   <h4 className="font-bold mb-2">Right to Access</h4>
-                  <p className="text-sm text-[#8B98A5]">Request a copy of all personal data we hold about you.</p>
+                  <p className="text-sm text-slate-500">Request a copy of all personal data we hold about you.</p>
                 </div>
-                <div className="p-4 bg-white border border-[#B3D9F2] rounded-lg">
+                <div className="p-4 bg-white border border-slate-200 rounded-lg">
                   <h4 className="font-bold mb-2">Right to Rectification</h4>
-                  <p className="text-sm text-[#8B98A5]">Request correction of inaccurate or incomplete data.</p>
+                  <p className="text-sm text-slate-500">Request correction of inaccurate or incomplete data.</p>
                 </div>
-                <div className="p-4 bg-white border border-[#B3D9F2] rounded-lg">
+                <div className="p-4 bg-white border border-slate-200 rounded-lg">
                   <h4 className="font-bold mb-2">Right to Erasure ("Right to be Forgotten")</h4>
-                  <p className="text-sm text-[#8B98A5]">
+                  <p className="text-sm text-slate-500">
                     Request deletion of your personal data (subject to legal obligations).
                   </p>
                 </div>
-                <div className="p-4 bg-white border border-[#B3D9F2] rounded-lg">
+                <div className="p-4 bg-white border border-slate-200 rounded-lg">
                   <h4 className="font-bold mb-2">Right to Restrict Processing</h4>
-                  <p className="text-sm text-[#8B98A5]">Request limitation of how we process your data.</p>
+                  <p className="text-sm text-slate-500">Request limitation of how we process your data.</p>
                 </div>
-                <div className="p-4 bg-white border border-[#B3D9F2] rounded-lg">
+                <div className="p-4 bg-white border border-slate-200 rounded-lg">
                   <h4 className="font-bold mb-2">Right to Data Portability</h4>
-                  <p className="text-sm text-[#8B98A5]">Receive your data in a machine-readable format.</p>
+                  <p className="text-sm text-slate-500">Receive your data in a machine-readable format.</p>
                 </div>
-                <div className="p-4 bg-white border border-[#B3D9F2] rounded-lg">
+                <div className="p-4 bg-white border border-slate-200 rounded-lg">
                   <h4 className="font-bold mb-2">Right to Object</h4>
-                  <p className="text-sm text-[#8B98A5]">
+                  <p className="text-sm text-slate-500">
                     Object to processing based on legitimate interests or direct marketing.
                   </p>
                 </div>
-                <div className="p-4 bg-white border border-[#B3D9F2] rounded-lg">
+                <div className="p-4 bg-white border border-slate-200 rounded-lg">
                   <h4 className="font-bold mb-2">Right to Withdraw Consent</h4>
-                  <p className="text-sm text-[#8B98A5]">
+                  <p className="text-sm text-slate-500">
                     Withdraw consent at any time (where processing is based on consent).
                   </p>
                 </div>
@@ -447,13 +447,13 @@ export default function PrivacyPolicyPage() {
 
               <p className="mt-6">
                 To exercise any of these rights, contact us at{" "}
-                <a href="mailto:privacy@promptandpause.com" className="text-[#1D9BF0] underline hover:text-[#0F1419]">
+                <a href="mailto:privacy@promptandpause.com" className="text-indigo-600 underline hover:text-slate-900">
                   privacy@promptandpause.com
                 </a>
                 . We will respond within 30 days.
               </p>
 
-              <p className="p-4 bg-[#EFF3F4] border border-[#B3D9F2] rounded-lg">
+              <p className="p-4 bg-slate-100 border border-slate-200 rounded-lg">
                 <strong>Right to Complain:</strong> You have the right to lodge a complaint with the UK Information
                 Commissioner's Office (ICO) or your local data protection authority.
               </p>
@@ -463,10 +463,10 @@ export default function PrivacyPolicyPage() {
           {/* Cookies */}
           <div id="cookies" className="scroll-mt-20">
             <h2 className="text-4xl font-bold mb-6 uppercase">Cookies & Tracking</h2>
-            <div className="space-y-4 text-[#536471] leading-relaxed">
+            <div className="space-y-4 text-slate-600 leading-relaxed">
               <p>
                 We use cookies and similar tracking technologies to improve your experience. See our{" "}
-                <Link href="/cookie-policy" className="text-[#1D9BF0] underline hover:text-[#0F1419]">
+                <Link href="/cookie-policy" className="text-indigo-600 underline hover:text-slate-900">
                   Cookie Policy
                 </Link>{" "}
                 for detailed information.
@@ -481,7 +481,7 @@ export default function PrivacyPolicyPage() {
           {/* Data Retention */}
           <div id="data-retention" className="scroll-mt-20">
             <h2 className="text-4xl font-bold mb-6 uppercase">Data Retention</h2>
-            <div className="space-y-4 text-[#536471] leading-relaxed">
+            <div className="space-y-4 text-slate-600 leading-relaxed">
               <ul className="space-y-3 list-disc list-inside ml-4">
                 <li>
                   <strong>Account Data:</strong> Retained while your account is active, plus 30 days after deletion
@@ -515,7 +515,7 @@ export default function PrivacyPolicyPage() {
           {/* International Transfers */}
           <div id="international" className="scroll-mt-20">
             <h2 className="text-4xl font-bold mb-6 uppercase">International Transfers</h2>
-            <div className="space-y-4 text-[#536471] leading-relaxed">
+            <div className="space-y-4 text-slate-600 leading-relaxed">
               <p>
                 Your data may be transferred to and processed in countries outside the UK/EU, including the United
                 States (Vercel, OpenAI, Groq).
@@ -532,11 +532,11 @@ export default function PrivacyPolicyPage() {
           {/* Children's Privacy */}
           <div id="children" className="scroll-mt-20">
             <h2 className="text-4xl font-bold mb-6 uppercase">Children's Privacy</h2>
-            <div className="space-y-4 text-[#536471] leading-relaxed">
+            <div className="space-y-4 text-slate-600 leading-relaxed">
               <p>
                 Prompt & Pause is not intended for children under 16 (UK/EU) or 13 (US). We do not knowingly collect
                 data from children. If you believe we have collected data from a child, contact us immediately at{" "}
-                <a href="mailto:privacy@promptandpause.com" className="text-[#1D9BF0] underline hover:text-[#0F1419]">
+                <a href="mailto:privacy@promptandpause.com" className="text-indigo-600 underline hover:text-slate-900">
                   privacy@promptandpause.com
                 </a>
                 .
@@ -547,36 +547,36 @@ export default function PrivacyPolicyPage() {
           {/* Changes */}
           <div id="changes" className="scroll-mt-20">
             <h2 className="text-4xl font-bold mb-6 uppercase">Changes to This Policy</h2>
-            <div className="space-y-4 text-[#536471] leading-relaxed">
+            <div className="space-y-4 text-slate-600 leading-relaxed">
               <p>
                 We may update this Privacy Policy from time to time. We will notify you of material changes via email or
                 prominent notice on our website. Continued use after changes constitutes acceptance.
               </p>
-              <p className="text-sm text-[#8B98A5]">Last updated: January 2026</p>
+              <p className="text-sm text-slate-500">Last updated: January 2026</p>
             </div>
           </div>
 
           {/* Contact */}
           <div id="contact" className="scroll-mt-20">
             <h2 className="text-4xl font-bold mb-6 uppercase">Contact Us</h2>
-            <div className="space-y-4 text-[#536471] leading-relaxed">
+            <div className="space-y-4 text-slate-600 leading-relaxed">
               <p>For privacy-related questions or to exercise your rights:</p>
-              <div className="p-6 bg-[#F7F9FA] border border-[#B3D9F2] rounded-lg mt-6">
+              <div className="p-6 bg-slate-50 border border-slate-200 rounded-lg mt-6">
                 <p>
                   <strong>Email:</strong>{" "}
-                  <a href="mailto:privacy@promptandpause.com" className="text-[#1D9BF0] underline hover:text-[#0F1419]">
+                  <a href="mailto:privacy@promptandpause.com" className="text-indigo-600 underline hover:text-slate-900">
                     privacy@promptandpause.com
                   </a>
                 </p>
                 <p className="mt-2">
                   <strong>Data Protection Officer:</strong>{" "}
-                  <a href="mailto:dpo@promptandpause.com" className="text-[#1D9BF0] underline hover:text-[#0F1419]">
+                  <a href="mailto:dpo@promptandpause.com" className="text-indigo-600 underline hover:text-slate-900">
                     dpo@promptandpause.com
                   </a>
                 </p>
                 <p className="mt-2">
                   <strong>General Inquiries:</strong>{" "}
-                  <a href="mailto:support@promptandpause.com" className="text-[#1D9BF0] underline hover:text-[#0F1419]">
+                  <a href="mailto:support@promptandpause.com" className="text-indigo-600 underline hover:text-slate-900">
                     support@promptandpause.com
                   </a>
                 </p>
@@ -587,13 +587,13 @@ export default function PrivacyPolicyPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-[#B3D9F2]">
+      <section className="py-20 px-4 bg-slate-200">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 uppercase text-[#0F1419]">Questions About Your Privacy?</h2>
-          <p className="text-xl text-[#536471] mb-8">We're here to help. Reach out anytime.</p>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 uppercase text-slate-900">Questions About Your Privacy?</h2>
+          <p className="text-xl text-slate-600 mb-8">We're here to help. Reach out anytime.</p>
           <Link
             href="/contact"
-            className="inline-block px-8 py-4 bg-white text-[#0F1419] font-bold uppercase hover:bg-[#EFF3F4] transition-colors duration-300"
+            className="inline-block px-8 py-4 bg-white text-slate-900 font-bold uppercase hover:bg-slate-100 transition-colors duration-300"
           >
             Contact Us
           </Link>

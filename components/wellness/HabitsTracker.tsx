@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   CheckCircle, 
@@ -93,11 +93,7 @@ export default function HabitsTracker({ userId, compact = false }: HabitsTracker
   const supabase = getSupabaseClient()
   const { toast } = useToast()
 
-  useEffect(() => {
-    loadHabits()
-  }, [userId])
-
-  const loadHabits = async () => {
+  const loadHabits = useCallback(async () => {
     setIsLoading(true)
     try {
       const today = new Date().toISOString().split('T')[0]
@@ -125,7 +121,11 @@ export default function HabitsTracker({ userId, compact = false }: HabitsTracker
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [supabase, userId])
+
+  useEffect(() => {
+    loadHabits()
+  }, [loadHabits])
 
   const handleToggleHabit = async (habitId: string) => {
     const currentState = todayLogs[habitId] || false

@@ -38,7 +38,7 @@ export function MoodModule() {
 }
 
 function getMoodColor(mood?: MoodType) {
-  if (!mood) return "bg-[#EFF3F4]"
+  if (!mood) return "bg-slate-100 dark:bg-white/[0.08]"
   const happy: MoodType[] = ["😊", "😄", "🙏"]
   const neutral: MoodType[] = ["😐", "🤔"]
   const sad: MoodType[] = ["😔"]
@@ -107,7 +107,7 @@ function MoodModuleInner() {
       icon={<Heart size={18} weight="bold" />}
       title="Your Mood"
       subtitle="This week at a glance"
-      accent="violet"
+      accent="indigo"
       action={
         currentStreak > 0 ? (
           <span className="inline-flex items-center gap-1 text-[10px] font-medium px-2 py-1 rounded-full bg-amber-50 text-amber-700 dark:bg-amber-400/10 dark:text-amber-300 border border-amber-200/60 dark:border-amber-400/20">
@@ -126,13 +126,13 @@ function MoodModuleInner() {
               <div
                 className={`w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center text-base transition-all ${
                   getMoodColor(day.mood)
-                } ${isActive ? "ring-2 ring-[#1D9BF0] ring-offset-2 dark:ring-offset-[#0A0A0A]" : ""} ${
+                } ${isActive ? "ring-2 ring-indigo-400 ring-offset-2 dark:ring-offset-[#0A0E18]" : ""} ${
                   !day.mood ? (isDark ? "border border-white/10" : "") : ""
                 }`}
               >
-                {day.mood ? <span>{day.mood}</span> : <span className={`text-xs ${isDark ? "text-white/20" : "text-[#C4C0B8]"}`}>—</span>}
+                {day.mood ? <span>{day.mood}</span> : <span className={`text-xs ${isDark ? "text-white/20" : "text-slate-300"}`}>—</span>}
               </div>
-              <span className={`text-[10px] font-medium ${isToday ? "text-[#1D9BF0]" : isDark ? "text-white/40" : "text-[#8B98A5]"}`}>
+              <span className={`text-[10px] font-medium ${isToday ? "text-indigo-500" : isDark ? "text-white/40" : "text-slate-400"}`}>
                 {isToday ? "Now" : day.dayName}
               </span>
             </button>
@@ -148,13 +148,13 @@ function MoodModuleInner() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.15 }}
-            className={`rounded-xl p-4 ${isDark ? "bg-white/[0.03] border border-white/[0.04]" : "bg-[#F7F9FA] border border-[#EFF3F4]"}`}
+            className={`rounded-2xl p-4 ${isDark ? "bg-white/[0.03] border border-white/[0.04]" : "bg-slate-50/80 border border-slate-100"}`}
           >
             <div className="flex items-center justify-between mb-2">
-              <p className={`text-xs font-medium ${isDark ? "text-white/40" : "text-[#8B98A5]"}`}>
+              <p className={`text-xs font-medium ${isDark ? "text-white/40" : "text-slate-400"}`}>
                 {activeDay === todayIndex ? "Today" : activeData.dayName}
               </p>
-              <p className={`text-xs ${isDark ? "text-white/40" : "text-[#8B98A5]"}`}>
+              <p className={`text-xs ${isDark ? "text-white/40" : "text-slate-400"}`}>
                 {new Date(activeData.date).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
               </p>
             </div>
@@ -163,19 +163,19 @@ function MoodModuleInner() {
                 {activeData.mood && (
                   <div className="flex items-center gap-2">
                     <span className="text-2xl">{activeData.mood}</span>
-                    <span className={`text-sm ${isDark ? "text-white/70" : "text-[#536471]"}`}>
+                    <span className={`text-sm ${isDark ? "text-white/70" : "text-slate-500"}`}>
                       {moodLabels[activeData.mood] || "Mood recorded"}
                     </span>
                   </div>
                 )}
                 {activeData.reflectionSnippet && (
-                  <p className={`text-xs leading-relaxed ${isDark ? "text-white/50" : "text-[#8B98A5]"}`}>
+                  <p className={`text-xs leading-relaxed ${isDark ? "text-white/50" : "text-slate-400"}`}>
                     {activeData.reflectionSnippet}
                   </p>
                 )}
               </div>
             ) : (
-              <p className={`text-xs ${isDark ? "text-white/30" : "text-[#8B98A5]"}`}>
+              <p className={`text-xs ${isDark ? "text-white/30" : "text-slate-400"}`}>
                 {activeDay === todayIndex ? "Write a reflection for today" : "No reflection for this day"}
               </p>
             )}
@@ -184,16 +184,16 @@ function MoodModuleInner() {
       </AnimatePresence>
 
       {sorted.length > 0 && (
-        <div className={`mt-3 rounded-xl p-3 ${isDark ? "bg-white/[0.03] border border-white/[0.04]" : "bg-[#F7F9FA] border border-[#EFF3F4]"}`}>
-          <p className={`text-[10px] mb-2 ${isDark ? "text-white/40" : "text-[#8B98A5]"}`}>Top feelings</p>
+        <div className={`mt-3 rounded-2xl p-3 ${isDark ? "bg-white/[0.03] border border-white/[0.04]" : "bg-slate-50/80 border border-slate-100"}`}>
+          <p className={`text-[10px] mb-2 ${isDark ? "text-white/40" : "text-slate-400"}`}>Top feelings</p>
           <div className="flex gap-2 flex-wrap">
             {sorted.map(([emoji, count]) => (
               <span key={emoji} className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-medium ${
-                isDark ? "bg-white/[0.06] text-white/70" : "bg-white text-[#536471] border border-[#EFF3F4]"
+                isDark ? "bg-white/[0.06] text-white/70" : "bg-white text-slate-500 border border-slate-100"
               }`}>
                 <span className="text-sm">{emoji}</span>
                 {moodLabels[emoji] || emoji}
-                {count > 1 && <span className={isDark ? "text-white/30" : "text-[#8B98A5]"}>×{count}</span>}
+                {count > 1 && <span className={isDark ? "text-white/30" : "text-slate-400"}>×{count}</span>}
               </span>
             ))}
           </div>

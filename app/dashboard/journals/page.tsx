@@ -7,11 +7,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
-import { Card } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
 import { useTheme } from "@/contexts/ThemeContext"
-import { motion, AnimatePresence } from "framer-motion"
-import { MagnifyingGlass, Trash, PencilSimple, CaretLeft, CaretRight, X, Eye, Funnel, Plus, CaretDown, CaretUp } from "phosphor-react"
+import { motion } from "framer-motion"
+import { MagnifyingGlass, Trash, PencilSimple, CaretLeft, CaretRight, X, Plus } from "phosphor-react"
 import { DashboardSidebar } from "../components/DashboardSidebar"
 
 const moods = ["😔", "😐", "😊", "😄", "🤔", "😌", "🙏", "💪"]
@@ -34,7 +33,7 @@ const tagColors: Record<string, { bg: string; text: string; border: string; dark
 function getTagColorClasses(tag: string, isDark: boolean): string {
   const colors = tagColors[tag]
   if (!colors) {
-    return isDark ? "bg-green-500/20 text-green-300 border border-green-400/40" : "bg-green-100 text-green-800 border border-green-300"
+    return isDark ? "bg-indigo-500/20 text-indigo-300 border border-indigo-400/40" : "bg-indigo-100 text-indigo-800 border border-indigo-300"
   }
   return isDark 
     ? `${colors.darkBg} ${colors.darkText} border ${colors.darkBorder}`
@@ -63,20 +62,17 @@ export default function JournalsPage() {
   const [filterMood, setFilterMood] = useState<string | null>(null)
   const [filterDate, setFilterDate] = useState<string>("") // YYYY-MM-DD
   const [searchText, setSearchText] = useState("")
-  const [heatmapDays, setHeatmapDays] = useState<{ date: string; count: number }[]>([])
-  
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1)
-  const [showAllJournals, setShowAllJournals] = useState(false)
   const journalsPerPage = 5
 
   const [editingId, setEditingId] = useState<string | null>(null)
   const [text, setText] = useState("")
   const [mood, setMood] = useState<string>("😊")
   const [tags, setTags] = useState<string[]>([])
-  
+
   // Mobile UX state
-  const [filtersExpanded, setFiltersExpanded] = useState(false)
   const [showEditor, setShowEditor] = useState(false)
 
   useEffect(() => {
@@ -96,25 +92,7 @@ export default function JournalsPage() {
         }
         const data = json?.data
         if (active) {
-          const list = (data || []) as JournalEntry[]
-          setJournals(list)
-
-          // Build last 12 weeks heatmap (84 days)
-          const today = new Date()
-          const start = new Date(today.getTime() - 83 * 24 * 60 * 60 * 1000)
-          const counts: Record<string, number> = {}
-          list.forEach(j => {
-            const d = new Date(j.created_at)
-            const key = d.toISOString().slice(0, 10)
-            counts[key] = (counts[key] || 0) + 1
-          })
-          const days: { date: string; count: number }[] = []
-          for (let i = 0; i < 84; i++) {
-            const d = new Date(start.getTime() + i * 24 * 60 * 60 * 1000)
-            const key = d.toISOString().slice(0, 10)
-            days.push({ date: key, count: counts[key] || 0 })
-          }
-          setHeatmapDays(days)
+          setJournals((data || []) as JournalEntry[])
         }
       } catch (err: any) {
         toast({ title: "Error", description: err.message || "Failed to load journals", variant: "destructive" })
@@ -134,13 +112,13 @@ export default function JournalsPage() {
     if (searchText) f = f.filter(j => j.journal_text.toLowerCase().includes(searchText.toLowerCase()))
     return f.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
   }, [journals, filterTag, filterMood, filterDate, searchText])
-  
+
   // Pagination logic
-  const totalPages = Math.ceil(filtered.length / journalsPerPage)
+  const totalPages = Math.max(1, Math.ceil(filtered.length / journalsPerPage))
   const startIndex = (currentPage - 1) * journalsPerPage
   const endIndex = startIndex + journalsPerPage
-  const paginatedJournals = showAllJournals ? filtered : filtered.slice(startIndex, endIndex)
-  
+  const paginatedJournals = filtered.slice(startIndex, endIndex)
+
   // Reset page when filters change
   useEffect(() => {
     setCurrentPage(1)
@@ -148,6 +126,20 @@ export default function JournalsPage() {
 
   function toggleTag(tag: string) {
     setTags((prev) => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag])
+  }
+
+  function clearFilters() {
+    setFilterTag(null)
+    setFilterMood(null)
+    setFilterDate("")
+    setSearchText("")
+  }
+
+  function resetEditor() {
+    setText("")
+    setTags([])
+    setMood("😊")
+    setEditingId(null)
   }
 
   async function handleSave() {
@@ -183,10 +175,7 @@ export default function JournalsPage() {
         if (created) setJournals((prev) => [created, ...prev])
         toast({ title: "Journal saved", description: "Your entry has been saved privately." })
       }
-      setText("")
-      setTags([])
-      setMood("😊")
-      setEditingId(null)
+      resetEditor()
     } catch (err: any) {
       toast({ title: "Error", description: err.message || "Failed to save journal", variant: "destructive" })
     } finally {
@@ -215,104 +204,80 @@ export default function JournalsPage() {
     window.scrollTo({ top: 0, behavior: "smooth" })
   }
 
-  const heatmapLegend = [
-    { label: "0", className: theme === 'dark' ? 'bg-white/10 border border-white/10' : 'bg-gray-100 border border-gray-200' },
-    { label: "1", className: 'bg-emerald-200 border border-emerald-300' },
-    { label: "2", className: 'bg-emerald-300 border border-emerald-400' },
-    { label: "3", className: 'bg-emerald-400 border border-emerald-500' },
-    { label: "4+", className: 'bg-emerald-500 border border-emerald-600' },
-  ]
+  const cardClass = theme === 'dark'
+    ? 'bg-white/[0.04] border border-white/[0.06]'
+    : 'bg-white/70 backdrop-blur-[12px] border border-slate-100 shadow-soft-card'
 
-  function intensityClass(count: number) {
-    if (count === 0) return theme === 'dark' ? 'bg-white/5 border border-white/10' : 'bg-gray-100 border border-gray-200'
-    if (count === 1) return 'bg-emerald-200 border border-emerald-300'
-    if (count === 2) return 'bg-emerald-300 border border-emerald-400'
-    if (count === 3) return 'bg-emerald-400 border border-emerald-500'
-    return 'bg-emerald-500 border border-emerald-600 text-white'
-  }
+  const labelClass = theme === 'dark' ? 'text-white/50' : 'text-slate-500'
+
+  const inputBase = `border-2 border-transparent focus:border-indigo-500/60 ${
+    theme === 'dark'
+      ? 'bg-white/5 text-white placeholder:text-white/40 focus:bg-white/10'
+      : 'bg-slate-50 text-slate-900 placeholder:text-slate-400 focus:bg-white'
+  }`
+
+  const pillBase = `px-4 py-2 rounded-xl border text-xs font-bold transition-all`
 
   return (
-    <div 
+    <div
       data-dashboard
-      className={`min-h-screen ${theme === 'dark' ? 'bg-[#0A0A0A]' : 'bg-[#FFFFFF]'}`}
+      className={`min-h-screen ${theme === 'dark' ? 'bg-[#0A0E18]' : 'bg-[#F9FBFB]'}`}
     >
       <div className="flex h-screen overflow-hidden">
         <DashboardSidebar />
 
         <main className="flex-1 pb-32 md:pb-10 overflow-y-auto scrollbar-thin">
-          <div className="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-10 pt-16 md:pt-10">
-          <div className="space-y-5 md:space-y-6">
-          {/* Header Card */}
-          <Card className={`rounded-2xl p-4 md:p-6 border shadow-none ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#EFF3F4]'}`}>
-            <div className="space-y-3 md:space-y-4">
-              {/* Title Row with Filter Toggle (Mobile) */}
-              <div className="flex items-center justify-between gap-3">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ type: "spring", stiffness: 100, damping: 20 }}
-                  className="flex-1 min-w-0"
-                >
-                  <h1 className={`text-xl md:text-3xl font-semibold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-[#0F1419]'}`}>My Journals</h1>
-                  <p className={`text-xs md:text-sm ${theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'} hidden md:block`}>Private self-journals (no AI, no pressure). Edit or add freely.</p>
-                </motion.div>
-                {/* Mobile Filter Toggle Button */}
-                <button
-                  onClick={() => setFiltersExpanded(!filtersExpanded)}
-                  className={`md:hidden flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-colors ${
-                    filtersExpanded || filterTag || filterMood || filterDate || searchText
-                      ? 'bg-green-500/20 text-green-600 dark:text-green-400 border border-green-400'
-                      : theme === 'dark' 
-                        ? 'bg-white/10 text-white/80 border border-white/20' 
-                        : 'bg-gray-100 text-gray-700 border border-gray-200'
-                  }`}
-                >
-                  <Funnel size={16} weight="bold" className="h-4 w-4" />
-                  {(filterTag || filterMood || filterDate || searchText) && (
-                    <span className="w-2 h-2 rounded-full bg-green-500" />
-                  )}
-                  {filtersExpanded ? <CaretUp size={16} weight="bold" className="h-4 w-4" /> : <CaretDown size={16} weight="bold" className="h-4 w-4" />}
-                </button>
+          <div className="max-w-4xl mx-auto px-5 py-12 lg:py-16">
+
+            {/* Header */}
+            <header className="mb-10 lg:mb-12">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h1 className={`text-3xl lg:text-4xl font-extrabold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>My Journals</h1>
+                  <p className={`text-slate-500 font-medium mt-2 ${theme === 'dark' ? 'text-white/40' : ''}`}>Private self-journals (no AI, no pressure). Edit or add freely.</p>
+                </div>
               </div>
-              
-              {/* Search Bar - Always visible */}
-              <div className="relative">
-                <MagnifyingGlass size={16} weight="bold" className={`h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />
-                <Input
-                  className={`pl-10 h-10 w-full ${theme === 'dark' ? 'bg-white/10 border-white/20 text-white placeholder:text-white/50' : 'bg-white border-gray-300 text-gray-900'}`}
-                  placeholder="Search journals..."
-                  value={searchText}
-                  onChange={(e) => setSearchText(e.target.value)}
-                />
-              </div>
-              
-              {/* Collapsible Filters - Hidden on mobile by default, always visible on desktop */}
-              <div className={`space-y-3 ${filtersExpanded ? 'block' : 'hidden'} md:block`}>
-                {/* Date Filter */}
-                <div className="max-w-[200px]">
-                  <label className={`text-[11px] font-semibold mb-1 block ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
-                    Filter by date
-                  </label>
+
+              {/* Search & Filters */}
+              <div className={`space-y-6 rounded-[32px] p-6 lg:p-8 ${cardClass}`}>
+                <div className="relative">
+                  <MagnifyingGlass size={18} weight="bold" className={`absolute left-5 top-1/2 -translate-y-1/2 ${theme === 'dark' ? 'text-white/40' : 'text-slate-400'}`} />
                   <Input
-                    type="date"
-                    value={filterDate}
-                    onChange={(e) => setFilterDate(e.target.value)}
-                    className={`h-9 ${theme === 'dark' ? 'bg-white/10 border-white/20 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                    placeholder="Search journals..."
+                    className={`pl-14 h-12 rounded-2xl ${inputBase}`}
                   />
                 </div>
-                
-                {/* Mood Filter Row - Horizontally scrollable on mobile */}
-                <div>
-                  <label className={`text-[11px] font-semibold mb-1.5 block ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
-                    Filter by mood
-                  </label>
-                  <div className="overflow-x-auto scrollbar-hide -mx-3 px-3 md:mx-0 md:px-0">
-                    <div className="flex gap-1.5 md:flex-wrap w-max md:w-auto">
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                  <div>
+                    <label className={`text-[11px] font-extrabold uppercase tracking-[0.18em] mb-3 block ${labelClass}`}>
+                      Filter by date
+                    </label>
+                    <Input
+                      type="date"
+                      value={filterDate}
+                      onChange={(e) => setFilterDate(e.target.value)}
+                      className={`h-11 rounded-xl px-4 ${inputBase}`}
+                    />
+                  </div>
+                  <div>
+                    <label className={`text-[11px] font-extrabold uppercase tracking-[0.18em] mb-3 block ${labelClass}`}>
+                      Filter by mood
+                    </label>
+                    <div className="flex flex-wrap gap-2">
                       {moods.map(m => (
                         <button
                           key={m}
                           onClick={() => setFilterMood(filterMood === m ? null : m)}
-                          className={`w-9 h-9 md:w-8 md:h-8 rounded-full text-lg md:text-base flex items-center justify-center border transition-all flex-shrink-0 ${filterMood === m ? 'bg-green-500/20 border-green-400 scale-110' : theme === 'dark' ? 'border-white/20 bg-white/10 hover:bg-white/15' : 'border-gray-200 bg-white/60 hover:bg-gray-100'}`}
+                          className={`w-10 h-10 rounded-xl text-xl flex items-center justify-center transition-all ${
+                            filterMood === m
+                              ? 'bg-indigo-50 border border-indigo-500 scale-110 dark:bg-indigo-500/20 dark:border-indigo-400/50'
+                              : theme === 'dark'
+                                ? 'bg-white/5 border border-transparent hover:bg-white/10'
+                                : 'bg-slate-50 border border-transparent hover:bg-indigo-50'
+                          }`}
                         >
                           {m}
                         </button>
@@ -320,205 +285,242 @@ export default function JournalsPage() {
                     </div>
                   </div>
                 </div>
-                
-                {/* Tags Row - Horizontally scrollable on mobile */}
+
                 <div>
-                  <label className={`text-[11px] font-semibold mb-1.5 block ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
+                  <label className={`text-[11px] font-extrabold uppercase tracking-[0.18em] mb-3 block ${labelClass}`}>
                     Filter by tag
                   </label>
-                  <div className="overflow-x-auto scrollbar-hide -mx-3 px-3 md:mx-0 md:px-0">
-                    <div className="flex gap-1.5 md:flex-wrap w-max md:w-auto">
-                      {availableTags.map(tag => (
-                        <Badge
-                          key={tag}
-                          onClick={() => setFilterTag(filterTag === tag ? null : tag)}
-                          className={`cursor-pointer transition-colors whitespace-nowrap flex-shrink-0 ${filterTag === tag ? 'bg-green-600 text-white border-green-600' : getTagColorClasses(tag, theme === 'dark')}`}
-                        >
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Clear Filters */}
-                {(filterTag || filterMood || filterDate || searchText) && (
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={() => { setFilterTag(null); setFilterMood(null); setFilterDate(""); setSearchText(""); }} 
-                    className={`text-xs ${theme === 'dark' ? 'text-white/70 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
-                  >
-                    <X size={12} weight="bold" className="mr-1" />
-                    Clear all filters
-                  </Button>
-                )}
-              </div>
-            </div>
-          </Card>
-
-          {/* Editor Card - Hidden on mobile by default, shown via FAB or when editing */}
-          <Card className={`rounded-2xl p-4 md:p-6 border shadow-none ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#EFF3F4]'} ${(showEditor || editingId) ? 'block' : 'hidden md:block'}`}>
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <h2 className={`text-lg md:text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-[#0F1419]'}`}>{editingId ? "Edit Journal" : "New Journal"}</h2>
-                <p className={`text-xs md:text-sm ${theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'}`}>No timer. Completely private.</p>
-              </div>
-              <div className="flex items-center gap-2">
-                {editingId && (
-                  <Button variant="ghost" size="sm" onClick={() => { setEditingId(null); setText(""); setTags([]); setMood("😊"); setShowEditor(false); }}>
-                    Cancel edit
-                  </Button>
-                )}
-                {/* Close button on mobile */}
-                <button
-                  onClick={() => { setShowEditor(false); if (!editingId) { setText(""); setTags([]); setMood("😊"); } }}
-                  className={`md:hidden p-1.5 rounded-lg transition-colors ${theme === 'dark' ? 'hover:bg-white/10 text-white/60' : 'hover:bg-gray-100 text-gray-500'}`}
-                >
-                  <X size={12} weight="bold" className="h-5 w-5" />
-                </button>
-              </div>
-            </div>
-            <div className="space-y-3">
-              <Textarea
-                placeholder="Write anything on your mind..."
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                disabled={saving}
-                className="min-h-[120px]"
-              />
-              <div>
-                <p className={`text-xs font-semibold mb-2 ${theme === 'dark' ? 'text-white/80' : 'text-gray-800'}`}>Mood</p>
-                <div className="overflow-x-auto scrollbar-hide -mx-3 px-3 md:mx-0 md:px-0">
-                  <div className="flex gap-1.5 md:flex-wrap w-max md:w-auto">
-                    {moods.map(m => (
-                      <button
-                        key={m}
-                        onClick={() => setMood(m)}
-                        className={`px-3 py-2 rounded-lg text-lg border flex-shrink-0 ${mood === m ? 'bg-green-500/20 border-green-400' : theme === 'dark' ? 'border-white/20 bg-white/10 text-white/80' : 'border-gray-200 bg-white/60 text-gray-800'}`}
-                        disabled={saving}
-                      >
-                        {m}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <div>
-                <p className={`text-xs font-semibold mb-2 ${theme === 'dark' ? 'text-white/80' : 'text-gray-800'}`}>Tags (optional)</p>
-                <div className="overflow-x-auto scrollbar-hide -mx-3 px-3 md:mx-0 md:px-0">
-                  <div className="flex gap-1.5 md:flex-wrap w-max md:w-auto">
+                  <div className="flex flex-wrap gap-2">
                     {availableTags.map(tag => (
                       <button
                         key={tag}
-                        onClick={() => toggleTag(tag)}
-                        className={`px-3 py-1.5 rounded-full text-xs font-semibold border flex-shrink-0 whitespace-nowrap ${tags.includes(tag) ? 'bg-green-500/25 border-green-400' : theme === 'dark' ? 'border-white/20 bg-white/10 text-white/80' : 'border-gray-200 bg-white/60 text-gray-800'}`}
-                        disabled={saving}
+                        onClick={() => setFilterTag(filterTag === tag ? null : tag)}
+                        className={`${pillBase} ${
+                          filterTag === tag
+                            ? 'bg-indigo-500 text-white border-indigo-500'
+                            : getTagColorClasses(tag, theme === 'dark')
+                        }`}
                       >
                         {tag}
                       </button>
                     ))}
                   </div>
                 </div>
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button variant="ghost" onClick={() => { setText(""); setTags([]); setMood("😊"); setEditingId(null); }} disabled={saving}>Clear</Button>
-                <Button 
-                  onClick={() => { handleSave(); setShowEditor(false); }} 
-                  disabled={saving || text.trim().length === 0} 
-                  className="bg-gradient-to-r from-green-500 to-emerald-500 text-white"
-                >
-                  {saving ? "Saving..." : editingId ? "Update Journal" : "Save Journal"}
-                </Button>
-              </div>
-            </div>
-          </Card>
 
-          {/* List Card */}
-          <Card className={`rounded-2xl p-4 md:p-6 border shadow-none ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#EFF3F4]'}`}>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-[#0F1419]'}`}>
-                Your Journals ({filtered.length})
-              </h3>
-              {!showAllJournals && filtered.length > journalsPerPage && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowAllJournals(true)}
-                  className={`text-xs ${theme === 'dark' ? 'text-white/60 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
-                >
-                  <Eye size={12} weight="bold" className="mr-1" />
-                  See All
-                </Button>
-              )}
-              {showAllJournals && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowAllJournals(false)}
-                  className={`text-xs ${theme === 'dark' ? 'text-white/60 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
-                >
-                  <X size={12} weight="bold" className="mr-1" />
-                  Show Less
-                </Button>
-              )}
-            </div>
-            
-            <AnimatePresence>
+                {(filterTag || filterMood || filterDate || searchText) && (
+                  <button
+                    onClick={clearFilters}
+                    className={`flex items-center gap-1.5 text-xs font-bold transition-colors ${theme === 'dark' ? 'text-white/50 hover:text-white' : 'text-slate-500 hover:text-slate-900'}`}
+                  >
+                    <X size={12} weight="bold" />
+                    Clear all filters
+                  </button>
+                )}
+              </div>
+            </header>
+
+            {/* New Journal Entry */}
+            <section className="mb-12">
+              <div className={`relative overflow-hidden rounded-[40px] border-2 p-8 lg:p-10 ${(showEditor || editingId) ? 'block' : 'hidden md:block'} ${
+                theme === 'dark'
+                  ? 'bg-white/[0.04] border-indigo-400/20'
+                  : 'bg-white/70 backdrop-blur-[12px] border-indigo-100 shadow-xl shadow-indigo-500/5'
+              }`}>
+                <div className={`absolute -top-12 -right-12 w-48 h-48 rounded-full blur-3xl pointer-events-none ${theme === 'dark' ? 'bg-indigo-500/10' : 'bg-indigo-100/60'}`} />
+
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-8">
+                    <div>
+                      <h2 className={`text-2xl font-extrabold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{editingId ? "Edit Journal" : "New Journal"}</h2>
+                      <p className={`text-sm font-medium mt-1 ${theme === 'dark' ? 'text-white/40' : 'text-slate-500'}`}>No timer. Completely private.</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {editingId && (
+                        <Button variant="ghost" size="sm" onClick={() => { resetEditor(); setShowEditor(false); }}>
+                          Cancel edit
+                        </Button>
+                      )}
+                      {/* Close button on mobile */}
+                      <button
+                        onClick={() => { setShowEditor(false); if (!editingId) resetEditor(); }}
+                        className={`md:hidden p-1.5 rounded-lg transition-colors ${theme === 'dark' ? 'hover:bg-white/10 text-white/60' : 'hover:bg-slate-100 text-slate-500'}`}
+                      >
+                        <X size={12} weight="bold" className="h-5 w-5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-8">
+                    <Textarea
+                      placeholder="Write anything on your mind..."
+                      value={text}
+                      onChange={(e) => setText(e.target.value)}
+                      disabled={saving}
+                      className={`min-h-[200px] md:min-h-[220px] rounded-[24px] p-6 text-base md:text-lg font-medium border-2 border-transparent focus:border-indigo-500/20 ${
+                        theme === 'dark'
+                          ? 'bg-white/5 text-white placeholder:text-white/40 focus:bg-white/10'
+                          : 'bg-slate-50 text-slate-900 placeholder:text-slate-400 focus:bg-white'
+                      }`}
+                    />
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
+                      <div>
+                        <p className={`text-sm font-extrabold mb-4 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>How are you feeling?</p>
+                        <div className="flex flex-wrap gap-3">
+                          {moods.map(m => (
+                            <button
+                              key={m}
+                              onClick={() => setMood(m)}
+                              disabled={saving}
+                              className={`w-12 h-12 rounded-2xl border text-2xl flex items-center justify-center transition-all ${
+                                mood === m
+                                  ? 'bg-indigo-50 border-indigo-500 scale-110 dark:bg-indigo-500/20 dark:border-indigo-400/50'
+                                  : theme === 'dark'
+                                    ? 'bg-white/5 border-transparent hover:bg-white/10'
+                                    : 'bg-slate-50 border-transparent hover:border-indigo-500/30 hover:bg-indigo-50'
+                              }`}
+                            >
+                              {m}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <p className={`text-sm font-extrabold mb-4 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>Tags (optional)</p>
+                        <div className="flex flex-wrap gap-2">
+                          {availableTags.map(tag => (
+                            <button
+                              key={tag}
+                              onClick={() => toggleTag(tag)}
+                              disabled={saving}
+                              className={`${pillBase} ${
+                                tags.includes(tag)
+                                  ? 'bg-indigo-500 text-white border-indigo-500'
+                                  : getTagColorClasses(tag, theme === 'dark')
+                              }`}
+                            >
+                              {tag}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-end gap-4 pt-4">
+                      <Button variant="ghost" onClick={resetEditor} disabled={saving} className="px-8 py-3 h-auto text-sm font-bold text-slate-500 hover:text-slate-900">
+                        Clear
+                      </Button>
+                      <Button
+                        onClick={() => { handleSave(); setShowEditor(false); }}
+                        disabled={saving || text.trim().length === 0}
+                        className="h-auto px-8 md:px-10 py-3 md:py-4 rounded-[20px] text-sm font-extrabold shadow-lg shadow-indigo-500/20"
+                      >
+                        {saving ? "Saving..." : editingId ? "Update Journal" : "Save Journal"}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Previous Journals */}
+            <section>
+              <div className="flex items-center justify-between mb-6 lg:mb-8">
+                <h3 className={`text-xl font-extrabold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+                  Your Journals ({filtered.length})
+                </h3>
+                <span className={`text-[10px] font-extrabold uppercase tracking-[0.18em] ${theme === 'dark' ? 'text-white/40' : 'text-slate-500'}`}>
+                  Latest First
+                </span>
+              </div>
+
               {loading ? (
-                <p className={`${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>Loading...</p>
+                <div className={`rounded-[32px] p-10 text-center ${cardClass}`}>
+                  <p className={`text-sm font-medium ${theme === 'dark' ? 'text-white/50' : 'text-slate-500'}`}>Loading...</p>
+                </div>
               ) : filtered.length === 0 ? (
-                <p className={`${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>No journals yet.</p>
+                journals.length === 0 ? (
+                  /* Empty state */
+                  <div className={`rounded-[40px] p-10 md:p-16 text-center ${cardClass}`}>
+                    <div className={`w-24 h-24 rounded-[32px] flex items-center justify-center mx-auto mb-6 ${theme === 'dark' ? 'bg-white/10 text-white/40' : 'bg-slate-100 text-slate-400'}`}>
+                      <span className="text-4xl">📓</span>
+                    </div>
+                    <h4 className={`text-xl font-extrabold mb-2 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>No journals yet.</h4>
+                    <p className={`font-medium max-w-xs mx-auto mb-10 ${theme === 'dark' ? 'text-white/40' : 'text-slate-500'}`}>Start your journey today by writing your first reflection above.</p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-md mx-auto text-left">
+                      <div className="p-6 rounded-3xl bg-indigo-50/70 border border-indigo-100 dark:bg-indigo-500/10 dark:border-indigo-400/20">
+                        <span className={`text-2xl mb-3 block ${theme === 'dark' ? 'text-indigo-400' : 'text-indigo-500'}`}>✨</span>
+                        <p className={`text-xs font-bold uppercase tracking-widest mb-1 ${theme === 'dark' ? 'text-indigo-300' : 'text-indigo-700'}`}>Prompt Idea</p>
+                        <p className={`text-sm font-bold leading-relaxed ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>What made you smile today?</p>
+                      </div>
+                      <div className="p-6 rounded-3xl bg-amber-50 border border-amber-200/60 dark:bg-amber-500/10 dark:border-amber-400/20">
+                        <span className={`text-2xl mb-3 block ${theme === 'dark' ? 'text-amber-400' : 'text-amber-500'}`}>☀️</span>
+                        <p className={`text-xs font-bold uppercase tracking-widest mb-1 ${theme === 'dark' ? 'text-amber-300' : 'text-amber-600'}`}>Daily Reflection</p>
+                        <p className={`text-sm font-bold leading-relaxed ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>Describe a moment of peace you had.</p>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  /* Filters active, no matches */
+                  <div className={`rounded-[32px] p-12 text-center ${cardClass}`}>
+                    <p className={`text-sm font-medium mb-4 ${theme === 'dark' ? 'text-white/50' : 'text-slate-500'}`}>No journals match your filters.</p>
+                    <Button variant="ghost" size="sm" onClick={clearFilters} className={`text-xs font-bold ${theme === 'dark' ? 'text-white/60 hover:text-white' : 'text-slate-500 hover:text-slate-900'}`}>
+                      <X size={12} weight="bold" className="mr-1" />
+                      Clear all filters
+                    </Button>
+                  </div>
+                )
               ) : (
                 <>
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {paginatedJournals.map((entry) => (
                       <motion.div
                         key={entry.id}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        className={`rounded-2xl p-4 border ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white border-[#EFF3F4]'}`}
+                        transition={{ type: "spring", stiffness: 120, damping: 20 }}
+                        className={`rounded-3xl p-4 md:p-5 ${cardClass}`}
                       >
                         <div className="flex items-start justify-between gap-3">
-                          <div className="space-y-2 flex-1">
+                          <div className="space-y-2 flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
                               {entry.mood && <span className="text-lg md:text-xl">{entry.mood}</span>}
-                              <div className="flex gap-1 flex-wrap">
+                              <div className="flex gap-1.5 flex-wrap">
                                 {(entry.tags || []).map(tag => (
                                   <Badge key={tag} className={`text-[10px] md:text-xs ${getTagColorClasses(tag, theme === 'dark')}`}>{tag}</Badge>
                                 ))}
                               </div>
                             </div>
-                            <p className={`text-sm md:text-base leading-relaxed ${theme === 'dark' ? 'text-white/90' : 'text-gray-900'}`}>{entry.journal_text}</p>
-                            <p className={`text-[10px] md:text-xs font-light ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`}>
+                            <p className={`text-sm md:text-base leading-relaxed whitespace-pre-wrap ${theme === 'dark' ? 'text-white/90' : 'text-slate-900'}`}>{entry.journal_text}</p>
+                            <p className={`text-[10px] md:text-xs font-medium ${theme === 'dark' ? 'text-white/40' : 'text-slate-400'}`}>
                               {new Date(entry.created_at).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })} · {new Date(entry.created_at).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
                             </p>
                           </div>
                           <div className="flex flex-col gap-2">
-                            <Button variant="ghost" size="icon" onClick={() => startEdit(entry)}><PencilSimple size={16} weight="bold" /></Button>
-                            <Button variant="ghost" size="icon" onClick={() => handleDelete(entry.id)}><Trash size={16} weight="bold" className="text-red-500" /></Button>
+                            <Button variant="ghost" size="icon" onClick={() => startEdit(entry)} className={theme === 'dark' ? 'text-white/60 hover:text-white' : 'text-slate-500 hover:text-slate-900'}><PencilSimple size={16} weight="bold" /></Button>
+                            <Button variant="ghost" size="icon" onClick={() => handleDelete(entry.id)} className={theme === 'dark' ? 'text-white/60' : 'text-slate-500'}><Trash size={16} weight="bold" className="text-red-500" /></Button>
                           </div>
                         </div>
                       </motion.div>
                     ))}
                   </div>
-                  
+
                   {/* Pagination Controls */}
-                  {!showAllJournals && totalPages > 1 && (
-                    <div className="flex items-center justify-between mt-6 pt-4 border-t ${theme === 'dark' ? 'border-white/10' : 'border-gray-200'}">
+                  {totalPages > 1 && (
+                    <div className={`flex items-center justify-between mt-8 pt-6 border-t ${theme === 'dark' ? 'border-white/10' : 'border-slate-200'}`}>
                       <div className="flex items-center gap-2">
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                           disabled={currentPage === 1}
-                          className={`px-3 py-1 ${theme === 'dark' ? 'text-white/60 hover:text-white' : 'text-gray-600 hover:text-gray-900'} ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          className={`px-3 py-1 ${theme === 'dark' ? 'text-white/60 hover:text-white' : 'text-slate-600 hover:text-slate-900'} ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
                           <CaretLeft size={16} weight="bold" className="h-4 w-4" />
                           Previous
                         </Button>
-                        
+
                         <div className="flex items-center gap-1">
                           {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                             let pageNum
@@ -531,56 +533,51 @@ export default function JournalsPage() {
                             } else {
                               pageNum = currentPage - 2 + i
                             }
-                            
+
                             return (
                               <Button
                                 key={pageNum}
                                 variant={currentPage === pageNum ? "default" : "ghost"}
                                 size="sm"
                                 onClick={() => setCurrentPage(pageNum)}
-                                className={`w-8 h-8 text-xs ${currentPage === pageNum ? 'bg-green-500 text-white' : theme === 'dark' ? 'text-white/60 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
+                                className={`w-8 h-8 text-xs ${currentPage === pageNum ? '' : theme === 'dark' ? 'text-white/60 hover:text-white' : 'text-slate-600 hover:text-slate-900'}`}
                               >
                                 {pageNum}
                               </Button>
                             )
                           })}
                         </div>
-                        
+
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                           disabled={currentPage === totalPages}
-                          className={`px-3 py-1 ${theme === 'dark' ? 'text-white/60 hover:text-white' : 'text-gray-600 hover:text-gray-900'} ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          className={`px-3 py-1 ${theme === 'dark' ? 'text-white/60 hover:text-white' : 'text-slate-600 hover:text-slate-900'} ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
                           Next
                           <CaretRight size={16} weight="bold" className="h-4 w-4" />
                         </Button>
                       </div>
-                      
-                      <span className={`text-xs ${theme === 'dark' ? 'text-white/60' : 'text-gray-500'}`}>
+
+                      <span className={`text-xs ${theme === 'dark' ? 'text-white/60' : 'text-slate-500'}`}>
                         Page {currentPage} of {totalPages}
                       </span>
                     </div>
                   )}
                 </>
               )}
-            </AnimatePresence>
-          </Card>
-          </div>
+            </section>
+
           </div>
         </main>
       </div>
-      
+
       {/* Floating Action Button (FAB) for Mobile - New Journal */}
       {!showEditor && !editingId && (
         <button
           onClick={() => { setShowEditor(true); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-          className={`md:hidden fixed bottom-28 right-4 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all active:scale-95 ${
-            theme === 'dark'
-              ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-green-500/30'
-              : 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-green-500/40'
-          }`}
+          className={`md:hidden fixed bottom-28 right-4 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all active:scale-95 bg-indigo-500 text-white shadow-indigo-500/40 hover:bg-indigo-600`}
           aria-label="New Journal"
         >
           <Plus size={24} weight="bold" />

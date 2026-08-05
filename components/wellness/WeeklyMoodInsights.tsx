@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { 
@@ -51,11 +51,7 @@ export default function WeeklyMoodInsights({ userId }: WeeklyMoodInsightsProps) 
 
   const supabase = getSupabaseClient()
 
-  useEffect(() => {
-    loadData()
-  }, [userId, period])
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setIsLoading(true)
     try {
       const today = new Date()
@@ -98,7 +94,11 @@ export default function WeeklyMoodInsights({ userId }: WeeklyMoodInsightsProps) 
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [supabase, userId, period, isPremium])
+
+  useEffect(() => {
+    loadData()
+  }, [loadData])
 
   const getTrendIcon = () => {
     if (!stats) return <Minus size={20} className={`${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`} />

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { Heart, Plus, X, Check, Sparkle, Crown } from 'phosphor-react'
@@ -41,11 +41,7 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
   const supabase = getSupabaseClient()
   const { toast } = useToast()
 
-  useEffect(() => {
-    loadGratitude()
-  }, [userId])
-
-  const loadGratitude = async () => {
+  const loadGratitude = useCallback(async () => {
     setIsLoading(true)
     try {
       const [todayData, streakData] = await Promise.all([
@@ -62,7 +58,11 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [supabase, userId])
+
+  useEffect(() => {
+    loadGratitude()
+  }, [loadGratitude])
 
   const addItem = () => {
     if (!newItem.trim()) return
@@ -226,7 +226,7 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
   }
 
   return (
-    <Card className={`relative overflow-hidden rounded-2xl border shadow-none ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-[#E8E5DE]'}`}>
+    <Card className={`relative overflow-hidden rounded-3xl border shadow-none ${theme === 'dark' ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-slate-100 shadow-soft-card'}`}>
       {/* Ambient amber glow top-right */}
       <span
         aria-hidden
@@ -244,10 +244,10 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
               </span>
             </span>
             <div className="min-w-0">
-              <CardTitle className={`text-lg font-semibold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-[#2F3B34]'}`}>
+              <CardTitle className={`text-lg font-semibold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
                 Daily gratitude
               </CardTitle>
-              <p className={`mt-0.5 text-[13px] ${theme === 'dark' ? 'text-white/55' : 'text-[#6B7F6E]'}`}>
+              <p className={`mt-0.5 text-[13px] ${theme === 'dark' ? 'text-white/55' : 'text-slate-400'}`}>
                 What are you grateful for today?
               </p>
             </div>

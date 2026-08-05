@@ -75,7 +75,7 @@ export default function FriendsPage() {
 
   return (
     <AuthGuard redirectPath="/dashboard/friends">
-      <div className={`min-h-screen ${isDark ? 'bg-[#0A0A0A]' : 'bg-[#FFFFFF]'}`}>
+      <div className={`min-h-screen ${isDark ? 'bg-[#0A0E18]' : 'bg-[#F9FBFB]'}`}>
         <div className="flex h-screen overflow-hidden">
           <DashboardSidebar />
           <main className="flex-1 pb-32 md:pb-10 overflow-y-auto scrollbar-thin">
@@ -86,10 +86,10 @@ export default function FriendsPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ type: 'spring', stiffness: 100, damping: 15 }}
                 >
-                  <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+                  <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
                     Friends
                   </h1>
-                  <p className={`text-sm mt-1 ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
+                  <p className={`text-sm mt-1 ${isDark ? 'text-white/40' : 'text-slate-400'}`}>
                     Connect with others on their reflection journey
                   </p>
                 </motion.div>
@@ -97,7 +97,7 @@ export default function FriendsPage() {
 
               {/* Search */}
               <div className="relative mb-4">
-                <MagnifyingGlass size={16} weight="bold" className={`absolute left-3 top-1/2 -translate-y-1/2 ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`} />
+                <MagnifyingGlass size={16} weight="bold" className={`absolute left-3 top-1/2 -translate-y-1/2 ${isDark ? 'text-white/20' : 'text-slate-400'}`} />
                 <Input
                   value={search}
                   onChange={e => setSearch(e.target.value)}
@@ -105,7 +105,7 @@ export default function FriendsPage() {
                   className={`pl-9 text-sm rounded-xl ${
                     isDark
                       ? 'bg-white/[0.06] border-white/[0.08] text-white placeholder:text-white/20'
-                      : 'bg-white/80 border-[#EFF3F4] text-[#0F1419] placeholder:text-[#8B98A5]'
+                      : 'bg-white/80 border-slate-100 text-slate-900 placeholder:text-slate-400'
                   }`}
                 />
               </div>
@@ -122,8 +122,8 @@ export default function FriendsPage() {
                     onClick={() => setTab(t.key as typeof tab)}
                     className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
                       tab === t.key
-                        ? isDark ? 'bg-white/10 text-white' : 'bg-white text-[#0F1419] shadow-sm'
-                        : isDark ? 'text-white/30 hover:text-white/50' : 'text-[#8B98A5] hover:text-[#536471]'
+                        ? isDark ? 'bg-white/10 text-white' : 'bg-white text-slate-900 shadow-sm'
+                        : isDark ? 'text-white/30 hover:text-white/50' : 'text-slate-400 hover:text-slate-600'
                     }`}
                   >
                     {t.label}
@@ -134,15 +134,15 @@ export default function FriendsPage() {
               {/* List */}
               {loading ? (
                 <div className="flex justify-center py-20">
-                  <Spinner size={12} weight="bold" className={`animate-spin ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`} />
+                  <Spinner size={12} weight="bold" className={`animate-spin ${isDark ? 'text-white/20' : 'text-slate-400'}`} />
                 </div>
               ) : displayList.length === 0 ? (
-                <div className={`rounded-2xl p-10 text-center ${isDark ? 'bg-white/[0.03] border border-white/[0.06]' : 'bg-white/60 border border-[#EFF3F4]'}`}>
-                  <UserPlus size={40} weight="bold" className={`mx-auto mb-4 ${isDark ? 'text-white/15' : 'text-[#D0CFC0]'}`} />
-                  <h3 className={`font-semibold mb-1 ${isDark ? 'text-white/60' : 'text-[#536471]'}`}>
+                <div className={`rounded-2xl p-10 text-center ${isDark ? 'bg-white/[0.03] border border-white/[0.06]' : 'bg-white/70 border border-slate-100 shadow-soft-card'}`}>
+                  <UserPlus size={40} weight="bold" className={`mx-auto mb-4 ${isDark ? 'text-white/15' : 'text-slate-300'}`} />
+                  <h3 className={`font-semibold mb-1 ${isDark ? 'text-white/60' : 'text-slate-600'}`}>
                     {tab === 'all' ? 'No friends yet' : tab === 'pending' ? 'No pending requests' : 'No incoming requests'}
                   </h3>
-                  <p className={`text-sm ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
+                  <p className={`text-sm ${isDark ? 'text-white/30' : 'text-slate-400'}`}>
                     {tab === 'all' ? 'Find people to connect with on their profiles.' : ''}
                   </p>
                 </div>
@@ -158,8 +158,8 @@ export default function FriendsPage() {
                         exit={{ opacity: 0, x: -20 }}
                         className={`rounded-xl p-3 flex items-center gap-3 transition-all ${
                           isDark
-                            ? 'bg-white/[0.03] hover:bg-white/[0.06]'
-                            : 'bg-white/60 hover:bg-white/80'
+                            ? 'bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06]'
+                            : 'bg-white/70 border border-slate-100 hover:bg-white/90'
                         }`}
                       >
                         <button
@@ -168,16 +168,16 @@ export default function FriendsPage() {
                         >
                           <Avatar className="h-10 w-10">
                             <AvatarImage src={friend.profile?.avatar_url || undefined} />
-                            <AvatarFallback className={`text-xs ${isDark ? 'bg-[#161618] text-white/40' : 'bg-[#F7F9FA] text-[#8B98A5]'}`}>
+                            <AvatarFallback className={`text-xs ${isDark ? 'bg-[#1B2436] text-white/40' : 'bg-slate-100 text-slate-500'}`}>
                               {friend.profile?.full_name?.[0] || '?'}
                             </AvatarFallback>
                           </Avatar>
                           <div className="min-w-0">
-                            <p className={`text-sm font-medium truncate ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+                            <p className={`text-sm font-medium truncate ${isDark ? 'text-white' : 'text-slate-900'}`}>
                               {friend.profile?.display_name || friend.profile?.full_name || 'Unknown'}
                             </p>
                             {friend.profile?.username && (
-                              <p className={`text-xs ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
+                              <p className={`text-xs ${isDark ? 'text-white/30' : 'text-slate-400'}`}>
                                 @{friend.profile.username}
                               </p>
                             )}
@@ -191,7 +191,7 @@ export default function FriendsPage() {
                               size="sm"
                               onClick={() => handleAction(friend.id, 'remove')}
                               disabled={actionLoading === friend.id}
-                              className={`h-8 text-xs ${isDark ? 'text-white/30 hover:text-red-400' : 'text-[#8B98A5] hover:text-red-500'}`}
+                              className={`h-8 text-xs ${isDark ? 'text-white/30 hover:text-red-400' : 'text-slate-400 hover:text-red-500'}`}
                             >
                               {actionLoading === friend.id ? (
                                 <Spinner size={12} weight="bold" className="animate-spin" />
@@ -210,8 +210,8 @@ export default function FriendsPage() {
                                   disabled={actionLoading === friend.id}
                                   className={`h-8 text-xs ${
                                     isDark
-                                      ? 'border-[#1D9BF0]/30 text-[#1D9BF0] hover:bg-[#1D9BF0]/10'
-                                      : 'border-[#B3D9F2] text-[#1D9BF0] hover:bg-[#E8F5FE]'
+                                    ? 'border-[#6366F1]/30 text-[#6366F1] hover:bg-[#6366F1]/10'
+                                    : 'border-indigo-200 text-[#6366F1] hover:bg-indigo-50'
                                   }`}
                                 >
                                   {actionLoading === friend.id ? (
@@ -227,7 +227,7 @@ export default function FriendsPage() {
                                 size="sm"
                                 onClick={() => handleAction(friend.id, 'remove')}
                                 disabled={actionLoading === friend.id}
-                                className={`h-8 text-xs ${isDark ? 'text-white/30 hover:text-red-400' : 'text-[#8B98A5] hover:text-red-500'}`}
+                                className={`h-8 text-xs ${isDark ? 'text-white/30 hover:text-red-400' : 'text-slate-400 hover:text-red-500'}`}
                               >
                                 {actionLoading === friend.id ? (
                                   <Spinner size={12} weight="bold" className="animate-spin" />
