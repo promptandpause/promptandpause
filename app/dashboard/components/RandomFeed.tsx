@@ -105,18 +105,18 @@ export function RandomFeed() {
 
   if (loading) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-3 px-4">
         {[1, 2, 3].map(i => (
-          <div key={i} className={`rounded-2xl p-5 ${isDark ? 'bg-white/[0.03]' : 'bg-white/60'}`}>
+          <div key={i} className={`rounded-3xl border p-5 ${isDark ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-slate-100'}`}>
             <div className="flex items-center gap-3 mb-3">
-              <div className={`h-10 w-10 rounded-full ${isDark ? 'bg-white/8' : 'bg-[#EFF3F4]'} animate-pulse`} />
+              <div className={`h-10 w-10 rounded-full ${isDark ? 'bg-white/8' : 'bg-slate-100'} animate-pulse`} />
               <div className="space-y-1.5 flex-1">
-                <div className={`h-3 w-24 rounded ${isDark ? 'bg-white/8' : 'bg-[#EFF3F4]'} animate-pulse`} />
-                <div className={`h-2.5 w-16 rounded ${isDark ? 'bg-white/5' : 'bg-[#EFF3F4]'} animate-pulse`} />
+                <div className={`h-3 w-24 rounded ${isDark ? 'bg-white/8' : 'bg-slate-100'} animate-pulse`} />
+                <div className={`h-2.5 w-16 rounded ${isDark ? 'bg-white/5' : 'bg-slate-100'} animate-pulse`} />
               </div>
             </div>
-            <div className={`h-3 w-full rounded ${isDark ? 'bg-white/5' : 'bg-[#EFF3F4]'} animate-pulse mb-2`} />
-            <div className={`h-3 w-3/4 rounded ${isDark ? 'bg-white/5' : 'bg-[#EFF3F4]'} animate-pulse`} />
+            <div className={`h-3 w-full rounded ${isDark ? 'bg-white/5' : 'bg-slate-100'} animate-pulse mb-2`} />
+            <div className={`h-3 w-3/4 rounded ${isDark ? 'bg-white/5' : 'bg-slate-100'} animate-pulse`} />
           </div>
         ))}
       </div>
@@ -124,7 +124,7 @@ export function RandomFeed() {
   }
 
   return (
-    <div className="space-y-1">
+    <div className="space-y-3 px-4">
       <AnimatePresence>
         {feed.map((item, i) => {
           const displayName = item.profile?.display_name || item.profile?.full_name || 'Unknown'
@@ -135,10 +135,10 @@ export function RandomFeed() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.03, type: 'spring', stiffness: 200, damping: 25 }}
-              className={`px-4 py-3 cursor-pointer transition-colors ${
+              className={`rounded-3xl border p-5 cursor-pointer transition-colors ${
                 isDark
-                  ? 'hover:bg-white/[0.02] border-b border-white/[0.06]'
-                  : 'hover:bg-[#F7F9FA] border-b border-[#EFF3F4]'
+                  ? 'bg-white/[0.04] border-white/[0.06] hover:bg-white/[0.06]'
+                  : 'bg-white/70 border-slate-100 hover:bg-white shadow-soft-card'
               }`}
               onClick={() => item.profile?.username && router.push(`/${item.profile.username}`)}
             >
@@ -146,7 +146,7 @@ export function RandomFeed() {
                 <Link href={`/${item.profile?.username}`} onClick={e => e.stopPropagation()} className="shrink-0">
                   <Avatar className="h-10 w-10">
                     <AvatarImage src={item.profile?.avatar_url || undefined} />
-                    <AvatarFallback className={`text-xs ${isDark ? 'bg-[#161618] text-white/40' : 'bg-[#EFF3F4] text-[#536471]'}`}>
+                    <AvatarFallback className={`text-xs ${isDark ? 'bg-[#1B2436] text-white/40' : 'bg-slate-100 text-slate-500'}`}>
                       {initials}
                     </AvatarFallback>
                   </Avatar>
@@ -154,13 +154,13 @@ export function RandomFeed() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+                      <span className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>
                         {displayName}
                       </span>
-                      <span className={`text-sm ${isDark ? 'text-white/30' : 'text-[#536471]'}`}>
+                      <span className={`text-sm ${isDark ? 'text-white/30' : 'text-slate-400'}`}>
                         @{item.profile?.username}
                       </span>
-                      <span className={`text-[10px] ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`}>
+                      <span className={`text-[10px] ${isDark ? 'text-white/20' : 'text-slate-300'}`}>
                         · {timeAgo(item.created_at)}
                       </span>
                     </div>
@@ -173,22 +173,22 @@ export function RandomFeed() {
                       onBlocked={() => setFeed(prev => prev.filter(f => f.user_id !== item.user_id))}
                     />
                   </div>
-                  <p className={`text-sm leading-relaxed mt-0.5 ${isDark ? 'text-white/80' : 'text-[#0F1419]'}`}>
+                  <p className={`text-sm leading-relaxed mt-1 ${isDark ? 'text-white/80' : 'text-slate-700'}`}>
                     {item.reflection_text}
                   </p>
-                  <div className="flex items-center gap-3 mt-2">
+                  <div className="flex items-center gap-3 mt-3">
                     <span className="text-lg leading-none">{item.mood}</span>
                     {item.tags?.slice(0, 3).map(tag => (
                       <span
                         key={tag}
-                        className={`text-xs ${isDark ? 'text-[#1D9BF0]' : 'text-[#1D9BF0]'}`}
+                        className={`text-xs ${isDark ? 'text-[#818CF8]' : 'text-indigo-500'}`}
                       >
                         #{tag}
                       </span>
                     ))}
                   </div>
-                  <div className="flex items-center gap-6 mt-2">
-                    <button className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#1D9BF0]' : 'text-[#536471] hover:text-[#1D9BF0]'}`}
+                  <div className="flex items-center gap-6 mt-3">
+                    <button className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#818CF8]' : 'text-slate-400 hover:text-indigo-500'}`}
                       onClick={e => { e.stopPropagation(); toggleComments(item.id) }}>
                       <ChatCircle size={14} weight="bold" /> Reply
                     </button>
@@ -210,20 +210,20 @@ export function RandomFeed() {
                       }}
                       className={`flex items-center gap-1.5 text-xs transition-colors ${
                         item.is_liked_by_me
-                          ? 'text-pink-500'
-                          : isDark ? 'text-white/30 hover:text-pink-400' : 'text-[#536471] hover:text-pink-500'
+                          ? 'text-rose-500'
+                          : isDark ? 'text-white/30 hover:text-rose-400' : 'text-slate-400 hover:text-rose-500'
                       }`}
                     >
                       <Heart size={14} weight={item.is_liked_by_me ? 'fill' : 'bold'} /> {item.like_count > 0 ? item.like_count : 'Like'}
                     </button>
-                    <button className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#1D9BF0]' : 'text-[#536471] hover:text-[#1D9BF0]'}`}
+                    <button className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#818CF8]' : 'text-slate-400 hover:text-indigo-500'}`}
                       onClick={e => { e.stopPropagation(); router.push('/dashboard/reflect') }}>
                       <Sparkle size={14} weight="bold" /> Reflect
                     </button>
                   </div>
                   {openComments.has(item.id) && (
                     <div
-                      className={`mt-3 -mx-4 border-t ${isDark ? 'border-white/[0.06]' : 'border-[#EFF3F4]'}`}
+                      className={`mt-3 -mx-5 border-t ${isDark ? 'border-white/[0.06]' : 'border-slate-100'}`}
                       onClick={e => e.stopPropagation()}
                     >
                       <CommentSection reflectionId={item.id} reflectionOwnerId={item.user_id} />
@@ -236,14 +236,14 @@ export function RandomFeed() {
         })}
       </AnimatePresence>
       {feed.length === 0 && !loading && (
-        <div className={`text-center py-16 ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
+        <div className={`text-center py-16 ${isDark ? 'text-white/30' : 'text-slate-400'}`}>
           <p className="text-sm">No reflections yet from the community.</p>
         </div>
       )}
       {hasMore && feed.length > 0 && (
         <div ref={loaderRef} className="flex justify-center py-6">
           {loadingMore && (
-            <div className={`h-5 w-5 rounded-full border-2 border-t-transparent animate-spin ${isDark ? 'border-white/20' : 'border-[#8B98A5]/40'}`} />
+            <div className={`h-5 w-5 rounded-full border-2 border-t-transparent animate-spin ${isDark ? 'border-white/20' : 'border-slate-400/40'}`} />
           )}
         </div>
       )}

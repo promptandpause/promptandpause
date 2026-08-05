@@ -19,7 +19,7 @@
 
 **AI-Powered Personalization** - Receive prompts that adapt to your focus areas, recent moods, and personal journey  
 📧 **Flexible Delivery** - Get prompts via email, Slack, or directly in your dashboard  
-📊 **Insightful Analytics** - Track your progress with mood trends, streak tracking, and reflection patterns  
+📊 **Insightful Analytics** - Track your progress with mood trends, gentle consistency tracking, and reflection patterns  
 🎯 **Custom Focus Areas** - Premium users can create unlimited custom focus areas for targeted growth  
 🔒 **Private by Default** - Every reflection starts private and encrypted. Sharing is entirely opt-in, per reflection  
 🌍 **Accessible Anywhere** - Web-based platform works on any device
@@ -64,7 +64,7 @@
 2. **Set Your Preferences** - Choose your focus areas, delivery time, and frequency
 3. **Receive Your Prompt** - Get a personalized reflection prompt daily
 4. **Reflect & Grow** - Take a few minutes to explore your thoughts
-5. **Track Progress** - Review insights, streaks, and patterns over time
+5. **Track Progress** - Review insights, rhythms, and patterns over time
 
 ---
 

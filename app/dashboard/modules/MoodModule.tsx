@@ -111,7 +111,7 @@ function MoodModuleInner() {
       action={
         currentStreak > 0 ? (
           <span className="inline-flex items-center gap-1 text-[10px] font-medium px-2 py-1 rounded-full bg-amber-50 text-amber-700 dark:bg-amber-400/10 dark:text-amber-300 border border-amber-200/60 dark:border-amber-400/20">
-            {currentStreak} day{currentStreak === 1 ? "" : "s"}
+            {currentStreak} day{currentStreak === 1 ? "" : "s"} in a row
           </span>
         ) : undefined
       }

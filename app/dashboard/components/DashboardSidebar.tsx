@@ -213,16 +213,16 @@ export function DashboardSidebar() {
                       active
                         ? isDark
                           ? "text-white font-semibold"
-                          : "text-[#0F1419] font-semibold"
+                          : "text-[#1E293B] font-semibold"
                         : isDark
                           ? "text-white/50 hover:bg-white/[0.06] hover:text-white"
-                          : "text-[#536471] hover:bg-[#EFF3F4] hover:text-[#0F1419]"
+                          : "text-[#64748B] hover:bg-slate-100 hover:text-[#1E293B]"
                     }`}
                   >
                     <item.icon
                       size={24}
                       weight={active ? "fill" : "regular"}
-                      className={active ? (isDark ? "text-white" : "text-[#1D9BF0]") : ""}
+                      className={active ? (isDark ? "text-[#818CF8]" : "text-[#6366F1]") : ""}
                     />
                     <span>{item.label === "my_profile" ? "My Profile" : item.label === "workspaces" ? "Workspaces" : t(`nav.${item.label}` as any)}</span>
                   </button>
@@ -232,14 +232,16 @@ export function DashboardSidebar() {
           </nav>
 
           {/* Profile Card */}
-          <div className={`mt-auto mb-3 rounded-2xl ${isDark ? "bg-white/[0.03] border border-white/[0.06]" : "bg-white border border-[#EFF3F4]"}`}>
+          <div className={`mt-auto mb-3 rounded-2xl border ${
+            isDark ? "bg-white/[0.03] border-white/[0.06]" : "bg-white/80 border-slate-100 shadow-soft-card"
+          }`}>
             {loading ? (
               <div className="p-4 space-y-3">
                 <div className="flex items-center gap-3">
-                  <Skeleton className={`h-10 w-10 rounded-full ${isDark ? "bg-white/10" : "bg-[#EFF3F4]"}`} />
+                  <Skeleton className={`h-10 w-10 rounded-full ${isDark ? "bg-white/10" : "bg-[#EDF2F7]"}`} />
                   <div className="flex-1 space-y-1">
-                    <Skeleton className={`h-3 w-20 ${isDark ? "bg-white/10" : "bg-[#EFF3F4]"}`} />
-                    <Skeleton className={`h-2.5 w-14 ${isDark ? "bg-white/5" : "bg-[#EFF3F4]"}`} />
+                    <Skeleton className={`h-3 w-20 ${isDark ? "bg-white/10" : "bg-[#EDF2F7]"}`} />
+                    <Skeleton className={`h-2.5 w-14 ${isDark ? "bg-white/5" : "bg-[#EDF2F7]"}`} />
                   </div>
                 </div>
               </div>
@@ -247,32 +249,32 @@ export function DashboardSidebar() {
               <div className="p-4">
                 <div className="flex items-center gap-3 mb-3">
                   <Link href={`/${userProfile.username}`} className="shrink-0">
-                    <div className={`h-10 w-10 rounded-full flex items-center justify-center ${isDark ? "bg-[#161618]" : "bg-[#EFF3F4]"}`}>
+                    <div className={`h-10 w-10 rounded-full flex items-center justify-center ${isDark ? "bg-[#1B2436]" : "bg-[#EDF2F7]"}`}>
                       {userProfile.avatar_url ? (
                         <img src={userProfile.avatar_url} alt="" className="h-10 w-10 rounded-full object-cover" />
                       ) : (
-                        <UserCircle size={22} weight="bold" className={isDark ? "text-white/40" : "text-[#536471]"} />
+                        <UserCircle size={22} weight="bold" className={isDark ? "text-white/40" : "text-[#64748B]"} />
                       )}
                     </div>
                   </Link>
                   <div className="flex-1 min-w-0">
-                    <Link href={`/${userProfile.username}`} className={`text-sm font-semibold truncate block hover:underline ${isDark ? "text-white" : "text-[#0F1419]"}`}>
+                    <Link href={`/${userProfile.username}`} className={`text-sm font-semibold truncate block hover:underline ${isDark ? "text-white" : "text-[#1E293B]"}`}>
                       {userProfile.full_name}
                     </Link>
-                    <p className={`text-xs truncate ${isDark ? "text-white/30" : "text-[#536471]"}`}>
+                    <p className={`text-xs truncate ${isDark ? "text-white/30" : "text-[#64748B]"}`}>
                       @{userProfile.username}
                     </p>
                   </div>
                   <Link href="/settings">
-                    <Gear size={16} weight="bold" className={`shrink-0 cursor-pointer transition-colors ${isDark ? "text-white/20 hover:text-white/40" : "text-[#8B98A5] hover:text-[#536471]"}`} />
+                    <Gear size={16} weight="bold" className={`shrink-0 cursor-pointer transition-colors ${isDark ? "text-white/20 hover:text-white/40" : "text-[#94A3B8] hover:text-[#64748B]"}`} />
                   </Link>
                 </div>
                 <div className="flex items-center gap-4 text-sm mb-3">
-                  <span className={`${isDark ? "text-white/30" : "text-[#536471]"}`}>
-                    <span className={`font-semibold ${isDark ? "text-white" : "text-[#0F1419]"}`}>{followingCount}</span> Following
+                  <span className={`${isDark ? "text-white/30" : "text-[#64748B]"}`}>
+                    <span className={`font-semibold ${isDark ? "text-white" : "text-[#1E293B]"}`}>{followingCount}</span> Following
                   </span>
-                  <span className={`${isDark ? "text-white/30" : "text-[#536471]"}`}>
-                    <span className={`font-semibold ${isDark ? "text-white" : "text-[#0F1419]"}`}>{followerCount}</span> Followers
+                  <span className={`${isDark ? "text-white/30" : "text-[#64748B]"}`}>
+                    <span className={`font-semibold ${isDark ? "text-white" : "text-[#1E293B]"}`}>{followerCount}</span> Followers
                   </span>
                 </div>
                 <Link
@@ -280,7 +282,7 @@ export function DashboardSidebar() {
                   className={`block w-full text-center py-2 rounded-full text-sm font-semibold transition-colors border ${
                     isDark
                       ? "border-white/20 text-white hover:bg-white/[0.06]"
-                      : "border-[#CFD9DE] text-[#0F1419] hover:bg-[#EFF3F4]"
+                      : "border-[#E2E8F0] text-[#1E293B] hover:bg-slate-100"
                   }`}
                 >
                   View Profile
@@ -295,14 +297,14 @@ export function DashboardSidebar() {
       <div className="md:hidden fixed top-0 left-0 right-0 z-40">
         <div className={cn(
           "px-4 h-14 grid grid-cols-3 items-center",
-          isDark ? "bg-[#0A0A0A]/90 backdrop-blur-lg border-b border-white/[0.06]" : "bg-white/90 backdrop-blur-lg border-b border-[#EFF3F4]"
+          isDark ? "bg-[#0A0E18]/85 backdrop-blur-xl border-b border-white/[0.06]" : "bg-white/80 backdrop-blur-xl border-b border-slate-100"
         )}>
           <button
             onClick={() => setDrawerOpen(true)}
-            className={`justify-self-start p-2 -ml-2 rounded-lg transition-colors ${isDark ? "hover:bg-white/10" : "hover:bg-[#EFF3F4]"}`}
+            className={`justify-self-start p-2 -ml-2 rounded-lg transition-colors ${isDark ? "hover:bg-white/10" : "hover:bg-[#EDF2F7]"}`}
             aria-label="Open navigation menu"
           >
-            <List size={22} weight="bold" className={isDark ? "text-white" : "text-[#0F1419]"} />
+            <List size={22} weight="bold" className={isDark ? "text-white" : "text-[#1E293B]"} />
           </button>
           <Link href="/dashboard" className="justify-self-center">
             <img
@@ -314,8 +316,8 @@ export function DashboardSidebar() {
           <div className="justify-self-end flex items-center gap-1">
             <NotificationBell />
             <Link href="/settings">
-              <button className={`p-2 -mr-2 rounded-lg transition-colors ${isDark ? "hover:bg-white/10" : "hover:bg-[#EFF3F4]"}`} aria-label="Settings">
-                <Gear size={20} weight="bold" className={isDark ? "text-white/50" : "text-[#536471]"} />
+              <button className={`p-2 -mr-2 rounded-lg transition-colors ${isDark ? "hover:bg-white/10" : "hover:bg-[#EDF2F7]"}`} aria-label="Settings">
+                <Gear size={20} weight="bold" className={isDark ? "text-white/50" : "text-[#64748B]"} />
               </button>
             </Link>
           </div>
@@ -328,14 +330,14 @@ export function DashboardSidebar() {
           <div className="fixed inset-0 bg-black/50" onClick={() => setDrawerOpen(false)} />
           <div className={cn(
             "fixed left-0 top-0 bottom-0 w-[280px] flex flex-col pt-14 overflow-y-auto",
-            isDark ? "bg-[#0A0A0A] border-r border-white/[0.06]" : "bg-white border-r border-[#EFF3F4]"
+            isDark ? "bg-[#0A0E18] border-r border-white/[0.06]" : "bg-white border-r border-slate-100"
           )}>
             <button
               onClick={() => setDrawerOpen(false)}
-              className={`absolute top-3 right-3 p-2 rounded-lg transition-colors ${isDark ? "hover:bg-white/10" : "hover:bg-[#EFF3F4]"}`}
+              className={`absolute top-3 right-3 p-2 rounded-lg transition-colors ${isDark ? "hover:bg-white/10" : "hover:bg-[#EDF2F7]"}`}
               aria-label="Close navigation menu"
             >
-              <X size={20} weight="bold" className={isDark ? "text-white/50" : "text-[#536471]"} />
+              <X size={20} weight="bold" className={isDark ? "text-white/50" : "text-[#64748B]"} />
             </button>
             <nav className="flex-1 px-3 py-2 space-y-0.5">
               {sidebarNav.map((item) => {
@@ -354,16 +356,16 @@ export function DashboardSidebar() {
                         active
                           ? isDark
                             ? "text-white font-semibold"
-                            : "text-[#0F1419] font-semibold"
+                            : "text-[#1E293B] font-semibold"
                           : isDark
                             ? "text-white/50 hover:bg-white/[0.06] hover:text-white"
-                            : "text-[#536471] hover:bg-[#EFF3F4] hover:text-[#0F1419]"
+                            : "text-[#64748B] hover:bg-slate-100 hover:text-[#1E293B]"
                       }`}
                     >
                       <item.icon
                         size={22}
                         weight={active ? "fill" : "regular"}
-                        className={active ? (isDark ? "text-white" : "text-[#1D9BF0]") : ""}
+                        className={active ? (isDark ? "text-[#818CF8]" : "text-[#6366F1]") : ""}
                       />
                       <span>{item.label === "my_profile" ? "My Profile" : item.label === "workspaces" ? "Workspaces" : t(`nav.${item.label}` as any)}</span>
                     </button>
@@ -374,27 +376,27 @@ export function DashboardSidebar() {
 
             {/* ─── Mobile Drawer: Trends & Suggestions ─── */}
             <div className="px-3 space-y-3 pb-3">
-              <div className={`border-t pt-3 ${isDark ? "border-white/[0.06]" : "border-[#EFF3F4]"}`}>
+              <div className={`border-t pt-3 ${isDark ? "border-white/[0.06]" : "border-[#EDF2F7]"}`}>
                 <TrendingTopics />
               </div>
               <WhoToFollow />
             </div>
 
             {userProfile && (
-              <div className={`px-4 py-4 border-t ${isDark ? "border-white/[0.06]" : "border-[#EFF3F4]"}`}>
+              <div className={`px-4 py-4 border-t ${isDark ? "border-white/[0.06]" : "border-[#EDF2F7]"}`}>
                 <div className="flex items-center gap-3">
                   <Link href={`/${userProfile.username}`} className="shrink-0" onClick={() => setDrawerOpen(false)}>
-                    <div className={`h-9 w-9 rounded-full flex items-center justify-center ${isDark ? "bg-[#161618]" : "bg-[#EFF3F4]"}`}>
+                    <div className={`h-9 w-9 rounded-full flex items-center justify-center ${isDark ? "bg-[#1B2436]" : "bg-[#EDF2F7]"}`}>
                       {userProfile.avatar_url ? (
                         <img src={userProfile.avatar_url} alt="" className="h-9 w-9 rounded-full object-cover" />
                       ) : (
-                        <UserCircle size={20} weight="bold" className={isDark ? "text-white/40" : "text-[#536471]"} />
+                        <UserCircle size={20} weight="bold" className={isDark ? "text-white/40" : "text-[#64748B]"} />
                       )}
                     </div>
                   </Link>
                   <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-semibold truncate ${isDark ? "text-white" : "text-[#0F1419]"}`}>{userProfile.full_name}</p>
-                    <p className={`text-xs truncate ${isDark ? "text-white/40" : "text-[#536471]"}`}>@{userProfile.username}</p>
+                    <p className={`text-sm font-semibold truncate ${isDark ? "text-white" : "text-[#1E293B]"}`}>{userProfile.full_name}</p>
+                    <p className={`text-xs truncate ${isDark ? "text-white/40" : "text-[#64748B]"}`}>@{userProfile.username}</p>
                   </div>
                 </div>
               </div>
@@ -405,7 +407,7 @@ export function DashboardSidebar() {
 
       {/* ─── Mobile Bottom Tab Bar ─── */}
       <div className={`md:hidden fixed bottom-0 left-0 right-0 z-40 pb-[env(safe-area-inset-bottom,0px)] ${
-        isDark ? "bg-[#0A0A0A]/90 backdrop-blur-lg border-t border-white/[0.06]" : "bg-white/90 backdrop-blur-lg border-t border-[#EFF3F4]"
+        isDark ? "bg-[#0A0E18]/85 backdrop-blur-xl border-t border-white/[0.06]" : "bg-white/80 backdrop-blur-xl border-t border-slate-100"
       }`}>
         <div className="flex items-center justify-around h-14">
           {mobileNav.map((item) => (
@@ -414,11 +416,11 @@ export function DashboardSidebar() {
                 className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition-colors ${
                   item.active
                     ? isDark
-                      ? "text-white"
-                      : "text-[#1D9BF0]"
+                      ? "text-[#818CF8]"
+                      : "text-[#6366F1]"
                     : isDark
                       ? "text-white/40"
-                      : "text-[#536471]"
+                      : "text-[#64748B]"
                 }`}
               >
                 {createElement(item.icon, { size: 22, weight: item.active ? "fill" : "regular" })}

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useTheme } from "@/contexts/ThemeContext"
-import { supabaseMoodService, supabaseAnalyticsService } from "@/lib/services/supabaseReflectionService"
+import { supabaseMoodService } from "@/lib/services/supabaseReflectionService"
 import { MoodType } from "@/lib/types/reflection"
 
 type Day = {
@@ -20,7 +20,6 @@ function normalizeMood(m: any): MoodType | null {
 export default function YourRhythm() {
   const { theme } = useTheme()
   const isDark = theme === 'dark'
-  const [streak, setStreak] = useState(0)
   const [days, setDays] = useState<Day[]>([])
 
   useEffect(() => {
@@ -28,7 +27,6 @@ export default function YourRhythm() {
 
     async function load() {
       try {
-        const s = await supabaseAnalyticsService.getCurrentStreak()
         const today = new Date()
         const items: Day[] = []
         for (let i = 6; i >= 0; i--) {
@@ -40,7 +38,6 @@ export default function YourRhythm() {
         }
 
         if (!mounted) return
-        setStreak(s)
         setDays(items)
       } catch {
       }
@@ -52,39 +49,43 @@ export default function YourRhythm() {
     }
   }, [])
 
+  const daysReflected = days.filter(d => d.mood).length
+
   return (
     <section
-      className={`rounded-2xl p-5 md:p-6 transition-all ${
-        isDark ? 'bg-white/5 border border-white/8' : 'bg-[#F7F9FA] border border-[#EFF3F4]'
+      className={`rounded-3xl p-5 md:p-6 border transition-all ${
+        isDark ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-slate-100 shadow-soft-card'
       }`}
     >
       <div className="flex flex-col gap-4">
         <div className="flex items-start justify-between">
           <div>
-            <p className={`text-xs uppercase tracking-[0.14em] font-medium mb-2 ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>Your rhythm</p>
+            <p className={`text-[10px] uppercase tracking-[0.14em] font-semibold mb-2 ${isDark ? 'text-white/40' : 'text-slate-400'}`}>Mood trends</p>
             <div className="flex items-baseline gap-2">
-              <span className={`text-2xl font-bold tabular-nums ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>{streak}</span>
-              <span className={`text-xs ${isDark ? 'text-white/50' : 'text-[#8B98A5]'}`}>current streak</span>
+              <span className={`text-2xl font-bold tabular-nums ${isDark ? 'text-white' : 'text-slate-900'}`}>{daysReflected}/7</span>
+              <span className={`text-xs ${isDark ? 'text-white/50' : 'text-slate-400'}`}>days reflected this week</span>
             </div>
           </div>
-          <p className={`text-xs max-w-[140px] text-right leading-relaxed ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>Consistency matters more than length.</p>
+          <p className={`text-xs max-w-[140px] text-right leading-relaxed ${isDark ? 'text-white/30' : 'text-slate-400'}`}>Consistency matters more than length.</p>
         </div>
 
         <div className="flex justify-between gap-1.5">
-          {days.map((d) => (
+          {days.map((d, i) => (
             <div
               key={d.date}
               className={`w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center ${
-                d.mood
-                  ? isDark ? 'bg-white/8' : 'bg-white border border-[#EFF3F4]'
-                  : isDark ? 'bg-white/5' : 'bg-[#EFF3F4]'
+                i === days.length - 1
+                  ? isDark ? 'bg-[#818CF8]/15 border border-[#818CF8]/30' : 'bg-indigo-50 border border-indigo-100'
+                  : d.mood
+                    ? isDark ? 'bg-white/8' : 'bg-white border border-slate-100'
+                    : isDark ? 'bg-white/5' : 'bg-slate-100'
               }`}
               aria-label={d.date}
               title={d.date}
             >
               {d.mood
                 ? <span className="text-base leading-none">{d.mood}</span>
-                : <span className={`text-xs ${isDark ? 'text-white/15' : 'text-[#C4C0B8]'}`}>—</span>
+                : <span className={`text-xs ${isDark ? 'text-white/15' : 'text-slate-300'}`}>—</span>
               }
             </div>
           ))}

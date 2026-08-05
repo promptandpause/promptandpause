@@ -683,7 +683,7 @@ function buildUserContext(context: GeneratePromptContext): string {
   }
 
   if (typeof context.current_streak === 'number') {
-    lines.push(`Current reflection streak: ${context.current_streak} day(s)`)
+    lines.push(`Days reflected in a row: ${context.current_streak}`)
   }
 
   if (context.focus_area_name) {

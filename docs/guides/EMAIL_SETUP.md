@@ -100,7 +100,7 @@ curl -X POST http://localhost:3000/api/emails/send-prompt \
 - Average word count
 - Top tags used (visual badges)
 - Mood distribution (emojis)
-- Current streak
+- Days reflected in a row
 - Personalized insights
 - Encouragement message
 

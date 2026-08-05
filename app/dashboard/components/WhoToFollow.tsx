@@ -50,14 +50,14 @@ export function WhoToFollow() {
 
   if (loading) {
     return (
-      <div className={`rounded-2xl ${isDark ? 'bg-white/[0.03] border border-white/[0.06]' : 'bg-white border border-[#EFF3F4]'} p-4`}>
-        <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>Who to follow</h3>
+      <div className={`rounded-3xl border ${isDark ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-slate-100 shadow-soft-card'} p-4`}>
+        <h3 className={`text-sm font-semibold mb-4 ${isDark ? 'text-white' : 'text-slate-900'}`}>Who to follow</h3>
         {[1, 2, 3].map(i => (
           <div key={i} className="flex items-center gap-3 mb-3">
-            <div className={`h-10 w-10 rounded-full ${isDark ? 'bg-white/8' : 'bg-[#EFF3F4]'} animate-pulse`} />
+            <div className={`h-10 w-10 rounded-full ${isDark ? 'bg-white/8' : 'bg-slate-100'} animate-pulse`} />
             <div className="flex-1 space-y-1">
-              <div className={`h-3 w-20 rounded ${isDark ? 'bg-white/8' : 'bg-[#EFF3F4]'} animate-pulse`} />
-              <div className={`h-2.5 w-14 rounded ${isDark ? 'bg-white/5' : 'bg-[#EFF3F4]'} animate-pulse`} />
+              <div className={`h-3 w-20 rounded ${isDark ? 'bg-white/8' : 'bg-slate-100'} animate-pulse`} />
+              <div className={`h-2.5 w-14 rounded ${isDark ? 'bg-white/5' : 'bg-slate-100'} animate-pulse`} />
             </div>
           </div>
         ))}
@@ -67,9 +67,9 @@ export function WhoToFollow() {
 
   if (users.length === 0) {
     return (
-      <div className={`rounded-2xl ${isDark ? 'bg-white/[0.03] border border-white/[0.06]' : 'bg-white border border-[#EFF3F4]'} p-4`}>
-        <h3 className={`text-lg font-semibold mb-2 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>Who to follow</h3>
-        <p className={`text-sm ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
+      <div className={`rounded-3xl border ${isDark ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-slate-100 shadow-soft-card'} p-4`}>
+        <h3 className={`text-sm font-semibold mb-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>Who to follow</h3>
+        <p className={`text-sm ${isDark ? 'text-white/30' : 'text-slate-400'}`}>
           No suggestions yet. Follow friends to see their reflections in your feed.
         </p>
       </div>
@@ -77,9 +77,9 @@ export function WhoToFollow() {
   }
 
   return (
-    <div className={`rounded-2xl ${isDark ? 'bg-white/[0.03] border border-white/[0.06]' : 'bg-white border border-[#EFF3F4]'} p-4`}>
-      <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>Who to follow</h3>
-      <div className="space-y-3">
+    <div className={`rounded-3xl border ${isDark ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-slate-100 shadow-soft-card'} p-4`}>
+      <h3 className={`text-sm font-semibold mb-4 ${isDark ? 'text-white' : 'text-slate-900'}`}>Who to follow</h3>
+      <div className="space-y-4">
         {users.map(user => {
           const displayName = user.display_name || user.full_name || 'Unknown'
           const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
@@ -89,23 +89,25 @@ export function WhoToFollow() {
               key={user.id}
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-center gap-3"
+              className="flex items-center justify-between gap-3"
             >
-              <Link href={`/${user.username}`} className="shrink-0">
-                <Avatar className="h-10 w-10">
-                  <AvatarImage src={user.avatar_url || undefined} />
-                  <AvatarFallback className={`text-xs ${isDark ? 'bg-[#161618] text-white/40' : 'bg-[#EFF3F4] text-[#536471]'}`}>
-                    {initials}
-                  </AvatarFallback>
-                </Avatar>
-              </Link>
-              <div className="flex-1 min-w-0">
-                <Link href={`/${user.username}`} className={`text-sm font-semibold truncate block hover:underline ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
-                  {displayName}
+              <div className="flex items-center gap-3 min-w-0">
+                <Link href={`/${user.username}`} className="shrink-0">
+                  <Avatar className="h-9 w-9">
+                    <AvatarImage src={user.avatar_url || undefined} />
+                    <AvatarFallback className={`text-xs ${isDark ? 'bg-[#1B2436] text-white/40' : 'bg-slate-100 text-slate-500'}`}>
+                      {initials}
+                    </AvatarFallback>
+                  </Avatar>
                 </Link>
-                <p className={`text-xs truncate ${isDark ? 'text-white/30' : 'text-[#536471]'}`}>
-                  @{user.username}
-                </p>
+                <div className="min-w-0">
+                  <Link href={`/${user.username}`} className={`text-sm font-semibold truncate block hover:underline ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                    {displayName}
+                  </Link>
+                  <p className={`text-xs truncate ${isDark ? 'text-white/30' : 'text-slate-400'}`}>
+                    @{user.username}
+                  </p>
+                </div>
               </div>
               <Button
                 variant="outline"
@@ -116,10 +118,10 @@ export function WhoToFollow() {
                   isFollowed
                     ? isDark
                       ? 'border-white/10 text-white/40'
-                      : 'border-[#EFF3F4] text-[#536471]'
+                      : 'border-slate-200 text-slate-500'
                     : isDark
-                      ? 'border-white text-white hover:bg-white/10'
-                      : 'border-[#0F1419] text-[#0F1419] hover:bg-[#EFF3F4]'
+                      ? 'bg-[#6366F1] border-[#6366F1] text-white hover:bg-[#4F46E5]'
+                      : 'bg-slate-900 border-slate-900 text-white hover:bg-slate-800'
                 }`}
               >
                 {isFollowed ? (
@@ -134,7 +136,7 @@ export function WhoToFollow() {
       </div>
       <Link
         href="/friends"
-        className={`block text-sm mt-3 transition-colors ${isDark ? 'text-[#1D9BF0] hover:text-[#1A8CD8]' : 'text-[#1D9BF0] hover:text-[#1A8CD8]'}`}
+        className={`block text-sm mt-4 transition-colors ${isDark ? 'text-[#818CF8] hover:text-[#A5B4FC]' : 'text-indigo-500 hover:text-indigo-600'}`}
       >
         Show more
       </Link>

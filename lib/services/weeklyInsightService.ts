@@ -440,7 +440,7 @@ function buildWeeklyContext(digest: WeeklyDigest, userName: string | null): stri
   context += `- Period: ${digest.weekStart} to ${digest.weekEnd}\n`
   context += `- Total reflections: ${digest.totalReflections}\n`
   context += `- Average word count: ${digest.averageWordCount}\n`
-  context += `- Current streak: ${digest.currentStreak} days\n\n`
+  context += `- Days reflected in a row: ${digest.currentStreak}\n\n`
   
   // Mood distribution
   if (digest.moodDistribution.length > 0) {

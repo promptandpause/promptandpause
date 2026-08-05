@@ -616,7 +616,7 @@ export async function getReflectionInsights(
     // Streak insights
     const currentStreak = await calculateReflectionStreak(userId)
     if (currentStreak >= 7) {
-      insights.push(`🔥 You\'re on a ${currentStreak}-day streak! Keep the momentum going!`)
+      insights.push(`🌱 ${currentStreak} days in a row! A gentle rhythm is taking shape.`)
     } else if (currentStreak >= 3) {
       insights.push(`🎯 ${currentStreak} days in a row! You\'re building a great habit.`)
     }

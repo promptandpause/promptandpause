@@ -49,7 +49,7 @@
 | **3** | CAR | **"5 Signs You Need a Reflection Practice"** — Slide 1: Hook. Slides 2-5: Signs (e.g., "You feel busy but not fulfilled", "You react instead of respond"). Slide 6: CTA. | "If 3+ of these hit... you're not broken, you're just not pausing. Try it free — link in bio." |
 | **4** | QC | *"What would change if you gave yourself permission to feel what you're actually feeling?"* | "This is today's prompt. Sit with it. No right answer. Drop a 💜 if this one hit." |
 | **5** | RL | **Screen recording walkthrough** — Show signing up → getting a prompt → writing a reflection → seeing your mood tracker. Keep it snappy, lo-fi music. | "Here's what 5 minutes of self-care actually looks like. No crystals required." |
-| **6** | QC | *"Healing isn't linear. Neither is growth. But showing up daily? That compounds."* | "Your streak doesn't need to be perfect. It just needs to exist." |
+| **6** | QC | *"Healing isn't linear. Neither is growth. But showing up daily? That compounds."* | "Your rhythm doesn't need to be perfect. It just needs to exist." |
 | **7** | CAR | **"How Prompt & Pause Works"** — Slide 1: "Your daily reflection in 3 steps". Slide 2: Get your prompt. Slide 3: Reflect. Slide 4: Track your mood. Slide 5: Watch yourself grow. Slide 6: CTA. | "It's not journaling. It's not therapy. It's the space in between. Free to start." |
 
 **Stories (Week 1):**
@@ -95,7 +95,7 @@
 | **17** | CAR | **"The Science Behind Daily Reflection"** — Slide 1: Hook ("It's not woo-woo"). Slides 2-5: Benefits backed by research (reduced anxiety, better decision-making, emotional regulation, improved relationships). Slide 6: CTA. | "Your brain literally rewires when you reflect consistently. Here's the proof." |
 | **18** | QC | *"You don't need more advice. You need more honest conversations with yourself."* | "That's what a prompt does. It starts the conversation. You finish it." |
 | **19** | RL | **"What your mood tracker reveals about you"** — Show the mood tracker feature. Explain how patterns emerge over a week. "I noticed I'm always 😐 on Wednesdays..." | Product feature highlight disguised as relatable content. |
-| **20** | QC | *"Growth isn't always loud. Sometimes it's just noticing what you used to ignore."* | "The small shifts matter. Your streak is proof you're showing up." |
+| **20** | QC | *"Growth isn't always loud. Sometimes it's just noticing what you used to ignore."* | "The small shifts matter. Your consistency is proof you're showing up." |
 | **21** | CAR | **"Free vs Premium — What You Get"** — Clean comparison carousel. Not salesy — informative. Highlight custom focus areas, AI insights, voice prompts, export. | "Free gets you started. Premium helps you go deeper. Both are valid." |
 
 **Stories (Week 3):**
@@ -115,7 +115,7 @@
 |---|---|---|---|
 | **22** | QC | *"The best time to start was yesterday. The next best time is right now."* | "Your first prompt is waiting. Free to start, no credit card needed. Link in bio." |
 | **23** | RL | **"I asked 5 people to try Prompt & Pause for a week"** — Compile short clips or text quotes from real users / friends / beta testers sharing their experience. | Social proof. Real voices > polished ads. |
-| **24** | CAR | **"A Week Inside Prompt & Pause"** — Day-by-day carousel showing what a user's week looks like: Mon prompt, Tue mood check, Wed reflection, Thu streak, Fri insight, Sat/Sun rest. | "This is what intentional living looks like in practice. Not perfect — consistent." |
+| **24** | CAR | **"A Week Inside Prompt & Pause"** — Day-by-day carousel showing what a user's week looks like: Mon prompt, Tue mood check, Wed reflection, Thu rhythm, Fri insight, Sat/Sun rest. | "This is what intentional living looks like in practice. Not perfect — consistent." |
 | **25** | QC | *"You are one question away from a completely different perspective."* | "That question lands in your inbox tomorrow morning. Sign up tonight." |
 | **26** | RL | **"Things that are free: Prompt & Pause, peace of mind, 5 minutes of honesty"** — Quick-cut aesthetic video. Text overlays. Trending sound. | Light, shareable, CTA at the end. |
 | **27** | QC | *"Don't just survive the week. Understand it."* | "Your reflections are building a map of who you are. Start yours." |
@@ -346,7 +346,7 @@ To match your brand:
 
 ### Trending Format Adaptations
 - **"Put a finger down"** — mental health edition → end with "If you put a finger down, you need Prompt & Pause"
-- **"Things that just make sense"** — pausing before reacting, checking in with yourself, having a reflection streak
+- **"Things that just make sense"** — pausing before reacting, checking in with yourself, keeping a reflection rhythm
 - **"Tell me without telling me"** — "Tell me you need a reflection practice without telling me"
 - **"Day in my life"** — Include P&P as part of your morning routine
 - **"This or That"** — Bottling emotions vs. reflecting on them
@@ -354,12 +354,12 @@ To match your brand:
 ### Aesthetic / B-Roll
 - Morning coffee + phone notification + typing reflection (no talking, lo-fi music)
 - Timelapse of writing a reflection
-- "Satisfying" streak counter going up
+- "Satisfying" reflection count going up
 - Split screen: chaotic morning vs. calm morning with P&P
 
 ### User-Generated Content Prompts
 - "Film yourself answering today's prompt and tag us"
-- "Show us your reflection streak"
+- "Show us your reflection rhythm"
 - "What's the most powerful prompt you've received?"
 
 ---

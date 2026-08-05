@@ -154,7 +154,7 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
           </div>
           {streak > 0 && (
             <span className={`text-xs px-2 py-0.5 rounded-full ${theme === 'dark' ? 'text-amber-400 bg-amber-500/20' : 'text-amber-600 bg-amber-50'}`}>
-              🔥 {streak} day streak
+              🔥 {streak} days in a row
             </span>
           )}
         </div>
@@ -264,7 +264,7 @@ export default function GratitudeEntry({ userId, reflectionId, onSave, compact =
               }`}
             >
               <Sparkle size={12} />
-              {streak}-day streak
+              {streak} days in a row
             </motion.span>
           )}
         </div>

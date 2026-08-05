@@ -185,7 +185,7 @@ We believe in fair compensation and transparency:
 
 - ✅ AI-powered personalized daily prompts
 - ✅ Reflection journaling with mood tracking
-- ✅ Achievement badges and streak tracking
+- ✅ Achievement badges and consistency tracking
 - ✅ Premium analytics and insights
 - ✅ Email and Slack integrations
 - ✅ 7-day free trial system

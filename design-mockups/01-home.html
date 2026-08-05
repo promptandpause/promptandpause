@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Prompt &amp; Pause</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .serif { font-family: 'Playfair Display', serif; }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); }
+        .soft-shadow { box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05); }
+        ::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-[#F9FBFB] text-[#334155] min-h-screen pb-24">
+
+    <!-- Sticky Header -->
+    <header class="glass sticky top-0 z-20 px-6 pt-12 pb-2 border-b border-white/60">
+        <div class="flex justify-between items-center mb-4">
+            <button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white transition-colors">
+                <i class="fa-solid fa-bars-staggered text-slate-400"></i>
+            </button>
+            <span class="serif font-semibold text-xl tracking-tight text-slate-800">Prompt &amp; Pause</span>
+                <div class="flex gap-2">
+                    <button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white transition-colors relative">
+                        <i class="fa-regular fa-bell text-slate-400"></i>
+                        <span class="absolute top-2 right-2 w-2 h-2 bg-indigo-400 rounded-full border-2 border-white"></span>
+                    </button>
+                    <button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white transition-colors">
+                        <i class="fa-solid fa-gear text-slate-400"></i>
+                    </button>
+                </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex -mx-6 px-2">
+            <button onclick="switchTab('for-you')" id="tab-for-you" class="tab-btn flex-1 py-3 text-sm font-semibold text-center text-slate-900 border-b-2 border-indigo-500">For You</button>
+            <button onclick="switchTab('following')" id="tab-following" class="tab-btn flex-1 py-3 text-sm font-semibold text-center text-slate-400 border-b-2 border-transparent">Following</button>
+            <button onclick="switchTab('likes')" id="tab-likes" class="tab-btn flex-1 py-3 text-sm font-semibold text-center text-slate-400 border-b-2 border-transparent">Likes</button>
+        </div>
+    </header>
+
+    <main class="px-6 space-y-6 pt-6">
+
+        <!-- Quick Share -->
+        <div class="glass rounded-3xl border border-slate-100 soft-shadow px-5 py-4 flex items-center gap-3 cursor-pointer">
+            <div class="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-sparkles text-indigo-400"></i>
+            </div>
+            <span class="text-sm text-slate-400 flex-1">Share your reflection...</span>
+            <i class="fa-solid fa-paper-plane text-slate-300"></i>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid grid-cols-2 gap-3">
+            <button class="glass rounded-2xl border border-slate-100 soft-shadow p-4 flex items-center gap-3">
+                <span class="w-9 h-9 rounded-xl bg-sky-50 flex items-center justify-center">
+                    <i class="fa-solid fa-wind text-sky-400"></i>
+                </span>
+                <span class="text-sm font-semibold text-slate-700">Breathe</span>
+            </button>
+            <button class="glass rounded-2xl border border-slate-100 soft-shadow p-4 flex items-center gap-3">
+                <span class="w-9 h-9 rounded-xl bg-rose-50 flex items-center justify-center">
+                    <i class="fa-solid fa-heart text-rose-400"></i>
+                </span>
+                <span class="text-sm font-semibold text-slate-700">Check In</span>
+            </button>
+            <button class="glass rounded-2xl border border-slate-100 soft-shadow p-4 flex items-center gap-3">
+                <span class="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center">
+                    <i class="fa-solid fa-pen-nib text-indigo-400"></i>
+                </span>
+                <span class="text-sm font-semibold text-slate-700">Reflect</span>
+            </button>
+            <button class="glass rounded-2xl border border-slate-100 soft-shadow p-4 flex items-center gap-3">
+                <span class="w-9 h-9 rounded-xl bg-amber-50 flex items-center justify-center">
+                    <i class="fa-solid fa-sun text-amber-400"></i>
+                </span>
+                <span class="text-sm font-semibold text-slate-700">Gratitude</span>
+            </button>
+        </div>
+
+        <!-- Your Rhythm -->
+        <div class="glass rounded-3xl border border-slate-100 soft-shadow p-5">
+            <div class="flex items-start justify-between mb-4">
+                <div>
+                    <p class="text-[10px] uppercase tracking-[0.14em] font-semibold text-slate-400 mb-1">Mood trends</p>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-2xl font-bold tabular-nums text-slate-900">4/7</span>
+                        <span class="text-xs text-slate-400">days reflected this week</span>
+                    </div>
+                </div>
+                <p class="text-xs max-w-[130px] text-right leading-relaxed text-slate-400">Consistency matters more than length.</p>
+            </div>
+            <div class="flex justify-between gap-1.5">
+                <div class="w-9 h-9 rounded-full bg-white border border-slate-100 flex items-center justify-center"><span>😌</span></div>
+                <div class="w-9 h-9 rounded-full bg-white border border-slate-100 flex items-center justify-center"><span>😊</span></div>
+                <div class="w-9 h-9 rounded-full bg-[#EFF3F4] flex items-center justify-center"><span class="text-xs text-slate-300">—</span></div>
+                <div class="w-9 h-9 rounded-full bg-white border border-slate-100 flex items-center justify-center"><span>😊</span></div>
+                <div class="w-9 h-9 rounded-full bg-white border border-slate-100 flex items-center justify-center"><span>😔</span></div>
+                <div class="w-9 h-9 rounded-full bg-[#EFF3F4] flex items-center justify-center"><span class="text-xs text-slate-300">—</span></div>
+                <div class="w-9 h-9 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center"><span>😊</span></div>
+            </div>
+        </div>
+
+        <!-- Feed -->
+        <div id="panel-for-you" class="tab-panel space-y-4">
+
+            <!-- Feed Card 1 -->
+            <article class="glass rounded-3xl border border-slate-100 soft-shadow p-5">
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-200 to-slate-200 flex items-center justify-center shrink-0">
+                        <span class="text-sm font-semibold text-slate-600">M</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="text-sm font-semibold text-slate-900">Maya Chen</span>
+                                <span class="text-sm text-slate-400">@mayachen</span>
+                                <span class="text-xs text-slate-300">· 2h</span>
+                            </div>
+                            <button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-slate-50 transition-colors">
+                                <i class="fa-solid fa-ellipsis text-slate-400 text-xs"></i>
+                            </button>
+                        </div>
+                        <p class="text-sm leading-relaxed mt-1 text-slate-700">
+                            Today's prompt asked me what I was holding onto. Letting go of the deadline pressure I invented. That's the work.
+                        </p>
+                        <div class="flex items-center gap-3 mt-3">
+                            <span class="text-lg leading-none">😊</span>
+                            <span class="text-xs text-indigo-500">#Personal Growth</span>
+                            <span class="text-xs text-indigo-500">#Self-care</span>
+                        </div>
+                        <div class="flex items-center gap-6 mt-3 text-slate-400">
+                            <button class="flex items-center gap-1.5 text-xs hover:text-indigo-500 transition-colors">
+                                <i class="fa-regular fa-comment text-sm"></i> 4
+                            </button>
+                            <button class="flex items-center gap-1.5 text-xs hover:text-rose-500 transition-colors">
+                                <i class="fa-regular fa-heart text-sm"></i> 18
+                            </button>
+                            <button class="flex items-center gap-1.5 text-xs hover:text-indigo-500 transition-colors">
+                                <i class="fa-solid fa-sparkles text-sm"></i> Reflect
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Feed Card 2 -->
+            <article class="glass rounded-3xl border border-slate-100 soft-shadow p-5">
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-rose-200 to-slate-200 flex items-center justify-center shrink-0">
+                        <span class="text-sm font-semibold text-slate-600">D</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="text-sm font-semibold text-slate-900">Daniel Okafor</span>
+                                <span class="text-sm text-slate-400">@danielo</span>
+                                <span class="text-xs text-slate-300">· 5h</span>
+                            </div>
+                            <button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-slate-50 transition-colors">
+                                <i class="fa-solid fa-ellipsis text-slate-400 text-xs"></i>
+                            </button>
+                        </div>
+                        <p class="serif italic text-[15px] leading-relaxed mt-1 text-slate-800">
+                            "Gratitude is the healthiest of all postures." Noted one small thing today: the quiet before everyone woke up.
+                        </p>
+                        <div class="flex items-center gap-3 mt-3">
+                            <span class="text-lg leading-none">🙏</span>
+                            <span class="text-xs text-indigo-500">#Gratitude</span>
+                        </div>
+                        <div class="flex items-center gap-6 mt-3 text-slate-400">
+                            <button class="flex items-center gap-1.5 text-xs hover:text-indigo-500 transition-colors">
+                                <i class="fa-regular fa-comment text-sm"></i> 2
+                            </button>
+                            <button class="flex items-center gap-1.5 text-xs text-rose-500 transition-colors">
+                                <i class="fa-solid fa-heart text-sm"></i> 32
+                            </button>
+                            <button class="flex items-center gap-1.5 text-xs hover:text-indigo-500 transition-colors">
+                                <i class="fa-solid fa-sparkles text-sm"></i> Reflect
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Feed Card 3 -->
+            <article class="glass rounded-3xl border border-slate-100 soft-shadow p-5">
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-200 to-slate-200 flex items-center justify-center shrink-0">
+                        <span class="text-sm font-semibold text-slate-600">S</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="text-sm font-semibold text-slate-900">Sofia Reyes</span>
+                                <span class="text-sm text-slate-400">@sofiar</span>
+                                <span class="text-xs text-slate-300">· 1d</span>
+                            </div>
+                            <button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-slate-50 transition-colors">
+                                <i class="fa-solid fa-ellipsis text-slate-400 text-xs"></i>
+                            </button>
+                        </div>
+                        <p class="text-sm leading-relaxed mt-1 text-slate-700">
+                            First reflection in a week. Felt heavy before I started, lighter after. Reminder that the pause is the point.
+                        </p>
+                        <div class="flex items-center gap-3 mt-3">
+                            <span class="text-lg leading-none">😌</span>
+                            <span class="text-xs text-indigo-500">#Health</span>
+                            <span class="text-xs text-indigo-500">#Achievement</span>
+                        </div>
+                        <div class="flex items-center gap-6 mt-3 text-slate-400">
+                            <button class="flex items-center gap-1.5 text-xs hover:text-indigo-500 transition-colors">
+                                <i class="fa-regular fa-comment text-sm"></i> 7
+                            </button>
+                            <button class="flex items-center gap-1.5 text-xs hover:text-rose-500 transition-colors">
+                                <i class="fa-regular fa-heart text-sm"></i> 9
+                            </button>
+                            <button class="flex items-center gap-1.5 text-xs hover:text-indigo-500 transition-colors">
+                                <i class="fa-solid fa-sparkles text-sm"></i> Reflect
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+        </div>
+
+        <!-- Following Panel -->
+        <div id="panel-following" class="tab-panel space-y-4 hidden">
+            <!-- Feed Card -->
+            <article class="glass rounded-3xl border border-slate-100 soft-shadow p-5">
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-violet-200 to-slate-200 flex items-center justify-center shrink-0">
+                        <span class="text-sm font-semibold text-slate-600">R</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="text-sm font-semibold text-slate-900">Rebecca Stone</span>
+                                <span class="text-sm text-slate-400">@rstone</span>
+                                <span class="text-xs text-slate-300">· 1h</span>
+                            </div>
+                            <button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-slate-50 transition-colors">
+                                <i class="fa-solid fa-ellipsis text-slate-400 text-xs"></i>
+                            </button>
+                        </div>
+                        <p class="text-sm leading-relaxed mt-1 text-slate-700">
+                            Three deep breaths before opening email. It changes the whole day. Trying to make it a habit.
+                        </p>
+                        <div class="flex items-center gap-3 mt-3">
+                            <span class="text-lg leading-none">😌</span>
+                            <span class="text-xs text-indigo-500">#Self-care</span>
+                        </div>
+                        <div class="flex items-center gap-6 mt-3 text-slate-400">
+                            <button class="flex items-center gap-1.5 text-xs hover:text-indigo-500 transition-colors">
+                                <i class="fa-regular fa-comment text-sm"></i> 3
+                            </button>
+                            <button class="flex items-center gap-1.5 text-xs hover:text-rose-500 transition-colors">
+                                <i class="fa-regular fa-heart text-sm"></i> 11
+                            </button>
+                            <button class="flex items-center gap-1.5 text-xs hover:text-indigo-500 transition-colors">
+                                <i class="fa-solid fa-sparkles text-sm"></i> Reflect
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Feed Card -->
+            <article class="glass rounded-3xl border border-slate-100 soft-shadow p-5">
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-teal-200 to-slate-200 flex items-center justify-center shrink-0">
+                        <span class="text-sm font-semibold text-slate-600">K</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="text-sm font-semibold text-slate-900">Kwame Mensah</span>
+                                <span class="text-sm text-slate-400">@kwamem</span>
+                                <span class="text-xs text-slate-300">· 3h</span>
+                            </div>
+                            <button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-slate-50 transition-colors">
+                                <i class="fa-solid fa-ellipsis text-slate-400 text-xs"></i>
+                            </button>
+                        </div>
+                        <p class="text-sm leading-relaxed mt-1 text-slate-700">
+                            Caught myself spiraling on a meeting I'm dreading. Paused, named the feeling, wrote it down. Smaller now.
+                        </p>
+                        <div class="flex items-center gap-3 mt-3">
+                            <span class="text-lg leading-none">😐</span>
+                            <span class="text-xs text-indigo-500">#Career</span>
+                            <span class="text-xs text-indigo-500">#Health</span>
+                        </div>
+                        <div class="flex items-center gap-6 mt-3 text-slate-400">
+                            <button class="flex items-center gap-1.5 text-xs hover:text-indigo-500 transition-colors">
+                                <i class="fa-regular fa-comment text-sm"></i> 5
+                            </button>
+                            <button class="flex items-center gap-1.5 text-xs hover:text-rose-500 transition-colors">
+                                <i class="fa-regular fa-heart text-sm"></i> 21
+                            </button>
+                            <button class="flex items-center gap-1.5 text-xs hover:text-indigo-500 transition-colors">
+                                <i class="fa-solid fa-sparkles text-sm"></i> Reflect
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Empty state (shown when no follows) -->
+            <div class="hidden text-center py-16 px-8">
+                <i class="fa-solid fa-rss text-4xl text-slate-200 mb-4"></i>
+                <p class="text-sm font-medium text-slate-600 mb-1">Your feed is empty</p>
+                <p class="text-xs text-slate-400">Add friends to see their shared reflections here.</p>
+            </div>
+        </div>
+
+        <!-- Likes Panel -->
+        <div id="panel-likes" class="tab-panel space-y-4 hidden">
+            <!-- Feed Card -->
+            <article class="glass rounded-3xl border border-slate-100 soft-shadow p-5">
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-fuchsia-200 to-slate-200 flex items-center justify-center shrink-0">
+                        <span class="text-sm font-semibold text-slate-600">L</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="text-sm font-semibold text-slate-900">Lena Fischer</span>
+                                <span class="text-sm text-slate-400">@lenaf</span>
+                                <span class="text-xs text-slate-300">· 4h</span>
+                            </div>
+                            <button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-slate-50 transition-colors">
+                                <i class="fa-solid fa-ellipsis text-slate-400 text-xs"></i>
+                            </button>
+                        </div>
+                        <p class="serif italic text-[15px] leading-relaxed mt-1 text-slate-800">
+                            "Rest is productive. Quiet is progress." Today's prompt hit harder than expected. Writing it out was a gift.
+                        </p>
+                        <div class="flex items-center gap-3 mt-3">
+                            <span class="text-lg leading-none">😊</span>
+                            <span class="text-xs text-indigo-500">#Rest</span>
+                            <span class="text-xs text-indigo-500">#Personal Growth</span>
+                        </div>
+                        <div class="flex items-center gap-6 mt-3 text-slate-400">
+                            <button class="flex items-center gap-1.5 text-xs hover:text-indigo-500 transition-colors">
+                                <i class="fa-regular fa-comment text-sm"></i> 9
+                            </button>
+                            <button class="flex items-center gap-1.5 text-xs text-rose-500 transition-colors">
+                                <i class="fa-solid fa-heart text-sm"></i> 27
+                            </button>
+                            <button class="flex items-center gap-1.5 text-xs hover:text-indigo-500 transition-colors">
+                                <i class="fa-solid fa-sparkles text-sm"></i> Reflect
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Feed Card -->
+            <article class="glass rounded-3xl border border-slate-100 soft-shadow p-5">
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-orange-200 to-slate-200 flex items-center justify-center shrink-0">
+                        <span class="text-sm font-semibold text-slate-600">T</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="text-sm font-semibold text-slate-900">Tom Alvarez</span>
+                                <span class="text-sm text-slate-400">@talvarez</span>
+                                <span class="text-xs text-slate-300">· 6h</span>
+                            </div>
+                            <button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-slate-50 transition-colors">
+                                <i class="fa-solid fa-ellipsis text-slate-400 text-xs"></i>
+                            </button>
+                        </div>
+                        <p class="text-sm leading-relaxed mt-1 text-slate-700">
+                            Week one of writing every morning. The prompt asked what I'd forgive myself for. Unexpected tears. Worth it.
+                        </p>
+                        <div class="flex items-center gap-3 mt-3">
+                            <span class="text-lg leading-none">💪</span>
+                            <span class="text-xs text-indigo-500">#Achievement</span>
+                        </div>
+                        <div class="flex items-center gap-6 mt-3 text-slate-400">
+                            <button class="flex items-center gap-1.5 text-xs hover:text-indigo-500 transition-colors">
+                                <i class="fa-regular fa-comment text-sm"></i> 12
+                            </button>
+                            <button class="flex items-center gap-1.5 text-xs text-rose-500 transition-colors">
+                                <i class="fa-solid fa-heart text-sm"></i> 45
+                            </button>
+                            <button class="flex items-center gap-1.5 text-xs hover:text-indigo-500 transition-colors">
+                                <i class="fa-solid fa-sparkles text-sm"></i> Reflect
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Empty state (shown when no likes) -->
+            <div class="hidden text-center py-16 px-8">
+                <i class="fa-solid fa-heart text-4xl text-slate-200 mb-4"></i>
+                <p class="text-sm font-medium text-slate-600 mb-1">No likes yet</p>
+                <p class="text-xs text-slate-400">Reflections you like will show up here.</p>
+            </div>
+        </div>
+
+        <!-- Trending Topics -->
+        <div class="glass rounded-3xl border border-slate-100 soft-shadow p-5">
+            <p class="text-sm font-semibold text-slate-900 mb-3">Trending topics</p>
+            <div class="space-y-3">
+                <div>
+                    <p class="text-xs text-slate-400">Trending in reflection</p>
+                    <p class="text-sm font-semibold text-slate-800">#MorningRoutine</p>
+                    <p class="text-xs text-slate-400">214 reflections</p>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-400">Trending in wellness</p>
+                    <p class="text-sm font-semibold text-slate-800">#LettingGo</p>
+                    <p class="text-xs text-slate-400">152 reflections</p>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-400">Trending this week</p>
+                    <p class="text-sm font-semibold text-slate-800">#OneSmallThing</p>
+                    <p class="text-xs text-slate-400">98 reflections</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Who to Follow -->
+        <div class="glass rounded-3xl border border-slate-100 soft-shadow p-5">
+            <p class="text-sm font-semibold text-slate-900 mb-3">Who to follow</p>
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-200 to-slate-200 flex items-center justify-center">
+                            <span class="text-sm font-semibold text-slate-600">A</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-slate-900">Amara Nwosu</p>
+                            <p class="text-xs text-slate-400">@amaran</p>
+                        </div>
+                    </div>
+                    <button class="text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-full px-4 py-1.5 transition-colors">Follow</button>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-sky-200 to-slate-200 flex items-center justify-center">
+                            <span class="text-sm font-semibold text-slate-600">J</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-slate-900">James Whitfield</p>
+                            <p class="text-xs text-slate-400">@jwhit</p>
+                        </div>
+                    </div>
+                    <button class="text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-full px-4 py-1.5 transition-colors">Follow</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bottom Nav -->
+    <nav class="fixed bottom-0 left-0 right-0 h-20 bg-white/80 backdrop-blur-md border-t border-slate-100 flex items-center justify-around px-4 z-20">
+        <button class="flex flex-col items-center gap-1 group">
+            <i class="fa-solid fa-house text-indigo-500"></i>
+            <span class="text-[10px] font-medium text-slate-900">Home</span>
+        </button>
+        <button class="flex flex-col items-center gap-1 group">
+            <i class="fa-solid fa-pen-nib text-slate-300 group-hover:text-indigo-400 transition-colors"></i>
+            <span class="text-[10px] font-medium text-slate-400 group-hover:text-slate-900">Reflect</span>
+        </button>
+        <button class="flex flex-col items-center gap-1 group">
+            <i class="fa-solid fa-wave-square text-slate-300 group-hover:text-indigo-400 transition-colors"></i>
+            <span class="text-[10px] font-medium text-slate-400 group-hover:text-slate-900">Feed</span>
+        </button>
+        <button class="flex flex-col items-center gap-1 group">
+            <i class="fa-solid fa-heart text-slate-300 group-hover:text-indigo-400 transition-colors"></i>
+            <span class="text-[10px] font-medium text-slate-400 group-hover:text-slate-900">Wellbeing</span>
+        </button>
+        <button class="flex flex-col items-center gap-1 group">
+            <i class="fa-solid fa-box-archive text-slate-300 group-hover:text-indigo-400 transition-colors"></i>
+            <span class="text-[10px] font-medium text-slate-400 group-hover:text-slate-900">Archive</span>
+        </button>
+    </nav>
+
+    <script>
+        function switchTab(name) {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+            document.getElementById('panel-' + name).classList.remove('hidden');
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('text-slate-900', 'border-indigo-500');
+                b.classList.add('text-slate-400', 'border-transparent');
+            });
+            const btn = document.getElementById('tab-' + name);
+            btn.classList.add('text-slate-900', 'border-indigo-500');
+            btn.classList.remove('text-slate-400', 'border-transparent');
+        }
+    </script>
+
+</body>
+</html>

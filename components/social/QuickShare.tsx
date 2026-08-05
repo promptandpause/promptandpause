@@ -87,15 +87,17 @@ export function QuickShare({ onShared }: { onShared?: () => void }) {
   ]
 
   return (
-    <div className={`rounded-2xl ${isDark ? 'bg-white/[0.03] border border-white/[0.06]' : 'bg-white/80 border border-[#EFF3F4]'}`}>
+    <div className={`rounded-3xl border ${isDark ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-slate-100 shadow-soft-card'}`}>
       <button
         onClick={() => setOpen(!open)}
-        className={`flex items-center gap-3 w-full px-4 py-2.5 transition-colors rounded-2xl ${
-          isDark ? 'hover:bg-white/[0.03]' : 'hover:bg-[#F7F9FA]'
+        className={`flex items-center gap-3 w-full px-4 py-2.5 transition-colors rounded-3xl ${
+          isDark ? 'hover:bg-white/[0.03]' : 'hover:bg-slate-50/60'
         }`}
       >
-        <Sparkle size={18} weight="bold" className={isDark ? 'text-[#1D9BF0]' : 'text-[#1D9BF0]'} />
-        <span className={`text-sm ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
+        <span className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${isDark ? 'bg-[#818CF8]/15 text-[#818CF8]' : 'bg-indigo-50 text-indigo-400'}`}>
+          <Sparkle size={18} weight="bold" />
+        </span>
+        <span className={`text-sm flex-1 ${isDark ? 'text-white/30' : 'text-slate-400'}`}>
           Share your reflection...
         </span>
       </button>
@@ -106,7 +108,7 @@ export function QuickShare({ onShared }: { onShared?: () => void }) {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className={`border-t ${isDark ? 'border-white/[0.06]' : 'border-[#EFF3F4]'}`}
+            className={`border-t ${isDark ? 'border-white/[0.06]' : 'border-slate-100'}`}
           >
             <div className="p-4 space-y-3">
               <textarea
@@ -117,7 +119,7 @@ export function QuickShare({ onShared }: { onShared?: () => void }) {
                 className={`w-full min-h-[100px] resize-none text-sm rounded-xl p-3 outline-none ${
                   isDark
                     ? 'bg-white/[0.06] text-white placeholder:text-white/20 border border-white/[0.08]'
-                    : 'bg-[#F7F9FA] text-[#0F1419] placeholder:text-[#8B98A5] border border-[#EFF3F4]'
+                    : 'bg-[#F9FBFB] text-slate-700 placeholder:text-slate-400 border border-slate-100'
                 }`}
               />
               <div className="flex items-center justify-between">
@@ -129,11 +131,11 @@ export function QuickShare({ onShared }: { onShared?: () => void }) {
                       className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                         visibility === opt.value
                           ? isDark
-                            ? 'bg-[#1D9BF0]/20 text-[#1D9BF0]'
-                            : 'bg-[#1D9BF0]/10 text-[#1D9BF0]'
+                            ? 'bg-[#818CF8]/20 text-[#818CF8]'
+                            : 'bg-indigo-50 text-indigo-600'
                           : isDark
                             ? 'text-white/30 hover:text-white/50'
-                            : 'text-[#8B98A5] hover:text-[#536471]'
+                            : 'text-slate-400 hover:text-slate-600'
                       }`}
                     >
                       {opt.icon} {opt.label}
@@ -146,8 +148,8 @@ export function QuickShare({ onShared }: { onShared?: () => void }) {
                   size="sm"
                   className={`rounded-full text-xs font-semibold px-4 ${
                     isDark
-                      ? 'bg-[#1D9BF0] text-white hover:bg-[#1A8CD8] disabled:opacity-50'
-                      : 'bg-[#1D9BF0] text-white hover:bg-[#1A8CD8] disabled:opacity-50'
+                      ? 'bg-[#6366F1] text-white hover:bg-[#4F46E5] disabled:opacity-50'
+                      : 'bg-[#6366F1] text-white hover:bg-[#4F46E5] disabled:opacity-50'
                   }`}
                 >
                   {submitting ? <Spinner size={14} weight="bold" className="animate-spin" /> : <Check size={14} weight="bold" />}
@@ -159,10 +161,10 @@ export function QuickShare({ onShared }: { onShared?: () => void }) {
                 <select
                   value={workspaceId}
                   onChange={e => setWorkspaceId(e.target.value)}
-                  className={`w-full px-3 py-2 rounded-lg text-sm border outline-none focus:border-[#1D9BF0] ${
+                  className={`w-full px-3 py-2 rounded-lg text-sm border outline-none focus:border-[#6366F1] ${
                     isDark
                       ? 'bg-white/[0.06] border-white/[0.1] text-white'
-                      : 'bg-white border-[#CFD9DE] text-[#0F1419]'
+                      : 'bg-white border-slate-200 text-slate-700'
                   }`}
                 >
                   {workspaces.map(ws => (
@@ -172,13 +174,13 @@ export function QuickShare({ onShared }: { onShared?: () => void }) {
               )}
 
               {visibility === 'public' && isWorkspaceMember && (
-                <p className={`text-xs ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
+                <p className={`text-xs ${isDark ? 'text-white/40' : 'text-slate-400'}`}>
                   This posts to your personal public feed — visible to everyone, not just your workspace.
                 </p>
               )}
 
               {visibility === 'workspace' && (
-                <p className={`text-xs ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
+                <p className={`text-xs ${isDark ? 'text-white/40' : 'text-slate-400'}`}>
                   Only members of this workspace can see it.
                 </p>
               )}

@@ -177,7 +177,7 @@ function DashboardContent() {
   }, [tab, loadFollowingFeed, loadLikesFeed])
 
   return (
-    <div className={`min-h-screen ${isDark ? "bg-[#0A0A0A]" : "bg-[#FFFFFF]"}`}>
+    <div className={`min-h-screen ${isDark ? "bg-[#0A0E18]" : "bg-[#F9FBFB]"}`}>
       <GlobalDataSync />
 
       <div className="flex h-screen overflow-hidden">
@@ -186,12 +186,12 @@ function DashboardContent() {
         <main className="flex-1 overflow-y-auto scrollbar-thin">
           <div className="max-w-[1400px] mx-auto flex gap-8 px-0 xl:px-6">
           <div className="flex-1 min-w-0 max-w-[680px] border-r border-[#EFF3F4] dark:border-white/[0.06]">
-          {/* Twitter-style header */}
+          {/* Header */}
           <div className={`sticky top-0 z-10 backdrop-blur-md ${
-            isDark ? "bg-[#0A0A0A]/80 border-b border-white/[0.06]" : "bg-white/80 border-b border-[#EFF3F4]"
+            isDark ? "bg-[#0A0E18]/80 border-b border-white/[0.06]" : "bg-[#F9FBFB]/80 border-b border-slate-100"
           }`}>
             <div className="px-4 h-12 flex items-center">
-              <h1 className={`text-xl font-semibold ${isDark ? "text-white" : "text-[#0F1419]"}`}>
+              <h1 className={`text-xl font-semibold ${isDark ? "text-white" : "text-[#1E293B]"}`}>
                 {tab === "for_you" ? t(greetingKey) : tab === "following" ? "Following" : "Likes"}{tab === "for_you" && userName ? `, ${userName}` : ""}
               </h1>
             </div>
@@ -199,8 +199,8 @@ function DashboardContent() {
               <button
                 className={`flex-1 py-3 text-sm font-semibold text-center transition-colors ${
                   tab === "for_you"
-                    ? `border-b-2 border-[#1D9BF0] ${isDark ? "text-white" : "text-[#0F1419]"}`
-                    : `${isDark ? "text-white/40 hover:text-white/60" : "text-[#536471] hover:text-[#0F1419]"}`
+                    ? `border-b-2 border-[#6366F1] ${isDark ? "text-white" : "text-[#1E293B]"}`
+                    : `${isDark ? "text-white/40 hover:text-white/60" : "text-[#64748B] hover:text-[#1E293B]"}`
                 }`}
                 onClick={() => setTab("for_you")}
               >
@@ -209,8 +209,8 @@ function DashboardContent() {
               <button
                 className={`flex-1 py-3 text-sm font-semibold text-center transition-colors ${
                   tab === "following"
-                    ? `border-b-2 border-[#1D9BF0] ${isDark ? "text-white" : "text-[#0F1419]"}`
-                    : `${isDark ? "text-white/40 hover:text-white/60" : "text-[#536471] hover:text-[#0F1419]"}`
+                    ? `border-b-2 border-[#6366F1] ${isDark ? "text-white" : "text-[#1E293B]"}`
+                    : `${isDark ? "text-white/40 hover:text-white/60" : "text-[#64748B] hover:text-[#1E293B]"}`
                 }`}
                 onClick={() => setTab("following")}
               >
@@ -219,8 +219,8 @@ function DashboardContent() {
               <button
                 className={`flex-1 py-3 text-sm font-semibold text-center transition-colors ${
                   tab === "likes"
-                    ? `border-b-2 border-[#1D9BF0] ${isDark ? "text-white" : "text-[#0F1419]"}`
-                    : `${isDark ? "text-white/40 hover:text-white/60" : "text-[#536471] hover:text-[#0F1419]"}`
+                    ? `border-b-2 border-[#6366F1] ${isDark ? "text-white" : "text-[#1E293B]"}`
+                    : `${isDark ? "text-white/40 hover:text-white/60" : "text-[#64748B] hover:text-[#1E293B]"}`
                 }`}
                 onClick={() => setTab("likes")}
               >
@@ -230,36 +230,40 @@ function DashboardContent() {
           </div>
 
           {/* Compose / Quick Share */}
-          <div className={`px-4 py-3 border-b ${isDark ? "border-white/[0.06]" : "border-[#EFF3F4]"}`}>
+          <div className={`px-4 py-3 border-b ${isDark ? "border-white/[0.06]" : "border-slate-100"}`}>
             <QuickShare onShared={() => {}} />
           </div>
 
-          {/* Quick Actions + Streak Row */}
-          <div className={`px-4 py-3 border-b ${isDark ? "border-white/[0.06]" : "border-[#EFF3F4]"}`}>
-            <div className="grid grid-cols-2 gap-2 mb-3">
+          {/* Quick Actions + Rhythm Row */}
+          <div className={`px-4 py-3 border-b ${isDark ? "border-white/[0.06]" : "border-slate-100"}`}>
+            <div className="grid grid-cols-2 gap-3 mb-3">
               <QuickActionBtn
                 icon={<Wind size={16} weight="bold" />}
                 label="Breathe"
                 href="/wellness?open=breathing"
                 isDark={isDark}
+                chip="bg-sky-50 text-sky-500"
               />
               <QuickActionBtn
                 icon={<Heart size={16} weight="bold" />}
                 label="Check In"
                 href="/wellness"
                 isDark={isDark}
+                chip="bg-rose-50 text-rose-500"
               />
               <QuickActionBtn
                 icon={<PencilLine size={16} weight="bold" />}
                 label="Reflect"
                 href="/reflect"
                 isDark={isDark}
+                chip="bg-indigo-50 text-indigo-500"
               />
               <QuickActionBtn
                 icon={<Sun size={16} weight="bold" />}
                 label="Gratitude"
                 href="/wellness?open=gratitude"
                 isDark={isDark}
+                chip="bg-amber-50 text-amber-500"
               />
             </div>
             <YourRhythm />
@@ -279,32 +283,32 @@ function DashboardContent() {
                       <Spinner size={24} weight="bold" className={`animate-spin ${isDark ? "text-white/20" : "text-[#8B98A5]"}`} />
                     </div>
                   ) : followingFeed.length === 0 ? (
-                    <div className={`text-center py-16 px-8 ${isDark ? "text-white/30" : "text-[#8B98A5]"}`}>
-                      <Rss size={40} weight="bold" className={`mx-auto mb-4 ${isDark ? "text-white/15" : "text-[#D0CFC0]"}`} />
-                      <p className="text-sm font-medium mb-1">Your feed is empty</p>
+                    <div className={`text-center py-16 px-8 ${isDark ? "text-white/30" : "text-slate-400"}`}>
+                      <Rss size={40} weight="bold" className={`mx-auto mb-4 ${isDark ? "text-white/15" : "text-slate-200"}`} />
+                      <p className="text-sm font-medium mb-1 text-slate-600 dark:text-white/40">Your feed is empty</p>
                       <p className="text-xs">Add friends to see their shared reflections here.</p>
                     </div>
                   ) : (
-                    <div className="space-y-1">
+                    <div className="space-y-3 px-4">
                       {followingFeed.map((item) => {
                         const displayName = item.profile?.display_name || item.profile?.full_name || "Unknown"
                         return (
                           <div
                             key={item.id}
-                            className={`px-4 py-3 cursor-pointer transition-colors ${
+                            className={`rounded-3xl border p-5 cursor-pointer transition-colors ${
                               isDark
-                                ? "hover:bg-white/[0.02] border-b border-white/[0.06]"
-                                : "hover:bg-[#F7F9FA] border-b border-[#EFF3F4]"
+                                ? "bg-white/[0.04] border-white/[0.06] hover:bg-white/[0.06]"
+                                : "bg-white/70 border-slate-100 hover:bg-white shadow-soft-card"
                             }`}
                             onClick={() => item.profile?.username && router.push(`/${item.profile.username}`)}
                           >
                             <div className="flex gap-3">
                               <div className="shrink-0">
-                                <div className={`h-10 w-10 rounded-full flex items-center justify-center ${isDark ? "bg-[#161618]" : "bg-[#EFF3F4]"}`}>
+                                <div className={`h-10 w-10 rounded-full flex items-center justify-center ${isDark ? "bg-[#1B2436]" : "bg-slate-100"}`}>
                                   {item.profile?.avatar_url ? (
                                     <img src={item.profile.avatar_url} alt="" className="h-10 w-10 rounded-full object-cover" />
                                   ) : (
-                                    <span className={`text-sm font-semibold ${isDark ? "text-white/40" : "text-[#536471]"}`}>
+                                    <span className={`text-sm font-semibold ${isDark ? "text-white/40" : "text-slate-500"}`}>
                                       {displayName.charAt(0).toUpperCase()}
                                     </span>
                                   )}
@@ -313,10 +317,10 @@ function DashboardContent() {
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center justify-between gap-2">
                                   <div className="flex items-center gap-1.5 flex-wrap">
-                                    <span className={`text-sm font-semibold ${isDark ? "text-white" : "text-[#0F1419]"}`}>
+                                    <span className={`text-sm font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>
                                       {displayName}
                                     </span>
-                                    <span className={`text-sm ${isDark ? "text-white/30" : "text-[#536471]"}`}>
+                                    <span className={`text-sm ${isDark ? "text-white/30" : "text-slate-400"}`}>
                                       @{item.profile?.username}
                                     </span>
                                   </div>
@@ -329,17 +333,17 @@ function DashboardContent() {
                                     onBlocked={() => setFollowingFeed(prev => prev.filter(f => f.user_id !== item.user_id))}
                                   />
                                 </div>
-                                <p className={`text-sm leading-relaxed mt-0.5 ${isDark ? "text-white/80" : "text-[#0F1419]"}`}>
+                                <p className={`text-sm leading-relaxed mt-1 ${isDark ? "text-white/80" : "text-slate-700"}`}>
                                   {item.reflection_text}
                                 </p>
-                                <div className="flex items-center gap-3 mt-2">
+                                <div className="flex items-center gap-3 mt-3">
                                   <span className="text-lg leading-none">{item.mood}</span>
                                   {item.tags?.slice(0, 3).map((tag: string) => (
-                                    <span key={tag} className="text-xs text-[#1D9BF0]">#{tag}</span>
+                                    <span key={tag} className="text-xs text-indigo-500">#{tag}</span>
                                   ))}
                                 </div>
-                                <div className="flex items-center gap-6 mt-2">
-                                  <button className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#1D9BF0]' : 'text-[#536471] hover:text-[#1D9BF0]'}`}
+                                <div className="flex items-center gap-6 mt-3">
+                                  <button className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#818CF8]' : 'text-slate-400 hover:text-indigo-500'}`}
                                     onClick={e => { e.stopPropagation(); toggleComments(item.id) }}>
                                     <ChatCircle size={14} weight="bold" /> Reply
                                   </button>
@@ -361,20 +365,20 @@ function DashboardContent() {
                                     }}
                                     className={`flex items-center gap-1.5 text-xs transition-colors ${
                                       item.is_liked_by_me
-                                        ? 'text-pink-500'
-                                        : isDark ? 'text-white/30 hover:text-pink-400' : 'text-[#536471] hover:text-pink-500'
+                                        ? 'text-rose-500'
+                                        : isDark ? 'text-white/30 hover:text-rose-400' : 'text-slate-400 hover:text-rose-500'
                                     }`}
                                   >
                                     <Heart size={14} weight={item.is_liked_by_me ? 'fill' : 'bold'} /> {item.like_count > 0 ? item.like_count : 'Like'}
                                   </button>
-                                  <button className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#1D9BF0]' : 'text-[#536471] hover:text-[#1D9BF0]'}`}
+                                  <button className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#818CF8]' : 'text-slate-400 hover:text-indigo-500'}`}
                                     onClick={e => { e.stopPropagation(); router.push('/dashboard/reflect') }}>
                                     <Sparkle size={14} weight="bold" /> Reflect
                                   </button>
                                 </div>
                                 {openComments.has(item.id) && (
                                   <div
-                                    className={`mt-3 -mx-4 border-t ${isDark ? 'border-white/[0.06]' : 'border-[#EFF3F4]'}`}
+                                    className={`mt-3 -mx-5 border-t ${isDark ? 'border-white/[0.06]' : 'border-slate-100'}`}
                                     onClick={e => e.stopPropagation()}
                                   >
                                     <CommentSection reflectionId={item.id} reflectionOwnerId={item.user_id} />
@@ -393,7 +397,7 @@ function DashboardContent() {
                         onClick={loadMoreFollowing}
                         disabled={followingLoadingMore}
                         className={`text-xs font-semibold px-4 py-2 rounded-full transition-colors ${
-                          isDark ? 'text-[#1D9BF0] hover:bg-white/[0.06]' : 'text-[#1D9BF0] hover:bg-[#EFF3F4]'
+                          isDark ? 'text-[#818CF8] hover:bg-white/[0.06]' : 'text-indigo-500 hover:bg-indigo-50'
                         }`}
                       >
                         {followingLoadingMore ? 'Loading…' : 'Load more'}
@@ -408,32 +412,32 @@ function DashboardContent() {
                       <Spinner size={24} weight="bold" className={`animate-spin ${isDark ? "text-white/20" : "text-[#8B98A5]"}`} />
                     </div>
                   ) : likesFeed.length === 0 ? (
-                    <div className={`text-center py-16 px-8 ${isDark ? "text-white/30" : "text-[#8B98A5]"}`}>
-                      <Heart size={40} weight="bold" className={`mx-auto mb-4 ${isDark ? "text-white/15" : "text-[#D0CFC0]"}`} />
-                      <p className="text-sm font-medium mb-1">No likes yet</p>
+                    <div className={`text-center py-16 px-8 ${isDark ? "text-white/30" : "text-slate-400"}`}>
+                      <Heart size={40} weight="bold" className={`mx-auto mb-4 ${isDark ? "text-white/15" : "text-slate-200"}`} />
+                      <p className="text-sm font-medium mb-1 text-slate-600 dark:text-white/40">No likes yet</p>
                       <p className="text-xs">Reflections you like will show up here.</p>
                     </div>
                   ) : (
-                    <div className="space-y-1">
+                    <div className="space-y-3 px-4">
                       {likesFeed.map((item) => {
                         const displayName = item.profile?.display_name || item.profile?.full_name || "Unknown"
                         return (
                           <div
                             key={item.id}
-                            className={`px-4 py-3 cursor-pointer transition-colors ${
+                            className={`rounded-3xl border p-5 cursor-pointer transition-colors ${
                               isDark
-                                ? "hover:bg-white/[0.02] border-b border-white/[0.06]"
-                                : "hover:bg-[#F7F9FA] border-b border-[#EFF3F4]"
+                                ? "bg-white/[0.04] border-white/[0.06] hover:bg-white/[0.06]"
+                                : "bg-white/70 border-slate-100 hover:bg-white shadow-soft-card"
                             }`}
                             onClick={() => item.profile?.username && router.push(`/${item.profile.username}`)}
                           >
                             <div className="flex gap-3">
                               <div className="shrink-0">
-                                <div className={`h-10 w-10 rounded-full flex items-center justify-center ${isDark ? "bg-[#161618]" : "bg-[#EFF3F4]"}`}>
+                                <div className={`h-10 w-10 rounded-full flex items-center justify-center ${isDark ? "bg-[#1B2436]" : "bg-slate-100"}`}>
                                   {item.profile?.avatar_url ? (
                                     <img src={item.profile.avatar_url} alt="" className="h-10 w-10 rounded-full object-cover" />
                                   ) : (
-                                    <span className={`text-sm font-semibold ${isDark ? "text-white/40" : "text-[#536471]"}`}>
+                                    <span className={`text-sm font-semibold ${isDark ? "text-white/40" : "text-slate-500"}`}>
                                       {displayName.charAt(0).toUpperCase()}
                                     </span>
                                   )}
@@ -442,10 +446,10 @@ function DashboardContent() {
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center justify-between gap-2">
                                   <div className="flex items-center gap-1.5 flex-wrap">
-                                    <span className={`text-sm font-semibold ${isDark ? "text-white" : "text-[#0F1419]"}`}>
+                                    <span className={`text-sm font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>
                                       {displayName}
                                     </span>
-                                    <span className={`text-sm ${isDark ? "text-white/30" : "text-[#536471]"}`}>
+                                    <span className={`text-sm ${isDark ? "text-white/30" : "text-slate-400"}`}>
                                       @{item.profile?.username}
                                     </span>
                                   </div>
@@ -458,17 +462,17 @@ function DashboardContent() {
                                     onBlocked={() => setLikesFeed(prev => prev.filter(f => f.user_id !== item.user_id))}
                                   />
                                 </div>
-                                <p className={`text-sm leading-relaxed mt-0.5 ${isDark ? "text-white/80" : "text-[#0F1419]"}`}>
+                                <p className={`text-sm leading-relaxed mt-1 ${isDark ? "text-white/80" : "text-slate-700"}`}>
                                   {item.reflection_text}
                                 </p>
-                                <div className="flex items-center gap-3 mt-2">
+                                <div className="flex items-center gap-3 mt-3">
                                   <span className="text-lg leading-none">{item.mood}</span>
                                   {item.tags?.slice(0, 3).map((tag: string) => (
-                                    <span key={tag} className="text-xs text-[#1D9BF0]">#{tag}</span>
+                                    <span key={tag} className="text-xs text-indigo-500">#{tag}</span>
                                   ))}
                                 </div>
-                                <div className="flex items-center gap-6 mt-2">
-                                  <button className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#1D9BF0]' : 'text-[#536471] hover:text-[#1D9BF0]'}`}
+                                <div className="flex items-center gap-6 mt-3">
+                                  <button className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#818CF8]' : 'text-slate-400 hover:text-indigo-500'}`}
                                     onClick={e => { e.stopPropagation(); toggleComments(item.id) }}>
                                     <ChatCircle size={14} weight="bold" /> Reply
                                   </button>
@@ -491,20 +495,20 @@ function DashboardContent() {
                                     }}
                                     className={`flex items-center gap-1.5 text-xs transition-colors ${
                                       item.is_liked_by_me
-                                        ? 'text-pink-500'
-                                        : isDark ? 'text-white/30 hover:text-pink-400' : 'text-[#536471] hover:text-pink-500'
+                                        ? 'text-rose-500'
+                                        : isDark ? 'text-white/30 hover:text-rose-400' : 'text-slate-400 hover:text-rose-500'
                                     }`}
                                   >
                                     <Heart size={14} weight={item.is_liked_by_me ? 'fill' : 'bold'} /> {item.like_count > 0 ? item.like_count : 'Like'}
                                   </button>
-                                  <button className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#1D9BF0]' : 'text-[#536471] hover:text-[#1D9BF0]'}`}
+                                  <button className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#818CF8]' : 'text-slate-400 hover:text-indigo-500'}`}
                                     onClick={e => { e.stopPropagation(); router.push('/dashboard/reflect') }}>
                                     <Sparkle size={14} weight="bold" /> Reflect
                                   </button>
                                 </div>
                                 {openComments.has(item.id) && (
                                   <div
-                                    className={`mt-3 -mx-4 border-t ${isDark ? 'border-white/[0.06]' : 'border-[#EFF3F4]'}`}
+                                    className={`mt-3 -mx-5 border-t ${isDark ? 'border-white/[0.06]' : 'border-slate-100'}`}
                                     onClick={e => e.stopPropagation()}
                                   >
                                     <CommentSection reflectionId={item.id} reflectionOwnerId={item.user_id} />
@@ -523,7 +527,7 @@ function DashboardContent() {
                         onClick={loadMoreLikes}
                         disabled={likesLoadingMore}
                         className={`text-xs font-semibold px-4 py-2 rounded-full transition-colors ${
-                          isDark ? 'text-[#1D9BF0] hover:bg-white/[0.06]' : 'text-[#1D9BF0] hover:bg-[#EFF3F4]'
+                          isDark ? 'text-[#818CF8] hover:bg-white/[0.06]' : 'text-indigo-500 hover:bg-indigo-50'
                         }`}
                       >
                         {likesLoadingMore ? 'Loading…' : 'Load more'}
@@ -556,20 +560,20 @@ function DashboardContent() {
   )
 }
 
-function QuickActionBtn({ icon, label, href, isDark }: { icon: React.ReactNode; label: string; href: string; isDark: boolean }) {
+function QuickActionBtn({ icon, label, href, isDark, chip }: { icon: React.ReactNode; label: string; href: string; isDark: boolean; chip?: string }) {
   return (
     <Link href={href}>
-      <div className={`flex items-center gap-2 rounded-xl px-3 py-2.5 transition-colors cursor-pointer border ${
+      <div className={`flex items-center gap-3 rounded-2xl px-4 py-4 transition-all cursor-pointer border ${
         isDark
-          ? "bg-white/[0.03] border-white/[0.06] hover:bg-white/[0.06]"
-          : "bg-[#F7F9FA] border-[#EFF3F4] hover:bg-[#EFF3F4]"
+          ? "bg-white/[0.04] border-white/[0.06] hover:bg-white/[0.08]"
+          : "bg-white/70 border-slate-100 hover:bg-white shadow-soft-card"
       }`}>
-        <span className={`w-7 h-7 rounded-lg flex items-center justify-center ${
-          isDark ? "bg-white/[0.06] text-white/60" : "bg-white text-[#536471]"
+        <span className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+          isDark ? "bg-white/[0.08] text-white/70" : chip || "bg-slate-50 text-slate-500"
         }`}>
           {icon}
         </span>
-        <span className={`text-xs font-semibold ${isDark ? "text-white/80" : "text-[#0F1419]"}`}>{label}</span>
+        <span className={`text-sm font-semibold ${isDark ? "text-white/80" : "text-slate-700"}`}>{label}</span>
       </div>
     </Link>
   )

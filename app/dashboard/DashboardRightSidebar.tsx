@@ -15,7 +15,7 @@ export function DashboardRightSidebar() {
         <SearchBar />
         <WhoToFollow />
         <TrendingTopics />
-        <p className={`text-xs leading-relaxed px-1 ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`}>
+        <p className={`text-xs leading-relaxed px-1 ${isDark ? 'text-white/20' : 'text-slate-400'}`}>
           &copy; 2026 Prompt &amp; Pause from DC REGENT GROUP
         </p>
       </div>

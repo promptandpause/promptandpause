@@ -441,7 +441,7 @@ export default function HabitsTracker({ userId, compact = false }: HabitsTracker
                     {habit.streak > 0 && (
                       <span className="flex items-center gap-0.5 text-amber-600">
                         <Flame size={12} />
-                        {habit.streak} day streak
+                        {habit.streak} days in a row
                       </span>
                     )}
                     <span>{habit.completionRate}% this week</span>

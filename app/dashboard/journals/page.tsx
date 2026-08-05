@@ -254,7 +254,7 @@ export default function JournalsPage() {
                   className="flex-1 min-w-0"
                 >
                   <h1 className={`text-xl md:text-3xl font-semibold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-[#0F1419]'}`}>My Journals</h1>
-                  <p className={`text-xs md:text-sm ${theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'} hidden md:block`}>Private self-journals (no AI, no streaks). Edit or add freely.</p>
+                  <p className={`text-xs md:text-sm ${theme === 'dark' ? 'text-white/40' : 'text-[#8B98A5]'} hidden md:block`}>Private self-journals (no AI, no pressure). Edit or add freely.</p>
                 </motion.div>
                 {/* Mobile Filter Toggle Button */}
                 <button

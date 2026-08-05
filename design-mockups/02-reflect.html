@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reflect - Prompt &amp; Pause</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,500&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .serif { font-family: 'Playfair Display', serif; }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); }
+        .soft-shadow { box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05); }
+        ::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-[#F9FBFB] text-[#334155] min-h-screen">
+
+    <!-- ============ DESKTOP SIDEBAR (lg+) ============ -->
+    <aside class="hidden lg:flex fixed inset-y-0 left-0 w-64 bg-[#F9FBFB]/80 backdrop-blur-xl border-r border-slate-100 flex-col px-4 py-6 z-30">
+        <!-- Logo -->
+        <a href="#" class="flex items-center gap-2.5 px-2 mb-8">
+            <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+                <i class="fa-solid fa-pause text-sm"></i>
+            </span>
+            <span class="serif font-semibold text-lg tracking-tight text-slate-900">Prompt &amp; Pause</span>
+        </a>
+
+        <!-- Nav -->
+        <nav class="flex-1 space-y-1">
+            <a href="#" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-500 hover:bg-white hover:text-slate-900 transition-colors">
+                <i class="fa-solid fa-house w-5 text-center"></i><span>Home</span>
+            </a>
+            <a href="#" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold bg-indigo-50 text-indigo-600 transition-colors">
+                <i class="fa-solid fa-pen-nib w-5 text-center"></i><span>Reflect</span>
+            </a>
+            <a href="#" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-500 hover:bg-white hover:text-slate-900 transition-colors">
+                <i class="fa-solid fa-wave-square w-5 text-center"></i><span>Feed</span>
+            </a>
+            <a href="#" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-500 hover:bg-white hover:text-slate-900 transition-colors">
+                <i class="fa-solid fa-user-plus w-5 text-center"></i><span>Friends</span>
+            </a>
+            <a href="#" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-500 hover:bg-white hover:text-slate-900 transition-colors">
+                <i class="fa-solid fa-heart w-5 text-center"></i><span>Wellbeing</span>
+            </a>
+            <a href="#" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-500 hover:bg-white hover:text-slate-900 transition-colors">
+                <i class="fa-solid fa-box-archive w-5 text-center"></i><span>Archive</span>
+            </a>
+            <a href="#" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-500 hover:bg-white hover:text-slate-900 transition-colors">
+                <i class="fa-solid fa-bookmark w-5 text-center"></i><span>Saved</span>
+            </a>
+            <a href="#" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-500 hover:bg-white hover:text-slate-900 transition-colors">
+                <i class="fa-solid fa-book-open w-5 text-center"></i><span>My Journals</span>
+            </a>
+            <a href="#" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-500 hover:bg-white hover:text-slate-900 transition-colors">
+                <i class="fa-solid fa-chart-line w-5 text-center"></i><span>Insights</span>
+            </a>
+            <a href="#" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-500 hover:bg-white hover:text-slate-900 transition-colors">
+                <i class="fa-solid fa-gear w-5 text-center"></i><span>Settings</span>
+            </a>
+        </nav>
+
+        <!-- Profile card -->
+        <div class="glass rounded-3xl border border-slate-100 soft-shadow p-4">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-200 to-slate-200 flex items-center justify-center shrink-0">
+                    <span class="text-sm font-semibold text-slate-600">M</span>
+                </div>
+                <div class="min-w-0 flex-1">
+                    <p class="text-sm font-semibold text-slate-900 truncate">Maya Chen</p>
+                    <p class="text-xs text-slate-400 truncate">@mayachen</p>
+                </div>
+                <i class="fa-solid fa-ellipsis text-slate-300 text-xs"></i>
+            </div>
+            <div class="flex items-center justify-around text-center">
+                <div>
+                    <p class="text-sm font-bold text-slate-900">24</p>
+                    <p class="text-[10px] text-slate-400">Friends</p>
+                </div>
+                <div>
+                    <p class="text-sm font-bold text-slate-900">38</p>
+                    <p class="text-[10px] text-slate-400">Followers</p>
+                </div>
+                <div>
+                    <p class="text-sm font-bold text-slate-900">61</p>
+                    <p class="text-[10px] text-slate-400">Following</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ============ CONTENT (offset for desktop sidebar) ============ -->
+    <div class="lg:pl-64">
+
+        <!-- Mobile header (lg:hidden) -->
+        <header class="glass sticky top-0 z-20 lg:hidden px-6 pt-3 pb-2 border-b border-white/60">
+            <div class="flex justify-between items-center">
+                <button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white transition-colors">
+                    <i class="fa-solid fa-bars-staggered text-slate-400"></i>
+                </button>
+                <span class="serif font-semibold text-xl tracking-tight text-slate-800">Prompt &amp; Pause</span>
+                <div class="flex gap-2">
+                    <button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white transition-colors relative">
+                        <i class="fa-regular fa-bell text-slate-400"></i>
+                        <span class="absolute top-2 right-2 w-2 h-2 bg-indigo-400 rounded-full border-2 border-white"></span>
+                    </button>
+                    <button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white transition-colors">
+                        <i class="fa-solid fa-gear text-slate-400"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-[680px] mx-auto px-6 pt-6 md:pt-10 pb-32 lg:pb-16 space-y-6">
+
+            <!-- Page title -->
+            <div>
+                <h1 class="text-2xl md:text-3xl font-semibold tracking-tight text-slate-900">Reflect</h1>
+                <p class="text-sm mt-1 text-slate-400">Your private space to write, process, and grow.</p>
+            </div>
+
+            <!-- ===== Today's Prompt / Composer ===== -->
+            <section id="prompt-card" class="glass rounded-3xl border border-slate-100 soft-shadow p-5 md:p-7 relative overflow-hidden">
+
+                <div class="relative flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <span class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
+                            <i class="fa-solid fa-sparkles text-sm"></i>
+                        </span>
+                        <div>
+                            <h3 class="text-lg font-semibold tracking-tight text-slate-900">Today</h3>
+                            <p class="text-xs text-slate-400">A small pause for a clearer mind</p>
+                        </div>
+                    </div>
+                    <button id="sim-save" onclick="simulateSave()" class="text-xs font-semibold text-indigo-500 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-full transition-colors">
+                        Preview: Save
+                    </button>
+                </div>
+
+                <!-- Composer state -->
+                <div id="composer-state">
+                    <blockquote class="serif italic text-base md:text-xl font-medium leading-relaxed text-slate-800">
+                        "What's one thing you're holding onto that you could gently let go of today?"
+                    </blockquote>
+
+                    <div class="flex items-center gap-2 mt-3 text-xs text-slate-400">
+                        <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-medium bg-white/70 border border-slate-100 text-slate-500">
+                            <i class="fa-solid fa-sparkles text-[11px] text-indigo-500"></i>
+                            Focus preference: Career
+                        </span>
+                    </div>
+
+                    <!-- Textarea -->
+                    <div class="mt-5">
+                        <textarea id="reflection-input" oninput="updateWords()" placeholder="Write your reflection..." maxlength="1200"
+                            class="w-full min-h-[160px] md:min-h-[140px] rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 text-sm md:text-base text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50 transition-all resize-none"></textarea>
+                        <div class="flex items-center justify-between mt-1.5 text-xs text-slate-400">
+                            <span id="encourage" class="italic"></span>
+                            <span><span id="word-count">0</span> words</span>
+                        </div>
+                    </div>
+
+                    <!-- Mood -->
+                    <div class="mt-4">
+                        <p class="text-sm font-semibold text-slate-800 mb-2">How are you feeling?</p>
+                        <div class="flex gap-2 flex-wrap">
+                            <button onclick="selectMood(this)" class="mood-btn text-xl p-2.5 rounded-xl bg-slate-50 hover:bg-white transition-colors">😔</button>
+                            <button onclick="selectMood(this)" class="mood-btn text-xl p-2.5 rounded-xl bg-slate-50 hover:bg-white transition-colors">😐</button>
+                            <button onclick="selectMood(this)" class="mood-btn text-xl p-2.5 rounded-xl bg-slate-50 hover:bg-white transition-colors">😊</button>
+                            <button onclick="selectMood(this)" class="mood-btn text-xl p-2.5 rounded-xl bg-slate-50 hover:bg-white transition-colors">😄</button>
+                            <button onclick="selectMood(this)" class="mood-btn text-xl p-2.5 rounded-xl bg-slate-50 hover:bg-white transition-colors">🤔</button>
+                            <button onclick="selectMood(this)" class="mood-btn text-xl p-2.5 rounded-xl bg-slate-50 hover:bg-white transition-colors">😌</button>
+                            <button onclick="selectMood(this)" class="mood-btn text-xl p-2.5 rounded-xl bg-slate-50 hover:bg-white transition-colors">🙏</button>
+                            <button onclick="selectMood(this)" class="mood-btn text-xl p-2.5 rounded-xl bg-slate-50 hover:bg-white transition-colors">💪</button>
+                        </div>
+                    </div>
+
+                    <!-- Tags -->
+                    <div class="mt-4">
+                        <p class="text-sm font-semibold text-slate-800 mb-2 flex items-center gap-2">🏷️ Add tags (optional)</p>
+                        <div class="flex gap-2 flex-wrap">
+                            <button onclick="toggleTag(this)" class="tag-btn px-3 py-1.5 rounded-full text-xs font-semibold border-2 bg-white text-slate-600 border-slate-200 hover:border-slate-300 transition-colors">Gratitude</button>
+                            <button onclick="toggleTag(this)" class="tag-btn px-3 py-1.5 rounded-full text-xs font-semibold border-2 bg-white text-slate-600 border-slate-200 hover:border-slate-300 transition-colors">Relationships</button>
+                            <button onclick="toggleTag(this)" class="tag-btn px-3 py-1.5 rounded-full text-xs font-semibold border-2 bg-white text-slate-600 border-slate-200 hover:border-slate-300 transition-colors">Career</button>
+                            <button onclick="toggleTag(this)" class="tag-btn px-3 py-1.5 rounded-full text-xs font-semibold border-2 bg-white text-slate-600 border-slate-200 hover:border-slate-300 transition-colors">Self-care</button>
+                            <button onclick="toggleTag(this)" class="tag-btn px-3 py-1.5 rounded-full text-xs font-semibold border-2 bg-white text-slate-600 border-slate-200 hover:border-slate-300 transition-colors">Personal Growth</button>
+                            <button onclick="toggleTag(this)" class="tag-btn px-3 py-1.5 rounded-full text-xs font-semibold border-2 bg-white text-slate-600 border-slate-200 hover:border-slate-300 transition-colors">Health</button>
+                            <button onclick="toggleTag(this)" class="tag-btn px-3 py-1.5 rounded-full text-xs font-semibold border-2 bg-white text-slate-600 border-slate-200 hover:border-slate-300 transition-colors">Achievement</button>
+                            <button onclick="toggleTag(this)" class="tag-btn px-3 py-1.5 rounded-full text-xs font-semibold border-2 bg-white text-slate-600 border-slate-200 hover:border-slate-300 transition-colors">Creativity</button>
+                        </div>
+                    </div>
+
+                    <!-- Visibility + Save -->
+                    <div class="mt-5 flex items-center justify-between gap-3">
+                        <p class="text-[10px] uppercase tracking-wider font-semibold text-slate-400">Who can see this</p>
+                        <div class="flex items-center gap-1 bg-slate-100/80 rounded-full p-1">
+                            <button onclick="setVis(0)" class="vis-btn text-xs font-semibold px-3 py-1 rounded-full text-slate-500 hover:text-slate-800 transition-colors"><i class="fa-solid fa-lock mr-1 text-[10px]"></i>Private</button>
+                            <button onclick="setVis(1)" class="vis-btn text-xs font-semibold px-3 py-1 rounded-full text-slate-500 hover:text-slate-800 transition-colors"><i class="fa-solid fa-user-group mr-1 text-[10px]"></i>Friends</button>
+                            <button onclick="setVis(2)" class="vis-btn text-xs font-semibold px-3 py-1 rounded-full text-slate-500 hover:text-slate-800 transition-colors"><i class="fa-solid fa-globe mr-1 text-[10px]"></i>Public</button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between gap-4 mt-4">
+                        <button onclick="simulateSave()" class="flex-1 md:flex-none bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white font-semibold px-6 md:px-8 py-3 rounded-xl transition-all shadow-lg shadow-indigo-500/25 hover:shadow-xl">
+                            Reflect
+                        </button>
+                        <p class="text-xs text-slate-400">No pressure — even one sentence counts.</p>
+                    </div>
+                </div>
+
+                <!-- Saved state -->
+                <div id="saved-state" class="hidden">
+                    <div class="rounded-2xl bg-indigo-50/80 border border-indigo-100 p-4 md:p-5">
+                        <p class="font-semibold text-indigo-600 mb-2">Saved.</p>
+                        <p class="text-sm leading-relaxed text-slate-700">
+                            I've been carrying the timeline for this project like it's my responsibility alone. The deadline I invented isn't real. Letting that go today.
+                        </p>
+                        <div class="flex items-center gap-2 mt-3">
+                            <span class="text-2xl">😌</span>
+                            <span class="text-xs font-medium bg-white/80 border border-slate-100 text-slate-600 rounded-full px-2.5 py-1">Career</span>
+                            <span class="text-xs font-medium bg-white/80 border border-slate-100 text-slate-600 rounded-full px-2.5 py-1">Personal Growth</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <p class="text-sm font-medium text-slate-800">How was this prompt for you?</p>
+                        <div class="flex gap-2 mt-2">
+                            <button class="text-xs font-semibold bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg transition-colors">👍 This helped me</button>
+                            <button class="text-xs font-semibold text-slate-600 hover:bg-slate-100 px-4 py-2 rounded-lg transition-colors">👎 Not relevant</button>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-t border-slate-100">
+                        <p class="text-xs md:text-sm text-slate-600">Before you go — no pressure, just if it helps:</p>
+                        <div class="flex flex-col sm:flex-row gap-2 mt-2">
+                            <button class="text-xs md:text-sm justify-start gap-2 text-slate-700 hover:bg-slate-100 px-3 py-2 rounded-lg flex items-center transition-colors">
+                                <i class="fa-solid fa-leaf text-indigo-400 w-4 text-center"></i> Revisit this tomorrow
+                            </button>
+                            <button class="text-xs md:text-sm justify-start gap-2 text-slate-700 hover:bg-slate-100 px-3 py-2 rounded-lg flex items-center transition-colors">
+                                <i class="fa-solid fa-bookmark text-indigo-400 w-4 text-center"></i> Save for later
+                            </button>
+                            <button class="text-xs md:text-sm justify-start gap-2 text-slate-700 hover:bg-slate-100 px-3 py-2 rounded-lg flex items-center transition-colors">
+                                <i class="fa-regular fa-bell text-indigo-400 w-4 text-center"></i> Quiet reminder
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 text-center">
+                        <button onclick="resetComposer()" class="text-xs text-slate-400 hover:text-indigo-500 transition-colors">← Back to composer</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== Your Mood ===== -->
+            <section class="glass rounded-3xl border border-slate-100 soft-shadow p-5">
+                <div class="flex items-center justify-between mb-5">
+                    <div class="flex items-center gap-3">
+                        <span class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-100 to-indigo-200 flex items-center justify-center">
+                            <i class="fa-solid fa-heart text-indigo-500"></i>
+                        </span>
+                        <div>
+                            <h3 class="text-sm font-semibold tracking-tight text-slate-900">Your Mood</h3>
+                            <p class="text-[11px] text-slate-400">This week at a glance</p>
+                        </div>
+                    </div>
+                    <span class="inline-flex items-center gap-1 text-[10px] font-medium px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200/60">
+                        <i class="fa-solid fa-fire text-[10px]"></i> 4 days in a row
+                    </span>
+                </div>
+
+                <div class="flex justify-between mb-4">
+                    <button class="flex flex-col items-center gap-1.5">
+                        <span class="w-9 h-9 rounded-full bg-emerald-200 flex items-center justify-center text-base">😊</span>
+                        <span class="text-[10px] font-medium text-slate-400">Mon</span>
+                    </button>
+                    <button class="flex flex-col items-center gap-1.5">
+                        <span class="w-9 h-9 rounded-full bg-emerald-200 flex items-center justify-center text-base">😄</span>
+                        <span class="text-[10px] font-medium text-slate-400">Tue</span>
+                    </button>
+                    <button class="flex flex-col items-center gap-1.5">
+                        <span class="w-9 h-9 rounded-full bg-[#EFF3F4] flex items-center justify-center"><span class="text-xs text-slate-300">—</span></span>
+                        <span class="text-[10px] font-medium text-slate-400">Wed</span>
+                    </button>
+                    <button class="flex flex-col items-center gap-1.5">
+                        <span class="w-9 h-9 rounded-full bg-sky-200 flex items-center justify-center text-base">😌</span>
+                        <span class="text-[10px] font-medium text-slate-400">Thu</span>
+                    </button>
+                    <button class="flex flex-col items-center gap-1.5">
+                        <span class="w-9 h-9 rounded-full bg-amber-200 flex items-center justify-center text-base">😐</span>
+                        <span class="text-[10px] font-medium text-slate-400">Fri</span>
+                    </button>
+                    <button class="flex flex-col items-center gap-1.5">
+                        <span class="w-9 h-9 rounded-full bg-rose-200 flex items-center justify-center text-base">😔</span>
+                        <span class="text-[10px] font-medium text-slate-400">Sat</span>
+                    </button>
+                    <button class="flex flex-col items-center gap-1.5">
+                        <span class="w-9 h-9 rounded-full bg-sky-200 ring-2 ring-indigo-400 ring-offset-2 flex items-center justify-center text-base">😌</span>
+                        <span class="text-[10px] font-medium text-indigo-500">Now</span>
+                    </button>
+                </div>
+
+                <div class="rounded-2xl bg-slate-50/80 border border-slate-100 p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-xs font-medium text-slate-400">Today</p>
+                        <p class="text-xs text-slate-400">5 Aug</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl">😌</span>
+                        <span class="text-sm text-slate-500">Calm</span>
+                    </div>
+                    <p class="text-xs leading-relaxed mt-2 text-slate-400">
+                        I've been carrying the timeline for this project like it's my responsibility alone...
+                    </p>
+                </div>
+
+                <div class="mt-3 rounded-2xl bg-slate-50/80 border border-slate-100 p-3">
+                    <p class="text-[10px] mb-2 text-slate-400">Top feelings</p>
+                    <div class="flex gap-2 flex-wrap">
+                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-medium bg-white text-slate-500 border border-slate-100"><span class="text-sm">😌</span> Calm ×2</span>
+                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-medium bg-white text-slate-500 border border-slate-100"><span class="text-sm">😊</span> Happy</span>
+                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-medium bg-white text-slate-500 border border-slate-100"><span class="text-sm">😄</span> Joyful</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== Daily Affirmation ===== -->
+            <section class="glass rounded-3xl border border-slate-100 soft-shadow p-5">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
+                        <i class="fa-solid fa-quote-left text-amber-500"></i>
+                    </span>
+                    <div>
+                        <h3 class="text-sm font-semibold tracking-tight text-slate-900">Daily Affirmation</h3>
+                        <p class="text-[11px] text-slate-400">A gentle reminder</p>
+                    </div>
+                </div>
+                <div class="relative">
+                    <span class="absolute -top-1 -left-1 text-3xl leading-none serif opacity-20 text-indigo-400 select-none">&ldquo;</span>
+                    <p class="serif italic text-sm md:text-[15px] leading-relaxed pl-4 text-slate-800">
+                        You've already handled hard things before.
+                    </p>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ============ MOBILE BOTTOM NAV (lg:hidden) ============ -->
+    <nav class="fixed bottom-0 left-0 right-0 h-20 lg:hidden bg-white/80 backdrop-blur-md border-t border-slate-100 flex items-center justify-around px-4 z-20">
+        <button class="flex flex-col items-center gap-1">
+            <i class="fa-solid fa-house text-slate-300"></i>
+            <span class="text-[10px] font-medium text-slate-400">Home</span>
+        </button>
+        <button class="flex flex-col items-center gap-1">
+            <i class="fa-solid fa-pen-nib text-indigo-500"></i>
+            <span class="text-[10px] font-medium text-slate-900">Reflect</span>
+        </button>
+        <button class="flex flex-col items-center gap-1">
+            <i class="fa-solid fa-wave-square text-slate-300"></i>
+            <span class="text-[10px] font-medium text-slate-400">Feed</span>
+        </button>
+        <button class="flex flex-col items-center gap-1">
+            <i class="fa-solid fa-heart text-slate-300"></i>
+            <span class="text-[10px] font-medium text-slate-400">Wellbeing</span>
+        </button>
+        <button class="flex flex-col items-center gap-1">
+            <i class="fa-solid fa-box-archive text-slate-300"></i>
+            <span class="text-[10px] font-medium text-slate-400">Archive</span>
+        </button>
+    </nav>
+
+    <script>
+        // Word count + encouraging message
+        function updateWords() {
+            var el = document.getElementById('reflection-input');
+            var n = el.value.trim().split(/\s+/).filter(Boolean).length;
+            document.getElementById('word-count').textContent = n;
+            var msg = '';
+            if (n >= 15 && n < 40) msg = 'Good start.';
+            else if (n >= 40 && n < 80) msg = 'Keep going, if you want to.';
+            else if (n >= 80 && n < 140) msg = 'This is taking shape.';
+            else if (n >= 140 && n < 220) msg = "That's a solid reflection.";
+            else if (n >= 220) msg = "Plenty here. Stop when you're ready.";
+            document.getElementById('encourage').textContent = msg;
+        }
+
+        // Mood selector
+        var activeMood = null;
+        function selectMood(btn) {
+            if (activeMood) {
+                activeMood.classList.remove('bg-indigo-100', 'ring-2', 'ring-indigo-400');
+                activeMood.classList.add('bg-slate-50');
+            }
+            btn.classList.remove('bg-slate-50');
+            btn.classList.add('bg-indigo-100', 'ring-2', 'ring-indigo-400');
+            activeMood = btn;
+        }
+
+        // Tag toggle
+        function toggleTag(btn) {
+            btn.classList.toggle('bg-indigo-500');
+            btn.classList.toggle('text-white');
+            btn.classList.toggle('border-indigo-600');
+            btn.classList.toggle('bg-white');
+            btn.classList.toggle('text-slate-600');
+            btn.classList.toggle('border-slate-200');
+        }
+
+        // Visibility segmented control
+        var activeVis = 0;
+        function setVis(i) {
+            var btns = document.querySelectorAll('.vis-btn');
+            btns.forEach(function (b) {
+                b.classList.remove('bg-white', 'text-slate-900', 'shadow-sm');
+            });
+            btns[i].classList.add('bg-white', 'text-slate-900', 'shadow-sm');
+            activeVis = i;
+        }
+        setVis(0);
+
+        // Composer <-> saved state preview
+        function simulateSave() {
+            document.getElementById('composer-state').classList.add('hidden');
+            document.getElementById('saved-state').classList.remove('hidden');
+            document.getElementById('sim-save').textContent = 'Preview: Composer';
+            document.getElementById('sim-save').setAttribute('onclick', 'resetComposer()');
+        }
+        function resetComposer() {
+            document.getElementById('saved-state').classList.add('hidden');
+            document.getElementById('composer-state').classList.remove('hidden');
+            document.getElementById('sim-save').textContent = 'Preview: Save';
+            document.getElementById('sim-save').setAttribute('onclick', 'simulateSave()');
+        }
+    </script>
+
+</body>
+</html>

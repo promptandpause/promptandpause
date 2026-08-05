@@ -691,7 +691,7 @@ export default function TodaysPrompt() {
                 </IconOrb>
                 <div>
                   <h3 className={`text-lg md:text-xl font-semibold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Self-Journal</h3>
-                  <p className={`text-xs md:text-sm ${theme === 'dark' ? 'text-white/55' : 'text-gray-600'}`}>No timer, no AI. Saved privately. Doesn't affect streaks or stats.</p>
+                  <p className={`text-xs md:text-sm ${theme === 'dark' ? 'text-white/55' : 'text-gray-600'}`}>No timer, no AI. Saved privately. Doesn't affect stats or rhythm.</p>
                 </div>
               </div>
               <Button variant="ghost" size="sm" onClick={() => setShowSelfJournal(false)} className={theme === 'dark' ? 'text-white/70 hover:bg-white/10' : ''}>Close</Button>

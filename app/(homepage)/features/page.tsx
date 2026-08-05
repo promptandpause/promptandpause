@@ -136,7 +136,7 @@ function CoreFeaturesSection() {
     {
       icon: Heart,
       title: "Daily Gratitude",
-      description: "Record up to 3 things you're grateful for each day. Build a gratitude practice with streak tracking.",
+      description: "Record up to 3 things you're grateful for each day. Build a gratitude practice with gentle consistency tracking.",
     },
     {
       icon: Wind,

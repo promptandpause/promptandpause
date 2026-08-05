@@ -385,7 +385,7 @@ export function StreakBadge({ count }: { count: number }) {
       )}
     >
       <Flame className="w-3.5 h-3.5" />
-      <span>{count} day streak</span>
+      <span>{count} days in a row</span>
     </motion.div>
   )
 }

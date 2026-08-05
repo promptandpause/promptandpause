@@ -58,8 +58,8 @@ export default function DigestModal({ open, onOpenChange, digest }: DigestModalP
               <div className="flex items-center gap-3">
                 <Trophy size={32} weight="bold" className="text-yellow-400" />
                 <div>
-                  <p className="text-white/60 text-xs">Streak</p>
-                  <p className="text-2xl font-bold text-white">{digest.currentStreak} 🔥</p>
+                  <p className="text-white/60 text-xs">Days in a row</p>
+                  <p className="text-2xl font-bold text-white">{digest.currentStreak}</p>
                 </div>
               </div>
             </Card>

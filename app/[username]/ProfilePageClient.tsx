@@ -157,7 +157,7 @@ export function ProfilePageClient({
 
   const isActive = (path: string) => pathname.startsWith(path)
 
-  const accentColor = profile.profile_theme?.accent_color || '#1D9BF0'
+  const accentColor = profile.profile_theme?.accent_color || '#6366F1'
   const coverStart = profile.profile_theme?.bg_gradient_start || `${accentColor}22`
   const coverEnd = profile.profile_theme?.bg_gradient_end || `${accentColor}44`
   const headingFont = profile.profile_theme?.font_heading || undefined
@@ -176,7 +176,7 @@ export function ProfilePageClient({
   const initials = displayName?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || '?'
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-[#0A0A0A]' : 'bg-[#FFFFFF]'}`}>
+    <div className={`min-h-screen ${isDark ? 'bg-[#0A0E18]' : 'bg-[#F9FBFB]'}`}>
       {showCursorTrail && <CursorTrail color={accentColor} />}
       {/* Cover Image */}
       <div
@@ -213,9 +213,9 @@ export function ProfilePageClient({
             transition={{ type: 'spring', stiffness: 200, damping: 20 }}
             className="self-start"
           >
-            <Avatar className="h-24 w-24 sm:h-32 sm:w-32 md:h-40 md:w-40 border-4 border-white dark:border-[#0A0A0A] ring-2 ring-black/5">
+            <Avatar className="h-24 w-24 sm:h-32 sm:w-32 md:h-40 md:w-40 border-4 border-white dark:border-[#0A0E18] ring-2 ring-black/5">
               <AvatarImage src={profile.avatar_url || undefined} />
-              <AvatarFallback className={`text-2xl sm:text-4xl font-light ${isDark ? 'bg-[#161618] text-white/60' : 'bg-white text-[#536471]'}`}>
+              <AvatarFallback className={`text-2xl sm:text-4xl font-light ${isDark ? 'bg-[#1B2436] text-white/60' : 'bg-white text-slate-500'}`}>
                 {initials}
               </AvatarFallback>
             </Avatar>
@@ -225,13 +225,13 @@ export function ProfilePageClient({
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
               <div className="min-w-0">
                 <h1
-                  className={`text-xl sm:text-2xl md:text-3xl font-bold truncate ${isDark ? 'text-white' : 'text-[#0F1419]'}`}
+                  className={`text-xl sm:text-2xl md:text-3xl font-bold truncate ${isDark ? 'text-white' : 'text-slate-900'}`}
                   style={headingFont ? { fontFamily: `var(--font-${headingFont.toLowerCase().replace(/\s+/g, '-')}, ${headingFont}, inherit)` } : undefined}
                 >
                   {displayName}
                 </h1>
                 {profile.username && (
-                  <p className={`text-xs sm:text-sm ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
+                  <p className={`text-xs sm:text-sm ${isDark ? 'text-white/40' : 'text-slate-400'}`}>
                     @{profile.username}
                   </p>
                 )}
@@ -251,7 +251,7 @@ export function ProfilePageClient({
                       className={`rounded-full text-xs font-semibold gap-1.5 ${
                         isDark
                           ? 'border-white/20 text-white hover:bg-white/10'
-                          : 'border-[#CFD9DE] text-[#0F1419] hover:bg-[#EFF3F4]'
+                          : 'border-slate-200 text-slate-900 hover:bg-slate-100'
                       }`}
                     >
                       <Pencil className="h-3.5 w-3.5" />
@@ -261,7 +261,7 @@ export function ProfilePageClient({
                       <Button variant="outline" size="sm" className={`rounded-full text-xs font-semibold gap-1.5 ${
                         isDark
                           ? 'border-white/20 text-white/60 hover:bg-white/10'
-                          : 'border-[#CFD9DE] text-[#536471] hover:bg-[#EFF3F4]'
+                          : 'border-slate-200 text-slate-500 hover:bg-slate-100'
                       }`}>
                         <Settings className="h-3.5 w-3.5" />
                       </Button>
@@ -289,13 +289,13 @@ export function ProfilePageClient({
             {isOwnProfile && (
               <div className="flex items-center gap-3 mt-3">
                 <Link href="/dashboard" className={`flex items-center gap-1.5 text-xs font-medium transition-colors ${
-                  isDark ? 'text-[#1D9BF0] hover:text-[#1A8CD8]' : 'text-[#1D9BF0] hover:text-[#1A8CD8]'
+                  isDark ? 'text-[#6366F1] hover:text-[#4F46E5]' : 'text-[#6366F1] hover:text-[#4F46E5]'
                 }`}>
                   <Layout className="h-3.5 w-3.5" />
                   Dashboard
                 </Link>
                 <Link href="/archive" className={`flex items-center gap-1.5 text-xs font-medium transition-colors ${
-                  isDark ? 'text-white/40 hover:text-white/60' : 'text-[#536471] hover:text-[#0F1419]'
+                  isDark ? 'text-white/40 hover:text-white/60' : 'text-slate-500 hover:text-slate-900'
                 }`}>
                   <Archive className="h-3.5 w-3.5" />
                   Archive
@@ -307,7 +307,7 @@ export function ProfilePageClient({
               <motion.p
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`mt-2 sm:mt-3 text-xs sm:text-sm leading-relaxed max-w-xl ${isDark ? 'text-white/60' : 'text-[#536471]'}`}
+                className={`mt-2 sm:mt-3 text-xs sm:text-sm leading-relaxed max-w-xl ${isDark ? 'text-white/60' : 'text-slate-500'}`}
                 style={bodyFont ? { fontFamily: `var(--font-${bodyFont.toLowerCase().replace(/\s+/g, '-')}, ${bodyFont}, inherit)` } : undefined}
               >
                 {profile.bio}
@@ -315,7 +315,7 @@ export function ProfilePageClient({
             )}
 
             {profile.mood_song_url && (
-              <div className={`mt-2 flex items-center gap-2 text-xs ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
+              <div className={`mt-2 flex items-center gap-2 text-xs ${isDark ? 'text-white/40' : 'text-slate-400'}`}>
                 <Music className="h-3.5 w-3.5" />
                 <span>Current vibe: {profile.mood_song_title || '🎵'}</span>
               </div>
@@ -329,7 +329,7 @@ export function ProfilePageClient({
         </div>
 
         {/* Navigation Tabs */}
-        <div className={`mt-6 sm:mt-8 border-b ${isDark ? 'border-white/10' : 'border-[#EFF3F4]'}`}>
+        <div className={`mt-6 sm:mt-8 border-b ${isDark ? 'border-white/10' : 'border-slate-100'}`}>
           <div className="flex gap-6 -mb-px">
             <TabButton
               active={activeTab === 'reflections'}
@@ -367,14 +367,14 @@ export function ProfilePageClient({
         {/* Tab Content */}
         <div className="mt-4 sm:mt-6 pb-20 sm:pb-16 md:pb-16">
           {isPrivate ? (
-            <div className={`rounded-2xl p-8 sm:p-10 text-center ${isDark ? 'bg-white/[0.03] border border-white/[0.06]' : 'bg-white/60 border border-[#EFF3F4]'}`}>
-              <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${isDark ? 'bg-white/[0.06]' : 'bg-[#EFF3F4]'}`}>
-                <Lock size={28} className={isDark ? 'text-white/20' : 'text-[#8B98A5]'} />
+            <div className={`rounded-2xl p-8 sm:p-10 text-center ${isDark ? 'bg-white/[0.03] border border-white/[0.06]' : 'bg-white/60 border border-slate-100'}`}>
+              <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${isDark ? 'bg-white/[0.06]' : 'bg-slate-100'}`}>
+                <Lock size={28} className={isDark ? 'text-white/20' : 'text-slate-400'} />
               </div>
-              <h2 className={`text-lg sm:text-xl font-semibold mb-2 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+              <h2 className={`text-lg sm:text-xl font-semibold mb-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 {isOwnProfile ? 'Your profile is private' : "This account's profile is private"}
               </h2>
-              <p className={`text-xs sm:text-sm mb-6 max-w-md mx-auto ${isDark ? 'text-white/40' : 'text-[#536471]'}`}>
+              <p className={`text-xs sm:text-sm mb-6 max-w-md mx-auto ${isDark ? 'text-white/40' : 'text-slate-500'}`}>
                 {isOwnProfile
                   ? 'Your reflections are currently hidden. Go to settings to make your profile public.'
                   : `@{profile.username} has marked their profile as private.`}
@@ -383,8 +383,8 @@ export function ProfilePageClient({
                 {isOwnProfile ? (
                   <button onClick={() => setShowEditModal(true)} className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-colors ${
                     isDark
-                      ? 'bg-[#1D9BF0] text-white hover:bg-[#1A8CD8]'
-                      : 'bg-[#1D9BF0] text-white hover:bg-[#1A8CD8]'
+                      ? 'bg-[#6366F1] text-white hover:bg-[#4F46E5]'
+                      : 'bg-[#6366F1] text-white hover:bg-[#4F46E5]'
                   }`}>
                     Edit Settings
                   </button>
@@ -393,13 +393,13 @@ export function ProfilePageClient({
                     <button onClick={() => window.history.back()} className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-colors border ${
                       isDark
                         ? 'border-white/20 text-white hover:bg-white/[0.06]'
-                        : 'border-[#CFD9DE] text-[#0F1419] hover:bg-[#EFF3F4]'
+                        : 'border-slate-200 text-slate-900 hover:bg-slate-100'
                     }`}>Go Back</button>
-                    <a href="/" className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-colors ${
+                    <Link href="/" className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-colors ${
                       isDark
-                        ? 'bg-[#1D9BF0] text-white hover:bg-[#1A8CD8]'
-                        : 'bg-[#1D9BF0] text-white hover:bg-[#1A8CD8]'
-                    }`}>Go to Dashboard</a>
+                        ? 'bg-[#6366F1] text-white hover:bg-[#4F46E5]'
+                        : 'bg-[#6366F1] text-white hover:bg-[#4F46E5]'
+                    }`}>Go to Dashboard</Link>
                   </>
                 )}
               </div>
@@ -407,7 +407,7 @@ export function ProfilePageClient({
           ) : activeTab === 'reflections' && (
             <div className="space-y-3 sm:space-y-4">
               {myReflections.length === 0 ? (
-                <div className={`text-center py-12 sm:py-16 ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
+                <div className={`text-center py-12 sm:py-16 ${isDark ? 'text-white/30' : 'text-slate-400'}`}>
                   <Sparkles className="h-10 w-10 mx-auto mb-3 opacity-30" />
                   <p className="text-sm font-medium mb-1">
                     {isOwnProfile ? 'No shared reflections yet' : 'No shared reflections yet.'}
@@ -426,16 +426,16 @@ export function ProfilePageClient({
                     className={`p-4 sm:p-5 ${
                       isDark
                         ? 'bg-white/[0.04] border border-white/[0.06]'
-                        : 'bg-white/80 border border-[#EFF3F4]'
+                        : 'bg-white/80 border border-slate-100'
                     }`}
                     style={cardStyle}
                   >
                     {ref.prompt_text && (
-                      <p className={`text-xs sm:text-sm font-medium mb-2 ${isDark ? 'text-white/50' : 'text-[#8B98A5]'}`}>
+                      <p className={`text-xs sm:text-sm font-medium mb-2 ${isDark ? 'text-white/50' : 'text-slate-400'}`}>
                         {ref.prompt_text}
                       </p>
                     )}
-                    <p className={`text-sm leading-relaxed ${isDark ? 'text-white/80' : 'text-[#0F1419]'}`}>
+                    <p className={`text-sm leading-relaxed ${isDark ? 'text-white/80' : 'text-slate-900'}`}>
                       {ref.reflection_text.slice(0, 300)}
                       {ref.reflection_text.length > 300 ? '...' : ''}
                     </p>
@@ -445,7 +445,7 @@ export function ProfilePageClient({
                         <span
                           key={tag}
                           className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${
-                            isDark ? 'bg-white/[0.06] text-white/40' : 'bg-[#F7F9FA] text-[#8B98A5]'
+                            isDark ? 'bg-white/[0.06] text-white/40' : 'bg-slate-50 text-slate-400'
                           }`}
                         >
                           #{tag}
@@ -460,14 +460,14 @@ export function ProfilePageClient({
                     <div className="flex items-center gap-6 mt-3">
                       <button
                         onClick={() => toggleComments(ref.id)}
-                        className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#1D9BF0]' : 'text-[#536471] hover:text-[#1D9BF0]'}`}
+                        className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#6366F1]' : 'text-slate-500 hover:text-[#6366F1]'}`}
                       >
                         <MessageCircle size={14} /> {ref.comment_count ? ref.comment_count : 'Reply'}
                       </button>
                       <button
                         onClick={() => toggleLike(ref, 'reflections')}
                         className={`flex items-center gap-1.5 text-xs transition-colors ${
-                          ref.is_liked_by_me ? 'text-pink-500' : isDark ? 'text-white/30 hover:text-pink-400' : 'text-[#536471] hover:text-pink-500'
+                          ref.is_liked_by_me ? 'text-rose-500' : isDark ? 'text-white/30 hover:text-rose-400' : 'text-slate-500 hover:text-rose-500'
                         }`}
                       >
                         <Heart size={14} fill={ref.is_liked_by_me ? 'currentColor' : 'none'} /> {ref.like_count ? ref.like_count : 'Like'}
@@ -475,14 +475,14 @@ export function ProfilePageClient({
                       {isOwnProfile && (
                         <button
                           onClick={() => deleteReflection(ref.id)}
-                          className={`flex items-center gap-1.5 text-xs transition-colors ml-auto ${isDark ? 'text-white/30 hover:text-red-400' : 'text-[#536471] hover:text-red-500'}`}
+                          className={`flex items-center gap-1.5 text-xs transition-colors ml-auto ${isDark ? 'text-white/30 hover:text-red-400' : 'text-slate-500 hover:text-red-500'}`}
                         >
                           <Trash2 size={14} /> Delete
                         </button>
                       )}
                     </div>
                     {openComments.has(ref.id) && (
-                      <div className={`mt-3 -mx-4 sm:-mx-5 border-t ${isDark ? 'border-white/[0.06]' : 'border-[#EFF3F4]'}`}>
+                      <div className={`mt-3 -mx-4 sm:-mx-5 border-t ${isDark ? 'border-white/[0.06]' : 'border-slate-100'}`}>
                         <CommentSection reflectionId={ref.id} reflectionOwnerId={profile.id} />
                       </div>
                     )}
@@ -503,9 +503,9 @@ export function ProfilePageClient({
           {!isPrivate && activeTab === 'likes' && (
             <div className="space-y-3 sm:space-y-4">
               {likesLoading ? (
-                <div className={`text-center py-12 ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>Loading...</div>
+                <div className={`text-center py-12 ${isDark ? 'text-white/30' : 'text-slate-400'}`}>Loading...</div>
               ) : likesFeed.length === 0 ? (
-                <div className={`text-center py-12 sm:py-16 ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
+                <div className={`text-center py-12 sm:py-16 ${isDark ? 'text-white/30' : 'text-slate-400'}`}>
                   <Heart className="h-10 w-10 mx-auto mb-3 opacity-30" />
                   <p className="text-sm font-medium mb-1">No likes yet</p>
                   <p className="text-xs">
@@ -522,11 +522,11 @@ export function ProfilePageClient({
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.05 }}
                       className={`p-4 sm:p-5 ${
-                        isDark ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-white/80 border border-[#EFF3F4]'
+                        isDark ? 'bg-white/[0.04] border border-white/[0.06]' : 'bg-white/80 border border-slate-100'
                       }`}
                       style={cardStyle}
                     >
-                      <Link href={ref.profile?.username ? `/${ref.profile.username}` : '#'} className={`text-xs font-semibold mb-1 inline-block ${isDark ? 'text-white/60 hover:text-white' : 'text-[#536471] hover:text-[#0F1419]'}`}>
+                      <Link href={ref.profile?.username ? `/${ref.profile.username}` : '#'} className={`text-xs font-semibold mb-1 inline-block ${isDark ? 'text-white/60 hover:text-white' : 'text-slate-500 hover:text-slate-900'}`}>
                         {authorName}
                       </Link>
                       {ref.user_id && (
@@ -544,31 +544,31 @@ export function ProfilePageClient({
                         </div>
                       )}
                       {ref.prompt_text && (
-                        <p className={`text-xs sm:text-sm font-medium mb-2 ${isDark ? 'text-white/50' : 'text-[#8B98A5]'}`}>
+                        <p className={`text-xs sm:text-sm font-medium mb-2 ${isDark ? 'text-white/50' : 'text-slate-400'}`}>
                           {ref.prompt_text}
                         </p>
                       )}
-                      <p className={`text-sm leading-relaxed ${isDark ? 'text-white/80' : 'text-[#0F1419]'}`}>
+                      <p className={`text-sm leading-relaxed ${isDark ? 'text-white/80' : 'text-slate-900'}`}>
                         {ref.reflection_text}
                       </p>
                       <div className="flex items-center gap-6 mt-3">
                         <button
                           onClick={() => toggleComments(ref.id)}
-                          className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#1D9BF0]' : 'text-[#536471] hover:text-[#1D9BF0]'}`}
+                          className={`flex items-center gap-1.5 text-xs transition-colors ${isDark ? 'text-white/30 hover:text-[#6366F1]' : 'text-slate-500 hover:text-[#6366F1]'}`}
                         >
                           <MessageCircle size={14} /> {ref.comment_count ? ref.comment_count : 'Reply'}
                         </button>
                         <button
                           onClick={() => toggleLike(ref, 'likes')}
                           className={`flex items-center gap-1.5 text-xs transition-colors ${
-                            ref.is_liked_by_me ? 'text-pink-500' : isDark ? 'text-white/30 hover:text-pink-400' : 'text-[#536471] hover:text-pink-500'
+                            ref.is_liked_by_me ? 'text-rose-500' : isDark ? 'text-white/30 hover:text-rose-400' : 'text-slate-500 hover:text-rose-500'
                           }`}
                         >
                           <Heart size={14} fill={ref.is_liked_by_me ? 'currentColor' : 'none'} /> {ref.like_count ? ref.like_count : 'Like'}
                         </button>
                       </div>
                       {openComments.has(ref.id) && (
-                        <div className={`mt-3 -mx-4 sm:-mx-5 border-t ${isDark ? 'border-white/[0.06]' : 'border-[#EFF3F4]'}`}>
+                        <div className={`mt-3 -mx-4 sm:-mx-5 border-t ${isDark ? 'border-white/[0.06]' : 'border-slate-100'}`}>
                           <CommentSection reflectionId={ref.id} reflectionOwnerId={ref.user_id} />
                         </div>
                       )}
@@ -582,7 +582,7 @@ export function ProfilePageClient({
                     onClick={loadMoreLikes}
                     disabled={likesLoadingMore}
                     className={`text-xs font-semibold px-4 py-2 rounded-full transition-colors ${
-                      isDark ? 'text-[#1D9BF0] hover:bg-white/[0.06]' : 'text-[#1D9BF0] hover:bg-[#EFF3F4]'
+                      isDark ? 'text-[#6366F1] hover:bg-white/[0.06]' : 'text-[#6366F1] hover:bg-slate-100'
                     }`}
                   >
                     {likesLoadingMore ? 'Loading…' : 'Load more'}
@@ -625,21 +625,21 @@ export function ProfilePageClient({
               exit={{ opacity: 0, y: 20, scale: 0.98 }}
               transition={{ type: 'spring', stiffness: 300, damping: 28 }}
               className={`relative w-full sm:max-w-2xl sm:my-8 sm:rounded-2xl overflow-hidden ${
-                isDark ? 'bg-[#0A0A0A]' : 'bg-white'
+                isDark ? 'bg-[#0A0E18]' : 'bg-white'
               }`}
             >
               <div className={`sticky top-0 z-10 flex items-center justify-between px-4 sm:px-6 py-3 border-b backdrop-blur-md ${
-                isDark ? 'bg-[#0A0A0A]/90 border-white/[0.08]' : 'bg-white/90 border-[#EFF3F4]'
+                isDark ? 'bg-[#0A0E18]/90 border-white/[0.08]' : 'bg-white/90 border-slate-100'
               }`}>
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => setShowEditModal(false)}
-                    className={`p-1.5 rounded-full transition-colors ${isDark ? 'hover:bg-white/10 text-white' : 'hover:bg-[#EFF3F4] text-[#0F1419]'}`}
+                    className={`p-1.5 rounded-full transition-colors ${isDark ? 'hover:bg-white/10 text-white' : 'hover:bg-slate-100 text-slate-900'}`}
                     aria-label="Close"
                   >
                     <X className="h-4 w-4" />
                   </button>
-                  <h2 className={`text-base font-semibold ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+                  <h2 className={`text-base font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>
                     Edit profile
                   </h2>
                 </div>
@@ -709,8 +709,8 @@ function TabButton({
       onClick={onClick}
       className={`relative pb-3 text-sm font-medium transition-colors ${
         active
-          ? isDark ? 'text-white' : 'text-[#0F1419]'
-          : isDark ? 'text-white/30 hover:text-white/50' : 'text-[#8B98A5] hover:text-[#536471]'
+          ? isDark ? 'text-white' : 'text-slate-900'
+          : isDark ? 'text-white/30 hover:text-white/50' : 'text-slate-400 hover:text-slate-500'
       }`}
     >
       {children}
@@ -725,7 +725,7 @@ function TabButton({
       {/* ─── Mobile Bottom Tab Bar (when logged in) ─── */}
       {loggedInUserId && isActive && (
         <div className={`md:hidden fixed bottom-0 left-0 right-0 z-40 pb-[env(safe-area-inset-bottom,0px)] ${
-          isDark ? 'bg-[#0A0A0A]/90 backdrop-blur-lg border-t border-white/[0.06]' : 'bg-white/90 backdrop-blur-lg border-t border-[#EFF3F4]'
+          isDark ? 'bg-[#0A0E18]/90 backdrop-blur-lg border-t border-white/[0.06]' : 'bg-white/90 backdrop-blur-lg border-t border-slate-100'
         }`}>
           <div className="flex items-center justify-around h-14">
             {[
@@ -738,8 +738,8 @@ function TabButton({
               <Link key={item.id} href={item.href}>
                 <button className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition-colors ${
                   isActive(item.href)
-                    ? isDark ? 'text-white' : 'text-[#1D9BF0]'
-                    : isDark ? 'text-white/30' : 'text-[#8B98A5]'
+                    ? isDark ? 'text-white' : 'text-[#6366F1]'
+                    : isDark ? 'text-white/30' : 'text-slate-400'
                 }`}>
                   <item.icon size={20} />
                   <span className="text-[10px] font-medium leading-none">{item.label}</span>

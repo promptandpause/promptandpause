@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
+import { Playfair_Display } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Toaster } from '@/components/ui/sonner'
@@ -12,6 +13,12 @@ import MetaPixel from '@/components/MetaPixel'
 import './globals.css'
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://promptandpause.com'
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-serif',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -91,7 +98,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: '#1D9BF0',
+  themeColor: '#6366F1',
   viewportFit: 'cover',
 }
 
@@ -102,7 +109,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
+      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} ${playfair.variable}`}>
         <ThemeProvider>
           <LanguageProvider>
             <GlobalSyncProvider>

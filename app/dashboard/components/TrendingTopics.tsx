@@ -31,12 +31,12 @@ export function TrendingTopics() {
 
   if (loading) {
     return (
-      <div className={`rounded-2xl ${isDark ? 'bg-white/[0.03] border border-white/[0.06]' : 'bg-white border border-[#EFF3F4]'} p-4`}>
-        <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>Trends for you</h3>
+      <div className={`rounded-3xl border ${isDark ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-slate-100 shadow-soft-card'} p-4`}>
+        <h3 className={`text-sm font-semibold mb-4 ${isDark ? 'text-white' : 'text-slate-900'}`}>Trending topics</h3>
         {[1, 2, 3, 4].map(i => (
           <div key={i} className="mb-3">
-            <div className={`h-3 w-24 rounded ${isDark ? 'bg-white/8' : 'bg-[#EFF3F4]'} animate-pulse mb-1`} />
-            <div className={`h-2.5 w-14 rounded ${isDark ? 'bg-white/5' : 'bg-[#EFF3F4]'} animate-pulse`} />
+            <div className={`h-3 w-24 rounded ${isDark ? 'bg-white/8' : 'bg-slate-100'} animate-pulse mb-1`} />
+            <div className={`h-2.5 w-14 rounded ${isDark ? 'bg-white/5' : 'bg-slate-100'} animate-pulse`} />
           </div>
         ))}
       </div>
@@ -45,9 +45,9 @@ export function TrendingTopics() {
 
   if (trending.length === 0) {
     return (
-      <div className={`rounded-2xl ${isDark ? 'bg-white/[0.03] border border-white/[0.06]' : 'bg-white border border-[#EFF3F4]'} p-4`}>
-        <h3 className={`text-lg font-semibold mb-2 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>Trends for you</h3>
-        <p className={`text-sm ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
+      <div className={`rounded-3xl border ${isDark ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-slate-100 shadow-soft-card'} p-4`}>
+        <h3 className={`text-sm font-semibold mb-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>Trending topics</h3>
+        <p className={`text-sm ${isDark ? 'text-white/30' : 'text-slate-400'}`}>
           No trending topics yet. Trends appear as the community shares reflections.
         </p>
       </div>
@@ -55,8 +55,8 @@ export function TrendingTopics() {
   }
 
   return (
-    <div className={`rounded-2xl ${isDark ? 'bg-white/[0.03] border border-white/[0.06]' : 'bg-white border border-[#EFF3F4]'} p-4`}>
-      <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>Trends for you</h3>
+    <div className={`rounded-3xl border ${isDark ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-slate-100 shadow-soft-card'} p-4`}>
+      <h3 className={`text-sm font-semibold mb-3 ${isDark ? 'text-white' : 'text-slate-900'}`}>Trending topics</h3>
       <div className="space-y-1">
         {trending.map((item, i) => (
           <motion.div
@@ -68,12 +68,12 @@ export function TrendingTopics() {
               isDark ? '' : ''
             }`}
           >
-            <Hash size={16} weight="bold" className={`shrink-0 ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`} />
+            <Hash size={16} weight="bold" className={`shrink-0 ${isDark ? 'text-[#818CF8]/60' : 'text-slate-400'}`} />
             <div className="flex-1 min-w-0">
-              <p className={`text-sm font-semibold truncate ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+              <p className={`text-sm font-semibold truncate ${isDark ? 'text-white' : 'text-slate-800'}`}>
                 {item.tag}
               </p>
-              <p className={`text-xs ${isDark ? 'text-white/30' : 'text-[#536471]'}`}>
+              <p className={`text-xs ${isDark ? 'text-white/30' : 'text-slate-400'}`}>
                 {item.count} {item.count === 1 ? 'reflection' : 'reflections'}
               </p>
             </div>

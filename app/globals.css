@@ -4,160 +4,160 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* ===== SOCIAL PLATFORM - LIGHT MODE (Bluesky × Twitter Palette) ===== */
+  /* ===== PROMPT & PAUSE - LIGHT MODE (Indigo × Slate Palette) ===== */
   
-  /* Backgrounds - Clean White */
-  --background: #FFFFFF;
-  --background-secondary: #F7F9FA;
-  --background-tertiary: #EFF3F4;
+  /* Backgrounds - Warm paper white */
+  --background: #F9FBFB;
+  --background-secondary: #F3F5F7;
+  --background-tertiary: #E9EEF2;
   
-  /* Text Colors */
-  --foreground: #0F1419;
-  --text-secondary: #536471;
-  --text-tertiary: #8B98A5;
+  /* Text Colors - Slate */
+  --foreground: #334155;
+  --text-secondary: #64748B;
+  --text-tertiary: #94A3B8;
   
   /* Glass Effects */
-  --glass-light: rgba(255, 255, 255, 0.78);
-  --glass-medium: rgba(255, 255, 255, 0.88);
-  --glass-heavy: rgba(255, 255, 255, 0.96);
-  --glass-border: rgba(29, 155, 240, 0.12);
+  --glass-light: rgba(255, 255, 255, 0.7);
+  --glass-medium: rgba(255, 255, 255, 0.82);
+  --glass-heavy: rgba(255, 255, 255, 0.94);
+  --glass-border: rgba(148, 163, 184, 0.16);
   
   /* Cards */
   --card: rgba(255, 255, 255, 0.82);
-  --card-foreground: #0F1419;
+  --card-foreground: #334155;
   
   /* Popovers */
-  --popover: rgba(255, 255, 255, 0.9);
-  --popover-foreground: #0F1419;
+  --popover: rgba(255, 255, 255, 0.92);
+  --popover-foreground: #334155;
   
-  /* Primary Accent - Twitter Blue */
-  --primary: #1D9BF0;
+  /* Primary Accent - Indigo */
+  --primary: #6366F1;
   --primary-foreground: #FFFFFF;
   
-  /* Secondary Accent - Bluesky Blue */
-  --secondary: #0085FF;
+  /* Secondary Accent - Periwinkle */
+  --secondary: #818CF8;
   --secondary-foreground: #FFFFFF;
   
   /* Muted/Disabled */
-  --muted: rgba(29, 155, 240, 0.06);
-  --muted-foreground: #8B98A5;
+  --muted: rgba(99, 102, 241, 0.06);
+  --muted-foreground: #94A3B8;
   
-  /* Accent - Light Blue Wash */
-  --accent: #E8F5FE;
-  --accent-foreground: #0F1419;
+  /* Accent - Indigo Wash */
+  --accent: #EEF2FF;
+  --accent-foreground: #1E293B;
   
   /* Destructive */
   --destructive: #EF4444;
   --destructive-foreground: #FFFFFF;
   
   /* Borders & Inputs */
-  --border: rgba(29, 155, 240, 0.12);
-  --input: rgba(29, 155, 240, 0.1);
-  --ring: rgba(29, 155, 240, 0.4);
+  --border: rgba(148, 163, 184, 0.22);
+  --input: rgba(148, 163, 184, 0.18);
+  --ring: rgba(99, 102, 241, 0.4);
   
-  /* Chart Colors - Blue Social Palette */
-  --chart-1: #1D9BF0;
-  --chart-2: #0085FF;
+  /* Chart Colors - Indigo Palette */
+  --chart-1: #6366F1;
+  --chart-2: #818CF8;
   --chart-3: #FCD34D;
   --chart-4: #F87171;
-  --chart-5: #6EE7B7;
+  --chart-5: #34D399;
   
   /* Border Radius - Rounded for modern feel */
   --radius: 1.25rem;
   
   /* Sidebar */
   --sidebar: rgba(255, 255, 255, 0.82);
-  --sidebar-foreground: #0F1419;
-  --sidebar-primary: #1D9BF0;
+  --sidebar-foreground: #334155;
+  --sidebar-primary: #6366F1;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #E8F5FE;
-  --sidebar-accent-foreground: #0F1419;
-  --sidebar-border: rgba(29, 155, 240, 0.08);
-  --sidebar-ring: rgba(29, 155, 240, 0.4);
+  --sidebar-accent: #EEF2FF;
+  --sidebar-accent-foreground: #1E293B;
+  --sidebar-border: rgba(148, 163, 184, 0.12);
+  --sidebar-ring: rgba(99, 102, 241, 0.4);
   
   /* Typography */
   --font-sans: 'Geist', 'Geist Fallback';
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
 
-  --font-serif: 'Source Serif 4', 'Source Serif 4 Fallback';
+  --font-serif: 'Playfair Display', 'Playfair Display Fallback';
   
-  /* Shadows - Soft blue-tinted */
+  /* Shadows - Soft slate-tinted */
   --shadow-x: 0px;
   --shadow-y: 2px;
   --shadow-blur: 8px;
   --shadow-spread: 0px;
   --shadow-opacity: 0.06;
-  --shadow-color: #1D9BF0;
+  --shadow-color: #475569;
 }
 
 .dark {
-  /* ===== SOCIAL PLATFORM - DARK MODE (Bluesky × Twitter Palette) ===== */
+  /* ===== PROMPT & PAUSE - DARK MODE (Indigo × Slate Palette) ===== */
   
-  /* Backgrounds - Deep Dark (Bluesky-inspired) */
-  --background: #0A0A0A;
-  --background-secondary: #161618;
-  --background-tertiary: #1D1D1F;
+  /* Backgrounds - Deep Dark */
+  --background: #0A0E18;
+  --background-secondary: #111827;
+  --background-tertiary: #1B2436;
   
   /* Text Colors */
-  --foreground: #E7E9EA;
-  --text-secondary: #8B98A5;
-  --text-tertiary: #536471;
+  --foreground: #E2E8F0;
+  --text-secondary: #94A3B8;
+  --text-tertiary: #64748B;
   
   /* Glass Effects */
-  --glass-light: rgba(22, 22, 24, 0.65);
-  --glass-medium: rgba(22, 22, 24, 0.8);
-  --glass-heavy: rgba(22, 22, 24, 0.92);
-  --glass-border: rgba(29, 155, 240, 0.15);
+  --glass-light: rgba(17, 24, 39, 0.72);
+  --glass-medium: rgba(17, 24, 39, 0.84);
+  --glass-heavy: rgba(17, 24, 39, 0.94);
+  --glass-border: rgba(129, 140, 248, 0.16);
   
   /* Cards */
-  --card: rgba(22, 22, 24, 0.65);
-  --card-foreground: #E7E9EA;
+  --card: rgba(17, 24, 39, 0.72);
+  --card-foreground: #E2E8F0;
   
   /* Popovers */
-  --popover: rgba(22, 22, 24, 0.8);
-  --popover-foreground: #E7E9EA;
+  --popover: rgba(17, 24, 39, 0.86);
+  --popover-foreground: #E2E8F0;
   
-  /* Primary Accent - Twitter Blue */
-  --primary: #1D9BF0;
+  /* Primary Accent - Indigo */
+  --primary: #818CF8;
   --primary-foreground: #FFFFFF;
   
-  /* Secondary Accent - Bluesky Blue */
-  --secondary: #0085FF;
+  /* Secondary Accent - Periwinkle */
+  --secondary: #6366F1;
   --secondary-foreground: #FFFFFF;
   
   /* Muted/Disabled */
-  --muted: rgba(29, 155, 240, 0.1);
-  --muted-foreground: #536471;
+  --muted: rgba(129, 140, 248, 0.12);
+  --muted-foreground: #64748B;
   
-  /* Accent - Dark Blue Wash */
-  --accent: #0A2E4A;
-  --accent-foreground: #E7E9EA;
+  /* Accent - Dark Indigo Wash */
+  --accent: #1E2447;
+  --accent-foreground: #E2E8F0;
   
   /* Destructive */
   --destructive: #F87171;
   --destructive-foreground: #FFFFFF;
   
   /* Borders & Inputs */
-  --border: rgba(29, 155, 240, 0.18);
-  --input: rgba(29, 155, 240, 0.15);
-  --ring: rgba(29, 155, 240, 0.5);
+  --border: rgba(129, 140, 248, 0.2);
+  --input: rgba(129, 140, 248, 0.16);
+  --ring: rgba(129, 140, 248, 0.5);
   
-  /* Chart Colors - Dark Blue Palette */
-  --chart-1: #1D9BF0;
-  --chart-2: #0085FF;
+  /* Chart Colors - Dark Indigo Palette */
+  --chart-1: #818CF8;
+  --chart-2: #6366F1;
   --chart-3: #FCD34D;
   --chart-4: #F87171;
-  --chart-5: #6EE7B7;
+  --chart-5: #34D399;
   
   /* Sidebar */
-  --sidebar: rgba(22, 22, 24, 0.65);
-  --sidebar-foreground: #E7E9EA;
-  --sidebar-primary: #1D9BF0;
+  --sidebar: rgba(17, 24, 39, 0.72);
+  --sidebar-foreground: #E2E8F0;
+  --sidebar-primary: #818CF8;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #0A2E4A;
-  --sidebar-accent-foreground: #E7E9EA;
-  --sidebar-border: rgba(29, 155, 240, 0.12);
-  --sidebar-ring: rgba(29, 155, 240, 0.5);
+  --sidebar-accent: #1E2447;
+  --sidebar-accent-foreground: #E2E8F0;
+  --sidebar-border: rgba(129, 140, 248, 0.14);
+  --sidebar-ring: rgba(129, 140, 248, 0.5);
   
   /* Shadows - Stronger for dark mode depth */
   --shadow-x: 0px;
@@ -207,7 +207,7 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --font-serif: 'Source Serif 4', 'Source Serif 4 Fallback';
+  --font-serif: 'Playfair Display', 'Playfair Display Fallback';
   /* computed shadow variables below - do not modify */
   --shadow-2xs: var(--shadow-x) var(--shadow-y) color-mix(in srgb, var(--shadow-color) calc(var(--shadow-opacity) * 100%), transparent);
   --shadow-xs: var(--shadow-x) var(--shadow-y) var(--shadow-blur) var(--shadow-spread) color-mix(in srgb, var(--shadow-color) calc(var(--shadow-opacity) * 100%), transparent);
@@ -425,13 +425,13 @@
     background: rgba(255, 255, 255, 0.98);
   }
   .dark .glass-light {
-    background: rgba(26, 22, 37, 0.92);
+    background: rgba(17, 24, 39, 0.92);
   }
   .dark .glass-medium {
-    background: rgba(26, 22, 37, 0.95);
+    background: rgba(17, 24, 39, 0.95);
   }
   .dark .glass-heavy {
-    background: rgba(26, 22, 37, 0.98);
+    background: rgba(17, 24, 39, 0.98);
   }
 }
 
@@ -468,6 +468,15 @@
 
 .shadow-soft-lg {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+/* ===== MOCKUP SOFT SHADOW (01-home.html) ===== */
+.shadow-soft-card {
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+}
+
+.dark .shadow-soft-card {
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.4);
 }
 
 .dark .shadow-soft {

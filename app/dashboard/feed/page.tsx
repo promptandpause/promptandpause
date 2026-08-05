@@ -42,7 +42,7 @@ export default function FeedPage() {
 
   return (
     <AuthGuard redirectPath="/dashboard/feed">
-      <div className={`min-h-screen ${isDark ? 'bg-[#0A0A0A]' : 'bg-[#FFFFFF]'}`}>
+      <div className={`min-h-screen ${isDark ? 'bg-[#0A0E18]' : 'bg-[#F9FBFB]'}`}>
         <div className="flex h-screen overflow-hidden">
           <DashboardSidebar />
           <main className="flex-1 pb-32 md:pb-10 overflow-y-auto scrollbar-thin">
@@ -55,10 +55,10 @@ export default function FeedPage() {
                 className="flex items-center justify-between mb-6"
               >
                 <div>
-                  <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight ${isDark ? 'text-white' : 'text-[#0F1419]'}`}>
+                  <h1 className={`text-2xl md:text-3xl font-semibold tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
                     Feed
                   </h1>
-                  <p className={`text-sm mt-1 ${isDark ? 'text-white/40' : 'text-[#8B98A5]'}`}>
+                  <p className={`text-sm mt-1 ${isDark ? 'text-white/40' : 'text-slate-400'}`}>
                     Reflections shared by your friends
                   </p>
                 </div>
@@ -67,7 +67,7 @@ export default function FeedPage() {
                   className={`flex items-center gap-2 text-sm px-4 py-2 rounded-xl transition-all ${
                     isDark
                       ? 'bg-white/[0.06] text-white/60 hover:bg-white/10 hover:text-white'
-                      : 'bg-white/80 text-[#536471] hover:bg-white hover:border-[#EFF3F4] border border-[#EFF3F4]'
+                      : 'bg-white/80 text-slate-500 hover:bg-white hover:border-slate-100 border border-slate-100'
                   }`}
                 >
                   <Users size={16} weight="bold" />
@@ -78,28 +78,30 @@ export default function FeedPage() {
               {/* Feed */}
               {loading ? (
                 <div className="flex flex-col items-center justify-center py-20 gap-3">
-                  <Spinner size={24} weight="bold" className={`animate-spin ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`} />
-                  <p className={`text-sm ${isDark ? 'text-white/20' : 'text-[#8B98A5]'}`}>Loading feed...</p>
+                  <Spinner size={24} weight="bold" className={`animate-spin ${isDark ? 'text-white/20' : 'text-slate-400'}`} />
+                  <p className={`text-sm ${isDark ? 'text-white/20' : 'text-slate-400'}`}>Loading feed...</p>
                 </div>
               ) : feed.length === 0 ? (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className={`rounded-2xl p-10 text-center ${isDark ? 'bg-white/[0.03] border border-white/[0.06]' : 'bg-white/60 border border-[#EFF3F4]'}`}
+                  className={`rounded-3xl border p-10 text-center ${
+                    isDark ? 'bg-white/[0.04] border-white/[0.06]' : 'bg-white/70 border-slate-100 shadow-soft-card'
+                  }`}
                 >
-                  <Rss size={40} weight="bold" className={`mx-auto mb-4 ${isDark ? 'text-white/15' : 'text-[#D0CFC0]'}`} />
-                  <h3 className={`font-semibold mb-1 ${isDark ? 'text-white/60' : 'text-[#536471]'}`}>
+                  <Rss size={40} weight="bold" className={`mx-auto mb-4 ${isDark ? 'text-white/15' : 'text-slate-300'}`} />
+                  <h3 className={`font-semibold mb-1 ${isDark ? 'text-white/60' : 'text-slate-600'}`}>
                     Your feed is empty
                   </h3>
-                  <p className={`text-sm max-w-sm mx-auto mb-4 ${isDark ? 'text-white/30' : 'text-[#8B98A5]'}`}>
+                  <p className={`text-sm max-w-sm mx-auto mb-4 ${isDark ? 'text-white/30' : 'text-slate-400'}`}>
                     Add friends to see their shared reflections here. Reflections are private by default — friends choose to share.
                   </p>
                   <Link
                     href="/friends"
                     className={`inline-flex items-center gap-2 text-sm px-4 py-2 rounded-xl ${
                       isDark
-                        ? 'bg-white/10 text-white hover:bg-white/15'
-                        : 'bg-[#0F1419] text-white hover:bg-[#536471]'
+                        ? 'bg-[#6366F1] text-white hover:bg-[#4F46E5]'
+                        : 'bg-slate-900 text-white hover:bg-slate-800'
                     }`}
                   >
                     <Users size={16} weight="bold" />
@@ -123,7 +125,7 @@ export default function FeedPage() {
                         className={`text-sm px-6 py-2 rounded-xl transition-all ${
                           isDark
                             ? 'bg-white/[0.06] text-white/50 hover:bg-white/10 hover:text-white'
-                            : 'bg-white/80 text-[#536471] hover:bg-white border border-[#EFF3F4]'
+                            : 'bg-white/80 text-slate-500 hover:bg-white border border-slate-100'
                         }`}
                       >
                         {loadingMore ? (

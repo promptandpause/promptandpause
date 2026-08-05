@@ -101,9 +101,9 @@ export default function ActivityCalendar() {
         <div className={`rounded-lg p-3 border ${theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200'}`}>
           <div className="flex items-center gap-1">
             <TrendUp size={16} weight="bold" className="text-purple-400" />
-            <p className={`text-xs ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>Streak</p>
+            <p className={`text-xs ${theme === 'dark' ? 'text-white/50' : 'text-gray-500'}`}>Days in a row</p>
           </div>
-          <p className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{currentStreak} 🔥</p>
+          <p className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{currentStreak}</p>
         </div>
       </div>
 
@@ -190,10 +190,10 @@ export default function ActivityCalendar() {
             className="bg-gradient-to-r from-purple-500/20 to-red-500/20 border border-purple-400/30 rounded-lg p-3"
           >
             <p className="text-purple-400 font-semibold text-sm mb-1">
-              🔥 {currentStreak} Day Streak!
+              🌱 {currentStreak} days in a row
             </p>
             <p className={`text-xs ${theme === 'dark' ? 'text-white/70' : 'text-gray-600'}`}>
-              Keep it up! You're building a great habit.
+              A gentle rhythm is taking shape.
             </p>
           </motion.div>
         )}
@@ -201,7 +201,7 @@ export default function ActivityCalendar() {
         {currentStreak === 0 && totalReflections > 0 && (
           <div className="bg-blue-500/20 border border-blue-400/30 rounded-lg p-3">
             <p className="text-blue-400 font-semibold text-sm mb-1">
-              💡 Start a new streak!
+              💡 Reflect today to start a rhythm
             </p>
             <p className={`text-xs ${theme === 'dark' ? 'text-white/70' : 'text-gray-600'}`}>
               Complete today's reflection to begin.
@@ -233,7 +233,7 @@ export default function ActivityCalendar() {
         )}
         {currentStreak >= 7 && (
           <Badge className="bg-gradient-to-r from-purple-500/20 to-red-500/20 text-purple-400 border border-purple-400/30">
-            🔥 Week Streak
+            🌱 A Week of Rhythm
           </Badge>
         )}
       </div>

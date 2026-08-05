@@ -49,8 +49,8 @@
   
 - [ ] **Existing User Flow**:
   1. Login → Dashboard → Write reflection → Save
-  2. Check if streak badges awarded correctly
-  3. Test 7-day streak milestone celebration
+  2. Check if consistency badges awarded correctly
+  3. Test 7-day consistency milestone celebration
 
 ### 4. Cross-Browser Testing
 - [ ] Chrome (latest)
@@ -106,7 +106,7 @@
 ### 10. Data Integrity
 - [ ] Verify reflections save correctly
 - [ ] Check mood tracking persists
-- [ ] Verify streak counting is accurate
+- [ ] Verify consistency counting is accurate
 - [ ] Test badge awarding doesn't duplicate
 - [ ] Check achievement timestamps are correct
 
@@ -164,12 +164,12 @@
 14. See 2 badges unlocked, 26 locked
 ```
 
-### Scenario 2: Streak Milestone User
+### Scenario 2: Consistency Milestone User
 ```
-1. Login (user with 6-day streak)
+1. Login (user with 6 days in a row)
 2. Write reflection
 3. Save reflection
-4. See celebration modal with "7-day streak!"
+4. See celebration modal with "7 days in a row!"
 5. See "Week Warrior" badge unlock
 6. Check achievements page
 7. Verify badge appears with today's date
@@ -307,7 +307,7 @@ DROP TABLE IF EXISTS user_achievements;
 
 ### 🏆 Achievement System
 - Earn 28 unique badges for your reflection journey
-- Track streaks, milestones, and exploration
+- Track consistency, milestones, and exploration
 - Beautiful gallery to view your accomplishments
 - Celebrate your consistency and growth
 
