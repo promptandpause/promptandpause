@@ -98,10 +98,13 @@ self.addEventListener('fetch', (event: FetchEvent) => {
       .then((response) => cleanRedirectedResponse(response))
       .then((cleanResponse) => {
         // Cache successful responses (cleaned copies only, so redirects never
-        // get cached under their original URL)
+        // get cached under their original URL). Clone synchronously BEFORE the
+        // response is returned (and its body consumed) — cloning inside the
+        // async caches.open() callback throws "Response body is already used".
         if (cleanResponse.status === 200) {
+          const responseToCache = cleanResponse.clone()
           caches.open(RUNTIME_CACHE).then((cache) => {
-            cache.put(request, cleanResponse.clone())
+            cache.put(request, responseToCache)
           })
         }
 
